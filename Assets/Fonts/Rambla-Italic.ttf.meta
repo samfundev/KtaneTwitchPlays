@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: a0361f087400bd449b737a0d7b2ab627
+timeCreated: 1489087512
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Rambla
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 8f3e1ef544a0a884aa2e04cb89846e26, type: 3}
+  - {fileID: 12800000, guid: 6986b8e68604d1441a0418bec65639ab, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
