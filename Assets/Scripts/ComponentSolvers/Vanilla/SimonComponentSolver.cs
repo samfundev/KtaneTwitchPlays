@@ -11,8 +11,7 @@ public class SimonComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (Array)_buttonsField.GetValue(bombComponent);
-        
-        helpMessage = "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages";
+        modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -23,15 +22,16 @@ public class SimonComponentSolver : ComponentSolver
         }
         inputCommand = inputCommand.Substring(6);
 
-        int beforeButtonStrikeCount = StrikeCount;
-
+        string sequence = "pressing ";
         foreach (Match move in Regex.Matches(inputCommand, @"(\b(red|blue|green|yellow)\b|[rbgy])", RegexOptions.IgnoreCase))
         {
             MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(  buttonIndex[ move.Value.Substring(0, 1).ToLowerInvariant() ]  );
-        
+            
+
             if (button != null)
             {
-                yield return move;
+                yield return move.Value;
+                sequence += move.Value + " ";
 
                 if (Canceller.ShouldCancel)
                 {
@@ -39,15 +39,7 @@ public class SimonComponentSolver : ComponentSolver
                     yield break;
                 }
 
-                DoInteractionStart(button);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(button);
-
-                //Escape the sequence if a part of the given sequence is wrong
-                if (StrikeCount != beforeButtonStrikeCount || Solved)
-                {
-                    break;
-                }
+                yield return DoInteractionClick(button, sequence);
             }
         }
     }

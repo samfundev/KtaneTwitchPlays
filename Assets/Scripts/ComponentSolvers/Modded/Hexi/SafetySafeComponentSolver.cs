@@ -18,59 +18,49 @@ public class SafetySafeComponentSolver : ComponentSolver
         {"leftbottom",3}, {"middlebottom",4}, {"centerbottom",4}, {"centrebottom",4}, {"rightbottom",5},
     };
 
+    private static string[] DialNames =
+    {
+        "top left", "top middle", "top right",
+        "bottom left", "bottom middle", "bottom right"
+    };
+
     public SafetySafeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (MonoBehaviour[])_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         _lever = (MonoBehaviour)_leverField.GetValue(bombComponent.GetComponent(_componentType));
-
-        helpMessage = "Listen to the dials with !{0} cycle. Listen to a single dial with !{0} cycle BR. Make a correction to a single dial with !{0} BM 3. Enter the solution with !{0} 6 0 6 8 2 5. Submit the answer with !{0} submit. Dial positions are TL, TM, TR, BL, BM, BR.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        var split = inputCommand.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+        string[] split = inputCommand.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
         int pos;
 
         if (split[0] == "submit" && split.Length == 1)
         {
             yield return "submit";
-            DoInteractionStart(_lever);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_lever);
+            yield return DoInteractionClick(_lever);
         }
         else if (split[0] == "cycle" && split.Length <= 2)
         {
-            yield return "cycle";
             if (split.Length == 1)
             {
-                for (var i = 0; i < 6; i++)
+                for (int i = 0; i < 6; i++)
                 {
-                    for (var j = 0; j < 12; j++)
+                    IEnumerator cycle = CycleDial(i, i < 5);
+                    while (cycle.MoveNext())
                     {
-                        yield return HandlePress(i);
-                        yield return new WaitForSeconds(0.3f);
-                        if (Canceller.ShouldCancel)
-                        {
-                            Canceller.ResetCancel();
-                            yield break;
-                        }
+                        yield return cycle.Current;
                     }
-                    if (i < 5)
-                        yield return new WaitForSeconds(0.5f);
                 }
             }
             else if (DialPosNames.TryGetValue(split[1], out pos))
             {
-                for (var j = 0; j < 12; j++)
+                IEnumerator cycle = CycleDial(pos);
+                while (cycle.MoveNext())
                 {
-                    yield return HandlePress(pos);
-                    yield return new WaitForSeconds(0.3f);
-                    if (Canceller.ShouldCancel)
-                    {
-                        Canceller.ResetCancel();
-                        yield break;
-                    }
+                    yield return cycle.Current;
                 }
             }
         }
@@ -79,24 +69,17 @@ public class SafetySafeComponentSolver : ComponentSolver
             if (split.Length == 1)
             {
                 yield return split[0];
-                yield return HandlePress(pos);
+                yield return DoInteractionClick(_buttons[pos]);
             }
             else if (split.Length == 2)
             {
                 int val = 0;
                 if (!int.TryParse(split[1], out val)) yield break;
-                val %= 12;
-                while (val < 0)
-                    val += 12;
-                yield return split[0];
-                for (int z = 0; z < val; z++)
+
+                IEnumerator set = SetDial(pos, val);
+                while (set.MoveNext())
                 {
-                    yield return HandlePress(pos);
-                    if (Canceller.ShouldCancel)
-                    {
-                        Canceller.ResetCancel();
-                        yield break;
-                    }
+                    yield return set.Current;
                 }
             }
         }
@@ -107,32 +90,52 @@ public class SafetySafeComponentSolver : ComponentSolver
             {
                 if (!int.TryParse(split[a], out values[a]))
                     yield break;
-                values[a] %= 12;
-                while (values[a] < 0)
-                    values[a] += 12;
             }
 
-            yield return inputCommand;
             for (int a = 0; a < 6; a++)
             {
-                for (int z = 0; z < values[a]; z++)
+                IEnumerator set = SetDial(a, values[a]);
+                while (set.MoveNext())
                 {
-                    yield return HandlePress(a);
-                    if (Canceller.ShouldCancel)
-                    {
-                        Canceller.ResetCancel();
-                        yield break;
-                    }
+                    yield return set.Current;
                 }
             }
         }
     }
 
-    private IEnumerator HandlePress(int pos)
+    private IEnumerator CycleDial(int pos, bool wait=false)
     {
-        DoInteractionStart(_buttons[pos]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_buttons[pos]);
+        yield return "cycle " + pos;
+        for (var j = 0; j < 12; j++)
+        {
+            yield return DoInteractionClick(_buttons[pos]);
+            yield return new WaitForSeconds(0.3f);
+            if (Canceller.ShouldCancel)
+            {
+                Canceller.ResetCancel();
+                yield break;
+            }
+        }
+        if (wait)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private IEnumerator SetDial(int pos, int value)
+    {
+        yield return "move dial " + pos + " by " + value + " clicks";
+        value = ((value % 12) + 12) % 12;
+        for (int i = 0; i < value; i++)
+        {
+            yield return DoInteractionClick(_buttons[pos]);
+            if (Canceller.ShouldCancel)
+            {
+                yield return "sendtochat Setting the " + DialNames[pos] + " dial on safety safe was interrupted due to a request to cancel.";
+                Canceller.ResetCancel();
+                yield break;
+            }
+        }
     }
 
     static SafetySafeComponentSolver()

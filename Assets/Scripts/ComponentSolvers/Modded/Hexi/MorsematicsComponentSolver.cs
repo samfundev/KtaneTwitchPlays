@@ -13,7 +13,7 @@ public class MorsematicsComponentSolver : ComponentSolver
         _component = bombComponent.GetComponent(_componentType);
         _transmit = (KMSelectable)_transmitField.GetValue(_component);
         _switch = (KMSelectable)_switchField.GetValue(_component);
-        helpMessage = "Turn the lights off with !{0} lights off. Turn the lights on with !{0} lights on. Tranmit the answer with !{0} transmit -..-";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -23,9 +23,7 @@ public class MorsematicsComponentSolver : ComponentSolver
         {
             yield return inputCommand;
             _lightsOn = !_lightsOn;
-            DoInteractionStart(_switch);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_switch);
+            yield return DoInteractionClick(_switch);
             yield break;
         }
         var letter = Regex.Match(inputCommand, "^((transmit|xmit|trans|tx) )([.-]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -43,6 +41,7 @@ public class MorsematicsComponentSolver : ComponentSolver
                 DoInteractionEnd(_transmit);
                 yield return new WaitForSeconds(0.08f);
             }
+            yield return new WaitForSeconds(0.5f);
         }
     }
 

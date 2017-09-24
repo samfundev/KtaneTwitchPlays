@@ -9,8 +9,7 @@ public class ProbingComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _wires = (MonoBehaviour[])_wiresField.GetValue(bombComponent.GetComponent(_componentType));
-
-        helpMessage = "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3.  Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -20,7 +19,6 @@ public class ProbingComponentSolver : ComponentSolver
             _wires[4] == null || _wires[5] == null)
             yield break;
 
-        var beforeStrikes = StrikeCount;
         if (split.Length == 1 && split[0] == "cycle")
         {
             yield return "Reading the frequencies";
@@ -29,13 +27,6 @@ public class ProbingComponentSolver : ComponentSolver
             for (var i = 1; i < 6; i++)
             {
                 yield return ConnectWires(i, 0);
-                if (beforeStrikes != StrikeCount)
-                {
-                    //A strike somewhere else on the bomb has the possibility to change the frequencies, and thus
-                    //ruin the reading.
-                    yield return EnsureWiresConnected(4, 4);
-                    yield break;
-                }
                 yield return new WaitForSeconds(2.0f);
             }
             yield return ConnectWires(4, 4);  //Leave the blue wire disconnected.
@@ -73,42 +64,22 @@ public class ProbingComponentSolver : ComponentSolver
             y %= 6;
         }
 
-        DoInteractionStart(_wires[x]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[x]);
-
-        DoInteractionStart(_wires[y]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[y]);
+        yield return DoInteractionClick(_wires[x]);
+        yield return DoInteractionClick(_wires[y]);
         yield return new WaitForSeconds(0.1f);
 
-        DoInteractionStart(_wires[x]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[x]);
-
-        DoInteractionStart(_wires[y]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[y]);
+        yield return DoInteractionClick(_wires[x]);
+        yield return DoInteractionClick(_wires[y]);
         yield return new WaitForSeconds(0.1f);
 
-        DoInteractionStart(_wires[red]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[red]);
-
-        DoInteractionStart(_wires[blue]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[blue]);
+        yield return DoInteractionClick(_wires[red]);
+        yield return DoInteractionClick(_wires[blue]);
     }
 
     IEnumerator ConnectWires(int red, int blue)
     {
-        DoInteractionStart(_wires[red]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[red]);
-
-        DoInteractionStart(_wires[blue]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_wires[blue]);
+        yield return DoInteractionClick(_wires[red]);
+        yield return DoInteractionClick(_wires[blue]);
     }
 
     static ProbingComponentSolver()

@@ -9,8 +9,7 @@ public class ButtonComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _button = (MonoBehaviour)_buttonField.GetValue(bombComponent);
-
-        helpMessage = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]";
+        modInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -19,10 +18,7 @@ public class ButtonComponentSolver : ComponentSolver
                        inputCommand.Equals("click", StringComparison.InvariantCultureIgnoreCase)))
         {
             yield return "tap";
-
-            DoInteractionStart (_button);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_button);
+            yield return DoInteractionClick(_button);
         }
         else if (!_held && (inputCommand.Equals("hold", StringComparison.InvariantCultureIgnoreCase)))
         {

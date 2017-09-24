@@ -11,8 +11,7 @@ public class VennWireComponentSolver : ComponentSolver
     {
         _wires = (Array)_activeWiresProperty.GetValue(bombComponent, null);
         _cutWires = new bool[6];
-        
-        helpMessage = "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted"; 
+        modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -22,8 +21,6 @@ public class VennWireComponentSolver : ComponentSolver
             yield break;
         }
         inputCommand = inputCommand.Substring(4);
-
-        int beforeButtonStrikeCount = StrikeCount;
 
         foreach (Match wireIndexString in Regex.Matches(inputCommand, @"[1-6]"))
         {
@@ -50,16 +47,7 @@ public class VennWireComponentSolver : ComponentSolver
                 }
 
                 MonoBehaviour wire = (MonoBehaviour)_wires.GetValue(wireIndex);
-
-                DoInteractionStart(wire);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(wire);
-
-                //Escape the sequence if a part of the given sequence is wrong
-                if (StrikeCount != beforeButtonStrikeCount || Solved)
-                {
-                    break;
-                }
+                yield return DoInteractionClick(wire, string.Format("cutting wire {0}", wireIndexString.Value));
             }
         }
     }

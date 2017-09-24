@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class RoundKeypadComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-        helpMessage = "Solve the module with !{0} press 2 4 6 7 8. Button 1 is the top most botton, and are numbered in clockwise order.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -20,35 +21,29 @@ public class RoundKeypadComponentSolver : ComponentSolver
         }
         inputCommand = inputCommand.Substring(6);
 
-        int beforeButtonStrikeCount = StrikeCount;
-
         string[] sequence = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        List<MonoBehaviour> buttons = new List<MonoBehaviour>();
 
         foreach (string buttonString in sequence)
         {
             int val = -1;
-            if(int.TryParse(buttonString, out val) && val >= 1 && val <= 8)
+            if (!int.TryParse(buttonString, out val) || val < 1 || val > 8)
             {
-                MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(val-1);
-
-                yield return buttonString;
-
-                if (Canceller.ShouldCancel)
-                {
-                    Canceller.ResetCancel();
-                    yield break;
-                }
-
-                DoInteractionStart(button);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(button);
-
-                //Escape the sequence if a part of the given sequence is wrong
-                if (StrikeCount != beforeButtonStrikeCount || Solved)
-                {
-                    yield break;
-                }
+                yield break;
             }
+            MonoBehaviour button = (MonoBehaviour) _buttons.GetValue(val - 1);
+            buttons.Add(button);
+        }
+
+        yield return inputCommand;
+        foreach (MonoBehaviour button in buttons)
+        {
+            if (Canceller.ShouldCancel)
+            {
+                Canceller.ResetCancel();
+                yield break;
+            }
+            yield return DoInteractionClick(button);
         }
     }
 

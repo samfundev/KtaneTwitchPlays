@@ -13,8 +13,7 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 		_buttonLeft = (KMSelectable) _buttonLeftField.GetValue(_component);
 		_buttonRight = (KMSelectable) _buttonRightField.GetValue(_component);
 		_buttonStraight = (KMSelectable) _buttonStraightField.GetValue(_component);
-
-		helpMessage = "Move around the maze using !{0} move left forward right. Walk slowly around the maze using !{0} walk left forawrd right. Shorten forms of the directions are also acceptable. You can use \"uturn\" or \"u\" to turn around.";
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	private string ShortenDirection(string direction)

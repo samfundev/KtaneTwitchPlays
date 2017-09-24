@@ -9,9 +9,7 @@ public class NeedyDischargeComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _dischargeButton = (MonoBehaviour)_dischargeButtonField.GetValue(bombComponent);
-        
-        helpMessage = "!{0} hold 7 [hold the lever for 7 seconds]";
-        manualCode = "Capacitor Discharge";
+        modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -38,17 +36,12 @@ public class NeedyDischargeComponentSolver : ComponentSolver
 
         if (holdTime > 10.0f)
         {
-            _musicPlayer = MusicPlayer.StartRandomMusic();
+            yield return "elevator music";
         }
 
         DoInteractionStart(_dischargeButton);
         yield return new WaitForSecondsWithCancel(holdTime, Canceller);
         DoInteractionEnd(_dischargeButton);
-
-        if (holdTime > 10.0f)
-        {
-            _musicPlayer.StopMusic();
-        }
     }
 
     static NeedyDischargeComponentSolver()
@@ -61,5 +54,4 @@ public class NeedyDischargeComponentSolver : ComponentSolver
     private static FieldInfo _dischargeButtonField = null;
 
     private MonoBehaviour _dischargeButton = null;
-    private MusicPlayer _musicPlayer = null;
 }

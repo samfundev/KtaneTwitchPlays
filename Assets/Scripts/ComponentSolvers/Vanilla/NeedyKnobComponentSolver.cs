@@ -9,9 +9,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _pointingKnob = (MonoBehaviour)_pointingKnobField.GetValue(bombComponent);
-        
-        helpMessage = "!{0} rotate 3, !{0} turn 3 [rotate the knob 3 quarter-turns]";
-        manualCode = "Knobs";
+        modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -46,10 +44,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
                 Canceller.ResetCancel();
                 yield break;
             }
-
-            DoInteractionStart(_pointingKnob);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_pointingKnob);
+            yield return DoInteractionClick(_pointingKnob);
         }
     }
 

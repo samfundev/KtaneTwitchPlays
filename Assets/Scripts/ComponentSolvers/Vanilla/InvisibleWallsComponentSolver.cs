@@ -11,9 +11,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (IList)_buttonsField.GetValue(bombComponent);
-
-        helpMessage = "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]";
-        manualCode = "Mazes";
+        modInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -24,8 +22,6 @@ public class InvisibleWallsComponentSolver : ComponentSolver
         }
 
         inputCommand = inputCommand.Substring(5);
-
-        int beforeButtonStrikeCount = StrikeCount;
 
         foreach (Match move in Regex.Matches(inputCommand, @"[udlr]", RegexOptions.IgnoreCase))
         {
@@ -41,15 +37,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
                     yield break;
                 }
 
-                DoInteractionStart(button);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(button);
-
-                //Escape the sequence if a part of the given sequence is wrong
-                if (StrikeCount != beforeButtonStrikeCount || Solved)
-                {
-                    break;
-                }
+                yield return DoInteractionClick(button);
             }            
         }
     }

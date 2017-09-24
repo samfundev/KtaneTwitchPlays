@@ -10,7 +10,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (MonoBehaviour[])_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-        helpMessage = "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -44,12 +44,13 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 
 
         if (button == null)
+        {
+            yield return "autosolve due to the buttons not being set to expected values";
             yield break;
+        }
 
         yield return "Foreign Exchange Rates Solve Attempt";
-        DoInteractionStart(button);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(button);
+        yield return DoInteractionClick(button);
     }
 
     static ForeignExchangeRatesComponentSolver()

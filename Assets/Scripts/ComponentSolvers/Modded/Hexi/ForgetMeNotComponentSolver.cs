@@ -9,7 +9,7 @@ public class ForgetMeNotComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-        helpMessage = "Enter forget me not sequence with !{0} press 5 3 1 8 2 0... The Sequence length depends on how many modules were on the bomb.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -19,8 +19,6 @@ public class ForgetMeNotComponentSolver : ComponentSolver
             yield break;
         }
         inputCommand = inputCommand.Substring(6);
-
-        int beforeButtonStrikeCount = StrikeCount;
 
         foreach (char buttonString in inputCommand)
         {
@@ -37,15 +35,7 @@ public class ForgetMeNotComponentSolver : ComponentSolver
                     yield break;
                 }
 
-                DoInteractionStart(button);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(button);
-
-                //Escape the sequence if a part of the given sequence is wrong
-                if (StrikeCount != beforeButtonStrikeCount || Solved)
-                {
-                    yield break;
-                }
+                yield return DoInteractionClick(button);
             }
         }
     }

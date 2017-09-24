@@ -13,7 +13,7 @@ public class MotionSenseComponentSolver : ComponentSolver
         _connection = ircConnection;
         _component = bombComponent.GetComponent(_componentType);
         _needy = (KMNeedyModule) _needyField.GetValue(_component);
-        helpMessage = "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

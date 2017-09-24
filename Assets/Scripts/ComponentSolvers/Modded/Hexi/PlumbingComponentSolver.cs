@@ -19,8 +19,7 @@ public class PlumbingComponentSolver : ComponentSolver
                 _pipes[i][j] = (MonoBehaviour) _pipesField[i][j].GetValue(bombComponent.GetComponent(_componentType));
             }
         }
-
-        helpMessage = "Rotate the pipes with !{0} rotate A1 A1 B2 B3 C2 C3 C3. Check your work for leaks Kappa with !{0} submit. (Pipes rotate clockwise. Top left is A1, Bottom right is F6)";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -29,9 +28,7 @@ public class PlumbingComponentSolver : ComponentSolver
             inputCommand.Equals("check", StringComparison.InvariantCultureIgnoreCase))
         {
             yield return "Checking for leaks Kappa";
-            DoInteractionStart(_check);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_check);
+            yield return DoInteractionClick(_check);
             yield break;
         }
 
@@ -62,10 +59,7 @@ public class PlumbingComponentSolver : ComponentSolver
                 Canceller.ResetCancel();
                 yield break;
             }
-
-            DoInteractionStart(button);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(button);
+            yield return DoInteractionClick(button);
         }
     }
 

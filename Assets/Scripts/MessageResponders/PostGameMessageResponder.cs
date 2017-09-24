@@ -34,9 +34,10 @@ public class PostGameMessageResponder : MessageResponder
     #region Protected/Private Methods
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
+        
         if (_postGameCommander != null)
         {
-            _coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(userNickName, text, null));
+            _coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(userNickName, text, null, _ircConnection));
         }
     }
 

@@ -11,11 +11,11 @@ public class ModuleCameras : MonoBehaviour
     public class ModuleItem
     {
         public MonoBehaviour component = null;
-        public MonoBehaviour handle = null;
+        public TwitchComponentHandle handle = null;
         public int priority = CameraNotInUse;
         public int index = 0;
 
-        public ModuleItem(MonoBehaviour c, MonoBehaviour h, int p)
+        public ModuleItem(MonoBehaviour c, TwitchComponentHandle h, int p)
         {
             component = c;
             handle = h;
@@ -138,8 +138,9 @@ public class ModuleCameras : MonoBehaviour
     #endregion
 
     #region Private Fields
-    private Stack<ModuleItem>[] stacks = new Stack<ModuleItem>[3];
+    private Stack<ModuleItem>[] stacks = new Stack<ModuleItem>[4];
     private Stack<ModuleItem> moduleStack = new Stack<ModuleItem>();
+    private Stack<ModuleItem> claimedModuleStack = new Stack<ModuleItem>();
     private Stack<ModuleItem> priorityModuleStack = new Stack<ModuleItem>();
     private Stack<ModuleItem> pinnedModuleStack = new Stack<ModuleItem>();
     private List<ModuleCamera> cameras = new List<ModuleCamera>();
@@ -155,8 +156,9 @@ public class ModuleCameras : MonoBehaviour
     #region Public Constants
     public const int CameraNotInUse = 0;
     public const int CameraInUse = 1;
-    public const int CameraPrioritised = 2;
-    public const int CameraPinned = 3;
+    public const int CameraClaimed = 2;
+    public const int CameraPrioritised = 3;
+    public const int CameraPinned = 4;
     #endregion
 
     #region Public Statics
@@ -182,7 +184,8 @@ public class ModuleCameras : MonoBehaviour
         }
         stacks[0] = pinnedModuleStack;
         stacks[1] = priorityModuleStack;
-        stacks[2] = moduleStack;
+        stacks[2] = claimedModuleStack;
+        stacks[3] = moduleStack;
     }
 
     private void LateUpdate()
@@ -196,13 +199,23 @@ public class ModuleCameras : MonoBehaviour
     #endregion
 
     #region Public Methods
-    public void AttachToModule(MonoBehaviour component, MonoBehaviour handle, int priority = CameraInUse)
+    public void AttachToModule(MonoBehaviour component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
+        if ( (handle.claimed) && (priority == CameraClaimed) )
+        {
+            priority = CameraClaimed;
+        }
         int existingCamera = CurrentModulesContains(component);
         if (existingCamera > -1)
         {
-            cameras[existingCamera].index = ++index;
-            cameras[existingCamera].module.index = cameras[existingCamera].index;
+            ModuleCamera cam = cameras[existingCamera];
+            if (cam.priority < priority)
+            {
+                cam.priority = priority;
+                cam.module.priority = priority;
+            }
+            cam.index = ++index;
+            cam.module.index = cam.index;
             return;
         }
         ModuleCamera camera = AvailableCamera(priority);
@@ -275,8 +288,8 @@ public class ModuleCameras : MonoBehaviour
     {
         if (currentBomb != null)
         {
-            currentSolves = currentBomb._bombSolvedModules;
-            string solves = currentSolves.ToString().PadLeft(currentBomb._bombSolvableModules.ToString().Length, Char.Parse("0"));
+            currentSolves = currentBomb.bombSolvedModules;
+            string solves = currentSolves.ToString().PadLeft(currentBomb.bombSolvableModules.ToString().Length, Char.Parse("0"));
             Debug.Log(LogPrefix + "Updating solves to " + solves);
             solvesPrefab.text = solves;
         }
@@ -286,7 +299,7 @@ public class ModuleCameras : MonoBehaviour
     {
         if (currentBomb != null)
         {
-            currentTotalModules = currentBomb._bombSolvableModules;
+            currentTotalModules = currentBomb.bombSolvableModules;
             string total = currentTotalModules.ToString();
             Debug.Log(LogPrefix + "Updating total modules to " + total);
             totalModulesPrefab.text = "/" + total;
@@ -380,7 +393,7 @@ public class ModuleCameras : MonoBehaviour
         yield break;
     }
 
-    private void AddModuleToStack(MonoBehaviour component, MonoBehaviour handle, int priority = CameraInUse)
+    private void AddModuleToStack(MonoBehaviour component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
         ModuleItem item = new ModuleItem(component, handle, priority);
         if (priority >= CameraPinned)
@@ -559,7 +572,7 @@ public class ModuleCameras : MonoBehaviour
             float timeMax = 0.2f;
 
             float timeRemaining = currentBomb.CurrentTimer;
-            float totalTime = currentBomb._bombStartingTimer;
+            float totalTime = currentBomb.bombStartingTimer;
 
             int strikesAvailable = (currentTotalStrikes - 1) - currentStrikes; // Strikes without exploding
 

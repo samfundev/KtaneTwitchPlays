@@ -29,7 +29,7 @@ public class TwitchLeaderboard : MonoBehaviour
             return;
         }
 
-        if (leaderboard.Success)
+        if (leaderboard.Success || !TwitchPlaySettings.data.EnableRetryButton)
         {
             retryTransform.gameObject.SetActive(false);
         }

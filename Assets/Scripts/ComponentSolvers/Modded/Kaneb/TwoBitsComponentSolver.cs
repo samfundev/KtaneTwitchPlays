@@ -30,8 +30,7 @@ public class TwoBitsComponentSolver : ComponentSolver
         _submit = (MonoBehaviour)_submitButtonField.GetValue(c);
         _query = (MonoBehaviour)_queryButtonField.GetValue(c);
         _buttons = (MonoBehaviour[])_buttonsField.GetValue(c);
-
-        helpMessage = "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -41,7 +40,7 @@ public class TwoBitsComponentSolver : ComponentSolver
         if (split.Length < 2 || split[0] != "press")
             yield break;
 
-        foreach (var x in split.Skip(1))
+        foreach (string x in split.Skip(1))
         {
             switch (x)
             {
@@ -49,7 +48,7 @@ public class TwoBitsComponentSolver : ComponentSolver
                 case "submit":
                     break;
                 default:
-                    foreach (var y in x)
+                    foreach (char y in x)
                         if (!ButtonLabels.Contains(y))
                             yield break;
                     break;
@@ -57,24 +56,20 @@ public class TwoBitsComponentSolver : ComponentSolver
         }
 
         yield return "Two Bits Solve Attempt";
-        foreach (var x in split.Skip(1))
+        foreach (string x in split.Skip(1))
         {
             switch (x)
             {
                 case "query":
-                    DoInteractionStart(_query);
-                    yield return new WaitForSeconds(0.1f);
-                    DoInteractionEnd(_query);
+                    yield return DoInteractionClick(_query);
                     break;
                 case "submit":
-                    DoInteractionStart(_submit);
-                    yield return new WaitForSeconds(0.1f);
-                    DoInteractionEnd(_submit);
+                    yield return DoInteractionClick(_submit);
                     break;
                 default:
-                    foreach (var y in x)
+                    foreach (char y in x)
                     {
-                        yield return HandlePress(y);
+                        yield return DoInteractionClick(_buttons[ButtonLabels.IndexOf(y)]);
                         _state = (State)_stateField.GetValue(c);
                         if (_state == State.ShowingError || _state == State.Inactive)
                             yield break;
@@ -91,14 +86,6 @@ public class TwoBitsComponentSolver : ComponentSolver
             string currentQuery = ((string) _getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
             yield return correctresponse.Equals(currentQuery) ? "solve" : "strike";
         }
-    }
-
-    private IEnumerator HandlePress(char c)
-    {
-        var pos = ButtonLabels.IndexOf(c);
-        DoInteractionStart(_buttons[pos]);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_buttons[pos]);
     }
 
     static TwoBitsComponentSolver()

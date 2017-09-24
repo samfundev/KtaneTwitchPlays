@@ -14,8 +14,7 @@ public class ResistorsComponentSolver : ComponentSolver
 		_pins = (KMSelectable[]) _pinsField.GetValue(_component);
 		_checkButton = (KMSelectable) _checkButtonField.GetValue(_component);
 		_clearButton = (KMSelectable) _clearButtonField.GetValue(_component);
-
-		helpMessage = "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.";
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	int? PinToIndex(string pin)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -12,9 +13,7 @@ public class WireSequenceComponentSolver : ComponentSolver
         _wireSequence = (IList)_wireSequenceField.GetValue(bombComponent);
         _upButton = (MonoBehaviour)_upButtonField.GetValue(bombComponent);
         _downButton = (MonoBehaviour)_downButtonField.GetValue(bombComponent);
-
-        helpMessage = "!{0} cut 7 [cut wire 7] | !{0} down, !{0} d [next stage] | !{0} up, !{0} u [previous stage] | !{0} cut 7 8 9 d [cut multiple wires and continue] | Use the numbers shown on the module";
-        manualCode = "Wire Sequences";
+        modInfo = ComponentSolverFactory.GetModuleInfo("WireSequenceComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -22,49 +21,28 @@ public class WireSequenceComponentSolver : ComponentSolver
         List<MonoBehaviour> buttons = new List<MonoBehaviour>();
         List<string> strikemessages = new List<string>();
 
-        int beforeButtonStrikeCount = StrikeCount;
         if (inputCommand.Equals("up", StringComparison.InvariantCultureIgnoreCase) ||
             inputCommand.Equals("u", StringComparison.InvariantCultureIgnoreCase))
         {
             yield return "up";
-
-            DoInteractionStart(_upButton);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_upButton);
+            yield return DoInteractionClick(_upButton);
         }
         else if (inputCommand.Equals("down", StringComparison.InvariantCultureIgnoreCase) ||
                 inputCommand.Equals("d", StringComparison.InvariantCultureIgnoreCase))
         {
             yield return "down";
-
-            DoInteractionStart(_downButton);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_downButton);
-
-            if (StrikeCount != beforeButtonStrikeCount)
-            {
-                yield return "strikemessage attempting to move down.";
-            }
+            yield return DoInteractionClick(_downButton, "attempting to move down.");
         }
         else
         {
-            if (inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))
-            {
-                inputCommand = inputCommand.Substring(4);
-            }
-            else if (inputCommand.StartsWith("c ", StringComparison.InvariantCultureIgnoreCase))
-            {
-                inputCommand = inputCommand.Substring(2);
-            }
-            else
+            if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase) &&
+                !inputCommand.StartsWith("c ", StringComparison.InvariantCultureIgnoreCase))
             {
                 yield break;
             }
-            
-
             string[] sequence = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string wireIndexString in sequence)
+            foreach (string wireIndexString in sequence.Skip(1))
             {
                 Debug.LogFormat("Wire Sequence Solver: '{0}'",wireIndexString);
                 if (wireIndexString.Equals("up", StringComparison.InvariantCultureIgnoreCase) ||
@@ -107,26 +85,16 @@ public class WireSequenceComponentSolver : ComponentSolver
             }
 
             yield return "wire sequence";
-            for (var i = 0; i < buttons.Count; i++)
+            for (int i = 0; i < buttons.Count; i++)
             {
                 Debug.LogFormat("Interaction {0}/{1} - Strike message: {2}", i + 1, buttons.Count, strikemessages[i]);
-                yield return strikemessages[i];
-                DoInteractionStart(buttons[i]);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(buttons[i]);
-
-                if (StrikeCount != beforeButtonStrikeCount)
-                {
-                    Debug.Log("Strike!!! - Aborting");
-                    yield break;
-                }
+                yield return DoInteractionClick(buttons[i], strikemessages[i]);
                 if (Canceller.ShouldCancel)
                 {
                     Canceller.ResetCancel();
                     yield break;
                 }
             }
-
             if (Canceller.ShouldCancel)
                 Canceller.ResetCancel();
         }

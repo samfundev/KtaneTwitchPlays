@@ -10,7 +10,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _lock = (MonoBehaviour)_lockField.GetValue(bombComponent.GetComponent(_componentType));
-        helpMessage = "Turn the key at specified time with !{0} turn 8:29";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -20,8 +20,6 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
         if (commands.Length != 2 || !commands[0].Equals("turn", StringComparison.InvariantCultureIgnoreCase))
             yield break;
-
-        yield return "Turning the key";
 
         yield return ReleaseCoroutine(commands[1]);
 
@@ -60,7 +58,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
         if (waitingTime >= 30)
         {
-            _musicPlayer = MusicPlayer.StartRandomMusic();
+            yield return "elevator music";
         }
 
         float timeRemaining = float.PositiveInfinity;
@@ -83,20 +81,12 @@ public class TurnTheKeyComponentSolver : ComponentSolver
             }
             if (timeRemaining == timeTarget)
             {
-                DoInteractionStart(_lock);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(_lock);
+                yield return DoInteractionClick(_lock);
                 break;
             }
 
             yield return null;
         }
-
-        if (waitingTime >= 30)
-        {
-            _musicPlayer.StopMusic();
-        }
-
     }
 
     static TurnTheKeyComponentSolver()
@@ -109,5 +99,4 @@ public class TurnTheKeyComponentSolver : ComponentSolver
     private static FieldInfo _lockField = null;
 
     private MonoBehaviour _lock = null;
-    private MusicPlayer _musicPlayer = null;
 }

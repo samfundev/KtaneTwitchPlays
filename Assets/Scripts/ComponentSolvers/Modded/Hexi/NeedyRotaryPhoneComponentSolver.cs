@@ -19,9 +19,7 @@ public class NeedyRotaryPhoneComponentSolver : ComponentSolver
         _buttons[7] = (MonoBehaviour)_button7Field.GetValue(bombComponent.GetComponent(_componentSolverType));
         _buttons[8] = (MonoBehaviour)_button8Field.GetValue(bombComponent.GetComponent(_componentSolverType));
         _buttons[9] = (MonoBehaviour)_button9Field.GetValue(bombComponent.GetComponent(_componentSolverType));
-
-        helpMessage = "Respond to the phone call with !{0} press 8 4 9.";
-        manualCode = "Rotary%20Phone";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     private static float[] delayTimes = new float[]{
@@ -34,30 +32,22 @@ public class NeedyRotaryPhoneComponentSolver : ComponentSolver
         if (inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
         {
             int val = -1;
-            if(int.TryParse(inputCommand.Substring(6), out val) && val >= 0 && val <= 999)
+            if(int.TryParse(inputCommand.Substring(6), out val) && val >= 0)
             {
                 yield return "press";
 
-                int first = val / 100;
+                int first = val / 100 % 10;
                 int second = (val / 10) % 10;
                 int third = val % 10;
 
-                DoInteractionStart(_buttons[first]);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(_buttons[first]);
+                yield return DoInteractionClick(_buttons[first]);
                 yield return new WaitForSeconds(delayTimes[first]);
-                
-                DoInteractionStart(_buttons[second]);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(_buttons[second]);
-                yield return new WaitForSeconds(delayTimes[second]);
-                
-                DoInteractionStart(_buttons[third]);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(_buttons[third]);
-                yield return new WaitForSeconds(delayTimes[third]);
 
-                yield break;
+                yield return DoInteractionClick(_buttons[second]);
+                yield return new WaitForSeconds(delayTimes[second]);
+
+                yield return DoInteractionClick(_buttons[third]);
+                yield return "strike";
             }
         }
     }

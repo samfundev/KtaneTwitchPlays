@@ -38,14 +38,14 @@ public class TwitchLeaderboardRow : MonoBehaviour
             solvesText.text = leaderboardEntry.SolveCount.ToString();
             strikesText.text = leaderboardEntry.StrikeCount.ToString();
 
-            float solveRate = leaderboardEntry.SolveRate;
-            if (float.IsNaN(solveRate))
+            float SolveScore = leaderboardEntry.SolveScore;
+            if (float.IsNaN(SolveScore))
             {
                 rateText.text = "--";
             }
             else
             {
-                rateText.text = string.Format("{0:0.00}", solveRate);
+                rateText.text = string.Format("{0}", SolveScore);
             }
         }
 

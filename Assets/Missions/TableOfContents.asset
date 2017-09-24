@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -434690030, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: TableOfContents
+  m_EditorClassIdentifier: 
+  Title: TP
+  Sections:
+  - Title: Special Missions
+    MissionIDs:
+    - tpFMNHell
+    - tpOneWithEverything
+    - tpNeedyReturns
+    - tpCasinoNight
+    - tpNotEverything
+    - tpBlinking
+    - tpColorBlind
+    - tpTimeManagement
+    - tpAmazing
+    - tpSouvenir2
+    - tpGottaBeFast
+    - tpMathisHard
+  - Title: Vanilla
+    MissionIDs:
+    - tp11vanilla
+    - tp23vanilla
+    - tp31vanilla
+    - tp49vanilla
+    - tp71vanilla
+  - Title: MixedLight
+    MissionIDs:
+    - tp11mixedlight
+    - tp23mixedlight
+    - tp31mixedlight
+    - tp49mixedlight
+    - tp71mixedlight
+  - Title: Mixed
+    MissionIDs:
+    - tp11mixed
+    - tp23mixed
+    - tp31mixed
+    - tp49mixed
+    - tp71mixed
+  - Title: MixedHeavy
+    MissionIDs:
+    - tp11mixedheavy
+    - tp23mixedheavy
+    - tp31mixedheavy
+    - tp49mixedheavy
+    - tp71mixedheavy
+  - Title: Mods
+    MissionIDs:
+    - tp11mods
+    - tp23mods
+    - tp31mods
+    - tp49mods
+    - tp71mods
+  - Title: Test
+    MissionIDs:
+    - tptest

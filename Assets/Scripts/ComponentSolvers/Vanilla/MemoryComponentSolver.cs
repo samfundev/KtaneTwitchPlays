@@ -9,8 +9,7 @@ public class MemoryComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (Array)_buttonsField.GetValue(bombComponent);
-
-        helpMessage = "!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]";
+        modInfo = ComponentSolverFactory.GetModuleInfo("MemoryComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -37,9 +36,7 @@ public class MemoryComponentSolver : ComponentSolver
                 yield return "position";
 
                 MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(buttonNumber - 1);
-                DoInteractionStart(button);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(button);
+                yield return DoInteractionClick(button);
             }
             else if (commandParts[0].Equals("label", StringComparison.InvariantCultureIgnoreCase) ||
                     commandParts[0].Equals("lab", StringComparison.InvariantCultureIgnoreCase) ||
@@ -52,10 +49,7 @@ public class MemoryComponentSolver : ComponentSolver
                     if (buttonText.Equals(buttonNumber.ToString()))
                     {
                         yield return "label";
-
-                        DoInteractionStart(button);
-                        yield return new WaitForSeconds(0.1f);
-                        DoInteractionEnd(button);
+                        yield return DoInteractionClick(button);
                         break;
                     }
                 }
