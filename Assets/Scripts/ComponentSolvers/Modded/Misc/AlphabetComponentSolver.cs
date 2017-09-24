@@ -10,8 +10,8 @@ public class AlphabetComponentSolver : ComponentSolver
 	public AlphabetComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -50,15 +50,6 @@ public class AlphabetComponentSolver : ComponentSolver
 			}
 		}
 	}
-
-	static AlphabetComponentSolver()
-	{
-		_componentType = ReflectionHelper.FindType("alphabet");
-		_buttonsField = _componentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
 
 	private KMSelectable[] _buttons = null;
 }

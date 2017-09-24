@@ -570,7 +570,7 @@ public class BombCommander : ICommandResponder
     }
 
 	private static string[] solveBased = new string[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced" };
-	private static bool removedSolveBasedModules = false;
+	private bool removedSolveBasedModules = false;
 	public void RemoveSolveBasedModules()
 	{
 		if (removedSolveBasedModules) return;
@@ -578,7 +578,8 @@ public class BombCommander : ICommandResponder
 
 		foreach (KMBombModule module in MonoBehaviour.FindObjectsOfType<KMBombModule>())
 		{
-			if (solveBased.Contains(module.ModuleType)) {
+			if (solveBased.Contains(module.ModuleType))
+			{
 				module.HandlePass();
 			}
 		}

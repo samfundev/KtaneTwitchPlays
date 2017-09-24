@@ -228,15 +228,17 @@ public class TwitchComponentHandle : MonoBehaviour
     public static bool SolveUnsupportedModules()
     {
         bool result = _unsupportedComponents.Count > 0;
-        foreach (TwitchComponentHandle handle in _unsupportedComponents)
-        {
-            CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.bombComponent, null);
-        }
         if (result)
         {
-            RemoveSolveBasedModules();
-        }
-        _unsupportedComponents.Clear();
+			foreach (TwitchComponentHandle handle in _unsupportedComponents)
+			{
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.bombComponent, null);
+			}
+
+			RemoveSolveBasedModules();
+			
+			_unsupportedComponents.Clear();
+		}
         return result;
     }
 
@@ -246,7 +248,6 @@ public class TwitchComponentHandle : MonoBehaviour
         {
             commander.RemoveSolveBasedModules();
         }
-        _bombCommanders.Clear();
     }
 
     public static void ClearUnsupportedModules()
