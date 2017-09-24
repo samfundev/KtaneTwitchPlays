@@ -331,7 +331,6 @@ public class BombBinderCommander : ICommandResponder
         {
             //Some protection to prevent going into a tutorial; don't have complete support for that!
             object tableOfContentsEntryObject = _currentSelectable.GetComponent(_missionTableOfContentsMissionEntryType);
-            Debug.Log(tableOfContentsEntryObject);
             if (tableOfContentsEntryObject != null)
             {
                 object missionID = _missionIDField.GetValue(tableOfContentsEntryObject);

@@ -46,12 +46,12 @@ public static class UserAccess
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         try
         {
-            Debug.Log("UserAccess: Writing User Access information data to file: " + path);
+            DebugHelper.Log("UserAccess: Writing User Access information data to file: {0}", path);
             File.WriteAllText(path, JsonConvert.SerializeObject(AccessLevels,Formatting.Indented,new StringEnumConverter()));
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
         }
     }
 
@@ -60,17 +60,17 @@ public static class UserAccess
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         try
         {
-            Debug.Log("UserAccess: Loading User Access information data from file: " + path);
+            DebugHelper.Log("UserAccess: Loading User Access information data from file: {0}", path);
             AccessLevels = JsonConvert.DeserializeObject<Dictionary<string, AccessLevel>>(File.ReadAllText(path), new StringEnumConverter());
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("UserAccess: File {0} was not found.", path);
+            DebugHelper.LogWarning("UserAccess: File {0} was not found.", path);
             WriteAccessList();
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
         }
     }
     public static string usersSavePath = "AccessLevels.json";

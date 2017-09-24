@@ -17,24 +17,6 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
-	private IEnumerable ToggleNotes(string[] notes)
-	{
-		foreach (string note in notes)
-		{
-			int notePosition = Array.IndexOf(noteIndexes, note);
-			while (currentPosition != notePosition)
-			{
-				DoInteractionClick(_wheelButton);
-				currentPosition = (currentPosition + 1) % 12;
-
-				yield return new WaitForSeconds(0.1f);
-			}
-
-			DoInteractionClick(_selectButton);
-			yield return new WaitForSeconds(0.1f);
-		}
-	}
-
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		var commands = inputCommand.ToLowerInvariant().Replace('♯', '#').Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -48,23 +30,26 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 				{
 					yield return null;
 
-					if (previousNotes != null) // Reset the previously set notes.
+					DoInteractionStart(_selectButton);
+					yield return new WaitForSeconds(0.8f);
+					DoInteractionEnd(_selectButton);
+
+					foreach (string note in notes)
 					{
-						foreach (object obj in ToggleNotes(previousNotes)) yield return obj;
-						previousNotes = null;
+						int notePosition = Array.IndexOf(noteIndexes, note);
+						while (currentPosition != notePosition)
+						{
+							DoInteractionClick(_wheelButton);
+							currentPosition = (currentPosition + 1) % 12;
+
+							yield return new WaitForSeconds(0.1f);
+						}
+
+						DoInteractionClick(_selectButton);
+						yield return new WaitForSeconds(0.1f);
 					}
-
-					foreach (object obj in ToggleNotes(notes)) yield return obj;
-
-					int lastStrikeCount = StrikeCount;
 					
 					DoInteractionClick(_submitButton);
-					yield return new WaitForSeconds(0.8f);
-
-					if (lastStrikeCount != StrikeCount)
-					{
-						previousNotes = notes;
-					}
 				}
 			}
 		}
@@ -87,7 +72,6 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 
 	private static string[] noteIndexes = { "a", "a#", "b", "c", "c#", "d", "d#", "e", "f", "f#", "g", "g#" };
 	private int currentPosition = 0;
-	private string[] previousNotes = null;
 
 	private KMSelectable _wheelButton = null;
 	private KMSelectable _selectButton = null;

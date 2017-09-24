@@ -204,7 +204,7 @@ public class TwitchComponentHandle : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log(e.Message);
+            DebugHelper.LogException(e);
             unsupportedPrefab.gameObject.SetActive(true);
             idBannerPrefab.gameObject.SetActive(false);
             canvasGroupMultiDecker.alpha = 0.0f;
@@ -212,7 +212,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
             if (TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode)
             {
-                Debug.Log("[TwitchPlays] An unimplemented module was added to a bomb, solving module.");
+                DebugHelper.Log("An unimplemented module was added to a bomb, solving module.");
             }
         }
 

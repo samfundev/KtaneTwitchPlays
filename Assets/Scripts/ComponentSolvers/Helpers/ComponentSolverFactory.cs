@@ -394,7 +394,7 @@ public static class ComponentSolverFactory
             return solver;
         }
 
-        Debug.LogFormat("Attempting to find a valid process command method to respond with on component {0}...", moduleType);
+        DebugHelper.Log("Attempting to find a valid process command method to respond with on component {0}...", moduleType);
 
         ModComponentSolverDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(bombComponent, moduleType, displayName);
         if (modComponentSolverCreator == null)
@@ -505,22 +505,22 @@ public static class ComponentSolverFactory
 
     private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom, out float Rotation)
     {
-        Debug.Log("[TwitchPlays] Attempting to find the modules StatusLightParent");
+        DebugHelper.Log("Attempting to find the modules StatusLightParent");
         Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
         foreach (Component component in allComponents)
         {
             Type type = component.GetType();
             if(type == ReflectionHelper.FindType("StatusLightParent"))
             {
-                Debug.LogFormat("Local Position - X = {0}, Y = {1}, Z = {2}", component.transform.localPosition.x, component.transform.localPosition.y, component.transform.localPosition.z);
-                Debug.LogFormat("Local Euler Angles - X = {0}, Y = {1}, Z = {2}", component.transform.localEulerAngles.x, component.transform.localEulerAngles.y, component.transform.localEulerAngles.z);
+                DebugHelper.Log("Local Position - X = {0}, Y = {1}, Z = {2}", component.transform.localPosition.x, component.transform.localPosition.y, component.transform.localPosition.z);
+                DebugHelper.Log("Local Euler Angles - X = {0}, Y = {1}, Z = {2}", component.transform.localEulerAngles.x, component.transform.localEulerAngles.y, component.transform.localEulerAngles.z);
                 StatusLightLeft = (component.transform.localPosition.x < 0);
                 StatusLightBottom = (component.transform.localPosition.z < 0);
                 Rotation = component.transform.localEulerAngles.y;
                 return true;
             }
         }
-        Debug.Log("StatusLightParent not found :(");
+        DebugHelper.Log("StatusLightParent not found :(");
         StatusLightLeft = false;
         StatusLightBottom = false;
         Rotation = 0;
@@ -533,7 +533,7 @@ public static class ComponentSolverFactory
         foreach (Component component in allComponents)
         {
             Type type = component.GetType();
-            //Debug.LogFormat("[TwitchPlays] component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
+            //DebugHelper.Log("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
             FieldInfo candidateString = type.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (candidateString == null)
             {
@@ -555,7 +555,7 @@ public static class ComponentSolverFactory
         foreach (Component component in allComponents)
         {
             Type type = component.GetType();
-            //Debug.LogFormat("[TwitchPlays] component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
+            //DebugHelper.Log("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
             FieldInfo candidateString = type.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (candidateString == null)
             {
@@ -646,32 +646,32 @@ public static class ComponentSolverFactory
         ParameterInfo[] parameters = candidateMethod.GetParameters();
         if (parameters == null || parameters.Length == 0)
         {
-            Debug.LogFormat("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
+            DebugHelper.Log("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
             return false;
         }
 
         if (parameters.Length > 1)
         {
-            Debug.LogFormat("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too many parameters).", type.FullName);
+            DebugHelper.Log("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too many parameters).", type.FullName);
             return false;
         }
 
         if (parameters[0].ParameterType != typeof(string))
         {
-            Debug.LogFormat("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (expected a single string parameter, got a single {1} parameter).", type.FullName, parameters[0].ParameterType.FullName);
+            DebugHelper.Log("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (expected a single string parameter, got a single {1} parameter).", type.FullName, parameters[0].ParameterType.FullName);
             return false;
         }
 
         if (candidateMethod.ReturnType == typeof(KMSelectable[]))
         {
-            Debug.LogFormat("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
+            DebugHelper.Log("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
             commandType = ModCommandType.Simple;
             return true;
         }
 
         if (candidateMethod.ReturnType == typeof(IEnumerator))
         {
-            Debug.LogFormat("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
+            DebugHelper.Log("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
             commandType = ModCommandType.Coroutine;
             return true;
         }

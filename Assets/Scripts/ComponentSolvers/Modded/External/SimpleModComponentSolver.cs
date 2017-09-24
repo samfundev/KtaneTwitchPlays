@@ -18,7 +18,7 @@ public class SimpleModComponentSolver : ComponentSolver
     {
         if (ProcessMethod == null)
         {
-            Debug.LogError("A declared TwitchPlays SimpleModComponentSolver process method is <null>, yet a component solver has been created; command invokation will not continue.");
+            DebugHelper.LogError("A declared TwitchPlays SimpleModComponentSolver process method is <null>, yet a component solver has been created; command invokation will not continue.");
             yield break;
         }
 
@@ -49,8 +49,7 @@ public class SimpleModComponentSolver : ComponentSolver
         }
         catch (Exception ex)
         {
-            Debug.LogErrorFormat("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name);
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
             yield break;
         }
 

@@ -42,7 +42,6 @@ public class ShapeShiftComponentSolver : ComponentSolver
 
 		initialL = _displayL = (int) _displayLField.GetValue(_component);
 		initialR = _displayR = (int) _displayRField.GetValue(_component);
-		Debug.Log(_displayL + " " + _displayR);
 	}
 
 	private IEnumerable SetDisplay(int displayIndexL, int displayIndexR)

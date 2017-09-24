@@ -44,7 +44,7 @@ public class TwitchPlaysService : MonoBehaviour
         ModSettingsJSON settings = JsonConvert.DeserializeObject<ModSettingsJSON>(_modSettings.Settings);
         if (settings == null)
         {
-            Debug.LogError("[TwitchPlays] Failed to read connection settings from mod settings.");
+            DebugHelper.LogError("Failed to read connection settings from mod settings.");
             return;
         }
 

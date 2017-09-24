@@ -81,7 +81,6 @@ public class FreeplayCommander : ICommandResponder
         FreeplayDevice = freeplayDevice;
         MultipleBombs = multipleBombs;
         Selectable = (MonoBehaviour)FreeplayDevice.GetComponent(_selectableType);
-        Debug.Log("Freeplay device: Attempting to get the Selectable list.");
         SelectableChildren = (MonoBehaviour[]) _childrenField.GetValue(Selectable);
         FloatingHoldable = (MonoBehaviour)FreeplayDevice.GetComponent(_floatingHoldableType);
         SelectableManager = (MonoBehaviour)_selectableManagerProperty.GetValue(_inputManager, null);
@@ -240,8 +239,8 @@ public class FreeplayCommander : ICommandResponder
                         changeModulesTo = modulesMatch.Value;
                     }
 
-                    Debug.Log(string.Format("[FreeplayCommander] Setting {1} to {0}", modulesMatch.Value,
-                        count <= 2 ? "bombs" : "modules"));
+                    DebugHelper.Log("[FreeplayCommander] Setting {1} to {0}", modulesMatch.Value,
+                        count <= 2 ? "bombs" : "modules");
                 }
                 message = message.Remove(modulesMatch.Index, modulesMatch.Length);
                 modulesMatch = Regex.Match(message, "[0-9]+");

@@ -44,7 +44,6 @@ public class WireSequenceComponentSolver : ComponentSolver
 
             foreach (string wireIndexString in sequence.Skip(1))
             {
-                Debug.LogFormat("Wire Sequence Solver: '{0}'",wireIndexString);
                 if (wireIndexString.Equals("up", StringComparison.InvariantCultureIgnoreCase) ||
                     wireIndexString.Equals("u", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -64,20 +63,17 @@ public class WireSequenceComponentSolver : ComponentSolver
                 int wireIndex;
                 if (!int.TryParse(wireIndexString, out wireIndex))
                 {
-                    Debug.Log("Invalid Integer - Aborting");
                     yield break;
                 }
                 wireIndex--;
                 if (!CanInteractWithWire(wireIndex))
                 {
-                    Debug.LogFormat("Cannot Interact with wire {0} as it doesn't exist on current page. Aborting.", wireIndex + 1);
                     yield break;
                 }
 
                 MonoBehaviour wire = GetWire(wireIndex);
                 if (wire == null)
                 {
-                    Debug.LogFormat("Wire {0} doesn't exist. Aborting.", wireIndex + 1);
                     yield break;
                 }
                 buttons.Add(wire);
@@ -87,7 +83,6 @@ public class WireSequenceComponentSolver : ComponentSolver
             yield return "wire sequence";
             for (int i = 0; i < buttons.Count; i++)
             {
-                Debug.LogFormat("Interaction {0}/{1} - Strike message: {2}", i + 1, buttons.Count, strikemessages[i]);
                 yield return DoInteractionClick(buttons[i], strikemessages[i]);
                 if (Canceller.ShouldCancel)
                 {

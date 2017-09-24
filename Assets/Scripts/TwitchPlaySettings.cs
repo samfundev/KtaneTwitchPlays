@@ -3,8 +3,6 @@ using System.IO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
 
 public class TwitchPlaySettingsData
 {
@@ -55,7 +53,7 @@ public class TwitchPlaySettingsData
 
     public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
-    public string TooManyClaimed = "ItsBoshyTime Sorry, {0} , you may only have {1} claimed modules.";
+    public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
 }
 
 public static class TwitchPlaySettings
@@ -69,22 +67,22 @@ public static class TwitchPlaySettings
     public static void WriteDataToFile()
     {
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
-        Debug.LogFormat("TwitchPlayStrings: Writing file {0}", path);
+        DebugHelper.Log("TwitchPlayStrings: Writing file {0}", path);
         try
         {
             File.WriteAllText(path,JsonConvert.SerializeObject(data, Formatting.Indented));
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("TwitchPlayStrings: File {0} was not found.", path);
+            DebugHelper.LogWarning("TwitchPlayStrings: File {0} was not found.", path);
             return;
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
             return;
         }
-        Debug.LogFormat("TwitchPlayStrings: Writing of file {0} completed successfully", path);
+        DebugHelper.Log("TwitchPlayStrings: Writing of file {0} completed successfully", path);
     }
 
     public static bool LoadDataFromFile()
@@ -92,7 +90,7 @@ public static class TwitchPlaySettings
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         try
         {
-            Debug.Log("TwitchPlayStrings: Loading Custom strings data from file: " + path);
+            DebugHelper.Log("TwitchPlayStrings: Loading Custom strings data from file: {0}", path);
             data = JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
             if (SettingsVersion != data.SettingsVersion)
             {
@@ -101,7 +99,7 @@ public static class TwitchPlaySettings
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("TwitchPlayStrings: File {0} was not found.", path);
+            DebugHelper.LogWarning("TwitchPlayStrings: File {0} was not found.", path);
             data = new TwitchPlaySettingsData();
             WriteDataToFile();
             return false;
@@ -109,7 +107,7 @@ public static class TwitchPlaySettings
         catch (Exception ex)
         {
             data = new TwitchPlaySettingsData();
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
             return false;
         }
         return true;
@@ -131,7 +129,7 @@ public static class TwitchPlaySettings
         }
         catch (Exception ex)
         {
-            Debug.LogFormat("TwitchPlaysStrings: Failed to Create shared Directory due to Exception :{0}, Stack Trace: {1}", ex.Message, ex.StackTrace);
+            DebugHelper.LogException(ex, "TwitchPlaysStrings: Failed to Create shared Directory due to Exception:");
             return false;
         }
     }
@@ -144,15 +142,15 @@ public static class TwitchPlaySettings
         }
         try
         {
-            using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(Path.Combine(TwitchPlaySettings.data.TPSharedFolder, TwitchPlaySettings.data.TPSolveStrikeLog), true))
+            using (StreamWriter file =
+                new StreamWriter(Path.Combine(data.TPSharedFolder, data.TPSolveStrikeLog), true))
             {
                 file.WriteLine(RecordMessageTone);
             }
         }
         catch (Exception ex)
         {
-            Debug.LogFormat("TwitchPlaysStrings: Failed to log due to Exception: {0}, Stack Trace: {1}", ex.Message, ex.StackTrace);
+			DebugHelper.LogException(ex, "TwitchPlaysStrings: Failed to log due to Exception:");
         }
     }
 

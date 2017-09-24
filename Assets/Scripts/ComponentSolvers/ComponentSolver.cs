@@ -323,6 +323,7 @@ public abstract class ComponentSolver : ICommandResponder
 	    {
 	        StrikeMessage = strikeMessage;
 	    }
+
         DoInteractionStart(interactable);
 		DoInteractionEnd(interactable);
 	    return new WaitForSeconds(0.1f);
@@ -330,8 +331,7 @@ public abstract class ComponentSolver : ICommandResponder
 
 	protected void HandleModuleException(Exception e)
 	{
-		Debug.Log("[TwitchPlays] While solving a module an exception has occurred! Here's the error:");
-		Debug.LogException(e);
+		DebugHelper.LogException(e, "While solving a module an exception has occurred! Here's the error:");
 
 		IRCConnection.SendMessage("Looks like a module ran into a problem while running a command, automatically solving module. Some other modules may also be solved to prevent problems.");
 
@@ -405,7 +405,7 @@ public abstract class ComponentSolver : ICommandResponder
 
         if (_turnQueued)
         {
-            Debug.LogFormat("[ComponentSolver] Activating queued turn for completed module {0}.", Code);
+            DebugHelper.Log("[ComponentSolver] Activating queued turn for completed module {0}.", Code);
             _readyToTurn = true;
             _turnQueued = false;
         }

@@ -21,7 +21,7 @@ public class CoroutineModComponentSolver : ComponentSolver
     {
         if (ProcessMethod == null)
         {
-            Debug.LogError("A declared TwitchPlays CoroutineModComponentSolver process method is <null>, yet a component solver has been created; command invokation will not continue.");
+            DebugHelper.LogError("A declared TwitchPlays CoroutineModComponentSolver process method is <null>, yet a component solver has been created; command invokation will not continue.");
             yield break;
         }
 		
@@ -52,9 +52,9 @@ public class CoroutineModComponentSolver : ComponentSolver
         }
         catch (Exception ex)
         {
-            Debug.LogErrorFormat("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name);
-            Debug.LogException(ex);
-            yield break;
+            DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
+
+			yield break;
         }
 
         //Previous changelists mentioned that people using the TPAPI were not following strict rules about how coroutine implementations should be done, w.r.t. required yield returning first before doing things.
@@ -76,10 +76,7 @@ public class CoroutineModComponentSolver : ComponentSolver
             }
             catch (Exception ex)
             {
-                Debug.LogErrorFormat(
-                    "An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.",
-                    ProcessMethod.DeclaringType.FullName, ProcessMethod.Name);
-                Debug.LogException(ex);
+                DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
                 yield break;
             }
 

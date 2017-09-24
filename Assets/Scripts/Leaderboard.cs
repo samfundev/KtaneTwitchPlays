@@ -365,7 +365,7 @@ public class Leaderboard
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         try
         {
-            Debug.Log("Leaderboard: Loading leaderboard data from file: " + path);
+            DebugHelper.Log("Leaderboard: Loading leaderboard data from file: {0}", path);
             XmlSerializer xml = new XmlSerializer(_entryList.GetType());
             TextReader reader = new StreamReader(path);
             List<LeaderboardEntry> entries = (List<LeaderboardEntry>)xml.Deserialize(reader);
@@ -373,7 +373,7 @@ public class Leaderboard
             ResetSortFlag();
 
             path = Path.Combine(Application.persistentDataPath, statsSavePath);
-            Debug.Log("Leaderboard: Loading stats data from file: " + path);
+            DebugHelper.Log("Leaderboard: Loading stats data from file: {0}", path);
             string jsonInput = File.ReadAllText(path);
             Dictionary<string, int> stats = JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonInput);
 
@@ -388,11 +388,11 @@ public class Leaderboard
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("Leaderboard: File {0} was not found.", path);
+            DebugHelper.LogWarning("Leaderboard: File {0} was not found.", path);
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
         }
     }
 
@@ -406,13 +406,13 @@ public class Leaderboard
                 CheckAndSort();
             }
 
-            Debug.Log("Leaderboard: Saving leaderboard data to file: " + path);
+            DebugHelper.Log("Leaderboard: Saving leaderboard data to file: {0}", path);
             XmlSerializer xml = new XmlSerializer(_entryList.GetType());
             TextWriter writer = new StreamWriter(path);
             xml.Serialize(writer, _entryList);
 
             path = Path.Combine(Application.persistentDataPath, statsSavePath);
-            Debug.Log("Leaderboard: Saving stats data to file: " + path);
+            DebugHelper.Log("Leaderboard: Saving stats data to file: {0}", path);
             Dictionary<string, int> stats = new Dictionary<string, int>
             {
                 { "BombsAttempted", BombsAttempted },
@@ -427,12 +427,11 @@ public class Leaderboard
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("Leaderboard: File {0} was not found.", path);
+            DebugHelper.LogWarning("Leaderboard: File {0} was not found.", path);
         }
         catch (Exception ex)
         {
-            string msg = ex.ToString();
-            Debug.LogWarning(msg);
+            DebugHelper.LogException(ex);
         }
     }
 

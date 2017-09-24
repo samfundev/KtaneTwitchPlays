@@ -13,7 +13,6 @@ public class NeedyQuizComponentSolver : ComponentSolver
         _display = (TextMesh) _displayField.GetValue(bombComponent.GetComponent(_componentSolverType));
 
         _service = (KMGameCommands) _serviceField.GetValue(bombComponent.GetComponent(_componentSolverType));
-        _thisLoggingID = (int) _thisLoggingIDField.GetValue(bombComponent.GetComponent(_componentSolverType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
@@ -28,9 +27,6 @@ public class NeedyQuizComponentSolver : ComponentSolver
 
             if (_display.text.Equals("Abort?"))
             {
-                Debug.Log("[Answering Questions #" + _thisLoggingID + "] Quiz: " + _display.text.Replace("\n", ""));
-                Debug.Log("[Answering Questions #" + _thisLoggingID + "] Given answer: Y");
-                Debug.Log("[Answering Questions #" + _thisLoggingID + "] ABORT! ABORT!!! ABOOOOOOORT!!!!!");
                 yield return "sendtochat ABORT! ABORT!!! ABOOOOOOORT!!!!!";
                 int strikeCount = 0;
                 yield return "multiple strikes";
@@ -61,7 +57,6 @@ public class NeedyQuizComponentSolver : ComponentSolver
         _noButtonField = _componentSolverType.GetField("NoButton", BindingFlags.Public | BindingFlags.Instance);
         _displayField = _componentSolverType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
         _serviceField = _componentSolverType.GetField("Service", BindingFlags.Public | BindingFlags.Instance);
-        _thisLoggingIDField = _componentSolverType.GetField("thisLoggingID", BindingFlags.Public | BindingFlags.Instance);
     }
 
     private static Type _componentSolverType = null;
@@ -69,11 +64,9 @@ public class NeedyQuizComponentSolver : ComponentSolver
     private static FieldInfo _noButtonField = null;
     private static FieldInfo _displayField = null;
     private static FieldInfo _serviceField = null;
-    private static FieldInfo _thisLoggingIDField = null;
 
     private MonoBehaviour _yesButton = null;
     private MonoBehaviour _noButton = null;
     private TextMesh _display = null;
     private KMGameCommands _service = null;
-    private int _thisLoggingID = 0;
 }

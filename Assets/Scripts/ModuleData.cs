@@ -31,16 +31,14 @@ public class ModuleInformation
     public bool builtIntoTwitchPlays;
 
     public bool CameraPinningAlwaysAllowed;
-
-
-    public bool ShouldSerializebuiltIntoTwitchPlays(){return false;}
-    public bool ShouldSerializevalidCommands(){return !builtIntoTwitchPlays;}
+	
+    public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
+    public bool ShouldSerializevalidCommands() {return !builtIntoTwitchPlays;}
     public bool ShouldSerializeDoesTheRightThing() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializehelpTextOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializemanualCodeOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializestatusLightOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializevalidCommandsOverride() { return !builtIntoTwitchPlays; }
-
 }
 
 public static class ModuleData
@@ -50,26 +48,28 @@ public static class ModuleData
     {
         if (!DataHasChanged) return;
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
-        Debug.LogFormat("ModuleData: Writing file {0}", path);
+        DebugHelper.Log("ModuleData: Writing file {0}", path);
+
         try
         {
             List<ModuleInformation> infoList = ComponentSolverFactory.GetModuleInformation().ToList();
             infoList = infoList.OrderBy(info => info.moduleDisplayName).ThenBy(info => info.moduleID).ToList();
 
-            File.WriteAllText(path,JsonConvert.SerializeObject(infoList, Formatting.Indented));
+            File.WriteAllText(path, JsonConvert.SerializeObject(infoList, Formatting.Indented));
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("ModuleData: File {0} was not found.", path);
+            DebugHelper.LogWarning("ModuleData: File {0} was not found.", path);
             return;
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
             return;
         }
+
         DataHasChanged = false;
-        Debug.LogFormat("ModuleData: Writing of file {0} completed successfully", path);
+        DebugHelper.Log("ModuleData: Writing of file {0} completed successfully", path);
     }
 
     public static bool LoadDataFromFile()
@@ -78,19 +78,20 @@ public static class ModuleData
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         try
         {
-            Debug.Log("ModuleData: Loading Module information data from file: " + path);
+            DebugHelper.Log("ModuleData: Loading Module information data from file: {0}", path);
             modInfo = JsonConvert.DeserializeObject<ModuleInformation[]>(File.ReadAllText(path));
         }
         catch (FileNotFoundException)
         {
-            Debug.LogWarningFormat("ModuleData: File {0} was not found.", path);
+            DebugHelper.LogWarning("ModuleData: File {0} was not found.", path);
             return false;
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            DebugHelper.LogException(ex);
             return false;
         }
+
         foreach (ModuleInformation info in modInfo)
         {
            ComponentSolverFactory.AddModuleInformation(info);
