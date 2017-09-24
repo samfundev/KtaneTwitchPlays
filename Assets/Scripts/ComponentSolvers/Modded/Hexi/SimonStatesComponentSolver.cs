@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public class SimonStatesComponentSolver : ComponentSolver
     {
         c = bombComponent.GetComponent(_componentType);
         _buttons = new MonoBehaviour[4];
-        helpMessage = "Enter the response with !{0} press B Y R G.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -23,7 +24,11 @@ public class SimonStatesComponentSolver : ComponentSolver
             _buttons[1] = (MonoBehaviour)_buttonsY.GetValue(c);
             _buttons[2] = (MonoBehaviour)_buttonsG.GetValue(c);
             _buttons[3] = (MonoBehaviour)_buttonsB.GetValue(c);
-            if(_buttons[0] == null) yield break;
+            if (_buttons[0] == null || _buttons[1] == null || _buttons[2] == null || _buttons[3] == null)
+            {
+                yield return "autosolve due to the buttons not having a valid MonoBehaviour assigned to them.";
+                yield break;
+            }
         }
 
         if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
@@ -32,51 +37,43 @@ public class SimonStatesComponentSolver : ComponentSolver
         }
         inputCommand = inputCommand.Substring(6);
 
-        int beforeButtonStrikeCount = StrikeCount;
-
-        string[] sequence = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] sequence = inputCommand.ToLowerInvariant().Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        List<MonoBehaviour> buttons = new List<MonoBehaviour>();
 
         foreach (string buttonString in sequence)
         {
-            MonoBehaviour button = null;
-
-            if (buttonString.Equals("r", StringComparison.InvariantCultureIgnoreCase) || buttonString.Equals("red", StringComparison.InvariantCultureIgnoreCase))
+            switch (buttonString)
             {
-                button = _buttons[0];
-            }
-            else if (buttonString.Equals("y", StringComparison.InvariantCultureIgnoreCase) || buttonString.Equals("yellow", StringComparison.InvariantCultureIgnoreCase))
-            {
-                button = _buttons[1];
-            }
-            else if (buttonString.Equals("g", StringComparison.InvariantCultureIgnoreCase) || buttonString.Equals("green", StringComparison.InvariantCultureIgnoreCase))
-            {
-                button = _buttons[2];
-            }
-            else if (buttonString.Equals("b", StringComparison.InvariantCultureIgnoreCase) || buttonString.Equals("blue", StringComparison.InvariantCultureIgnoreCase))
-            {
-                button = _buttons[3];
-            }
-
-            if (button != null)
-            {
-                yield return buttonString;
-
-                if (Canceller.ShouldCancel)
-                {
-                    Canceller.ResetCancel();
-                    yield break;
-                }
-
-                DoInteractionStart(button);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(button);
-
-                //Escape the sequence if a part of the given sequence is wrong
-                if (StrikeCount != beforeButtonStrikeCount || Solved)
-                {
+                case "red":
+                case "r":
+                    buttons.Add(_buttons[0]);
                     break;
-                }
+                case "y":
+                case "yellow":
+                    buttons.Add(_buttons[1]);
+                    break;
+                case "g":
+                case "green":
+                    buttons.Add(_buttons[2]);
+                    break;
+                case "b":
+                case "blue":
+                    buttons.Add(_buttons[3]);
+                    break;
+                default:
+                    yield break;
             }
+        }
+        yield return inputCommand;
+        foreach (MonoBehaviour button in buttons)
+        {
+            if (Canceller.ShouldCancel)
+            {
+                Canceller.ResetCancel();
+                yield break;
+            }
+
+            yield return DoInteractionClick(button);
         }
     }
 

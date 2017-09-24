@@ -11,7 +11,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		object _component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 		bombComponent.StartCoroutine(GetDisplay(_component));
-		helpMessage = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.";
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	private int? ToShapeIndex(string shape)

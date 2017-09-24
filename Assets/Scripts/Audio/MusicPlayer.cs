@@ -59,8 +59,8 @@ public class MusicPlayer : MonoBehaviour
         {
             startInterruptSound.time = 0.0f;
             startInterruptSound.Play();
+            yield return new WaitForSeconds(startInterruptSound.clip.length);
         }
-        yield return new WaitForSeconds(startInterruptSound.clip.length);
 
         musicLoopSound.time = 0.0f;
         musicLoopSound.Play();
@@ -79,8 +79,9 @@ public class MusicPlayer : MonoBehaviour
         {
             endInterruptSound.time = 0.0f;
             endInterruptSound.Play();
+            yield return new WaitForSeconds(endInterruptSound.clip.length);
         }
-        yield return new WaitForSeconds(startInterruptSound.clip.length);
+        
 
         InterruptMusic.Instance.SetMusicInterrupt(false);
     }

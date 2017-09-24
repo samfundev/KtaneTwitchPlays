@@ -42,6 +42,7 @@ public static class CommonReflectedTypeInfo
         BombComponentsField = BombType.GetField("BombComponents", BindingFlags.Public | BindingFlags.Instance);
         HasDetonatedProperty = BombType.GetProperty("HasDetonated", BindingFlags.Public | BindingFlags.Instance);
         GetTimerMethod = BombType.GetMethod("GetTimer", BindingFlags.Public | BindingFlags.Instance);
+        IsSolvedMethod = BombType.GetMethod("IsSolved", BindingFlags.Public | BindingFlags.Instance);
         NumStrikesField = BombType.GetField("NumStrikes", BindingFlags.Public | BindingFlags.Instance);
         NumStrikesToLoseField = BombType.GetField("NumStrikesToLose", BindingFlags.Public | BindingFlags.Instance);
 
@@ -57,6 +58,10 @@ public static class CommonReflectedTypeInfo
         TimeElapsedProperty = TimerComponentType.GetProperty("TimeElapsed", BindingFlags.Public | BindingFlags.Instance);
         TimeRemainingField = TimerComponentType.GetField("TimeRemaining", BindingFlags.Public | BindingFlags.Instance);
         GetFormattedTimeMethod = TimerComponentType.GetMethod("GetFormattedTime", BindingFlags.Public | BindingFlags.Static);
+
+        AlarmClockType = ReflectionHelper.FindType("Assets.Scripts.Props.AlarmClock");
+        AlarmClockSnooze = AlarmClockType.GetMethod("ButtonDown", BindingFlags.Public | BindingFlags.Instance);
+        AlarmClockTurnOff = AlarmClockType.GetMethod("TurnOff", BindingFlags.Public | BindingFlags.Instance);
 
         ResultPageType = ReflectionHelper.FindType("ResultPage");
 
@@ -90,6 +95,12 @@ public static class CommonReflectedTypeInfo
     } 
 
     public static MethodInfo GetTimerMethod
+    {
+        get;
+        private set;
+    }
+
+    public static MethodInfo IsSolvedMethod
     {
         get;
         private set;
@@ -150,6 +161,26 @@ public static class CommonReflectedTypeInfo
 		get;
 		private set;
 	}
+    #endregion
+
+    #region AlarmClock
+    public static Type AlarmClockType
+    {
+        get;
+        private set;
+    }
+
+    public static MethodInfo AlarmClockSnooze
+    {
+        get;
+        private set;
+    }
+
+    public static MethodInfo AlarmClockTurnOff
+    {
+        get;
+        private set;
+    }
     #endregion
 
     #region Timer Component

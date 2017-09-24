@@ -14,9 +14,7 @@ public class NeedyQuizComponentSolver : ComponentSolver
 
         _service = (KMGameCommands) _serviceField.GetValue(bombComponent.GetComponent(_componentSolverType));
         _thisLoggingID = (int) _thisLoggingIDField.GetValue(bombComponent.GetComponent(_componentSolverType));
-
-        helpMessage = "Answer the question with !{0} Y or !{0} N.";
-        manualCode = "Answering%20Questions";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -44,12 +42,7 @@ public class NeedyQuizComponentSolver : ComponentSolver
                 yield return "award strikes " + strikeCount;
                 yield break;
             }
-
-            DoInteractionStart(_yesButton);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_yesButton);
-
-            
+            yield return DoInteractionClick(_yesButton);
         }
         else if (inputCommand.Equals("n", StringComparison.InvariantCultureIgnoreCase) ||
                  inputCommand.Equals("no", StringComparison.InvariantCultureIgnoreCase) ||
@@ -57,10 +50,7 @@ public class NeedyQuizComponentSolver : ComponentSolver
                  inputCommand.Equals("press no", StringComparison.InvariantCultureIgnoreCase))
         {
             yield return "no";
-
-            DoInteractionStart(_noButton);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_noButton);
+            yield return DoInteractionClick(_noButton);
         }
     }
 

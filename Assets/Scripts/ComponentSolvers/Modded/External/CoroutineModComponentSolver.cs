@@ -2,22 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-    public CoroutineModComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, string manual, string help, FieldInfo cancelfield, Type canceltype, bool statusLeft, bool statusBottom, float rotation) :
+    public CoroutineModComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield, Type canceltype) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         ProcessMethod = processMethod;
         CommandComponent = commandComponent;
-        helpMessage = help;
-        manualCode = manual;
         TryCancelField = cancelfield;
         TryCancelComponentSolverType = canceltype;
-        statusLightLeft = statusLeft;
-        statusLightBottom = statusBottom;
-        IDRotation = rotation;
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -29,6 +26,21 @@ public class CoroutineModComponentSolver : ComponentSolver
         }
 		
         IEnumerator responseCoroutine = null;
+
+        bool RegexValid = modInfo.validCommands == null;
+        if (!RegexValid)
+        {
+            foreach (string regex in modInfo.validCommands)
+            {
+                RegexValid = Regex.IsMatch(inputCommand, regex, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+                if (RegexValid)
+                {
+                    break;
+                }
+            }
+        }
+        if (!RegexValid)
+            yield break;
 
         try
         {
@@ -50,7 +62,10 @@ public class CoroutineModComponentSolver : ComponentSolver
         //code would never be executed until absolutely necessary.
         //There is the side-effect though that invalid commands sent to the module will appear as if they were 'correctly' processed, by executing the focus.
         //I'd rather have interactions that are not broken by timing mismatches, even if the tradeoff is that it looks like it accepted invalid commands.
-        yield return "modcoroutine";
+        if (!modInfo.DoesTheRightThing)
+        {
+            yield return "modcoroutine";
+        }
 
         while (true)
         {

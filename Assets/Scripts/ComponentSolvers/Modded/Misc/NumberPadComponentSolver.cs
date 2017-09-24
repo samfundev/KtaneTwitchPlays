@@ -11,7 +11,7 @@ public class NumberPadComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-		helpMessage = "Submit your anwser with !{0} submit 4236.";
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	int? ButtonToIndex(string button)

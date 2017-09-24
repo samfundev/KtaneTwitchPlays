@@ -9,7 +9,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _toggle = (MonoBehaviour)_toggleField.GetValue(bombComponent.GetComponent(_componentType));
-        helpMessage = "Toggle the switch down and up with !{0} toggle 4 5. The order is down, then up.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -27,7 +27,6 @@ public class CrazyTalkComponentSolver : ComponentSolver
             yield break;
 
         yield return "Crazy Talk Solve Attempt";
-        int beforeButtonStrikeCount = StrikeCount;
         MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
         int timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent));
 
@@ -36,23 +35,14 @@ public class CrazyTalkComponentSolver : ComponentSolver
             yield return null;
             timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent));
         }
-
-        DoInteractionStart(_toggle);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_toggle);
-
-        if (StrikeCount != beforeButtonStrikeCount)
-            yield break;
+        yield return DoInteractionClick(_toggle);
 
         while ((timeRemaining % 10) != uptime)
         {
             yield return null;
             timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent));
         }
-
-        DoInteractionStart(_toggle);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_toggle);
+        yield return DoInteractionClick(_toggle);
     }
 
     static CrazyTalkComponentSolver()

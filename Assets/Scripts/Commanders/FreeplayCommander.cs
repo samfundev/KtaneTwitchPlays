@@ -89,7 +89,7 @@ public class FreeplayCommander : ICommandResponder
     #endregion
 
     #region Interface Implementation
-    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
         message = message.ToLowerInvariant();
         int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);

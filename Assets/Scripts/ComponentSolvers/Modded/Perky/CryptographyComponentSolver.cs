@@ -10,13 +10,11 @@ public class CryptographyComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (MonoBehaviour[])_keysField.GetValue(bombComponent.GetComponent(_componentType));
-        helpMessage = "Solve the cryptography puzzle with !{0} press N B V T K.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        var BeforeStrikes = StrikeCount;
-
         var split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (split.Length < 2 || split[0] != "press")
             yield break;
@@ -35,11 +33,7 @@ public class CryptographyComponentSolver : ComponentSolver
         {
             foreach (var y in x)
             {
-                DoInteractionStart(_buttons[keytext.IndexOf(y)]);
-                yield return new WaitForSeconds(0.1f);
-                DoInteractionEnd(_buttons[keytext.IndexOf(y)]);
-                if (StrikeCount != BeforeStrikes || Solved)
-                    yield break;
+                yield return DoInteractionClick(_buttons[keytext.IndexOf(y)]);
             }
         }
     }

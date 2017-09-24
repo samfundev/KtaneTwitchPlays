@@ -30,37 +30,25 @@ public class TwitchLeaderboardStats : MonoBehaviour
         int bombCount = leaderboard.BombsCleared;
         int solveCount = 0;
         int strikeCount = 0;
-        float totalSolveRate = 0.0f;
-        leaderboard.GetTotalSolveStrikeCounts(out solveCount, out strikeCount);
+        int SolveScore = 0;
+        int totalSolveScore = 0;
+        leaderboard.GetTotalSolveStrikeCounts(out solveCount, out strikeCount,out SolveScore);
 
-        if (strikeCount == 0)
-        {
-            totalSolveRate = solveCount;
-        }
-        else
-        {
-            totalSolveRate = ((float)solveCount) / strikeCount;
-        }
+            totalSolveScore = SolveScore;
 
-        float sessionSolveRate = 0.0f;
-        if ((strikeCount - leaderboard.OldStrikes) == 0)
-        {
-            sessionSolveRate = solveCount - leaderboard.OldSolves;
-        }
-        else
-        {
-            sessionSolveRate = ((float)solveCount - leaderboard.OldSolves) / (strikeCount - leaderboard.OldStrikes);
-        }
+        int sessionSolveScore = 0;
+            sessionSolveScore = SolveScore - leaderboard.OldScore;
+
 
         totalBombCountText.text = bombCount.ToString();
         totalSolveCountText.text = solveCount.ToString();
         totalStrikeCountText.text = strikeCount.ToString();
-        totalRateText.text = string.Format("{0:0.00}", totalSolveRate);
+        totalRateText.text = string.Format("{0}", totalSolveScore);
 
         sessionBombCountText.text = (bombCount - leaderboard.OldBombsCleared).ToString();
         sessionSolveCountText.text = (solveCount - leaderboard.OldSolves).ToString();
         sessionStrikeCountText.text = (strikeCount - leaderboard.OldStrikes).ToString();
-        sessionRateText.text = string.Format("{0:0.00}", sessionSolveRate);
+        sessionRateText.text = string.Format("{0}", sessionSolveScore);
     }
 
     private void OnDisable()

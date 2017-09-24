@@ -12,8 +12,8 @@ public class SeaShellsComponentSolver : ComponentSolver
 	{
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		helpMessage = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.";
-	}
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+    }
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{

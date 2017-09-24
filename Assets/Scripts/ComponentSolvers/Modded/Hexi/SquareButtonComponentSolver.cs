@@ -10,8 +10,7 @@ public class SquareButtonComponentSolver : ComponentSolver
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _button = (MonoBehaviour)_buttonField.GetValue(bombComponent.GetComponent(_componentType));
-
-        helpMessage = "Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -20,10 +19,7 @@ public class SquareButtonComponentSolver : ComponentSolver
                        inputCommand.Equals("click", StringComparison.InvariantCultureIgnoreCase)))
         {
             yield return "tap";
-
-            DoInteractionStart (_button);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_button);
+            yield return DoInteractionClick(_button);
         }
         if (!_held && (inputCommand.StartsWith("tap ", StringComparison.InvariantCultureIgnoreCase) ||
                        inputCommand.StartsWith("click ", StringComparison.InvariantCultureIgnoreCase)))
@@ -94,19 +90,17 @@ public class SquareButtonComponentSolver : ComponentSolver
         int waitTime = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
         waitTime -= timeTarget;
         if (waitTime >= 30)
-        {
-            _musicPlayer = MusicPlayer.StartRandomMusic();
-        }
+            yield return "elevator music";
 
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
             if (Canceller.ShouldCancel)
             {
-                if (waitTime >= 30)
-                    _musicPlayer.StopMusic();
-
                 Canceller.ResetCancel();
+                yield return _held
+                    ? "sendtochat The button was not released due to a request to cancel."
+                    : "sendtochat The button was not tapped due to a request to cancel.";
                 yield break;
             }
 
@@ -114,17 +108,20 @@ public class SquareButtonComponentSolver : ComponentSolver
 
             if (timeRemaining < timeTarget)
             {
-                if (waitTime >= 30)
-                    _musicPlayer.StopMusic();
-
-                if(sortedTimes.Count == 0) yield break;
+                if (sortedTimes.Count == 0)
+                {
+                    yield return _held 
+                        ? "sendtochat The button was not released because all of your specfied times are greater than the time remaining." 
+                        : "sendtochat The button was not tapped because all of your specified times are greater than the time remaining.";
+                    yield break;
+                }
                 timeTarget = sortedTimes[0];
                 sortedTimes.RemoveAt(0);
 
                 waitTime = (int)timeRemaining;
                 waitTime -= timeTarget;
                 if (waitTime >= 30)
-                    _musicPlayer = MusicPlayer.StartRandomMusic();
+                    yield return "elevator music";
 
                 continue;
             }
@@ -137,9 +134,7 @@ public class SquareButtonComponentSolver : ComponentSolver
                 }
                 DoInteractionEnd(_button);
                 _held = false;
-                if (waitTime >= 30)
-                    _musicPlayer.StopMusic();
-                break;
+                yield break;
             }
 
             yield return null;
@@ -157,5 +152,4 @@ public class SquareButtonComponentSolver : ComponentSolver
 
     private MonoBehaviour _button = null;
     private bool _held = false;
-    private MusicPlayer _musicPlayer = null;
 }

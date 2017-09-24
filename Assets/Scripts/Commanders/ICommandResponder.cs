@@ -2,5 +2,5 @@
 
 public interface ICommandResponder
 {
-    IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier);
+    IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection);
 }

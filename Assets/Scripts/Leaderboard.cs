@@ -29,6 +29,12 @@ public class Leaderboard
         }
 
         public int StrikeCount
+		{
+            get;
+            set;
+        }
+		
+        public int SolveScore
         {
             get;
             set;
@@ -70,19 +76,6 @@ public class Leaderboard
             set;
         }
 
-        public float SolveRate
-        {
-            get
-            {
-                if (StrikeCount == 0)
-                {
-                    return SolveCount;
-                }
-
-                return ((float)SolveCount) / StrikeCount;
-            }
-        }
-
         public float TimePerSoloSolve
         {
             get
@@ -104,6 +97,11 @@ public class Leaderboard
         {
             StrikeCount += num;
         }
+		
+        public void AddScore(int num)
+        {
+            SolveScore += num;
+        }		
 
     }
 
@@ -112,7 +110,7 @@ public class Leaderboard
         return _entryDictionary.TryGetValue(UserName.ToLowerInvariant(), out entry);
     }
 
-    private LeaderboardEntry GetEntry(string userName, Color userColor)
+    private LeaderboardEntry GetEntry(string userName)
     {
         LeaderboardEntry entry = null;
         if (!GetEntry(userName, out entry))
@@ -120,7 +118,15 @@ public class Leaderboard
             entry = new LeaderboardEntry();
             _entryDictionary[userName.ToLowerInvariant()] = entry;
             _entryList.Add(entry);
+            entry.UserColor = Color.black;
         }
+        entry.UserName = userName;
+        return entry;
+    }
+
+    private LeaderboardEntry GetEntry(string userName, Color userColor)
+    {
+        LeaderboardEntry entry = GetEntry(userName);
         entry.UserName = userName;
         entry.UserColor = userColor;
         return entry;
@@ -169,6 +175,23 @@ public class Leaderboard
         ResetSortFlag();
     }
 
+    public void AddScore(string userName, int numScore)
+    {
+        LeaderboardEntry entry = GetEntry(userName);
+        entry.AddScore(numScore);
+        entry.LastAction = DateTime.Now;
+        ResetSortFlag();
+    }
+
+	public void AddScore(string userName, Color userColor, int numScore)
+    {
+        LeaderboardEntry entry = GetEntry(userName, userColor);
+        entry.AddScore(numScore);
+        entry.LastAction = DateTime.Now;
+        ResetSortFlag();
+    }
+	
+	
     public IEnumerable<LeaderboardEntry> GetSortedEntries(int count)
     {
         CheckAndSort();
@@ -238,15 +261,17 @@ public class Leaderboard
         return (entry != null) ? entry.SoloRank : 0;
     }
 
-    public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount)
+    public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int scoreCount)
     {
         solveCount = 0;
         strikeCount = 0;
+		scoreCount = 0;
 
         foreach (LeaderboardEntry entry in _entryList)
         {
             solveCount += entry.SolveCount;
             strikeCount += entry.StrikeCount;
+			scoreCount += entry.SolveScore;
         }
     }
 
@@ -255,6 +280,7 @@ public class Leaderboard
         LeaderboardEntry entry = GetEntry(user.UserName, user.UserColor);
         entry.SolveCount = user.SolveCount;
         entry.StrikeCount = user.StrikeCount;
+		entry.SolveScore = user.SolveScore;
         entry.LastAction = user.LastAction;
         entry.RecordSoloTime = user.RecordSoloTime;
         entry.TotalSoloTime = user.TotalSoloTime;
@@ -313,14 +339,14 @@ public class Leaderboard
 
     private static int CompareScores(LeaderboardEntry lhs, LeaderboardEntry rhs)
     {
-        if (lhs.SolveCount != rhs.SolveCount)
+        if (lhs.SolveScore != rhs.SolveScore)
         {
             //Intentially reversed comparison to sort from highest to lowest
-            return rhs.SolveCount.CompareTo(lhs.SolveCount);
+            return rhs.SolveScore.CompareTo(lhs.SolveScore);
         }
 
         //Intentially reversed comparison to sort from highest to lowest
-        return rhs.SolveRate.CompareTo(lhs.SolveRate);
+        return rhs.SolveScore.CompareTo(lhs.SolveScore);
     }
 
     private static int CompareSoloTimes(LeaderboardEntry lhs, LeaderboardEntry rhs)
@@ -358,7 +384,7 @@ public class Leaderboard
             OldBombsCleared = BombsCleared;
             OldBombsExploded = BombsExploded;
 
-            GetTotalSolveStrikeCounts(out OldSolves, out OldStrikes);
+            GetTotalSolveStrikeCounts(out OldSolves, out OldStrikes, out OldScore);
         }
         catch (FileNotFoundException)
         {
@@ -441,6 +467,7 @@ public class Leaderboard
     public int OldBombsExploded = 0;
     public int OldSolves = 0;
     public int OldStrikes = 0;
+	public int OldScore = 0;
 
     public LeaderboardEntry SoloSolver = null;
     public Dictionary<string, int> CurrentSolvers = new Dictionary<string, int>();

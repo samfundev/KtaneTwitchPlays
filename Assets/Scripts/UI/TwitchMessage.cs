@@ -47,6 +47,14 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
                 if (leaderboard != null)
                 {
                     leaderboard.AddSolve(userName, userColor);
+                    if (!UserAccess.HasAccess(userName, AccessLevel.NoPoints))
+                    {
+                        leaderboard.AddScore(userName, userColor, value);
+                    }
+                    else
+                    {
+                        TwitchPlaySettings.AddRewardBonus(value);
+                    }
                 }
                 break;
             case CommandResponse.EndError:
@@ -54,7 +62,11 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
                 StartCoroutine(DoBackgroundColorChange(errorColor));
                 if (leaderboard != null)
                 {
-                    leaderboard.AddStrike(userName, userColor, value);
+                    leaderboard.AddStrike(userName, userColor, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? value : 1);
+                    if (!UserAccess.HasAccess(userName, AccessLevel.NoPoints))
+                    {
+                        leaderboard.AddScore(userName, userColor, (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? value : 1) * -6);
+                    }
                 }
                 break;
             case CommandResponse.NoResponse:

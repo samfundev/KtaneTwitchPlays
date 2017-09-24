@@ -14,8 +14,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
         _right = (MonoBehaviour)_rightField.GetValue(bombComponent.GetComponent(_componentType));
         _ccw = (MonoBehaviour)_ccwField.GetValue(bombComponent.GetComponent(_componentType));
         _cw = (MonoBehaviour)_cwField.GetValue(bombComponent.GetComponent(_componentType));
-
-        helpMessage = "Move the cube with !{0} press cw l set.  The buttons are l, r, cw, ccw, set.";
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -61,13 +60,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
                 default: yield break;
             }
 
-            DoInteractionStart(button);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(button);
-
-            if (button == _submit)
-                yield break;
-            //Stop pressing buttons following the submit button.
+            yield return DoInteractionClick(button);
         }
     }
 

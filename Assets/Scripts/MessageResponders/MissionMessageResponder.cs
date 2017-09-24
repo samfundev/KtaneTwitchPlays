@@ -64,17 +64,22 @@ public class MissionMessageResponder : MessageResponder
         {
             return;
         }
-
         Match binderMatch = Regex.Match(text, "^!binder (.+)", RegexOptions.IgnoreCase);
         if (binderMatch.Success)
         {
-            _coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, binderMatch.Groups[1].Value, null));
+            if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin))
+            {
+                _coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, binderMatch.Groups[1].Value, null, _ircConnection));
+            }
         }
 
         Match freeplayMatch = Regex.Match(text, "^!freeplay (.+)", RegexOptions.IgnoreCase);
         if (freeplayMatch.Success)
         {
-            _coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, freeplayMatch.Groups[1].Value, null));
+            if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin))
+            {
+                _coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, freeplayMatch.Groups[1].Value, null, _ircConnection));
+            }
         }
     }
     #endregion

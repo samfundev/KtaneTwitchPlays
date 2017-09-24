@@ -13,8 +13,7 @@ public class MorseCodeComponentSolver : ComponentSolver
         _upButton = (MonoBehaviour)_upButtonField.GetValue(bombComponent);
         _downButton = (MonoBehaviour)_downButtonField.GetValue(bombComponent);
         _transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(bombComponent);
-
-        helpMessage = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]";
+        modInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -58,18 +57,13 @@ public class MorseCodeComponentSolver : ComponentSolver
                 yield break;
             }
 
-            DoInteractionStart(buttonToShift);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(buttonToShift);
+            yield return DoInteractionClick(buttonToShift);
         }
 
         if (CurrentFrequency == targetFrequency)
         {
             yield return "transmit";
-
-            DoInteractionStart(_transmitButton);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(_transmitButton);
+            yield return DoInteractionClick(_transmitButton);
         }
     }    
 

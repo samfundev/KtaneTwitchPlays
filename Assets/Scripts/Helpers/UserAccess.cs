@@ -1,19 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
+using System.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using UnityEngine;
+using Formatting = Newtonsoft.Json.Formatting;
 
 [Flags()]
 public enum AccessLevel
 {
-    SuperUser = 0x80,
-    Admin = 0x40,
-    Mod = 0x20,
-
-    User = 0x00
+    SuperUser = 0x8000,
+    Admin = 0x4000,
+    Mod = 0x2000,
+    
+    Defuser = 0x0002,
+    NoPoints = 0x0001,
+    User = 0x0000
 }
 
 public static class UserAccess
 { 
-    private static readonly Dictionary<string, AccessLevel> AccessLevels = new Dictionary<string, AccessLevel>();
+    private static Dictionary<string, AccessLevel> AccessLevels = new Dictionary<string, AccessLevel>();
 
     static UserAccess()
     {
@@ -23,16 +32,87 @@ public static class UserAccess
          * The access level enum can be extended further per your requirements.
          * 
          * Use the helper method below to determine if the user has access for a particular access level or not.
-         * TODO: Extend this to a JSON-serializable type, and/or inspect the decorated PRIVMSG lines from IRC to infer moderator status from the Twitch Chat moderator flag.
          */
 
-        //AccessLevels["UserNickName"] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
-        //AccessLevels["UserNickName"] = AccessLevel.Mod;
+        //Twitch Usernames can't actually begin with an underscore, so these are safe to include as examples
+        AccessLevels["_UserNickName1"] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
+        AccessLevels["_UserNickName2"] = AccessLevel.Mod;
+
+        LoadAccessList();
     }
 
-    public static bool HasAccess(string userNickName, AccessLevel accessLevel)
+    public static void WriteAccessList()
+    {
+        string path = Path.Combine(Application.persistentDataPath, usersSavePath);
+        try
+        {
+            Debug.Log("UserAccess: Writing User Access information data to file: " + path);
+            File.WriteAllText(path, JsonConvert.SerializeObject(AccessLevels,Formatting.Indented,new StringEnumConverter()));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
+    }
+
+    public static void LoadAccessList()
+    {
+        string path = Path.Combine(Application.persistentDataPath, usersSavePath);
+        try
+        {
+            Debug.Log("UserAccess: Loading User Access information data from file: " + path);
+            AccessLevels = JsonConvert.DeserializeObject<Dictionary<string, AccessLevel>>(File.ReadAllText(path), new StringEnumConverter());
+        }
+        catch (FileNotFoundException)
+        {
+            Debug.LogWarningFormat("UserAccess: File {0} was not found.", path);
+            WriteAccessList();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
+    }
+    public static string usersSavePath = "AccessLevels.json";
+
+    public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
     {
         AccessLevel userAccessLevel = AccessLevel.User;
-        return AccessLevels.TryGetValue(userNickName, out userAccessLevel) && (accessLevel & userAccessLevel) == accessLevel;
+        if (!AccessLevels.TryGetValue(userNickName, out userAccessLevel))
+        {
+            return accessLevel == AccessLevel.User;
+        }
+        if (userAccessLevel == accessLevel)
+        {
+            return true;
+        }
+
+        do
+        {
+            if ((accessLevel & userAccessLevel) == accessLevel)
+            {
+                return true;
+            }
+            userAccessLevel = (AccessLevel) ((int) userAccessLevel >> 1);
+        } while (userAccessLevel != AccessLevel.User && orHigher);
+
+        return false;
     }
+
+    public static void AddUser(string userNickName, AccessLevel level)
+    {
+        AccessLevel userAccessLevel = AccessLevel.User;
+        AccessLevels.TryGetValue(userNickName, out userAccessLevel);
+        userAccessLevel |= level;
+        AccessLevels[userNickName] = userAccessLevel;
+    }
+
+    public static void RemoveUser(string userNickName, AccessLevel level)
+    {
+        AccessLevel userAccessLevel = AccessLevel.User;
+        AccessLevels.TryGetValue(userNickName, out userAccessLevel);
+        userAccessLevel &= ~level;
+        AccessLevels[userNickName] = userAccessLevel;
+    }
+
 }

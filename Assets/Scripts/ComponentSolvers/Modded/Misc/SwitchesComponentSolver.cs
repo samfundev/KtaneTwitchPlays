@@ -10,7 +10,7 @@ public class SwitchesComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-		helpMessage = "Flip switches using !{0} flip 1 5 3 2.";
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	private int? TryParse(string input)

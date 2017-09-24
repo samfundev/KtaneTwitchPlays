@@ -94,7 +94,7 @@ GameObject:
   - 114: {fileID: 114875955209670786}
   - 114: {fileID: 114075388513426192}
   m_Layer: 0
-  m_Name: Percentage
+  m_Name: Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -510,7 +510,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Solve Rate
+  m_Text: Score
 --- !u!114 &114910015195192922
 MonoBehaviour:
   m_ObjectHideFlags: 1

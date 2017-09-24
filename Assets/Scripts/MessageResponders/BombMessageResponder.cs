@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -17,7 +18,11 @@ public class BombMessageResponder : MessageResponder
     private List<TwitchComponentHandle> _componentHandles = new List<TwitchComponentHandle>();
     private int _currentBomb = -1;
 
+    private UnityEngine.Object AlarmClock;
+
     public static ModuleCameras moduleCameras = null;
+
+    private static bool BombActive = false;
 
     private float specialNameProbability = 0.25f;
     private string[] singleNames = new string[]
@@ -48,13 +53,25 @@ public class BombMessageResponder : MessageResponder
     };
 
     #region Unity Lifecycle
-    private void OnEnable()
+
+    public static bool EnableDisableInput()
     {
-        if (!TwitchPlaysService.DebugMode)
+        if (!TwitchPlaysService.DebugMode && TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode && BombActive)
         {
             InputInterceptor.DisableInput();
+            return true;
         }
+        else
+        {
+            InputInterceptor.EnableInput();
+            return false;
+        }
+    }
 
+    private void OnEnable()
+    {
+        BombActive = true;
+        EnableDisableInput();
         leaderboard.ClearSolo();
         TwitchPlaysService.logUploader.Clear();
 
@@ -63,11 +80,16 @@ public class BombMessageResponder : MessageResponder
 
     private void OnDisable()
     {
+        BombActive = false;
+        EnableDisableInput();
+        TwitchComponentHandle.ClaimedList.Clear();
+        TwitchComponentHandle.ClearUnsupportedModules();
         StopAllCoroutines();
         leaderboard.BombsAttempted++;
         string bombMessage = null;
 
         bool HasDetonated = false;
+        bool HasBeenSolved = true;
         var timeStarting = float.MaxValue;
         var timeRemaining = float.MaxValue;
         var timeRemainingFormatted = "";
@@ -77,9 +99,10 @@ public class BombMessageResponder : MessageResponder
         foreach (var commander in _bombCommanders)
         {
             HasDetonated |= (bool) CommonReflectedTypeInfo.HasDetonatedProperty.GetValue(commander.Bomb, null);
+            HasBeenSolved &= commander.IsSolved;
             if (timeRemaining > commander.CurrentTimer)
             {
-                timeStarting = commander._bombStartingTimer;
+                timeStarting = commander.bombStartingTimer;
                 timeRemaining = commander.CurrentTimer;
             }
 
@@ -95,14 +118,16 @@ public class BombMessageResponder : MessageResponder
 
         if (HasDetonated)
         {
-            bombMessage = string.Format("KAPOW KAPOW The bomb has exploded, with {0} remaining! KAPOW KAPOW", timeRemainingFormatted);
+            bombMessage = string.Format(TwitchPlaySettings.data.BombExplodedMessage, timeRemainingFormatted);
             leaderboard.BombsExploded+=_bombCommanders.Count;
             leaderboard.Success = false;
+            TwitchPlaySettings.ClearPlayerLog();
         }
-        else
+        else if (HasBeenSolved)
         {
-            bombMessage = string.Format("PraiseIt PraiseIt The bomb has been defused, with {0} remaining! PraiseIt PraiseIt", timeRemainingFormatted);
-            leaderboard.BombsCleared+=_bombCommanders.Count;
+            bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedMessage, timeRemainingFormatted);
+            bombMessage += TwitchPlaySettings.GiveBonusPoints(leaderboard);
+            leaderboard.BombsCleared += _bombCommanders.Count;
             leaderboard.Success = true;
             if (leaderboard.CurrentSolvers.Count == 1)
             {
@@ -117,14 +142,24 @@ public class BombMessageResponder : MessageResponder
                 if (leaderboard.CurrentSolvers[userName] == (Leaderboard.RequiredSoloSolves * _bombCommanders.Count))
                 {
                     leaderboard.AddSoloClear(userName, elapsedTime, out previousRecord);
-                    TimeSpan elapsedTimeSpan = TimeSpan.FromSeconds(elapsedTime);
-                    bombMessage = string.Format("PraiseIt PraiseIt {0} completed a solo defusal in {1}:{2:00}!", leaderboard.SoloSolver.UserName, (int)elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
-                    if (elapsedTime < previousRecord)
+                    if (TwitchPlaySettings.data.EnableSoloPlayMode)
                     {
-                        TimeSpan previousTimeSpan = TimeSpan.FromSeconds(previousRecord);
-                        bombMessage += string.Format(" It's a new record! (Previous record: {0}:{1:00})", (int)previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
+                        //Still record solo information, should the defuser be the only one to actually defuse a 11 * bomb-count bomb, but display normal leaderboards instead if
+                        //solo play is disabled.
+                        TimeSpan elapsedTimeSpan = TimeSpan.FromSeconds(elapsedTime);
+                        string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, leaderboard.SoloSolver.UserName, (int) elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
+                        if (elapsedTime < previousRecord)
+                        {
+                            TimeSpan previousTimeSpan = TimeSpan.FromSeconds(previousRecord);
+                            soloMessage += string.Format(TwitchPlaySettings.data.BombSoloDefusalNewRecordMessage, (int) previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
+                        }
+                        soloMessage += TwitchPlaySettings.data.BombSoloDefusalFooter;
+                        parentService.StartCoroutine(SendDelayedMessage(1.0f, soloMessage));
                     }
-                    bombMessage += " PraiseIt PraiseIt";
+                    else
+                    {
+                        leaderboard.ClearSolo();
+                    }
                 }
                 else
                 {
@@ -132,7 +167,12 @@ public class BombMessageResponder : MessageResponder
                 }
             }
         }
-
+        else
+        {
+            bombMessage = string.Format(TwitchPlaySettings.data.BombAbortedMessage, timeRemainingFormatted);
+            leaderboard.Success = false;
+            TwitchPlaySettings.ClearPlayerLog();
+        }
         parentService.StartCoroutine(SendDelayedMessage(1.0f, bombMessage, SendAnalysisLink));
 
         if (moduleCameras != null)
@@ -222,7 +262,20 @@ public class BombMessageResponder : MessageResponder
             }
         } while (bombs == null || bombs.Length == 0);
 
+        UnityEngine.Object[] clocks;
+        do
+        {
+            yield return null;
+            clocks = FindObjectsOfType(CommonReflectedTypeInfo.AlarmClockType);
+        } while (clocks == null || clocks.Length == 0);
+        AlarmClock = clocks[0];
+
         moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
+
+        if (EnableDisableInput())
+        {
+            TwitchComponentHandle.SolveUnsupportedModules();
+        }
     }
 
     private void SetBomb(MonoBehaviour bomb, int id)
@@ -231,18 +284,35 @@ public class BombMessageResponder : MessageResponder
         CreateBombHandleForBomb(bomb, id);
         CreateComponentHandlesForBomb(bomb);
 
+        if (TwitchPlaySettings.data.BombLiveMessageDelay > 0)
+        {
+            System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
+        }
+
         if (id == -1)
         {
-            _ircConnection.SendMessage("The next bomb is now live! Start sending your commands! MrDestructoid");
+            _ircConnection.SendMessage(TwitchPlaySettings.data.BombLiveMessage);
         }
         else if (id == 0)
         {
-            _ircConnection.SendMessage("The next set of bombs are now live! Start sending your commands! MrDestructoid");
+            _ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
         }
     }
 
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
+        if (!TwitchPlaySettings.data.EnableTwitchPlaysMode && !UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true))
+        {
+            return;
+        }
+
+        if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
+        {
+            MethodInfo method = TwitchPlaySettings.data.AllowSnoozeOnly ? CommonReflectedTypeInfo.AlarmClockTurnOff : CommonReflectedTypeInfo.AlarmClockSnooze;
+            method.Invoke(AlarmClock, new object[] {0});
+            return;
+        }
+
         if (text.Equals("!stop", StringComparison.InvariantCultureIgnoreCase))
         {
             _currentBomb = _coroutineQueue.CurrentBombID;
@@ -264,18 +334,39 @@ public class BombMessageResponder : MessageResponder
                 string internalCommand = match.Groups[1].Value;
                 text = string.Format("!bomb{0} {1}", _currentBomb + 1, internalCommand);
             }
+
+            match = Regex.Match(text, "^!edgework$");
+            if (match.Success)
+            {
+                text = string.Format("!edgework{0}", _currentBomb + 1);
+            }
+            else
+            {
+                match = Regex.Match(text, "^!edgework (.+)");
+                if (match.Success)
+                {
+                    string internalCommand = match.Groups[1].Value;
+                    text = string.Format("!edgework{0} {1}", _currentBomb + 1, internalCommand);
+                }
+            }
         }
 
-        foreach (var handle in _bombHandles)
+        foreach (TwitchBombHandle handle in _bombHandles)
         {
             if (handle != null)
             {
                 IEnumerator onMessageReceived = handle.OnMessageReceived(userNickName, userColorCode, text);
-                if (onMessageReceived == null) continue;
+                if (onMessageReceived == null)
+                {
+                    continue;
+                }
 
                 if (_currentBomb != handle.bombID)
                 {
+                    _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), handle.bombID);
+                    _coroutineQueue.AddToQueue(handle.ShowMainUIWindow(), handle.bombID);
                     _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(), handle.bombID);
+
                     _currentBomb = handle.bombID;
                 }
                 _coroutineQueue.AddToQueue(onMessageReceived, handle.bombID);
@@ -289,6 +380,8 @@ public class BombMessageResponder : MessageResponder
             {
                 if (_currentBomb != componentHandle.bombID)
                 {
+                    _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), componentHandle.bombID);
+                    _coroutineQueue.AddToQueue(_bombHandles[componentHandle.bombID].ShowMainUIWindow(), componentHandle.bombID);
                     _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(),componentHandle.bombID);
                     _currentBomb = componentHandle.bombID;
                 }
@@ -314,9 +407,9 @@ public class BombMessageResponder : MessageResponder
 
         IList bombComponents = (IList)CommonReflectedTypeInfo.BombComponentsField.GetValue(bomb);
 
-        if (bombComponents.Count > 12)
+        if (bombComponents.Count > 12 || TwitchPlaySettings.data.ForceMultiDeckerMode)
         {
-            _bombCommanders[_bombCommanders.Count - 1]._multiDecker = true;
+            _bombCommanders[_bombCommanders.Count - 1].multiDecker = true;
         }
 
         foreach (MonoBehaviour bombComponent in bombComponents)
@@ -331,7 +424,7 @@ public class BombMessageResponder : MessageResponder
                     continue;
 
                 case ComponentTypeEnum.Timer:
-                    _bombCommanders[_bombCommanders.Count - 1]._timerComponent = bombComponent;
+                    _bombCommanders[_bombCommanders.Count - 1].timerComponent = bombComponent;
                     continue;
 
                 default:
@@ -354,7 +447,7 @@ public class BombMessageResponder : MessageResponder
             handle.basePosition = handle.transform.localPosition;
             handle.idealHandlePositionOffset = bombComponent.transform.parent.InverseTransformDirection(idealOffset);
 
-            handle.bombCommander._bombSolvableModules++;
+            handle.bombCommander.bombSolvableModules++;
 
             _componentHandles.Add(handle);
         }
