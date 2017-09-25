@@ -63,7 +63,7 @@ public class PlumbingComponentSolver : ComponentSolver
         {
             yield return inputCommand;
             if (elevator)
-                yield return "elevaotr music";
+                yield return "elevator music";
         }
         foreach (MonoBehaviour button in pipes)
         {
