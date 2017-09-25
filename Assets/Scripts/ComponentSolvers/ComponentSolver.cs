@@ -220,7 +220,9 @@ public abstract class ComponentSolver : ICommandResponder
                     HandleModuleException(new Exception(currentString));
                     break;
                 }
-                else if (currentString.Equals("elevator music", StringComparison.InvariantCultureIgnoreCase))
+                else if (currentString.Equals("elevator music", StringComparison.InvariantCultureIgnoreCase) ||
+                         currentString.Equals("hold music", StringComparison.InvariantCultureIgnoreCase) ||
+                         currentString.Equals("waiting music", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (_musicPlayer == null)
                     {
