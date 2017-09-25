@@ -22,8 +22,13 @@ public class InvisibleWallsComponentSolver : ComponentSolver
         }
 
         inputCommand = inputCommand.Substring(5);
+        MatchCollection matches = Regex.Matches(inputCommand, @"[udlr]", RegexOptions.IgnoreCase);
+        if (matches.Count > 35)
+        {
+            yield return "elevator music";
+        }
 
-        foreach (Match move in Regex.Matches(inputCommand, @"[udlr]", RegexOptions.IgnoreCase))
+        foreach (Match move in matches)
         {
             MonoBehaviour button = (MonoBehaviour)_buttons[  buttonIndex[ move.Value.ToLowerInvariant() ]  ];
             

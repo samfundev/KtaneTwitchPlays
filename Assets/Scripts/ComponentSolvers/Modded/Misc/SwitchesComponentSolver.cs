@@ -29,6 +29,10 @@ public class SwitchesComponentSolver : ComponentSolver
 			if (switches.All(n => n != null && n > 0 && n < 6))
 			{
 				yield return null;
+			    if (switches.Count() > 20)
+			    {
+			        yield return "elevator music";
+			    }
 
 				foreach (int? switchIndex in switches)
 				{

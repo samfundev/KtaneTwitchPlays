@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class PlumbingComponentSolver : ComponentSolver
@@ -39,6 +41,8 @@ public class PlumbingComponentSolver : ComponentSolver
         inputCommand = inputCommand.Substring(6);
 
         string[] sequence = inputCommand.ToLowerInvariant().Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        List<MonoBehaviour> pipes = new List<MonoBehaviour>();
+        bool elevator = false;
 
         foreach (string buttonString in sequence)
         {
@@ -51,9 +55,18 @@ public class PlumbingComponentSolver : ComponentSolver
             var col = letters.IndexOf(buttonString[0]);
 
             MonoBehaviour button = _pipes[row][col];
+            pipes.Add(button);
+            elevator |= pipes.FindAll(x => x == button).Count >= 4;
+        }
 
-            yield return buttonString;
-
+        if (pipes.Count > 0)
+        {
+            yield return inputCommand;
+            if (elevator)
+                yield return "elevaotr music";
+        }
+        foreach (MonoBehaviour button in pipes)
+        {
             if (Canceller.ShouldCancel)
             {
                 Canceller.ResetCancel();

@@ -48,6 +48,10 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 			{
 				yield return null;
 
+			    if (moves.Count() > (commands[0].Equals("move") ? 64 : 16))
+			    {
+			        yield return "elevator music";
+			    }
 				float moveDelay = commands[0].Equals("move") ? 0.1f : 0.4f;
 				foreach (string move in moves)
 				{
