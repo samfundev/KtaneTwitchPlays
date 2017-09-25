@@ -349,6 +349,11 @@ public class TwitchComponentHandle : MonoBehaviour
         return null;
     }
 
+    public void CommandInvalid(string userNickName)
+    {
+        ircConnection.SendMessage(string.Format(TwitchPlaySettings.data.InvalidCommand, userNickName, _code, headerText.text));
+    }
+
     public IEnumerator TakeInProgress = null;
     public static List<string> ClaimedList = new List<string>(); 
 

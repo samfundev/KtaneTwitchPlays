@@ -115,10 +115,9 @@ public abstract class ComponentSolver : ICommandResponder
                     yield return new WaitForSeconds(0.5f);
                 }
                 else
-				{
-					IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.InvalidCommand, userNickName));
-
-					responseNotifier.ProcessResponse(CommandResponse.NoResponse);
+                {
+                    ComponentHandle.CommandInvalid(userNickName);
+                    responseNotifier.ProcessResponse(CommandResponse.NoResponse);
 				}
 
                 _currentResponseNotifier = null;
@@ -221,7 +220,9 @@ public abstract class ComponentSolver : ICommandResponder
                     HandleModuleException(new Exception(currentString));
                     break;
                 }
-                else if (currentString.Equals("elevator music", StringComparison.InvariantCultureIgnoreCase))
+                else if (currentString.Equals("elevator music", StringComparison.InvariantCultureIgnoreCase) ||
+                         currentString.Equals("hold music", StringComparison.InvariantCultureIgnoreCase) ||
+                         currentString.Equals("waiting music", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (_musicPlayer == null)
                     {
@@ -245,7 +246,7 @@ public abstract class ComponentSolver : ICommandResponder
 
 		if (!_responded && !exceptionThrown)
 		{
-			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.InvalidCommand, userNickName));
+		    ComponentHandle.CommandInvalid(userNickName);
 		}
 
         if (needQuaternionReset)

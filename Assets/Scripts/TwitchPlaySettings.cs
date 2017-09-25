@@ -3,6 +3,8 @@ using System.IO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 public class TwitchPlaySettingsData
 {
@@ -25,7 +27,7 @@ public class TwitchPlaySettingsData
     public string TPSharedFolder = Path.Combine(Application.persistentDataPath, "TwitchPlaysShared");
     public string TPSolveStrikeLog = "TPLog.txt";
 
-    public string InvalidCommand = "Sorry @{0}, that command is invalid.";
+    public string InvalidCommand = "Sorry @{0}, that command for {1} ({2}) is invalid.";
 
     public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
     public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
@@ -54,6 +56,61 @@ public class TwitchPlaySettingsData
     public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
     public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
+
+    private bool ValidateString(ref string input, string def, int parameters)
+    {
+        MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
+        int count = matches.Count > 0 
+                ? matches.Cast<Match>().Max(m => int.Parse(m.Groups[1].Value)) + 1
+                : 0;
+
+        DebugHelper.Log("TwitchPlaySettings.ValidateString( {0}, {1}, {2} ) = {3}", input, def, parameters, count == parameters);
+
+        if (count != parameters)
+        {
+            input = def;
+            return false;
+        }
+        return true;
+    }
+
+    public bool ValidateStrings()
+    {
+        TwitchPlaySettingsData data = new TwitchPlaySettingsData();
+        bool valid = true;
+
+        valid &= ValidateString(ref InvalidCommand, data.InvalidCommand, 3);
+
+        valid &= ValidateString(ref AwardSolve, data.AwardSolve, 4);
+        valid &= ValidateString(ref AwardStrike, data.AwardStrike, 8);
+
+        valid &= ValidateString(ref BombLiveMessage, data.BombLiveMessage, 0);
+        valid &= ValidateString(ref MultiBombLiveMessage, data.MultiBombLiveMessage, 0);
+
+        valid &= ValidateString(ref BombExplodedMessage, data.BombExplodedMessage, 1);
+
+        valid &= ValidateString(ref BombDefusedMessage, data.BombDefusedMessage, 1);
+        valid &= ValidateString(ref BombDefusedBonusMessage, data.BombDefusedBonusMessage, 1);
+        valid &= ValidateString(ref BombDefusedFooter, data.BombDefusedFooter, 0);
+
+        valid &= ValidateString(ref BombSoloDefusalMessage, data.BombSoloDefusalMessage, 3);
+        valid &= ValidateString(ref BombSoloDefusalNewRecordMessage, data.BombSoloDefusalNewRecordMessage, 2);
+        valid &= ValidateString(ref BombSoloDefusalFooter, data.BombSoloDefusalFooter, 0);
+
+        valid &= ValidateString(ref BombAbortedMessage, data.BombAbortedMessage, 1);
+
+        valid &= ValidateString(ref RankTooLow, data.RankTooLow, 0);
+
+        valid &= ValidateString(ref SolverAndSolo, data.SolverAndSolo, 0);
+        valid &= ValidateString(ref SoloRankQuery, data.SoloRankQuery, 3);
+        valid &= ValidateString(ref RankQuery, data.RankQuery, 6);
+
+        valid &= ValidateString(ref DoYouEvenPlayBro, data.DoYouEvenPlayBro, 1);
+
+        valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
+
+        return valid;
+    }
 }
 
 public static class TwitchPlaySettings
@@ -92,7 +149,9 @@ public static class TwitchPlaySettings
         {
             DebugHelper.Log("TwitchPlayStrings: Loading Custom strings data from file: {0}", path);
             data = JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
-            if (SettingsVersion != data.SettingsVersion)
+            bool result = data.ValidateStrings();
+            result &= SettingsVersion == data.SettingsVersion;
+            if (!result)
             {
                 WriteDataToFile();
             }
