@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,9 +17,7 @@ public class AlphabetComponentSolver : ComponentSolver
 	{
 		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		yield return null;
-
-		if (commands.Length >= 2 && commands[0].Equals("submit"))
+		if (commands.Length >= 2 && (commands[0] == "submit" || commands[0] == "press"))
 		{
 			List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
 
@@ -38,13 +35,11 @@ public class AlphabetComponentSolver : ComponentSolver
 
 				if (fixedLabels.Count == submittedText.Count())
 				{
+					yield return null;
+
 					foreach (string fixedLabel in fixedLabels)
 					{
-						KMSelectable button = _buttons[buttonLabels.IndexOf(fixedLabel)];
-						DoInteractionStart(button);
-						DoInteractionEnd(button);
-
-						yield return new WaitForSeconds(0.1f);
+						yield return DoInteractionClick(_buttons[buttonLabels.IndexOf(fixedLabel)]);
 					}
 				}
 			}
