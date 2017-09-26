@@ -26,8 +26,8 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.Equals("!manual", StringComparison.InvariantCultureIgnoreCase) ||
                  text.Equals("!help", StringComparison.InvariantCultureIgnoreCase))
         {
-            _ircConnection.SendMessage( string.Format("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.VanillaManual) );
-            _ircConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.CommandReference));
+            _ircConnection.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.VanillaManual);
+            _ircConnection.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.CommandReference);
             return;
         }
         else if (text.StartsWith("!bonusscore", StringComparison.InvariantCultureIgnoreCase))
@@ -45,14 +45,14 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser))
             {
-                _ircConnection.SendMessage(string.Format("{0} awarded {1} points by {2}", parts[1], parts[2], userNickName));
+                _ircConnection.SendMessage("{0} awarded {1} points by {2}", parts[1], parts[2], userNickName);
                 Color usedColor = new Color(.31f, .31f, .31f);
                 leaderboard.AddScore(playerrewarded, usedColor, scorerewarded);
             }
             else
             {
                 scorerewarded = Mathf.Abs(scorerewarded);
-                _ircConnection.SendMessage(string.Format("{0} lost {1} points", userNickName, parts[2]));
+                _ircConnection.SendMessage("{0} lost {1} points", userNickName, parts[2]);
                 Color usedColor = new Color(.31f, .31f, .31f);
                 leaderboard.AddScore(playerrewarded, usedColor, -scorerewarded);
             }
@@ -106,11 +106,11 @@ public class MiscellaneousMessageResponder : MessageResponder
                     txtSolver = TwitchPlaySettings.data.SolverAndSolo;
                     txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int)recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
                 }
-                _ircConnection.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo));
+                _ircConnection.SendMessage(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo);
             }
             else
             {
-                _ircConnection.SendMessage(string.Format(TwitchPlaySettings.data.DoYouEvenPlayBro, userNickName));
+                _ircConnection.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, userNickName);
             }
             return;
         }
@@ -187,18 +187,18 @@ public class MiscellaneousMessageResponder : MessageResponder
             {
                 UserAccess.AddUser(split[2], level);
                 UserAccess.WriteAccessList();
-                _ircConnection.SendMessage(string.Format("/me Added {0} as {1}", split[2], level));
+                _ircConnection.SendMessage("/me Added {0} as {1}", split[2], level);
             }
             else
             {
                 if (level == AccessLevel.SuperUser && userNickName.Equals(split[2]))
                 {
-                    _ircConnection.SendMessage(string.Format("/me Sorry @{0}, you Can't remove yourself as Super User.",userNickName));
+                    _ircConnection.SendMessage("/me Sorry @{0}, you Can't remove yourself as Super User.",userNickName);
                     return; //Prevent locking yourself out.
                 }
                 UserAccess.RemoveUser(split[2], level);
                 UserAccess.WriteAccessList();
-                _ircConnection.SendMessage(string.Format("/me Removed {0} from {1}", split[2], level));
+                _ircConnection.SendMessage("/me Removed {0} from {1}", split[2], level);
             }
         }
 

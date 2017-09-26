@@ -304,7 +304,7 @@ public class TwitchComponentHandle : MonoBehaviour
         SetBannerColor(unclaimedBackgroundColor);
         if (playerName != null)
         {
-            ircConnection.SendMessage(string.Format("/me {1} has released Module {0} ({2}).", targetModule, playerName, headerText.text));
+            ircConnection.SendMessage("/me {1} has released Module {0} ({2}).", targetModule, playerName, headerText.text);
             ClaimedList.Remove(playerName);
             playerName = null;
             TakeInProgress = null;
@@ -351,7 +351,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
     public void CommandInvalid(string userNickName)
     {
-        ircConnection.SendMessage(string.Format(TwitchPlaySettings.data.InvalidCommand, userNickName, _code, headerText.text));
+        ircConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, _code, headerText.text);
     }
 
     public IEnumerator TakeInProgress = null;
@@ -506,7 +506,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
         if (!string.IsNullOrEmpty(messageOut))
         {
-            ircConnection.SendMessage(string.Format(messageOut, _code, headerText.text));
+            ircConnection.SendMessage(messageOut, _code, headerText.text);
             return null;
         }
 
@@ -532,7 +532,7 @@ public class TwitchComponentHandle : MonoBehaviour
         {
             if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))))
             {
-                ircConnection.SendMessage(string.Format("/me Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.", targetModule, playerName, userNickName, headerText.text));
+                ircConnection.SendMessage("/me Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.", targetModule, playerName, userNickName, headerText.text);
                 return null;
             }
             else

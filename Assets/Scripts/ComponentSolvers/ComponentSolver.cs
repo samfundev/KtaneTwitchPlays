@@ -475,7 +475,7 @@ public abstract class ComponentSolver : ICommandResponder
     private void AwardSolve(string userNickName, ICommandResponseNotifier responseNotifier, int ComponentValue)
     {
         string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
-        IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText));
+        IRCConnection.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Value: " + ComponentValue;
         responseNotifier.ProcessResponse(CommandResponse.EndComplete, ComponentValue);
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
@@ -486,7 +486,7 @@ public abstract class ComponentSolver : ICommandResponder
     {
         string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
         int strikePenalty = -6 * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
-        IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty));
+        IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
         for (int i = 0; i < strikeCount; i++)
         {

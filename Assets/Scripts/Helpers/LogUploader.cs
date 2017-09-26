@@ -134,7 +134,7 @@ public class LogUploader : MonoBehaviour
         }
         Debug.Log(LOGPREFIX + "Posting analysis URL to chat");
         emote = " " + emote + " ";
-        ircConnection.SendMessage(string.Format(emote + format, analysisUrl));
+        ircConnection.SendMessage(emote + format, analysisUrl);
         return true;
     }
 
