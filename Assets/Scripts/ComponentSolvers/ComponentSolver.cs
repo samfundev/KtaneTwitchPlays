@@ -197,6 +197,11 @@ public abstract class ComponentSolver : ICommandResponder
                 {
                     IRCConnection.SendMessage(currentString.Substring(11));
                 }
+                else if (currentString.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) &&
+                         currentString.Substring(16).Trim() != string.Empty)
+                {
+                    ComponentHandle.CommandError(userNickName, currentString.Substring(16));
+                }
                 else if (currentString.StartsWith("add strike", StringComparison.InvariantCultureIgnoreCase))
                 {
                     OnStrike(null);

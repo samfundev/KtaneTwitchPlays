@@ -349,6 +349,11 @@ public class TwitchComponentHandle : MonoBehaviour
         return null;
     }
 
+    public void CommandError(string userNickName, string message)
+    {
+        ircConnection.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, _code, headerText.text, message);
+    }
+
     public void CommandInvalid(string userNickName)
     {
         ircConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, _code, headerText.text);

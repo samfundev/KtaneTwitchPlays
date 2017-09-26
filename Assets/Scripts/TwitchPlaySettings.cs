@@ -28,6 +28,7 @@ public class TwitchPlaySettingsData
     public string TPSolveStrikeLog = "TPLog.txt";
 
     public string InvalidCommand = "Sorry @{0}, that command for {1} ({2}) is invalid.";
+    public string CommandError = "Sorry @{0}, Module {1} ({2}) responded with: {3}";
 
     public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
     public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
@@ -80,6 +81,7 @@ public class TwitchPlaySettingsData
         bool valid = true;
 
         valid &= ValidateString(ref InvalidCommand, data.InvalidCommand, 3);
+        valid &= ValidateString(ref CommandError, data.CommandError, 4);
 
         valid &= ValidateString(ref AwardSolve, data.AwardSolve, 4);
         valid &= ValidateString(ref AwardStrike, data.AwardStrike, 8);
@@ -115,7 +117,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 4;
+    public static int SettingsVersion = 5;  //Bump this up each time a new setting is added.
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
