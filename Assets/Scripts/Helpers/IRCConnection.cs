@@ -119,6 +119,11 @@ public class IRCConnection
     {
         SendCommand(string.Format("PRIVMSG #{0} :{1}", _channelName, message));
     }
+
+    public void SendMessage(string message, params object[] args)
+    {
+        SendMessage(string.Format(message, args));
+    }
     #endregion
 
     #region Private Methods

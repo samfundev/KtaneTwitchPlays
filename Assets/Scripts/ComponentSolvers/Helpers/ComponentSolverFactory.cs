@@ -52,6 +52,7 @@ public static class ComponentSolverFactory
         //Asimir Modules
         ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent, ircConnection, canceller) => new ShapeShiftComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent, ircConnection, canceller) => new SeaShellsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThirdBaseComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Spare Wizard Modules
         ModComponentSolverCreators["spwiz3DMaze"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThreeDMazeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -115,6 +116,7 @@ public static class ComponentSolverFactory
         //Asimir
         ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "SeaShells", moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice." , moduleScore = 7};
         ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "shapeshift", moduleDisplayName = "Shape Shift", helpText = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
+        ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 5, moduleID = "ThirdBase", moduleDisplayName = "Third Base", helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive." };
 
         //AT_Bash / Bashly
         ModComponentSolverInformation["MotionSense"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "MotionSense", moduleDisplayName = "Motion Sense", helpText = "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long."};
@@ -257,7 +259,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, helpText = "Press O with !{0} press O.  Press I with !{0} press I. Unscrew the bulb with !{0} unscrew.  Screw in the bulb with !{0} screw."};
         ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit a time with !{0} set 12:34 am. Command must include a 12-hour time followed by AM/PM."};
         ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit your answer with !{0} submit l r u d a b."};
-        ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { moduleScore = 5, helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive."};
         ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc.  Consider the design with !{0} con.  Reject the design with !{0} reject."};
         ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 6, helpText = "Cut the correct wires with !{0} cut A2 B4 D3."};
         ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { moduleScore = 5, helpText = ""};

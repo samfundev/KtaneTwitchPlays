@@ -299,10 +299,22 @@ public class BombMessageResponder : MessageResponder
         }
     }
 
+    private bool IsAuthorizedDefuser(string userNickName, string command)
+    {
+        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
+
+        result |= Regex.IsMatch(command, "^!bomb[0-9]* (?>timestamp|clock|timer?|date|help)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        result |= Regex.IsMatch(command, "^!edgework[0-9]*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        result |= Regex.IsMatch(command, "^![0-9]* (?>player|help|manual)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+        return result;
+    }
+
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
-        if (!TwitchPlaySettings.data.EnableTwitchPlaysMode && !UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true))
+        if (!IsAuthorizedDefuser(userNickName, text))
         {
+            _ircConnection.SendMessage("Sorry @{0}, Twitch plays is only enabled for Authorized defusers", userNickName);
             return;
         }
 

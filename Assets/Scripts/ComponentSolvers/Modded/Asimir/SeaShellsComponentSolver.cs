@@ -44,12 +44,12 @@ public class SeaShellsComponentSolver : ComponentSolver
 					}
 					else if (matchedCount == 0)
 					{
-						yield return string.Format("sendtochat There isn't any label that contains \"{0}\".", text);
+						yield return string.Format("sendtochaterror There isn't any label that contains \"{0}\".", text);
 						yield break;
 					}
 					else
 					{
-						yield return string.Format("sendtochat There are multiple labels that contain \"{0}\": {1}.", text, string.Join(", ", matchingLabels.ToArray()));
+						yield return string.Format("sendtochaterror There are multiple labels that contain \"{0}\": {1}.", text, string.Join(", ", matchingLabels.ToArray()));
 						yield break;
 					}
 				}
