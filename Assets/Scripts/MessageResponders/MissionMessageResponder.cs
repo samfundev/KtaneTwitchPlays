@@ -71,6 +71,10 @@ public class MissionMessageResponder : MessageResponder
             {
                 _coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, binderMatch.Groups[1].Value, null, _ircConnection));
             }
+            else
+            {
+                _ircConnection.SendMessage("Sorry @{0}, Only authorized users may access the mission binder", userNickName);
+            }
         }
 
         Match freeplayMatch = Regex.Match(text, "^!freeplay (.+)", RegexOptions.IgnoreCase);
@@ -79,6 +83,10 @@ public class MissionMessageResponder : MessageResponder
             if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin))
             {
                 _coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, freeplayMatch.Groups[1].Value, null, _ircConnection));
+            }
+            else
+            {
+                _ircConnection.SendMessage("Sorry @{0}, Only authorized user may access the freeplay briefcase", userNickName);
             }
         }
     }
