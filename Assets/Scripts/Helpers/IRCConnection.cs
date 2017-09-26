@@ -117,7 +117,6 @@ public class IRCConnection
 
     public void SendMessage(string message)
     {
-        DebugHelper.Log();
         SendCommand(string.Format("PRIVMSG #{0} :{1}", _channelName, message));
     }
 
