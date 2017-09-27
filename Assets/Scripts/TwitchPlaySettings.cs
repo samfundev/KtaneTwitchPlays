@@ -56,30 +56,42 @@ public class TwitchPlaySettingsData
 
     public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
-    public string TurnBombOnSolve = "/me Turning to the other side when Module {0} ({1}) is solved";
-    public string CancelBombTurn = "/me Bomb turn on Module {0} ({1}) solve cancelled";
+    public string TurnBombOnSolve = "Turning to the other side when Module {0} ({1}) is solved";
+    public string CancelBombTurn = "Bomb turn on Module {0} ({1}) solve cancelled";
 
-    public string ModuleClaimed = "/me {1} has claimed Module {0} ({2}).";
-    public string ModuleUnclaimed = "/me {1} has released Module {0} ({2}).";
+    public string ModuleClaimed = "{1} has claimed Module {0} ({2}).";
+    public string ModuleUnclaimed = "{1} has released Module {0} ({2}).";
 
-    public string AssignModule = "/me Module {0} ({3}) assigned to {1} by {2}";
-    public string ModuleReady = "/me {1} says module {0} ({2}) is ready to be submitted";
+    public string AssignModule = "Module {0} ({3}) assigned to {1} by {2}";
+    public string ModuleReady = "{1} says module {0} ({2}) is ready to be submitted";
 
-    public string TakeModule = "/me @{0}, {1} wishes to take Module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
-    public string TakeInProgress = "/me Sorry @{0}, There is already a takeover attempt for Module {1} ({2}) in progress.";
-    public string ModuleAbandoned = "/me {1} has released Module {0} ({2}).";
-    public string ModuleIsMine = "/me {0} confirms he/she is still working on {1} ({2})";
+    public string TakeModule = "@{0}, {1} wishes to take Module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
+    public string TakeInProgress = "Sorry @{0}, There is already a takeover attempt for Module {1} ({2}) in progress.";
+    public string ModuleAbandoned = "{1} has released Module {0} ({2}).";
+    public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
     public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
-    public string ModulePlayer = "/me Module {0} ({2}) was claimed by {1}";
-    public string AlreadyClaimed = "/me Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.";
+    public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
+    public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.";
 
     public string OwnedModule = "({0} - \"{1}\")";
-    public string OwnedModuleList = "/me @{0}, your claimed modules are {1}";
-    public string NoOwnedModules = "/me Sorry @{0}, you have no claimed modules.";
+    public string OwnedModuleList = "@{0}, your claimed modules are {1}";
+    public string NoOwnedModules = "Sorry @{0}, you have no claimed modules.";
 
     public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
     public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
     public string FreePlayDisabled = "Sorry @{0}, Only authorized user may access the freeplay briefcase";
+    public string RetryInactive = "Sorry, retry is inactive.  Returning to hallway instead.";
+
+    public string AddedUserPower = "Added {0} as {1}";
+    public string CantRemoveSelf = "Sorry @{0}, you Can't remove yourself as Super User.";
+    public string RemoveUserPower = "Removed {0} from {1}";
+
+    public string BombHelp = "The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]";
+    public string BlankBombEdgework = "Not set, use !edgework <edgework> to set!\nUse !bomb edgework or !bomb edgework 45 to view the bomb edges.";
+    public string BombEdgework = "Edgework: {0}";
+    public string BombTimeRemaining = "panicBasket [{0}] out of [{1}].";
+    public string BombTimeStamp = "The Date/Time this bomb started is {0:F}";
+    public string BombDetonateCommand = "panicBasket This bomb's gonna blow!";
 
     private bool ValidateString(ref string input, string def, int parameters)
     {
@@ -156,6 +168,18 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref TwitchPlaysDisabled, data.TwitchPlaysDisabled, 1);
         valid &= ValidateString(ref MissionBinderDisabled, data.MissionBinderDisabled, 1);
         valid &= ValidateString(ref FreePlayDisabled, data.FreePlayDisabled, 1);
+        valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
+
+        valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2);
+        valid &= ValidateString(ref CantRemoveSelf, data.CantRemoveSelf, 1);
+        valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2);
+
+        valid &= ValidateString(ref BombHelp, data.BombHelp, 0);
+        valid &= ValidateString(ref BlankBombEdgework, data.BlankBombEdgework, 0);
+        valid &= ValidateString(ref BombEdgework, data.BombEdgework, 1);
+        valid &= ValidateString(ref BombTimeRemaining, data.BombTimeRemaining, 2);
+        valid &= ValidateString(ref BombTimeStamp, data.BombTimeStamp, 1);
+        valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
 
         return valid;
     }
@@ -163,7 +187,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 7;  //Bump this up each time a new setting is added.
+    public static int SettingsVersion = 8;  //Bump this up each time a new setting is added.
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
