@@ -83,6 +83,24 @@ public class TwitchComponentHandle : MonoBehaviour
     [HideInInspector]
     public int bombID;
 
+    [HideInInspector]
+    public string PlayerName
+    {
+        get
+        {
+            return playerName;
+        }
+    }
+
+    [HideInInspector]
+    public bool Solved
+    {
+        get
+        {
+            return _solved;
+        }
+    }
+
     #endregion
 
     #region Private Fields

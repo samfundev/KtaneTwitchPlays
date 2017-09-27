@@ -73,6 +73,10 @@ public class TwitchPlaySettingsData
     public string ModulePlayer = "/me Module {0} ({2}) was claimed by {1}";
     public string AlreadyClaimed = "/me Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.";
 
+    public string OwnedModule = "({0} - \"{1}\")";
+    public string OwnedModuleList = "/me @{0}, your claimed modules are {1}";
+    public string NoOwnedModules = "/me Sorry @{0}, you have no claimed modules.";
+
     public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
     public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
     public string FreePlayDisabled = "Sorry @{0}, Only authorized user may access the freeplay briefcase";
@@ -145,6 +149,10 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref ModulePlayer, data.ModulePlayer, 3);
         valid &= ValidateString(ref AlreadyClaimed, data.AlreadyClaimed, 4);
 
+        valid &= ValidateString(ref OwnedModule, data.OwnedModule, 2);
+        valid &= ValidateString(ref OwnedModuleList, data.OwnedModuleList, 2);
+        valid &= ValidateString(ref NoOwnedModules, data.NoOwnedModules, 1);
+
         valid &= ValidateString(ref TwitchPlaysDisabled, data.TwitchPlaysDisabled, 1);
         valid &= ValidateString(ref MissionBinderDisabled, data.MissionBinderDisabled, 1);
         valid &= ValidateString(ref FreePlayDisabled, data.FreePlayDisabled, 1);
@@ -155,7 +163,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 6;  //Bump this up each time a new setting is added.
+    public static int SettingsVersion = 7;  //Bump this up each time a new setting is added.
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
