@@ -314,7 +314,7 @@ public class BombMessageResponder : MessageResponder
     {
         if (!IsAuthorizedDefuser(userNickName, text))
         {
-            _ircConnection.SendMessage("Sorry @{0}, Twitch plays is only enabled for Authorized defusers", userNickName);
+            _ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
             return;
         }
 

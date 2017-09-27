@@ -56,7 +56,26 @@ public class TwitchPlaySettingsData
 
     public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
+    public string TurnBombOnSolve = "/me Turning to the other side when Module {0} ({1}) is solved";
+    public string CancelBombTurn = "/me Bomb turn on Module {0} ({1}) solve cancelled";
+
+    public string ModuleClaimed = "/me {1} has claimed Module {0} ({2}).";
+    public string ModuleUnclaimed = "/me {1} has released Module {0} ({2}).";
+
+    public string AssignModule = "/me Module {0} ({3}) assigned to {1} by {2}";
+    public string ModuleReady = "/me {1} says module {0} ({2}) is ready to be submitted";
+
+    public string TakeModule = "/me @{0}, {1} wishes to take Module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
+    public string TakeInProgress = "/me Sorry @{0}, There is already a takeover attempt for Module {1} ({2}) in progress.";
+    public string ModuleAbandoned = "/me {1} has released Module {0} ({2}).";
+    public string ModuleIsMine = "/me {0} confirms he/she is still working on {1} ({2})";
     public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
+    public string ModulePlayer = "/me Module {0} ({2}) was claimed by {1}";
+    public string AlreadyClaimed = "/me Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.";
+
+    public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
+    public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
+    public string FreePlayDisabled = "Sorry @{0}, Only authorized user may access the freeplay briefcase";
 
     private bool ValidateString(ref string input, string def, int parameters)
     {
@@ -109,7 +128,26 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref DoYouEvenPlayBro, data.DoYouEvenPlayBro, 1);
 
+        valid &= ValidateString(ref TurnBombOnSolve, data.TurnBombOnSolve, 2);
+        valid &= ValidateString(ref CancelBombTurn, data.CancelBombTurn, 2);
+
+        valid &= ValidateString(ref ModuleClaimed, data.ModuleClaimed, 3);
+        valid &= ValidateString(ref ModuleUnclaimed, data.ModuleUnclaimed, 3);
+
+        valid &= ValidateString(ref AssignModule, data.AssignModule, 4);
+        valid &= ValidateString(ref ModuleReady, data.ModuleReady, 3);
+
+        valid &= ValidateString(ref TakeModule, data.TakeModule, 4);
+        valid &= ValidateString(ref TakeInProgress, data.TakeInProgress, 3);
+        valid &= ValidateString(ref ModuleAbandoned, data.ModuleAbandoned, 3);
+        valid &= ValidateString(ref ModuleIsMine, data.ModuleIsMine, 3);
         valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
+        valid &= ValidateString(ref ModulePlayer, data.ModulePlayer, 3);
+        valid &= ValidateString(ref AlreadyClaimed, data.AlreadyClaimed, 4);
+
+        valid &= ValidateString(ref TwitchPlaysDisabled, data.TwitchPlaysDisabled, 1);
+        valid &= ValidateString(ref MissionBinderDisabled, data.MissionBinderDisabled, 1);
+        valid &= ValidateString(ref FreePlayDisabled, data.FreePlayDisabled, 1);
 
         return valid;
     }
@@ -117,7 +155,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 5;  //Bump this up each time a new setting is added.
+    public static int SettingsVersion = 6;  //Bump this up each time a new setting is added.
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
