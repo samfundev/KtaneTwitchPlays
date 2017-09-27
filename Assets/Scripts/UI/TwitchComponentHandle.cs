@@ -83,6 +83,24 @@ public class TwitchComponentHandle : MonoBehaviour
     [HideInInspector]
     public int bombID;
 
+    [HideInInspector]
+    public string PlayerName
+    {
+        get
+        {
+            return playerName;
+        }
+    }
+
+    [HideInInspector]
+    public bool Solved
+    {
+        get
+        {
+            return _solved;
+        }
+    }
+
     #endregion
 
     #region Private Fields
@@ -304,7 +322,7 @@ public class TwitchComponentHandle : MonoBehaviour
         SetBannerColor(unclaimedBackgroundColor);
         if (playerName != null)
         {
-            ircConnection.SendMessage("/me {1} has released Module {0} ({2}).", targetModule, playerName, headerText.text);
+            ircConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, playerName, headerText.text);
             ClaimedList.Remove(playerName);
             playerName = null;
             TakeInProgress = null;
@@ -343,7 +361,7 @@ public class TwitchComponentHandle : MonoBehaviour
                 }
                 SetBannerColor(claimedBackgroundColour);
                 playerName = userNickName;
-                return string.Format("/me {1} has claimed Module {0} ({2}).", targetModule, playerName, headerText.text);
+                return string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, playerName, headerText.text);
             }
         }
         return null;
@@ -407,12 +425,12 @@ public class TwitchComponentHandle : MonoBehaviour
                 _solver._turnQueued = true;
                 StartCoroutine(_solver.TurnBombOnSolve());
             }
-            messageOut = string.Format("/me Turning to the other side when Module {0} ({1}) is solved", targetModule, headerText.text);
+            messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, targetModule, headerText.text);
         }
         else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase) && !_solved)
         {
             _solver._turnQueued = false;
-            messageOut = string.Format("/me Bomb turn on Module {0} ({1}) solve cancelled", targetModule, headerText.text);
+            messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, headerText.text);
         }
         else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
         {
@@ -429,7 +447,7 @@ public class TwitchComponentHandle : MonoBehaviour
                 }
                 StartCoroutine(ReleaseModule(playerName, userNickName));
                 SetBannerColor(unclaimedBackgroundColor);
-                messageOut = string.Format("/me {1} has released Module {0} ({2}).", targetModule, playerName, headerText.text);
+                messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, playerName, headerText.text);
                 playerName = null;
             }
         }
@@ -439,7 +457,7 @@ public class TwitchComponentHandle : MonoBehaviour
             {
                 SetBannerColor(solvedBackgroundColor);
                 playerName = null;
-                messageOut = string.Format("/me {1} says module {0} ({2}) is ready to be submitted", targetModule, userNickName, headerText.text);
+                messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, targetModule, userNickName, headerText.text);
             }
         }
         else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
@@ -457,7 +475,7 @@ public class TwitchComponentHandle : MonoBehaviour
                     ClaimedList.Add(playerName);
                 }
                 SetBannerColor(claimedBackgroundColour);
-                messageOut = string.Format("/me Module {0} ({3}) assigned to {1} by {2}", targetModule, playerName, userNickName, headerText.text);
+                messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, playerName, userNickName, headerText.text);
             }
         }
         else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
@@ -466,21 +484,21 @@ public class TwitchComponentHandle : MonoBehaviour
             {
                 if (!_solved)
                 {
-                    messageOut = string.Format("/me {0}, {1} wishes to take Module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.", playerName, userNickName, targetModule, headerText.text);
+                    messageOut = string.Format(TwitchPlaySettings.data.TakeModule, playerName, userNickName, targetModule, headerText.text);
                     TakeInProgress = TakeModule(userNickName, targetModule);
                     StartCoroutine(TakeInProgress);
                 }
             }
             else if ((playerName != null) && (userNickName != playerName))
             {
-                messageOut = string.Format("/me Sorry @{0}, There is already a takeover attempt for Module {1} ({2}) in progress.", userNickName, targetModule, headerText.text);
+                messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, headerText.text);
             }
         }
         else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
         {
             if (playerName == userNickName)
             {
-                messageOut = string.Format("/me {0} confirms he/she is still working on {1} ({2})", playerName, targetModule, headerText.text);
+                messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, playerName, targetModule, headerText.text);
                 if (TakeInProgress != null)
                 {
                     StopCoroutine(TakeInProgress);
@@ -505,7 +523,7 @@ public class TwitchComponentHandle : MonoBehaviour
         {
             if (playerName != null)
             {
-                messageOut = string.Format("/me Module {0} ({2}) was claimed by {1}", targetModule, playerName, headerText.text);
+                messageOut = string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
             }
         }
 
@@ -537,7 +555,7 @@ public class TwitchComponentHandle : MonoBehaviour
         {
             if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))))
             {
-                ircConnection.SendMessage("/me Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.", targetModule, playerName, userNickName, headerText.text);
+                ircConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
                 return null;
             }
             else

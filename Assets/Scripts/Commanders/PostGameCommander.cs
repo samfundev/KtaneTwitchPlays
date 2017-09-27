@@ -38,7 +38,7 @@ public class PostGameCommander : ICommandResponder
         {
             if (!TwitchPlaySettings.data.EnableRetryButton)
             {
-                connection.SendMessage("/me Sorry, retry is inactive.  Returning to hallway instead.");
+                connection.SendMessage(TwitchPlaySettings.data.RetryInactive);
             }
             button = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? RetryButton : ContinueButton;
         }

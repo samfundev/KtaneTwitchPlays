@@ -35,8 +35,8 @@ public static class UserAccess
          */
 
         //Twitch Usernames can't actually begin with an underscore, so these are safe to include as examples
-        AccessLevels["_UserNickName1"] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
-        AccessLevels["_UserNickName2"] = AccessLevel.Mod;
+        AccessLevels["_UserNickName1".ToLowerInvariant()] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
+        AccessLevels["_UserNickName2".ToLowerInvariant()] = AccessLevel.Mod;
 
         LoadAccessList();
     }
@@ -72,13 +72,23 @@ public static class UserAccess
         {
             DebugHelper.LogException(ex);
         }
+
+        foreach (string key in AccessLevels.Keys)
+        {
+            if (!key.Equals(key.ToLowerInvariant()))
+            {
+                AccessLevel level = AccessLevels[key];
+                AccessLevels.Remove(key);
+                AccessLevels[key.ToLowerInvariant()] = level;
+            }
+        }
     }
     public static string usersSavePath = "AccessLevels.json";
 
     public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
     {
         AccessLevel userAccessLevel = AccessLevel.User;
-        if (!AccessLevels.TryGetValue(userNickName, out userAccessLevel))
+        if (!AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out userAccessLevel))
         {
             return accessLevel == AccessLevel.User;
         }
@@ -102,17 +112,17 @@ public static class UserAccess
     public static void AddUser(string userNickName, AccessLevel level)
     {
         AccessLevel userAccessLevel = AccessLevel.User;
-        AccessLevels.TryGetValue(userNickName, out userAccessLevel);
+        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out userAccessLevel);
         userAccessLevel |= level;
-        AccessLevels[userNickName] = userAccessLevel;
+        AccessLevels[userNickName.ToLowerInvariant()] = userAccessLevel;
     }
 
     public static void RemoveUser(string userNickName, AccessLevel level)
     {
         AccessLevel userAccessLevel = AccessLevel.User;
-        AccessLevels.TryGetValue(userNickName, out userAccessLevel);
+        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out userAccessLevel);
         userAccessLevel &= ~level;
-        AccessLevels[userNickName] = userAccessLevel;
+        AccessLevels[userNickName.ToLowerInvariant()] = userAccessLevel;
     }
 
 }

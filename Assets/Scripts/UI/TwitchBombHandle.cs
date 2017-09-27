@@ -62,7 +62,7 @@ public class TwitchBombHandle : MonoBehaviour
 
         idText.text = string.Format("!{0}", _code);
         edgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
-        edgeworkText.text = string.Format("Not set, use !edgework <edgework> to set!{0}Use !bomb edgework or !bomb edgework 45 to view the bomb edges.", Environment.NewLine);
+        edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
         canvasGroup.alpha = 1.0f;
         highlightGroup.alpha = 0.0f;
@@ -96,7 +96,7 @@ public class TwitchBombHandle : MonoBehaviour
                 {
                     edgeworkText.text = internalCommand;
                 }
-                ircConnection.SendMessage("Edgework: " + edgeworkText.text);
+                ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework,edgeworkText.text);
             }
             return null;
         }
@@ -121,19 +121,14 @@ public class TwitchBombHandle : MonoBehaviour
             //Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 
             notifier.ProcessResponse(CommandResponse.Start);
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append("The Date/Time this bomb started is ");
-            sb.Append(string.Format("{0:F}", bombCommander.BombTimeStamp));
-            ircConnection.SendMessage(sb.ToString());
-
+            ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
             notifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
         else if (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase))
         {
             notifier.ProcessResponse(CommandResponse.Start);
 
-            ircConnection.SendMessage("The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]");
+            ircConnection.SendMessage(TwitchPlaySettings.data.BombHelp);
 
             notifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
@@ -142,15 +137,7 @@ public class TwitchBombHandle : MonoBehaviour
                  internalCommand.Equals("clock", StringComparison.InvariantCultureIgnoreCase))
         {
             notifier.ProcessResponse(CommandResponse.Start);
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append("/me panicBasket [");
-            sb.Append(string.Format(bombCommander.GetFullFormattedTime));
-            sb.Append("] out of [");
-            sb.Append(string.Format(bombCommander.GetFullStartingTime));
-            sb.Append("].");
-            ircConnection.SendMessage(sb.ToString());
-
+            ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
             notifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
         else if (internalCommand.Equals("explode", StringComparison.InvariantCultureIgnoreCase) ||
@@ -196,7 +183,7 @@ public class TwitchBombHandle : MonoBehaviour
     {
         notifier.ProcessResponse(CommandResponse.Start);
 
-        ircConnection.SendMessage("panicBasket This bomb's gonna blow!");
+        ircConnection.SendMessage(TwitchPlaySettings.data.BombDetonateCommand);
         yield return new WaitForSeconds(1.0f);
 
         bombCommander.CauseStrikesToExplosion("Detonate Command");

@@ -73,7 +73,7 @@ public class MissionMessageResponder : MessageResponder
             }
             else
             {
-                _ircConnection.SendMessage("Sorry @{0}, Only authorized users may access the mission binder", userNickName);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.MissionBinderDisabled, userNickName);
             }
         }
 
@@ -86,7 +86,7 @@ public class MissionMessageResponder : MessageResponder
             }
             else
             {
-                _ircConnection.SendMessage("Sorry @{0}, Only authorized user may access the freeplay briefcase", userNickName);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
             }
         }
     }

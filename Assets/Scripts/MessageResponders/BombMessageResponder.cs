@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -314,7 +315,7 @@ public class BombMessageResponder : MessageResponder
     {
         if (!IsAuthorizedDefuser(userNickName, text))
         {
-            _ircConnection.SendMessage("Sorry @{0}, Twitch plays is only enabled for Authorized defusers", userNickName);
+            _ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
             return;
         }
 
@@ -334,6 +335,31 @@ public class BombMessageResponder : MessageResponder
         if (text.Equals("!modules", StringComparison.InvariantCultureIgnoreCase))
         {
             moduleCameras.AttachToModules(_componentHandles);
+            return;
+        }
+
+        if (text.StartsWith("!claims ", StringComparison.InvariantCultureIgnoreCase))
+        {
+            userNickName = text.Substring(8);
+            text = "!claims";
+            if (userNickName == "")
+            {
+                return;
+            }
+        }
+
+        if (text.Equals("!claims", StringComparison.InvariantCultureIgnoreCase))
+        {
+            List<string> claimed = (from handle in _componentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idText.text.Replace("!", ""), handle.headerText.text)).ToList();
+            if (claimed.Count > 0)
+            {
+                string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, claimed.Count > 5 ? 5 : claimed.Count));
+                if (claimed.Count > 5)
+                    message += "...";
+                _ircConnection.SendMessage(message);
+            }
+            else
+                _ircConnection.SendMessage(TwitchPlaySettings.data.NoOwnedModules, userNickName);
             return;
         }
 
