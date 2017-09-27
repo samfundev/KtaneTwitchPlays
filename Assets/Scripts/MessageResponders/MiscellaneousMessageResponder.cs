@@ -187,18 +187,18 @@ public class MiscellaneousMessageResponder : MessageResponder
             {
                 UserAccess.AddUser(split[2], level);
                 UserAccess.WriteAccessList();
-                _ircConnection.SendMessage("/me Added {0} as {1}", split[2], level);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.AddedUserPower, split[2], level);
             }
             else
             {
                 if (level == AccessLevel.SuperUser && userNickName.Equals(split[2]))
                 {
-                    _ircConnection.SendMessage("/me Sorry @{0}, you Can't remove yourself as Super User.",userNickName);
+                    _ircConnection.SendMessage(TwitchPlaySettings.data.CantRemoveSelf ,userNickName);
                     return; //Prevent locking yourself out.
                 }
                 UserAccess.RemoveUser(split[2], level);
                 UserAccess.WriteAccessList();
-                _ircConnection.SendMessage("/me Removed {0} from {1}", split[2], level);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.RemoveUserPower, split[2], level);
             }
         }
 
