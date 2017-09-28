@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
-using System.Xml;
+using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
@@ -73,15 +72,7 @@ public static class UserAccess
             DebugHelper.LogException(ex);
         }
 
-        foreach (string key in AccessLevels.Keys)
-        {
-            if (!key.Equals(key.ToLowerInvariant()))
-            {
-                AccessLevel level = AccessLevels[key];
-                AccessLevels.Remove(key);
-                AccessLevels[key.ToLowerInvariant()] = level;
-            }
-        }
+		AccessLevels = AccessLevels.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
     }
     public static string usersSavePath = "AccessLevels.json";
 
