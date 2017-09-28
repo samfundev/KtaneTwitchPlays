@@ -184,7 +184,7 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
 
         //Version breaking changes  - If string fromats changed, add them here, and return false, if version is less than the point at which that change happened.
-        if (SettingsVersion < 10)
+        if (SettingsVersion < 1)
         {
             AddedUserPower = data.AddedUserPower;
             RemoveUserPower = data.RemoveUserPower;
@@ -197,7 +197,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 10;  //Bump this up each time a new setting is added.
+    public static int SettingsVersion = 1;  //Bump this up each time there is a breaking file format change. (like a changed to the string formats themselves)
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
@@ -205,11 +205,11 @@ public static class TwitchPlaySettings
 
     public static void WriteDataToFile()
     {
-        data.SettingsVersion = SettingsVersion;
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         DebugHelper.Log("TwitchPlayStrings: Writing file {0}", path);
         try
         {
+            data.SettingsVersion = SettingsVersion;
             File.WriteAllText(path,JsonConvert.SerializeObject(data, Formatting.Indented));
         }
         catch (FileNotFoundException)
@@ -232,12 +232,8 @@ public static class TwitchPlaySettings
         {
             DebugHelper.Log("TwitchPlayStrings: Loading Custom strings data from file: {0}", path);
             data = JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
-            bool result = data.ValidateStrings();
-            result &= SettingsVersion == data.SettingsVersion;
-            if (!result)
-            {
-                WriteDataToFile();
-            }
+            data.ValidateStrings();
+            WriteDataToFile();
         }
         catch (FileNotFoundException)
         {
