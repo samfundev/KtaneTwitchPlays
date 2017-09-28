@@ -76,6 +76,27 @@ public class BombMessageResponder : MessageResponder
         leaderboard.ClearSolo();
         TwitchPlaysService.logUploader.Clear();
 
+		bool bombStarted = false;
+		parentService.GetComponent<KMGameInfo>().OnLightsChange += delegate (bool on)
+		{
+			if (bombStarted || !on) return;
+			bombStarted = true;
+
+			if (TwitchPlaySettings.data.BombLiveMessageDelay > 0)
+			{
+				System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
+			}
+
+			if (_bombCommanders.Count == 1)
+			{
+				_ircConnection.SendMessage(TwitchPlaySettings.data.BombLiveMessage);
+			}
+			else
+			{
+				_ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
+			}
+		};
+
         StartCoroutine(CheckForBomb());
     }
 
@@ -120,7 +141,7 @@ public class BombMessageResponder : MessageResponder
         if (HasDetonated)
         {
             bombMessage = string.Format(TwitchPlaySettings.data.BombExplodedMessage, timeRemainingFormatted);
-            leaderboard.BombsExploded+=_bombCommanders.Count;
+            leaderboard.BombsExploded += _bombCommanders.Count;
             leaderboard.Success = false;
             TwitchPlaySettings.ClearPlayerLog();
         }
@@ -284,20 +305,6 @@ public class BombMessageResponder : MessageResponder
         _bombCommanders.Add(new BombCommander(bomb));
         CreateBombHandleForBomb(bomb, id);
         CreateComponentHandlesForBomb(bomb);
-
-        if (TwitchPlaySettings.data.BombLiveMessageDelay > 0)
-        {
-            System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
-        }
-
-        if (id == -1)
-        {
-            _ircConnection.SendMessage(TwitchPlaySettings.data.BombLiveMessage);
-        }
-        else if (id == 0)
-        {
-            _ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
-        }
     }
 
     private bool IsAuthorizedDefuser(string userNickName, string command)

@@ -57,8 +57,11 @@ public static class ComponentSolverFactory
         //Spare Wizard Modules
         ModComponentSolverCreators["spwiz3DMaze"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThreeDMazeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
-        //Misc Modules
-        ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent, ircConnection, canceller) => new AlphabetComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+		//Mock Army Modules
+		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent, ircConnection, canceller) => new EmojiMathComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+
+		//Misc Modules
+		ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent, ircConnection, canceller) => new AlphabetComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, ircConnection, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -148,8 +151,11 @@ public static class ComponentSolverFactory
         //SpareWizard
         ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "spwiz3DMaze", moduleDisplayName = "3D Maze", helpText = "Move around the maze using !{0} move left forward right. Walk slowly around the maze using !{0} walk left forawrd right. Shorten forms of the directions are also acceptable. You can use \"uturn\" or \"u\" to turn around.", moduleScore = 20};
 
-        //Misc
-        ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
+		//Mock Army
+		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Emoji Math", moduleDisplayName = "Emoji Math", helpText = "Submit an answer using !{0} submit -47.", moduleScore = 1 };
+
+		//Misc
+		ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
         ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9};
         ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Microcontroller", moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
         ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
