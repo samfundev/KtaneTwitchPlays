@@ -22,6 +22,8 @@ public class TwitchPlaySettingsData
     public int ClaimCooldownTime = 30;
     public int ModuleClaimLimit = 2;
 
+    public string TwitchBotColorOnQuit = string.Empty;
+
     public bool AllowSnoozeOnly = false;
 
     public string TPSharedFolder = Path.Combine(Application.persistentDataPath, "TwitchPlaysShared");
@@ -187,7 +189,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 8;  //Bump this up each time a new setting is added.
+    public static int SettingsVersion = 9;  //Bump this up each time a new setting is added.
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
@@ -195,6 +197,7 @@ public static class TwitchPlaySettings
 
     public static void WriteDataToFile()
     {
+        data.SettingsVersion = SettingsVersion;
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
         DebugHelper.Log("TwitchPlayStrings: Writing file {0}", path);
         try
