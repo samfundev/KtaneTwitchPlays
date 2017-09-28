@@ -105,6 +105,7 @@ public class TwitchPlaysService : MonoBehaviour
     {
         if (_ircConnection != null)
         {
+            _ircConnection.ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
             _ircConnection.Disconnect();
         }
     }

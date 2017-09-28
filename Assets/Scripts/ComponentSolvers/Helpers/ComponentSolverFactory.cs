@@ -327,6 +327,7 @@ public static class ComponentSolverFactory
 
             i.moduleScore = info.moduleScore;
             i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
+            i.strikePenalty = info.strikePenalty;
         }
         else
         {

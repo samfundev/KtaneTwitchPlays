@@ -490,7 +490,7 @@ public abstract class ComponentSolver : ICommandResponder
     private void AwardStrikes(string userNickName, ICommandResponseNotifier responseNotifier, int strikeCount)
     {
         string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
-        int strikePenalty = -6 * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+        int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
         for (int i = 0; i < strikeCount; i++)
@@ -501,6 +501,7 @@ public abstract class ComponentSolver : ICommandResponder
                 break;
             }
         }
+        responseNotifier.ProcessResponse(CommandResponse.EndErrorSubtractScore, strikePenalty);
         responseNotifier.ProcessResponse(CommandResponse.EndError, strikeCount);
         StrikeMessage = string.Empty;
     }
@@ -601,7 +602,7 @@ public abstract class ComponentSolver : ICommandResponder
             {
                 _responded = true;
                 bool pinAllowed = inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) &&
-                                  (UserAccess.HasAccess(userNickName, AccessLevel.Mod) || modInfo.CameraPinningAlwaysAllowed);
+                                  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed);
 
                 cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
             }

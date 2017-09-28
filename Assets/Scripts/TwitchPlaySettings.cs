@@ -22,6 +22,8 @@ public class TwitchPlaySettingsData
     public int ClaimCooldownTime = 30;
     public int ModuleClaimLimit = 2;
 
+    public string TwitchBotColorOnQuit = string.Empty;
+
     public bool AllowSnoozeOnly = false;
 
     public string TPSharedFolder = Path.Combine(Application.persistentDataPath, "TwitchPlaysShared");
@@ -82,9 +84,9 @@ public class TwitchPlaySettingsData
     public string FreePlayDisabled = "Sorry @{0}, Only authorized user may access the freeplay briefcase";
     public string RetryInactive = "Sorry, retry is inactive.  Returning to hallway instead.";
 
-    public string AddedUserPower = "Added {0} as {1}";
+    public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
     public string CantRemoveSelf = "Sorry @{0}, you Can't remove yourself as Super User.";
-    public string RemoveUserPower = "Removed {0} from {1}";
+    public string RemoveUserPower = "Removed access levels ({0}) from user \"{1}\"";
 
     public string BombHelp = "The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]";
     public string BlankBombEdgework = "Not set, use !edgework <edgework> to set!\nUse !bomb edgework or !bomb edgework 45 to view the bomb edges.";
@@ -181,13 +183,21 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref BombTimeStamp, data.BombTimeStamp, 1);
         valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
 
+        //Version breaking changes  - If string fromats changed, add them here, and return false, if version is less than the point at which that change happened.
+        if (SettingsVersion < 1)
+        {
+            AddedUserPower = data.AddedUserPower;
+            RemoveUserPower = data.RemoveUserPower;
+            return false;
+        }
+
         return valid;
     }
 }
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 8;  //Bump this up each time a new setting is added.
+    public static int SettingsVersion = 1;  //Bump this up each time there is a breaking file format change. (like a changed to the string formats themselves)
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
@@ -199,6 +209,7 @@ public static class TwitchPlaySettings
         DebugHelper.Log("TwitchPlayStrings: Writing file {0}", path);
         try
         {
+            data.SettingsVersion = SettingsVersion;
             File.WriteAllText(path,JsonConvert.SerializeObject(data, Formatting.Indented));
         }
         catch (FileNotFoundException)
@@ -221,12 +232,8 @@ public static class TwitchPlaySettings
         {
             DebugHelper.Log("TwitchPlayStrings: Loading Custom strings data from file: {0}", path);
             data = JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
-            bool result = data.ValidateStrings();
-            result &= SettingsVersion == data.SettingsVersion;
-            if (!result)
-            {
-                WriteDataToFile();
-            }
+            data.ValidateStrings();
+            WriteDataToFile();
         }
         catch (FileNotFoundException)
         {

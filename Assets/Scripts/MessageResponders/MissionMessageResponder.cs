@@ -67,7 +67,7 @@ public class MissionMessageResponder : MessageResponder
         Match binderMatch = Regex.Match(text, "^!binder (.+)", RegexOptions.IgnoreCase);
         if (binderMatch.Success)
         {
-            if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin))
+            if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
             {
                 _coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, binderMatch.Groups[1].Value, null, _ircConnection));
             }
@@ -80,7 +80,7 @@ public class MissionMessageResponder : MessageResponder
         Match freeplayMatch = Regex.Match(text, "^!freeplay (.+)", RegexOptions.IgnoreCase);
         if (freeplayMatch.Success)
         {
-            if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin))
+            if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
             {
                 _coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, freeplayMatch.Groups[1].Value, null, _ircConnection));
             }

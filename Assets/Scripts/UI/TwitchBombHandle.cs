@@ -143,7 +143,7 @@ public class TwitchBombHandle : MonoBehaviour
         else if (internalCommand.Equals("explode", StringComparison.InvariantCultureIgnoreCase) ||
                 internalCommand.Equals("detonate", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+                if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
                 {
                    return DelayBombExplosionCoroutine(notifier);
 
