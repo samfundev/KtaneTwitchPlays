@@ -602,7 +602,7 @@ public abstract class ComponentSolver : ICommandResponder
             {
                 _responded = true;
                 bool pinAllowed = inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) &&
-                                  (UserAccess.HasAccess(userNickName, AccessLevel.Mod) || modInfo.CameraPinningAlwaysAllowed);
+                                  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed);
 
                 cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
             }

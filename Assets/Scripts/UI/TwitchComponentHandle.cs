@@ -335,7 +335,7 @@ public class TwitchComponentHandle : MonoBehaviour
         {
             yield break;
         }
-        if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+        if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
         {
             yield return new WaitForSeconds(TwitchPlaySettings.data.ClaimCooldownTime);
         }
@@ -438,7 +438,7 @@ public class TwitchComponentHandle : MonoBehaviour
         }
         else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (((playerName != null) && (playerName == userNickName)) || (UserAccess.HasAccess(userNickName, AccessLevel.Mod)))
+            if (((playerName != null) && (playerName == userNickName)) || (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
             {
                 if (TakeInProgress != null)
                 {
@@ -453,7 +453,7 @@ public class TwitchComponentHandle : MonoBehaviour
         }
         else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
             {
                 SetBannerColor(solvedBackgroundColor);
                 playerName = null;
@@ -462,7 +462,7 @@ public class TwitchComponentHandle : MonoBehaviour
         }
         else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
             {
                 if (playerName != null && !_solved)
                 {
