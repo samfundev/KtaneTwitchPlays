@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 public class MiscellaneousMessageResponder : MessageResponder
@@ -139,66 +140,68 @@ public class MiscellaneousMessageResponder : MessageResponder
                 return;
             }
 
-            bool add = text.StartsWith("!add ", StringComparison.InvariantCultureIgnoreCase);
-            string[] split = text.Split(' ');
-            if (split.Length != 3)
+           
+            string[] split = text.ToLowerInvariant().Split(' ');
+            if (split.Length < 3)
             {
                 return;
             }
             AccessLevel level = AccessLevel.User;
-            switch (split[1].ToLowerInvariant())
+            foreach(string lvl in split.Skip(2))
             {
-                case "mod":
-                case "moderator":
-                    level = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.Mod : AccessLevel.User;
-                    break;
-                case "admin":
-                case "administrator":
-                    level = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.Admin : AccessLevel.User;
-                    break;
-                case "superadmin":
-                case "superuser":
-                case "super-user":
-                case "super-admin":
-                case "super-mod":
-                case "supermod":
-                    level = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.SuperUser : AccessLevel.User;
-                    break;
+                switch (lvl)
+                {
+                    case "mod":
+                    case "moderator":
+                        level |= UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.Mod : AccessLevel.User;
+                        break;
+                    case "admin":
+                    case "administrator":
+                        level |= UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.Admin : AccessLevel.User;
+                        break;
+                    case "superadmin":
+                    case "superuser":
+                    case "super-user":
+                    case "super-admin":
+                    case "super-mod":
+                    case "supermod":
+                        level |= UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.SuperUser : AccessLevel.User;
+                        break;
 
                 
-                case "defuser":
-                    level = AccessLevel.Defuser;
-                    break;
-                case "no-points":
-                case "no-score":
-                case "noscore":
-                case "nopoints":
-                    level = AccessLevel.NoPoints;
-                    break;
+                    case "defuser":
+                        level |= AccessLevel.Defuser;
+                        break;
+                    case "no-points":
+                    case "no-score":
+                    case "noscore":
+                    case "nopoints":
+                        level |= AccessLevel.NoPoints;
+                        break;
+                }
             }
             if (level == AccessLevel.User)
             {
                 return;
             }
 
-
-            if (add)
+            if (text.StartsWith("!add ", StringComparison.InvariantCultureIgnoreCase))
             {
-                UserAccess.AddUser(split[2], level);
-                UserAccess.WriteAccessList();
-                _ircConnection.SendMessage(TwitchPlaySettings.data.AddedUserPower, split[2], level);
+                UserAccess.AddUser(split[1], level);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.AddedUserPower, level, split[1]);
             }
             else
             {
-                if (level == AccessLevel.SuperUser && userNickName.Equals(split[2]))
+                if ((level & AccessLevel.SuperUser) == AccessLevel.SuperUser && userNickName.Equals(split[1]))
                 {
-                    _ircConnection.SendMessage(TwitchPlaySettings.data.CantRemoveSelf ,userNickName);
+                    _ircConnection.SendMessage(TwitchPlaySettings.data.CantRemoveSelf, userNickName);
                     return; //Prevent locking yourself out.
                 }
-                UserAccess.RemoveUser(split[2], level);
-                UserAccess.WriteAccessList();
-                _ircConnection.SendMessage(TwitchPlaySettings.data.RemoveUserPower, split[2], level);
+                UserAccess.RemoveUser(split[1], level);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.RemoveUserPower, level, split[1]);
+
             }
+            UserAccess.WriteAccessList();
         }
 
 
