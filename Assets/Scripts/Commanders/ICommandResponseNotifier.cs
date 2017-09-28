@@ -4,6 +4,7 @@
     EndNotComplete,
     EndComplete,
     EndError,
+    EndErrorSubtractScore,
     NoResponse
 }
 

@@ -63,15 +63,18 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
                 if (leaderboard != null)
                 {
                     leaderboard.AddStrike(userName, userColor, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? value : 1);
-                    if (!UserAccess.HasAccess(userName, AccessLevel.NoPoints))
-                    {
-                        leaderboard.AddScore(userName, userColor, (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? value : 1) * -6);
-                    }
                 }
                 break;
             case CommandResponse.NoResponse:
                 StopAllCoroutines();
                 StartCoroutine(DoBackgroundColorChange(ignoreColor));
+                break;
+
+            case CommandResponse.EndErrorSubtractScore:
+                if (leaderboard != null && !UserAccess.HasAccess(userName, AccessLevel.NoPoints))
+                {
+                    leaderboard.AddScore(userName, userColor, value);
+                }
                 break;
 
             default:
