@@ -50,6 +50,7 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["TwoBits"] = (bombCommander, bombComponent, ircConnection, canceller) => new TwoBitsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Asimir Modules
+        ModComponentSolverCreators["murder"] = (bombCommander, bombComponent, ircConnection, canceller) => new MurderComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent, ircConnection, canceller) => new ShapeShiftComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent, ircConnection, canceller) => new SeaShellsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThirdBaseComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -117,6 +118,7 @@ public static class ComponentSolverFactory
         //All of these modules are built into Twitch plays.
 
         //Asimir
+        ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "murder", moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
         ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "SeaShells", moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice." , moduleScore = 7};
         ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "shapeshift", moduleDisplayName = "Shape Shift", helpText = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
         ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 5, moduleID = "ThirdBase", moduleDisplayName = "Third Base", helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive." };
@@ -241,7 +243,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation {moduleScore = 12};
         ModComponentSolverInformation["MorseV2"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20, helpText = "Move with !{0} forward back. Turn with !{0} left right u-turn. The first letter only can be used instead. Submit with !{0} submit."};
-        ModComponentSolverInformation["murder"] = new ModuleInformation { moduleScore = 10, helpText = ""};
         ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9};
         ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move the numbers around with !{0} press 1 3 2 1 3 4 6 8."};
         ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = ""};
