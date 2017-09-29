@@ -68,6 +68,7 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, ircConnection, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent, ircConnection, canceller) => new ChordQualitiesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -159,6 +160,7 @@ public static class ComponentSolverFactory
 		//Misc
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
         ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9};
+        ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "LetterKeys", moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
         ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Microcontroller", moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
         ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
         ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "resistors", moduleDisplayName = "Resistors", helpText = "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.", moduleScore = 6};
@@ -231,7 +233,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move left/right with !{0} left and !{0} right. Sell with !{0} sell."};
         ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 15, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning.  Set just washing with !{0} set wash 40C.  Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa"};
         ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b."};
-        ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { moduleScore = 3};
         ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit your answer with !{0} B R W M G Y. (note, this module WILL try to input any answer you put into it.)"};
         ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right."};
         ModComponentSolverInformation["Logic"] = new ModuleInformation { moduleScore = 12, helpText = "Logic is answered with !{0} submit F T."};
