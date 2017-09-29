@@ -45,14 +45,14 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser))
             {
-                _ircConnection.SendMessage("{0} awarded {1} points by {2}", parts[1], parts[2], userNickName);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, parts[1], parts[2], userNickName);
                 Color usedColor = new Color(.31f, .31f, .31f);
                 leaderboard.AddScore(playerrewarded, usedColor, scorerewarded);
             }
             else
             {
                 scorerewarded = Mathf.Abs(scorerewarded);
-                _ircConnection.SendMessage("{0} lost {1} points", userNickName, parts[2]);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.TakeAwayPointsForTrying, userNickName, scorerewarded);
                 Color usedColor = new Color(.31f, .31f, .31f);
                 leaderboard.AddScore(playerrewarded, usedColor, -scorerewarded);
             }

@@ -50,6 +50,7 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["TwoBits"] = (bombCommander, bombComponent, ircConnection, canceller) => new TwoBitsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Asimir Modules
+        ModComponentSolverCreators["murder"] = (bombCommander, bombComponent, ircConnection, canceller) => new MurderComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent, ircConnection, canceller) => new ShapeShiftComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent, ircConnection, canceller) => new SeaShellsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThirdBaseComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -59,14 +60,17 @@ public static class ComponentSolverFactory
 
 		//Mock Army Modules
 		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent, ircConnection, canceller) => new EmojiMathComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new AnagramsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new AnagramsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
-		//Misc Modules
-		ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent, ircConnection, canceller) => new AlphabetComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        //Misc Modules
+        ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent, ircConnection, canceller) => new AlphabetComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, ircConnection, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, ircConnection, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent, ircConnection, canceller) => new ChordQualitiesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -76,21 +80,29 @@ public static class ComponentSolverFactory
             {
                 "moduleDisplayName": "Double-Oh",
                 "moduleID": "DoubleOhModule",
+                "moduleScore": 8,
+                "strikePenalty": -6,
+                "moduleScoreIsDynamic": false,
+                "helpTextOverride": false,
                 "helpText": "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.)  Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.",
+                "manualCodeOverride": false,
                 "manualCode": null,
+                "statusLightOverride": true,
                 "statusLightLeft": false,
                 "statusLightDown": false,
                 "chatRotation": 0.0,
+                "validCommandsOverride": false,
                 "validCommands": null,
                 "DoesTheRightThing": false,
-                "helpTextOverride": false,
-                "manualCodeOverride": false,
-                "statusLightOverride": true,
-                "validCommandsOverride": false
+                "CameraPinningAlwaysAllowed": false
             },
          * 
          * moduleDisplayName - The name of the module as displayed in Mod Selector or the chat box.
          * moduleID - The unique identifier of the module.
+         * 
+         * moduleScore - The number of points the module will award the defuser on solve
+         * strikePenalty - The number of points the module will take away from the defuser on a strike.
+         * moduleScoreIsDynamic - Only used in limited cases. If true, moduleScore will define the scoring rules that apply.
          * 
          * helpTextOverride - Specifies whether the help text should not be overwritten by what is present in the module.
          * helpText - Instructions on how to interact with the module in twitch plays.
@@ -111,12 +123,15 @@ public static class ComponentSolverFactory
          *      
          * DoesTheRightThing - Specifies whether the module properly yields return something BEFORE interacting with any buttons.
          * 
+         * CameraPinningAlwaysAllowed - Defines if a normal user is allowed to use view pin on this module.
+         * 
          * 
          */
 
         //All of these modules are built into Twitch plays.
 
         //Asimir
+        ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "murder", moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
         ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "SeaShells", moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice." , moduleScore = 7};
         ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "shapeshift", moduleDisplayName = "Shape Shift", helpText = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
         ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 5, moduleID = "ThirdBase", moduleDisplayName = "Third Base", helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive." };
@@ -153,10 +168,13 @@ public static class ComponentSolverFactory
 
 		//Mock Army
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Emoji Math", moduleDisplayName = "Emoji Math", helpText = "Submit an answer using !{0} submit -47.", moduleScore = 1 };
+        ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "AnagramsModule", moduleDisplayName = "Anagrams", statusLightLeft = true, helpText = "Submit your answer with !{0} submit poodle"};
+        ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WordScrambleModule", moduleDisplayName = "Word Scramble", helpText = "Submit your answer with !{0} submit poodle" };
 
-		//Misc
-		ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
+        //Misc
+        ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
         ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9};
+        ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "LetterKeys", moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
         ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Microcontroller", moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
         ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
         ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "resistors", moduleDisplayName = "Resistors", helpText = "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.", moduleScore = 6};
@@ -229,7 +247,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move left/right with !{0} left and !{0} right. Sell with !{0} sell."};
         ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 15, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning.  Set just washing with !{0} set wash 40C.  Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa"};
         ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b."};
-        ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { moduleScore = 3};
         ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit your answer with !{0} B R W M G Y. (note, this module WILL try to input any answer you put into it.)"};
         ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right."};
         ModComponentSolverInformation["Logic"] = new ModuleInformation { moduleScore = 12, helpText = "Logic is answered with !{0} submit F T."};
@@ -241,7 +258,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation {moduleScore = 12};
         ModComponentSolverInformation["MorseV2"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20, helpText = "Move with !{0} forward back. Turn with !{0} left right u-turn. The first letter only can be used instead. Submit with !{0} submit."};
-        ModComponentSolverInformation["murder"] = new ModuleInformation { moduleScore = 10, helpText = ""};
         ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9};
         ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move the numbers around with !{0} press 1 3 2 1 3 4 6 8."};
         ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = ""};

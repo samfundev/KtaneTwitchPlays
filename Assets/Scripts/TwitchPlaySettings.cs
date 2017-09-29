@@ -95,6 +95,9 @@ public class TwitchPlaySettingsData
     public string BombTimeStamp = "The Date/Time this bomb started is {0:F}";
     public string BombDetonateCommand = "panicBasket This bomb's gonna blow!";
 
+    public string GiveBonusPoints = "{0} awarded {1} points by {2}";
+    public string TakeAwayPointsForTrying = "@{0}, you just lost {1} points for trying to use a command reserved for Super users.";
+
     private bool ValidateString(ref string input, string def, int parameters)
     {
         MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
@@ -182,6 +185,9 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref BombTimeRemaining, data.BombTimeRemaining, 2);
         valid &= ValidateString(ref BombTimeStamp, data.BombTimeStamp, 1);
         valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
+
+        valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
+        valid &= ValidateString(ref TakeAwayPointsForTrying, data.TakeAwayPointsForTrying, 2);
 
         //Version breaking changes  - If string fromats changed, add them here, and return false, if version is less than the point at which that change happened.
         if (SettingsVersion < 1)
