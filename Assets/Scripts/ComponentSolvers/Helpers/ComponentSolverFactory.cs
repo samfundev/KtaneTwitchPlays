@@ -80,21 +80,29 @@ public static class ComponentSolverFactory
             {
                 "moduleDisplayName": "Double-Oh",
                 "moduleID": "DoubleOhModule",
+                "moduleScore": 8,
+                "strikePenalty": -6,
+                "moduleScoreIsDynamic": false,
+                "helpTextOverride": false,
                 "helpText": "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.)  Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.",
+                "manualCodeOverride": false,
                 "manualCode": null,
+                "statusLightOverride": true,
                 "statusLightLeft": false,
                 "statusLightDown": false,
                 "chatRotation": 0.0,
+                "validCommandsOverride": false,
                 "validCommands": null,
                 "DoesTheRightThing": false,
-                "helpTextOverride": false,
-                "manualCodeOverride": false,
-                "statusLightOverride": true,
-                "validCommandsOverride": false
+                "CameraPinningAlwaysAllowed": false
             },
          * 
          * moduleDisplayName - The name of the module as displayed in Mod Selector or the chat box.
          * moduleID - The unique identifier of the module.
+         * 
+         * moduleScore - The number of points the module will award the defuser on solve
+         * strikePenalty - The number of points the module will take away from the defuser on a strike.
+         * moduleScoreIsDynamic - Only used in limited cases. If true, moduleScore will define the scoring rules that apply.
          * 
          * helpTextOverride - Specifies whether the help text should not be overwritten by what is present in the module.
          * helpText - Instructions on how to interact with the module in twitch plays.
@@ -114,6 +122,8 @@ public static class ComponentSolverFactory
          *      If null, the command will always be passed on.
          *      
          * DoesTheRightThing - Specifies whether the module properly yields return something BEFORE interacting with any buttons.
+         * 
+         * CameraPinningAlwaysAllowed - Defines if a normal user is allowed to use view pin on this module.
          * 
          * 
          */
