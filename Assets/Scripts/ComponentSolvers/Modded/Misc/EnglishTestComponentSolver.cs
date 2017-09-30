@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -10,36 +8,37 @@ public class EnglishTestComponentSolver : ComponentSolver
 	public EnglishTestComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
+	    _englishTestCompoent = bombComponent.GetComponent(_componentType);
 	    selectButton = findChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
 	    submitButton = findChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
-        _englishTestCompoent = bombComponent.GetComponent(_componentType);
-	    _questionComponent = bombComponent.GetComponent("Question");
-	    Type questionType = _questionComponent.GetType();
-	    _answerField = questionType.GetField("answers", BindingFlags.NonPublic | BindingFlags.Instance);
-	    _bombComponent = bombComponent;
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-	    yield return null;
-        object _question = _currentQuestionField.GetValue(_englishTestCompoent);
-	    if (_question == null)
+	    string[] split = inputCommand.ToLowerInvariant().Split(' ');
+	    if (split.Length != 2 || (split[0] != "submit" && split[0] != "answer"))
 	    {
-	        yield return "sendtochaterror I am not ready for your answer yet.";
 	        yield break;
 	    }
-	    List<string> Answers = (List<string>)_answerField.GetValue(_question);
+	    
+	    int desiredIndex;
+	    if (!int.TryParse(split[1], out desiredIndex) || desiredIndex < 1)
+	    {
+	        yield break;
+	    }
+	    desiredIndex--;
+	    yield return null;
+	    int currentIndex = (int) _indexField.GetValue(_englishTestCompoent);
 
-	    int answerIndex = Answers.FindIndex(x => x.Equals(inputCommand, StringComparison.InvariantCultureIgnoreCase));
-	    if (answerIndex < 0)
-	    {;
-	        yield return "sendtochaterror The answer you gave is not one of the choices. The choices are " + string.Join(", ", Answers.ToArray());
-	        yield break;
-	    }
-	    while ((int)_indexField.GetValue(_englishTestCompoent) != answerIndex)
+        while ((int)_indexField.GetValue(_englishTestCompoent) != desiredIndex)
 	    {
 	        yield return DoInteractionClick(selectButton);
+	        if ((int) _indexField.GetValue(_englishTestCompoent) == currentIndex)
+	        {
+	            yield return string.Format("sendtochaterror I can't select answer #{0} because that answer doesn't exist.", desiredIndex + 1);
+	            yield break;
+	        }
 	    }
 	    yield return DoInteractionClick(submitButton);
 	}
@@ -60,19 +59,15 @@ public class EnglishTestComponentSolver : ComponentSolver
     static EnglishTestComponentSolver()
     {
         _componentType = ReflectionHelper.FindType("EnglishTestModule");
-        _currentQuestionField = _componentType.GetField("currentQuestion", BindingFlags.NonPublic | BindingFlags.Instance);
         _indexField = _componentType.GetField("selectedAnswerIndex", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
     private static Type _componentType = null;
-    private static FieldInfo _currentQuestionField = null;
     private static FieldInfo _indexField = null;
 
 
     private FieldInfo _answerField;
-    private Component _bombComponent;
     private Component _englishTestCompoent;
-    private Component _questionComponent;
     private KMSelectable selectButton;
     private KMSelectable submitButton;
 }
