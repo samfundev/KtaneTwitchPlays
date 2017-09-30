@@ -71,6 +71,7 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, ircConnection, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent, ircConnection, canceller) => new ChordQualitiesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent, ircConnection, canceller) => new EnglishTestComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -174,6 +175,7 @@ public static class ComponentSolverFactory
         //Misc
         ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
         ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9};
+        ModComponentSolverInformation["EnglishTest"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "EnglishTest", moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2.  (Answers are numbered from 1-4 starting from left to right.)"};
         ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "LetterKeys", moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
         ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Microcontroller", moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
         ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
