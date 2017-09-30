@@ -51,31 +51,32 @@ public static class ComponentSolverFactory
 
         //Asimir Modules
         ModComponentSolverCreators["murder"] = (bombCommander, bombComponent, ircConnection, canceller) => new MurderComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent, ircConnection, canceller) => new ShapeShiftComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent, ircConnection, canceller) => new SeaShellsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent, ircConnection, canceller) => new ShapeShiftComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThirdBaseComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Spare Wizard Modules
         ModComponentSolverCreators["spwiz3DMaze"] = (bombCommander, bombComponent, ircConnection, canceller) => new ThreeDMazeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
 		//Mock Army Modules
-		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent, ircConnection, canceller) => new EmojiMathComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new AnagramsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent, ircConnection, canceller) => new EmojiMathComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new AnagramsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Misc Modules
         ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent, ircConnection, canceller) => new AlphabetComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, ircConnection, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, ircConnection, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent, ircConnection, canceller) => new ChordQualitiesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+		ModComponentSolverCreators["ColorMorseModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new ColorMorseComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent, ircConnection, canceller) => new EnglishTestComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, ircConnection, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, ircConnection, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
-        //Module Information
-        //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
-        /*
+		//Module Information
+		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
+		/*
          * 
             Typical ModuleInformation json entry
             {
@@ -129,10 +130,10 @@ public static class ComponentSolverFactory
          * 
          */
 
-        //All of these modules are built into Twitch plays.
+		//All of these modules are built into Twitch plays.
 
-        //Asimir
-        ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "murder", moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
+		//Asimir
+		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "murder", moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
         ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "SeaShells", moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice." , moduleScore = 7};
         ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "shapeshift", moduleDisplayName = "Shape Shift", helpText = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
         ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 5, moduleID = "ThirdBase", moduleDisplayName = "Third Base", helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive." };
@@ -168,14 +169,15 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "spwiz3DMaze", moduleDisplayName = "3D Maze", helpText = "Move around the maze using !{0} move left forward right. Walk slowly around the maze using !{0} walk left forawrd right. Shorten forms of the directions are also acceptable. You can use \"uturn\" or \"u\" to turn around.", moduleScore = 20};
 
 		//Mock Army
-		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Emoji Math", moduleDisplayName = "Emoji Math", helpText = "Submit an answer using !{0} submit -47.", moduleScore = 1 };
         ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "AnagramsModule", moduleDisplayName = "Anagrams", statusLightLeft = true, helpText = "Submit your answer with !{0} submit poodle"};
+		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Emoji Math", moduleDisplayName = "Emoji Math", helpText = "Submit an answer using !{0} submit -47.", moduleScore = 1 };
         ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WordScrambleModule", moduleDisplayName = "Word Scramble", helpText = "Submit your answer with !{0} submit poodle" };
 
         //Misc
         ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
         ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9};
-        ModComponentSolverInformation["EnglishTest"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "EnglishTest", moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2.  (Answers are numbered from 1-4 starting from left to right.)"};
+		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ColorMorseModule", moduleDisplayName = "Color Morse", helpText = "Submit some morse code using !{0} transmit ....- --...", moduleScore = 5 };
+		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "EnglishTest", moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2.  (Answers are numbered from 1-4 starting from left to right.)"};
         ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "LetterKeys", moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
         ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Microcontroller", moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
         ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };

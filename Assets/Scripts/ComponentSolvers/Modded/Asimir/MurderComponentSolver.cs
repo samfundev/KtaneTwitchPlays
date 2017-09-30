@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -21,7 +18,7 @@ public class MurderComponentSolver : ComponentSolver
     IEnumerable CycleThroughCategory(int index, string search = null)
     {
         int length = (index == 2) ? 9 : 4;
-        float delay = (search != null) ? 0.05f : 1.0f;
+        //float delay = (search != null) ? 0.05f : 1.0f; // Doesn't seem to be used.
         KMSelectable button = _buttons[(index * 2) + 1];
         for (int i = 0; i < length; i++)
         {
