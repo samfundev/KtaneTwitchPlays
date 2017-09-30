@@ -61,7 +61,7 @@ public class ButtonComponentSolver : ComponentSolver
         string secondString = second.ToString();
 
         float timeRemaining = float.PositiveInfinity;
-        while (timeRemaining > 0.0f)
+        while (timeRemaining > 0.0f && _held)
         {
             if (Canceller.ShouldCancel)
             {
@@ -76,7 +76,6 @@ public class ButtonComponentSolver : ComponentSolver
             {
                 DoInteractionEnd(_button);
                 _held = false;
-                break;
             }
 
             yield return null;
