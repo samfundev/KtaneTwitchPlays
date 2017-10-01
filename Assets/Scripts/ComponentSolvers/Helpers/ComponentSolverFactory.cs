@@ -221,7 +221,6 @@ public static class ComponentSolverFactory
         //Modded Modules not built into Twitch Plays
         ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats.  Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)"};
         ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12, helpText = "Set the Letters with !{0} set W D J S.  (warning, this will unset ALL letters not specified.)  Submit your answer with !{0} submit." };
-        ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["spwizAstrology"] = new ModuleInformation { moduleScore = 7, helpText = "Press good on 3 with !{0} press good on 3.  Press bad on 2 with !{0} press bad on 2. No Omen is !{0} press no"};
         ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 12, helpText = "Scan the safe spots with !{0} scan A2 B3 E5. Mark the spots as water with !{0} miss A1 A3 B4.  Mark the spots as ships with !{0} hit E3 E4. Fill in the rows with !{0} row 3 4. Fill in columns with !{0} col B D"};
         ModComponentSolverInformation["BigCircle"] = new ModuleInformation {moduleScore = 6};
@@ -245,8 +244,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation {moduleScore = 15};
         ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 8, helpText = "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.)  Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false};
         ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { moduleScore = 5, helpText = ""};
-        ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { moduleScore = 5, helpText = ""};
-        ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["fastMath"] = new ModuleInformation { moduleScore = 12, helpText = "Start the timer with !{0} go. Submit an answer with !{0} submit 12."};
         ModComponentSolverInformation["Filibuster"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press the top button with !{0} press top (also t, 1, etc.). Submit with !{0} press submit."};
@@ -261,13 +258,11 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit your answer with !{0} B R W M G Y. (note, this module WILL try to input any answer you put into it.)"};
         ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right."};
         ModComponentSolverInformation["Logic"] = new ModuleInformation { moduleScore = 12, helpText = "Logic is answered with !{0} submit F T."};
-        ModComponentSolverInformation["MazeV2"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, helpText = "Clear the initial colour with !{0} dig blue. Clear the square on column 1 row 2 with !{0} dig 1 2. Flag the square on column 3 row 4 with !{0} flag 3 4. Separate multiple squares with a semicolon to interact with all of them."};
         ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset.  Move the black card +2 with !{0} move black 2.  Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false};
         ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash."};
         ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation {moduleScore = 12};
-        ModComponentSolverInformation["MorseV2"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20, helpText = "Move with !{0} forward back. Turn with !{0} left right u-turn. The first letter only can be used instead. Submit with !{0} submit."};
         ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9};
         ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move the numbers around with !{0} press 1 3 2 1 3 4 6 8."};
@@ -294,7 +289,6 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit your answer with !{0} submit l r u d a b."};
         ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc.  Consider the design with !{0} con.  Reject the design with !{0} reject."};
         ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 6, helpText = "Cut the correct wires with !{0} cut A2 B4 D3."};
-        ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { moduleScore = 5, helpText = ""};
         ModComponentSolverInformation["WordSearchModule"] = new ModuleInformation { moduleScore = 6, helpText = "Select the word starting at column B row 3, and ending at column C row 4, with !{0} select B3 C4."};
         ModComponentSolverInformation["XRayModule"] = new ModuleInformation {moduleScore = 12};
         ModComponentSolverInformation["YahtzeeModule"] = new ModuleInformation { moduleScore = 9, helpText = "Roll the dice with !{0} roll. Keep some dice with !{0} keep white,purple,blue,yellow,black. Roll the remaining dice until a 3 appears with !{0} roll until 3."};
