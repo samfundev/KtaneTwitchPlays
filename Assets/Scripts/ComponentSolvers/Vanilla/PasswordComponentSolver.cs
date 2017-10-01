@@ -31,7 +31,7 @@ public class PasswordComponentSolver : ComponentSolver
 
             if (commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
             {
-                int spinnerIndex = 0;
+                int spinnerIndex = 1;
                 if (commandParts.Length == 2 && !int.TryParse(commandParts[1], out spinnerIndex))
                 {
                     yield break;
