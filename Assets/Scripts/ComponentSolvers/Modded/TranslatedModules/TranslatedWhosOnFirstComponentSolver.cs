@@ -19,15 +19,17 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 	    List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToUpperInvariant()).ToList();
-	    inputCommand = inputCommand.ToUpperInvariant();
 
-	    int index = buttonLabels.IndexOf(inputCommand);
+	    if (inputCommand.Equals("literally blank", StringComparison.InvariantCultureIgnoreCase))
+	        inputCommand = "\u2003\u2003";
+
+	    int index = buttonLabels.IndexOf(inputCommand.ToUpperInvariant());
 	    if (index < 0)
 	    {
 	        yield return null;
-	        yield return buttonLabels.Any(label => label == " ") 
-                ? "sendtochaterror The module is not ready for input yet." 
-                : string.Format("sendtochaterror There isn't any label that contains \"{0}\".", inputCommand);
+	        yield return buttonLabels.Any(label => label == " ")
+	            ? "sendtochaterror The module is not ready for input yet."
+	            : string.Format("sendtochaterror There isn't any label that contains \"{0}\".", inputCommand.Replace("\u2003\u2003", "Literally Blank"));
 	        yield break;
 	    }
 	    yield return null;
