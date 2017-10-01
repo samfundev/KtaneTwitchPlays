@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
 using UnityEngine;
-using System.IO;
 
 public class TwitchPlaysService : MonoBehaviour
 {

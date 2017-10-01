@@ -5,7 +5,6 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
-using UnityEngine;
 using UnityEngine.Events;
 
 public class IRCConnection

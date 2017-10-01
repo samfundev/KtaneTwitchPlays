@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class TranslatedMorseCodeComponentSolver : ComponentSolver
