@@ -1,8 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class ComponentSolverFactory
@@ -176,12 +176,12 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "spwiz3DMaze", moduleDisplayName = "3D Maze", helpText = "Move around the maze using !{0} move left forward right. Walk slowly around the maze using !{0} walk left forawrd right. Shorten forms of the directions are also acceptable. You can use \"uturn\" or \"u\" to turn around.", moduleScore = 20};
 
 		//Mock Army
-        ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "AnagramsModule", moduleDisplayName = "Anagrams", statusLightLeft = true, helpText = "Submit your answer with !{0} submit poodle"};
+        ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "AnagramsModule", moduleDisplayName = "Anagrams", statusLightLeft = true, helpText = "Submit your answer with !{0} submit poodle", moduleScore = 1 };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Emoji Math", moduleDisplayName = "Emoji Math", helpText = "Submit an answer using !{0} submit -47.", moduleScore = 1 };
-        ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WordScrambleModule", moduleDisplayName = "Word Scramble", helpText = "Submit your answer with !{0} submit poodle" };
+        ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WordScrambleModule", moduleDisplayName = "Word Scramble", helpText = "Submit your answer with !{0} submit poodle", moduleScore = 1 };
 
         //Misc
-        ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 5 };
+        ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "alphabet", moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 1 };
         ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9};
 		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ColorMorseModule", moduleDisplayName = "Color Morse", helpText = "Submit some morse code using !{0} transmit ....- --...", moduleScore = 5 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "EnglishTest", moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2.  (Answers are numbered from 1-4 starting from left to right.)"};
@@ -236,7 +236,7 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y.  Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blackK. (note what letter is capitalized in each color.)"};
         ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 7, helpText = "Press the desired squares with !{0} red, !{0} green, !{0} blue, !{0} yellow, !{0} magenta, !{0} row, or !{0} col."};
         ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation {moduleScore = 9};
-        ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = ""};
+        ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3."};
         ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 6, helpText = "Press the top button with !{0} press top (also t, 1, etc.)."};
         ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR."}; // Connection Check
         ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 15, helpText = "Cycle the options with !{0} cycle.  Submit your answer with !{0} submit <3,2>.  Partial answers are acceptable. To do chinese numbers, its !{0} submit chinese 12."};

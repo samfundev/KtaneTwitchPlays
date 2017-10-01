@@ -384,7 +384,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   messagePrefab: {fileID: 114000014222916652, guid: eaefed77918294947a596df986fbea35,
     type: 2}
-  mainUIWindow: {fileID: 224000013303321254}
   canvasGroup: {fileID: 225000011905846548}
   highlightGroup: {fileID: 225000011816022592}
   idText: {fileID: 114000012370377976}
@@ -914,7 +913,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: c2a810211f65a714985f5e615e62fcfc, type: 3}
+    m_Font: {fileID: 12800000, guid: dc7fddbd6db093f458c47e100f7751eb, type: 3}
     m_FontSize: 0
     m_FontStyle: 0
     m_BestFit: 1
@@ -927,7 +926,7 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 087HK9 || *BOB FRK || [DVI-D RJ-45 PS/2 Stereo RCA] [DVI-D RJ-45 PS/2 Stereo
-    RCA][DVI-D RJ-45 PS/2 Stereo RCA] [DVI-D RJ-45 PS/2 Stereo RCA] || rooDuck
+    RCA] [DVI-D RJ-45 PS/2 Stereo RCA] [DVI-D RJ-45 PS/2 Stereo RCA] || rooDuck
 --- !u!114 &114000013886720476
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1134,9 +1133,9 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -50, y: 0}
-  m_SizeDelta: {x: -100, y: 0}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -47.5, y: 0}
+  m_SizeDelta: {x: -105, y: -10}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000010537442592
 RectTransform:
   m_ObjectHideFlags: 1
