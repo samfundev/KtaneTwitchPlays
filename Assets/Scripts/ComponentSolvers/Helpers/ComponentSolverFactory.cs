@@ -74,9 +74,16 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
-		//Module Information
-		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
-		/*
+        //Translated Modules
+        ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedButtonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+
+        //Module Information
+        //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
+        /*
          * 
             Typical ModuleInformation json entry
             {
@@ -130,10 +137,10 @@ public static class ComponentSolverFactory
          * 
          */
 
-		//All of these modules are built into Twitch plays.
+        //All of these modules are built into Twitch plays.
 
-		//Asimir
-		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "murder", moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
+        //Asimir
+        ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "murder", moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
         ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "SeaShells", moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice." , moduleScore = 7};
         ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "shapeshift", moduleDisplayName = "Shape Shift", helpText = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
         ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 5, moduleID = "ThirdBase", moduleDisplayName = "Third Base", helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive." };
@@ -203,10 +210,10 @@ public static class ComponentSolverFactory
 
 
         //Translated Modules - Pre-emptively added.
-        ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "BigButtonTranslated", moduleDisplayName = "Big Button Translated", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]", moduleScore = 4 };
-        ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "MorseCodeTranslated", moduleDisplayName = "Morse Code Translated", helpText = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]", moduleScore = 4 };
-        ModComponentSolverInformation["PasswordsTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "PasswordsTranslated", moduleDisplayName = "Password Translated", helpText = "!{0} cycle 3 [cycle through the letters in column 3] | !{0} world [try to submit a word]", moduleScore = 4 };
-        ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WhosOnFirstTranslated", moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", moduleScore = 4 };
+        ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "BigButtonTranslated", moduleDisplayName = "Big Button Translated", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)", moduleScore = 1 };
+        ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "MorseCodeTranslated", moduleDisplayName = "Morse Code Translated", helpText = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]", moduleScore = 3 };
+        ModComponentSolverInformation["PasswordsTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "PasswordsTranslated", moduleDisplayName = "Password Translated", helpText = "!{0} cycle 3 [cycle through the letters in column 3] | !{0} world [try to submit a word]", moduleScore = 2 };
+        ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WhosOnFirstTranslated", moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"", moduleScore = 4 };
         ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "VentGasTranslated", moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
 

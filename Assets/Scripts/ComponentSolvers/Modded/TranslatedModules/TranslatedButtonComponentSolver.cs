@@ -1,15 +1,15 @@
-using System;
-using System.Collections;
+﻿using System;
 using System.Reflection;
+using System.Collections;
 using UnityEngine;
 
-public class ButtonComponentSolver : ComponentSolver
+public class TranslatedButtonComponentSolver : ComponentSolver
 {
-    public ButtonComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
-        _button = (MonoBehaviour)_buttonField.GetValue(bombComponent);
-        modInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
+	public TranslatedButtonComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+		base(bombCommander, bombComponent, ircConnection, canceller)
+	{
+	    _button = (KMSelectable) _buttonField.GetValue(bombComponent.GetComponent(_componentType));
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -82,16 +82,15 @@ public class ButtonComponentSolver : ComponentSolver
         }
     }
 
-    static ButtonComponentSolver()
-    {
-        _buttonComponentType = ReflectionHelper.FindType("ButtonComponent");
-        _buttonField = _buttonComponentType.GetField("button", BindingFlags.Public | BindingFlags.Instance);
-    }
+    static TranslatedButtonComponentSolver()
+	{
+		_componentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
+		_buttonField = _componentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
+	}
 
-    private static Type _buttonComponentType = null;
-    private static FieldInfo _buttonField = null;
+	private static Type _componentType = null;
+	private static FieldInfo _buttonField = null;
 
-    private MonoBehaviour _button = null;
+    private KMSelectable _button = null;
     private bool _held = false;
-
 }
