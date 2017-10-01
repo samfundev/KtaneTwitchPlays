@@ -79,7 +79,7 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-
+        ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -210,10 +210,10 @@ public static class ComponentSolverFactory
 
 
         //Translated Modules - Pre-emptively added.
-        ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "BigButtonTranslated", moduleDisplayName = "Big Button Translated", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other buttons get held, and the answer retains original color.)", moduleScore = 4 };
+        ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "BigButtonTranslated", moduleDisplayName = "Big Button Translated", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)", moduleScore = 4 };
         ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "MorseCodeTranslated", moduleDisplayName = "Morse Code Translated", helpText = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]", moduleScore = 4 };
         ModComponentSolverInformation["PasswordsTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "PasswordsTranslated", moduleDisplayName = "Password Translated", helpText = "!{0} cycle 3 [cycle through the letters in column 3] | !{0} world [try to submit a word]", moduleScore = 4 };
-        ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WhosOnFirstTranslated", moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", moduleScore = 4 };
+        ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WhosOnFirstTranslated", moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"", moduleScore = 4 };
         ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "VentGasTranslated", moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
 
