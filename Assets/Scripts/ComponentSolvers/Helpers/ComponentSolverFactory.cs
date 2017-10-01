@@ -76,6 +76,7 @@ public static class ComponentSolverFactory
 
         //Translated Modules
         ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedButtonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
