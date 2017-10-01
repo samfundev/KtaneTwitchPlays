@@ -77,6 +77,7 @@ public static class ComponentSolverFactory
         //Translated Modules
         ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedButtonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
 
