@@ -364,6 +364,9 @@ public abstract class ComponentSolver : ICommandResponder
         //string componentType = ComponentHandle.componentType.ToString();
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 
+        if (modInfo == null)
+            return false;
+
         int moduleScore = modInfo.moduleScore;
         if (modInfo.moduleScoreIsDynamic)
         {

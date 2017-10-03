@@ -98,6 +98,8 @@ public class TwitchPlaySettingsData
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
     public string TakeAwayPointsForTrying = "@{0}, you just lost {1} points for trying to use a command reserved for Super users.";
 
+    public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
+
     private bool ValidateString(ref string input, string def, int parameters)
     {
         MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
@@ -188,6 +190,8 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
         valid &= ValidateString(ref TakeAwayPointsForTrying, data.TakeAwayPointsForTrying, 2);
+
+        valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
 
         //Version breaking changes  - If string fromats changed, add them here, and return false, if version is less than the point at which that change happened.
         if (SettingsVersion < 1)
