@@ -10,8 +10,31 @@ public class NumberPadComponentSolver : ComponentSolver
 	public NumberPadComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	    Component component = bombComponent.GetComponent("NumberPadModule");
+	    if (component == null)
+	    {
+	        throw new NotSupportedException("Could not get NumberPadModule Component from bombComponent");
+	    }
+
+        Type componentType = component.GetType();
+	    if (componentType == null)
+	    {
+	        throw new NotSupportedException("Could not get componentType from NumberPadModule Component");
+	    }
+
+        FieldInfo buttonsField = componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+        if(buttonsField == null)
+        {
+            throw new NotSupportedException("Could not find the KMSelectable fields in component Type");
+        }
+
+        _buttons = (KMSelectable[]) buttonsField.GetValue(component);
+        if(_buttons == null)
+        {
+            throw new NotSupportedException("Component had null KMSelectables.");
+        }
+
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	int? ButtonToIndex(string button)
@@ -65,15 +88,6 @@ public class NumberPadComponentSolver : ComponentSolver
 			}
 		}
 	}
-
-	static NumberPadComponentSolver()
-	{
-		_componentType = ReflectionHelper.FindType("NumberPadModule");
-		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
 
 	private KMSelectable[] _buttons = null;
 }
