@@ -106,7 +106,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                     txtSolver = TwitchPlaySettings.data.SolverAndSolo;
                     txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int)recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
                 }
-                _ircConnection.SendMessage(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore);
             }
             else
             {

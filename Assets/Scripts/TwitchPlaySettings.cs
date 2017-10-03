@@ -54,7 +54,7 @@ public class TwitchPlaySettingsData
 
     public string SolverAndSolo = "solver ";
     public string SoloRankQuery = ", and #{0} solo with a best time of {1}:{2:00.0}";
-    public string RankQuery = "SeemsGood {0} is #{1} {4}with {2} solves and {3} strikes{5}";
+    public string RankQuery = "SeemsGood {0} is #{1} {4}with {2} solves and {3} strikes and a total score of {6}{5}";
 
     public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
