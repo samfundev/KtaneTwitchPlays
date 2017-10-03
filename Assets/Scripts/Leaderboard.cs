@@ -166,6 +166,14 @@ public class Leaderboard
         CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out value) ? value + 1 : 1;
     }
 
+    public void AddStrike(string userName, int numStrikes)
+    {
+        LeaderboardEntry entry = GetEntry(userName);
+        entry.AddStrike(numStrikes);
+        entry.LastAction = DateTime.Now;
+        ResetSortFlag();
+    }
+
     public void AddStrike(string userName, Color userColor, int numStrikes)
     {
         LeaderboardEntry entry = GetEntry(userName, userColor);
