@@ -145,7 +145,7 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref SolverAndSolo, data.SolverAndSolo, 0);
         valid &= ValidateString(ref SoloRankQuery, data.SoloRankQuery, 3);
-        valid &= ValidateString(ref RankQuery, data.RankQuery, 6);
+        valid &= ValidateString(ref RankQuery, data.RankQuery, 7);
 
         valid &= ValidateString(ref DoYouEvenPlayBro, data.DoYouEvenPlayBro, 1);
 
