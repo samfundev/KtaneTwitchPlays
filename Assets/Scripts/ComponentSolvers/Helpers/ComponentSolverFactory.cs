@@ -561,11 +561,11 @@ public static class ComponentSolverFactory
         foreach (Component component in allComponents)
         {
             string fullName = component.GetType().FullName;
-            if (FullNamesLogged.Contains(fullName))
+            Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.FullName.Equals(fullName)).ToArray();
+            if (FullNamesLogged.Contains(fullName) || types.Length < 2)
                 continue;
 
             FullNamesLogged.Add(fullName);
-            Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.FullName.Equals(fullName)).ToArray();
             DebugHelper.Log("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
             foreach (Type type in types)
             {
