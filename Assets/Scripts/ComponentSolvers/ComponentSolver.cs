@@ -364,6 +364,9 @@ public abstract class ComponentSolver : ICommandResponder
         //string componentType = ComponentHandle.componentType.ToString();
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 
+        if (modInfo == null)
+            return false;
+
         int moduleScore = modInfo.moduleScore;
         if (modInfo.moduleScoreIsDynamic)
         {
@@ -461,6 +464,10 @@ public abstract class ComponentSolver : ICommandResponder
         {
             AwardStrikes(_currentUserNickName, _currentResponseNotifier, 1);
         }
+        else if (ComponentHandle.PlayerName != null)
+        {
+            AwardStrikes(ComponentHandle.PlayerName, null, 1);
+        }
 
         BombMessageResponder.moduleCameras.UpdateStrikes(true);
 
@@ -499,8 +506,17 @@ public abstract class ComponentSolver : ICommandResponder
                 break;
             }
         }
-        responseNotifier.ProcessResponse(CommandResponse.EndErrorSubtractScore, strikePenalty);
-        responseNotifier.ProcessResponse(CommandResponse.EndError, strikeCount);
+        if (responseNotifier != null)
+        {
+            responseNotifier.ProcessResponse(CommandResponse.EndErrorSubtractScore, strikePenalty);
+            responseNotifier.ProcessResponse(CommandResponse.EndError, strikeCount);
+        }
+        else
+        {
+            ComponentHandle.leaderboard.AddScore(userNickName, strikePenalty);
+            ComponentHandle.leaderboard.AddStrike(userNickName, strikeCount);
+        }
+
         StrikeMessage = string.Empty;
     }
     #endregion

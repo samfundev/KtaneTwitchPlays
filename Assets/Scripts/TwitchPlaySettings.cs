@@ -54,7 +54,7 @@ public class TwitchPlaySettingsData
 
     public string SolverAndSolo = "solver ";
     public string SoloRankQuery = ", and #{0} solo with a best time of {1}:{2:00.0}";
-    public string RankQuery = "SeemsGood {0} is #{1} {4}with {2} solves and {3} strikes{5}";
+    public string RankQuery = "SeemsGood {0} is #{1} {4}with {2} solves and {3} strikes and a total score of {6}{5}";
 
     public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
@@ -97,6 +97,8 @@ public class TwitchPlaySettingsData
 
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
     public string TakeAwayPointsForTrying = "@{0}, you just lost {1} points for trying to use a command reserved for Super users.";
+
+    public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
 
     private bool ValidateString(ref string input, string def, int parameters)
     {
@@ -145,7 +147,7 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref SolverAndSolo, data.SolverAndSolo, 0);
         valid &= ValidateString(ref SoloRankQuery, data.SoloRankQuery, 3);
-        valid &= ValidateString(ref RankQuery, data.RankQuery, 6);
+        valid &= ValidateString(ref RankQuery, data.RankQuery, 7);
 
         valid &= ValidateString(ref DoYouEvenPlayBro, data.DoYouEvenPlayBro, 1);
 
@@ -188,6 +190,8 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
         valid &= ValidateString(ref TakeAwayPointsForTrying, data.TakeAwayPointsForTrying, 2);
+
+        valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
 
         //Version breaking changes  - If string fromats changed, add them here, and return false, if version is less than the point at which that change happened.
         if (SettingsVersion < 1)

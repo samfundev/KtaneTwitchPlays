@@ -232,6 +232,37 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 				DebugHelper.Log("An unimplemented module was added to a bomb, solving module.");
 			}
+
+		    if (bombComponent != null)
+		    {
+		        if (bombComponent.GetComponent<KMBombModule>() != null)
+		        {
+		            KMBombModule module = bombComponent.GetComponent<KMBombModule>();
+		            module.OnPass += delegate
+		            {
+		                bombCommander.bombSolvedModules++;
+		                BombMessageResponder.moduleCameras.UpdateSolves();
+		                OnPass();
+		                BombMessageResponder.moduleCameras.DetachFromModule(bombComponent);
+		                return false;
+		            };
+
+		            module.OnStrike += delegate
+		            {
+		                BombMessageResponder.moduleCameras.UpdateStrikes();
+		                return false;
+		            };
+		        }
+		        else if (bombComponent.GetComponent<KMNeedyModule>() != null)
+		        {
+		            bombComponent.GetComponent<KMNeedyModule>().OnStrike += delegate
+		            {
+		                BombMessageResponder.moduleCameras.UpdateStrikes();
+		                return false;
+		            };
+		        }
+		    }
+
 		}
 
 		if (!_bombCommanders.Contains(bombCommander))
@@ -250,8 +281,15 @@ public class TwitchComponentHandle : MonoBehaviour
 		{
 			foreach (TwitchComponentHandle handle in _unsupportedComponents)
 			{
-				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.bombComponent, null);
-			}
+			    if (handle.bombComponent.GetComponent<KMNeedyModule>() != null)
+			    {
+			        handle.ircConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
+			    }
+                else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
+			    {
+			        handle.bombComponent.GetComponent<KMBombModule>().HandlePass();
+			    }
+            }
 
 			RemoveSolveBasedModules();
 
