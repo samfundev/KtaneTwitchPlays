@@ -81,6 +81,9 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
         ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
+        //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases.
+        ModComponentSolverCreators["RubiksCubeModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new RubiksCubeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
         /*
@@ -216,7 +219,8 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WhosOnFirstTranslated", moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"", moduleScore = 4 };
         ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "VentGasTranslated", moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
-
+        //Shim added in between Twitch Plays and module (This allows overriding a specific command.)
+        ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "RubiksCubeModule", moduleDisplayName = "Rubik's Cube", moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", validCommands = new[] { "^reset$", "^rotate$", "(?>[fbudlr]['2]?)(?> [fbudlr]['2]?)*$" } };
 
         //Modded Modules not built into Twitch Plays
         ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats.  Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)"};
