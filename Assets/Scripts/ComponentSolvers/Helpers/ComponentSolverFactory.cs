@@ -404,13 +404,32 @@ public static class ComponentSolverFactory
 
             case ComponentTypeEnum.Mod:
                 KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
-                return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, solvableModule.ModuleType, solvableModule.ModuleDisplayName);                
+                try
+                {
+                    return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
+                }
+                catch
+                {
+                    DebugHelper.Log("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
+                    LogAllComponentTypes(solvableModule);
+                    throw;
+                }
 
             case ComponentTypeEnum.NeedyMod:
                 KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
-                return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, needyModule.ModuleType, needyModule.ModuleDisplayName);
+                try
+                {
+                    return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, needyModule.ModuleType, needyModule.ModuleDisplayName);
+                }
+                catch
+                {
+                    DebugHelper.Log("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
+                    LogAllComponentTypes(needyModule);
+                    throw;
+                }
 
             default:
+                LogAllComponentTypes(bombComponent);
                 throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays'.", (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(bombComponent, null)));
         }
     }
@@ -530,6 +549,29 @@ public static class ComponentSolverFactory
         }
 
         return null;
+    }
+
+    private static readonly List<string> FullNamesLogged = new List<string>();
+    private static void LogAllComponentTypes(MonoBehaviour bombComponent)
+    {
+        //If and when there is a potential conflict between multiple assemblies, this will help to find these conflicts so that
+        //ReflectionHelper.FindType(fullName, assemblyName) can be used instead.
+
+        Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
+        foreach (Component component in allComponents)
+        {
+            string fullName = component.GetType().FullName;
+            Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.FullName.Equals(fullName)).ToArray();
+            if (FullNamesLogged.Contains(fullName) || types.Length < 2)
+                continue;
+
+            FullNamesLogged.Add(fullName);
+            DebugHelper.Log("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
+            foreach (Type type in types)
+            {
+                DebugHelper.Log("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
+            }
+        }
     }
 
     private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom, out float Rotation)
