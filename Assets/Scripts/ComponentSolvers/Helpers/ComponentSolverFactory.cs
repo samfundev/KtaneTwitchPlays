@@ -85,6 +85,8 @@ public static class ComponentSolverFactory
 
         //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases.
         ModComponentSolverCreatorShims["RubiksCubeModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new RubiksCubeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreatorShims["PianoKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new PianoKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreatorShims["CruelPianoKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new PianoKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
