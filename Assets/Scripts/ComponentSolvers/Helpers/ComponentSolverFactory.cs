@@ -9,6 +9,7 @@ public static class ComponentSolverFactory
 {
     private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller);
     private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
+    private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
     private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
 
     private enum ModCommandType
@@ -20,6 +21,7 @@ public static class ComponentSolverFactory
     static ComponentSolverFactory()
     {
         ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
+        ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
         ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
         //AT_Bash Modules
@@ -82,7 +84,7 @@ public static class ComponentSolverFactory
         ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases.
-        ModComponentSolverCreators["RubiksCubeModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new RubiksCubeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreatorShims["RubiksCubeModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new RubiksCubeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
         //Module Information
         //Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -220,7 +222,7 @@ public static class ComponentSolverFactory
         ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "VentGasTranslated", moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
         //Shim added in between Twitch Plays and module (This allows overriding a specific command.)
-        ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "RubiksCubeModule", moduleDisplayName = "Rubik's Cube", moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", validCommands = new[] { "^reset$", "^rotate$", "(?>[fbudlr]['2]?)(?> [fbudlr]['2]?)*$" } };
+        ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleID = "RubiksCubeModule", moduleDisplayName = "Rubik's Cube", moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", validCommands = new[] { "^reset$", "^rotate$", "(?>[fbudlr]['2]?)(?> [fbudlr]['2]?)*$" } };
 
         //Modded Modules not built into Twitch Plays
         ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats.  Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)"};
@@ -440,9 +442,10 @@ public static class ComponentSolverFactory
 
     private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, string moduleType, string displayName)
     {
+        bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
         if (ModComponentSolverCreators.ContainsKey(moduleType))
         {
-            ComponentSolver solver = ModComponentSolverCreators[moduleType](bombCommander, bombComponent, ircConnection, canceller);
+            ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
             return solver;
         }
 
@@ -456,7 +459,7 @@ public static class ComponentSolverFactory
 
         ModComponentSolverCreators[moduleType] = modComponentSolverCreator;
 
-        return modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller);
+        return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
     }
 
     private static ModComponentSolverDelegate GenerateModComponentSolverCreator(MonoBehaviour bombComponent, string moduleType, string displayName)

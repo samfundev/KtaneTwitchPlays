@@ -21,6 +21,7 @@ public class TwitchPlaySettingsData
     public int BombLiveMessageDelay = 0;
     public int ClaimCooldownTime = 30;
     public int ModuleClaimLimit = 2;
+    public bool EnableTwitchPlayShims = true;
 
     public string TwitchBotColorOnQuit = string.Empty;
 
