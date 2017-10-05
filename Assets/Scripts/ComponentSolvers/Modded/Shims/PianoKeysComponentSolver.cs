@@ -244,13 +244,39 @@ public class PianoKeysComponentSolver : ComponentSolver
         #endregion
     }
 
+    private readonly HashSet<KMSelectable> HeldSelectables = new HashSet<KMSelectable>();
     protected override IEnumerator RespondToCommandInternal(string command)
     {
-        KMSelectable[] NotesToPress = (KMSelectable[])_ProcessCommandMethod.Invoke(_component, new object[] {command});
-        if (NotesToPress == null)
+        object processCommand = _ProcessCommandMethod.Invoke(_component, new object[] { command });
+        if (processCommand == null)
+            yield break;
+        if (processCommand is IEnumerator)
         {
+            yield return null;
+            IEnumerator result = (IEnumerator) processCommand;
+            while (result.MoveNext())
+            {
+                object currentObject = result.Current;
+                if (currentObject is KMSelectable)
+                {
+                    KMSelectable selectable = (KMSelectable)currentObject;
+                    if (HeldSelectables.Contains(selectable))
+                    {
+                        DoInteractionEnd(selectable);
+                        HeldSelectables.Remove(selectable);
+                    }
+                    else
+                    {
+                        DoInteractionStart(selectable);
+                        HeldSelectables.Add(selectable);
+                    }
+                }
+                yield return currentObject;
+            }
             yield break;
         }
+
+        KMSelectable[] NotesToPress = (KMSelectable[]) processCommand;
 
 	    command = command.Substring(5);
 
