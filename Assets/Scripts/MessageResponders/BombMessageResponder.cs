@@ -444,6 +444,7 @@ public class BombMessageResponder : MessageResponder
         _bombHandle.coroutineQueue = _coroutineQueue;
         _bombHandle.coroutineCanceller = _coroutineCanceller;
         _bombHandles.Add(_bombHandle);
+        _bombCommanders[_bombCommanders.Count - 1].twitchBombHandle = _bombHandle;
     }
 
     private bool CreateComponentHandlesForBomb(MonoBehaviour bomb)

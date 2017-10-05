@@ -238,6 +238,12 @@ public abstract class ComponentSolver : ICommandResponder
 				if (!needQuaternionReset)
 				{
 					BombMessageResponder.moduleCameras.Hide();
+				    BombMessageResponder.moduleCameras.HideHUD();
+                    IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
+				    while (hideUI.MoveNext())
+				    {
+				        yield return hideUI.Current;
+				    }
 				}
 
                 Quaternion localQuaternion = (Quaternion)currentValue;
@@ -256,7 +262,13 @@ public abstract class ComponentSolver : ICommandResponder
         {
             BombCommander.RotateByLocalQuaternion(Quaternion.identity);
 			BombMessageResponder.moduleCameras.Show();
-		}
+            BombMessageResponder.moduleCameras.ShowHUD();
+            IEnumerator showUI = BombCommander.twitchBombHandle.ShowMainUIWindow();
+            while (showUI.MoveNext())
+            {
+                yield return showUI.Current;
+            }
+        }
 
         if (_musicPlayer != null)
         {
