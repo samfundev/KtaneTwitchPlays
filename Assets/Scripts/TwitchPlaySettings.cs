@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
 using System.IO;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using UnityEngine;
 
 public class TwitchPlaySettingsData
 {
@@ -73,7 +73,7 @@ public class TwitchPlaySettingsData
     public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
     public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
     public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
-    public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}.  If you think they have abandoned it, you may type !{0} take to free it up.";
+    public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
 
     public string OwnedModule = "({0} - \"{1}\")";
     public string OwnedModuleList = "@{0}, your claimed modules are {1}";
@@ -82,7 +82,7 @@ public class TwitchPlaySettingsData
     public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
     public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
     public string FreePlayDisabled = "Sorry @{0}, Only authorized user may access the freeplay briefcase";
-    public string RetryInactive = "Sorry, retry is inactive.  Returning to hallway instead.";
+    public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
 
     public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
     public string CantRemoveSelf = "Sorry @{0}, you Can't remove yourself as Super User.";
@@ -107,11 +107,11 @@ public class TwitchPlaySettingsData
                 ? matches.Cast<Match>().Max(m => int.Parse(m.Groups[1].Value)) + 1
                 : 0;
 
-        DebugHelper.Log("TwitchPlaySettings.ValidateString( {0}, {1}, {2} ) = {3}", input, def, parameters, count == parameters);
-
         if (count != parameters)
         {
-            input = def;
+			DebugHelper.Log("TwitchPlaySettings.ValidateString( {0}, {1}, {2} ) = {3}", input, def, parameters, count == parameters);
+
+			input = def;
             return false;
         }
         return true;

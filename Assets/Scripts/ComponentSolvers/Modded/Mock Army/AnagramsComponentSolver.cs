@@ -26,6 +26,9 @@ public class AnagramsComponentSolver : ComponentSolver
 	                yield break;
                 buttons.Add(_buttons[index]);
 	        }
+
+			if (buttons.Count != 6) yield break;
+
 	        yield return null;
 	        yield return DoInteractionClick(_buttons[3]);
 	        foreach (KMSelectable b in buttons)
