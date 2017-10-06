@@ -14,7 +14,7 @@ public class MemoryComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        string[] commandParts = inputCommand.Split(' ');
+        string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
         if (commandParts.Length != 2)
         {
@@ -29,18 +29,14 @@ public class MemoryComponentSolver : ComponentSolver
 
         if (buttonNumber >= 1 && buttonNumber <= 4)
         {
-            if (commandParts[0].Equals("position", StringComparison.InvariantCultureIgnoreCase) ||
-                commandParts[0].Equals("pos", StringComparison.InvariantCultureIgnoreCase) ||
-                commandParts[0].Equals("p", StringComparison.InvariantCultureIgnoreCase))
+            if (commandParts[0].EqualsAny("position", "pos", "p"))
             {
                 yield return "position";
 
                 MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(buttonNumber - 1);
                 yield return DoInteractionClick(button);
             }
-            else if (commandParts[0].Equals("label", StringComparison.InvariantCultureIgnoreCase) ||
-                    commandParts[0].Equals("lab", StringComparison.InvariantCultureIgnoreCase) ||
-                    commandParts[0].Equals("l", StringComparison.InvariantCultureIgnoreCase))
+            else if (commandParts[0].EqualsAny("label", "lab", "l"))
             {
                 foreach(object buttonObject in _buttons)
                 {

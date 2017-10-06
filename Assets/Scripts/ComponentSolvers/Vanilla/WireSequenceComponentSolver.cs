@@ -18,17 +18,16 @@ public class WireSequenceComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
+        inputCommand = inputCommand.ToLowerInvariant();
         List<MonoBehaviour> buttons = new List<MonoBehaviour>();
         List<string> strikemessages = new List<string>();
 
-        if (inputCommand.Equals("up", StringComparison.InvariantCultureIgnoreCase) ||
-            inputCommand.Equals("u", StringComparison.InvariantCultureIgnoreCase))
+        if (inputCommand.EqualsAny("up", "u"))
         {
             yield return "up";
             yield return DoInteractionClick(_upButton);
         }
-        else if (inputCommand.Equals("down", StringComparison.InvariantCultureIgnoreCase) ||
-                inputCommand.Equals("d", StringComparison.InvariantCultureIgnoreCase))
+        else if (inputCommand.EqualsAny("down", "d"))
         {
             yield return "down";
             yield return DoInteractionClick(_downButton, "attempting to move down.");
@@ -44,16 +43,14 @@ public class WireSequenceComponentSolver : ComponentSolver
 
             foreach (string wireIndexString in sequence.Skip(1))
             {
-                if (wireIndexString.Equals("up", StringComparison.InvariantCultureIgnoreCase) ||
-                    wireIndexString.Equals("u", StringComparison.InvariantCultureIgnoreCase))
+                if (wireIndexString.EqualsAny("up", "u"))
                 {
                     buttons.Add(_upButton);
                     strikemessages.Add("strikemessage This will never cause a strike Kappa");
                     break;
                 }
 
-                if (wireIndexString.Equals("down", StringComparison.InvariantCultureIgnoreCase) ||
-                    wireIndexString.Equals("d", StringComparison.InvariantCultureIgnoreCase))
+                if (wireIndexString.EqualsAny("down", "d"))
                 {
                     buttons.Add(_downButton);
                     strikemessages.Add("strikemessage attempting to move down.");
