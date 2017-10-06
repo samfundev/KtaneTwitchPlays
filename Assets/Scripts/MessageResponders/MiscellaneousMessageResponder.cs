@@ -54,7 +54,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                 scorerewarded = Mathf.Abs(scorerewarded);
                 _ircConnection.SendMessage(TwitchPlaySettings.data.TakeAwayPointsForTrying, userNickName, scorerewarded);
                 Color usedColor = new Color(.31f, .31f, .31f);
-                leaderboard.AddScore(playerrewarded, usedColor, -scorerewarded);
+                leaderboard.AddScore(userNickName, usedColor, -scorerewarded);
             }
             return;
         }
