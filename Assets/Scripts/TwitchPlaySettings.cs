@@ -101,16 +101,16 @@ public class TwitchPlaySettingsData
 
     public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
 
-    private bool ValidateString(ref string input, string def, int parameters)
+    private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
     {
         MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
         int count = matches.Count > 0 
                 ? matches.Cast<Match>().Max(m => int.Parse(m.Groups[1].Value)) + 1
                 : 0;
 
-        if (count != parameters)
+        if (count != parameters || forceUpdate)
         {
-			DebugHelper.Log("TwitchPlaySettings.ValidateString( {0}, {1}, {2} ) = {3}", input, def, parameters, count == parameters);
+			DebugHelper.Log("TwitchPlaySettings.ValidateString( {0}, {1}, {2} ) - {3}", input, def, parameters, forceUpdate ? "Updated because of version breaking changes" : "Updated because parameters didn't match expected count.");
 
 			input = def;
             return false;
@@ -178,8 +178,8 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref FreePlayDisabled, data.FreePlayDisabled, 1);
         valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
 
-        valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2);
-        valid &= ValidateString(ref CantRemoveSelf, data.CantRemoveSelf, 1);
+        valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2, SettingsVersion < 1);
+        valid &= ValidateString(ref CantRemoveSelf, data.CantRemoveSelf, 1, SettingsVersion < 1);
         valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2);
 
         valid &= ValidateString(ref BombHelp, data.BombHelp, 0);
@@ -193,14 +193,6 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref TakeAwayPointsForTrying, data.TakeAwayPointsForTrying, 2);
 
         valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
-
-        //Version breaking changes  - If string fromats changed, add them here, and return false, if version is less than the point at which that change happened.
-        if (SettingsVersion < 1)
-        {
-            AddedUserPower = data.AddedUserPower;
-            RemoveUserPower = data.RemoveUserPower;
-            return false;
-        }
 
         return valid;
     }
