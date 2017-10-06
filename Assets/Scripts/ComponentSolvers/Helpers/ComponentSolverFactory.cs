@@ -9,6 +9,7 @@ public static class ComponentSolverFactory
 {
 	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
+    private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
 
 	private enum ModCommandType
@@ -20,6 +21,7 @@ public static class ComponentSolverFactory
 	static ComponentSolverFactory()
 	{
 		ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
+        ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
 		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
 		//AT_Bash Modules
@@ -68,6 +70,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent, ircConnection, canceller) => new ChordQualitiesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["ColorMorseModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new ColorMorseComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent, ircConnection, canceller) => new EnglishTestComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+        ModComponentSolverCreators["ESColorGenerator"] = (bombCommander, bombComponent, ircConnection, canceller) => new ColorGeneratorComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, ircConnection, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, ircConnection, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, ircConnection, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -80,6 +83,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+
+        //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases.
+        ModComponentSolverCreatorShims["RubiksCubeModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new RubiksCubeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -185,6 +191,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ChordQualities", moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9 };
 		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "ColorMorseModule", moduleDisplayName = "Color Morse", helpText = "Submit some morse code using !{0} transmit ....- --...", moduleScore = 5 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "EnglishTest", moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)" };
+        ModComponentSolverInformation["ESColorGenerator"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleID = "ESColorGenerator", moduleDisplayName = "Color Generator", moduleScore = 6, helpText = "Submit your answer with !{0} 76 122 28. | Colors are odered Red, Green, Blue"};
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "LetterKeys", moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "Microcontroller", moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
@@ -216,6 +223,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "WhosOnFirstTranslated", moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"", moduleScore = 4 };
 		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "VentGasTranslated", moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
+        //Shim added in between Twitch Plays and module (This allows overriding a specific command.)
+        ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleID = "RubiksCubeModule", moduleDisplayName = "Rubik's Cube", moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", validCommands = new[] { "^reset$", "^rotate$", "(?>[fbudlr]['2]?)(?> [fbudlr]['2]?)*$" } };
 
 		//Modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)" };
@@ -437,9 +446,10 @@ public static class ComponentSolverFactory
 
 	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, string moduleType, string displayName)
 	{
+        bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
 		if (ModComponentSolverCreators.ContainsKey(moduleType))
 		{
-			ComponentSolver solver = ModComponentSolverCreators[moduleType](bombCommander, bombComponent, ircConnection, canceller);
+            ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
 			return solver;
 		}
 
@@ -453,7 +463,7 @@ public static class ComponentSolverFactory
 
 		ModComponentSolverCreators[moduleType] = modComponentSolverCreator;
 
-		return modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller);
+        return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
 	}
 
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(MonoBehaviour bombComponent, string moduleType, string displayName)

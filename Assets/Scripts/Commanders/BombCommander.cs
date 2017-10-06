@@ -639,6 +639,7 @@ public class BombCommander : ICommandResponder
     private static MonoBehaviour _inputManager = null;
     #endregion
 
+    public TwitchBombHandle twitchBombHandle = null;
     public MonoBehaviour timerComponent = null;
     public int bombSolvableModules;
     public int bombSolvedModules;

@@ -649,6 +649,7 @@ MonoBehaviour:
   - {fileID: 20000013495690836}
   - {fileID: 20000012462343982}
   - {fileID: 20000011972459250}
+  bombStatus: {fileID: 224000013468750172}
   firstBackupCamera: 3
 --- !u!114 &114000010622526408
 MonoBehaviour:

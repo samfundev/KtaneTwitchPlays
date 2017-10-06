@@ -133,6 +133,7 @@ public class ModuleCameras : MonoBehaviour
     public Text totalModulesPrefab = null;
     public Text confidencePrefab = null;
     public Camera[] cameraPrefabs = null;
+    public RectTransform bombStatus = null;
     public int firstBackupCamera = 3;
     #endregion
 
@@ -166,6 +167,7 @@ public class ModuleCameras : MonoBehaviour
 
     #region Private Static Readonlys
     private const string LogPrefix = "[ModuleCameras] ";
+    private static readonly Vector3 HUDScale = new Vector3(0.7f, Mathf.Round(1), Mathf.Round(1));
     #endregion
 
     #region Unity Lifecycle
@@ -265,6 +267,16 @@ public class ModuleCameras : MonoBehaviour
     public void Show()
     {
         SetCameraVisibility(true);
+    }
+
+    public void HideHUD()
+    {
+        bombStatus.localScale = Vector3.zero;
+    }
+
+    public void ShowHUD()
+    {
+        bombStatus.localScale = HUDScale;
     }
 
     public void UpdateStrikes(bool delay = false)
