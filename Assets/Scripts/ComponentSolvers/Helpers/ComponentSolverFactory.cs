@@ -238,7 +238,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["booleanVennModule"] = new ModuleInformation { moduleScore = 12, helpText = "Select parts of the diagram with !{0} a bc abc. Options are A, AB, ABC, AC, B, BC, C, O (none)." };
 		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 10, helpText = "Press the button by name with !{0} press \"this\". Press the button in column 2 row 3 with !{0} press 2 3. Press the right submit button with !{0} submit right." };
 		ModComponentSolverInformation["CaesarCipherModule"] = new ModuleInformation { moduleScore = 3, helpText = "Press the correct cipher text with !{0} press K B Q I S." };
-		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the items with !{0} items. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24." };
+		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the items with !{0} items. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24.", DoesTheRightThing = true };
 		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { moduleScore = 9, helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2." };
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash" };
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blackK. (note what letter is capitalized in each color.)" };
@@ -266,10 +266,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit your answer with !{0} B R W M G Y. (note, this module WILL try to input any answer you put into it.)" };
 		ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right." };
 		ModComponentSolverInformation["Logic"] = new ModuleInformation { moduleScore = 12, helpText = "Logic is answered with !{0} submit F T." };
-		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20 };
+		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
-		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash." };
-		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "" };
+		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
+		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
 		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20, helpText = "Move with !{0} forward back. Turn with !{0} left right u-turn. The first letter only can be used instead. Submit with !{0} submit." };
 		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9, helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl." };
