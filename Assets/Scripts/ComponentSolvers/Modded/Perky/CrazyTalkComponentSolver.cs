@@ -19,7 +19,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
 
         var commands = inputCommand.ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
-        if (commands.Length != 3 || !commands[0].EqualsAny("flip", "switch") ||
+        if (commands.Length != 3 || !commands[0].EqualsAny("toggle", "flip", "switch") ||
             !int.TryParse(commands[1], out downtime) || !int.TryParse(commands[2], out uptime))
             yield break;
 
