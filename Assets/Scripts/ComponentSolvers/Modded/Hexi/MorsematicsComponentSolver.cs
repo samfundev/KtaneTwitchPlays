@@ -55,9 +55,7 @@ public class MorsematicsComponentSolver : ComponentSolver
     private static Type _componentType = null;
     private static FieldInfo _switchField = null;
     private static FieldInfo _transmitField = null;
-   
-
-
+	
     private bool _lightsOn = true;
     private KMSelectable _switch = null;
     private KMSelectable _transmit = null;

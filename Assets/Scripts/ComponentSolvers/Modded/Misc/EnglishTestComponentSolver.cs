@@ -17,7 +17,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 	    string[] split = inputCommand.ToLowerInvariant().Split(' ');
-	    if (split.Length != 2 || (split[0] != "submit" && split[0] != "answer"))
+	    if (split.Length != 2 || !split[0].EqualsAny("submit", "answer"))
 	    {
 	        yield break;
 	    }
@@ -64,8 +64,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 
     private static Type _componentType = null;
     private static FieldInfo _indexField = null;
-
-
+	
     private FieldInfo _answerField;
     private Component _englishTestCompoent;
     private KMSelectable selectButton;

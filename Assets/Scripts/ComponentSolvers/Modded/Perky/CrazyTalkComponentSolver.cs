@@ -17,10 +17,10 @@ public class CrazyTalkComponentSolver : ComponentSolver
         int downtime;
         int uptime;
 
-        var commands = inputCommand.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+        var commands = inputCommand.ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
-        if (commands.Length != 3 || !commands[0].Equals("toggle", StringComparison.InvariantCultureIgnoreCase) ||
-            !int.TryParse(commands[1],out downtime) || !int.TryParse(commands[2],out uptime))
+        if (commands.Length != 3 || !commands[0].EqualsAny("flip", "switch") ||
+            !int.TryParse(commands[1], out downtime) || !int.TryParse(commands[2], out uptime))
             yield break;
 
         if (downtime < 0 || downtime > 9 || uptime < 0 || uptime > 9)

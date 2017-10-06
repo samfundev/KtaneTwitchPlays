@@ -40,7 +40,7 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 	{
 		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length > 1 && (commands[0].Equals("move") || commands[0].Equals("walk")))
+		if (commands.Length > 1 && commands[0].EqualsAny("move", "m", "walk", "w"))
 		{
 			var moves = commands.Where((_, i) => i > 0).Select(dir => ShortenDirection(dir));
 
@@ -48,11 +48,13 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 			{
 				yield return null;
 
-			    if (moves.Count() > (commands[0].Equals("move") ? 64 : 16))
+				bool moving = commands[0].EqualsAny("move", "m");
+				if (moves.Count() > (moving ? 64 : 16))
 			    {
 			        yield return "elevator music";
 			    }
-				float moveDelay = commands[0].Equals("move") ? 0.1f : 0.4f;
+
+				float moveDelay = moving ? 0.1f : 0.4f;
 				foreach (string move in moves)
 				{
 					KMSelectable button = null;
@@ -70,6 +72,7 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 						case "u":
 							button = _buttonRight;
 							DoInteractionClick(button);
+							yield return new WaitForSeconds(moveDelay);
 							break;
 					}
 

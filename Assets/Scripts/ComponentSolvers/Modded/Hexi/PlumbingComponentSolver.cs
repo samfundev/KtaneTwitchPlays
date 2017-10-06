@@ -25,15 +25,16 @@ public class PlumbingComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if (inputCommand.Equals("submit",StringComparison.InvariantCultureIgnoreCase) ||
-            inputCommand.Equals("check", StringComparison.InvariantCultureIgnoreCase))
+		inputCommand = inputCommand.ToLowerInvariant();
+
+        if (inputCommand.EqualsAny("submit", "check"))
         {
             yield return "Checking for leaks Kappa";
             yield return DoInteractionClick(_check);
             yield break;
         }
 
-        if (!inputCommand.StartsWith("rotate ", StringComparison.InvariantCultureIgnoreCase))
+        if (!inputCommand.StartsWith("rotate "))
         {
             yield break;
         }

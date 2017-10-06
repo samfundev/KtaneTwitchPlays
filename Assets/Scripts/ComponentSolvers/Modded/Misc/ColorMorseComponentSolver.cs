@@ -18,7 +18,7 @@ public class ColorMorseComponentSolver : ComponentSolver
 	{
 		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length >= 2 && ValidSubmitWords.Any(x => x.Equals(commands[0])))
+		if (commands.Length >= 2 && commands[0].EqualsAny("transmit", "submit", "trans", "tx", "xmit"))
 		{
 			List<int> buttonIndexes = new List<int>();
 			foreach (string morse in commands.Skip(1))
@@ -57,9 +57,7 @@ public class ColorMorseComponentSolver : ComponentSolver
 		_componentType = ReflectionHelper.FindType("FlashingMathModule");
 		_buttonsField = _componentType.GetField("Buttons");
 	}
-
-    private static readonly string[] ValidSubmitWords =  { "transmit", "submit", "trans", "tx", "xmit" };
-
+	
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsField = null;
 

@@ -18,10 +18,9 @@ public class NeedyQuizComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if (inputCommand.Equals("y", StringComparison.InvariantCultureIgnoreCase) ||
-            inputCommand.Equals("yes", StringComparison.InvariantCultureIgnoreCase) ||
-            inputCommand.Equals("press y", StringComparison.InvariantCultureIgnoreCase) ||
-            inputCommand.Equals("press yes", StringComparison.InvariantCultureIgnoreCase))
+		inputCommand = inputCommand.ToLowerInvariant();
+
+        if (inputCommand.EqualsAny("y", "yes", "press y", "press yes"))
         {
             yield return "yes";
 
@@ -40,10 +39,7 @@ public class NeedyQuizComponentSolver : ComponentSolver
             }
             yield return DoInteractionClick(_yesButton);
         }
-        else if (inputCommand.Equals("n", StringComparison.InvariantCultureIgnoreCase) ||
-                 inputCommand.Equals("no", StringComparison.InvariantCultureIgnoreCase) ||
-                 inputCommand.Equals("press n", StringComparison.InvariantCultureIgnoreCase) ||
-                 inputCommand.Equals("press no", StringComparison.InvariantCultureIgnoreCase))
+        else if (inputCommand.EqualsAny("n", "no", "press n", "press no"))
         {
             yield return "no";
             yield return DoInteractionClick(_noButton);

@@ -66,7 +66,7 @@ public class ResistorsComponentSolver : ComponentSolver
 				}
 			}
 		}
-		else if (commands.Length == 1 && (commands[0].Equals("check") || commands[0].Equals("submit")))
+		else if (commands.Length == 1 && commands[0].EqualsAny("check", "submit"))
 		{
 			yield return null;
 

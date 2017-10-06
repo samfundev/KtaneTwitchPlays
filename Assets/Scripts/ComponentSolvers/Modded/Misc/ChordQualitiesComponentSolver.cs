@@ -21,7 +21,7 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 	{
 		var commands = inputCommand.ToLowerInvariant().Replace('♯', '#').Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length == 5 && (commands[0].Equals("submit") || commands[0].Equals("play")))
+		if (commands.Length == 5 && commands[0].EqualsAny("submit", "play", "press"))
 		{
 			string[] notes = commands.Where((_, i) => i > 0).ToArray();
 			if (notes.All(note => Array.IndexOf(noteIndexes, note) > -1))

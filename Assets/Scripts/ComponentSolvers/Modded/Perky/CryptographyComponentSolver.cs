@@ -16,7 +16,7 @@ public class CryptographyComponentSolver : ComponentSolver
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
         var split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        if (split.Length < 2 || split[0] != "press")
+        if (split.Length < 2 || split[0].EqualsAny("press", "submit"))
             yield break;
 
         string keytext = _buttons.Aggregate(string.Empty, (current, button) => current + ((KMSelectable) button).GetComponentInChildren<TextMesh>().text.ToLowerInvariant());

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using System.Reflection;
+using System.Collections;
 using UnityEngine;
 
 public class ForeignExchangeRatesComponentSolver : ComponentSolver
@@ -9,7 +9,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
     public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _buttons = (MonoBehaviour[])_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
+        _buttons = (MonoBehaviour[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
@@ -23,25 +23,33 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
         if (_buttons.Length < 9)
             yield break;
 
-        foreach(var cmd in split.Skip(1))
-            switch (cmd.Replace("center", "middle").Replace("centre", "middle"))
-            {
-                case "tl": case "lt": case "topleft": case "lefttop": case "1": button = _buttons[0]; break;
-                case "tm": case "tc": case "mt": case "ct": case "topmiddle": case "middletop": case "2": button = _buttons[1]; ; break;
-                case "tr": case "rt": case "topright": case "righttop": case "3": button = _buttons[2]; break;
+		var cmds = split.Skip(1).Select(cmd =>
+		{
+			return cmd.Replace("center", "middle")
+			.Replace("centre", "middle")
+			.Replace("top", "t")
+			.Replace("bottom", "b")
+			.Replace("left", "l")
+			.Replace("right", "r")
+			.Replace("middle", "m");
+		});
 
-                case "ml": case "cl": case "lm": case "lc": case "middleleft": case "leftmiddle": case "4": button = _buttons[3]; break;
-                case "mm": case "cm": case "mc": case "cc": case "middle": case "middlemiddle": case "5": button = _buttons[4]; break;
-                case "mr": case "cr": case "rm": case "rc": case "middleright": case "rightmiddle": case "6": button = _buttons[5]; break;
+		foreach (var cmd in cmds)
+		{
+			if (cmd.EqualsAny("tl", "lt", "1")) button = _buttons[0];
+			else if (cmd.EqualsAny("tm", "mt", "2")) button = _buttons[1];
+			else if (cmd.EqualsAny("tr", "rt", "3")) button = _buttons[2];
 
-                case "bl": case "lb": case "bottomleft": case "leftbottom": case "7": button = _buttons[6]; break;
-                case "bm": case "bc": case "mb": case "cb": case "bottommiddle": case "middlebottom": case "8": button = _buttons[7]; break;
-                case "br": case "rb": case "bottomright": case "rightbottom": case "9": button = _buttons[8]; break;
+			else if (cmd.EqualsAny("ml", "lm", "4")) button = _buttons[3];
+			else if (cmd.EqualsAny("mm", "5")) button = _buttons[4];
+			else if (cmd.EqualsAny("mr", "rm", "6")) button = _buttons[5];
 
-                default: yield break;
-            }
+			else if (cmd.EqualsAny("bl", "lb", "7")) button = _buttons[6];
+			else if (cmd.EqualsAny("bm", "mb", "8")) button = _buttons[7];
+			else if (cmd.EqualsAny("br", "rb", "9")) button = _buttons[8];
 
-
+			else yield break;
+		}
 
         if (button == null)
         {

@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ColorGeneratorComponentSolver : ComponentSolver
@@ -75,8 +73,6 @@ public class ColorGeneratorComponentSolver : ComponentSolver
 	    _multiplyButtonField = _componentType.GetField("Multiply", BindingFlags.Public | BindingFlags.Instance);
 	    _submitButtonField = _componentType.GetField("Submit", BindingFlags.Public | BindingFlags.Instance);
 	}
-
-    private static readonly string[] ValidSubmitWords =  { "transmit", "submit", "trans", "tx", "xmit" };
 
 	private static Type _componentType = null;
 	private static FieldInfo _redButtonField = null;

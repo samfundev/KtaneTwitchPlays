@@ -15,7 +15,6 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-
         var commands = inputCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (commands.Length != 2 || !commands[0].Equals("turn", StringComparison.InvariantCultureIgnoreCase))

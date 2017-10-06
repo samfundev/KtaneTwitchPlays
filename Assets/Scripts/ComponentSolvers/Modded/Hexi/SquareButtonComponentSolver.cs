@@ -15,14 +15,15 @@ public class SquareButtonComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if (!_held && (inputCommand.Equals("tap", StringComparison.InvariantCultureIgnoreCase) ||
-                       inputCommand.Equals("click", StringComparison.InvariantCultureIgnoreCase)))
+		inputCommand = inputCommand.ToLowerInvariant();
+
+		if (!_held && inputCommand.EqualsAny("tap", "click"))
         {
             yield return "tap";
             yield return DoInteractionClick(_button);
         }
-        if (!_held && (inputCommand.StartsWith("tap ", StringComparison.InvariantCultureIgnoreCase) ||
-                       inputCommand.StartsWith("click ", StringComparison.InvariantCultureIgnoreCase)))
+        if (!_held && (inputCommand.StartsWith("tap ") ||
+                       inputCommand.StartsWith("click ")))
         {
             yield return "tap2";
 
@@ -32,8 +33,7 @@ public class SquareButtonComponentSolver : ComponentSolver
                 yield return releaseCoroutine.Current;
             }
         }
-        else if (!_held && (inputCommand.Equals("hold", StringComparison.InvariantCultureIgnoreCase) ||
-                            inputCommand.Equals("press", StringComparison.InvariantCultureIgnoreCase)))
+        else if (!_held && inputCommand.EqualsAny("hold", "press"))
         {
             yield return "hold";
 
@@ -41,7 +41,7 @@ public class SquareButtonComponentSolver : ComponentSolver
             DoInteractionStart(_button);
             yield return new WaitForSeconds(2.0f);
         }
-        else if (_held && inputCommand.StartsWith("release ", StringComparison.InvariantCultureIgnoreCase))
+        else if (_held && inputCommand.StartsWith("release "))
         {
             IEnumerator releaseCoroutine = ReleaseCoroutine(inputCommand.Substring(inputCommand.IndexOf(' ')));
             while (releaseCoroutine.MoveNext())
@@ -98,10 +98,8 @@ public class SquareButtonComponentSolver : ComponentSolver
             if (Canceller.ShouldCancel)
             {
                 Canceller.ResetCancel();
-                yield return _held
-                    ? "sendtochat The button was not released due to a request to cancel."
-                    : "sendtochat The button was not tapped due to a request to cancel.";
-                yield break;
+				yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+				yield break;
             }
 
             timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
@@ -110,9 +108,7 @@ public class SquareButtonComponentSolver : ComponentSolver
             {
                 if (sortedTimes.Count == 0)
                 {
-                    yield return _held 
-                        ? "sendtochat The button was not released because all of your specfied times are greater than the time remaining." 
-                        : "sendtochat The button was not tapped because all of your specified times are greater than the time remaining.";
+					yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are greater than the time remaining.", _held ? "released" : "tapped");
                     yield break;
                 }
                 timeTarget = sortedTimes[0];

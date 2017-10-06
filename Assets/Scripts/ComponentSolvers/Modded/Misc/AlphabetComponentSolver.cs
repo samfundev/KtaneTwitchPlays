@@ -17,7 +17,7 @@ public class AlphabetComponentSolver : ComponentSolver
 	{
 		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length >= 2 && (commands[0] == "submit" || commands[0] == "press"))
+		if (commands.Length >= 2 && commands[0].EqualsAny("submit", "press"))
 		{
 			List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
 
