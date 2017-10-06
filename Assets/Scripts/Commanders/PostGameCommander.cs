@@ -28,13 +28,13 @@ public class PostGameCommander : ICommandResponder
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
         MonoBehaviour button = null;
+        message = message.ToLowerInvariant();
 
-        if (message.Equals("!continue", StringComparison.InvariantCultureIgnoreCase) ||
-            message.Equals("!back", StringComparison.InvariantCultureIgnoreCase))
+        if (message.EqualsAny("!continue","!back"))
         {
             button = ContinueButton;
         }
-        else if (message.Equals("!retry", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("!retry"))
         {
             if (!TwitchPlaySettings.data.EnableRetryButton)
             {

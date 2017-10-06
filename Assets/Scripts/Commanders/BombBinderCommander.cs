@@ -72,8 +72,8 @@ public class BombBinderCommander : ICommandResponder
     #region Interface Implementation
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
-        if (message.Equals("hold", StringComparison.InvariantCultureIgnoreCase) ||
-            message.Equals("pick up", StringComparison.InvariantCultureIgnoreCase))
+        message = message.ToLowerInvariant();
+        if (message.EqualsAny("hold","pick up"))
         {
             IEnumerator holdCoroutine = HoldBombBinder();
             while (holdCoroutine.MoveNext())
@@ -89,13 +89,11 @@ public class BombBinderCommander : ICommandResponder
                 yield break;
             }
 
-            if (message.Equals("drop", StringComparison.InvariantCultureIgnoreCase) ||
-                message.Equals("let go", StringComparison.InvariantCultureIgnoreCase) ||
-                message.Equals("put down", StringComparison.InvariantCultureIgnoreCase))
+            if (message.EqualsAny("drop","let go","put down"))
             {
                 LetGoBombBinder();
             }
-            else if (message.Equals("select", StringComparison.InvariantCultureIgnoreCase))
+            else if (message.Equals("select"))
             {
                 IEnumerator selectCoroutine = SelectOnPage();
                 while (selectCoroutine.MoveNext())
@@ -103,7 +101,7 @@ public class BombBinderCommander : ICommandResponder
                     yield return selectCoroutine.Current;
                 }
             }
-            else if (message.StartsWith("select", StringComparison.InvariantCultureIgnoreCase))
+            else if (message.StartsWith("select"))
             {
                 string[] commandParts = message.Split(' ');
                 int index = 0;
@@ -127,14 +125,12 @@ public class BombBinderCommander : ICommandResponder
                 string[] sequence = message.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string subCommand in sequence)
                 {
-                    if (subCommand.Equals("down", StringComparison.InvariantCultureIgnoreCase) ||
-                        subCommand.Equals("d", StringComparison.InvariantCultureIgnoreCase))
+                    if (subCommand.EqualsAny("down","d"))
                     {
                         MoveDownOnPage();
                         yield return new WaitForSeconds(0.2f);
                     }
-                    else if (subCommand.Equals("up", StringComparison.InvariantCultureIgnoreCase) ||
-                             subCommand.Equals("u", StringComparison.InvariantCultureIgnoreCase))
+                    else if (subCommand.EqualsAny("up","u"))
                     {
                         MoveUpOnPage();
                         yield return new WaitForSeconds(0.2f);

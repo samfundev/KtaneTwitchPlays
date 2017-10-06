@@ -94,9 +94,7 @@ public class FreeplayCommander : ICommandResponder
         
         if (holdState == 0)
         {
-            if (message.Equals("drop", StringComparison.InvariantCultureIgnoreCase) ||
-            message.Equals("let go", StringComparison.InvariantCultureIgnoreCase) ||
-            message.Equals("put down", StringComparison.InvariantCultureIgnoreCase))
+            if (message.EqualsAny("drop","let go","put down"))
             {
                 LetGoFreeplayDevice();
                 yield break;
@@ -118,31 +116,31 @@ public class FreeplayCommander : ICommandResponder
         string changeModulesTo = String.Empty;
         bool startBomb = false;
         
-        if (message.Equals("needy on", StringComparison.InvariantCultureIgnoreCase))
+        if (message.Equals("needy on"))
         {
             SetNeedy();
         }
-        else if (message.Equals("needy off", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("needy off"))
         {
             SetNeedy(false);
         }
-        else if (message.Equals("hardcore on", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("hardcore on"))
         {
             SetHardcore();
         }
-        else if (message.Equals("hardcore off", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("hardcore off"))
         {
             SetHardcore(false);
         }
-        else if (message.Equals("mods only on", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("mods only on"))
         {
             SetModsOnly();
         }
-        else if (message.Equals("mods only off", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("mods only off"))
         {
             SetModsOnly(false);
         }
-        else if (message.Equals("start", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("start"))
         {
             StartBomb();
         }
@@ -245,16 +243,14 @@ public class FreeplayCommander : ICommandResponder
                 modulesMatch = Regex.Match(message, "[0-9]+");
             }
 
-            string messageLower = message.ToLowerInvariant();
+            SetHardcore(message.Contains("hardcore"));
+            SetNeedy(message.Contains("needy"));
 
-            SetHardcore(messageLower.Contains("hardcore"));
-            SetNeedy(messageLower.Contains("needy"));
-
-            if (messageLower.Contains("vanilla"))
+            if (message.Contains("vanilla"))
             {
                 SetModsOnly(false);
             }
-            else if (messageLower.Contains("mods"))
+            else if (message.Contains("mods"))
             {
                 SetModsOnly();
             }
