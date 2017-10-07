@@ -97,7 +97,6 @@ public class TwitchPlaySettingsData
     public string BombDetonateCommand = "panicBasket This bomb's gonna blow!";
 
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
-    public string TakeAwayPointsForTrying = "@{0}, you just lost {1} points for trying to use a command reserved for Super users.";
 
     public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
 
