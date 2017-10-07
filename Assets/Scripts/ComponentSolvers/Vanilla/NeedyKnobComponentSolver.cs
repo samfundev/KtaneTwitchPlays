@@ -14,15 +14,14 @@ public class NeedyKnobComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        string[] commandParts = inputCommand.Split(' ');
+        string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
         if (commandParts.Length != 2)
         {
             yield break;
         }
 
-        if (!commandParts[0].Equals("rotate", StringComparison.InvariantCultureIgnoreCase) &&
-            !commandParts[0].Equals("turn", StringComparison.InvariantCultureIgnoreCase))
+        if (!commandParts[0].EqualsAny("rotate", "turn"))
         {
             yield break;
         }

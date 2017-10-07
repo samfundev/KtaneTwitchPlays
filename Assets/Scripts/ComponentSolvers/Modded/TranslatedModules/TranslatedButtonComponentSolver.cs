@@ -14,13 +14,13 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if (!_held && (inputCommand.Equals("tap", StringComparison.InvariantCultureIgnoreCase) ||
-                       inputCommand.Equals("click", StringComparison.InvariantCultureIgnoreCase)))
+        inputCommand = inputCommand.ToLowerInvariant();
+        if (!_held && inputCommand.EqualsAny("tap", "click"))
         {
             yield return "tap";
             yield return DoInteractionClick(_button);
         }
-        else if (!_held && (inputCommand.Equals("hold", StringComparison.InvariantCultureIgnoreCase)))
+        else if (!_held && inputCommand.Equals("hold"))
         {
             yield return "hold";
 
@@ -31,7 +31,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
         else if (_held)
         {
             string[] commandParts = inputCommand.Split(' ');
-            if (commandParts.Length == 2 && commandParts[0].Equals("release", StringComparison.InvariantCultureIgnoreCase))
+            if (commandParts.Length == 2 && commandParts[0].Equals("release"))
             {
                 int second = 0;
                 if (!int.TryParse(commandParts[1], out second))

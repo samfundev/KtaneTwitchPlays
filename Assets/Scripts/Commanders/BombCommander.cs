@@ -79,8 +79,9 @@ public class BombCommander : ICommandResponder
     #region Interface Implementation
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
-        if (message.Equals("hold", StringComparison.InvariantCultureIgnoreCase) ||
-            message.Equals("pick up", StringComparison.InvariantCultureIgnoreCase))
+        message = message.ToLowerInvariant();
+
+        if(message.EqualsAny("hold","pick up"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
 
@@ -92,12 +93,7 @@ public class BombCommander : ICommandResponder
 
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (message.Equals("turn", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("turn round", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("turn around", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("rotate", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("flip", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("spin", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.EqualsAny("turn", "turn round", "turn around", "rotate", "flip", "spin"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
 
@@ -109,9 +105,7 @@ public class BombCommander : ICommandResponder
 
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (message.Equals("drop", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("let go", StringComparison.InvariantCultureIgnoreCase) ||
-                 message.Equals("put down", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.EqualsAny("drop","let go","put down"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
 
@@ -123,12 +117,12 @@ public class BombCommander : ICommandResponder
 
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (Regex.IsMatch(message, "^(edgework( 45|-45)?)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || 
-                 Regex.IsMatch(message, "^(edgework( 45|-45)? )?(top|top right|right top|right|right bottom|bottom right|bottom|bottom left|left bottom|left|left top|top left|)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        else if (Regex.IsMatch(message, "^(edgework( 45|-45)?)$") || 
+                 Regex.IsMatch(message, "^(edgework( 45|-45)? )?(top|top right|right top|right|right bottom|bottom right|bottom|bottom left|left bottom|left|left top|top left|)$"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
-            bool _45Degrees = Regex.IsMatch(message, "^(edgework(-45| 45)).*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-            IEnumerator edgeworkCoroutine = ShowEdgework(message.Replace("edgework", "").Replace(" 45", "").Replace("-45","").Trim().ToLowerInvariant(), _45Degrees);
+            bool _45Degrees = Regex.IsMatch(message, "^(edgework(-45| 45)).*$");
+            IEnumerator edgeworkCoroutine = ShowEdgework(message.Replace("edgework", "").Replace(" 45", "").Replace("-45","").Trim(), _45Degrees);
             while (edgeworkCoroutine.MoveNext())
             {
                 yield return edgeworkCoroutine.Current;
@@ -136,13 +130,13 @@ public class BombCommander : ICommandResponder
 
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (message.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.Equals("unview"))
         {
             BombMessageResponder.moduleCameras.DetachFromModule(timerComponent);
         }
-        else if (message.StartsWith("view", StringComparison.InvariantCultureIgnoreCase))
+        else if (message.StartsWith("view"))
         {
-            int priority = (message.Equals("view pin", StringComparison.InvariantCultureIgnoreCase)) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
+            int priority = (message.Equals("view pin")) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
             BombMessageResponder.moduleCameras.AttachToModule(timerComponent, null, priority);
         }
         else

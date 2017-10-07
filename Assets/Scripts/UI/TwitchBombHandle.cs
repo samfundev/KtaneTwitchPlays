@@ -112,10 +112,11 @@ public class TwitchBombHandle : MonoBehaviour
             message.SetMessage(string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, userColor));
         }
 
+        string internalCommandLower = internalCommand.ToLowerInvariant();
+
         //Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
         ICommandResponseNotifier notifier = message;
-        if (internalCommand.Equals("timestamp", StringComparison.InvariantCultureIgnoreCase) || 
-            internalCommand.Equals("date", StringComparison.InvariantCultureIgnoreCase))
+        if (internalCommandLower.EqualsAny("timestamp","date"))
         {
             //Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 
@@ -123,7 +124,7 @@ public class TwitchBombHandle : MonoBehaviour
             ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
             notifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase))
+        else if (internalCommandLower.Equals("help"))
         {
             notifier.ProcessResponse(CommandResponse.Start);
 
@@ -131,16 +132,13 @@ public class TwitchBombHandle : MonoBehaviour
 
             notifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (internalCommand.Equals("time", StringComparison.InvariantCultureIgnoreCase) ||
-                 internalCommand.Equals("timer", StringComparison.InvariantCultureIgnoreCase) ||
-                 internalCommand.Equals("clock", StringComparison.InvariantCultureIgnoreCase))
+        else if (internalCommandLower.EqualsAny("time","timer","clock"))
         {
             notifier.ProcessResponse(CommandResponse.Start);
             ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
             notifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (internalCommand.Equals("explode", StringComparison.InvariantCultureIgnoreCase) ||
-                internalCommand.Equals("detonate", StringComparison.InvariantCultureIgnoreCase))
+        else if (internalCommandLower.EqualsAny("explode","detonate"))
             {
                 if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
                 {

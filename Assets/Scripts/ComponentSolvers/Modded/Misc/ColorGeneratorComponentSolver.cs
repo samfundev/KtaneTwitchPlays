@@ -58,10 +58,9 @@ public class ColorGeneratorComponentSolver : ComponentSolver
             {
                 yield return DoInteractionClick(_blueButton);
             }
+            yield return DoInteractionClick(_multiplyButton);
+            yield return DoInteractionClick(_submitButton);
         }
-        yield return DoInteractionClick(_multiplyButton);
-        yield return DoInteractionClick(_submitButton);
-
     }
 
     static ColorGeneratorComponentSolver()

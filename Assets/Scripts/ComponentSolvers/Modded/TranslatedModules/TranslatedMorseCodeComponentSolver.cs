@@ -18,17 +18,14 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        string[] commandParts = inputCommand.Split(' ');
+        string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
         if (commandParts.Length != 2)
         {
             yield break;
         }
 
-        if (!commandParts[0].Equals("transmit", StringComparison.InvariantCultureIgnoreCase) &&
-            !commandParts[0].Equals("trans", StringComparison.InvariantCultureIgnoreCase) &&
-            !commandParts[0].Equals("xmit", StringComparison.InvariantCultureIgnoreCase) &&
-            !commandParts[0].Equals("tx", StringComparison.InvariantCultureIgnoreCase))
+        if (!commandParts[0].EqualsAny("transmit", "trans", "xmit", "tx", "submit"))
         {
             yield break;
         }
