@@ -115,30 +115,39 @@ public class FreeplayCommander : ICommandResponder
         string changeBombsTo = String.Empty;
         string changeModulesTo = String.Empty;
         bool startBomb = false;
-        
-        if (message.Equals("needy on"))
+
+        if (message.EqualsAny("needy on", "needy off"))
         {
-            SetNeedy();
+            if (TwitchPlaySettings.data.EnableFreeplayNeedy || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+            {
+                SetNeedy(message.Equals("needy on"));
+            }
+            else
+            {
+                connection.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
+            }
         }
-        else if (message.Equals("needy off"))
+        else if (message.EqualsAny("hardcore on", "hardcore off"))
         {
-            SetNeedy(false);
+            if (TwitchPlaySettings.data.EnableFreeplayHardcore || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+            {
+                SetHardcore(message.Equals("hardcore on"));
+            }
+            else
+            {
+                connection.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
+            }
         }
-        else if (message.Equals("hardcore on"))
+        else if (message.EqualsAny("mods only on", "mods only off"))
         {
-            SetHardcore();
-        }
-        else if (message.Equals("hardcore off"))
-        {
-            SetHardcore(false);
-        }
-        else if (message.Equals("mods only on"))
-        {
-            SetModsOnly();
-        }
-        else if (message.Equals("mods only off"))
-        {
-            SetModsOnly(false);
+            if (TwitchPlaySettings.data.EnableFreeplayModsOnly || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+            {
+                SetModsOnly(message.Equals("mods only on"));
+            }
+            else
+            {
+                connection.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName);
+            }
         }
         else if (message.Equals("start"))
         {
@@ -243,19 +252,46 @@ public class FreeplayCommander : ICommandResponder
                 modulesMatch = Regex.Match(message, "[0-9]+");
             }
 
-            SetHardcore(message.Contains("hardcore"));
-            SetNeedy(message.Contains("needy"));
-
-            if (message.Contains("vanilla"))
-            {
-                SetModsOnly(false);
-            }
-            else if (message.Contains("mods"))
-            {
-                SetModsOnly();
-            }
-
             startBomb = true;
+
+            if (TwitchPlaySettings.data.EnableFreeplayHardcore || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+            {
+                SetHardcore(message.Contains("hardcore"));
+            }
+            else if (message.Contains("hardcore") != IsHardcore)
+            {
+                connection.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
+                startBomb = false;
+            }
+
+            if (TwitchPlaySettings.data.EnableFreeplayNeedy || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+            {
+                SetNeedy(message.Contains("needy"));
+            }
+            else if (message.Contains("needy") != HasNeedy)
+            {
+                connection.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
+                startBomb = false;
+            }
+
+            if (TwitchPlaySettings.data.EnableFreeplayModsOnly || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+            {
+                if (message.Contains("vanilla"))
+                {
+                    SetModsOnly(false);
+                }
+                else if (message.Contains("mods"))
+                {
+                    SetModsOnly();
+                }
+            }
+            else if (message.Contains("vanilla") || message.Contains("mods"))
+            {
+                connection.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled,userNickName);
+                startBomb = false;
+            }
+
+            
         }
         else
         {
@@ -441,21 +477,16 @@ public class FreeplayCommander : ICommandResponder
 
     public void SetNeedy(bool on = true)
     {
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice);
-        bool hasNeedy = (bool)_hasNeedyField.GetValue(currentSettings);
-        if (hasNeedy != on)
+        if (HasNeedy != on)
         {
             MonoBehaviour needyToggle = (MonoBehaviour)_needyToggleField.GetValue(FreeplayDevice);
             SelectObject( (MonoBehaviour)needyToggle.GetComponent(_selectableType) );
-            
         }
     }
 
     public void SetHardcore(bool on = true)
     {
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice);
-        bool isHardcore = (bool)_isHardCoreField.GetValue(currentSettings);
-        if (isHardcore != on)
+        if (IsHardcore != on)
         {
             MonoBehaviour hardcoreToggle = (MonoBehaviour)_hardcoreToggleField.GetValue(FreeplayDevice);
             SelectObject( (MonoBehaviour)hardcoreToggle.GetComponent(_selectableType) );
@@ -546,6 +577,8 @@ public class FreeplayCommander : ICommandResponder
     public readonly MonoBehaviour FloatingHoldable = null;
     private readonly MonoBehaviour SelectableManager = null;
     private readonly MonoBehaviour MultipleBombs = null;
+    public bool HasNeedy { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice); return (bool)_hasNeedyField.GetValue(currentSettings); }}
+    public bool IsHardcore { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice); return (bool)_isHardCoreField.GetValue(currentSettings); }}
     #endregion
 
     #region Private Static Fields
