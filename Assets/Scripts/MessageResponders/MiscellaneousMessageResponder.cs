@@ -49,13 +49,6 @@ public class MiscellaneousMessageResponder : MessageResponder
                 Color usedColor = new Color(.31f, .31f, .31f);
                 leaderboard.AddScore(playerrewarded, usedColor, scorerewarded);
             }
-            else
-            {
-                scorerewarded = Mathf.Abs(scorerewarded);
-                _ircConnection.SendMessage(TwitchPlaySettings.data.TakeAwayPointsForTrying, userNickName, scorerewarded);
-                Color usedColor = new Color(.31f, .31f, .31f);
-                leaderboard.AddScore(userNickName, usedColor, -scorerewarded);
-            }
             return;
         }
         else if (text.StartsWith("!reward", StringComparison.InvariantCultureIgnoreCase))
