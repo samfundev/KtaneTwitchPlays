@@ -189,7 +189,6 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
-        valid &= ValidateString(ref TakeAwayPointsForTrying, data.TakeAwayPointsForTrying, 2);
 
         valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
 
