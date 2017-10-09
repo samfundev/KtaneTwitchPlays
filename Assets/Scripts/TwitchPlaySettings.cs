@@ -92,7 +92,6 @@ public class TwitchPlaySettingsData
     public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
 
     public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
-    public string CantRemoveSelf = "Sorry @{0}, you Can't remove yourself as Super User.";
     public string RemoveUserPower = "Removed access levels ({0}) from user \"{1}\"";
 
     public string BombHelp = "The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]";
@@ -187,8 +186,7 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
 
         valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2, SettingsVersion < 1);
-        valid &= ValidateString(ref CantRemoveSelf, data.CantRemoveSelf, 1, SettingsVersion < 1);
-        valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2);
+        valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2, SettingsVersion < 1);
 
         valid &= ValidateString(ref BombHelp, data.BombHelp, 0);
         valid &= ValidateString(ref BlankBombEdgework, data.BlankBombEdgework, 0);

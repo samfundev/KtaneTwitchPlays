@@ -43,7 +43,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             {
                 return;
             }
-            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser))
+            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
             {
                 _ircConnection.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, parts[1], parts[2], userNickName);
                 Color usedColor = new Color(.31f, .31f, .31f);
@@ -53,7 +53,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.StartsWith("!reward", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser))
+            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
             {
                 string[] parts = text.Split(' ');
                 moduleCountBonus = Int32.Parse(parts[1]);
@@ -128,17 +128,20 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.StartsWith("!add ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!remove ", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-            {
-                return;
-            }
-
-           
             string[] split = text.ToLowerInvariant().Split(' ');
             if (split.Length < 3)
             {
                 return;
             }
+
+            bool stepdown = split[0].Equals("!remove",StringComparison.InvariantCultureIgnoreCase) && split[1].Equals(userNickName, StringComparison.InvariantCultureIgnoreCase);
+            if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) && !stepdown)
+            {
+                return;
+            }
+
+           
+            
             AccessLevel level = AccessLevel.User;
             foreach(string lvl in split.Skip(2))
             {
@@ -146,11 +149,11 @@ public class MiscellaneousMessageResponder : MessageResponder
                 {
                     case "mod":
                     case "moderator":
-                        level |= UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.Mod : AccessLevel.User;
+                        level |= (stepdown || UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) ? AccessLevel.Mod : AccessLevel.User;
                         break;
                     case "admin":
                     case "administrator":
-                        level |= UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.Admin : AccessLevel.User;
+                        level |= (stepdown || UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) ? AccessLevel.Admin : AccessLevel.User;
                         break;
                     case "superadmin":
                     case "superuser":
@@ -158,7 +161,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                     case "super-admin":
                     case "super-mod":
                     case "supermod":
-                        level |= UserAccess.HasAccess(userNickName, AccessLevel.SuperUser) ? AccessLevel.SuperUser : AccessLevel.User;
+                        level |= (stepdown || UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) ? AccessLevel.SuperUser : AccessLevel.User;
                         break;
 
                 
@@ -169,7 +172,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                     case "no-score":
                     case "noscore":
                     case "nopoints":
-                        level |= AccessLevel.NoPoints;
+                        level |= UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) ? AccessLevel.NoPoints : AccessLevel.User;
                         break;
                 }
             }
@@ -185,26 +188,28 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             else
             {
-                if ((level & AccessLevel.SuperUser) == AccessLevel.SuperUser && userNickName.Equals(split[1]))
-                {
-                    _ircConnection.SendMessage(TwitchPlaySettings.data.CantRemoveSelf, userNickName);
-                    return; //Prevent locking yourself out.
-                }
                 UserAccess.RemoveUser(split[1], level);
                 _ircConnection.SendMessage(TwitchPlaySettings.data.RemoveUserPower, level, split[1]);
-
             }
             UserAccess.WriteAccessList();
         }
 
 
-        if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser))
+        if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
         {
             if (text.Equals("!reloaddata", StringComparison.InvariantCultureIgnoreCase))
             {
+                bool streamer = UserAccess.HasAccess(userNickName, AccessLevel.Streamer);
+                bool superuser = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser);
+
                 ModuleData.LoadDataFromFile();
                 TwitchPlaySettings.LoadDataFromFile();
                 UserAccess.LoadAccessList();
+
+                if (streamer)
+                    UserAccess.AddUser(userNickName, AccessLevel.Streamer);
+                if (superuser)
+                    UserAccess.AddUser(userNickName, AccessLevel.SuperUser);
                 _ircConnection.SendMessage("Data reloaded");
             }
             else if (text.Equals("!enabletwitchplays", StringComparison.InvariantCultureIgnoreCase))

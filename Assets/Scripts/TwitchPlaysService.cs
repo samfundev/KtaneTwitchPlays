@@ -71,8 +71,8 @@ public class TwitchPlaysService : MonoBehaviour
 
         TwitchPlaySettings.LoadDataFromFile();
 
-        UserAccess.AddUser(settings.userName, AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
-        UserAccess.AddUser(settings.channelName.Replace("#",""), AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+        UserAccess.AddUser(settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+        UserAccess.AddUser(settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
         UserAccess.WriteAccessList();
 
         SetupResponder(bombMessageResponder);
