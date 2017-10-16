@@ -53,10 +53,17 @@ public class RubiksCubeComponentSolver : ComponentSolver
 	        bool valid = false;
 	        while (command.MoveNext())
 	        {
-	            valid = true;
+	            if (!valid)
+	            {
+	                yield return null;
+	                valid = true;
+	            }
 	            yield return command.Current;
 	        }
-	        if (valid) yield return null;
+	        if (valid)
+	        {
+	            yield return "solve";
+	        }
 	    }
 	}
 
