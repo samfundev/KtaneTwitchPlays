@@ -202,7 +202,7 @@ public class ModuleCameras : MonoBehaviour
     #region Public Methods
     public void AttachToModule(MonoBehaviour component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
-        if ( (handle.claimed) && (priority == CameraClaimed) )
+        if ( handle != null && (handle.claimed) && (priority == CameraClaimed) )
         {
             priority = CameraClaimed;
         }

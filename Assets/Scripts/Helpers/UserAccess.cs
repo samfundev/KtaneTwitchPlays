@@ -10,6 +10,7 @@ using Formatting = Newtonsoft.Json.Formatting;
 [Flags()]
 public enum AccessLevel
 {
+    Streamer = 0x10000,
     SuperUser = 0x8000,
     Admin = 0x4000,
     Mod = 0x2000,

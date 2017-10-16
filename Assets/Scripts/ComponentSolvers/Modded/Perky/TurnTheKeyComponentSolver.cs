@@ -20,8 +20,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         if (commands.Length != 2 || !commands[0].Equals("turn", StringComparison.InvariantCultureIgnoreCase))
             yield break;
 
-        yield return ReleaseCoroutine(commands[1]);
-
+        IEnumerator turn = ReleaseCoroutine(commands[1]);
+        while (turn.MoveNext())
+            yield return turn.Current;
     }
 
     private IEnumerator ReleaseCoroutine(string second)

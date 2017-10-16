@@ -13,6 +13,9 @@ public class TwitchPlaySettingsData
     public bool EnableRewardMultipleStrikes = true;
     public bool EnableMissionBinder = true;
     public bool EnableFreeplayBriefcase = true;
+    public bool EnableFreeplayNeedy = true;
+    public bool EnableFreeplayHardcore = true;
+    public bool EnableFreeplayModsOnly = true;
     public bool EnableSoloPlayMode = true;
     public bool ForceMultiDeckerMode = false;
     public bool EnableRetryButton = true;
@@ -82,11 +85,13 @@ public class TwitchPlaySettingsData
 
     public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
     public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
-    public string FreePlayDisabled = "Sorry @{0}, Only authorized user may access the freeplay briefcase";
+    public string FreePlayDisabled = "Sorry @{0}, Only authorized users may access the freeplay briefcase";
+    public string FreePlayNeedyDisabled = "Sorry @{0}, Only authorized users may enable/disable Needy modules";
+    public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
+    public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
     public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
 
     public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
-    public string CantRemoveSelf = "Sorry @{0}, you Can't remove yourself as Super User.";
     public string RemoveUserPower = "Removed access levels ({0}) from user \"{1}\"";
 
     public string BombHelp = "The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]";
@@ -175,11 +180,13 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref TwitchPlaysDisabled, data.TwitchPlaysDisabled, 1);
         valid &= ValidateString(ref MissionBinderDisabled, data.MissionBinderDisabled, 1);
         valid &= ValidateString(ref FreePlayDisabled, data.FreePlayDisabled, 1);
+        valid &= ValidateString(ref FreePlayNeedyDisabled, data.FreePlayNeedyDisabled, 1);
+        valid &= ValidateString(ref FreePlayHardcoreDisabled, data.FreePlayHardcoreDisabled, 1);
+        valid &= ValidateString(ref FreePlayModsOnlyDisabled, data.FreePlayModsOnlyDisabled, 1);
         valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
 
         valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2, SettingsVersion < 1);
-        valid &= ValidateString(ref CantRemoveSelf, data.CantRemoveSelf, 1, SettingsVersion < 1);
-        valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2);
+        valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2, SettingsVersion < 1);
 
         valid &= ValidateString(ref BombHelp, data.BombHelp, 0);
         valid &= ValidateString(ref BlankBombEdgework, data.BlankBombEdgework, 0);
