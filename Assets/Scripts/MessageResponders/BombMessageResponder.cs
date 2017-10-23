@@ -263,7 +263,7 @@ public class BombMessageResponder : MessageResponder
                     SetBomb((MonoBehaviour) bombs[i], id++);
                 }
 
-                if (rand.NextDouble() < specialNameProbability)
+                if (bombs.Length == 2 && rand.NextDouble() < specialNameProbability)
                 {
                     int nameIndex = rand.Next(0, doubleNames.Length - 1);
                     string nameText = null;
@@ -278,7 +278,17 @@ public class BombMessageResponder : MessageResponder
                 }
                 else
                 {
-                    _bombHandles[1].nameText.text = "The Other Bomb";
+                    if (bombs.Length == 2)
+                    {
+                        _bombHandles[1].nameText.text = "The Other Bomb";
+                    }
+                    else
+                    {
+                        for (var i = 0; i < bombs.Length; i++)
+                        {
+                            _bombHandles[i].nameText.text = singleNames[rand.Next(0, singleNames.Length - 1)];
+                        }
+                    }
                 }
                 _coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), 0);
             }
@@ -292,7 +302,15 @@ public class BombMessageResponder : MessageResponder
         } while (clocks == null || clocks.Length == 0);
         AlarmClock = clocks[0];
 
-        moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
+        try
+        {
+            moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogException(ex, "Failed to Instantiate the module Camera system due to an Exception: ");
+            moduleCameras = null;
+        }
 
         if (EnableDisableInput())
         {
@@ -341,7 +359,8 @@ public class BombMessageResponder : MessageResponder
 
         if (text.Equals("!modules", StringComparison.InvariantCultureIgnoreCase))
         {
-            moduleCameras.AttachToModules(_componentHandles);
+            if(moduleCameras != null)
+                moduleCameras.AttachToModules(_componentHandles);
             return;
         }
 
