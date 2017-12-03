@@ -133,12 +133,14 @@ public class BombCommander : ICommandResponder
         }
         else if (message.Equals("unview"))
         {
-            BombMessageResponder.moduleCameras.DetachFromModule(timerComponent);
+            if (BombMessageResponder.moduleCameras != null)
+                BombMessageResponder.moduleCameras.DetachFromModule(timerComponent);
         }
         else if (message.StartsWith("view"))
         {
             int priority = (message.Equals("view pin")) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
-            BombMessageResponder.moduleCameras.AttachToModule(timerComponent, null, priority);
+            if (BombMessageResponder.moduleCameras != null)
+                BombMessageResponder.moduleCameras.AttachToModule(timerComponent, null, priority);
         }
         else
         {
@@ -157,7 +159,8 @@ public class BombCommander : ICommandResponder
         {
             SelectObject(Selectable);
             doForceRotate = true;
-            BombMessageResponder.moduleCameras.ChangeBomb(this);
+            if (BombMessageResponder.moduleCameras != null)
+                BombMessageResponder.moduleCameras.ChangeBomb(this);
         }
         else if (frontFace != _heldFrontFace)
         {
@@ -201,7 +204,8 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator ShowEdgework(string edge, bool _45Degrees)
     {
-        BombMessageResponder.moduleCameras.Hide();
+        if (BombMessageResponder.moduleCameras != null)
+            BombMessageResponder.moduleCameras.Hide();
 
         IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
         while (holdCoroutine.MoveNext())
@@ -344,7 +348,8 @@ public class BombCommander : ICommandResponder
             yield return returnToFace.Current;
         }
 
-        BombMessageResponder.moduleCameras.Show();
+        if (BombMessageResponder.moduleCameras != null)
+            BombMessageResponder.moduleCameras.Show();
     }
 
     public IEnumerator Focus(MonoBehaviour selectable, float focusDistance, bool frontFace)
