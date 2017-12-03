@@ -325,27 +325,11 @@ public class BombMessageResponder : MessageResponder
         CreateComponentHandlesForBomb(bomb);
     }
 
-    private bool IsAuthorizedDefuser(string userNickName, string command)
-    {
-        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
-
-        result |= Regex.IsMatch(command, "^!bomb[0-9]* (?>timestamp|clock|timer?|date|help)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-        result |= Regex.IsMatch(command, "^!edgework[0-9]*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-        result |= Regex.IsMatch(command, "^![0-9]* (?>player|help|manual)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-
-        return result;
-    }
-
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
-        if (!IsAuthorizedDefuser(userNickName, text))
-        {
-            _ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
-            return;
-        }
-
         if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             MethodInfo method = TwitchPlaySettings.data.AllowSnoozeOnly ? CommonReflectedTypeInfo.AlarmClockTurnOff : CommonReflectedTypeInfo.AlarmClockSnooze;
             method.Invoke(AlarmClock, new object[] {0});
             return;
@@ -353,19 +337,22 @@ public class BombMessageResponder : MessageResponder
 
         if (text.Equals("!stop", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             _currentBomb = _coroutineQueue.CurrentBombID;
             return;
         }
 
         if (text.Equals("!modules", StringComparison.InvariantCultureIgnoreCase))
         {
-            if(moduleCameras != null)
+            if (!IsAuthorizedDefuser(userNickName)) return;
+            if (moduleCameras != null)
                 moduleCameras.AttachToModules(_componentHandles);
             return;
         }
 
         if (text.StartsWith("!claims ", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             userNickName = text.Substring(8);
             text = "!claims";
             if (userNickName == "")
@@ -376,6 +363,7 @@ public class BombMessageResponder : MessageResponder
 
         if (text.Equals("!claims", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             List<string> claimed = (from handle in _componentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idText.text.Replace("!", ""), handle.headerText.text)).ToList();
             if (claimed.Count > 0)
             {
