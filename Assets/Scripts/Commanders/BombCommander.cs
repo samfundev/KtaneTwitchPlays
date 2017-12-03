@@ -10,9 +10,11 @@ public class BombCommander : ICommandResponder
     #region Constructors
     static BombCommander()
     {
+        DebugHelper.Log("[BombCommander] - Running static constructor");
         _floatingHoldableType = ReflectionHelper.FindType("FloatingHoldable");
         if (_floatingHoldableType == null)
         {
+            DebugHelper.Log("[BombCommander] Failed to get FloatingHoldable Type");
             return;
         }
         _focusMethod = _floatingHoldableType.GetMethod("Focus", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Transform), typeof(float), typeof(bool), typeof(bool), typeof(float) }, null);
@@ -22,6 +24,11 @@ public class BombCommander : ICommandResponder
         _holdStateProperty = _floatingHoldableType.GetProperty("HoldState", BindingFlags.Public | BindingFlags.Instance);
 
         _selectableType = ReflectionHelper.FindType("Selectable");
+        if (_selectableType == null)
+        {
+            DebugHelper.Log("[BombCommander] Failed to get Selectable Type");
+            return;
+        }
         _handleSelectMethod = _selectableType.GetMethod("HandleSelect", BindingFlags.Public | BindingFlags.Instance);
         _handleSelectableInteractMethod = _selectableType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
         _handleSelectableCancelMethod = _selectableType.GetMethod("HandleCancel", BindingFlags.Public | BindingFlags.Instance);
@@ -30,6 +37,7 @@ public class BombCommander : ICommandResponder
         _selectableManagerType = ReflectionHelper.FindType("SelectableManager");
         if (_selectableManagerType == null)
         {
+            DebugHelper.Log("[BombCommander] Failed to get SelectableManager Type");
             return;
         }
         _selectMethod = _selectableManagerType.GetMethod("Select", BindingFlags.Public | BindingFlags.Instance);
@@ -41,10 +49,20 @@ public class BombCommander : ICommandResponder
         _handleFaceSelectionMethod = _selectableManagerType.GetMethod("HandleFaceSelection", BindingFlags.Public | BindingFlags.Instance);
 
         _recordManagerType = ReflectionHelper.FindType("Assets.Scripts.Records.RecordManager");
+        if (_recordManagerType == null)
+        {
+            DebugHelper.Log("[BombCommander] Failed to get Assets.Scripts.Records.RecordManager Type");
+            return;
+        }
         _recordManagerInstanceProperty = _recordManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
         _recordStrikeMethod = _recordManagerType.GetMethod("RecordStrike", BindingFlags.Public | BindingFlags.Instance);
         
         _strikeSourceType = ReflectionHelper.FindType("Assets.Scripts.Records.StrikeSource");
+        if (_strikeSourceType == null)
+        {
+            DebugHelper.Log("[BombCommander] Failed to get Assets.Scripts.Records.StrikeSource Type");
+            return;
+        }
         _componentTypeField = _strikeSourceType.GetField("ComponentType", BindingFlags.Public | BindingFlags.Instance);
         _componentNameField = _strikeSourceType.GetField("ComponentName", BindingFlags.Public | BindingFlags.Instance);
         _interactionTypeField = _strikeSourceType.GetField("InteractionType", BindingFlags.Public | BindingFlags.Instance);
@@ -55,6 +73,7 @@ public class BombCommander : ICommandResponder
         _inputManagerType = ReflectionHelper.FindType("KTInputManager");
         if (_inputManagerType == null)
         {
+            DebugHelper.Log("[BombCommander] Failed to get KTInputManager Type");
             return;
         }
         _inputManagerInstanceProperty = _inputManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
@@ -63,6 +82,7 @@ public class BombCommander : ICommandResponder
         _inputManager = (MonoBehaviour)_inputManagerInstanceProperty.GetValue(null, null);
 
         _onStrikeMethod = CommonReflectedTypeInfo.BombType.GetMethod("OnStrike", BindingFlags.Public | BindingFlags.Instance);
+        DebugHelper.Log("[BombCommander] - Static constructor finished");
     }
 
     public BombCommander(MonoBehaviour bomb)

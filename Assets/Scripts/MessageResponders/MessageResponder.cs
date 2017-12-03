@@ -23,6 +23,15 @@ public abstract class MessageResponder : MonoBehaviour
         _ircConnection.OnMessageReceived.AddListener(OnInternalMessageReceived);
     }
 
+    public bool IsAuthorizedDefuser(string userNickName)
+    {
+        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
+        if (!result)
+            _ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+
+        return result;
+    }
+
     protected abstract void OnMessageReceived(string userNickName, string userColorCode, string text);
 
     private void OnInternalMessageReceived(string userNickName, string userColorCode, string text)

@@ -93,6 +93,7 @@ public class TwitchBombHandle : MonoBehaviour
                 internalCommand = match.Groups[1].Value;
                 if (!string.IsNullOrEmpty(internalCommand))
                 {
+                    if (!IsAuthorizedDefuser(userNickName)) return null;
                     edgeworkText.text = internalCommand;
                 }
                 ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework,edgeworkText.text);
@@ -146,7 +147,10 @@ public class TwitchBombHandle : MonoBehaviour
 
             }
         }
-        
+        else if (!IsAuthorizedDefuser(userNickName))
+        {
+            return null;
+        }
         else
         {
             return RespondToCommandCoroutine(userNickName, internalCommand, message);
@@ -176,6 +180,18 @@ public class TwitchBombHandle : MonoBehaviour
     #endregion
 
     #region Private Methods
+    private bool IsAuthorizedDefuser(string userNickName)
+    {
+        if (userNickName.Equals(nameText.text))
+            return true;
+        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
+        if (!result)
+            ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+
+        return result;
+    }
+
+
     private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
     {
         notifier.ProcessResponse(CommandResponse.Start);
