@@ -57,7 +57,7 @@ public static class CommonReflectedTypeInfo
         TimerComponentType = ReflectionHelper.FindType("TimerComponent");
         TimeElapsedProperty = TimerComponentType.GetProperty("TimeElapsed", BindingFlags.Public | BindingFlags.Instance);
         TimeRemainingField = TimerComponentType.GetField("TimeRemaining", BindingFlags.Public | BindingFlags.Instance);
-        GetFormattedTimeMethod = TimerComponentType.GetMethod("GetFormattedTime", BindingFlags.Public | BindingFlags.Static);
+        GetFormattedTimeMethod = TimerComponentType.GetMethod("GetFormattedTime", BindingFlags.Public | BindingFlags.Instance);
 
         AlarmClockType = ReflectionHelper.FindType("Assets.Scripts.Props.AlarmClock");
         AlarmClockSnooze = AlarmClockType.GetMethod("ButtonDown", BindingFlags.Public | BindingFlags.Instance);

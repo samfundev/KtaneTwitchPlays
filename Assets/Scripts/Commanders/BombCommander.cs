@@ -68,7 +68,8 @@ public class BombCommander : ICommandResponder
     public BombCommander(MonoBehaviour bomb)
     {
         Bomb = bomb;
-        Selectable = (MonoBehaviour)Bomb.GetComponent(_selectableType);
+		timerComponent = (MonoBehaviour) CommonReflectedTypeInfo.GetTimerMethod.Invoke(Bomb, null);
+		Selectable = (MonoBehaviour)Bomb.GetComponent(_selectableType);
         FloatingHoldable = (MonoBehaviour)Bomb.GetComponent(_floatingHoldableType);
         SelectableManager = (MonoBehaviour)_selectableManagerProperty.GetValue(_inputManager, null);
         BombTimeStamp = DateTime.Now;
@@ -481,7 +482,6 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(Bomb, null);
             return (float)CommonReflectedTypeInfo.TimeElapsedProperty.GetValue(timerComponent, null);
         }
     }
@@ -490,7 +490,6 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(Bomb, null);
             return (float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent);
         }
     }
@@ -499,7 +498,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            return (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(null, new object[] { CurrentTimer, true });
+			return (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(timerComponent, new object[] { CurrentTimer, true });
         }
     }
 
@@ -507,7 +506,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            return (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(null, new object[] { bombStartingTimer, true });
+			return (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(timerComponent, new object[] { bombStartingTimer, true });
         }
     }
 

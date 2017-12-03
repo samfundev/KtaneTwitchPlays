@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 public class WorkshopEditorWindow : EditorWindow
 {
+    private Vector2 scrollPosition;
+
     protected static readonly AppId_t KTANE_APP_ID = new AppId_t(341800);
     protected static readonly AppId_t EDITOR_APP_ID = new AppId_t(341800); //For now, the same AppID
 
@@ -32,7 +34,7 @@ public class WorkshopEditorWindow : EditorWindow
         Debug.LogWarning(pchDebugText);
     }
 
-    [MenuItem("Keep Talking ModKit/Steam Workshop Tool", priority = 20)]
+    [MenuItem("Keep Talking ModKit/Steam Workshop Tool _#F6", priority = 20)]
     protected static void ShowWindow()
     {
         WorkshopEditorWindow window = EditorWindow.GetWindow<WorkshopEditorWindow>("Workshop");
@@ -85,6 +87,7 @@ public class WorkshopEditorWindow : EditorWindow
                 }
             }
 
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             workshopItemEditor.OnInspectorGUI();
 
             //Publishing Tools
@@ -168,6 +171,7 @@ public class WorkshopEditorWindow : EditorWindow
                 GUI.enabled = true;
             }
             EditorGUILayout.EndVertical();
+            EditorGUILayout.EndScrollView();
         }
     }
 
@@ -196,7 +200,7 @@ public class WorkshopEditorWindow : EditorWindow
         ugcUpdateHandle = SteamUGC.StartItemUpdate(KTANE_APP_ID, new PublishedFileId_t(currentWorkshopItem.WorkshopPublishedFileID));
 
         SteamUGC.SetItemTitle(ugcUpdateHandle, currentWorkshopItem.Title);
-        SteamUGC.SetItemDescription(ugcUpdateHandle, currentWorkshopItem.Description);
+        SteamUGC.SetItemDescription(ugcUpdateHandle, ModConfig.Description);
 
         string[] tags = GetTags();
         if (tags != null && tags.Length > 0)
@@ -204,9 +208,9 @@ public class WorkshopEditorWindow : EditorWindow
             SteamUGC.SetItemTags(ugcUpdateHandle, GetTags());
         }
 
-        if (currentWorkshopItem.PreviewImage != null)
+        if (ModConfig.PreviewImage != null)
         {
-            string previewImagePath = AssetDatabase.GetAssetPath(currentWorkshopItem.PreviewImage);
+            string previewImagePath = AssetDatabase.GetAssetPath(ModConfig.PreviewImage);
             previewImagePath = Path.GetFullPath(previewImagePath);
             Debug.LogFormat("Setting preview image path to: {0}", previewImagePath);
             SteamUGC.SetItemPreview(ugcUpdateHandle, previewImagePath);

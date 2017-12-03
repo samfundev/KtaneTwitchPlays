@@ -59,6 +59,87 @@
             DO NOT USE IN MOD. Used by the game to hook into the controller.
             </summary>
         </member>
+        <member name="T:KMHoldable">
+            <summary>
+            Interface to define a holdable object that can be picked up by motion controls
+            Should add a rigidbody or a default one will be created
+            </summary>
+        </member>
+        <member name="F:KMHoldable.targetPosition">
+            <summary>
+            Position to hold object when picked up
+            </summary>
+        </member>
+        <member name="F:KMHoldable.targetRotation">
+            <summary>
+            Default rotation of object when held
+            </summary>
+        </member>
+        <member name="T:KMHoldable.ButtonEnum">
+            <summary>
+            Enumeration of controller buttons
+            </summary>
+        </member>
+        <member name="T:KMHoldable.AxisEnum">
+            <summary>
+            Enumeration of controller axes
+            </summary>
+        </member>
+        <member name="T:KMHoldable.HoldableAvailabilityEnum">
+            <summary>
+            Enumeration of holdable availibilities
+            </summary>
+        </member>
+        <member name="F:KMHoldable.HoldableAvailability">
+            <summary>
+            Indicates in which room the holdable will be available
+            </summary>
+        </member>
+        <member name="M:KMHoldable.GetAxisValue(KMHoldable.AxisEnum,System.Int32)">
+            <summary>
+            Get a specified axis value for the controller holding this object
+            </summary>
+        </member>
+        <member name="M:KMHoldable.GetButton(KMHoldable.ButtonEnum)">
+            <summary>
+            Get whether a specified button is currently held for the controller holding this object
+            </summary>
+        </member>
+        <member name="M:KMHoldable.GetAnchorTransform">
+            <summary>
+            Gets the transform for the anchor on the controller holding this object
+            </summary>
+        </member>
+        <member name="T:KMHoldable.KMOnGetAxisValueDelegate">
+            <summary>
+            Delegate type for checking axis value
+            </summary>
+        </member>
+        <member name="T:KMHoldable.KMOnGetButtonDelegate">
+            <summary>
+            Delegate type for checking buttonup event
+            </summary>
+        </member>
+        <member name="T:KMHoldable.KMOnGetAnchorDelegate">
+            <summary>
+            Delegate type for checking buttonup event
+            </summary>
+        </member>
+        <member name="F:KMHoldable.OnGetAxisValue">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to hook into the controller.
+            </summary>
+        </member>
+        <member name="F:KMHoldable.OnGetButton">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to hook into the controller.
+            </summary>
+        </member>
+        <member name="F:KMHoldable.OnGetAnchorTransform">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to hook into the controller.
+            </summary>
+        </member>
         <member name="T:KMMaterialInfo">
             <summary>
             This component is added during assetbundle build to any game objects that have material components
@@ -143,6 +224,11 @@
             Force modules to be placed only on the front face. By default this will limit the module count to 5 (+1 for the timer).
             Useful in rare circumstances where you wish to generate a bomb with a few modules and guarantee that they will all
             be visibile simultaneously.
+            </summary>
+        </member>
+        <member name="F:KMGeneratorSetting.OptionalWidgetCount">
+            <summary>
+            Set how many optional widgets (widgets other than serial number) that should be placed on the bomb
             </summary>
         </member>
         <member name="F:KMGeneratorSetting.ComponentPools">
@@ -510,16 +596,194 @@
             <param name="id"></param>
             <param name="seed"></param>
         </member>
+        <member name="M:KMGameCommands.StartMission(KMMission,System.String)">
+            <summary>
+            Launches a custom KMMission with the mission id set to 'custom'
+            </summary>
+            <param name="mission"></param>
+            <param name="seed"></param>
+        </member>
         <member name="M:KMGameCommands.CauseStrike(System.String)">
             <summary>
             Cause a strike on the bomb for whatever reason you deem is appropriate.
             </summary>
             <param name="reason"></param>
         </member>
+        <member name="M:KMGameCommands.GetBombs">
+            <summary>
+            Gets the list of all bombs currently available
+            </summary>
+        </member>
+        <member name="M:KMGameCommands.CreateBomb(System.String,KMGeneratorSetting,UnityEngine.GameObject,System.String)">
+            <summary>
+            Creates and returns a new bomb with 
+            </summary>
+            <param name="missionId">The mission id to spawn the bomb based on</param>
+            <param name="generatorSettings">Generator seetings that will be used if missionId is empty or null </param>
+            <param name="spawnPoint">A gameobject whose transform will determine where the bomb spawns </param>
+            <param name="seed">The seed used to generate the bomb, currently this must parse to an int </param>
+        </member>
+        <member name="M:KMGameCommands.RemoveSolvedBomb(KMBomb)">
+            <summary>
+            Attempts to remove a solved bomb from play, may fail if bomb not found or only one bomb remaining and not freeplay mode
+            </summary>
+        </member>
+        <member name="T:KMGameCommands.KMStartMissionCommand">
+            <summary>
+            Delegate type starting mission with id
+            </summary>
+        </member>
+        <member name="T:KMGameCommands.KMStartCustomMissionCommand">
+            <summary>
+            Delegate type starting mission with custom settings
+            </summary>
+        </member>
+        <member name="T:KMGameCommands.KMCauseStrikeDelegate">
+            <summary>
+            Delegate type causing a strike
+            </summary>
+        </member>
+        <member name="T:KMGameCommands.GetBombsDelegate">
+            <summary>
+            Delegate type for getting the list of all bombs
+            </summary>
+        </member>
+        <member name="T:KMGameCommands.CreateBombDelegate">
+            <summary>
+            Delegate type for creating a bomb
+            </summary>
+        </member>
+        <member name="T:KMGameCommands.RemoveSolvedBombDelegate">
+            <summary>
+            Delegate type for removing a bomb
+            </summary>
+        </member>
+        <member name="F:KMGameCommands.OnStartMission">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to start a mission.
+            </summary>
+        </member>
+        <member name="F:KMGameCommands.OnStartCustomMission">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to start a mission.
+            </summary>
+        </member>
+        <member name="F:KMGameCommands.OnCauseStrike">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to cause a strike.
+            </summary>
+        </member>
+        <member name="F:KMGameCommands.OnGetBombs">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to retrieve the list of bombs
+            </summary>
+        </member>
+        <member name="F:KMGameCommands.OnCreateBomb">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to create a bomb
+            </summary>
+        </member>
+        <member name="F:KMGameCommands.OnRemoveSolvedBomb">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to remove a bomb
+            </summary>
+        </member>
         <member name="T:KMGameInfo">
             <summary>
-            Interface to get notified of game state changes.
+            Interface to get information about game and to get notified of game state changes.
             </summary>
+        </member>
+        <member name="T:KMGameInfo.State">
+            <summary>
+            An enumeration of game states
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.State.Gameplay">
+            <summary>
+            The gameplay state where defusing happens
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.State.Setup">
+            <summary>
+            The setup state in the office where options are chosen
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.State.PostGame">
+            <summary>
+            The state where results are shown
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.State.Transitioning">
+            <summary>
+            No current state, transitioning to a new state
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.State.Unlock">
+            <summary>
+            The unlock state where manual verification and tutorial take place
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.State.Quitting">
+            <summary>
+            Game is exiting
+            </summary>
+        </member>
+        <member name="T:KMGameInfo.KMModuleInfo">
+            <summary>
+            A structure that contains a module's name and ID
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.KMModuleInfo.DisplayName">
+            <summary>
+            The display name of the module
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.KMModuleInfo.ModuleId">
+            <summary>
+            The id of the module
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.KMModuleInfo.IsMod">
+            <summary>
+            True if this module is from a mod rather from the game
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.KMModuleInfo.IsNeedy">
+            <summary>
+            True if this module is needy and cannot be solved
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.KMModuleInfo.ModuleType">
+            <summary>
+            Returns the module type of built in modules or empty if this is a mod module
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.OnStateChange">
+            <summary>
+            Called when game state changes between gameplay, setup, postgame and loading
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.OnAlarmClockChange">
+            <summary>
+            Called when alarm clock turns on or off
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.OnLightsChange">
+            <summary>
+            Called when in game lights change state
+            </summary>
+        </member>
+        <member name="M:KMGameInfo.GetAvailableModuleInfo">
+            <summary>
+            Gets information about all available modules that could be used in a bomb
+            </summary>
+            <returns>A list of information about available bomb modules</returns>
+        </member>
+        <member name="M:KMGameInfo.GetMaximumBombModules">
+            <summary>
+            Gets the maximum number of bomb modules that can be placed based on which cases are available
+            </summary>
+            <returns>The maximum number of bomb modules that can be placed</returns>
         </member>
         <member name="T:KMGameInfo.KMStateChangeDelegate">
             <summary>
@@ -536,19 +800,24 @@
             Delegate type for change in lights
             </summary>
         </member>
-        <member name="F:KMGameInfo.OnStateChange">
+        <member name="T:KMGameInfo.KMGetAvailableModuleInfoDelgate">
             <summary>
-            Called when game state changes between gameplay, setup, postgame and loading
+            Delegate type for getting info on available modules
             </summary>
         </member>
-        <member name="F:KMGameInfo.OnAlarmClockChange">
+        <member name="T:KMGameInfo.KMGetMaximumBombModulesDelgate">
             <summary>
-            Called when alarm clock turns on or off
+            Delegate type for getting the total number of modules that can be placed
             </summary>
         </member>
-        <member name="F:KMGameInfo.OnLightsChange">
+        <member name="F:KMGameInfo.OnGetAvailableModuleInfo">
             <summary>
-            Called when in game lights change state
+            DO NOT USE IN MOD. Used by the game to get available module info
+            </summary>
+        </member>
+        <member name="F:KMGameInfo.OnGetMaximumBombModules">
+            <summary>
+            DO NOT USE IN MOD. Used by the game for getting the total number of modules that can be placed
             </summary>
         </member>
         <member name="T:KMGameplayRoom">
@@ -591,6 +860,27 @@
         <member name="F:KMModSettings.Settings">
             <summary>
             The contents of modSettings.json in this mod's directory, containing any user-specific data they may have put there.
+            </summary>
+        </member>
+        <member name="F:KMModSettings.SettingsPath">
+            <summary>
+            The location of the ModSettings file that can be used to refresh Settings without reloading the mod
+            Set automatically by game overwriting anything that you put here
+            </summary>
+        </member>
+        <member name="M:KMModSettings.RefreshSettings">
+            <summary>
+            Refreshes settings from file, requires file access so good to use sparingly
+            </summary>
+        </member>
+        <member name="T:KMModSettings.KMOnRefreshSettingsDelegate">
+            <summary>
+            Delegate type for refreshing settings
+            </summary>
+        </member>
+        <member name="F:KMModSettings.OnRefreshSettings">
+            <summary>
+            DO NOT USE IN MOD. Used by the game to refresh settings
             </summary>
         </member>
         <member name="T:KMModuleBacking">

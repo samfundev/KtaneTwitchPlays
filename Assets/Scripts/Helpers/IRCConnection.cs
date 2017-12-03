@@ -142,7 +142,7 @@ public class IRCConnection
 
         _outputThread = new Thread(() => OutputThreadMethod(outputStream));
         _outputThread.Start();
-
+		
         SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands", _oauth, Environment.NewLine, _nickName));
 
         return true;
