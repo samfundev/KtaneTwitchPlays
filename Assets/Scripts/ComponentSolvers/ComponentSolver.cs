@@ -235,9 +235,12 @@ public abstract class ComponentSolver : ICommandResponder
             {
 				if (!needQuaternionReset)
 				{
-					BombMessageResponder.moduleCameras.Hide();
-				    BombMessageResponder.moduleCameras.HideHUD();
-                    IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
+				    if (BombMessageResponder.moduleCameras != null)
+				    {
+				        BombMessageResponder.moduleCameras.Hide();
+				        BombMessageResponder.moduleCameras.HideHUD();
+				    }
+				    IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
 				    while (hideUI.MoveNext())
 				    {
 				        yield return hideUI.Current;
@@ -259,8 +262,11 @@ public abstract class ComponentSolver : ICommandResponder
         if (needQuaternionReset)
         {
             BombCommander.RotateByLocalQuaternion(Quaternion.identity);
-			BombMessageResponder.moduleCameras.Show();
-            BombMessageResponder.moduleCameras.ShowHUD();
+            if (BombMessageResponder.moduleCameras != null)
+            {
+                BombMessageResponder.moduleCameras.Show();
+                BombMessageResponder.moduleCameras.ShowHUD();
+            }
             IEnumerator showUI = BombCommander.twitchBombHandle.ShowMainUIWindow();
             while (showUI.MoveNext())
             {
@@ -418,7 +424,10 @@ public abstract class ComponentSolver : ICommandResponder
         }
 
         BombCommander.bombSolvedModules++;
-        BombMessageResponder.moduleCameras.UpdateSolves();
+        if (BombMessageResponder.moduleCameras != null)
+        {
+            BombMessageResponder.moduleCameras.UpdateSolves();
+        }
 
         if (_turnQueued)
         {
@@ -429,7 +438,10 @@ public abstract class ComponentSolver : ICommandResponder
 
         ComponentHandle.OnPass();
 
-        BombMessageResponder.moduleCameras.DetachFromModule(BombComponent, true);
+        if (BombMessageResponder.moduleCameras != null)
+        {
+            BombMessageResponder.moduleCameras.DetachFromModule(BombComponent, true);
+        }
 
         return false;
     }
@@ -479,7 +491,10 @@ public abstract class ComponentSolver : ICommandResponder
             AwardStrikes(ComponentHandle.PlayerName, null, 1);
         }
 
-        BombMessageResponder.moduleCameras.UpdateStrikes(true);
+        if (BombMessageResponder.moduleCameras != null)
+        {
+            BombMessageResponder.moduleCameras.UpdateStrikes(true);
+        }
 
         return false;
     }
@@ -487,7 +502,10 @@ public abstract class ComponentSolver : ICommandResponder
     public bool OnStrikes(object _ignore)
     {
         _strikeCount++;
-        BombMessageResponder.moduleCameras.UpdateStrikes(true);
+        if (BombMessageResponder.moduleCameras != null)
+        {
+            BombMessageResponder.moduleCameras.UpdateStrikes(true);
+        }
         return false;
 
     }
@@ -617,8 +635,11 @@ public abstract class ComponentSolver : ICommandResponder
         if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
         {
             cameraPriority = ModuleCameras.CameraNotInUse;
-            BombMessageResponder.moduleCameras.DetachFromModule(BombComponent);
-			_responded = true;
+            if (BombMessageResponder.moduleCameras != null)
+            {
+                BombMessageResponder.moduleCameras.DetachFromModule(BombComponent);
+            }
+            _responded = true;
         }
         else
         {
@@ -630,7 +651,7 @@ public abstract class ComponentSolver : ICommandResponder
 
                 cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
             }
-            if ( (BombCommander.multiDecker) || (cameraPriority > ModuleCameras.CameraNotInUse) )
+            if ( (BombCommander.multiDecker) || (cameraPriority > ModuleCameras.CameraNotInUse)  && BombMessageResponder.moduleCameras != null)
             {
                 BombMessageResponder.moduleCameras.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
             }
