@@ -6,4 +6,9 @@ public static class GeneralExtensions
 	{
 		return targets.Contains(obj);	
 	}
+
+	public static bool InRange(this int num, int min, int max)
+	{
+		return min <= num && num <= max;
+	}
 }

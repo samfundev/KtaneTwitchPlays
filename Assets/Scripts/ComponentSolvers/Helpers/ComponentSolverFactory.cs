@@ -75,6 +75,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, ircConnection, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, ircConnection, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent, ircConnection, canceller) => new CurriculumComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedButtonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -195,6 +196,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "NumberPad", moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "resistors", moduleDisplayName = "Resistors", helpText = "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.", moduleScore = 6 };
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "switchModule", moduleDisplayName = "Switches", helpText = "Flip switches using !{0} flip 1 5 3 2.", moduleScore = 3 };
+		ModComponentSolverInformation["curriculum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleID = "curriculum", moduleDisplayName = "Curriculum", helpText = "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.", moduleScore = 12 };
 
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
