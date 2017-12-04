@@ -70,9 +70,8 @@ public class TranslatedButtonComponentSolver : ComponentSolver
             }
 
             timeRemaining = (float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent);
-            string formattedTime = (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(null, new object[] { timeRemaining, true });
 
-            if (formattedTime.Contains(secondString))
+            if (BombCommander.CurrentTimerFormatted.Contains(secondString))
             {
                 DoInteractionEnd(_button);
                 _held = false;
