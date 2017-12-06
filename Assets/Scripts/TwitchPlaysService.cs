@@ -156,6 +156,8 @@ public class TwitchPlaysService : MonoBehaviour
                 return bombMessageResponder;
 
             case KMGameInfo.State.Setup:
+                StartCoroutine(VanillaRuleModifier.Refresh());
+                StartCoroutine(MultipleBombs.Refresh());
                 return missionMessageResponder;
 
             case KMGameInfo.State.PostGame:
