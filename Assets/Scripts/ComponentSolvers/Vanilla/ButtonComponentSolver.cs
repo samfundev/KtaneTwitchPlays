@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Assets.Scripts.Helpers;
 using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
@@ -9,14 +10,31 @@ public class ButtonComponentSolver : ComponentSolver
     public ButtonComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
+        ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
+        ModuleInformation squarebuttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonV2");
+
         _button = (MonoBehaviour)_buttonField.GetValue(bombComponent);
-        modInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
+        modInfo = new ModuleInformation
+        {
+            builtIntoTwitchPlays = buttonInfo.builtIntoTwitchPlays,
+            CameraPinningAlwaysAllowed = buttonInfo.CameraPinningAlwaysAllowed,
+            helpText = VanillaRuleModifier.IsSeedVanilla()
+                ? buttonInfo.helpText
+                : squarebuttonInfo.helpText,
+            manualCode = buttonInfo.manualCode,
+            moduleDisplayName = buttonInfo.moduleDisplayName,
+            moduleID = buttonInfo.moduleID,
+            moduleScore = VanillaRuleModifier.IsSeedVanilla()
+                ? buttonInfo.moduleScore
+                : squarebuttonInfo.moduleScore
+        };
+
         _bombComponent = bombComponent;
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        bool isModdedSeed = (VanillaRuleModiferAPI.Instance != null && !VanillaRuleModiferAPI.Instance.IsSeedVanilla());
+        bool isModdedSeed = VanillaRuleModifier.IsSeedModded();
         inputCommand = inputCommand.ToLowerInvariant();
         if (!_held && inputCommand.EqualsAny("tap", "click"))
         {
@@ -151,7 +169,7 @@ public class ButtonComponentSolver : ComponentSolver
             yield return "elevator music";
             if (waitTime >= 120)
             {
-                yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModiferAPI.Instance.GetRuleSeed());
+                yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModifier.GetRuleSeed());
                 yield return string.Format("sendtochat Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", Code);
                 longwait = true;
             }
@@ -165,7 +183,7 @@ public class ButtonComponentSolver : ComponentSolver
             {
                 Canceller.ResetCancel();
                 if (timeTarget < 10)
-                    yield return string.Format("sendtochat The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModiferAPI.Instance.GetRuleSeed());
+                    yield return string.Format("sendtochat The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModifier.GetRuleSeed());
                 else
                     yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
                 _buttonCloseMethod.Invoke(_bombComponent, null);
@@ -193,7 +211,7 @@ public class ButtonComponentSolver : ComponentSolver
                     
                     if (waitTime >= 120 && !longwait)
                     {
-                        yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModiferAPI.Instance.GetRuleSeed());
+                        yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModifier.GetRuleSeed());
                         yield return string.Format("sendtochat Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", Code);
                     }
                     longwait = true;
