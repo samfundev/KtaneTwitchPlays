@@ -1345,6 +1345,7 @@ MonoBehaviour:
   - {fileID: 2130088624}
   - {fileID: 560963547}
   - {fileID: 269146698}
+  bombStatus: {fileID: 0}
   firstBackupCamera: 3
 --- !u!224 &1255777968
 RectTransform:

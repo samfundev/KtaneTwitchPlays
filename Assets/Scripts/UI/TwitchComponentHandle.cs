@@ -466,7 +466,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase) && !_solved)
 		{
-			if (!_solver._turnQueued)
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if (!_solver._turnQueued)
 			{
 				_solver._turnQueued = true;
 				StartCoroutine(_solver.TurnBombOnSolve());
@@ -475,16 +476,19 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase) && !_solved)
 		{
-			_solver._turnQueued = false;
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            _solver._turnQueued = false;
 			messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, headerText.text);
 		}
 		else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
 		{
-			messageOut = ClaimModule(userNickName, targetModule);
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            messageOut = ClaimModule(userNickName, targetModule);
 		}
 		else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (((playerName != null) && (playerName == userNickName)) || (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if (((playerName != null) && (playerName == userNickName)) || (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 			{
 				if (TakeInProgress != null)
 				{
@@ -499,7 +503,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
 				SetBannerColor(solvedBackgroundColor);
 				playerName = null;
@@ -508,7 +513,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
 				if (playerName != null && !_solved)
 				{
@@ -526,7 +532,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if ((playerName != null) && (userNickName != playerName) && (TakeInProgress == null))
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if ((playerName != null) && (userNickName != playerName) && (TakeInProgress == null))
 			{
 				if (!_solved)
 				{
@@ -542,7 +549,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (playerName == userNickName)
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if (playerName == userNickName)
 			{
 				messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, playerName, targetModule, headerText.text);
 				if (TakeInProgress != null)
@@ -558,7 +566,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
 			{
 				SetBannerColor(markedBackgroundColor);
 				return null;
@@ -599,7 +608,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		if (_solver != null)
 		{
-			if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))))
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
+            if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))))
 			{
 				ircConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
 				return null;
@@ -614,10 +624,19 @@ public class TwitchComponentHandle : MonoBehaviour
 			return null;
 		}
 	}
-	#endregion
+    #endregion
 
-	#region Private Methods
-	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)
+    #region Private Methods
+    private bool IsAuthorizedDefuser(string userNickName)
+    {
+        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
+        if (!result)
+            ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+
+        return result;
+    }
+
+    private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)
 	{
 		float time = Time.time;
 		while (Time.time - time < fadeDuration)

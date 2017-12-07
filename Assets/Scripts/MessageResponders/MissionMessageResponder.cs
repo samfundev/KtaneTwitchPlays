@@ -46,10 +46,7 @@ public class MissionMessageResponder : MessageResponder
             UnityEngine.Object[] freeplayDevices = FindObjectsOfType(CommonReflectedTypeInfo.FreeplayDeviceType);
             if (freeplayDevices != null && freeplayDevices.Length > 0)
             {
-                UnityEngine.Object[] objects = FindObjectsOfType(ReflectionHelper.FindType("MultipleBombsAssembly.MultipleBombs"));
-                MonoBehaviour multipleBombs = (objects == null || objects.Length == 0) ? null : (MonoBehaviour)objects[0];
-
-                _freeplayCommander = new FreeplayCommander((MonoBehaviour)freeplayDevices[0],multipleBombs);
+                _freeplayCommander = new FreeplayCommander((MonoBehaviour)freeplayDevices[0]);
                 break;
             }
 

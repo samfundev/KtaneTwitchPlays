@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class MiscellaneousMessageResponder : MessageResponder
@@ -14,11 +15,13 @@ public class MiscellaneousMessageResponder : MessageResponder
     {
         if (text.Equals("!cancel", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             _coroutineCanceller.SetCancel();
             return;
         }
         else if (text.Equals("!stop", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             _coroutineCanceller.SetCancel();
             _coroutineQueue.CancelFutureSubcoroutines();
             return;
@@ -32,6 +35,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.StartsWith("!bonusscore", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             string[] parts = text.Split(' ');
             if (parts.Length < 3)
             {
@@ -53,6 +57,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.StartsWith("!reward", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
             {
                 string[] parts = text.Split(' ');
@@ -114,6 +119,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.Equals("!shorturl", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             _ircConnection.SendMessage((TwitchPlaysService.urlHelper.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs");
         }
         else if (text.Equals("!about", StringComparison.InvariantCultureIgnoreCase))
@@ -128,6 +134,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.StartsWith("!add ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!remove ", StringComparison.InvariantCultureIgnoreCase))
         {
+            if (!IsAuthorizedDefuser(userNickName)) return;
             string[] split = text.ToLowerInvariant().Split(' ');
             if (split.Length < 3)
             {

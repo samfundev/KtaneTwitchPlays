@@ -18,7 +18,7 @@ public class FreeplayCommander : ICommandResponder
         _hardcoreToggleField = _freeplayDeviceType.GetField("HardcoreToggle", BindingFlags.Public | BindingFlags.Instance);
         _modsOnlyToggleField = _freeplayDeviceType.GetField("ModsOnly", BindingFlags.Public | BindingFlags.Instance);
         _startButtonField = _freeplayDeviceType.GetField("StartButton", BindingFlags.Public | BindingFlags.Instance);
-        _currentSettingsField = _freeplayDeviceType.GetField("currentSettings", BindingFlags.NonPublic | BindingFlags.Instance);
+        _currentSettingsField = _freeplayDeviceType.GetProperty("CurrentSettings", BindingFlags.Public | BindingFlags.Instance);
         _maxModuleField = _freeplayDeviceType.GetField("maxModules", BindingFlags.NonPublic | BindingFlags.Instance);
         _MAXSECONDSFIELD = _freeplayDeviceType.GetField("MAX_SECONDS_TO_SOLVE", BindingFlags.Public | BindingFlags.Static);
 
@@ -65,20 +65,11 @@ public class FreeplayCommander : ICommandResponder
         _selectableManagerProperty = _inputManagerType.GetProperty("SelectableManager", BindingFlags.Public | BindingFlags.Instance);
 
         _inputManager = (MonoBehaviour)_instanceProperty.GetValue(null, null);
-
-        _multipleBombsType = ReflectionHelper.FindType("MultipleBombsAssembly.MultipleBombs");
-        if (_multipleBombsType == null)
-        {
-            return;
-        }
-        _bombsCountField = _multipleBombsType.GetField("bombsCount", BindingFlags.NonPublic | BindingFlags.Instance);
-        _getCurrentMaximumBombCountMethod = _multipleBombsType.GetMethod("GetCurrentMaximumBombCount", BindingFlags.Public | BindingFlags.Instance);
     }
 
-    public FreeplayCommander(MonoBehaviour freeplayDevice, MonoBehaviour multipleBombs)
+    public FreeplayCommander(MonoBehaviour freeplayDevice)
     {
         FreeplayDevice = freeplayDevice;
-        MultipleBombs = multipleBombs;
         Selectable = (MonoBehaviour)FreeplayDevice.GetComponent(_selectableType);
         SelectableChildren = (MonoBehaviour[]) _childrenField.GetValue(Selectable);
         FloatingHoldable = (MonoBehaviour)FreeplayDevice.GetComponent(_floatingHoldableType);
@@ -87,7 +78,29 @@ public class FreeplayCommander : ICommandResponder
     #endregion
 
     #region Interface Implementation
+
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
+    {
+        IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier, connection);
+        bool result;
+        do
+        {
+            try
+            {
+                result = respond.MoveNext();
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogException(ex);
+                result = false;
+            }
+            if (result)
+                yield return respond.Current;
+        } while (result);
+    }
+
+
+    public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
         message = message.ToLowerInvariant();
         int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
@@ -109,11 +122,11 @@ public class FreeplayCommander : ICommandResponder
             }
         }
 
-        string changeHoursTo = String.Empty;
-        string changeMinutesTo = String.Empty;
-        string changeSecondsTo = String.Empty;
-        string changeBombsTo = String.Empty;
-        string changeModulesTo = String.Empty;
+        string changeHoursTo = string.Empty;
+        string changeMinutesTo = string.Empty;
+        string changeSecondsTo = string.Empty;
+        string changeBombsTo = string.Empty;
+        string changeModulesTo = string.Empty;
         bool startBomb = false;
 
         if (message.EqualsAny("needy on", "needy off"))
@@ -323,7 +336,7 @@ public class FreeplayCommander : ICommandResponder
             }
         }
 
-        if (changeMinutesTo != String.Empty)
+        if (changeMinutesTo != string.Empty)
         {
             IEnumerator setTimerCoroutine = SetBombTimer(changeHoursTo, changeMinutesTo, changeSecondsTo);
             while (setTimerCoroutine.MoveNext())
@@ -331,7 +344,7 @@ public class FreeplayCommander : ICommandResponder
                 yield return setTimerCoroutine.Current;
             }
         }
-        if (changeBombsTo != String.Empty)
+        if (changeBombsTo != string.Empty)
         {
             IEnumerator setBombsCoroutine = SetBombCount(changeBombsTo);
             while (setBombsCoroutine.MoveNext())
@@ -339,7 +352,7 @@ public class FreeplayCommander : ICommandResponder
                 yield return setBombsCoroutine.Current;
             }
         }
-        if (changeModulesTo != String.Empty)
+        if (changeModulesTo != string.Empty)
         {
             IEnumerator setModulesCoroutine = SetBombModules(changeModulesTo);
             while (setModulesCoroutine.MoveNext())
@@ -356,26 +369,9 @@ public class FreeplayCommander : ICommandResponder
     #endregion
 
     #region Helper Methods
-    public bool IsDualBombInstalled()
-    {
-        bool result = MultipleBombs != null;
-
-        if (_multipleBombsType == null)
-        {
-            _multipleBombsType = ReflectionHelper.FindType("MultipleBombsAssembly.MultipleBombs");
-            if (_multipleBombsType == null)
-            {
-                return false;
-            }
-            _bombsCountField = _multipleBombsType.GetField("bombsCount", BindingFlags.NonPublic | BindingFlags.Instance);
-            _getCurrentMaximumBombCountMethod = _multipleBombsType.GetMethod("GetCurrentMaximumBombCount", BindingFlags.Public | BindingFlags.Instance);
-        }
-
-        return result;
-    }
-
     public IEnumerator SetBombTimer(string hours, string mins, string secs)
     {
+        DebugHelper.Log("Time parsing section");
         int hoursInt = 0;
         if (!string.IsNullOrEmpty(hours) && !int.TryParse(hours, out hoursInt))
         {
@@ -396,20 +392,23 @@ public class FreeplayCommander : ICommandResponder
         }
 
         int timeIndex = (hoursInt * 120) + (minutes * 2) + (seconds / 30);
-
+        DebugHelper.Log("Freeplay time doubling section");
         //Double the available free play time. (The doubling stacks with the Multiple bombs module installed)
         float originalMaxTime = (float) _MAXSECONDSFIELD.GetValue(null);
         int maxModules = (int)_maxModuleField.GetValue(FreeplayDevice);
-        int multiplier = IsDualBombInstalled() ? ((int)_getCurrentMaximumBombCountMethod.Invoke(MultipleBombs,null) * 2) - 1 : 1;
+        int multiplier = MultipleBombs.Installed() ? (MultipleBombs.GetMaximumBombCount() * 2) - 1 : 1;
         float newMaxTime = 600f + ((maxModules - 1) * multiplier * 60);
         _MAXSECONDSFIELD.SetValue(null, newMaxTime);
 
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice);
-        float currentTime = (float)_timeField.GetValue(currentSettings);
-        int currentTimeIndex = Mathf.FloorToInt(currentTime) / 30;
-        MonoBehaviour button = timeIndex > currentTimeIndex ? (MonoBehaviour)_timeIncrementField.GetValue(FreeplayDevice) : (MonoBehaviour)_timeDecrementField.GetValue(FreeplayDevice);
-        MonoBehaviour buttonSelectable = (MonoBehaviour)button.GetComponent(_selectableType);
 
+        DebugHelper.Log("Freeplay settings reading section");
+        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice,null); DebugHelper.Log("1");
+        float currentTime = (float)_timeField.GetValue(currentSettings); DebugHelper.Log("2");
+        int currentTimeIndex = Mathf.FloorToInt(currentTime) / 30; DebugHelper.Log("3");
+        MonoBehaviour button = timeIndex > currentTimeIndex ? (MonoBehaviour)_timeIncrementField.GetValue(FreeplayDevice) : (MonoBehaviour)_timeDecrementField.GetValue(FreeplayDevice); DebugHelper.Log("4");
+        MonoBehaviour buttonSelectable = (MonoBehaviour)button.GetComponent(_selectableType); DebugHelper.Log("5");
+
+        DebugHelper.Log("Freeplay time setting section");
         for (int hitCount = 0; hitCount < Mathf.Abs(timeIndex - currentTimeIndex); ++hitCount)
         {
             currentTime = (float)_timeField.GetValue(currentSettings);
@@ -431,25 +430,22 @@ public class FreeplayCommander : ICommandResponder
             yield break;
         }
 
-        if (!IsDualBombInstalled())
+        if (!MultipleBombs.Installed())
         {
             yield break;
         }
 
-        int currentBombCount = (int) _bombsCountField.GetValue(MultipleBombs);
+        int currentBombCount = MultipleBombs.GetFreePlayBombCount();
         MonoBehaviour buttonSelectable = bombCount > currentBombCount ? SelectableChildren[3] : SelectableChildren[2];
 
         for (int hitCount = 0; hitCount < Mathf.Abs(bombCount - currentBombCount); ++hitCount)
         {
-            int lastBombCount = (int)_bombsCountField.GetValue(MultipleBombs);
+            int lastBombCount = MultipleBombs.GetFreePlayBombCount();
             SelectObject(buttonSelectable);
             yield return new WaitForSeconds(0.01f);
-            if (lastBombCount == (int)_bombsCountField.GetValue(MultipleBombs))
+            if (lastBombCount == MultipleBombs.GetFreePlayBombCount())
                 yield break;
         }
-
-
-        //SelectObject(bombCount <= 1 ? SelectableChildren[2] : SelectableChildren[3]);
     }
 
     public IEnumerator SetBombModules(string mods)
@@ -460,7 +456,7 @@ public class FreeplayCommander : ICommandResponder
             yield break;
         }
 
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice);
+        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null);
         int currentModuleCount = (int)_moduleCountField.GetValue(currentSettings);
         MonoBehaviour button = moduleCount > currentModuleCount ? (MonoBehaviour)_moduleCountIncrementField.GetValue(FreeplayDevice) : (MonoBehaviour)_moduleCountDecrementField.GetValue(FreeplayDevice);
         MonoBehaviour buttonSelectable = (MonoBehaviour)button.GetComponent(_selectableType);
@@ -495,7 +491,7 @@ public class FreeplayCommander : ICommandResponder
 
     public void SetModsOnly(bool on = true)
     {
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice);
+        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null);
         bool onlyMods = (bool)_onlyModsField.GetValue(currentSettings);
         if (onlyMods != on)
         {
@@ -576,9 +572,8 @@ public class FreeplayCommander : ICommandResponder
     public readonly MonoBehaviour[] SelectableChildren = null;
     public readonly MonoBehaviour FloatingHoldable = null;
     private readonly MonoBehaviour SelectableManager = null;
-    private readonly MonoBehaviour MultipleBombs = null;
-    public bool HasNeedy { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice); return (bool)_hasNeedyField.GetValue(currentSettings); }}
-    public bool IsHardcore { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice); return (bool)_isHardCoreField.GetValue(currentSettings); }}
+    public bool HasNeedy { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null); return (bool)_hasNeedyField.GetValue(currentSettings); }}
+    public bool IsHardcore { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null); return (bool)_isHardCoreField.GetValue(currentSettings); }}
     #endregion
 
     #region Private Static Fields
@@ -591,9 +586,9 @@ public class FreeplayCommander : ICommandResponder
     private static FieldInfo _hardcoreToggleField = null;
     private static FieldInfo _modsOnlyToggleField = null;
     private static FieldInfo _startButtonField = null;
-    private static FieldInfo _currentSettingsField = null;
     private static FieldInfo _maxModuleField = null;
     private static FieldInfo _MAXSECONDSFIELD = null;
+    private static PropertyInfo _currentSettingsField = null;
 
     private static Type _freeplaySettingsType = null;
     private static FieldInfo _moduleCountField = null;
@@ -625,11 +620,6 @@ public class FreeplayCommander : ICommandResponder
     private static PropertyInfo _selectableManagerProperty = null;
 
     private static MonoBehaviour _inputManager = null;
-
-    private static Type _multipleBombsType = null;
-    private static FieldInfo _bombsCountField = null;
-    private static MethodInfo _getCurrentMaximumBombCountMethod = null;
-
     #endregion
 }
 
