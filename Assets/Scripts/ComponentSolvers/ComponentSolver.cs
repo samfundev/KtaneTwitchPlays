@@ -353,12 +353,17 @@ public abstract class ComponentSolver : ICommandResponder
 	{
 		DebugHelper.LogException(e, "While solving a module an exception has occurred! Here's the error:");
 
-		IRCConnection.SendMessage("Looks like a module ran into a problem while running a command, automatically solving module. Some other modules may also be solved to prevent problems.");
+		SolveModule("Looks like a module ran into a problem while running a command, automatically solving module.");
+	}
+
+	protected void SolveModule(string reason = "A module is being automatically solved.")
+	{
+		IRCConnection.SendMessage("{0} Some other modules may also be solved to prevent problems.", reason);
 
 		_currentUserNickName = null;
 		_delegatedSolveUserNickName = null;
 
-	    TwitchComponentHandle.RemoveSolveBasedModules();
+		TwitchComponentHandle.RemoveSolveBasedModules();
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
 	}
 	#endregion
@@ -662,6 +667,10 @@ public abstract class ComponentSolver : ICommandResponder
 			yield return "show";
             yield return null;
         }
+		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		{
+			SolveModule(string.Format("A module ({0}) is being automatically solved.", modInfo.moduleDisplayName));
+		}
     }
     #endregion
 
