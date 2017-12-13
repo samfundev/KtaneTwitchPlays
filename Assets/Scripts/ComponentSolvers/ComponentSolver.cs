@@ -667,7 +667,7 @@ public abstract class ComponentSolver : ICommandResponder
 			yield return "show";
             yield return null;
         }
-		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 		{
 			SolveModule(string.Format("A module ({0}) is being automatically solved.", modInfo.moduleDisplayName));
 		}

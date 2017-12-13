@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -127,7 +128,8 @@ public class ModuleCameras : MonoBehaviour
 
     #region Public Fields
     public Text timerPrefab = null;
-    public Text strikesPrefab = null;
+	public Text timerShadowPrefab = null;
+	public Text strikesPrefab = null;
     public Text strikeLimitPrefab = null;
     public Text solvesPrefab = null;
     public Text totalModulesPrefab = null;
@@ -187,14 +189,16 @@ public class ModuleCameras : MonoBehaviour
         stacks[1] = priorityModuleStack;
         stacks[2] = claimedModuleStack;
         stacks[3] = moduleStack;
-    }
-
-    private void LateUpdate()
+	}
+	
+	private void LateUpdate()
     {
         if (currentBomb != null)
         {
-            timerPrefab.text = DisplayTime;
-            UpdateConfidence();
+			string formattedTime = currentBomb.GetFullFormattedTime;
+			timerPrefab.text = formattedTime;
+			timerShadowPrefab.text = Regex.Replace(formattedTime, @"\d", "8");
+			UpdateConfidence();
         }
     }
     #endregion
@@ -558,19 +562,6 @@ public class ModuleCameras : MonoBehaviour
             */
             
             return null;
-        }
-    }
-
-    private string DisplayTime
-    {
-        get
-        {
-            string output = currentBomb.GetFullFormattedTime;
-            if (output.Length < 7)
-            {
-                output = "0:" + output;
-            }
-            return output;
         }
     }
 

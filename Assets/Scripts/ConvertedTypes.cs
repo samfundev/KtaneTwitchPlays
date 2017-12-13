@@ -45,8 +45,9 @@ public static class CommonReflectedTypeInfo
         IsSolvedMethod = BombType.GetMethod("IsSolved", BindingFlags.Public | BindingFlags.Instance);
         NumStrikesField = BombType.GetField("NumStrikes", BindingFlags.Public | BindingFlags.Instance);
         NumStrikesToLoseField = BombType.GetField("NumStrikesToLose", BindingFlags.Public | BindingFlags.Instance);
+		StrikeIndicatorField = BombType.GetField("StrikeIndicator", BindingFlags.Public | BindingFlags.Instance);
 
-        BombComponentType = ReflectionHelper.FindType("BombComponent");
+		BombComponentType = ReflectionHelper.FindType("BombComponent");
         ComponentTypeField = BombComponentType.GetField("ComponentType", BindingFlags.Public | BindingFlags.Instance);
         ModuleDisplayNameField = BombComponentType.GetMethod("GetModuleDisplayName", BindingFlags.Public | BindingFlags.Instance);
         IsSolvedField = BombComponentType.GetField("IsSolved", BindingFlags.Public | BindingFlags.Instance);
@@ -58,8 +59,9 @@ public static class CommonReflectedTypeInfo
         TimeElapsedProperty = TimerComponentType.GetProperty("TimeElapsed", BindingFlags.Public | BindingFlags.Instance);
         TimeRemainingField = TimerComponentType.GetField("TimeRemaining", BindingFlags.Public | BindingFlags.Instance);
         GetFormattedTimeMethod = TimerComponentType.GetMethod("GetFormattedTime", BindingFlags.Public | BindingFlags.Instance);
+		SetRateModifierMethod = TimerComponentType.GetMethod("SetRateModifier", BindingFlags.Public | BindingFlags.Instance);
 
-        AlarmClockType = ReflectionHelper.FindType("Assets.Scripts.Props.AlarmClock");
+		AlarmClockType = ReflectionHelper.FindType("Assets.Scripts.Props.AlarmClock");
         AlarmClockSnooze = AlarmClockType.GetMethod("ButtonDown", BindingFlags.Public | BindingFlags.Instance);
         AlarmClockTurnOff = AlarmClockType.GetMethod("TurnOff", BindingFlags.Public | BindingFlags.Instance);
 
@@ -73,7 +75,10 @@ public static class CommonReflectedTypeInfo
         BombBinderType = ReflectionHelper.FindType("BombBinder");
 
         FreeplayDeviceType = ReflectionHelper.FindType("FreeplayDevice");
-    }
+
+		StrikeIndicatorType = ReflectionHelper.FindType("StrikeIndicator");
+		StrikeCountProperty = StrikeIndicatorType.GetProperty("StrikeCount", BindingFlags.Public | BindingFlags.Instance);
+	}
 
     #region Bomb
     public static Type BombType
@@ -117,10 +122,16 @@ public static class CommonReflectedTypeInfo
         get;
         private set;
     }
-    #endregion
 
-    #region Bomb Component
-    public static Type BombComponentType
+	public static FieldInfo StrikeIndicatorField
+	{
+		get;
+		private set;
+	}
+	#endregion
+
+	#region Bomb Component
+	public static Type BombComponentType
     {
         get;
         private set;
@@ -214,10 +225,15 @@ public static class CommonReflectedTypeInfo
         private set;
     }
 
-    #endregion
+	public static MethodInfo SetRateModifierMethod
+	{
+		get;
+		private set;
+	}
+	#endregion
 
-    #region Result Page
-    public static Type ResultPageType
+	#region Result Page
+	public static Type ResultPageType
     {
         get;
         private set;
@@ -255,4 +271,16 @@ public static class CommonReflectedTypeInfo
         get;
         private set;
     }
+
+	public static Type StrikeIndicatorType
+	{
+		get;
+		private set;
+	}
+
+	public static PropertyInfo StrikeCountProperty
+	{
+		get;
+		private set;
+	}
 }

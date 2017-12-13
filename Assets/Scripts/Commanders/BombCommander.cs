@@ -410,11 +410,6 @@ public class BombCommander : ICommandResponder
         }
     }
 
-    public void CauseInstantStrike(string reason)
-    {
-        CauseStrike(reason);
-    }
-
     public void CauseStrike(string reason)
     {
         object strikeSource = Activator.CreateInstance(_strikeSourceType);
@@ -539,13 +534,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            string formattedTime = CurrentTimerFormatted;
-            if (CurrentTimer >= 3600.0f)
-            {
-                int hours = (int) (CurrentTimer / 3600);
-                formattedTime = hours + ":" + formattedTime;
-            }
-            return formattedTime;
+            return CurrentTimer.FormatTime();
         }
     }
 	
@@ -553,13 +542,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            string formattedTime = StartingTimerFormatted;
-            if (bombStartingTimer >= 3600.0f)
-            {
-                int hours = (int)(bombStartingTimer / 3600);
-               formattedTime = hours + ":" + formattedTime;
-            }
-            return formattedTime;
+			return bombStartingTimer.FormatTime();
         }
     }
 	
