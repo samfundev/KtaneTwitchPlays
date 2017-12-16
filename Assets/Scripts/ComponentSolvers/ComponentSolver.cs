@@ -178,7 +178,7 @@ public abstract class ComponentSolver : ICommandResponder
 				{
 					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
 
-					int penalty = Math.Min((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
+					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
 					IRCConnection.SendMessage("That answer couldn't be submitted! You lose {0} points, please only submit correct answers.", penalty);
 				}
