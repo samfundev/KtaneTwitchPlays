@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
+using System.Text;
 
 public static class GeneralExtensions
 {
@@ -40,5 +41,16 @@ public static class GeneralExtensions
 		if (addMilliseconds) formatedTime += ((int) (seconds * 100)).ToString(@"\.00");
 
 		return formatedTime;
+	}
+
+	public static string Join(this IEnumerable<string> strings, string separator = " ")
+	{
+		StringBuilder stringBuilder = new StringBuilder();
+		IEnumerator<string> enumerator = strings.GetEnumerator();
+		if (enumerator.MoveNext()) stringBuilder.Append(enumerator.Current); else return "";
+
+		while (enumerator.MoveNext()) stringBuilder.Append(separator).Append(enumerator.Current);
+
+		return stringBuilder.ToString();
 	}
 }

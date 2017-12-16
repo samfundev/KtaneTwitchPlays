@@ -173,8 +173,16 @@ public abstract class ComponentSolver : ICommandResponder
                 {
                     _delegatedSolveUserNickName = userNickName;
                     _delegatedSolveResponseNotifier = responseNotifier;
-                }
-                else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
+				}
+				else if (currentString.Equals("unsubmittablepenalty", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
+
+					int penalty = Math.Min((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
+					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
+					IRCConnection.SendMessage("That answer couldn't be submitted! You lose {0} points, please only submit correct answers.", penalty);
+				}
+				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(14).Trim() != string.Empty)
                 {
                     StrikeMessage = currentString.Substring(14);

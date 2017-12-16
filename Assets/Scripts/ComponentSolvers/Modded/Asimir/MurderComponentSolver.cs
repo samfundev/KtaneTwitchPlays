@@ -69,7 +69,7 @@ public class MurderComponentSolver : ComponentSolver
 	        category = match.Groups[1].ToString();
 	        value = match.Groups[2].ToString().Trim();
 
-	        catIndex = System.Array.IndexOf(Commands, category);
+	        catIndex = Array.IndexOf(Commands, category);
 	        if ((catIndex == -1) || (set[catIndex]))
 	        {
 	            continue;
@@ -92,6 +92,11 @@ public class MurderComponentSolver : ComponentSolver
 	    {
 	        yield return DoInteractionClick(_buttons[6]);
 	    }
+		else
+		{
+			yield return "unsubmittablepenalty";
+			yield break;
+		}
     }
 
 	static MurderComponentSolver()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -89,6 +90,7 @@ public class BombCommander : ICommandResponder
     {
         Bomb = bomb;
 		timerComponent = (MonoBehaviour) CommonReflectedTypeInfo.GetTimerMethod.Invoke(Bomb, null);
+		widgetManager = CommonReflectedTypeInfo.WidgetManagerField.GetValue(Bomb);
 		Selectable = (MonoBehaviour)Bomb.GetComponent(_selectableType);
         FloatingHoldable = (MonoBehaviour)Bomb.GetComponent(_floatingHoldableType);
         SelectableManager = (MonoBehaviour)_selectableManagerProperty.GetValue(_inputManager, null);
@@ -372,6 +374,36 @@ public class BombCommander : ICommandResponder
             BombMessageResponder.moduleCameras.Show();
     }
 
+	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null)
+	{
+		return ((List<string>) CommonReflectedTypeInfo.GetWidgetQueryResponsesMethod.Invoke(widgetManager, new string[] { queryKey, queryInfo })).Select(str => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>(str));
+	}
+
+	public void FillEdgework()
+	{
+		List<string> edgework = new List<string>();
+		Dictionary<string, string> portNames = new Dictionary<string, string>()
+		{
+			{ "RJ45", "RJ" },
+			{ "StereoRCA", "RCA" }
+		};
+
+		var batteries = QueryWidgets<int>(KMBombInfo.QUERYKEY_GET_BATTERIES);
+		edgework.Add(string.Format("{0}B {1}H", batteries.Sum(x => x["numbatteries"]), batteries.Count()));
+
+		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_INDICATOR).OrderBy(x => x["label"]).Select(x => (x["on"] == "True" ? "*" : "") + x["label"]).Join());
+
+		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x == "" ? "Empty" : x).Select(x => "[" + x + "]").Join(" "));
+		
+		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
+		
+		string edgeworkString = edgework.Join(" // ");
+		if (twitchBombHandle.edgeworkText.text == edgeworkString) return;
+
+		twitchBombHandle.edgeworkText.text = edgeworkString;
+		twitchBombHandle.ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
+	}
+	
     public IEnumerator Focus(MonoBehaviour selectable, float focusDistance, bool frontFace)
     {
         IEnumerator holdCoroutine = HoldBomb(frontFace);
@@ -642,7 +674,8 @@ public class BombCommander : ICommandResponder
 
     public TwitchBombHandle twitchBombHandle = null;
     public MonoBehaviour timerComponent = null;
-    public int bombSolvableModules;
+	public object widgetManager = null;
+	public int bombSolvableModules;
     public int bombSolvedModules;
     public float bombStartingTimer;
     public bool multiDecker = false;

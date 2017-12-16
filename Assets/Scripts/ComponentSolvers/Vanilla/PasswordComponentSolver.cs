@@ -101,6 +101,7 @@ public class PasswordComponentSolver : ComponentSolver
             //Break out of the sequence if a column spinner doesn't have a matching character
             if (GetCurrentChar(spinner) != characters[characterIndex])
             {
+				yield return "unsubmittablepenalty";
                 yield break;
             }
         }

@@ -46,6 +46,7 @@ public static class CommonReflectedTypeInfo
         NumStrikesField = BombType.GetField("NumStrikes", BindingFlags.Public | BindingFlags.Instance);
         NumStrikesToLoseField = BombType.GetField("NumStrikesToLose", BindingFlags.Public | BindingFlags.Instance);
 		StrikeIndicatorField = BombType.GetField("StrikeIndicator", BindingFlags.Public | BindingFlags.Instance);
+		WidgetManagerField = BombType.GetField("WidgetManager", BindingFlags.Public | BindingFlags.Instance);
 
 		BombComponentType = ReflectionHelper.FindType("BombComponent");
         ComponentTypeField = BombComponentType.GetField("ComponentType", BindingFlags.Public | BindingFlags.Instance);
@@ -78,6 +79,9 @@ public static class CommonReflectedTypeInfo
 
 		StrikeIndicatorType = ReflectionHelper.FindType("StrikeIndicator");
 		StrikeCountProperty = StrikeIndicatorType.GetProperty("StrikeCount", BindingFlags.Public | BindingFlags.Instance);
+
+		WidgetManagerType = ReflectionHelper.FindType("WidgetManager");
+		GetWidgetQueryResponsesMethod = WidgetManagerType.GetMethod("GetWidgetQueryResponses", BindingFlags.Public | BindingFlags.Instance);
 	}
 
     #region Bomb
@@ -124,6 +128,12 @@ public static class CommonReflectedTypeInfo
     }
 
 	public static FieldInfo StrikeIndicatorField
+	{
+		get;
+		private set;
+	}
+
+	public static FieldInfo WidgetManagerField
 	{
 		get;
 		private set;
@@ -279,6 +289,18 @@ public static class CommonReflectedTypeInfo
 	}
 
 	public static PropertyInfo StrikeCountProperty
+	{
+		get;
+		private set;
+	}
+
+	public static Type WidgetManagerType
+	{
+		get;
+		private set;
+	}
+
+	public static MethodInfo GetWidgetQueryResponsesMethod
 	{
 		get;
 		private set;
