@@ -84,6 +84,8 @@ public abstract class ComponentSolver : ICommandResponder
 				try
 				{
 					moved = subcoroutine.MoveNext();
+
+					if (moved && modInfo.DoesTheRightThing) _responded = true;
 				}
 				catch (Exception e)
 				{

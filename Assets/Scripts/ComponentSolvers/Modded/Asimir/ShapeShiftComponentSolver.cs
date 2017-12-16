@@ -44,7 +44,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		initialR = _displayR = (int) _displayRField.GetValue(_component);
 	}
 
-	private IEnumerable SetDisplay(int displayIndexL, int displayIndexR)
+	private IEnumerator SetDisplay(int displayIndexL, int displayIndexR)
 	{
 		while (_displayL != displayIndexL)
 		{
@@ -73,7 +73,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 			if (shapeL != null && shapeR != null)
 			{
 				yield return null;
-				foreach (object obj in SetDisplay((int) shapeL, (int) shapeR)) yield return obj;
+				yield return SetDisplay((int) shapeL, (int) shapeR);
 
 				DoInteractionClick(_buttons[1]);
 			}
@@ -81,7 +81,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		else if (commands.Length == 1 && commands[0].Equals("reset"))
 		{
 			yield return null;
-			foreach (object obj in SetDisplay(initialL, initialR)) yield return obj;
+			yield return SetDisplay(initialL, initialR);
 		}
 	}
 

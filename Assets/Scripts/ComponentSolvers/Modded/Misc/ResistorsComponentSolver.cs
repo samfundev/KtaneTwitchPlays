@@ -73,7 +73,7 @@ public class ResistorsComponentSolver : ComponentSolver
 			DoInteractionClick(_checkButton);
 			yield return new WaitForSeconds(0.1f);
 		}
-		else if (commands.Length == 1 && commands[0].Equals("clear"))
+		else if (commands.Length == 1 && commands[0].EqualsAny("clear", "reset"))
 		{
 			yield return null;
 
