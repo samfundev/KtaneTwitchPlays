@@ -98,8 +98,7 @@ public class MurderComponentSolver : ComponentSolver
 		{
 		    for (var i = 0; i < 3; i++)
 		    {
-		        if (!tried[i]) continue;
-		        if (set[i]) continue;
+		        if (!tried[i] || set[i]) continue;
 		        yield return "unsubmittablepenalty";
 		        yield break;
             }
