@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class TwitchBombHandle : MonoBehaviour
 {
@@ -114,47 +116,126 @@ public class TwitchBombHandle : MonoBehaviour
         }
 
         string internalCommandLower = internalCommand.ToLowerInvariant();
+		string[] split = internalCommandLower.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
-        //Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
-        ICommandResponseNotifier notifier = message;
-        if (internalCommandLower.EqualsAny("timestamp","date"))
-        {
-            //Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
+		//Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
+		ICommandResponseNotifier notifier = message;
+		if (internalCommandLower.EqualsAny("timestamp", "date"))
+		{
+			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 
-            notifier.ProcessResponse(CommandResponse.Start);
-            ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
-            notifier.ProcessResponse(CommandResponse.EndNotComplete);
-        }
-        else if (internalCommandLower.Equals("help"))
-        {
-            notifier.ProcessResponse(CommandResponse.Start);
+			notifier.ProcessResponse(CommandResponse.Start);
+			ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
+			notifier.ProcessResponse(CommandResponse.EndNotComplete);
+		}
+		else if (internalCommandLower.Equals("help"))
+		{
+			notifier.ProcessResponse(CommandResponse.Start);
 
-            ircConnection.SendMessage(TwitchPlaySettings.data.BombHelp);
+			ircConnection.SendMessage(TwitchPlaySettings.data.BombHelp);
 
-            notifier.ProcessResponse(CommandResponse.EndNotComplete);
-        }
-        else if (internalCommandLower.EqualsAny("time","timer","clock"))
-        {
-            notifier.ProcessResponse(CommandResponse.Start);
-            ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
-            notifier.ProcessResponse(CommandResponse.EndNotComplete);
-        }
-        else if (internalCommandLower.EqualsAny("explode","detonate"))
-            {
-                if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-                {
-                   return DelayBombExplosionCoroutine(notifier);
+			notifier.ProcessResponse(CommandResponse.EndNotComplete);
+		}
+		else if (internalCommandLower.EqualsAny("time", "timer", "clock"))
+		{
+			notifier.ProcessResponse(CommandResponse.Start);
+			ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
+			notifier.ProcessResponse(CommandResponse.EndNotComplete);
+		}
+		else if (internalCommandLower.EqualsAny("explode", "detonate"))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				return DelayBombExplosionCoroutine(notifier);
+			}
+		}
+		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove"))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			{
+				bool negitive = split[0].EqualsAny("subtract", "decrease", "remove");
+				switch (split[1])
+				{
+					case "time":
+					case "t":
+						float time = 0;
+						Dictionary<string, float> timeLengths = new Dictionary<string, float>()
+						{
+							{ "ms", 0.001f },
+							{ "s", 1 },
+							{ "m", 60 },
+							{ "h", 3600 },
+							{ "d", 86400 },
+						};
 
-            }
-        }
-        else if (!IsAuthorizedDefuser(userNickName))
-        {
-            return null;
-        }
-        else
-        {
-            return RespondToCommandCoroutine(userNickName, internalCommand, message);
-        }
+						foreach (string part in split.Skip(2))
+						{
+							bool valid = false;
+							foreach (string name in timeLengths.Keys)
+							{
+								if (part.EndsWith(name))
+								{
+									float length;
+									if (float.TryParse(part.Substring(0, part.Length - name.Length), out length))
+									{
+										time += length * timeLengths[name];
+										valid = true;
+										break;
+									}
+								}
+							}
+
+							if (!valid) return null;
+						}
+
+						if (time == 0) break;
+						if (negitive) time = -time;
+
+						CommonReflectedTypeInfo.TimeRemainingField.SetValue(bombCommander.timerComponent, bombCommander.CurrentTimer + time);
+						ircConnection.SendMessage("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from");
+						break;
+					case "strikes":
+					case "strike":
+					case "s":
+						int strikes;
+						if (int.TryParse(split[2], out strikes) && strikes != 0)
+						{
+							if (negitive) strikes = -strikes;
+
+							CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, bombCommander.StrikeCount + strikes);
+							ircConnection.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), strikes > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
+							BombMessageResponder.moduleCameras.UpdateStrikes();
+							HandleStrikeChanges();
+						}
+						break;
+					case "strikelimit":
+					case "sl":
+					case "maxstrikes":
+					case "ms":
+						int maxStrikes;
+						if (int.TryParse(split[2], out maxStrikes) && maxStrikes != 0)
+						{
+							if (negitive) maxStrikes = -maxStrikes;
+
+							CommonReflectedTypeInfo.NumStrikesToLoseField.SetValue(bombCommander.Bomb, bombCommander.StrikeLimit + maxStrikes);
+							ircConnection.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), maxStrikes > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
+							BombMessageResponder.moduleCameras.UpdateStrikeLimit();
+							HandleStrikeChanges();
+						}
+						break;
+				}
+
+				return null;
+			}
+		}
+		else if (!IsAuthorizedDefuser(userNickName))
+		{
+			return null;
+		}
+		else
+		{
+			return RespondToCommandCoroutine(userNickName, internalCommand, message);
+		}
 
         return null;
     }
@@ -180,6 +261,29 @@ public class TwitchBombHandle : MonoBehaviour
     #endregion
 
     #region Private Methods
+	private void HandleStrikeChanges()
+	{
+		int strikeLimit = bombCommander.StrikeLimit;
+		int strikeCount = Math.Min(bombCommander.StrikeCount, strikeLimit);
+		
+		if (strikeCount == strikeLimit)
+		{
+			CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, strikeLimit - 1);
+			bombCommander.CauseStrike("Strike count / strike limit changed.");
+			//RecordManager.Instance.SetResult(GameResultEnum.ExplodedDueToStrikes, this.GetTimer().TimeElapsed, SceneManager.Instance.GameplayState.GetElapsedRealTime());
+			//this.Detonate();
+		}
+		else
+		{
+			Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", bombCommander.StrikeCount, bombCommander.StrikeLimit));
+
+			//MasterAudio.PlaySound3DAtTransformAndForget("strike", base.transform, 1f, null, 0f, null);
+			float[] rates = { 1, 1.25f, 1.5f, 1.75f, 2 };
+			CommonReflectedTypeInfo.SetRateModifierMethod.Invoke(bombCommander.timerComponent, new object[] { rates[Math.Min(strikeCount, 4)] });
+			CommonReflectedTypeInfo.StrikeCountProperty.SetValue(CommonReflectedTypeInfo.StrikeIndicatorField.GetValue(bombCommander.Bomb), strikeCount, null);
+		}
+	}
+	
     private bool IsAuthorizedDefuser(string userNickName)
     {
         if (userNickName.Equals(nameText.text))
@@ -190,7 +294,6 @@ public class TwitchBombHandle : MonoBehaviour
 
         return result;
     }
-
 
     private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
     {

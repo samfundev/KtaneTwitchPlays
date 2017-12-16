@@ -173,8 +173,16 @@ public abstract class ComponentSolver : ICommandResponder
                 {
                     _delegatedSolveUserNickName = userNickName;
                     _delegatedSolveResponseNotifier = responseNotifier;
-                }
-                else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
+				}
+				else if (currentString.Equals("unsubmittablepenalty", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
+
+					int penalty = Math.Min((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
+					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
+					IRCConnection.SendMessage("That answer couldn't be submitted! You lose {0} points, please only submit correct answers.", penalty);
+				}
+				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(14).Trim() != string.Empty)
                 {
                     StrikeMessage = currentString.Substring(14);
@@ -353,12 +361,17 @@ public abstract class ComponentSolver : ICommandResponder
 	{
 		DebugHelper.LogException(e, "While solving a module an exception has occurred! Here's the error:");
 
-		IRCConnection.SendMessage("Looks like a module ran into a problem while running a command, automatically solving module. Some other modules may also be solved to prevent problems.");
+		SolveModule("Looks like a module ran into a problem while running a command, automatically solving module.");
+	}
+
+	protected void SolveModule(string reason = "A module is being automatically solved.")
+	{
+		IRCConnection.SendMessage("{0} Some other modules may also be solved to prevent problems.", reason);
 
 		_currentUserNickName = null;
 		_delegatedSolveUserNickName = null;
 
-	    TwitchComponentHandle.RemoveSolveBasedModules();
+		TwitchComponentHandle.RemoveSolveBasedModules();
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
 	}
 	#endregion
@@ -662,6 +675,10 @@ public abstract class ComponentSolver : ICommandResponder
 			yield return "show";
             yield return null;
         }
+		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+		{
+			SolveModule(string.Format("A module ({0}) is being automatically solved.", modInfo.moduleDisplayName));
+		}
     }
     #endregion
 

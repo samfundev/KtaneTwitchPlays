@@ -95,6 +95,8 @@ public class BombMessageResponder : MessageResponder
 			{
 				_ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
 			}
+
+			if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in _bombCommanders) commander.FillEdgework();
 		};
 
         StartCoroutine(CheckForBomb());
@@ -376,6 +378,12 @@ public class BombMessageResponder : MessageResponder
                 _ircConnection.SendMessage(TwitchPlaySettings.data.NoOwnedModules, userNickName);
             return;
         }
+
+		if (text.Equals("!filledgework", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		{
+			foreach (var commander in _bombCommanders) commander.FillEdgework();
+			return;
+		}
 
         if (_currentBomb > -1)
         {

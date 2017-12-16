@@ -21,12 +21,14 @@ public class TwitchPlaySettingsData
     public bool EnableRetryButton = true;
     public bool EnableTwitchPlaysMode = true;
     public bool EnableInteractiveMode = false;
+	public bool EnableAutomaticEdgework = false;
     public int BombLiveMessageDelay = 0;
     public int ClaimCooldownTime = 30;
     public int ModuleClaimLimit = 2;
-    public bool EnableTwitchPlayShims = true;
+	public bool EnableTwitchPlayShims = true;
+	public float UnsubmittablePenaltyPercent = 0.3f;
 
-    public string TwitchBotColorOnQuit = string.Empty;
+	public string TwitchBotColorOnQuit = string.Empty;
 
     public bool AllowSnoozeOnly = false;
 
