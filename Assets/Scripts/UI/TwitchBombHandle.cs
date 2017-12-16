@@ -146,7 +146,9 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
-				return DelayBombExplosionCoroutine(notifier);
+			    CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, bombCommander.StrikeLimit - 1);
+			    HandleStrikeChanges();
+                return DelayBombExplosionCoroutine(notifier);
 			}
 		}
 		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove"))
@@ -202,9 +204,13 @@ public class TwitchBombHandle : MonoBehaviour
 						{
 							if (negitive) strikes = -strikes;
 
-							CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, bombCommander.StrikeCount + strikes);
-							ircConnection.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), strikes > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
-							BombMessageResponder.moduleCameras.UpdateStrikes();
+						    if ((bombCommander.StrikeCount + strikes) < 0)
+						    {
+						        strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
+						    }
+						    CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, bombCommander.StrikeCount + strikes);
+						    ircConnection.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), strikes > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
+                            BombMessageResponder.moduleCameras.UpdateStrikes();
 							HandleStrikeChanges();
 						}
 						break;
@@ -261,29 +267,42 @@ public class TwitchBombHandle : MonoBehaviour
     #endregion
 
     #region Private Methods
-	private void HandleStrikeChanges()
-	{
-		int strikeLimit = bombCommander.StrikeLimit;
-		int strikeCount = Math.Min(bombCommander.StrikeCount, strikeLimit);
-		
-		if (strikeCount == strikeLimit)
-		{
-			CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, strikeLimit - 1);
-			bombCommander.CauseStrike("Strike count / strike limit changed.");
-			//RecordManager.Instance.SetResult(GameResultEnum.ExplodedDueToStrikes, this.GetTimer().TimeElapsed, SceneManager.Instance.GameplayState.GetElapsedRealTime());
-			//this.Detonate();
-		}
-		else
-		{
-			Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", bombCommander.StrikeCount, bombCommander.StrikeLimit));
 
-			//MasterAudio.PlaySound3DAtTransformAndForget("strike", base.transform, 1f, null, 0f, null);
-			float[] rates = { 1, 1.25f, 1.5f, 1.75f, 2 };
-			CommonReflectedTypeInfo.SetRateModifierMethod.Invoke(bombCommander.timerComponent, new object[] { rates[Math.Min(strikeCount, 4)] });
-			CommonReflectedTypeInfo.StrikeCountProperty.SetValue(CommonReflectedTypeInfo.StrikeIndicatorField.GetValue(bombCommander.Bomb), strikeCount, null);
-		}
-	}
-	
+    private void HandleStrikeChanges()
+    {
+        int strikeLimit = bombCommander.StrikeLimit;
+        int strikeCount = Math.Min(bombCommander.StrikeCount, strikeLimit);
+
+        object RecordManager = CommonReflectedTypeInfo.RecordManagerInstance.GetValue(null, null);
+        object GameRecord = CommonReflectedTypeInfo.RecordManagerCurrentGameRecord.GetValue(RecordManager);
+
+        Array Strikes = (Array) CommonReflectedTypeInfo.GameRecordStrikesField.GetValue(GameRecord);
+        if (Strikes.Length != strikeLimit)
+        {
+            Array newStrikes = Array.CreateInstance(CommonReflectedTypeInfo.StrikeSourceType, strikeLimit);
+            Array.Copy(Strikes, newStrikes, Math.Min(Strikes.Length, newStrikes.Length));
+            CommonReflectedTypeInfo.GameRecordStrikesField.SetValue(GameRecord, newStrikes);
+        }
+
+        if (strikeCount == strikeLimit)
+        {
+            CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, strikeLimit - 1);
+            CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeLimit - 1);
+            bombCommander.CauseStrike("Strike count / limit changed.");
+            //RecordManager.Instance.SetResult(GameResultEnum.ExplodedDueToStrikes, this.GetTimer().TimeElapsed, SceneManager.Instance.GameplayState.GetElapsedRealTime());
+            //this.Detonate();
+        }
+        else
+        {
+            Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", bombCommander.StrikeCount, bombCommander.StrikeLimit));
+            CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeCount);
+            //MasterAudio.PlaySound3DAtTransformAndForget("strike", base.transform, 1f, null, 0f, null);
+            float[] rates = {1, 1.25f, 1.5f, 1.75f, 2};
+            CommonReflectedTypeInfo.SetRateModifierMethod.Invoke(bombCommander.timerComponent, new object[] {rates[Math.Min(strikeCount, 4)]});
+            CommonReflectedTypeInfo.StrikeCountProperty.SetValue(CommonReflectedTypeInfo.StrikeIndicatorField.GetValue(bombCommander.Bomb), strikeCount, null);
+        }
+    }
+
     private bool IsAuthorizedDefuser(string userNickName)
     {
         if (userNickName.Equals(nameText.text))
