@@ -263,11 +263,9 @@ public class TwitchBombHandle : MonoBehaviour
         highlightTransform.localScale = Vector3.one;
         yield return null;
     }
-
     #endregion
 
     #region Private Methods
-
     private void HandleStrikeChanges()
     {
         int strikeLimit = bombCommander.StrikeLimit;
