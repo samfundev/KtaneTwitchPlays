@@ -105,6 +105,8 @@ public class TwitchPlaySettingsData
 
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
 
+    public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} points, please only submit correct answers.";
+
     public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
 
     private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
@@ -198,6 +200,8 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
+
+        valid &= ValidateString(ref UnsubmittableAnswerPenalty, data.UnsubmittableAnswerPenalty, 4);
 
         valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
 
