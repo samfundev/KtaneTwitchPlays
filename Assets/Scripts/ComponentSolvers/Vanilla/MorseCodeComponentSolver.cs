@@ -52,14 +52,20 @@ public class MorseCodeComponentSolver : ComponentSolver
                 Canceller.ResetCancel();
                 yield break;
             }
-
+            int lastFrequency = CurrentFrequency;
             yield return DoInteractionClick(buttonToShift);
+            if (lastFrequency == CurrentFrequency)
+                break;
         }
 
         if (CurrentFrequency == targetFrequency)
         {
             yield return "transmit";
             yield return DoInteractionClick(_transmitButton);
+        }
+        else
+        {
+            yield return "unsubmittablepenalty";
         }
     }    
 

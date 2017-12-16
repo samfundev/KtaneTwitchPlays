@@ -82,7 +82,17 @@ public static class CommonReflectedTypeInfo
 
 		WidgetManagerType = ReflectionHelper.FindType("WidgetManager");
 		GetWidgetQueryResponsesMethod = WidgetManagerType.GetMethod("GetWidgetQueryResponses", BindingFlags.Public | BindingFlags.Instance);
-	}
+
+        RecordManagerType = ReflectionHelper.FindType("Assets.Scripts.Records.RecordManager");
+        RecordManagerInstance = RecordManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+        RecordManagerCurrentGameRecord = RecordManagerType.GetField("currentRecord", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        GameRecordType = ReflectionHelper.FindType("Assets.Scripts.Records.GameRecord");
+        GameRecordStrikesField = GameRecordType.GetField("Strikes", BindingFlags.Public | BindingFlags.Instance);
+        GameRecordCurrentStrikeIndexField = GameRecordType.GetField("currentStrikeIndex", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        StrikeSourceType = ReflectionHelper.FindType("Assets.Scripts.Records.StrikeSource");
+    }
 
     #region Bomb
     public static Type BombType
@@ -305,4 +315,46 @@ public static class CommonReflectedTypeInfo
 		get;
 		private set;
 	}
+
+    public static Type RecordManagerType
+    {
+        get;
+        private set;
+    }
+
+    public static PropertyInfo RecordManagerInstance
+    {
+        get;
+        private set;
+    }
+
+    public static FieldInfo RecordManagerCurrentGameRecord
+    {
+        get;
+        private set;
+    }
+
+    public static Type GameRecordType
+    {
+        get;
+        private set;
+    }
+
+    public static FieldInfo GameRecordStrikesField
+    {
+        get;
+        private set;
+    }
+
+    public static FieldInfo GameRecordCurrentStrikeIndexField
+    {
+        get;
+        private set;
+    }
+
+    public static Type StrikeSourceType
+    {
+        get;
+        private set;
+    }
 }

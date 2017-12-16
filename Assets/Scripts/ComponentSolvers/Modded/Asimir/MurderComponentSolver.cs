@@ -63,6 +63,7 @@ public class MurderComponentSolver : ComponentSolver
 	    string category, value;
 	    int catIndex;
 	    bool[] set = new bool[3] { false, false, false };
+        bool[] tried = new bool[3] { false, false, false };
 
 	    foreach (Match match in Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)"))
 	    {
@@ -74,6 +75,7 @@ public class MurderComponentSolver : ComponentSolver
 	        {
 	            continue;
 	        }
+	        tried[catIndex] = true;
 
 	        foreach (var item in CycleThroughCategory(catIndex, value))
 	        {
@@ -94,8 +96,12 @@ public class MurderComponentSolver : ComponentSolver
 	    }
 		else
 		{
-			yield return "unsubmittablepenalty";
-			yield break;
+		    for (var i = 0; i < 3; i++)
+		    {
+		        if (!tried[i] || set[i]) continue;
+		        yield return "unsubmittablepenalty";
+		        yield break;
+            }
 		}
     }
 
