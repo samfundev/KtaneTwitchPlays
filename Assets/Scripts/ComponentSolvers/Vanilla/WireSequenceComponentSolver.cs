@@ -46,14 +46,14 @@ public class WireSequenceComponentSolver : ComponentSolver
                 if (wireIndexString.EqualsAny("up", "u"))
                 {
                     buttons.Add(_upButton);
-                    strikemessages.Add("strikemessage This will never cause a strike Kappa");
+                    strikemessages.Add("This will never cause a strike Kappa");
                     break;
                 }
 
                 if (wireIndexString.EqualsAny("down", "d"))
                 {
                     buttons.Add(_downButton);
-                    strikemessages.Add("strikemessage attempting to move down.");
+                    strikemessages.Add("attempting to move down.");
                     break;
                 }
 
@@ -74,7 +74,7 @@ public class WireSequenceComponentSolver : ComponentSolver
                     yield break;
                 }
                 buttons.Add(wire);
-                strikemessages.Add(string.Format("strikemessage cutting Wire {0}.", wireIndex + 1));
+                strikemessages.Add(string.Format("cutting Wire {0}.", wireIndex + 1));
             }
 
             yield return "wire sequence";

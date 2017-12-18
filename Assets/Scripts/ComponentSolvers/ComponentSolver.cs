@@ -233,6 +233,12 @@ public abstract class ComponentSolver : ICommandResponder
                     HandleModuleException(new Exception(currentString));
                     break;
                 }
+                else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode"))
+                {
+                    AwardStrikes(_currentUserNickName, _currentResponseNotifier, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+                    BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
+                    break;
+                }
                 else if (currentString.ToLowerInvariant().EqualsAny("elevator music", "hold music", "waiting music"))
                 {
                     if (_musicPlayer == null)
@@ -260,6 +266,25 @@ public abstract class ComponentSolver : ICommandResponder
                 Quaternion localQuaternion = (Quaternion)currentValue;
                 BombCommander.RotateByLocalQuaternion(localQuaternion);
                 needQuaternionReset = true;
+            }
+            else if (currentValue is string[])
+            {
+                string[] currentStrings = (string[]) currentValue;
+                if (currentStrings.Length >= 1)
+                {
+                    if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode"))
+                    {
+                        AwardStrikes(_currentUserNickName, _currentResponseNotifier, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+                        if (currentStrings.Length == 2)
+                            BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], modInfo.moduleDisplayName);
+                        else if (currentStrings.Length == 3)
+                            BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], currentStrings[2]);
+                        else
+                            BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
+                        break;
+                    }
+                }
+
             }
             yield return currentValue;
         }
@@ -541,14 +566,7 @@ public abstract class ComponentSolver : ICommandResponder
         int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
-        for (int i = 0; i < strikeCount; i++)
-        {
-            TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
-            if (!TwitchPlaySettings.data.EnableRewardMultipleStrikes)
-            {
-                break;
-            }
-        }
+        TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         if (responseNotifier != null)
         {
             responseNotifier.ProcessResponse(CommandResponse.EndErrorSubtractScore, strikePenalty);

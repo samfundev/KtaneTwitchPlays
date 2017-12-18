@@ -146,8 +146,6 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
-			    CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, bombCommander.StrikeLimit - 1);
-			    HandleStrikeChanges();
                 return DelayBombExplosionCoroutine(notifier);
 			}
 		}
@@ -225,7 +223,8 @@ public class TwitchBombHandle : MonoBehaviour
 
 							CommonReflectedTypeInfo.NumStrikesToLoseField.SetValue(bombCommander.Bomb, bombCommander.StrikeLimit + maxStrikes);
 							ircConnection.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), maxStrikes > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
-							BombMessageResponder.moduleCameras.UpdateStrikeLimit();
+						    BombMessageResponder.moduleCameras.UpdateStrikes();
+                            BombMessageResponder.moduleCameras.UpdateStrikeLimit();
 							HandleStrikeChanges();
 						}
 						break;
@@ -262,6 +261,11 @@ public class TwitchBombHandle : MonoBehaviour
         mainWindowTransform.localScale = Vector3.one;
         highlightTransform.localScale = Vector3.one;
         yield return null;
+    }
+
+    public void CauseExplosionByModuleCommand(string message, string reason)
+    {
+        StartCoroutine(DelayBombExplosionCoroutine(message, reason,0.1f));
     }
     #endregion
 
@@ -315,13 +319,18 @@ public class TwitchBombHandle : MonoBehaviour
     private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
     {
         notifier.ProcessResponse(CommandResponse.Start);
-
-        ircConnection.SendMessage(TwitchPlaySettings.data.BombDetonateCommand);
-        yield return new WaitForSeconds(1.0f);
-
-        bombCommander.CauseStrikesToExplosion("Detonate Command");
-
+        yield return DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
         notifier.ProcessResponse(CommandResponse.EndNotComplete);
+    }
+
+    private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
+    {
+        CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, bombCommander.StrikeLimit - 1);
+        HandleStrikeChanges();
+        if (!string.IsNullOrEmpty(message))
+            ircConnection.SendMessage(message);
+        yield return new WaitForSeconds(delay);
+        bombCommander.CauseStrikesToExplosion(reason);
     }
 
     private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)

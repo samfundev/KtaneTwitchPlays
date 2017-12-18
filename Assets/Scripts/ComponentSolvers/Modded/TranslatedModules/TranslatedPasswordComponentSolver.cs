@@ -91,6 +91,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
             //Break out of the sequence if a column spinner doesn't have a matching character
             if (!_display[characterIndex].text.Equals(characters[characterIndex].ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
+                yield return "unsubmittablepenalty";
                 yield break;
             }
         }
