@@ -100,7 +100,6 @@ public class TwitchComponentHandle : MonoBehaviour
 			return _solved;
 		}
 	}
-
 	#endregion
 
 	#region Private Fields
@@ -373,19 +372,12 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public IEnumerator ReleaseModule(string player, string userNickName)
 	{
-		if (_solved)
-		{
-			yield break;
-		}
 		if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
 			yield return new WaitForSeconds(TwitchPlaySettings.data.ClaimCooldownTime);
 		}
-		if (!_solved)
-		{
 			ClaimedList.Remove(player);
 		}
-	}
 
 	public string ClaimModule(string userNickName, string targetModule)
 	{
@@ -464,9 +456,12 @@ public class TwitchComponentHandle : MonoBehaviour
 				messageOut = string.Format("{0} : {1} : {2}", headerText.text, _solver.modInfo.helpText, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
 			}
 		}
-		else if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase) && !_solved)
+		else if (!_solved)
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
+			if (IsAuthorizedDefuser(userNickName))
+			{
+				if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
+		{
             if (!_solver._turnQueued)
 			{
 				_solver._turnQueued = true;
@@ -474,21 +469,18 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 			messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, targetModule, headerText.text);
 		}
-		else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase) && !_solved)
+				else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
             _solver._turnQueued = false;
 			messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, headerText.text);
 		}
 		else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
             messageOut = ClaimModule(userNickName, targetModule);
 		}
 		else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if (((playerName != null) && (playerName == userNickName)) || (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+					if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
 				if (TakeInProgress != null)
 				{
@@ -503,7 +495,6 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
             if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
 				SetBannerColor(solvedBackgroundColor);
@@ -513,52 +504,43 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
             if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
-				if (playerName != null && !_solved)
+						if (playerName != null)
 				{
 					ClaimedList.Remove(playerName);
 				}
 				string newplayerName = internalCommand.Remove(0, 7).Trim();
 				playerName = newplayerName;
-				if (!_solved)
-				{
 					ClaimedList.Add(playerName);
-				}
 				SetBannerColor(claimedBackgroundColour);
 				messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, playerName, userNickName, headerText.text);
 			}
 		}
 		else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if ((playerName != null) && (userNickName != playerName) && (TakeInProgress == null))
+					if (userNickName != playerName)
 			{
-				if (!_solved)
+						if (TakeInProgress == null)
 				{
 					messageOut = string.Format(TwitchPlaySettings.data.TakeModule, playerName, userNickName, targetModule, headerText.text);
 					TakeInProgress = TakeModule(userNickName, targetModule);
 					StartCoroutine(TakeInProgress);
 				}
-			}
-			else if ((playerName != null) && (userNickName != playerName))
+						else
 			{
 				messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, headerText.text);
 			}
 		}
+				}
 		else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if (playerName == userNickName)
+					if (playerName == userNickName && TakeInProgress != null)
 			{
 				messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, playerName, targetModule, headerText.text);
-				if (TakeInProgress != null)
-				{
 					StopCoroutine(TakeInProgress);
 					TakeInProgress = null;
 				}
-			}
 			else if (playerName == null)
 			{
 				messageOut = ClaimModule(userNickName, targetModule);
@@ -566,7 +548,6 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
 		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
             if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
 			{
 				SetBannerColor(markedBackgroundColor);
@@ -574,12 +555,14 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 
 		}
+			}
 		else if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (playerName != null)
 			{
 				messageOut = string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
 			}
+		}
 		}
 
 		if (!string.IsNullOrEmpty(messageOut))
@@ -604,7 +587,6 @@ public class TwitchComponentHandle : MonoBehaviour
 				message.userColor = new Color(0.31f, 0.31f, 0.31f);
 			}
 		}
-
 
 		if (_solver != null)
 		{
