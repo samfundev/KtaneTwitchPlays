@@ -286,7 +286,7 @@ public static class TwitchPlaySettings
         }
     }
 
-    public static void AppendToSolveStrikeLog(string RecordMessageTone)
+    public static void AppendToSolveStrikeLog(string RecordMessageTone, int copies=1)
     {
         if (!CreateSharedDirectory() || string.IsNullOrEmpty(data.TPSolveStrikeLog))
         {
@@ -297,7 +297,10 @@ public static class TwitchPlaySettings
             using (StreamWriter file =
                 new StreamWriter(Path.Combine(data.TPSharedFolder, data.TPSolveStrikeLog), true))
             {
-                file.WriteLine(RecordMessageTone);
+                for (int i = 0; i < copies; i++)
+                {
+                    file.WriteLine(RecordMessageTone);
+                }
             }
         }
         catch (Exception ex)

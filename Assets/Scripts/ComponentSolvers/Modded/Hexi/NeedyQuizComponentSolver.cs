@@ -12,7 +12,6 @@ public class NeedyQuizComponentSolver : ComponentSolver
         _noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_componentSolverType));
         _display = (TextMesh) _displayField.GetValue(bombComponent.GetComponent(_componentSolverType));
 
-        _service = (KMGameCommands) _serviceField.GetValue(bombComponent.GetComponent(_componentSolverType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
@@ -26,15 +25,7 @@ public class NeedyQuizComponentSolver : ComponentSolver
 
             if (_display.text.Equals("Abort?"))
             {
-                yield return "sendtochat ABORT! ABORT!!! ABOOOOOOORT!!!!!";
-                int strikeCount = 0;
-                yield return "multiple strikes";
-                while (!Detonated)
-                {
-                    strikeCount++;
-                    _service.CauseStrike("ABORT!");
-                }
-                yield return "award strikes " + strikeCount;
+                yield return new string[] {"detonate", "ABORT! ABORT!!! ABOOOOOOORT!!!!!", "ABORT!"};
                 yield break;
             }
             yield return DoInteractionClick(_yesButton);
@@ -52,17 +43,14 @@ public class NeedyQuizComponentSolver : ComponentSolver
         _yesButtonField = _componentSolverType.GetField("YesButton", BindingFlags.Public | BindingFlags.Instance);
         _noButtonField = _componentSolverType.GetField("NoButton", BindingFlags.Public | BindingFlags.Instance);
         _displayField = _componentSolverType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
-        _serviceField = _componentSolverType.GetField("Service", BindingFlags.Public | BindingFlags.Instance);
     }
 
     private static Type _componentSolverType = null;
     private static FieldInfo _yesButtonField = null;
     private static FieldInfo _noButtonField = null;
     private static FieldInfo _displayField = null;
-    private static FieldInfo _serviceField = null;
 
     private MonoBehaviour _yesButton = null;
     private MonoBehaviour _noButton = null;
     private TextMesh _display = null;
-    private KMGameCommands _service = null;
 }
