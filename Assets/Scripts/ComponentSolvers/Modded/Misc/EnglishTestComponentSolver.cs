@@ -36,8 +36,8 @@ public class EnglishTestComponentSolver : ComponentSolver
 	        yield return DoInteractionClick(selectButton);
 	        if ((int) _indexField.GetValue(_englishTestCompoent) == currentIndex)
 	        {
-	            yield return "unsubmittablepenalty";
-                yield break;
+	            yield return string.Format("sendtochaterror I can't select answer #{0} because that answer doesn't exist.", desiredIndex + 1);
+	            yield break;
 	        }
 	    }
 	    yield return DoInteractionClick(submitButton);
