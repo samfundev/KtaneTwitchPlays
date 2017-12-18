@@ -309,6 +309,11 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
+	public void SolveSilently()
+	{
+		_solver.SolveSilently();
+	}
+
 	public static void ClearUnsupportedModules()
 	{
 		_bombCommanders.Clear();
