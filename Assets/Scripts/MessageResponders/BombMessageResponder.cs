@@ -385,6 +385,12 @@ public class BombMessageResponder : MessageResponder
 			return;
 		}
 
+		if (text.Equals("!solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		{
+			foreach (var handle in _componentHandles) if (!handle.Solved) handle.SolveSilently();
+			return;
+		}
+
         if (_currentBomb > -1)
         {
             //Check for !bomb messages, and pass them off to the currently held bomb.

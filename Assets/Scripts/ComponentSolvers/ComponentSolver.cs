@@ -549,6 +549,15 @@ public abstract class ComponentSolver : ICommandResponder
 
     }
 
+	public void SolveSilently()
+	{
+		_delegatedSolveUserNickName = null;
+		_currentUserNickName = null;
+
+		TwitchComponentHandle.RemoveSolveBasedModules();
+		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
+	}
+
     private void AwardSolve(string userNickName, ICommandResponseNotifier responseNotifier, int ComponentValue)
     {
         string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);

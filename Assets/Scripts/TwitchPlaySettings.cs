@@ -27,6 +27,7 @@ public class TwitchPlaySettingsData
     public int ModuleClaimLimit = 2;
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
+	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
 
 	public string TwitchBotColorOnQuit = string.Empty;
 
@@ -224,7 +225,7 @@ public static class TwitchPlaySettings
         try
         {
             data.SettingsVersion = SettingsVersion;
-            File.WriteAllText(path,JsonConvert.SerializeObject(data, Formatting.Indented));
+			File.WriteAllText(path, SettingsConverter.Serialize(data));//JsonConvert.SerializeObject(data, Formatting.Indented));
         }
         catch (FileNotFoundException)
         {
@@ -245,7 +246,7 @@ public static class TwitchPlaySettings
         try
         {
             DebugHelper.Log("TwitchPlayStrings: Loading Custom strings data from file: {0}", path);
-            data = JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
+			data = SettingsConverter.Deserialize<TwitchPlaySettingsData>(File.ReadAllText(path));//JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
             data.ValidateStrings();
             WriteDataToFile();
         }

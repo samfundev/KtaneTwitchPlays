@@ -32,8 +32,11 @@ public class ModuleInformation
     public bool builtIntoTwitchPlays;
 
     public bool CameraPinningAlwaysAllowed;
-	
-    public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
+
+	public Color unclaimedColor;
+
+	public bool ShouldSerializeunclaimedColor() { return unclaimedColor != new Color(); }
+	public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
     public bool ShouldSerializevalidCommands() {return !builtIntoTwitchPlays;}
     public bool ShouldSerializeDoesTheRightThing() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializehelpTextOverride() { return !builtIntoTwitchPlays; }
@@ -56,7 +59,7 @@ public static class ModuleData
             List<ModuleInformation> infoList = ComponentSolverFactory.GetModuleInformation().ToList();
             infoList = infoList.OrderBy(info => info.moduleDisplayName).ThenBy(info => info.moduleID).ToList();
 
-            File.WriteAllText(path, JsonConvert.SerializeObject(infoList, Formatting.Indented));
+			File.WriteAllText(path, SettingsConverter.Serialize(infoList));//JsonConvert.SerializeObject(infoList, Formatting.Indented));
         }
         catch (FileNotFoundException)
         {
@@ -80,7 +83,7 @@ public static class ModuleData
         try
         {
             DebugHelper.Log("ModuleData: Loading Module information data from file: {0}", path);
-            modInfo = JsonConvert.DeserializeObject<ModuleInformation[]>(File.ReadAllText(path));
+			modInfo = SettingsConverter.Deserialize<ModuleInformation[]>(File.ReadAllText(path));//JsonConvert.DeserializeObject<ModuleInformation[]>(File.ReadAllText(path));
         }
         catch (FileNotFoundException)
         {
