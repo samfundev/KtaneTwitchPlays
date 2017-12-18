@@ -141,13 +141,15 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		canvasGroupMultiDecker.alpha = bombCommander.multiDecker ? 1.0f : 0.0f;
 
-		unclaimedBackgroundColor = idBannerPrefab.GetComponent<Image>().color;
+		unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;//idBannerPrefab.GetComponent<Image>().color;
 
 		try
 		{
 			_solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, ircConnection, coroutineCanceller);
 			if (_solver != null)
 			{
+				if (_solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = _solver.modInfo.unclaimedColor;
+
 				_solver.Code = _code;
 				_solver.ComponentHandle = this;
 				Vector3 pos = canvasGroupMultiDecker.transform.localPosition;
@@ -267,6 +269,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		    }
 
 		}
+		
+		SetBannerColor(unclaimedBackgroundColor);
 
 		if (!_bombCommanders.Contains(bombCommander))
 		{
@@ -381,8 +385,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		{
 			yield return new WaitForSeconds(TwitchPlaySettings.data.ClaimCooldownTime);
 		}
-			ClaimedList.Remove(player);
-		}
+		ClaimedList.Remove(player);
+	}
 
 	public string ClaimModule(string userNickName, string targetModule)
 	{
@@ -466,108 +470,108 @@ public class TwitchComponentHandle : MonoBehaviour
 			if (IsAuthorizedDefuser(userNickName))
 			{
 				if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
-		{
-            if (!_solver._turnQueued)
-			{
-				_solver._turnQueued = true;
-				StartCoroutine(_solver.TurnBombOnSolve());
-			}
-			messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, targetModule, headerText.text);
-		}
+				{
+					if (!_solver._turnQueued)
+					{
+						_solver._turnQueued = true;
+						StartCoroutine(_solver.TurnBombOnSolve());
+					}
+					messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, targetModule, headerText.text);
+				}
 				else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
-		{
-            _solver._turnQueued = false;
-			messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, headerText.text);
-		}
-		else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
-		{
-            messageOut = ClaimModule(userNickName, targetModule);
-		}
-		else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
-		{
+				{
+					_solver._turnQueued = false;
+					messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, headerText.text);
+				}
+				else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
+				{
+					messageOut = ClaimModule(userNickName, targetModule);
+				}
+				else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
+				{
 					if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TakeInProgress != null)
-				{
-					StopCoroutine(TakeInProgress);
-					TakeInProgress = null;
+					{
+						if (TakeInProgress != null)
+						{
+							StopCoroutine(TakeInProgress);
+							TakeInProgress = null;
+						}
+						StartCoroutine(ReleaseModule(playerName, userNickName));
+						SetBannerColor(unclaimedBackgroundColor);
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, playerName, headerText.text);
+						playerName = null;
+					}
 				}
-				StartCoroutine(ReleaseModule(playerName, userNickName));
-				SetBannerColor(unclaimedBackgroundColor);
-				messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, playerName, headerText.text);
-				playerName = null;
-			}
-		}
-		else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
-		{
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				SetBannerColor(solvedBackgroundColor);
-				playerName = null;
-				messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, targetModule, userNickName, headerText.text);
-			}
-		}
-		else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
-		{
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
+				else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+					{
+						SetBannerColor(solvedBackgroundColor);
+						playerName = null;
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, targetModule, userNickName, headerText.text);
+					}
+				}
+				else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+					{
 						if (playerName != null)
-				{
-					ClaimedList.Remove(playerName);
+						{
+							ClaimedList.Remove(playerName);
+						}
+						string newplayerName = internalCommand.Remove(0, 7).Trim();
+						playerName = newplayerName;
+						ClaimedList.Add(playerName);
+						SetBannerColor(claimedBackgroundColour);
+						messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, playerName, userNickName, headerText.text);
+					}
 				}
-				string newplayerName = internalCommand.Remove(0, 7).Trim();
-				playerName = newplayerName;
-					ClaimedList.Add(playerName);
-				SetBannerColor(claimedBackgroundColour);
-				messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, playerName, userNickName, headerText.text);
-			}
-		}
-		else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
-		{
+				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
+				{
 					if (userNickName != playerName)
-			{
+					{
 						if (TakeInProgress == null)
-				{
-					messageOut = string.Format(TwitchPlaySettings.data.TakeModule, playerName, userNickName, targetModule, headerText.text);
-					TakeInProgress = TakeModule(userNickName, targetModule);
-					StartCoroutine(TakeInProgress);
-				}
+						{
+							messageOut = string.Format(TwitchPlaySettings.data.TakeModule, playerName, userNickName, targetModule, headerText.text);
+							TakeInProgress = TakeModule(userNickName, targetModule);
+							StartCoroutine(TakeInProgress);
+						}
 						else
-			{
-				messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, headerText.text);
-			}
-		}
+						{
+							messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, headerText.text);
+						}
+					}
 				}
-		else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
-		{
+				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
+				{
 					if (playerName == userNickName && TakeInProgress != null)
-			{
-				messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, playerName, targetModule, headerText.text);
-					StopCoroutine(TakeInProgress);
-					TakeInProgress = null;
+					{
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, playerName, targetModule, headerText.text);
+						StopCoroutine(TakeInProgress);
+						TakeInProgress = null;
+					}
+					else if (playerName == null)
+					{
+						messageOut = ClaimModule(userNickName, targetModule);
+					}
 				}
-			else if (playerName == null)
-			{
-				messageOut = ClaimModule(userNickName, targetModule);
-			}
-		}
-		else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
-		{
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
-			{
-				SetBannerColor(markedBackgroundColor);
-				return null;
-			}
+				else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+					{
+						SetBannerColor(markedBackgroundColor);
+						return null;
+					}
 
-		}
+				}
 			}
-		else if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (playerName != null)
+			else if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
 			{
-				messageOut = string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
+				if (playerName != null)
+				{
+					messageOut = string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
+				}
 			}
-		}
 		}
 
 		if (!string.IsNullOrEmpty(messageOut))

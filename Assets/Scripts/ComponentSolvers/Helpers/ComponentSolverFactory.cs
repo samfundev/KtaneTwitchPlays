@@ -363,6 +363,8 @@ public static class ComponentSolverFactory
 			i.moduleScore = info.moduleScore;
 			i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
 			i.strikePenalty = info.strikePenalty;
+
+			i.unclaimedColor = info.unclaimedColor;
 		}
 		else
 		{
