@@ -453,7 +453,6 @@ public abstract class ComponentSolver : ICommandResponder
 
         if (_delegatedSolveUserNickName != null && _delegatedSolveResponseNotifier != null)
         {
-
             AwardSolve(_delegatedSolveUserNickName, _delegatedSolveResponseNotifier, moduleScore);
             _delegatedSolveUserNickName = null;
             _delegatedSolveResponseNotifier = null;

@@ -369,7 +369,7 @@ public class BombMessageResponder : MessageResponder
             List<string> claimed = (from handle in _componentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idText.text.Replace("!", ""), handle.headerText.text)).ToList();
             if (claimed.Count > 0)
             {
-                string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, claimed.Count > 5 ? 5 : claimed.Count));
+                string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
                 if (claimed.Count > 5)
                     message += "...";
                 _ircConnection.SendMessage(message);
