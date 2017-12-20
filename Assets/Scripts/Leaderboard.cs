@@ -29,11 +29,11 @@ public class Leaderboard
         }
 
         public int StrikeCount
-		{
+        {
             get;
             set;
         }
-		
+
         public int SolveScore
         {
             get;
@@ -84,7 +84,7 @@ public class Leaderboard
                 {
                     return 0;
                 }
-                return ((float)RecordSoloTime) / Leaderboard.RequiredSoloSolves;
+                return ((float) RecordSoloTime) / Leaderboard.RequiredSoloSolves;
             }
         }
 
@@ -97,11 +97,11 @@ public class Leaderboard
         {
             StrikeCount += num;
         }
-		
+
         public void AddScore(int num)
         {
             SolveScore += num;
-        }		
+        }
 
     }
 
@@ -191,15 +191,15 @@ public class Leaderboard
         ResetSortFlag();
     }
 
-	public void AddScore(string userName, Color userColor, int numScore)
+    public void AddScore(string userName, Color userColor, int numScore)
     {
         LeaderboardEntry entry = GetEntry(userName, userColor);
         entry.AddScore(numScore);
         entry.LastAction = DateTime.Now;
         ResetSortFlag();
     }
-	
-	
+
+
     public IEnumerable<LeaderboardEntry> GetSortedEntries(int count)
     {
         CheckAndSort();
@@ -212,22 +212,21 @@ public class Leaderboard
         return _entryListSolo.Take(count);
     }
 
-    public IEnumerable<LeaderboardEntry> GetSortedEntriesIncluding(Dictionary<string, int>.KeyCollection entries, int count)
+    public IEnumerable<LeaderboardEntry> GetSortedEntriesIncluding(Dictionary<string, int>.KeyCollection extras, int count)
     {
-        List<LeaderboardEntry> ranking = GetSortedEntries(count).ToList();
-        List<LeaderboardEntry> extras = new List<LeaderboardEntry>();
+        var entries = new List<LeaderboardEntry>();
 
         LeaderboardEntry entry;
-        foreach (string name in entries)
-        {
-            if (GetRank(name, out entry) > count)
-            {
-                extras.Add(entry);
-            }
-        }
-        extras.Sort(CompareScores);
+        foreach (string name in extras)
+            entries.Add(entry);
 
-        return ranking.Take(count - extras.Count).Concat(extras);
+        if (entries.Count < count)
+        {
+            entries.AddRange(GetSortedEntries(count).Where(e => !entries.Any(ex => ex.UserName == e.UserName)));
+        }
+
+        entries.Sort(CompareScores);
+        return entries.Take(count);
     }
 
     public IEnumerable<LeaderboardEntry> GetSortedSoloEntriesIncluding(string userName, int count)
@@ -273,13 +272,13 @@ public class Leaderboard
     {
         solveCount = 0;
         strikeCount = 0;
-		scoreCount = 0;
+        scoreCount = 0;
 
         foreach (LeaderboardEntry entry in _entryList)
         {
             solveCount += entry.SolveCount;
             strikeCount += entry.StrikeCount;
-			scoreCount += entry.SolveScore;
+            scoreCount += entry.SolveScore;
         }
     }
 
@@ -288,7 +287,7 @@ public class Leaderboard
         LeaderboardEntry entry = GetEntry(user.UserName, user.UserColor);
         entry.SolveCount = user.SolveCount;
         entry.StrikeCount = user.StrikeCount;
-		entry.SolveScore = user.SolveScore;
+        entry.SolveScore = user.SolveScore;
         entry.LastAction = user.LastAction;
         entry.RecordSoloTime = user.RecordSoloTime;
         entry.TotalSoloTime = user.TotalSoloTime;
@@ -376,7 +375,7 @@ public class Leaderboard
             DebugHelper.Log("Leaderboard: Loading leaderboard data from file: {0}", path);
             XmlSerializer xml = new XmlSerializer(_entryList.GetType());
             TextReader reader = new StreamReader(path);
-            List<LeaderboardEntry> entries = (List<LeaderboardEntry>)xml.Deserialize(reader);
+            List<LeaderboardEntry> entries = (List<LeaderboardEntry>) xml.Deserialize(reader);
             AddEntries(entries);
             ResetSortFlag();
 
@@ -474,7 +473,7 @@ public class Leaderboard
     public int OldBombsExploded = 0;
     public int OldSolves = 0;
     public int OldStrikes = 0;
-	public int OldScore = 0;
+    public int OldScore = 0;
 
     public LeaderboardEntry SoloSolver = null;
     public Dictionary<string, int> CurrentSolvers = new Dictionary<string, int>();
