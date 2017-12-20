@@ -218,8 +218,7 @@ public class Leaderboard
 
         LeaderboardEntry entry;
         foreach (string name in extras)
-            if (GetRank(name, out entry) > count)
-                entries.Add(entry);
+            entries.Add(entry);
 
         if (entries.Count < count)
         {
