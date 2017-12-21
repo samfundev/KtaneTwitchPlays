@@ -281,13 +281,18 @@ public class TwitchBombHandle : MonoBehaviour
         Array Strikes = (Array) CommonReflectedTypeInfo.GameRecordStrikesField.GetValue(GameRecord);
         if (Strikes.Length != strikeLimit)
         {
-            Array newStrikes = Array.CreateInstance(CommonReflectedTypeInfo.StrikeSourceType, strikeLimit);
+            Array newStrikes = Array.CreateInstance(CommonReflectedTypeInfo.StrikeSourceType, Math.Max(strikeLimit, 1));
             Array.Copy(Strikes, newStrikes, Math.Min(Strikes.Length, newStrikes.Length));
             CommonReflectedTypeInfo.GameRecordStrikesField.SetValue(GameRecord, newStrikes);
         }
 
         if (strikeCount == strikeLimit)
         {
+            if (strikeLimit < 1)
+            {
+                CommonReflectedTypeInfo.NumStrikesToLoseField.SetValue(bombCommander.Bomb, 1);
+                strikeLimit = 1;
+            }
             CommonReflectedTypeInfo.NumStrikesField.SetValue(bombCommander.Bomb, strikeLimit - 1);
             CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeLimit - 1);
             bombCommander.CauseStrike("Strike count / limit changed.");
