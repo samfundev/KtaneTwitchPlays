@@ -99,7 +99,7 @@ public class PasswordComponentSolver : ComponentSolver
             }
 
             //Break out of the sequence if a column spinner doesn't have a matching character
-            if (GetCurrentChar(spinner) != characters[characterIndex])
+            if (char.ToLowerInvariant(GetCurrentChar(spinner)) != char.ToLowerInvariant(characters[characterIndex]))
             {
 				yield return "unsubmittablepenalty";
                 yield break;
@@ -113,8 +113,8 @@ public class PasswordComponentSolver : ComponentSolver
 
     private IEnumerator GetCharacterSpinnerToCharacterCoroutine(MonoBehaviour spinner, char desiredCharacter)
     {
-        MonoBehaviour downButton = (MonoBehaviour)_downButtonField.GetValue(spinner);
-        for (int hitCount = 0; hitCount < 6 && char.ToLower(GetCurrentChar(spinner)) != char.ToLower(desiredCharacter); ++hitCount)
+        MonoBehaviour downButton = (MonoBehaviour) _downButtonField.GetValue(spinner);
+        for (int hitCount = 0; hitCount < 6 && char.ToLowerInvariant(GetCurrentChar(spinner)) != char.ToLowerInvariant(desiredCharacter); ++hitCount)
         {
             yield return DoInteractionClick(downButton);
         }
