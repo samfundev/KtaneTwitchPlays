@@ -218,7 +218,8 @@ public class Leaderboard
 
         LeaderboardEntry entry;
         foreach (string name in extras)
-            entries.Add(entry);
+            if (GetEntry(name, out entry))
+                entries.Add(entry);
 
         if (entries.Count < count)
         {
