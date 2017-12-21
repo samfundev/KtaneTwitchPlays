@@ -562,21 +562,6 @@ public class TwitchComponentHandle : MonoBehaviour
 						SetBannerColor(markedBackgroundColor);
 						return null;
 					}
-			}
-			else if (playerName == null)
-			{
-				messageOut = ClaimModule(userNickName, targetModule);
-			}
-		}
-		else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
-		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
-			{
-				SetBannerColor(markedBackgroundColor);
-				return null;
-			}
->>>>>>> Authorized Defuser command fixes
 
 				}
 			}
