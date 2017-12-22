@@ -64,11 +64,7 @@ public class CurriculumComponentSolver : ComponentSolver
 				KMSelectable button = _buttons[buttonPosition];
 				if (buttonOffset[buttonPosition] > 0)
 				{
-					for (int i = 0; i < 6 - buttonOffset[buttonPosition]; i++)
-					{
-						button.OnInteract();
-						yield return new WaitForSeconds(0.05f);
-					}
+					for (int i = 0; i < 6 - buttonOffset[buttonPosition]; i++) button.OnInteract();
 					buttonOffset[buttonPosition] = 0;
 				}
 
@@ -80,6 +76,12 @@ public class CurriculumComponentSolver : ComponentSolver
 						button.OnInteract();
 						yield return new WaitForSeconds(0.1f);
 					}
+				}
+
+				if (buttonOffset[buttonPosition] > 0)
+				{
+					for (int i = 0; i < buttonOffset[buttonPosition]; i++) button.OnInteract();
+					buttonOffset[buttonPosition] = 0;
 				}
 			}
 
