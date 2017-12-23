@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -54,37 +56,55 @@ public class MissionMessageResponder : MessageResponder
         }
     }
 
-    protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
-    {
-        if (_bombBinderCommander == null)
-        {
-            return;
-        }
-        Match binderMatch = Regex.Match(text, "^!binder (.+)", RegexOptions.IgnoreCase);
-        if (binderMatch.Success)
-        {
-            if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
-            {
-                _coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, binderMatch.Groups[1].Value, null, _ircConnection));
-            }
-            else
-            {
-                _ircConnection.SendMessage(TwitchPlaySettings.data.MissionBinderDisabled, userNickName);
-            }
-        }
+	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
+	{
+		if (_bombBinderCommander == null)
+		{
+			return;
+		}
+		Match binderMatch = Regex.Match(text, "^!binder (.+)", RegexOptions.IgnoreCase);
+		if (binderMatch.Success)
+		{
+			if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			{
+				_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, binderMatch.Groups[1].Value, null, _ircConnection));
+			}
+			else
+			{
+				_ircConnection.SendMessage(TwitchPlaySettings.data.MissionBinderDisabled, userNickName);
+			}
+		}
 
-        Match freeplayMatch = Regex.Match(text, "^!freeplay (.+)", RegexOptions.IgnoreCase);
-        if (freeplayMatch.Success)
-        {
-            if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
-            {
-                _coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, freeplayMatch.Groups[1].Value, null, _ircConnection));
-            }
-            else
-            {
-                _ircConnection.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
-            }
-        }
-    }
+		Match freeplayMatch = Regex.Match(text, "^!freeplay (.+)", RegexOptions.IgnoreCase);
+		if (freeplayMatch.Success)
+		{
+			if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			{
+				_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, freeplayMatch.Groups[1].Value, null, _ircConnection));
+			}
+			else
+			{
+				_ircConnection.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
+			}
+		}
+		
+		Match runMatch = Regex.Match(text, "^!run (.+)", RegexOptions.IgnoreCase);
+		if (runMatch.Success && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		{
+			string targetID = runMatch.Groups[1].Value;
+			object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
+			IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
+			ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID)));
+			if (mission == null) _ircConnection.SendMessage("Failed to find a mission with ID \"{0}\".", targetID);
+
+			GetComponent<KMGameCommands>().StartMission(mission.name, "-1");
+		}
+
+		Match runrawMatch = Regex.Match(text, "^!runraw (.+)", RegexOptions.IgnoreCase);
+		if (runrawMatch.Success && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		{
+			GetComponent<KMGameCommands>().StartMission(runrawMatch.Groups[1].Value, "-1");
+		}
+	}
     #endregion
 }

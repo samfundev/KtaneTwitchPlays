@@ -92,7 +92,11 @@ public static class CommonReflectedTypeInfo
         GameRecordCurrentStrikeIndexField = GameRecordType.GetField("currentStrikeIndex", BindingFlags.NonPublic | BindingFlags.Instance);
 
         StrikeSourceType = ReflectionHelper.FindType("Assets.Scripts.Records.StrikeSource");
-    }
+
+		ModManagerType = ReflectionHelper.FindType("ModManager");
+		ModManagerInstanceField = ModManagerType.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+		ModMissionsField = ModManagerType.GetProperty("ModMissions", BindingFlags.Public | BindingFlags.Instance);
+	}
 
     #region Bomb
     public static Type BombType
@@ -357,4 +361,24 @@ public static class CommonReflectedTypeInfo
         get;
         private set;
     }
+
+	#region ModManager
+	public static Type ModManagerType
+	{
+		get;
+		private set;
+	}
+
+	public static FieldInfo ModManagerInstanceField
+	{
+		get;
+		private set;
+	}
+
+	public static PropertyInfo ModMissionsField
+	{
+		get;
+		private set;
+	}
+	#endregion
 }
