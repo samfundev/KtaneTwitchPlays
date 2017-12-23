@@ -467,7 +467,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (!_solved)
 		{
-			if (IsAuthorizedDefuser(userNickName))
+			if (IsAuthorizedDefuser(userNickName, false))
 			{
 				if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
 				{
@@ -619,10 +619,10 @@ public class TwitchComponentHandle : MonoBehaviour
     #endregion
 
     #region Private Methods
-    private bool IsAuthorizedDefuser(string userNickName)
+    private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
     {
         bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
-        if (!result)
+        if (!result && sendMessage)
             ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 
         return result;
