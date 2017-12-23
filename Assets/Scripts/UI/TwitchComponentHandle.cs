@@ -487,7 +487,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					messageOut = ClaimModule(userNickName, targetModule);
 				}
-				else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
+				else if (internalCommand.ToLowerInvariant().EqualsAny("release", "unclaim"))
 				{
 					if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
@@ -565,7 +565,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 				}
 			}
-			else if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
+
+			if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
 			{
 				if (playerName != null)
 				{
