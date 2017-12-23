@@ -467,7 +467,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		else if (!_solved)
 		{
-			if (IsAuthorizedDefuser(userNickName))
+			if (IsAuthorizedDefuser(userNickName, false))
 			{
 				if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
 				{
@@ -487,7 +487,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					messageOut = ClaimModule(userNickName, targetModule);
 				}
-				else if (internalCommand.Equals("unclaim", StringComparison.InvariantCultureIgnoreCase))
+				else if (internalCommand.ToLowerInvariant().EqualsAny("release", "unclaim"))
 				{
 					if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
@@ -562,10 +562,12 @@ public class TwitchComponentHandle : MonoBehaviour
 						SetBannerColor(markedBackgroundColor);
 						return null;
 					}
-
 				}
+
+				if (messageOut == null) ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 			}
-			else if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
+
+			if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
 			{
 				if (playerName != null)
 				{
@@ -618,10 +620,10 @@ public class TwitchComponentHandle : MonoBehaviour
     #endregion
 
     #region Private Methods
-    private bool IsAuthorizedDefuser(string userNickName)
+    private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
     {
         bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
-        if (!result)
+        if (!result && sendMessage)
             ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 
         return result;

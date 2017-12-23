@@ -302,7 +302,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press a button with !{0} tl. Buttons are tl, tm, tr, ml, mm, mr, bl, bm, br.", manualCode = "Tic-Tac-Toe" };
 		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, helpText = "Press O with !{0} press O. Press I with !{0} press I. Unscrew the bulb with !{0} unscrew. Screw in the bulb with !{0} screw." };
 		ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit a time with !{0} set 12:34 am. Command must include a 12-hour time followed by AM/PM." };
-		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit your answer with !{0} submit l r u d a b." };
+		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject." };
 		ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 6, helpText = "Cut the correct wires with !{0} cut A2 B4 D3." };
 		ModComponentSolverInformation["WordSearchModule"] = new ModuleInformation { moduleScore = 6, helpText = "Select the word starting at column B row 3, and ending at column C row 4, with !{0} select B3 C4." };
