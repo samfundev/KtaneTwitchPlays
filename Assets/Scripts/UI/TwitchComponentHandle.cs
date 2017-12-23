@@ -562,8 +562,9 @@ public class TwitchComponentHandle : MonoBehaviour
 						SetBannerColor(markedBackgroundColor);
 						return null;
 					}
-
 				}
+
+				if (messageOut == null) ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 			}
 
 			if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
