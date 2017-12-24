@@ -599,11 +599,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		if (_solver != null)
 		{
-		    if (!IsAuthorizedDefuser(userNickName))
-		    {
-		        ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
-		        return null;
-		    }
+		    if (!IsAuthorizedDefuser(userNickName)) return null;
             if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))))
 			{
 				ircConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
