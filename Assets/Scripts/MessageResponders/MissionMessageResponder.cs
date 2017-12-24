@@ -57,6 +57,32 @@ public class MissionMessageResponder : MessageResponder
         }
     }
 
+	string resolveMissionID(string targetID)
+	{
+		object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
+		IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
+		ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID)));
+		if (mission == null) return null; else return mission.name;
+	}
+
+	class Distribution
+	{
+		public string displayName;
+		public float vanilla;
+		public float modded;
+	}
+
+	Dictionary<string, Distribution> distributions = new Dictionary<string, Distribution>()
+	{
+		{ "vanilla", new Distribution { vanilla = 1f, modded = 0f, displayName = "Vanilla" } },
+		{ "mods", new Distribution { vanilla = 0f, modded = 1f, displayName = "Modded" } },
+		{ "mixed", new Distribution { vanilla = 0.5f, modded = 0.5f, displayName = "Mixed" } },
+		{ "mixedlight", new Distribution { vanilla = 0.67f, modded = 0.33f, displayName = "Mixed Light" } },
+		{ "mixedheavy", new Distribution { vanilla = 0.33f, modded = 0.67f, displayName = "Mixed Heavy" } },
+		{ "light", new Distribution { vanilla = 0.8f, modded = 0.2f, displayName = "Light" } },
+		{ "heavy", new Distribution { vanilla = 0.2f, modded = 0.8f, displayName = "Heavy" } },
+	};
+
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
 	{
 		if (_bombBinderCommander == null)
@@ -92,15 +118,97 @@ public class MissionMessageResponder : MessageResponder
 				}
 				break;
 			case "run":
-				if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
-					string targetID = textAfter;
-					object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
-					IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
-					ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID)));
-					if (mission == null) _ircConnection.SendMessage("Failed to find a mission with ID \"{0}\".", targetID);
+					_ircConnection.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
+					break;
+				}
 
-					GetComponent<KMGameCommands>().StartMission(mission.name, "-1");
+				if (split.Length == 2)
+				{
+					string missionID = null;
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+					{
+						missionID = resolveMissionID(textAfter);
+					}
+
+					if (missionID == null && TwitchPlaySettings.data.CustomMissions.ContainsKey(textAfter))
+					{
+						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter]);
+					}
+
+					if (missionID != null)
+					{
+						_ircConnection.SendMessage("Unable to find a mission with an ID of \"{0}\".", textAfter);
+					}
+					else
+					{
+						GetComponent<KMGameCommands>().StartMission(missionID, "-1");
+					}
+				}
+				else if (split.Length == 3)
+				{
+					int modules;
+					if (int.TryParse(split[1], out modules) && modules > 0)
+					{
+						int maxModules = GetComponent<KMGameInfo>().GetMaximumBombModules();
+						if (modules > maxModules)
+						{
+							_ircConnection.SendMessage("Sorry, the maximum number of modules is {0}.", maxModules);
+							break;
+						}
+
+						if (!distributions.ContainsKey(split[2]))
+						{
+							_ircConnection.SendMessage("Sorry, there is no distribution called \"{0}\".", split[2]);
+							break;
+						}
+						Distribution distribution = distributions[split[2]];
+
+						int vanillaModules = Mathf.FloorToInt(modules * distribution.vanilla);
+						int moddedModules = Mathf.FloorToInt(modules * distribution.modded);
+
+						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
+						List<KMComponentPool> pools = new List<KMComponentPool>();
+
+						if (vanillaModules > 0)
+						{
+							KMComponentPool vanillaPool = new KMComponentPool();
+							vanillaPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
+							vanillaPool.AllowedSources = KMComponentPool.ComponentSource.Base;
+							vanillaPool.Count = vanillaModules;
+							pools.Add(vanillaPool);
+						}
+
+						if (moddedModules > 0)
+						{
+							KMComponentPool moddedPool = new KMComponentPool();
+							moddedPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
+							moddedPool.AllowedSources = KMComponentPool.ComponentSource.Mods;
+							moddedPool.Count = moddedModules;
+							pools.Add(moddedPool);
+						}
+
+						int bothModules = modules - moddedModules - vanillaModules;
+						if (bothModules > 0)
+						{
+							KMComponentPool bothPool = new KMComponentPool();
+							bothPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
+							bothPool.AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods;
+							bothPool.Count = bothModules;
+							pools.Add(bothPool);
+						}
+
+						mission.DisplayName = modules + " " + distribution.displayName;
+						mission.GeneratorSetting = new KMGeneratorSetting()
+						{
+							ComponentPools = pools,
+							TimeLimit = modules * 120,
+							NumStrikes = Math.Max(3, modules / 12)
+						};
+
+						GetComponent<KMGameCommands>().StartMission(mission, "-1");
+					}
 				}
 				break;
 			case "runraw":

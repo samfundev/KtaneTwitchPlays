@@ -16,7 +16,8 @@ public class TwitchPlaySettingsData
     public bool EnableFreeplayNeedy = true;
     public bool EnableFreeplayHardcore = true;
     public bool EnableFreeplayModsOnly = true;
-    public bool EnableSoloPlayMode = true;
+	public bool EnableRunCommand = true;
+	public bool EnableSoloPlayMode = true;
     public bool ForceMultiDeckerMode = false;
     public bool EnableRetryButton = true;
     public bool EnableTwitchPlaysMode = true;
@@ -28,6 +29,11 @@ public class TwitchPlaySettingsData
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
+
+	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>()
+	{
+
+	};
 
 	public string TwitchBotColorOnQuit = string.Empty;
 
@@ -92,6 +98,7 @@ public class TwitchPlaySettingsData
     public string FreePlayNeedyDisabled = "Sorry @{0}, Only authorized users may enable/disable Needy modules";
     public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
     public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
+	public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
     public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
 
     public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
