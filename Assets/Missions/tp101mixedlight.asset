@@ -9,19 +9,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -548183353, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: tp71vanilla
+  m_Name: tp101mixedlight
   m_EditorClassIdentifier: 
-  DisplayName: 71 Vanilla
+  DisplayName: 101 Mixed Light
   Description: 
   GeneratorSetting:
-    TimeLimit: 7200
-    NumStrikes: 6
+    TimeLimit: 10800
+    NumStrikes: 10
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
     OptionalWidgetCount: 5
     ComponentPools:
     - Count: 11
-      AllowedSources: 1
+      AllowedSources: 2
+      ComponentTypes: 
+      SpecialComponentType: 1
+      ModTypes: []
+    - Count: 11
+      AllowedSources: 2
+      ComponentTypes: 
+      SpecialComponentType: 1
+      ModTypes: []
+    - Count: 11
+      AllowedSources: 2
       ComponentTypes: 
       SpecialComponentType: 1
       ModTypes: []
@@ -50,7 +60,12 @@ MonoBehaviour:
       ComponentTypes: 
       SpecialComponentType: 1
       ModTypes: []
-    - Count: 5
+    - Count: 11
+      AllowedSources: 1
+      ComponentTypes: 
+      SpecialComponentType: 1
+      ModTypes: []
+    - Count: 2
       AllowedSources: 1
       ComponentTypes: 
       SpecialComponentType: 1

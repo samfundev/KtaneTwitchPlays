@@ -14,10 +14,11 @@ MonoBehaviour:
   DisplayName: 31 Mixed Light
   Description: 
   GeneratorSetting:
-    TimeLimit: 3720
-    NumStrikes: 3
+    TimeLimit: 3600
+    NumStrikes: 4
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 10
       AllowedSources: 2

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -89,15 +90,27 @@ public class MissionMessageResponder : MessageResponder
 		}
 		
 		Match runMatch = Regex.Match(text, "^!run (.+)", RegexOptions.IgnoreCase);
-		if (runMatch.Success && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		if (runMatch.Success)
 		{
-			string targetID = runMatch.Groups[1].Value;
-			object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
-			IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
-			ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID)));
-			if (mission == null) _ircConnection.SendMessage("Failed to find a mission with ID \"{0}\".", targetID);
-
-			GetComponent<KMGameCommands>().StartMission(mission.name, "-1");
+		    string targetID = runMatch.Groups[1].Value;
+		    string allowedID = TwitchPlaySettings.data.AllowedRunCommandMissions.Where(x => x.Key.Equals(targetID, StringComparison.InvariantCultureIgnoreCase)).Select(y => y.Value).FirstOrDefault();
+            if ((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		    {
+		        object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
+		        IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
+		        ScriptableObject mission = null;
+		        var scriptableObjects = missions as ScriptableObject[] ?? missions.ToArray();
+		        if(UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)) mission = scriptableObjects.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID)));
+                if (mission == null && !string.IsNullOrEmpty(allowedID)) mission = scriptableObjects.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(allowedID)));
+                if (mission == null)
+                    _ircConnection.SendMessage("Failed to find a mission with ID \"{0}\".", targetID);
+                else
+		            GetComponent<KMGameCommands>().StartMission(mission.name, "-1");
+		    }
+		    else
+            { 
+		        _ircConnection.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
+		    }
 		}
 
 		Match runrawMatch = Regex.Match(text, "^!runraw (.+)", RegexOptions.IgnoreCase);
