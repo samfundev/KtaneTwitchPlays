@@ -137,7 +137,7 @@ public class MissionMessageResponder : MessageResponder
 						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter]);
 					}
 
-					if (missionID != null)
+					if (missionID == null)
 					{
 						_ircConnection.SendMessage("Unable to find a mission with an ID of \"{0}\".", textAfter);
 					}
