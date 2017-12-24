@@ -139,16 +139,37 @@ public class MissionMessageResponder : MessageResponder
 
 					if (missionID == null)
 					{
-						_ircConnection.SendMessage("Unable to find a mission with an ID of \"{0}\".", textAfter);
+					    string distributionName = distributions.Select(x => x.Key).FirstOrDefault(y => split[1].Contains(y));
+					    int modules;
+					    if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out modules) || 
+                            modules < 1 || modules > GetComponent<KMGameInfo>().GetMaximumBombModules())
+					    {
+					        _ircConnection.SendMessage("Unable to find a mission with an ID of \"{0}\".", textAfter);
+					    }
+					    else
+					    {
+					        split[1] = split[1].Replace(distributionName, "");
+					        Array.Resize(ref split, 3);
+					        split[2] = distributionName;
+					    }
 					}
 					else
 					{
 						GetComponent<KMGameCommands>().StartMission(missionID, "-1");
 					}
 				}
-				else if (split.Length == 3)
+
+				if (split.Length == 3)
 				{
 					int modules;
+
+				    if (distributions.ContainsKey(split[1]))
+				    {
+				        string temp = split[1];
+				        split[1] = split[2];
+				        split[2] = temp;
+				    }
+
 					if (int.TryParse(split[1], out modules) && modules > 0)
 					{
 						int maxModules = GetComponent<KMGameInfo>().GetMaximumBombModules();
