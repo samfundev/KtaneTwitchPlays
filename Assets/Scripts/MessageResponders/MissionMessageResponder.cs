@@ -139,7 +139,7 @@ public class MissionMessageResponder : MessageResponder
 
 					if (missionID == null)
 					{
-					    string distributionName = distributions.Select(x => x.Key).FirstOrDefault(y => split[1].Contains(y));
+					    string distributionName = distributions.Keys.OrderByDescending(x => x.Length).FirstOrDefault(y => split[1].Contains(y));
 					    int modules;
 					    if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out modules) || 
                             modules < 1 || modules > GetComponent<KMGameInfo>().GetMaximumBombModules())
