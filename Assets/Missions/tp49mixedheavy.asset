@@ -14,10 +14,11 @@ MonoBehaviour:
   DisplayName: 49 Mixed Heavy
   Description: 
   GeneratorSetting:
-    TimeLimit: 5880
-    NumStrikes: 3
+    TimeLimit: 5400
+    NumStrikes: 5
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 11
       AllowedSources: 2

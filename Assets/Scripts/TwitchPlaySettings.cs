@@ -12,6 +12,7 @@ public class TwitchPlaySettingsData
 
     public bool EnableRewardMultipleStrikes = true;
     public bool EnableMissionBinder = true;
+    public bool EnableRunCommand = true;
     public bool EnableFreeplayBriefcase = true;
     public bool EnableFreeplayNeedy = true;
     public bool EnableFreeplayHardcore = true;
@@ -32,6 +33,44 @@ public class TwitchPlaySettingsData
 	public string TwitchBotColorOnQuit = string.Empty;
 
     public bool AllowSnoozeOnly = false;
+
+    public Dictionary<string, string> AllowedRunCommandMissions = new Dictionary<string, string>
+    {
+        {"11vanilla", "tp11vanilla"},
+        {"23vanilla", "tp23vanilla"},
+        {"31vanilla", "tp31vanilla"},
+        {"49vanilla","tp49vanilla" },
+        {"71vanilla","tp71vanilla" },
+        {"101vanilla","tp101vanilla" },
+
+        {"11mods", "tp11mods"},
+        {"23mods", "tp23mods"},
+        {"31mods", "tp31mods"},
+        {"49mods", "tp49mods"},
+        {"71mods", "tp71mods"},
+        {"101mods", "tp101mods"},
+
+        {"11mixed", "tp11mixed"},
+        {"23mixed", "tp23mixed"},
+        {"31mixed", "tp31mixed"},
+        {"49mixed", "tp49mixed"},
+        {"71mixed", "tp71mixed"},
+        {"101mixed", "tp101mixed"},
+
+        {"11mixedlight", "tp11mixedlight"},
+        {"23mixedlight", "tp23mixedlight"},
+        {"31mixedlight", "tp31mixedlight"},
+        {"49mixedlight", "tp49mixedlight"},
+        {"71mixedlight", "tp71mixedlight"},
+        {"101mixedlight", "tp101mixedlight"},
+
+        {"11mixedheavy", "tp11mixedheavy"},
+        {"23mixedheavy", "tp23mixedheavy"},
+        {"31mixedheavy", "tp31mixedheavy"},
+        {"49mixedheavy", "tp49mixedheavy"},
+        {"71mixedheavy", "tp71mixedheavy"},
+        {"101mixedheavy", "tp101mixedheavy"},
+    };
 
     public string TPSharedFolder = Path.Combine(Application.persistentDataPath, "TwitchPlaysShared");
     public string TPSolveStrikeLog = "TPLog.txt";
@@ -88,6 +127,7 @@ public class TwitchPlaySettingsData
 
     public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
     public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
+    public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
     public string FreePlayDisabled = "Sorry @{0}, Only authorized users may access the freeplay briefcase";
     public string FreePlayNeedyDisabled = "Sorry @{0}, Only authorized users may enable/disable Needy modules";
     public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
@@ -184,6 +224,7 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref TwitchPlaysDisabled, data.TwitchPlaysDisabled, 1);
         valid &= ValidateString(ref MissionBinderDisabled, data.MissionBinderDisabled, 1);
+        valid &= ValidateString(ref RunCommandDisabled, data.RunCommandDisabled, 1);
         valid &= ValidateString(ref FreePlayDisabled, data.FreePlayDisabled, 1);
         valid &= ValidateString(ref FreePlayNeedyDisabled, data.FreePlayNeedyDisabled, 1);
         valid &= ValidateString(ref FreePlayHardcoreDisabled, data.FreePlayHardcoreDisabled, 1);

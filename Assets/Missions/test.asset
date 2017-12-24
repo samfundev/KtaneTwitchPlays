@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -548183353, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: tptest
+  m_Name: test
   m_EditorClassIdentifier: 
   DisplayName: Practice
   Description: 
@@ -18,6 +18,7 @@ MonoBehaviour:
     NumStrikes: 5
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 1
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 5
       AllowedSources: 3
