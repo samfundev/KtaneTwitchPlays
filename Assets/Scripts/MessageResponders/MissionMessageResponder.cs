@@ -61,7 +61,7 @@ public class MissionMessageResponder : MessageResponder
 	{
 		object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
 		IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
-		ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID)));
+		ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
 		if (mission == null) return null; else return mission.name;
 	}
 
