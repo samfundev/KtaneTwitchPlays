@@ -117,7 +117,7 @@ public class TwitchPlaySettingsData
 
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
 
-    public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} points, please only submit correct answers.";
+    public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
 
     public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
 

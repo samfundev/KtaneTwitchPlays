@@ -182,7 +182,7 @@ public abstract class ComponentSolver : ICommandResponder
 
 					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, ComponentHandle.idText.text, modInfo.moduleDisplayName, penalty);
+					IRCConnection.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, ComponentHandle.idText.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(14).Trim() != string.Empty)
