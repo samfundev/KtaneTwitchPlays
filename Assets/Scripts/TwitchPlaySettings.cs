@@ -336,18 +336,19 @@ public static class TwitchPlaySettings
     }
 
     public static string GiveBonusPoints(Leaderboard leaderboard)
-    {
-        if (ClearReward == 0 || Players.Count == 0)
+	{
+		if (ClearReward == 0 || Players.Count == 0)
         {
             return data.BombDefusedFooter;
-        }
-        ClearReward = Mathf.CeilToInt(((float)ClearReward) / Players.Count);
-        foreach (string player in Players)
+		}
+        ClearReward = Mathf.CeilToInt(ClearReward / (float) Players.Count);
+		string message = string.Format(data.BombDefusedBonusMessage, ClearReward) + data.BombDefusedFooter;
+		foreach (string player in Players)
         {
             leaderboard.AddScore(player, ClearReward);
         }
         ClearPlayerLog();
-        return string.Format(data.BombDefusedBonusMessage, ClearReward) + data.BombDefusedFooter;
+		return message;
     }
 
     public static void AddRewardBonus(int bonus)
