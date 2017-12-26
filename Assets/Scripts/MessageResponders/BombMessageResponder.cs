@@ -96,8 +96,11 @@ public class BombMessageResponder : MessageResponder
 				_ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
 			}
 
-			if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in _bombCommanders) commander.FillEdgework();
-		};
+            if ((TwitchPlaySettings.data.EnableAutomaticEdgework) || (OtherModes.timedModeOn)) foreach (var commander in _bombCommanders) commander.FillEdgework();
+            if (OtherModes.timedModeOn)
+                foreach (var commander in _bombCommanders) CommonReflectedTypeInfo.TimeRemainingField.SetValue(commander.timerComponent, 300);
+            OtherModes.setMultiplier(9);
+        };
 
         StartCoroutine(CheckForBomb());
     }

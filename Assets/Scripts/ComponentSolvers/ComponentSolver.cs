@@ -566,6 +566,18 @@ public abstract class ComponentSolver : ICommandResponder
         responseNotifier.ProcessResponse(CommandResponse.EndComplete, ComponentValue);
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
         TwitchPlaySettings.AppendToPlayerLog(userNickName);
+        if (OtherModes.timedModeOn)
+        {
+            float multiplier = OtherModes.getMultiplier();
+            float time = multiplier * ComponentValue;
+            CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, BombCommander.CurrentTimer + time);
+            IRCConnection.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
+            if (multiplier < 10)
+            {
+                multiplier = multiplier + 0.1f;
+                OtherModes.setMultiplier(multiplier);
+            }
+        }
     }
 
     private void AwardStrikes(string userNickName, ICommandResponseNotifier responseNotifier, int strikeCount)
@@ -575,6 +587,33 @@ public abstract class ComponentSolver : ICommandResponder
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+        if (OtherModes.timedModeOn)
+        {
+            bool multiDropped = OtherModes.dropMultiplier();
+            float multiplier = OtherModes.getMultiplier();
+            string tempMessage;
+            if (multiDropped)
+            {
+                tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
+            }
+            else
+            {
+                tempMessage = "Mutliplier set at 1, cannot be further reduced.  Time";
+            }
+            if (BombCommander.CurrentTimer < 60)
+            {
+                CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, BombCommander.CurrentTimer - 15);
+                tempMessage = tempMessage + " reduced by 15 seconds.";
+            }
+            else
+            {
+                float timeReducer = BombCommander.CurrentTimer * .25f;
+                double easyText = Math.Round(timeReducer, 1);
+                CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, BombCommander.CurrentTimer - timeReducer);
+                tempMessage = tempMessage + " reduced by 25%. (" + easyText + " seconds)";
+            }
+            IRCConnection.SendMessage(tempMessage);
+        }
         if (responseNotifier != null)
         {
             responseNotifier.ProcessResponse(CommandResponse.EndErrorSubtractScore, strikePenalty);
@@ -585,7 +624,11 @@ public abstract class ComponentSolver : ICommandResponder
             ComponentHandle.leaderboard.AddScore(userNickName, strikePenalty);
             ComponentHandle.leaderboard.AddStrike(userNickName, strikeCount);
         }
-
+        if (OtherModes.timedModeOn)
+        {
+            CommonReflectedTypeInfo.NumStrikesField.SetValue(BombCommander.Bomb, -1);
+            BombMessageResponder.moduleCameras.UpdateStrikes();
+        }
         StrikeMessage = string.Empty;
     }
     #endregion
