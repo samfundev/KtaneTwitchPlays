@@ -27,6 +27,8 @@ public class TwitchComponentHandle : MonoBehaviour
 	public Text headerText = null;
 	public Text idText = null;
 	public Text idTextMultiDecker = null;
+	public Image claimedUser = null;
+	public Image claimedUserMultiDecker = null;
 	public ScrollRect messageScroll = null;
 	public GameObject messageScrollContents = null;
 
@@ -106,7 +108,6 @@ public class TwitchComponentHandle : MonoBehaviour
 	private string _code = null;
 	private ComponentSolver _solver = null;
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
-	private string playerName = null;
 	private bool _solved = false;
 	#endregion
 
@@ -154,6 +155,9 @@ public class TwitchComponentHandle : MonoBehaviour
 				_solver.ComponentHandle = this;
 				Vector3 pos = canvasGroupMultiDecker.transform.localPosition;
 				canvasGroupMultiDecker.transform.localPosition = new Vector3(_solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, _solver.modInfo.statusLightDown ? -pos.z : pos.z);
+				RectTransform rectTransform = claimedUserMultiDecker.rectTransform;
+				rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(_solver.modInfo.statusLightLeft ? 1 : 0, _solver.modInfo.statusLightDown ? 0 : 1);
+				rectTransform.pivot = new Vector2(_solver.modInfo.statusLightLeft ? 0 : 1, _solver.modInfo.statusLightDown ? 0 : 1);
 
 				/*Vector3 angle = canvasGroupMultiDecker.transform.eulerAngles;
                 canvasGroupMultiDecker.transform.localEulerAngles = new Vector3(angle.x, _solver.modInfo.chatRotation, angle.z);
@@ -398,10 +402,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 			else
 			{
-				if (!_solved)
-				{
-					ClaimedList.Add(userNickName);
-				}
+				ClaimedList.Add(userNickName);
 				SetBannerColor(claimedBackgroundColour);
 				playerName = userNickName;
 				return string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, playerName, headerText.text);
@@ -659,12 +660,38 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	private void SetBannerColor(Color color)
 	{
-		idBannerPrefab.GetComponent<Image>().color = color;
-		canvasGroupMultiDecker.GetComponent<Image>().color = color;
+		if (bombCommander.multiDecker)
+		{
+			canvasGroupMultiDecker.GetComponent<Image>().color = color;
+			claimedUserMultiDecker.color = color;
+		}
+		else
+		{
+
+			idBannerPrefab.GetComponent<Image>().color = color;
+			claimedUser.color = color;
+		}
 	}
 	#endregion
 
 	#region Private Properties
+	private string _playerName = null;
+	private string playerName
+	{
+		set
+		{
+			_playerName = value;
+
+			Image claimedDisplay = bombCommander.multiDecker ? claimedUserMultiDecker : claimedUser;
+			if (value != null) claimedDisplay.transform.Find("Username").GetComponent<Text>().text = value;
+			claimedDisplay.gameObject.SetActive(value != null);
+		}
+		get
+		{
+			return _playerName;
+		}
+	}
+
 	private Image Arrow
 	{
 		get
