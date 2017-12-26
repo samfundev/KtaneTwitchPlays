@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using System.IO;
+using Newtonsoft.Json;
 
 public class MissionMessageResponder : MessageResponder
 {
@@ -235,6 +237,53 @@ public class MissionMessageResponder : MessageResponder
 			case "runraw":
 				if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 					GetComponent<KMGameCommands>().StartMission(textAfter, "-1");
+				break;
+			case "profile":
+			case "profiles":
+				var profileList = TwitchPlaySettings.data.ProfileWhitelist;
+				if (profileList.Count == 0)
+				{
+					_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileCommandDisabled, userNickName);
+					break;
+				}
+
+				switch (split[1])
+				{
+					case "enable":
+					case "add":
+					case "activate":
+					case "disable":
+					case "remove":
+					case "deactivate":
+						string profileString = ProfileHelper.GetProperProfileName(split.Skip(2).Join());
+						if (profileList.Contains(profileString))
+						{
+							string filename = profileString.Replace(' ', '_');
+							if (split[1].EqualsAny("enable", "add"))
+							{
+								if (ProfileHelper.Add(filename)) _ircConnection.SendMessage("Enabled profile: {0}.", profileString);
+								else _ircConnection.SendMessage(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled");
+							}
+							else
+							{
+								if (ProfileHelper.Remove(filename)) _ircConnection.SendMessage("Disabled profile: {0}.", profileString);
+								else _ircConnection.SendMessage(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled");
+							}
+						}
+						else
+						{
+							_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileNotWhitelisted, split.Skip(2).Join());
+						}
+						break;
+					case "enabled":
+					case "enabledlist":
+						_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileListEnabled, ProfileHelper.Profiles.Select(str => str.Replace('_', ' ')).Intersect(profileList).DefaultIfEmpty("None").Join(", "));
+						break;
+					case "list":
+					case "all":
+						_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileListAll, profileList.Join(", "));
+						break;
+				}
 				break;
 		}
 	}

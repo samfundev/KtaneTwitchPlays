@@ -30,10 +30,8 @@ public class TwitchPlaySettingsData
 	public float UnsubmittablePenaltyPercent = 0.3f;
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
 
-	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>()
-	{
-
-	};
+	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
+	public List<string> ProfileWhitelist = new List<string>();
 
 	public string TwitchBotColorOnQuit = string.Empty;
 
@@ -99,9 +97,15 @@ public class TwitchPlaySettingsData
     public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
     public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
 	public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
-    public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
+	public string ProfileCommandDisabled = "Sorry @{0}, profile management is currently disabled.";
+	public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
 
-    public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
+	public string ProfileActionUseless = "That profile ({0}) is already {1}.";
+	public string ProfileNotWhitelisted = "That profile ({0}) can't not be enabled/disabled.";
+	public string ProfileListEnabled = "Currently enabled profiles: {0}";
+	public string ProfileListAll = "All profiles: {0}";
+
+	public string AddedUserPower = "Added access levels ({0}) to user \"{1}\"";
     public string RemoveUserPower = "Removed access levels ({0}) from user \"{1}\"";
 
     public string BombHelp = "The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]";
