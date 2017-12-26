@@ -29,7 +29,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolver
 
     static ExtendedPasswordComponentSolver()
     {
-        _componentType = ReflectionHelper.FindType("ExtendedPassword");
+        _componentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");
         _ProcessCommandMethod = _componentType.GetMethod("ProcessTwitchCommand", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
