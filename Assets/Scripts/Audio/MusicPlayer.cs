@@ -10,6 +10,8 @@ public class MusicPlayer : MonoBehaviour
     public AudioSource startInterruptSound = null;
     public AudioSource musicLoopSound = null;
     public AudioSource endInterruptSound = null;
+
+    private Coroutine _currentCoroutine;
     
     private void Awake()
     {
@@ -38,12 +40,20 @@ public class MusicPlayer : MonoBehaviour
 
     public void StartMusic()
     {
-        StartCoroutine(StartMusicCoroutine());
+        if (_currentCoroutine != null)
+        {
+            StopCoroutine(_currentCoroutine);
+        }
+        _currentCoroutine = StartCoroutine(StartMusicCoroutine());
     }
 
     public void StopMusic()
     {
-        StartCoroutine(EndMusicCoroutine());
+        if (_currentCoroutine != null)
+        {
+            StopCoroutine(_currentCoroutine);
+        }
+        _currentCoroutine = StartCoroutine(EndMusicCoroutine());
     }
 
     private IEnumerator StartMusicCoroutine()
@@ -64,25 +74,28 @@ public class MusicPlayer : MonoBehaviour
 
         musicLoopSound.time = 0.0f;
         musicLoopSound.Play();
+        _currentCoroutine = null;
     }
 
     private IEnumerator EndMusicCoroutine()
     {
-        if (musicLoopSound == null || !musicLoopSound.isPlaying)
+        if (musicLoopSound == null)
         {
             yield break;
         }
 
-        musicLoopSound.Stop();
-
-        if (endInterruptSound != null)
+        if (musicLoopSound.isPlaying)
         {
-            endInterruptSound.time = 0.0f;
-            endInterruptSound.Play();
-            yield return new WaitForSeconds(endInterruptSound.clip.length);
+            musicLoopSound.Stop();
+            if (endInterruptSound != null)
+            {
+                endInterruptSound.time = 0.0f;
+                endInterruptSound.Play();
+                yield return new WaitForSeconds(endInterruptSound.clip.length);
+            }
         }
-        
 
         InterruptMusic.Instance.SetMusicInterrupt(false);
+        _currentCoroutine = null;
     }
 }
