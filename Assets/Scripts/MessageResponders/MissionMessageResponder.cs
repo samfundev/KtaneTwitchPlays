@@ -222,6 +222,7 @@ public class MissionMessageResponder : MessageResponder
 							pools.Add(bothPool);
 						}
 
+						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;
 						mission.GeneratorSetting = new KMGeneratorSetting()
 						{
