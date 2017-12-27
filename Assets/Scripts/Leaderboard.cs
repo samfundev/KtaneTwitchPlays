@@ -223,7 +223,7 @@ public class Leaderboard
 
         if (entries.Count < count)
         {
-            entries.AddRange(GetSortedEntries(count).Where(e => !entries.Any(ex => ex.UserName == e.UserName)));
+			entries.AddRange(GetSortedEntries(count).Except(entries).Take(count - entries.Count));
         }
 
         entries.Sort(CompareScores);
