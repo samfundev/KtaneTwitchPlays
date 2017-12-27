@@ -529,7 +529,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 				{
-					if (userNickName != playerName)
+					if (playerName != null && userNickName != playerName)
 					{
 						if (TakeInProgress == null)
 						{
