@@ -341,11 +341,11 @@ public static class TwitchPlaySettings
         {
             return data.BombDefusedFooter;
 		}
-        ClearReward = Mathf.CeilToInt(ClearReward / (float) Players.Count);
-		string message = string.Format(data.BombDefusedBonusMessage, ClearReward) + data.BombDefusedFooter;
+        int ClearReward2 = Mathf.CeilToInt(ClearReward / (float) Players.Count);
+		string message = string.Format(data.BombDefusedBonusMessage, ClearReward2) + data.BombDefusedFooter;
 		foreach (string player in Players)
         {
-            leaderboard.AddScore(player, ClearReward);
+            leaderboard.AddScore(player, ClearReward2);
         }
         ClearPlayerLog();
 		return message;
@@ -359,6 +359,11 @@ public static class TwitchPlaySettings
     public static void SetRewardBonus(int moduleCountBonus)
     {
         ClearReward = moduleCountBonus;
+    }
+
+    public static int GetRewardBonus()
+    {
+        return ClearReward;
     }
 
     public static string usersSavePath = "TwitchPlaySettings.json";

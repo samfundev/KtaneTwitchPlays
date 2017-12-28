@@ -244,7 +244,7 @@ public class BombCommander : ICommandResponder
             {
                 yield return firstEdge.Current;
             }
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSeconds(2.0f);
         }
 
         if ((edge == "" && _45Degrees) || edge == "bottom right" || edge == "right bottom")
@@ -269,7 +269,7 @@ public class BombCommander : ICommandResponder
             {
                 yield return secondEdge.Current;
             }
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSeconds(2.0f);
         }
 
         if ((edge == "" && _45Degrees) || edge == "bottom left" || edge == "left bottom")
@@ -293,7 +293,7 @@ public class BombCommander : ICommandResponder
             {
                 yield return thirdEdge.Current;
             }
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSeconds(2.0f);
         }
 
         if ((edge == "" && _45Degrees) || edge == "top left" || edge == "left top")
@@ -317,7 +317,7 @@ public class BombCommander : ICommandResponder
             {
                 yield return fourthEdge.Current;
             }
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSeconds(2.0f);
         }
 
         if ((edge == "" && _45Degrees) || edge == "top right" || edge == "right top")

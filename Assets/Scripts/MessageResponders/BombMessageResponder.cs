@@ -96,9 +96,7 @@ public class BombMessageResponder : MessageResponder
 				_ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
 			}
 
-            if ((TwitchPlaySettings.data.EnableAutomaticEdgework) || (OtherModes.timedModeOn)) foreach (var commander in _bombCommanders) commander.FillEdgework();
-            if (OtherModes.timedModeOn)
-                foreach (var commander in _bombCommanders) CommonReflectedTypeInfo.TimeRemainingField.SetValue(commander.timerComponent, 300);
+            if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in _bombCommanders) commander.FillEdgework();
             OtherModes.setMultiplier(9);
         };
 
@@ -387,8 +385,14 @@ public class BombMessageResponder : MessageResponder
 			foreach (var commander in _bombCommanders) commander.FillEdgework();
 			return;
 		}
+        if (text.StartsWith("!setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+        {
+            float tempNumber = float.Parse(text.Substring(15));
+            OtherModes.setMultiplier(tempNumber);
+            
+        }
 
-		if (text.Equals("!solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+        if (text.Equals("!solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			foreach (var handle in _componentHandles) if (!handle.Solved) handle.SolveSilently();
 			return;

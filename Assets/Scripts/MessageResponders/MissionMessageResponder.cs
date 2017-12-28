@@ -224,14 +224,28 @@ public class MissionMessageResponder : MessageResponder
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;
-						mission.GeneratorSetting = new KMGeneratorSetting()
-						{
-							ComponentPools = pools,
-							TimeLimit = modules * 120,
-							NumStrikes = Math.Max(3, modules / 12)
-						};
-
-						GetComponent<KMGameCommands>().StartMission(mission, "-1");
+                        if (OtherModes.timedModeOn)
+                        {
+                            mission.GeneratorSetting = new KMGeneratorSetting()
+                            {
+                                ComponentPools = pools,
+                                TimeLimit = 300,
+                                NumStrikes = 9
+                            };
+                        }
+                        else
+                        {
+                            mission.GeneratorSetting = new KMGeneratorSetting()
+                            {
+                                ComponentPools = pools,
+                                TimeLimit = (120*modules)-(60*vanillaModules),
+                                NumStrikes = Math.Max(3, modules / 12)
+                            };
+                        }
+                        int rewardPoints = Convert.ToInt32((5*modules)-(3*vanillaModules));
+                        TwitchPlaySettings.SetRewardBonus(rewardPoints);
+                        _ircConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
+                        GetComponent<KMGameCommands>().StartMission(mission, "-1");
 					}
 				}
 				break;

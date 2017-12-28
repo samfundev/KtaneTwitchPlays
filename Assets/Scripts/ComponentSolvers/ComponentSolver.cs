@@ -554,7 +554,7 @@ public abstract class ComponentSolver : ICommandResponder
 		_delegatedSolveUserNickName = null;
 		_currentUserNickName = null;
 
-		TwitchComponentHandle.RemoveSolveBasedModules();
+		// TwitchComponentHandle.RemoveSolveBasedModules();
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
 	}
 
@@ -587,6 +587,11 @@ public abstract class ComponentSolver : ICommandResponder
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+        
+        int currentReward = TwitchPlaySettings.GetRewardBonus();
+        currentReward = Convert.ToInt32(currentReward * .80);
+        TwitchPlaySettings.SetRewardBonus(currentReward);
+        IRCConnection.SendMessage("Reward reduced to " + currentReward + " points.");
         if (OtherModes.timedModeOn)
         {
             bool multiDropped = OtherModes.dropMultiplier();

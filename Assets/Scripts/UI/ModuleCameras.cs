@@ -325,68 +325,84 @@ public class ModuleCameras : MonoBehaviour
     {
         if (OtherModes.timedModeOn)
         {
-
             float timedMultiplier = OtherModes.getMultiplier();
             confidencePrefab.color = Color.yellow;
             string conf = "x" + String.Format("{0:0.0}", timedMultiplier);
-            confidencePrefab.text = conf;
+            string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
+            confidencePrefab.text = pts;
+            strikesPrefab.color = Color.yellow;
+            strikeLimitPrefab.color = Color.yellow;
+            strikesPrefab.text = conf;
+            strikeLimitPrefab.text = "";
+
+
         }
+        //     if (OtherModes.vsModeOn)
+        //     {
+        //         int bossHealth = OtherModes.getBossHealth();
+        //         int teamHealth = OtherModes.getTeamHealth();
+        //
+        //     }
         else
         {
-            int previousSuccess = (int)(currentSuccess * 100);
-            currentSuccess = PlayerSuccessRating;
-
-            if (previousSuccess != (int)(currentSuccess * 100))
-            {
-                float minHue = 0.0f; // red (0deg)
-                float maxHue = (float)1 / 3; // green (120deg)
-                float minBeforeValueDown = 0.25f;
-                float maxBeforeSaturationDown = 0.75f;
-                float minValue = 0.25f;
-                float minSaturation = 0.0f;
-                float lowSuccessDesaturationSpeed = 3.0f;
-
-                float hueSuccessRange = maxBeforeSaturationDown - minBeforeValueDown;
-                float hueRange = maxHue - minHue;
-                float valueRange = 1.0f - minValue;
-                float saturationRange = 1.0f - minSaturation;
-
-                float hue, pointOnScale;
-                float saturation = 1.0f;
-                float value = 1.0f;
-
-                if (currentSuccess < minBeforeValueDown)
-                {
-                    // At very low ratings, move from red to dark grey
-                    hue = minHue;
-                    pointOnScale = (currentSuccess - (minBeforeValueDown / lowSuccessDesaturationSpeed)) * lowSuccessDesaturationSpeed;
-                    pointOnScale = Math.Max(pointOnScale, 0.0f) / minBeforeValueDown;
-                    saturation = minSaturation + (saturationRange * pointOnScale);
-                    pointOnScale = currentSuccess / maxBeforeSaturationDown;
-                    value = minValue + (valueRange * pointOnScale);
-                }
-                else if (currentSuccess > maxBeforeSaturationDown)
-                {
-                    // At very high ratings, move from green to white
-                    hue = maxHue;
-                    pointOnScale = ((1.0f - currentSuccess) / (1.0f - maxBeforeSaturationDown));
-                    saturation = minSaturation + (saturationRange * pointOnScale);
-                }
-                else
-                {
-                    // At moderate ratings, move between red and green
-                    pointOnScale = ((currentSuccess - minBeforeValueDown) / hueSuccessRange);
-                    hue = minHue + (hueRange * pointOnScale);
-                }
-
-                confidencePrefab.color = Color.HSVToRGB(hue, saturation, value);
-            }
-
-
-            string conf = string.Format("{0:00}%", currentSuccess * 100);
-            confidencePrefab.text = conf;
+            confidencePrefab.color = Color.yellow;
+            string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
+            confidencePrefab.text = pts;
+            //    int previousSuccess = (int)(currentSuccess * 100);
+            //    currentSuccess = PlayerSuccessRating;
+            //
+            //    if (previousSuccess != (int)(currentSuccess * 100))
+            //    {
+            //        float minHue = 0.0f; // red (0deg)
+            //        float maxHue = (float)1 / 3; // green (120deg)
+            //        float minBeforeValueDown = 0.25f;
+            //        float maxBeforeSaturationDown = 0.75f;
+            //        float minValue = 0.25f;
+            //        float minSaturation = 0.0f;
+            //        float lowSuccessDesaturationSpeed = 3.0f;
+            //
+            //        float hueSuccessRange = maxBeforeSaturationDown - minBeforeValueDown;
+            //        float hueRange = maxHue - minHue;
+            //        float valueRange = 1.0f - minValue;
+            //        float saturationRange = 1.0f - minSaturation;
+            //
+            //        float hue, pointOnScale;
+            //        float saturation = 1.0f;
+            //        float value = 1.0f;
+            //
+            //        if (currentSuccess < minBeforeValueDown)
+            //        {
+            //            // At very low ratings, move from red to dark grey
+            //            hue = minHue;
+            //            pointOnScale = (currentSuccess - (minBeforeValueDown / lowSuccessDesaturationSpeed)) * lowSuccessDesaturationSpeed;
+            //            pointOnScale = Math.Max(pointOnScale, 0.0f) / minBeforeValueDown;
+            //            saturation = minSaturation + (saturationRange * pointOnScale);
+            //            pointOnScale = currentSuccess / maxBeforeSaturationDown;
+            //            value = minValue + (valueRange * pointOnScale);
+            //        }
+            //        else if (currentSuccess > maxBeforeSaturationDown)
+            //        {
+            //            // At very high ratings, move from green to white
+            //            hue = maxHue;
+            //            pointOnScale = ((1.0f - currentSuccess) / (1.0f - maxBeforeSaturationDown));
+            //            saturation = minSaturation + (saturationRange * pointOnScale);
+            //        }
+            //        else
+            //        {
+            //            // At moderate ratings, move between red and green
+            //            pointOnScale = ((currentSuccess - minBeforeValueDown) / hueSuccessRange);
+            //            hue = minHue + (hueRange * pointOnScale);
+            //        }
+            //
+            //        confidencePrefab.color = Color.HSVToRGB(hue, saturation, value);
+            //    }
+            //
+            //
+            //    string conf = string.Format("{0:00}%", currentSuccess * 100);
+            //    confidencePrefab.text = conf;
         }
     }
+
 
     public void ChangeBomb(BombCommander bomb)
     {
