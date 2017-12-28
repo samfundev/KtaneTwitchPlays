@@ -63,7 +63,15 @@ public class MiscellaneousMessageResponder : MessageResponder
                 moduleCountBonus = Int32.Parse(parts[1]);
                 TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
             }
-        }        
+        }
+        else if (text.Equals("!timemode", StringComparison.InvariantCultureIgnoreCase))
+        {
+            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+            {
+                OtherModes.toggleTimedMode();
+                _ircConnection.SendMessage(OtherModes.timedModeCheck() ? "Time Mode Enabled" : "Time Mode Disabled");
+            }
+        }
         else if (text.StartsWith("!rank", StringComparison.InvariantCultureIgnoreCase))
         {
             Leaderboard.LeaderboardEntry entry = null;
