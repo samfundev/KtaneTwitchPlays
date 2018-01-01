@@ -13,6 +13,7 @@ public static class OtherModes
 
     public static void toggleVsMode()
     {
+        if (BombMessageResponder.BombActive) return;
         vsModeOn = !vsModeOn;
     }
 
@@ -40,6 +41,7 @@ public static class OtherModes
 
     public static void toggleTimedMode()
     {
+        if (BombMessageResponder.BombActive) return;
         timedModeOn = !timedModeOn;
     }
 
