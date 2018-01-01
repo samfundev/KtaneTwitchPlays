@@ -264,6 +264,11 @@ public class MiscellaneousMessageResponder : MessageResponder
                 _ircConnection.SendMessage("Removing Solve based modules");
                 TwitchComponentHandle.RemoveSolveBasedModules();
             }
+            else if (text.Equals("!silencemode", StringComparison.InvariantCultureIgnoreCase))
+            {
+                _ircConnection.ToggleSilenceMode();
+            }
+
         }
     }
 

@@ -169,6 +169,7 @@ public class IRCConnection
 
     public void SendMessage(string message)
     {
+        if (_silenceMode) return;
         foreach (string line in message.Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
         {        
             SendCommand(string.Format("PRIVMSG #{0} :{1}", _channelName, line));
@@ -178,6 +179,19 @@ public class IRCConnection
     public void SendMessage(string message, params object[] args)
     {
         SendMessage(string.Format(message, args));
+    }
+
+    public void ToggleSilenceMode()
+    {
+        if (!_silenceMode)
+        {
+            SendCommand(string.Format("PRIVMSG #{0} :Silence mode on", _channelName));
+        }
+        _silenceMode = !_silenceMode;
+        if (!_silenceMode)
+        {
+            SendCommand(string.Format("PRIVMSG #{0} :Silence mode off", _channelName));
+        }
     }
     #endregion
 
@@ -357,6 +371,7 @@ public class IRCConnection
     private bool _isDisconnecting = false;
     private bool _isModerator = false;
     private int _messageDelay = 2000;
+    private bool _silenceMode = false;
     
     private string _currentColor = string.Empty;
 
