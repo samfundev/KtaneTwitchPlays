@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
+[RequireComponent(typeof(KMGameCommands))]
+[RequireComponent(typeof(KMGameInfo))]
 public class MiscellaneousMessageResponder : MessageResponder
 {
     public Leaderboard leaderboard = null;
@@ -10,29 +15,74 @@ public class MiscellaneousMessageResponder : MessageResponder
     [HideInInspector]
     public MonoBehaviour bombComponent = null;
 
-    protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
+	private KMGameCommands GameCommands;
+	private KMGameInfo GameInfo;
+	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
+
+	private void Start()
+	{
+		GameCommands = GetComponent<KMGameCommands>();
+		GameInfo = GetComponent<KMGameInfo>();
+		GameInfo.OnStateChange += delegate (KMGameInfo.State state)
+		{
+			CurrentState = state;
+		};
+	}
+
+	string resolveMissionID(string targetID)
+	{
+		object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
+		IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
+		ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
+		if (mission == null) return null; else return mission.name;
+	}
+
+	class Distribution
+	{
+		public string displayName;
+		public float vanilla;
+		public float modded;
+	}
+
+	Dictionary<string, Distribution> distributions = new Dictionary<string, Distribution>()
+	{
+		{ "vanilla", new Distribution { vanilla = 1f, modded = 0f, displayName = "Vanilla" } },
+		{ "mods", new Distribution { vanilla = 0f, modded = 1f, displayName = "Modded" } },
+		{ "mixed", new Distribution { vanilla = 0.5f, modded = 0.5f, displayName = "Mixed" } },
+		{ "mixedlight", new Distribution { vanilla = 0.67f, modded = 0.33f, displayName = "Mixed Light" } },
+		{ "mixedheavy", new Distribution { vanilla = 0.33f, modded = 0.67f, displayName = "Mixed Heavy" } },
+		{ "light", new Distribution { vanilla = 0.8f, modded = 0.2f, displayName = "Light" } },
+		{ "heavy", new Distribution { vanilla = 0.2f, modded = 0.8f, displayName = "Heavy" } },
+	};
+
+	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
-        if (text.Equals("!cancel", StringComparison.InvariantCultureIgnoreCase))
+		if (!text.StartsWith("!")) return;
+		text = text.Substring(1);
+
+		string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string textAfter = split.Skip(1).Join();
+		if (text.Equals("cancel", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             _coroutineCanceller.SetCancel();
             return;
         }
-        else if (text.Equals("!stop", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             _coroutineCanceller.SetCancel();
             _coroutineQueue.CancelFutureSubcoroutines();
             return;
         }
-        else if (text.Equals("!manual", StringComparison.InvariantCultureIgnoreCase) ||
-                 text.Equals("!help", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("manual", StringComparison.InvariantCultureIgnoreCase) ||
+                 text.Equals("help", StringComparison.InvariantCultureIgnoreCase))
         {
             _ircConnection.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.VanillaManual);
             _ircConnection.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.CommandReference);
             return;
         }
-        else if (text.StartsWith("!bonusscore", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.StartsWith("bonusscore", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             string[] parts = text.Split(' ');
@@ -54,7 +104,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             return;
         }
-        else if (text.StartsWith("!reward", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.StartsWith("reward", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
@@ -64,7 +114,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                 TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
             }
         }
-        else if (text.Equals("!timemode", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("timemode", StringComparison.InvariantCultureIgnoreCase))
         {
             if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
             {
@@ -72,7 +122,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                 _ircConnection.SendMessage(OtherModes.timedModeCheck() ? "Time Mode Enabled" : "Time Mode Disabled");
             }
         }
-        else if (text.StartsWith("!rank", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
         {
             Leaderboard.LeaderboardEntry entry = null;
             if (text.Length > 6)
@@ -119,43 +169,40 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             return;
         }
-        else if (text.Equals("!log", StringComparison.InvariantCultureIgnoreCase) || text.Equals("!analysis", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("log", StringComparison.InvariantCultureIgnoreCase) || text.Equals("analysis", StringComparison.InvariantCultureIgnoreCase))
         {
             TwitchPlaysService.logUploader.PostToChat("Analysis for the previous bomb: {0}");
             return;
         }
-        else if (text.Equals("!shorturl", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("shorturl", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             _ircConnection.SendMessage((TwitchPlaysService.urlHelper.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs");
         }
-        else if (text.Equals("!about", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("about", StringComparison.InvariantCultureIgnoreCase))
         {
             _ircConnection.SendMessage("Twitch Plays: KTaNE is an alternative way of playing !ktane. Unlike the original game, you play as both defuser and expert, and defuse the bomb by sending special commands to the chat. Try !help for more information!");
             return;
         }
-        else if (text.Equals("!ktane", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.Equals("ktane", StringComparison.InvariantCultureIgnoreCase))
         {
             _ircConnection.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
             return;
         }
-        else if (text.StartsWith("!add ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!remove ", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.StartsWith("add ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("remove ", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            string[] split = text.ToLowerInvariant().Split(' ');
             if (split.Length < 3)
             {
                 return;
             }
 
-            bool stepdown = split[0].Equals("!remove",StringComparison.InvariantCultureIgnoreCase) && split[1].Equals(userNickName, StringComparison.InvariantCultureIgnoreCase);
+            bool stepdown = split[0].Equals("remove",StringComparison.InvariantCultureIgnoreCase) && split[1].Equals(userNickName, StringComparison.InvariantCultureIgnoreCase);
             if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) && !stepdown)
             {
                 return;
             }
 
-           
-            
             AccessLevel level = AccessLevel.User;
             foreach(string lvl in split.Skip(2))
             {
@@ -195,7 +242,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                 return;
             }
 
-            if (text.StartsWith("!add ", StringComparison.InvariantCultureIgnoreCase))
+            if (text.StartsWith("add ", StringComparison.InvariantCultureIgnoreCase))
             {
                 UserAccess.AddUser(split[1], level);
                 _ircConnection.SendMessage(TwitchPlaySettings.data.AddedUserPower, level, split[1]);
@@ -207,11 +254,200 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             UserAccess.WriteAccessList();
         }
+		
+		switch (split[0])
+		{
+			case "run":
+				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+				{
+					_ircConnection.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
+					break;
+				}
 
+				if (split.Length == 2)
+				{
+					string missionID = null;
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+					{
+						missionID = resolveMissionID(textAfter);
+					}
 
+					if (missionID == null && TwitchPlaySettings.data.CustomMissions.ContainsKey(textAfter))
+					{
+						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter]);
+					}
+
+					if (missionID == null)
+					{
+						string distributionName = distributions.Keys.OrderByDescending(x => x.Length).FirstOrDefault(y => split[1].Contains(y));
+						int modules;
+						if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out modules) ||
+							modules < 1 || modules > GameInfo.GetMaximumBombModules())
+						{
+							_ircConnection.SendMessage("Unable to find a mission with an ID of \"{0}\".", textAfter);
+						}
+						else
+						{
+							split[1] = split[1].Replace(distributionName, "");
+							Array.Resize(ref split, 3);
+							split[2] = distributionName;
+						}
+					}
+					else
+					{
+						GameCommands.StartMission(missionID, "-1");
+					}
+				}
+
+				if (split.Length == 3)
+				{
+					int modules;
+
+					if (distributions.ContainsKey(split[1]))
+					{
+						string temp = split[1];
+						split[1] = split[2];
+						split[2] = temp;
+					}
+
+					if (int.TryParse(split[1], out modules) && modules > 0)
+					{
+						int maxModules = GameInfo.GetMaximumBombModules();
+						if (modules > maxModules)
+						{
+							_ircConnection.SendMessage("Sorry, the maximum number of modules is {0}.", maxModules);
+							break;
+						}
+
+						if (!distributions.ContainsKey(split[2]))
+						{
+							_ircConnection.SendMessage("Sorry, there is no distribution called \"{0}\".", split[2]);
+							break;
+						}
+
+						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+						if (CurrentState != KMGameInfo.State.Setup) break;
+
+						Distribution distribution = distributions[split[2]];
+						int vanillaModules = Mathf.FloorToInt(modules * distribution.vanilla);
+						int moddedModules = Mathf.FloorToInt(modules * distribution.modded);
+
+						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
+						List<KMComponentPool> pools = new List<KMComponentPool>();
+
+						if (vanillaModules > 0)
+						{
+							KMComponentPool vanillaPool = new KMComponentPool();
+							vanillaPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
+							vanillaPool.AllowedSources = KMComponentPool.ComponentSource.Base;
+							vanillaPool.Count = vanillaModules;
+							pools.Add(vanillaPool);
+						}
+
+						if (moddedModules > 0)
+						{
+							KMComponentPool moddedPool = new KMComponentPool();
+							moddedPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
+							moddedPool.AllowedSources = KMComponentPool.ComponentSource.Mods;
+							moddedPool.Count = moddedModules;
+							pools.Add(moddedPool);
+						}
+
+						int bothModules = modules - moddedModules - vanillaModules;
+						if (bothModules > 0)
+						{
+							KMComponentPool bothPool = new KMComponentPool();
+							bothPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
+							bothPool.AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods;
+							bothPool.Count = bothModules;
+							pools.Add(bothPool);
+						}
+
+						mission.PacingEventsEnabled = true;
+						mission.DisplayName = modules + " " + distribution.displayName;
+						if (OtherModes.timedModeOn)
+						{
+							mission.GeneratorSetting = new KMGeneratorSetting()
+							{
+								ComponentPools = pools,
+								TimeLimit = 300,
+								NumStrikes = 9
+							};
+						}
+						else
+						{
+							mission.GeneratorSetting = new KMGeneratorSetting()
+							{
+								ComponentPools = pools,
+								TimeLimit = (120 * modules) - (60 * vanillaModules),
+								NumStrikes = Math.Max(3, modules / 12)
+							};
+						}
+						
+						int rewardPoints = Convert.ToInt32((5 * modules) - (3 * vanillaModules));
+						TwitchPlaySettings.SetRewardBonus(rewardPoints);
+						_ircConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
+						GameCommands.StartMission(mission, "-1");
+					}
+				}
+				break;
+			case "runraw":
+				if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+					if (CurrentState == KMGameInfo.State.Setup) GameCommands.StartMission(textAfter, "-1");
+					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+				break;
+			case "profile":
+			case "profiles":
+				var profileList = TwitchPlaySettings.data.ProfileWhitelist;
+				if (profileList.Count == 0)
+				{
+					_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileCommandDisabled, userNickName);
+					break;
+				}
+
+				switch (split[1])
+				{
+					case "enable":
+					case "add":
+					case "activate":
+					case "disable":
+					case "remove":
+					case "deactivate":
+						string profileString = ProfileHelper.GetProperProfileName(split.Skip(2).Join());
+						if (profileList.Contains(profileString))
+						{
+							string filename = profileString.Replace(' ', '_');
+							if (split[1].EqualsAny("enable", "add"))
+							{
+								if (ProfileHelper.Add(filename)) _ircConnection.SendMessage("Enabled profile: {0}.", profileString);
+								else _ircConnection.SendMessage(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled");
+							}
+							else
+							{
+								if (ProfileHelper.Remove(filename)) _ircConnection.SendMessage("Disabled profile: {0}.", profileString);
+								else _ircConnection.SendMessage(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled");
+							}
+						}
+						else
+						{
+							_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileNotWhitelisted, split.Skip(2).Join());
+						}
+						break;
+					case "enabled":
+					case "enabledlist":
+						_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileListEnabled, ProfileHelper.Profiles.Select(str => str.Replace('_', ' ')).Intersect(profileList).DefaultIfEmpty("None").Join(", "));
+						break;
+					case "list":
+					case "all":
+						_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileListAll, profileList.Join(", "));
+						break;
+				}
+				break;
+		}
+		
         if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
         {
-            if (text.Equals("!reloaddata", StringComparison.InvariantCultureIgnoreCase))
+            if (text.Equals("reloaddata", StringComparison.InvariantCultureIgnoreCase))
             {
                 bool streamer = UserAccess.HasAccess(userNickName, AccessLevel.Streamer);
                 bool superuser = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser);
@@ -226,40 +462,40 @@ public class MiscellaneousMessageResponder : MessageResponder
                     UserAccess.AddUser(userNickName, AccessLevel.SuperUser);
                 _ircConnection.SendMessage("Data reloaded");
             }
-            else if (text.Equals("!enabletwitchplays", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("enabletwitchplays", StringComparison.InvariantCultureIgnoreCase))
             {
                 _ircConnection.SendMessage("Twitch Plays Enabled");
                 TwitchPlaySettings.data.EnableTwitchPlaysMode = true;
                 TwitchPlaySettings.WriteDataToFile();
                 EnableDisableInput();
             }
-            else if (text.Equals("!disabletwitchplays", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("disabletwitchplays", StringComparison.InvariantCultureIgnoreCase))
             {
                 _ircConnection.SendMessage("Twitch Plays Disabled");
                 TwitchPlaySettings.data.EnableTwitchPlaysMode = false;
                 TwitchPlaySettings.WriteDataToFile();
                 EnableDisableInput();
             }
-            else if (text.Equals("!enableinteractivemode", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("enableinteractivemode", StringComparison.InvariantCultureIgnoreCase))
             {
                 _ircConnection.SendMessage("Interactive Mode Enabled");
                 TwitchPlaySettings.data.EnableInteractiveMode = true;
                 TwitchPlaySettings.WriteDataToFile();
                 EnableDisableInput();
             }
-            else if (text.Equals("!disableinteractivemode", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("disableinteractivemode", StringComparison.InvariantCultureIgnoreCase))
             {
                 _ircConnection.SendMessage("Interactive Mode Disabled");
                 TwitchPlaySettings.data.EnableInteractiveMode = false;
                 TwitchPlaySettings.WriteDataToFile();
                 EnableDisableInput();
             }
-            else if (text.Equals("!solveunsupportedmodules", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("solveunsupportedmodules", StringComparison.InvariantCultureIgnoreCase))
             {
                 _ircConnection.SendMessage("Solving unsupported modules.");
                 TwitchComponentHandle.SolveUnsupportedModules();
             }
-            else if (text.Equals("!removesolvebasedmodules", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("removesolvebasedmodules", StringComparison.InvariantCultureIgnoreCase))
             {
                 _ircConnection.SendMessage("Removing Solve based modules");
                 TwitchComponentHandle.RemoveSolveBasedModules();
@@ -272,7 +508,14 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
     }
 
-    private void EnableDisableInput()
+	private IEnumerator ReturnToSetup(string userNickName, string text)
+	{
+		_ircConnection.OnMessageReceived.Invoke(userNickName, null, "!back");
+		yield return new WaitUntil(() => CurrentState == KMGameInfo.State.Setup);
+		_ircConnection.OnMessageReceived.Invoke(userNickName, null, text);
+	}
+
+	private void EnableDisableInput()
     {
         if (!BombMessageResponder.EnableDisableInput())
         {
