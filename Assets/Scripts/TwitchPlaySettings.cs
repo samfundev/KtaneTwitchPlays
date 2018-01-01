@@ -104,7 +104,7 @@ public class TwitchPlaySettingsData
 	public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
 
 	public string ProfileActionUseless = "That profile ({0}) is already {1}.";
-	public string ProfileNotWhitelisted = "That profile ({0}) can't not be enabled/disabled.";
+	public string ProfileNotWhitelisted = "That profile ({0}) cannot be enabled/disabled.";
 	public string ProfileListEnabled = "Currently enabled profiles: {0}";
 	public string ProfileListAll = "All profiles: {0}";
 
