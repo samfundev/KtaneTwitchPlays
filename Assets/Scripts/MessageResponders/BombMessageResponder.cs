@@ -23,7 +23,12 @@ public class BombMessageResponder : MessageResponder
 
     public static ModuleCameras moduleCameras = null;
 
-    private static bool BombActive = false;
+    public static bool BombActive { get; private set; }
+
+    static BombMessageResponder()
+    {
+        BombActive = false;
+    }
 
     private float specialNameProbability = 0.25f;
     private string[] singleNames = new string[]
