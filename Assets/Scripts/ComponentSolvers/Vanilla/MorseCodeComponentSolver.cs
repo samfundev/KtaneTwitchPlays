@@ -19,23 +19,13 @@ public class MorseCodeComponentSolver : ComponentSolver
     {
         string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
-        if (commandParts.Length != 2)
-        {
-            yield break;
-        }
-
-        if (!commandParts[0].EqualsAny("transmit", "trans", "xmit", "tx", "submit"))
+        if (commandParts.Length != 2 || !commandParts[0].EqualsAny("transmit", "trans", "xmit", "tx", "submit") || commandParts[1].Length != 3)
         {
             yield break;
         }
 
         int targetFrequency = 0;
-        if (!int.TryParse(commandParts[1].Substring(commandParts[1].Length - 3), out targetFrequency))
-        {
-            yield break;
-        }
-
-        if (!Frequencies.Contains(targetFrequency))
+        if (!int.TryParse(commandParts[1], out targetFrequency) || !Frequencies.Contains(targetFrequency))
         {
             yield break;
         }
