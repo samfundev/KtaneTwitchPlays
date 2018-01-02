@@ -397,7 +397,7 @@ public class BombCommander : ICommandResponder
 		
 		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
 		
-		string edgeworkString = edgework.Join(" // ");
+		string edgeworkString = edgework.Where(str => str != "").Join(" // ");
 		if (twitchBombHandle.edgeworkText.text == edgeworkString) return;
 
 		twitchBombHandle.edgeworkText.text = edgeworkString;
