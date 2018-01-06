@@ -85,20 +85,19 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.StartsWith("bonusscore", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            string[] parts = text.Split(' ');
-            if (parts.Length < 3)
+            if (split.Length < 3)
             {
                 return;
             }
-            string playerrewarded = parts[1];
+            string playerrewarded = split[1];
             int scorerewarded;
-            if (!int.TryParse(parts[2], out scorerewarded))
+            if (!int.TryParse(split[2], out scorerewarded))
             {
                 return;
             }
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
             {
-                _ircConnection.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, parts[1], parts[2], userNickName);
+                _ircConnection.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, split[1], split[2], userNickName);
                 Color usedColor = new Color(.31f, .31f, .31f);
                 leaderboard.AddScore(playerrewarded, usedColor, scorerewarded);
             }
@@ -109,8 +108,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             if (!IsAuthorizedDefuser(userNickName)) return;
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
             {
-                string[] parts = text.Split(' ');
-                moduleCountBonus = Int32.Parse(parts[1]);
+                moduleCountBonus = Int32.Parse(split[1]);
                 TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
             }
         }
@@ -127,13 +125,12 @@ public class MiscellaneousMessageResponder : MessageResponder
             Leaderboard.LeaderboardEntry entry = null;
             if (text.Length > 6)
             {
-                string[] parts = text.Split(' ');
                 int desiredRank;
-                if (parts[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(parts[2], out desiredRank))
+                if (split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank))
                 {
                     leaderboard.GetSoloRank(desiredRank, out entry);
                 }
-                else if (int.TryParse(parts[1], out desiredRank))
+                else if (int.TryParse(split[1], out desiredRank))
                 {
                     leaderboard.GetRank(desiredRank, out entry);
                 }
@@ -337,30 +334,32 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 						if (vanillaModules > 0)
 						{
-							KMComponentPool vanillaPool = new KMComponentPool();
-							vanillaPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
-							vanillaPool.AllowedSources = KMComponentPool.ComponentSource.Base;
-							vanillaPool.Count = vanillaModules;
-							pools.Add(vanillaPool);
+							pools.Add(new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Base,
+								Count = vanillaModules
+							});
 						}
 
 						if (moddedModules > 0)
 						{
-							KMComponentPool moddedPool = new KMComponentPool();
-							moddedPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
-							moddedPool.AllowedSources = KMComponentPool.ComponentSource.Mods;
-							moddedPool.Count = moddedModules;
-							pools.Add(moddedPool);
+							pools.Add(new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Mods,
+								Count = moddedModules
+							});
 						}
 
 						int bothModules = modules - moddedModules - vanillaModules;
 						if (bothModules > 0)
 						{
-							KMComponentPool bothPool = new KMComponentPool();
-							bothPool.SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE;
-							bothPool.AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods;
-							bothPool.Count = bothModules;
-							pools.Add(bothPool);
+							pools.Add(new KMComponentPool() {
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
+								Count = bothModules
+							});
 						}
 
 						mission.PacingEventsEnabled = true;
@@ -517,11 +516,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	private void EnableDisableInput()
     {
-        if (!BombMessageResponder.EnableDisableInput())
-        {
-            return;
-        }
-        if (TwitchComponentHandle.SolveUnsupportedModules())
+        if (BombMessageResponder.EnableDisableInput() && TwitchComponentHandle.SolveUnsupportedModules())
         {
             _ircConnection.SendMessage("Some modules were automatically solved to prevent problems with defusing this bomb.");
         }
