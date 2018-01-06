@@ -13,7 +13,8 @@ public class TwitchLeaderboard : MonoBehaviour
     public RectTransform altTableTransform = null;
     public RectTransform promptTransform = null;
     public RectTransform retryTransform = null;
-    public RectTransform leftMaskTransform = null;
+	public RectTransform runTransform = null;
+	public RectTransform leftMaskTransform = null;
 
     public Leaderboard leaderboard = null;
     private TwitchLeaderboardTable mainTable = null;
@@ -31,6 +32,9 @@ public class TwitchLeaderboard : MonoBehaviour
         {
             retryTransform.gameObject.SetActive(false);
         }
+
+		if (!TwitchPlaySettings.data.EnableRunCommand)
+			runTransform.gameObject.SetActive(false);
 
         statsTable = Instantiate<TwitchLeaderboardStats>(twitchLeaderboardStatsPrefab);
         statsTable.leaderboard = leaderboard;
@@ -82,8 +86,7 @@ public class TwitchLeaderboard : MonoBehaviour
 
             mainTable.transform.SetParent(mainTableTransform, false);
         }
-
-
+		
         StartCoroutine(DelayPrompt(10.0f));
     }
 
