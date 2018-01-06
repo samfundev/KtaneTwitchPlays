@@ -13,54 +13,36 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         _rightKey = (MonoBehaviour)_rightKeyField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 
-        ((KMSelectable) _leftKey).OnInteract = HandleLeftKey;
-        ((KMSelectable) _rightKey).OnInteract = HandleRightKey;
+        ((KMSelectable) _leftKey).OnInteract = () => HandleKey(LeftBeforeA, LeftAfterA, _leftKeyTurnedField, _rightKeyTurnedField, _beforeLeftKeyField, _onLeftKeyTurnMethod);
+        ((KMSelectable) _rightKey).OnInteract = () => HandleKey(RightBeforeA, RightAfterA, _rightKeyTurnedField, _leftKeyTurnedField, _beforeRightKeyField, _onRightKeyTurnMethod);
     }
 
-    private bool HandleRightKey()
+    private bool HandleKey(string[] modulesBefore, string[] modulesAfter, FieldInfo keyTurned, FieldInfo otherKeyTurned, FieldInfo beforeKeyField, MethodInfo onKeyTurn)
     {
-        if (!GetValue(_activatedField) || GetValue(_rightKeyTurnedField)) return false;
+        if (!GetValue(_activatedField) || GetValue(keyTurned)) return false;
         KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
         KMBombModule bombModule = BombComponent.GetComponent<KMBombModule>();
 
         if (TwitchPlaySettings.data.EnforceSolveAllBeforeTurningKeys &&
-            RightAfterA.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
+            modulesAfter.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
         {
             bombModule.HandleStrike();
             return false;
         }
 
-        _beforeRightKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : RightBeforeA);
-        _onRightKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-        if (GetValue(_rightKeyTurnedField) && TwitchPlaySettings.data.DisableTurnTheKeysSoftLock)
+        beforeKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : modulesBefore);
+        onKeyTurn.Invoke(BombComponent.GetComponent(_componentType), null);
+        if (GetValue(keyTurned))
         {
             //Check to see if any forbidden modules for this key were solved.
-            if (bombInfo.GetSolvedModuleNames().Any(x => RightBeforeA.Contains(x)))
+            if (TwitchPlaySettings.data.DisableTurnTheKeysSoftLock && bombInfo.GetSolvedModuleNames().Any(modulesBefore.Contains))
                 bombModule.HandleStrike();  //If so, Award a strike for it.
-        }
-        return false;
-    }
 
-    private bool HandleLeftKey()
-    {
-        if (!GetValue(_activatedField) || GetValue(_leftKeyTurnedField)) return false;
-        KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
-        KMBombModule bombModule = BombComponent.GetComponent<KMBombModule>();
-
-        if (TwitchPlaySettings.data.EnforceSolveAllBeforeTurningKeys &&
-            LeftAfterA.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
-        {
-            bombModule.HandleStrike();
-            return false;
-        }
-
-        _beforeLeftKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : LeftBeforeA);
-        _onLeftKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-        if (GetValue(_leftKeyTurnedField) && TwitchPlaySettings.data.DisableTurnTheKeysSoftLock)
-        {
-            //Check to see if any forbidden modules for this key were solved.
-            if (bombInfo.GetSolvedModuleNames().Any(x => LeftBeforeA.Contains(x)))
-                bombModule.HandleStrike();  //If so, Award a strike for it.
+            if (GetValue(otherKeyTurned))
+            {
+                int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
+                TwitchPlaySettings.AddRewardBonus(2 * modules);
+            }
         }
         return false;
     }
