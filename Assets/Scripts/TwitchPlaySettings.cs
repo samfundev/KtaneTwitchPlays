@@ -31,6 +31,7 @@ public class TwitchPlaySettingsData
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
     public bool AllowTurnTheKeyEarlyLate = true;
     public bool DisableTurnTheKeysSoftLock = true;
+    public bool EnforceSolveAllBeforeTurningKeys = true;
 
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();

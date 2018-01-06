@@ -23,6 +23,13 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
         KMBombModule bombModule = BombComponent.GetComponent<KMBombModule>();
 
+        if (TwitchPlaySettings.data.EnforceSolveAllBeforeTurningKeys &&
+            RightAfterA.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
+        {
+            bombModule.HandleStrike();
+            return false;
+        }
+
         _beforeRightKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : RightBeforeA);
         _onRightKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
         if (GetValue(_rightKeyTurnedField) && TwitchPlaySettings.data.DisableTurnTheKeysSoftLock)
@@ -39,6 +46,13 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         if (!GetValue(_activatedField) || GetValue(_leftKeyTurnedField)) return false;
         KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
         KMBombModule bombModule = BombComponent.GetComponent<KMBombModule>();
+
+        if (TwitchPlaySettings.data.EnforceSolveAllBeforeTurningKeys &&
+            LeftAfterA.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
+        {
+            bombModule.HandleStrike();
+            return false;
+        }
 
         _beforeLeftKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : LeftBeforeA);
         _onLeftKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
@@ -107,6 +121,16 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
     private MonoBehaviour _leftKey = null;
     private MonoBehaviour _rightKey = null;
 
+    private static string[] LeftAfterA = new string[]
+    {
+        "Password",
+        "Crazy Talk",
+        "Who's On First",
+        "Keypads",
+        "Listening",
+        "Orientation"
+    };
+
     private static string[] LeftBeforeA = new string[]
     {
         "Maze",
@@ -114,6 +138,16 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         "Complicated Wires",
         "Wire Sequence",
         "Cryptography"
+    };
+
+    private static string[] RightAfterA = new string[]
+    {
+        "Morse Code",
+        "Wires",
+        "Two Bits",
+        "The Button",
+        "Colour Flash",
+        "Round Keypad"
     };
 
     private static string[] RightBeforeA = new string[]
