@@ -30,6 +30,7 @@ public class TwitchPlaySettingsData
 	public float UnsubmittablePenaltyPercent = 0.3f;
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
     public bool AllowTurnTheKeyEarlyLate = true;
+    public bool DisableTurnTheKeysSoftLock = true;
 
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();
