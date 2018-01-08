@@ -260,10 +260,9 @@ public class BombMessageResponder : MessageResponder
             else
             {
                 _currentBomb = 0;
-                int id = 0;
-                for (var i = bombs.Length - 1; i >= 0; i--)
+                for (int i = 0; i < bombs.Length; i++)
                 {
-                    SetBomb((MonoBehaviour) bombs[i], id++);
+                    SetBomb((MonoBehaviour) bombs[i], i);
                 }
 
                 if (bombs.Length == 2 && rand.NextDouble() < specialNameProbability)
