@@ -216,7 +216,7 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
 
-        valid &= ValidateString(ref UnsubmittableAnswerPenalty, data.UnsubmittableAnswerPenalty, 4);
+        valid &= ValidateString(ref UnsubmittableAnswerPenalty, data.UnsubmittableAnswerPenalty, 5);
 
         valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
 
