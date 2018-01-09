@@ -363,9 +363,14 @@ public class TwitchComponentHandle : MonoBehaviour
 	{
 		_nextID = 0;
 	}
-	#endregion
 
-	public IEnumerator TakeModule(string userNickName, string targetModule)
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+    #endregion
+
+    public IEnumerator TakeModule(string userNickName, string targetModule)
 	{
 		if (takeModuleSound != null)
 		{

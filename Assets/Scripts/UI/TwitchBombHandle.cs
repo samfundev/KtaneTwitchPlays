@@ -80,6 +80,11 @@ public class TwitchBombHandle : MonoBehaviour
     {
         messageScroll.verticalNormalizedPosition = 0.0f;
     }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
     #endregion
 
     #region Message Interface    
@@ -312,7 +317,7 @@ public class TwitchBombHandle : MonoBehaviour
 
     private bool IsAuthorizedDefuser(string userNickName)
     {
-        if (userNickName.Equals(nameText.text))
+        if (userNickName.EqualsAny(nameText.text,"Bomb Factory"))
             return true;
         bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
         if (!result)

@@ -22,6 +22,7 @@ public class BombMessageResponder : MessageResponder
     private UnityEngine.Object AlarmClock;
 
     public static ModuleCameras moduleCameras = null;
+    public static Factory factory = null;
 
     private static bool BombActive = false;
 
@@ -96,7 +97,7 @@ public class BombMessageResponder : MessageResponder
 				_ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
 			}
 
-            if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in _bombCommanders) commander.FillEdgework();
+            if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in _bombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
             OtherModes.setMultiplier(9);
         };
 
@@ -244,9 +245,24 @@ public class BombMessageResponder : MessageResponder
                 bombs = FindObjectsOfType(CommonReflectedTypeInfo.BombType);
             }
 
+            if (Factory.FactoryType() != null)
+            {
+                factory = Factory.SetupFactory(FindObjectsOfType(Factory.FactoryType()));
+            }
+
             System.Random rand = new System.Random();
 
-            if (bombs.Length == 1)
+            if (factory != null)
+            {
+                _currentBomb = bombs.Length == 1 ? -1 : 0;
+                for (int i = 0; i < bombs.Length; i++)
+                {
+                    SetBomb((MonoBehaviour)bombs[i], i);
+                    _bombHandles[i].nameText.text = string.Format("Bomb {0} of {1}", i + 1, bombs.Length);
+                }
+                StartCoroutine(factory.ReportBombStatus(_bombHandles));
+            }
+            else if (bombs.Length == 1)
             {
                 _currentBomb = -1;
                 SetBomb((MonoBehaviour) bombs[0], -1);
@@ -260,9 +276,10 @@ public class BombMessageResponder : MessageResponder
             else
             {
                 _currentBomb = 0;
-                for (int i = 0; i < bombs.Length; i++)
+                int id = 0;
+                for (int i = bombs.Length - 1; i >= 0; i--)
                 {
-                    SetBomb((MonoBehaviour) bombs[i], i);
+                    SetBomb((MonoBehaviour) bombs[i], id++);
                 }
 
                 if (bombs.Length == 2 && rand.NextDouble() < specialNameProbability)
@@ -381,7 +398,7 @@ public class BombMessageResponder : MessageResponder
 
 		if (text.Equals("!filledgework", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
-			foreach (var commander in _bombCommanders) commander.FillEdgework();
+		    foreach (var commander in _bombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
 			return;
 		}
         if (text.StartsWith("!setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
@@ -396,6 +413,11 @@ public class BombMessageResponder : MessageResponder
 			foreach (var handle in _componentHandles) if (!handle.Solved) handle.SolveSilently();
 			return;
 		}
+
+        if (!Factory.IsCurrentBomb(factory, _currentBomb))
+        {
+            _currentBomb = factory.GetBombID();
+        }
 
         if (_currentBomb > -1)
         {
@@ -435,6 +457,9 @@ public class BombMessageResponder : MessageResponder
 
                 if (_currentBomb != handle.bombID)
                 {
+                    if (!Factory.IsCurrentBomb(factory,handle.bombID))
+                        continue;
+
                     _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), handle.bombID);
                     _coroutineQueue.AddToQueue(handle.ShowMainUIWindow(), handle.bombID);
                     _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(), handle.bombID);
@@ -452,6 +477,9 @@ public class BombMessageResponder : MessageResponder
             {
                 if (_currentBomb != componentHandle.bombID)
                 {
+                    if (!Factory.IsCurrentBomb(factory, componentHandle.bombID))
+                        continue;
+
                     _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), componentHandle.bombID);
                     _coroutineQueue.AddToQueue(_bombHandles[componentHandle.bombID].ShowMainUIWindow(), componentHandle.bombID);
                     _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(),componentHandle.bombID);

@@ -438,6 +438,11 @@ public class ModuleCameras : MonoBehaviour
 
     private void AddModuleToStack(MonoBehaviour component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
+        if (!Factory.IsCurrentBomb(BombMessageResponder.factory,handle.bombID))
+        {
+            return;
+        }
+
         ModuleItem item = new ModuleItem(component, handle, priority);
         if (priority >= CameraPinned)
         {

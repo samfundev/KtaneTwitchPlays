@@ -379,7 +379,7 @@ public class BombCommander : ICommandResponder
 		return ((List<string>) CommonReflectedTypeInfo.GetWidgetQueryResponsesMethod.Invoke(widgetManager, new string[] { queryKey, queryInfo })).Select(str => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>(str));
 	}
 
-	public void FillEdgework()
+	public void FillEdgework(bool silent = false)
 	{
 		List<string> edgework = new List<string>();
 		Dictionary<string, string> portNames = new Dictionary<string, string>()
@@ -401,7 +401,9 @@ public class BombCommander : ICommandResponder
 		if (twitchBombHandle.edgeworkText.text == edgeworkString) return;
 
 		twitchBombHandle.edgeworkText.text = edgeworkString;
-		twitchBombHandle.ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
+
+        if(!silent)
+		    twitchBombHandle.ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
 	}
 	
     public IEnumerator Focus(MonoBehaviour selectable, float focusDistance, bool frontFace)
