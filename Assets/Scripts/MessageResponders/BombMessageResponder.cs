@@ -355,7 +355,7 @@ public class BombMessageResponder : MessageResponder
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             MethodInfo method = TwitchPlaySettings.data.AllowSnoozeOnly ? CommonReflectedTypeInfo.AlarmClockTurnOff : CommonReflectedTypeInfo.AlarmClockSnooze;
-            method.Invoke(AlarmClock, new object[] {0});
+            method.Invoke(AlarmClock, TwitchPlaySettings.data.AllowSnoozeOnly ? null : new object[] { 0 });
             return;
         }
 
