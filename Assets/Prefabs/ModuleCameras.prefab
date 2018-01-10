@@ -1065,7 +1065,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerPrefab: {fileID: 114000012698524946}
-  timerShadowPrefab: {fileID: 0}
+  timerShadowPrefab: {fileID: 114000011558730752}
   strikesPrefab: {fileID: 114000012964175846}
   strikeLimitPrefab: {fileID: 114000010782987718}
   solvesPrefab: {fileID: 114000012932646642}
