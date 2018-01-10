@@ -385,7 +385,7 @@ public class BombMessageResponder : MessageResponder
         if (text.StartsWith("!appendnotes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!appendnotes2 ", StringComparison.InvariantCultureIgnoreCase) ||
             text.StartsWith("!appendnotes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!appendnotes4 ", StringComparison.InvariantCultureIgnoreCase))
         {
-            text = text.Substring(0, 1) + text.Substring(7, 7) + text.Substring(1, 6) + text.Substring(14);
+            text = text.Substring(0, 1) + text.Substring(7, 6) + text.Substring(1, 6) + text.Substring(13);
         }
 
         if (text.StartsWith("!notes1append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes2append ", StringComparison.InvariantCultureIgnoreCase) ||
