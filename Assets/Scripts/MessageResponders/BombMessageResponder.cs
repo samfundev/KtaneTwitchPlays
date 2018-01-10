@@ -404,6 +404,23 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
+        if (text.EqualsAny("!clearnotes1", "!clearnotes2", "!clearnotes3", "!clearnotes4"))
+        {
+            text = text.Substring(0, 1) + text.Substring(6, 6) + text.Substring(1, 5);
+        }
+
+        if (text.EqualsAny("!notes1clear", "!notes2clear", "!notes3clear", "!notes4clear"))
+        {
+            if (!IsAuthorizedDefuser(userNickName)) return;
+            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
+            _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
+            _ircConnection.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index + 1);
+
+            if (moduleCameras != null)
+                moduleCameras.notesTexts[index].text = TwitchPlaySettings.data.NotesSpaceFree;
+            return;
+        }
+
         if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;

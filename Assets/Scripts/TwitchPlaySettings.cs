@@ -122,6 +122,7 @@ public class TwitchPlaySettingsData
     public string Notes = "Notes {0}: {1}";
     public string NotesTaken = "Notes Taken for Note Slot {0}: {1}";
     public string NotesAppended = "Notes appended to Note Slot {0}: {1}";
+    public string NoteSlotCleared = "Note Slot {0} Cleared.";
 
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
 
@@ -223,6 +224,7 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref Notes, data.Notes, 2);
         valid &= ValidateString(ref NotesTaken, data.NotesTaken, 2);
         valid &= ValidateString(ref NotesAppended, data.NotesTaken, 2);
+        valid &= ValidateString(ref NoteSlotCleared, data.NoteSlotCleared, 1);
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
 
