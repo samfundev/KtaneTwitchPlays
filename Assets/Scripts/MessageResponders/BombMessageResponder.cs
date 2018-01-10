@@ -263,7 +263,7 @@ public class BombMessageResponder : MessageResponder
                 _currentBomb = bombs.Length == 1 ? -1 : 0;
                 for (int i = 0; i < bombs.Length; i++)
                 {
-                    SetBomb((MonoBehaviour)bombs[i], i);
+                    SetBomb((MonoBehaviour) bombs[i], _currentBomb == -1 ? -1 : i);
                     _bombHandles[i].nameText.text = string.Format("Bomb {0} of {1}", i + 1, bombs.Length);
                 }
                 StartCoroutine(factory.ReportBombStatus(_bombHandles));
