@@ -118,6 +118,10 @@ public class TwitchPlaySettingsData
     public string BombTimeStamp = "The Date/Time this bomb started is {0:F}";
     public string BombDetonateCommand = "panicBasket This bomb's gonna blow!";
 
+    public string Notes = "Notes {0}: {1}";
+    public string NotesTaken = "Notes Taken for Note Slot {0}: {1}";
+    public string NotesAppended = "Notes appended to Note Slot {0}: {1}";
+
     public string GiveBonusPoints = "{0} awarded {1} points by {2}";
 
     public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
@@ -213,6 +217,10 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref BombTimeRemaining, data.BombTimeRemaining, 2);
         valid &= ValidateString(ref BombTimeStamp, data.BombTimeStamp, 1);
         valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
+
+        valid &= ValidateString(ref Notes, data.Notes, 2);
+        valid &= ValidateString(ref NotesTaken, data.NotesTaken, 2);
+        valid &= ValidateString(ref NotesAppended, data.NotesTaken, 2);
 
         valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
 

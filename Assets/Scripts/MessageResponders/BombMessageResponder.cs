@@ -351,6 +351,43 @@ public class BombMessageResponder : MessageResponder
 
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
+        if (text.EqualsAny("!notes1","!notes2","!notes3","!notes4"))
+        {
+            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
+            _ircConnection.SendMessage(TwitchPlaySettings.data.Notes, index+1, moduleCameras.notesTexts[index].text);
+            return;
+        }
+
+        if (text.StartsWith("!notes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes2 ", StringComparison.InvariantCultureIgnoreCase) ||
+            text.StartsWith("!notes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes4 ", StringComparison.InvariantCultureIgnoreCase))
+        {
+            if (!IsAuthorizedDefuser(userNickName)) return;
+            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
+            string notes = text.Substring(8);
+            if (notes == "") return;
+            _ircConnection.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
+            moduleCameras.notesTexts[index].text = notes;
+            return;
+        }
+
+        if (text.StartsWith("!appendnotes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!appendnotes2 ", StringComparison.InvariantCultureIgnoreCase) ||
+            text.StartsWith("!appendnotes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!appendnotes4 ", StringComparison.InvariantCultureIgnoreCase))
+        {
+            text = text.Substring(0, 1) + text.Substring(7, 7) + text.Substring(1, 6) + text.Substring(14);
+        }
+
+        if (text.StartsWith("!notes1append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes2append ", StringComparison.InvariantCultureIgnoreCase) ||
+            text.StartsWith("!notes3append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes4append ", StringComparison.InvariantCultureIgnoreCase))
+        {
+            if (!IsAuthorizedDefuser(userNickName)) return;
+            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
+            string notes = text.Substring(14);
+            if (notes == "") return;
+            _ircConnection.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
+            moduleCameras.notesTexts[index].text += " " + notes;
+            return;
+        }
+
         if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;

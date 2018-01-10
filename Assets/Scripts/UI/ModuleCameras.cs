@@ -137,6 +137,7 @@ public class ModuleCameras : MonoBehaviour
     public Camera[] cameraPrefabs = null;
     public RectTransform bombStatus = null;
     public int firstBackupCamera = 3;
+    public Text[] notesTexts = null;
     #endregion
 
     #region Private Fields
