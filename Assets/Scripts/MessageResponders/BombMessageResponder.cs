@@ -361,7 +361,7 @@ public class BombMessageResponder : MessageResponder
 
         if (text.Equals("!stop", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (!IsAuthorizedDefuser(userNickName)) return;
+            if (!IsAuthorizedDefuser(userNickName, true)) return;
             _currentBomb = _coroutineQueue.CurrentBombID;
             return;
         }
