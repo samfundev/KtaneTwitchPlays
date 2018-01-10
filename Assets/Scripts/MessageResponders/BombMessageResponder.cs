@@ -18,6 +18,7 @@ public class BombMessageResponder : MessageResponder
     private List<TwitchBombHandle> _bombHandles = new List<TwitchBombHandle>();
     private List<TwitchComponentHandle> _componentHandles = new List<TwitchComponentHandle>();
     private int _currentBomb = -1;
+    private string[] _notes = new string[4];
 
     private UnityEngine.Object AlarmClock;
 
@@ -336,6 +337,13 @@ public class BombMessageResponder : MessageResponder
             moduleCameras = null;
         }
 
+        for (int i = 0; i < 4; i++)
+        {
+            _notes[i] = TwitchPlaySettings.data.NotesSpaceFree;
+            if (moduleCameras != null)
+                moduleCameras.notesTexts[i].text = TwitchPlaySettings.data.NotesSpaceFree;
+        }
+
         if (EnableDisableInput())
         {
             TwitchComponentHandle.SolveUnsupportedModules();
@@ -354,7 +362,7 @@ public class BombMessageResponder : MessageResponder
         if (text.EqualsAny("!notes1","!notes2","!notes3","!notes4"))
         {
             int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
-            _ircConnection.SendMessage(TwitchPlaySettings.data.Notes, index+1, moduleCameras.notesTexts[index].text);
+            _ircConnection.SendMessage(TwitchPlaySettings.data.Notes, index+1, _notes[index]);
             return;
         }
 
@@ -365,8 +373,12 @@ public class BombMessageResponder : MessageResponder
             int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
             string notes = text.Substring(8);
             if (notes == "") return;
+
             _ircConnection.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
-            moduleCameras.notesTexts[index].text = notes;
+
+            _notes[index] = notes;
+            if(moduleCameras != null)
+                moduleCameras.notesTexts[index].text = notes;
             return;
         }
 
@@ -383,8 +395,12 @@ public class BombMessageResponder : MessageResponder
             int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
             string notes = text.Substring(14);
             if (notes == "") return;
+
             _ircConnection.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
-            moduleCameras.notesTexts[index].text += " " + notes;
+
+            _notes[index] += " " + notes;
+            if(moduleCameras != null)
+                moduleCameras.notesTexts[index].text += " " + notes;
             return;
         }
 
