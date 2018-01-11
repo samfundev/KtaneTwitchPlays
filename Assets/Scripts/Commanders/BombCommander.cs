@@ -568,7 +568,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-            return CurrentTimer.FormatTime();
+            return Math.Max(CurrentTimer, 0).FormatTime();
         }
     }
 	
@@ -576,7 +576,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-			return bombStartingTimer.FormatTime();
+			return Math.Max(bombStartingTimer, 0).FormatTime();
         }
     }
 	
