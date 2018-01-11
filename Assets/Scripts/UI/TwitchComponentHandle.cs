@@ -102,6 +102,14 @@ public class TwitchComponentHandle : MonoBehaviour
 			return _solved;
 		}
 	}
+
+	public string Code
+	{
+		get
+		{
+			return _code;
+		}
+	}
 	#endregion
 
 	#region Private Fields

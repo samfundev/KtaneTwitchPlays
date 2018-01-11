@@ -471,6 +471,36 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
+		if (text.Equals("!unclaimed", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			IEnumerable<string> unclaimed = _componentHandles.Where(handle => !handle.claimed && !handle.Solved).Shuffle().Take(3)
+				.Select(handle => string.Format("{0} ({1})", handle.headerText.text, handle.Code));
+			
+			if (unclaimed.Count() > 0) _ircConnection.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
+			else _ircConnection.SendMessage("There are no more unclaimed modules.");
+
+			return;
+		}
+
+		if (text.StartsWith("!find ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!search ", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			string query = split.Skip(1).Join(" ");
+			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ToLowerInvariant().Contains(query)).Take(3)
+				.Select(handle => string.Format("{0} ({1}) - {2}", handle.headerText.text, handle.Code, 
+					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
+				));
+
+			if (modules.Count() > 0) _ircConnection.SendMessage("Modules: {0}", modules.Join(", "));
+			else _ircConnection.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+
+			return;
+		}
+
 		if (text.Equals("!filledgework", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
 		    foreach (var commander in _bombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
