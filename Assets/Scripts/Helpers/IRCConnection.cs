@@ -170,8 +170,8 @@ public class IRCConnection
     public void SendMessage(string message)
     {
         if (_silenceMode) return;
-        foreach (string line in message.Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
-        {        
+        foreach (string line in message.Wrap(MaxMessageLength).Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
+        {
             SendCommand(string.Format("PRIVMSG #{0} :{1}", _channelName, line));
         }
     }
@@ -364,6 +364,7 @@ public class IRCConnection
     private readonly int _port = 0;
     private const int MessageDelayUser = 2000;
     private const int MessageDelayMod = 500;
+    private const int MaxMessageLength = 480;
 
     private Thread _inputThread = null;
     private Thread _outputThread = null;
