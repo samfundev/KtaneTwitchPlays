@@ -476,11 +476,11 @@ public class BombMessageResponder : MessageResponder
 		    foreach (var commander in _bombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
 			return;
 		}
+
         if (text.StartsWith("!setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
         {
             float tempNumber = float.Parse(text.Substring(15));
             OtherModes.setMultiplier(tempNumber);
-            
         }
 
         if (text.Equals("!solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
@@ -583,9 +583,10 @@ public class BombMessageResponder : MessageResponder
 
         IList bombComponents = (IList)CommonReflectedTypeInfo.BombComponentsField.GetValue(bomb);
 
-        if (bombComponents.Count > 12 || TwitchPlaySettings.data.ForceMultiDeckerMode)
+		var bombCommander = _bombCommanders[_bombCommanders.Count - 1];
+		if (bombComponents.Count > 12 || TwitchPlaySettings.data.ForceMultiDeckerMode)
         {
-            _bombCommanders[_bombCommanders.Count - 1].multiDecker = true;
+			bombCommander.multiDecker = true;
         }
 
         foreach (MonoBehaviour bombComponent in bombComponents)
@@ -608,9 +609,9 @@ public class BombMessageResponder : MessageResponder
                     break;
             }
 
-            TwitchComponentHandle handle = (TwitchComponentHandle)Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
+            TwitchComponentHandle handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
             handle.ircConnection = _ircConnection;
-            handle.bombCommander = _bombCommanders[_bombCommanders.Count - 1];
+            handle.bombCommander = bombCommander;
             handle.bombComponent = bombComponent;
             handle.componentType = componentTypeEnum;
             handle.coroutineQueue = _coroutineQueue;
@@ -623,10 +624,10 @@ public class BombMessageResponder : MessageResponder
             handle.basePosition = handle.transform.localPosition;
             handle.idealHandlePositionOffset = bombComponent.transform.parent.InverseTransformDirection(idealOffset);
 
-            handle.bombCommander.bombSolvableModules++;
+			bombCommander.bombSolvableModules++;
 
             _componentHandles.Add(handle);
-        }
+		}
 
         return foundComponents;
     }
