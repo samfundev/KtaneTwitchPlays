@@ -252,7 +252,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 6, helpText = "Press the top button with !{0} press top (also t, 1, etc.)." };
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
 		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 15, helpText = "Cycle the options with !{0} cycle. Submit your answer with !{0} submit <3,2>. Partial answers are acceptable. To do chinese numbers, its !{0} submit chinese 12.", DoesTheRightThing = false };
-		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 12, helpText = "Combine two elements with !{0} combine water fire.", DoesTheRightThing = false };
+		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 12, helpText = "Combine two elements with !{0} combine water fire.", DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = false };
 		ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 8, helpText = "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.) Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { moduleScore = 5, helpText = "" };
@@ -296,7 +296,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Semaphore"] = new ModuleInformation { moduleScore = 7, helpText = "Move to the next flag with !{0} move right or !{0} press right. Move to previous flag with !{0} move left or !{0} press left. Submit with !{0} press ok.", DoesTheRightThing = false };
 		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 15, helpText = "Keep the slots with !{0} keep. Pull the slots with !{0} pull.", DoesTheRightThing = false };
 		ModComponentSolverInformation["SimonScreamsModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press the correct colors for each round with !{0} press B O Y.", DoesTheRightThing = false };
-		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit the correct response with !{0} submit 1 2 3." };
+		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit the correct response with !{0} submit 1 2 3.", DoesTheRightThing = true };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the correct response with !{0} answer 3. Order is from top to bottom, then left to right.", CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["symbolicPasswordModule"] = new ModuleInformation { moduleScore = 9, helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!" };
 		ModComponentSolverInformation["spwizTetris"] = new ModuleInformation { moduleScore = 5 };
