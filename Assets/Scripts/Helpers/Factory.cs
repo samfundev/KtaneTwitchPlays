@@ -75,5 +75,4 @@ public class Factory
     private static FieldInfo _currentBombField = null;
 
     private object _factory = null;
-    private int _lastIndex = -1;
 }
