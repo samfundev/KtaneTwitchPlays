@@ -521,7 +521,7 @@ public class BombMessageResponder : MessageResponder
 
         if (!Factory.IsCurrentBomb(factory, _currentBomb))
         {
-            _currentBomb = factory.GetBombID();
+            _currentBomb = factory.BombID;
         }
 
         if (_currentBomb > -1)
