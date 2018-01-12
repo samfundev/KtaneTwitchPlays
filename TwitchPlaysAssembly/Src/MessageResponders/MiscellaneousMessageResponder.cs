@@ -319,8 +319,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					else
 					{
-                        if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
-                        if (CurrentState != KMGameInfo.State.Setup) break;
+						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+						if (CurrentState != KMGameInfo.State.Setup) break;
 
 						GameCommands.StartMission(missionID, "-1");
 					}
