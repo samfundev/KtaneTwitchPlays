@@ -84,6 +84,9 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         _activatedField = _componentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
         _beforeLeftKeyField = _componentType.GetField("LeftBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
         _beforeRightKeyField = _componentType.GetField("RightBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
+        _afterLeftKeyField = _componentType.GetField("LeftAfterA", BindingFlags.NonPublic | BindingFlags.Static);
+        if(_afterLeftKeyField != null)
+            _afterLeftKeyField.SetValue(null, LeftAfterA);
         _leftKeyTurnedField = _componentType.GetField("bLeftKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
         _rightKeyTurnedField = _componentType.GetField("bRightKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
         _onLeftKeyTurnMethod = _componentType.GetMethod("OnLeftKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -96,6 +99,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
     private static FieldInfo _activatedField = null;
     private static FieldInfo _beforeLeftKeyField = null;
     private static FieldInfo _beforeRightKeyField = null;
+    private static FieldInfo _afterLeftKeyField = null;
     private static FieldInfo _leftKeyTurnedField = null;
     private static FieldInfo _rightKeyTurnedField = null;
     private static MethodInfo _onLeftKeyTurnMethod = null;
@@ -108,10 +112,10 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
     {
         "Password",
         "Crazy Talk",
-        "Who's On First",
-        "Keypads",
+        "Who's on First",
+        "Keypad",
         "Listening",
-        "Orientation"
+        "Orientation Cube"
     };
 
     private static string[] LeftBeforeA = new string[]
