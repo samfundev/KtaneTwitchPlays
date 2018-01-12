@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000010349612714}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30f77ff0dd846e5428c7437b10a1adad, type: 3}
+  m_Script: {fileID: 909338452, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114000010782666596
@@ -1249,7 +1249,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000014043968336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16876dcaa5e64444f8664ea0f6b7fcb5, type: 3}
+  m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startInterruptSound: {fileID: 82000011923926230}
@@ -1263,7 +1263,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012806938254}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afc4ab33103373446a2eb477ec3b1a59, type: 3}
+  m_Script: {fileID: 1542516859, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   bombMessageResponder: {fileID: 114000012319271450}
@@ -1289,7 +1289,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000011185453198}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ebd31ad0452bd94cad87051ad67a331, type: 3}
+  m_Script: {fileID: 1980236055, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moduleCountBonus: 0
@@ -1302,7 +1302,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012806938254}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30d5be60333cf0c45afd7062cf1bef44, type: 3}
+  m_Script: {fileID: 517810858, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   VanillaManual: http://www.bombmanual.com
@@ -1315,7 +1315,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000013158957348}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16876dcaa5e64444f8664ea0f6b7fcb5, type: 3}
+  m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startInterruptSound: {fileID: 82000014023970508}
@@ -1329,7 +1329,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000011059263980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79bb1928c3b43e44f89db5abfd59371b, type: 3}
+  m_Script: {fileID: 2019006919, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114000012319271450
@@ -1340,7 +1340,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000013652365734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70fbcf1964eef1a4aa69e935e5006aa4, type: 3}
+  m_Script: {fileID: -1329483523, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   twitchBombHandlePrefab: {fileID: 114000010032398610, guid: 60b75909c23ea834abc0710ecf8e18db,
@@ -1349,7 +1349,7 @@ MonoBehaviour:
     type: 2}
   moduleCamerasPrefab: {fileID: 114000010240856800, guid: c6c98293524bb1b41bad44e41d9d7eaa,
     type: 2}
-  parentService: {fileID: 0}
+  parentService: {fileID: 114000011240893280}
 --- !u!114 &114000012720405196
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1358,7 +1358,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000010860278632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16876dcaa5e64444f8664ea0f6b7fcb5, type: 3}
+  m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startInterruptSound: {fileID: 82000014121871414}
@@ -1372,7 +1372,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012834733418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16876dcaa5e64444f8664ea0f6b7fcb5, type: 3}
+  m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startInterruptSound: {fileID: 82000013589858194}
@@ -1386,7 +1386,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012806938254}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bce18af53e6a0614b92c62df9d657a56, type: 3}
+  m_Script: {fileID: 602533217, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentBombID: -1
@@ -1398,7 +1398,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012462415026}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16876dcaa5e64444f8664ea0f6b7fcb5, type: 3}
+  m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startInterruptSound: {fileID: 82000012117545474}
@@ -1412,7 +1412,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012806938254}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06e0889f6b8827449aef5d005f4599a4, type: 3}
+  m_Script: {fileID: -1365468908, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   analysisUrl: 
@@ -1426,7 +1426,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012562160632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6f70e1d5d9a6d042be7be1082b3a605, type: 3}
+  m_Script: {fileID: 660898418, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   twitchLeaderboardPrefab: {fileID: 114884447472921414, guid: 96028b4481f6de74dbbdede6307c450e,

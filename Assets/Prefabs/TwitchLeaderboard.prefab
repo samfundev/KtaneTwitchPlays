@@ -867,7 +867,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1440321241862986}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d51cf144c8294f4d9de8ae90e8b4ec8, type: 3}
+  m_Script: {fileID: 1815592860, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   twitchLeaderboardTablePrefab: {fileID: 114000010313906494, guid: 33372d04f650daa4ea2b8b4aeb1de952,

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchPlaysAssembly", "TwitchPlaysAssembly\TwitchPlaysAssembly.csproj", "{B2DBE282-D779-4B15-BDC9-C747EA7EAF72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchPlaysAssembly", "TwitchPlaysAssembly.csproj", "{B2DBE282-D779-4B15-BDC9-C747EA7EAF72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E5613B45-DC21-4F9F-9189-B3CEF0025565}
+		SolutionGuid = {DBB58A69-6866-4977-B380-936289B303A6}
 	EndGlobalSection
 EndGlobal
