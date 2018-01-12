@@ -123,7 +123,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
         {
             Leaderboard.LeaderboardEntry entry = null;
-            if (text.Length > 6)
+            if (split.Length >= 1)
             {
                 int desiredRank;
                 if (split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank))
