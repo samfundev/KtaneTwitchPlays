@@ -96,7 +96,16 @@ public static class CommonReflectedTypeInfo
 		ModManagerType = ReflectionHelper.FindType("ModManager");
 		ModManagerInstanceField = ModManagerType.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
 		ModMissionsField = ModManagerType.GetProperty("ModMissions", BindingFlags.Public | BindingFlags.Instance);
-	}
+
+        ModMissionType = ReflectionHelper.FindType("Assets.Scripts.Missions.Mission");
+        GeneratorSettingField = ModMissionType.GetField("GeneratorSetting", BindingFlags.Public | BindingFlags.Instance);
+
+        GeneratorSettingType = ReflectionHelper.FindType("Assets.Scripts.Missions.GeneratorSetting");
+        ComponentPoolField = GeneratorSettingType.GetField("ComponentPools", BindingFlags.Public | BindingFlags.Instance);
+
+        ComponentPoolType = ReflectionHelper.FindType("Assets.Scripts.Missions.ComponentPool");
+        ComponentPoolModTypesField = ComponentPoolType.GetField("ModTypes", BindingFlags.Public | BindingFlags.Instance);
+    }
 
     #region Bomb
     public static Type BombType
@@ -380,5 +389,41 @@ public static class CommonReflectedTypeInfo
 		get;
 		private set;
 	}
+
+    public static Type ModMissionType
+    {
+        get;
+        private set;
+    }
+
+    public static FieldInfo GeneratorSettingField
+    {
+        get;
+        private set;
+    }
+
+    public static Type GeneratorSettingType
+    {
+        get;
+        private set;
+    }
+
+    public static FieldInfo ComponentPoolField
+    {
+        get;
+        private set;
+    }
+
+    public static Type ComponentPoolType
+    {
+        get;
+        private set;
+    }
+
+    public static FieldInfo ComponentPoolModTypesField
+    {
+        get;
+        private set;
+    }
 	#endregion
 }

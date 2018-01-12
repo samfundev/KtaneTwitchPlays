@@ -29,12 +29,38 @@ public class MiscellaneousMessageResponder : MessageResponder
 		};
 	}
 
-	string resolveMissionID(string targetID)
+	string resolveMissionID(string targetID, out string failureMessage)
 	{
+	    failureMessage = null;
 		object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
 		IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
 		ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
-		if (mission == null) return null; else return mission.name;
+	    if (mission == null)
+	    {
+	        failureMessage = string.Format("Unable to find a mission with an ID of \"{0}\".", targetID);
+	        return null;
+	    }
+
+	    List<string> availableMods = GameInfo.GetAvailableModuleInfo().Where(x => x.IsMod).Select(y => y.ModuleId).ToList();
+	    if (MultipleBombs.Installed())
+	        availableMods.Add("Multiple Bombs");
+	    List<string> missingMods = new List<string>();
+
+	    object generatorSetting = CommonReflectedTypeInfo.GeneratorSettingField.GetValue(mission);
+	    IList componentPools = (IList) CommonReflectedTypeInfo.ComponentPoolField.GetValue(generatorSetting);
+	    foreach (object componentPool in componentPools)
+	    {
+	        List<string> modTypes = (List<string>) CommonReflectedTypeInfo.ComponentPoolModTypesField.GetValue(componentPool);
+	        if (modTypes == null || modTypes.Count == 0) continue;
+	        missingMods.AddRange(modTypes.Where(x => !availableMods.Contains(x) && !missingMods.Contains(x)));
+	    }
+	    if (missingMods.Count > 0)
+	    {
+	        failureMessage = string.Format("Mission {0} was found, however, the following mods are not installed / loaded: {1}", targetID, string.Join(", ", missingMods.ToArray()));
+            return null;
+	    }
+        
+	    return mission.name;
 	}
 
 	class Distribution
@@ -264,14 +290,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 				if (split.Length == 2)
 				{
 					string missionID = null;
+				    string failureMessage = null;
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
-						missionID = resolveMissionID(textAfter);
+						missionID = resolveMissionID(textAfter, out failureMessage);
 					}
 
 					if (missionID == null && TwitchPlaySettings.data.CustomMissions.ContainsKey(textAfter))
 					{
-						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter]);
+						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter], out failureMessage);
 					}
 
 					if (missionID == null)
@@ -281,7 +308,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out modules) ||
 							modules < 1 || modules > GameInfo.GetMaximumBombModules())
 						{
-							_ircConnection.SendMessage("Unable to find a mission with an ID of \"{0}\".", textAfter);
+						    _ircConnection.SendMessage("{0}", failureMessage);
 						}
 						else
 						{
