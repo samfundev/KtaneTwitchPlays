@@ -490,7 +490,8 @@ public class BombMessageResponder : MessageResponder
 
 			var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			string query = split.Skip(1).Join(" ");
-			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ToLowerInvariant().Contains(query)).Take(3)
+			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ToLowerInvariant().Contains(query))
+                .OrderBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
 				.Select(handle => string.Format("{0} ({1}) - {2}", handle.headerText.text, handle.Code, 
 					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
 				));
