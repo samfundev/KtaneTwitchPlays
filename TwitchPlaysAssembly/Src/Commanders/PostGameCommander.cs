@@ -6,19 +6,7 @@ using UnityEngine;
 public class PostGameCommander : ICommandResponder
 {
     #region Constructors
-    static PostGameCommander()
-    {
-        _resultPageType = CommonReflectedTypeInfo.ResultPageType;
-        _continueButtonField = _resultPageType.GetField("ContinueButton", BindingFlags.Public | BindingFlags.Instance);
-        _retryButtonField = _resultPageType.GetField("RetryButton", BindingFlags.Public | BindingFlags.Instance);
-
-        _selectableType = ReflectionHelper.FindType("Selectable");
-        _interactMethod = _selectableType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
-        _interactEndedMethod = _selectableType.GetMethod("OnInteractEnded", BindingFlags.Public | BindingFlags.Instance);
-        _setHighlightMethod = _selectableType.GetMethod("SetHighlight", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    public PostGameCommander(MonoBehaviour resultsPage)
+    public PostGameCommander(ResultPage resultsPage)
     {
         ResultsPage = resultsPage;
     }
@@ -27,7 +15,7 @@ public class PostGameCommander : ICommandResponder
     #region Interface Implementation
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
-        MonoBehaviour button = null;
+        Selectable button = null;
         message = message.ToLowerInvariant();
 
         if (message.EqualsAny("!continue","!back"))
@@ -59,49 +47,32 @@ public class PostGameCommander : ICommandResponder
     #endregion
 
     #region Public Fields
-    public MonoBehaviour ContinueButton
+    public Selectable ContinueButton
     {
-        get
-        {
-            return (MonoBehaviour)_continueButtonField.GetValue(ResultsPage);
-        }
+        get { return ResultsPage.ContinueButton; }
     }
 
-    public MonoBehaviour RetryButton
+    public Selectable RetryButton
     {
-        get
-        {
-            return (MonoBehaviour)_retryButtonField.GetValue(ResultsPage);
-        }
+        get { return ResultsPage.RetryButton; }
     }
     #endregion
 
     #region Private Methods
-    private void DoInteractionStart(MonoBehaviour selectable)
+    private void DoInteractionStart(Selectable selectable)
     {
-        _interactMethod.Invoke(selectable, null);
+        selectable.HandleInteract();
     }
 
-    private void DoInteractionEnd(MonoBehaviour selectable)
+    private void DoInteractionEnd(Selectable selectable)
     {
-        _interactEndedMethod.Invoke(selectable, null);
-        _setHighlightMethod.Invoke(selectable, new object[] { false });
+        selectable.OnInteractEnded();
+        selectable.SetHighlight(false);
     }
     #endregion
 
     #region Private Readonly Fields
-    private readonly MonoBehaviour ResultsPage = null;
-    #endregion
-
-    #region Private Static Fields
-    private static Type _resultPageType = null;
-    private static FieldInfo _continueButtonField = null;
-    private static FieldInfo _retryButtonField = null;
-
-    private static Type _selectableType = null;
-    private static MethodInfo _interactMethod = null;
-    private static MethodInfo _interactEndedMethod = null;
-    private static MethodInfo _setHighlightMethod = null;
+    private readonly ResultPage ResultsPage = null;
     #endregion
 }
 

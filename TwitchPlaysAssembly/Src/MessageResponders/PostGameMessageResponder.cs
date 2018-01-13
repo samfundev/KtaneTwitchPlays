@@ -47,10 +47,10 @@ public class PostGameMessageResponder : MessageResponder
 
         while (true)
         {
-            UnityEngine.Object[] resultPages = FindObjectsOfType(CommonReflectedTypeInfo.ResultPageType);
+            ResultPage[] resultPages = FindObjectsOfType<ResultPage>();
             if (resultPages != null && resultPages.Length > 0)
             {
-                MonoBehaviour resultPageBehaviour = (MonoBehaviour)resultPages[0];
+                ResultPage resultPageBehaviour = resultPages[0];
                 _postGameCommander = new PostGameCommander(resultPageBehaviour);
                 break;
             }
