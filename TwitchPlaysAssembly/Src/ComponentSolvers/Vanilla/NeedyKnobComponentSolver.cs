@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class NeedyKnobComponentSolver : ComponentSolver
 {
-    public NeedyKnobComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public NeedyKnobComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _pointingKnob = (MonoBehaviour)_pointingKnobField.GetValue(bombComponent);

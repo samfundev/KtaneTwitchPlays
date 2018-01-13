@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MicrocontrollerComponentSolver : ComponentSolver
 {
-	public MicrocontrollerComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public MicrocontrollerComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		object _component = bombComponent.GetComponent(_componentType);

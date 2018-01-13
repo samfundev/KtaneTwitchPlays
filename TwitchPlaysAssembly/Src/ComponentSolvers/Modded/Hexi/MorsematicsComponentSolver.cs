@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MorsematicsComponentSolver : ComponentSolver
 {
-    public MorsematicsComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public MorsematicsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _component = bombComponent.GetComponent(_componentType);

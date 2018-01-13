@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EdgeworkComponentSolver : ComponentSolver
 {
-	public EdgeworkComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public EdgeworkComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_component = bombComponent.GetComponent(_componentType);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class NeedyRotaryPhoneComponentSolver : ComponentSolver
 {
-    public NeedyRotaryPhoneComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public NeedyRotaryPhoneComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = new MonoBehaviour[10];

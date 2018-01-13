@@ -13,7 +13,7 @@ public class MiscellaneousMessageResponder : MessageResponder
     public int moduleCountBonus = 0;
 
     [HideInInspector]
-    public MonoBehaviour bombComponent = null;
+    public BombComponent bombComponent = null;
 
 	private KMGameCommands GameCommands;
 	private KMGameInfo GameInfo;

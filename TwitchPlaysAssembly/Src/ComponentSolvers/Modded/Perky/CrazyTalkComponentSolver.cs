@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CrazyTalkComponentSolver : ComponentSolver
 {
-    public CrazyTalkComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public CrazyTalkComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _toggle = (MonoBehaviour)_toggleField.GetValue(bombComponent.GetComponent(_componentType));

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class VennWireComponentSolver : ComponentSolver
 {
-    public VennWireComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public VennWireComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _wires = (Array)_activeWiresProperty.GetValue(bombComponent, null);

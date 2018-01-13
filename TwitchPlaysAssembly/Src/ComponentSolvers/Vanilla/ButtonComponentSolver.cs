@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
 {
-    public ButtonComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public ButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");

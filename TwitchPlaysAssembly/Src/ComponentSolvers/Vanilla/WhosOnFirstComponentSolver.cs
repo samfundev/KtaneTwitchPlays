@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WhosOnFirstComponentSolver : ComponentSolver
 {
-    public WhosOnFirstComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public WhosOnFirstComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (Array)_buttonsField.GetValue(bombComponent);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ProbingComponentSolver : ComponentSolver
 {
-    public ProbingComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public ProbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _wires = (MonoBehaviour[])_wiresField.GetValue(bombComponent.GetComponent(_componentType));

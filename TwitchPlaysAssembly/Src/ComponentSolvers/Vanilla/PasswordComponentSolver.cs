@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PasswordComponentSolver : ComponentSolver
 {
-    public PasswordComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public PasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _spinners = (IList)_spinnersField.GetValue(bombComponent);

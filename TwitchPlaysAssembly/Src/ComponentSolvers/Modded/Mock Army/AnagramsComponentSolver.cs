@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AnagramsComponentSolver : ComponentSolver
 {
-	public AnagramsComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public AnagramsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;

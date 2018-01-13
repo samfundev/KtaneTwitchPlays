@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CurriculumComponentSolver : ComponentSolver
 {
-	public CurriculumComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public CurriculumComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;

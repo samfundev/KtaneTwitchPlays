@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CryptographyComponentSolver : ComponentSolver
 {
-    public CryptographyComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public CryptographyComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (MonoBehaviour[])_keysField.GetValue(bombComponent.GetComponent(_componentType));

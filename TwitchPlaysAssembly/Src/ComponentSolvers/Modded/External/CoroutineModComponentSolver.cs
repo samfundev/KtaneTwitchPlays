@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-    public CoroutineModComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield, Type canceltype) :
+    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield, Type canceltype) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         ProcessMethod = processMethod;

@@ -56,7 +56,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public BombCommander bombCommander = null;
 
 	[HideInInspector]
-	public MonoBehaviour bombComponent = null;
+	public BombComponent bombComponent = null;
 
 	[HideInInspector]
 	public ComponentTypeEnum componentType = ComponentTypeEnum.Empty;

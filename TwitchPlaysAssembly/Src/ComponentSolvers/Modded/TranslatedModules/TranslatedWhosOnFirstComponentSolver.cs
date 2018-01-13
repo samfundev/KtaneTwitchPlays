@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 {
-	public TranslatedWhosOnFirstComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public TranslatedWhosOnFirstComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_component = bombComponent.GetComponent(_componentType);

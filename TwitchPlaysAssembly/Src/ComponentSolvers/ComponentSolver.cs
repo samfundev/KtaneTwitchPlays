@@ -22,11 +22,11 @@ public abstract class ComponentSolver : ICommandResponder
         _onStrikeInternalMethod = thisType.GetMethod("OnStrike", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
-    public ComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller)
+    public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller)
     {
         BombCommander = bombCommander;
         BombComponent = bombComponent;
-        Selectable = (MonoBehaviour)bombComponent.GetComponent(_selectableType);
+        Selectable = bombComponent.GetComponent<Selectable>();
         IRCConnection = ircConnection;
         Canceller = canceller;
     
@@ -760,8 +760,8 @@ public abstract class ComponentSolver : ICommandResponder
 
     #region Readonly Fields
     protected readonly BombCommander BombCommander = null;
-    protected readonly MonoBehaviour BombComponent = null;
-    protected readonly MonoBehaviour Selectable = null;
+    protected readonly BombComponent BombComponent = null;
+    protected readonly Selectable Selectable = null;
     protected readonly IRCConnection IRCConnection = null;
     public readonly CoroutineCanceller Canceller = null;
     #endregion

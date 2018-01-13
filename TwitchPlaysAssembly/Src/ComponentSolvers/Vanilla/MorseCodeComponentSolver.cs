@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MorseCodeComponentSolver : ComponentSolver
 {
-    public MorseCodeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public MorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _upButton = (MonoBehaviour)_upButtonField.GetValue(bombComponent);

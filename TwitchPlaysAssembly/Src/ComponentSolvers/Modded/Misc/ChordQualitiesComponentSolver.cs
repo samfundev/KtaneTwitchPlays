@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ChordQualitiesComponentSolver : ComponentSolver
 {
-	public ChordQualitiesComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public ChordQualitiesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		object _component = bombComponent.GetComponent(_componentType);

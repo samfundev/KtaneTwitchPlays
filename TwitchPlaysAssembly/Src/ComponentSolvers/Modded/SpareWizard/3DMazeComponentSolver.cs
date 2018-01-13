@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ThreeDMazeComponentSolver : ComponentSolver
 {
-	public ThreeDMazeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public ThreeDMazeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		object _component = bombComponent.GetComponent(_componentType);

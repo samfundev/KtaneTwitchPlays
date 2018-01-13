@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Records;
 using UnityEngine;
 
 public class BombCommander : ICommandResponder
@@ -12,88 +13,17 @@ public class BombCommander : ICommandResponder
     static BombCommander()
     {
         DebugHelper.Log("[BombCommander] - Running static constructor");
-        _floatingHoldableType = ReflectionHelper.FindType("FloatingHoldable");
-        if (_floatingHoldableType == null)
-        {
-            DebugHelper.Log("[BombCommander] Failed to get FloatingHoldable Type");
-            return;
-        }
-        _focusMethod = _floatingHoldableType.GetMethod("Focus", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Transform), typeof(float), typeof(bool), typeof(bool), typeof(float) }, null);
-        _defocusMethod = _floatingHoldableType.GetMethod("Defocus", BindingFlags.Public | BindingFlags.Instance);
-        _focusTimeField = _floatingHoldableType.GetField("FocusTime", BindingFlags.Public | BindingFlags.Instance);
-        _pickupTimeField = _floatingHoldableType.GetField("PickupTime", BindingFlags.Public | BindingFlags.Instance);
-        _holdStateProperty = _floatingHoldableType.GetProperty("HoldState", BindingFlags.Public | BindingFlags.Instance);
-
-        _selectableType = ReflectionHelper.FindType("Selectable");
-        if (_selectableType == null)
-        {
-            DebugHelper.Log("[BombCommander] Failed to get Selectable Type");
-            return;
-        }
-        _handleSelectMethod = _selectableType.GetMethod("HandleSelect", BindingFlags.Public | BindingFlags.Instance);
-        _handleSelectableInteractMethod = _selectableType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
-        _handleSelectableCancelMethod = _selectableType.GetMethod("HandleCancel", BindingFlags.Public | BindingFlags.Instance);
-        _onInteractEndedMethod = _selectableType.GetMethod("OnInteractEnded", BindingFlags.Public | BindingFlags.Instance);
-
-        _selectableManagerType = ReflectionHelper.FindType("SelectableManager");
-        if (_selectableManagerType == null)
-        {
-            DebugHelper.Log("[BombCommander] Failed to get SelectableManager Type");
-            return;
-        }
-        _selectMethod = _selectableManagerType.GetMethod("Select", BindingFlags.Public | BindingFlags.Instance);
-        _handleInteractMethod = _selectableManagerType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
-        _handleCancelMethod = _selectableManagerType.GetMethod("HandleCancel", BindingFlags.Public | BindingFlags.Instance);
-        _setZSpinMethod = _selectableManagerType.GetMethod("SetZSpin", BindingFlags.Public | BindingFlags.Instance);
-        _setControlsRotationMethod = _selectableManagerType.GetMethod("SetControlsRotation", BindingFlags.Public | BindingFlags.Instance);
-        _getBaseHeldObjectTransformMethod = _selectableManagerType.GetMethod("GetBaseHeldObjectTransform", BindingFlags.Public | BindingFlags.Instance);
-        _handleFaceSelectionMethod = _selectableManagerType.GetMethod("HandleFaceSelection", BindingFlags.Public | BindingFlags.Instance);
-
-        _recordManagerType = ReflectionHelper.FindType("Assets.Scripts.Records.RecordManager");
-        if (_recordManagerType == null)
-        {
-            DebugHelper.Log("[BombCommander] Failed to get Assets.Scripts.Records.RecordManager Type");
-            return;
-        }
-        _recordManagerInstanceProperty = _recordManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
-        _recordStrikeMethod = _recordManagerType.GetMethod("RecordStrike", BindingFlags.Public | BindingFlags.Instance);
-        
-        _strikeSourceType = ReflectionHelper.FindType("Assets.Scripts.Records.StrikeSource");
-        if (_strikeSourceType == null)
-        {
-            DebugHelper.Log("[BombCommander] Failed to get Assets.Scripts.Records.StrikeSource Type");
-            return;
-        }
-        _componentTypeField = _strikeSourceType.GetField("ComponentType", BindingFlags.Public | BindingFlags.Instance);
-        _componentNameField = _strikeSourceType.GetField("ComponentName", BindingFlags.Public | BindingFlags.Instance);
-        _interactionTypeField = _strikeSourceType.GetField("InteractionType", BindingFlags.Public | BindingFlags.Instance);
-        _timeField = _strikeSourceType.GetField("Time", BindingFlags.Public | BindingFlags.Instance);
-
-        _interactionTypeEnumType = ReflectionHelper.FindType("Assets.Scripts.Records.InteractionTypeEnum");
-
-        _inputManagerType = ReflectionHelper.FindType("KTInputManager");
-        if (_inputManagerType == null)
-        {
-            DebugHelper.Log("[BombCommander] Failed to get KTInputManager Type");
-            return;
-        }
-        _inputManagerInstanceProperty = _inputManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
-        _selectableManagerProperty = _inputManagerType.GetProperty("SelectableManager", BindingFlags.Public | BindingFlags.Instance);
-
-        _inputManager = (MonoBehaviour)_inputManagerInstanceProperty.GetValue(null, null);
-
-        _onStrikeMethod = CommonReflectedTypeInfo.BombType.GetMethod("OnStrike", BindingFlags.Public | BindingFlags.Instance);
         DebugHelper.Log("[BombCommander] - Static constructor finished");
     }
 
-    public BombCommander(MonoBehaviour bomb)
+    public BombCommander(Bomb bomb)
     {
         Bomb = bomb;
-		timerComponent = (MonoBehaviour) CommonReflectedTypeInfo.GetTimerMethod.Invoke(Bomb, null);
-		widgetManager = CommonReflectedTypeInfo.WidgetManagerField.GetValue(Bomb);
-		Selectable = (MonoBehaviour)Bomb.GetComponent(_selectableType);
-        FloatingHoldable = (MonoBehaviour)Bomb.GetComponent(_floatingHoldableType);
-        SelectableManager = (MonoBehaviour)_selectableManagerProperty.GetValue(_inputManager, null);
+        timerComponent = Bomb.GetTimer();
+        widgetManager = Bomb.WidgetManager;
+        Selectable = Bomb.GetComponent<Selectable>();
+        FloatingHoldable = Bomb.GetComponent<FloatingHoldable>();
+        SelectableManager = KTInputManager.Instance.SelectableManager;
         BombTimeStamp = DateTime.Now;
         bombStartingTimer = CurrentTimer;
     }
@@ -174,10 +104,10 @@ public class BombCommander : ICommandResponder
     #region Helper Methods
     public IEnumerator HoldBomb(bool frontFace = true)
     {
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
         bool doForceRotate = false;
 
-        if (holdState != 0)
+        if (holdState != FloatingHoldable.HoldStateEnum.Held)
         {
             SelectObject(Selectable);
             doForceRotate = true;
@@ -191,7 +121,7 @@ public class BombCommander : ICommandResponder
 
         if (doForceRotate)
         {
-            float holdTime = (float)_pickupTimeField.GetValue(FloatingHoldable);
+            float holdTime = FloatingHoldable.PickupTime;
             IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
             while (forceRotationCoroutine.MoveNext())
             {
@@ -211,8 +141,8 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator LetGoBomb()
     {
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
-        if (holdState == 0)
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+        if (holdState == FloatingHoldable.HoldStateEnum.Held)
         {
             IEnumerator turnBombCoroutine = HoldBomb(true);
             while (turnBombCoroutine.MoveNext())
@@ -376,7 +306,7 @@ public class BombCommander : ICommandResponder
 
 	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null)
 	{
-		return ((List<string>) CommonReflectedTypeInfo.GetWidgetQueryResponsesMethod.Invoke(widgetManager, new string[] { queryKey, queryInfo })).Select(str => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>(str));
+	    return widgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(str => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>(str));
 	}
 
 	public void FillEdgework(bool silent = false)
@@ -406,7 +336,7 @@ public class BombCommander : ICommandResponder
 		    twitchBombHandle.ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
 	}
 	
-    public IEnumerator Focus(MonoBehaviour selectable, float focusDistance, bool frontFace)
+    public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
     {
         IEnumerator holdCoroutine = HoldBomb(frontFace);
         while (holdCoroutine.MoveNext())
@@ -414,26 +344,26 @@ public class BombCommander : ICommandResponder
             yield return holdCoroutine.Current;
         }
 
-        float focusTime = (float)_focusTimeField.GetValue(FloatingHoldable);
-        _focusMethod.Invoke(FloatingHoldable, new object[] { selectable.transform, focusDistance, false, false, focusTime });
-        _handleSelectableInteractMethod.Invoke(selectable, null);
+        float focusTime = FloatingHoldable.FocusTime;
+        FloatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+        selectable.HandleInteract();
     }
 
-    public IEnumerator Defocus(MonoBehaviour selectable, bool frontFace)
+    public IEnumerator Defocus(Selectable selectable, bool frontFace)
     {
-        _defocusMethod.Invoke(FloatingHoldable, new object[] { false, false });
-        _handleSelectableCancelMethod.Invoke(selectable, null);
+        FloatingHoldable.Defocus(false, false);
+        selectable.HandleCancel();
         yield break;
     }
 
     public void RotateByLocalQuaternion(Quaternion localQuaternion)
     {
-        Transform baseTransform = (Transform)_getBaseHeldObjectTransformMethod.Invoke(SelectableManager, null);
+        Transform baseTransform = SelectableManager.GetBaseHeldObjectTransform();
 
         float currentZSpin = _heldFrontFace ? 0.0f : 180.0f;
 
-        _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion });
-        _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+        SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
+        SelectableManager.HandleFaceSelection();
     }
 
     public void CauseStrikesToExplosion(string reason)
@@ -446,34 +376,34 @@ public class BombCommander : ICommandResponder
 
     public void CauseStrike(string reason)
     {
-        object strikeSource = Activator.CreateInstance(_strikeSourceType);
-        _componentTypeField.SetValue(strikeSource, Enum.ToObject(CommonReflectedTypeInfo.ComponentTypeEnumType, (int)ComponentTypeEnum.Mod));
-        _interactionTypeField.SetValue(strikeSource, Enum.ToObject(_interactionTypeEnumType, (int)InteractionTypeEnum.Other));
-        _timeField.SetValue(strikeSource, CurrentTimerElapsed);
-        _componentNameField.SetValue(strikeSource, reason);
+        StrikeSource strikeSource = new StrikeSource();
+        strikeSource.ComponentType = Assets.Scripts.Missions.ComponentTypeEnum.Mod;
+        strikeSource.InteractionType = Assets.Scripts.Records.InteractionTypeEnum.Other;
+        strikeSource.Time = CurrentTimerElapsed;
+        strikeSource.ComponentName = reason;
 
-        object recordManager = _recordManagerInstanceProperty.GetValue(null, null);
-        _recordStrikeMethod.Invoke(recordManager, new object[] { strikeSource });
+        RecordManager recordManager = RecordManager.Instance;
+        recordManager.RecordStrike(strikeSource);
 
-        _onStrikeMethod.Invoke(Bomb, new object[] { null });
+        Bomb.OnStrike(null);
     }
 
-    private void SelectObject(MonoBehaviour selectable)
+    private void SelectObject(Selectable selectable)
     {
-        _handleSelectMethod.Invoke(selectable, new object[] { true });
-        _selectMethod.Invoke(SelectableManager, new object[] { selectable, true });
-        _handleInteractMethod.Invoke(SelectableManager, null);
-        _onInteractEndedMethod.Invoke(selectable, null);
+        selectable.HandleSelect(true);
+        SelectableManager.Select(selectable, true);
+        SelectableManager.HandleInteract();
+        selectable.OnInteractEnded();
     }
 
-    private void DeselectObject(MonoBehaviour selectable)
+    private void DeselectObject(Selectable selectable)
     {
-        _handleCancelMethod.Invoke(SelectableManager, null);
+        SelectableManager.HandleCancel();
     }
 
     private IEnumerator ForceHeldRotation(bool frontFace, float duration)
     {
-        Transform baseTransform = (Transform)_getBaseHeldObjectTransformMethod.Invoke(SelectableManager, null);
+        Transform baseTransform = SelectableManager.GetBaseHeldObjectTransform();
 
         float oldZSpin = _heldFrontFace ? 0.0f : 180.0f;
         float targetZSpin = frontFace ? 0.0f : 180.0f;
@@ -486,15 +416,15 @@ public class BombCommander : ICommandResponder
 
             Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 
-            _setZSpinMethod.Invoke(SelectableManager, new object[] { currentZSpin });
-            _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * currentRotation });
-            _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+            SelectableManager.SetZSpin(currentZSpin);
+            SelectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+            SelectableManager.HandleFaceSelection();
             yield return null;
         }
 
-        _setZSpinMethod.Invoke(SelectableManager, new object[] { targetZSpin });
-        _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin) });
-        _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+        SelectableManager.SetZSpin(targetZSpin);
+        SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+        SelectableManager.HandleFaceSelection();
 
         _heldFrontFace = frontFace;
     }
@@ -526,33 +456,24 @@ public class BombCommander : ICommandResponder
 
     public bool IsSolved
     {
-        get
-        {
-            return (bool) CommonReflectedTypeInfo.IsSolvedMethod.Invoke(Bomb, null);
-        }
+        get { return Bomb.IsSolved(); }
     }
 
     public float CurrentTimerElapsed
     {
-        get
-        {
-            return (float)CommonReflectedTypeInfo.TimeElapsedProperty.GetValue(timerComponent, null);
-        }
+        get { return timerComponent.TimeElapsed; }
     }
 
     public float CurrentTimer
     {
-        get
-        {
-            return (float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent);
-        }
+        get { return timerComponent.TimeRemaining; }
     }
 
     public string CurrentTimerFormatted
     {
         get
         {
-			return (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(timerComponent, new object[] { CurrentTimer, true });
+            return timerComponent.GetFormattedTime(CurrentTimer, true);
         }
     }
 
@@ -560,7 +481,7 @@ public class BombCommander : ICommandResponder
     {
         get
         {
-			return (string)CommonReflectedTypeInfo.GetFormattedTimeMethod.Invoke(timerComponent, new object[] { bombStartingTimer, true });
+            return timerComponent.GetFormattedTime(bombStartingTimer, true);
         }
     }
 
@@ -582,18 +503,12 @@ public class BombCommander : ICommandResponder
 	
     public int StrikeCount
     {
-        get
-        {
-            return (int)CommonReflectedTypeInfo.NumStrikesField.GetValue(Bomb);
-        }
+        get { return Bomb.NumStrikes; }
     }
 
     public int StrikeLimit
     {
-        get
-        {
-            return (int)CommonReflectedTypeInfo.NumStrikesToLoseField.GetValue(Bomb);
-        }
+        get { return Bomb.NumStrikesToLose; }
     }
 
     public int NumberModules
@@ -622,61 +537,20 @@ public class BombCommander : ICommandResponder
 	#endregion
 
 	#region Readonly Fields
-	public readonly MonoBehaviour Bomb = null;
-    public readonly MonoBehaviour Selectable = null;
-    public readonly MonoBehaviour FloatingHoldable = null;
+	public readonly Bomb Bomb = null;
+    public readonly Selectable Selectable = null;
+    public readonly FloatingHoldable FloatingHoldable = null;
     public readonly DateTime BombTimeStamp;
 
-    private readonly MonoBehaviour SelectableManager = null;
+    private readonly SelectableManager SelectableManager = null;
     #endregion
 
     #region Private Static Fields
-    private static Type _floatingHoldableType = null;
-    private static MethodInfo _focusMethod = null;
-    private static MethodInfo _defocusMethod = null;
-    private static FieldInfo _focusTimeField = null;
-    private static FieldInfo _pickupTimeField = null;
-    private static PropertyInfo _holdStateProperty = null;
-
-    private static Type _selectableType = null;
-    private static MethodInfo _handleSelectMethod = null;
-    private static MethodInfo _handleSelectableInteractMethod = null;
-    private static MethodInfo _handleSelectableCancelMethod = null;
-    private static MethodInfo _onInteractEndedMethod = null;
-
-    private static Type _selectableManagerType = null;
-    private static MethodInfo _selectMethod = null;
-    private static MethodInfo _handleInteractMethod = null;
-    private static MethodInfo _handleCancelMethod = null;
-    private static MethodInfo _setZSpinMethod = null;
-    private static MethodInfo _setControlsRotationMethod = null;
-    private static MethodInfo _getBaseHeldObjectTransformMethod = null;
-    private static MethodInfo _handleFaceSelectionMethod = null;
-
-    private static Type _recordManagerType = null;
-    private static PropertyInfo _recordManagerInstanceProperty = null;
-    private static MethodInfo _recordStrikeMethod = null;
-
-    private static Type _strikeSourceType = null;
-    private static FieldInfo _componentTypeField = null;
-    private static FieldInfo _componentNameField = null;
-    private static FieldInfo _interactionTypeField = null;
-    private static FieldInfo _timeField = null;
-
-    private static Type _interactionTypeEnumType = null;
-
-    private static MethodInfo _onStrikeMethod = null;
-
-    private static Type _inputManagerType = null;
-    private static PropertyInfo _inputManagerInstanceProperty = null;
-    private static PropertyInfo _selectableManagerProperty = null;
-
-    private static MonoBehaviour _inputManager = null;
     #endregion
 
     public TwitchBombHandle twitchBombHandle = null;
-    public MonoBehaviour timerComponent = null;
-	public object widgetManager = null;
+    public TimerComponent timerComponent = null;
+	public WidgetManager widgetManager = null;
 	public int bombSolvableModules;
     public int bombSolvedModules;
     public float bombStartingTimer;

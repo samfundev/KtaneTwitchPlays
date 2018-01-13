@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class OrientationCubeComponentSolver : ComponentSolver
 {
-    public OrientationCubeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public OrientationCubeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _submit = (MonoBehaviour)_submitField.GetValue(bombComponent.GetComponent(_componentType));

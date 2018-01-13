@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class RubiksCubeComponentSolver : ComponentSolver
 {
-	public RubiksCubeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public RubiksCubeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_component = bombComponent.GetComponent(_componentType);

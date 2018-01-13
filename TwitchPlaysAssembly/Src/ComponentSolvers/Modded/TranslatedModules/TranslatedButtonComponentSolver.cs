@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TranslatedButtonComponentSolver : ComponentSolver
 {
-	public TranslatedButtonComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public TranslatedButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 	    _button = (KMSelectable) _buttonField.GetValue(bombComponent.GetComponent(_componentType));

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 {
-    public TurnTheKeyAdvancedComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public TurnTheKeyAdvancedComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _leftKey = (MonoBehaviour)_leftKeyField.GetValue(bombComponent.GetComponent(_componentType));

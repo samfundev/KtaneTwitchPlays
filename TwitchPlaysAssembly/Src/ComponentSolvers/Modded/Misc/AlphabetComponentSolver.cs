@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class AlphabetComponentSolver : ComponentSolver
 {
-	public AlphabetComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+	public AlphabetComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
 		base(bombCommander, bombComponent, ircConnection, canceller)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;

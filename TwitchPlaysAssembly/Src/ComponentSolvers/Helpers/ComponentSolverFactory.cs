@@ -7,7 +7,7 @@ using UnityEngine;
 
 public static class ComponentSolverFactory
 {
-	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller);
+	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
     private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
@@ -376,7 +376,7 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ComponentSolver CreateSolver(BombCommander bombCommander, MonoBehaviour bombComponent, ComponentTypeEnum componentType, IRCConnection ircConnection, CoroutineCanceller canceller)
+	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType, IRCConnection ircConnection, CoroutineCanceller canceller)
 	{
 		switch (componentType)
 		{
@@ -439,7 +439,7 @@ public static class ComponentSolverFactory
 				KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
                 try
                 {
-				return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, needyModule.ModuleType, needyModule.ModuleDisplayName);
+				    return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, needyModule.ModuleType, needyModule.ModuleDisplayName);
                 }
                 catch
                 {
@@ -454,7 +454,7 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, string moduleType, string displayName)
+	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, string moduleType, string displayName)
 	{
         bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
 		if (ModComponentSolverCreators.ContainsKey(moduleType))
@@ -476,7 +476,7 @@ public static class ComponentSolverFactory
         return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
 	}
 
-	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(MonoBehaviour bombComponent, string moduleType, string displayName)
+	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)
 	{
 		ModCommandType commandType = ModCommandType.Simple;
 		Type commandComponentType = null;
@@ -549,7 +549,7 @@ public static class ComponentSolverFactory
 			switch (commandType)
 			{
 				case ModCommandType.Simple:
-					return delegate (BombCommander _bombCommander, MonoBehaviour _bombComponent, IRCConnection _ircConnection, CoroutineCanceller _canceller)
+					return delegate (BombCommander _bombCommander, BombComponent _bombComponent, IRCConnection _ircConnection, CoroutineCanceller _canceller)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
 						return new SimpleModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent);
@@ -558,7 +558,7 @@ public static class ComponentSolverFactory
 					FieldInfo cancelfield;
 					Type canceltype;
 					FindCancelBool(bombComponent, out cancelfield, out canceltype);
-					return delegate (BombCommander _bombCommander, MonoBehaviour _bombComponent, IRCConnection _ircConnection, CoroutineCanceller _canceller)
+					return delegate (BombCommander _bombCommander, BombComponent _bombComponent, IRCConnection _ircConnection, CoroutineCanceller _canceller)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
 						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent, cancelfield, canceltype);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ForgetMeNotComponentSolver : ComponentSolver
 {
-    public ForgetMeNotComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public ForgetMeNotComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));

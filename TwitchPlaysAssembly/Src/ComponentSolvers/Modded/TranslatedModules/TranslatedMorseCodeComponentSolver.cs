@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TranslatedMorseCodeComponentSolver : ComponentSolver
 {
-    public TranslatedMorseCodeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public TranslatedMorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _component = bombComponent.GetComponent(_morseCodeComponentType);

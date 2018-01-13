@@ -6,7 +6,7 @@ using UnityEngine;
 public class MotionSenseComponentSolver : ComponentSolver
 {
     private readonly IRCConnection _connection;
-    public MotionSenseComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
 

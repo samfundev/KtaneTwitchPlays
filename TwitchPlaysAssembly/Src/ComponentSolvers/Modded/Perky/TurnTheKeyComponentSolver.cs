@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TurnTheKeyComponentSolver : ComponentSolver
 {
-    public TurnTheKeyComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public TurnTheKeyComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _lock = (MonoBehaviour)_lockField.GetValue(BombComponent.GetComponent(_componentType));

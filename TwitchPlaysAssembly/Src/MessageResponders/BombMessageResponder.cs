@@ -240,15 +240,15 @@ public class BombMessageResponder : MessageResponder
     {
         TwitchComponentHandle.ResetId();
 
-        UnityEngine.Object[] bombs;
+        Bomb[] bombs;
         do
         {
             yield return null;
-            bombs = FindObjectsOfType(CommonReflectedTypeInfo.BombType);
+            bombs = FindObjectsOfType<Bomb>();
             if (bombs.Length > 0)
             {
                 yield return new WaitForSeconds(0.1f);
-                bombs = FindObjectsOfType(CommonReflectedTypeInfo.BombType);
+                bombs = FindObjectsOfType<Bomb>();
             }
 
             if (Factory.FactoryType() != null)
@@ -263,7 +263,7 @@ public class BombMessageResponder : MessageResponder
                 _currentBomb = bombs.Length == 1 ? -1 : 0;
                 for (int i = 0; i < bombs.Length; i++)
                 {
-                    SetBomb((MonoBehaviour) bombs[i], _currentBomb == -1 ? -1 : i);
+                    SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
                     _bombHandles[i].nameText.text = string.Format("Bomb {0} of {1}", i + 1, bombs.Length);
                 }
                 StartCoroutine(factory.ReportBombStatus(_bombHandles));
@@ -271,7 +271,7 @@ public class BombMessageResponder : MessageResponder
             else if (bombs.Length == 1)
             {
                 _currentBomb = -1;
-                SetBomb((MonoBehaviour) bombs[0], -1);
+                SetBomb(bombs[0], -1);
 
                 if (rand.NextDouble() < specialNameProbability)
                 {
@@ -285,7 +285,7 @@ public class BombMessageResponder : MessageResponder
                 int id = 0;
                 for (int i = bombs.Length - 1; i >= 0; i--)
                 {
-                    SetBomb((MonoBehaviour) bombs[i], id++);
+                    SetBomb(bombs[i], id++);
                 }
 
                 if (bombs.Length == 2 && rand.NextDouble() < specialNameProbability)
@@ -350,7 +350,7 @@ public class BombMessageResponder : MessageResponder
         }
     }
 
-    private void SetBomb(MonoBehaviour bomb, int id)
+    private void SetBomb(Bomb bomb, int id)
     {
         _bombCommanders.Add(new BombCommander(bomb));
         CreateBombHandleForBomb(bomb, id);
@@ -608,11 +608,11 @@ public class BombMessageResponder : MessageResponder
         _bombCommanders[_bombCommanders.Count - 1].twitchBombHandle = _bombHandle;
     }
 
-    private bool CreateComponentHandlesForBomb(MonoBehaviour bomb)
+    private bool CreateComponentHandlesForBomb(Bomb bomb)
     {
         bool foundComponents = false;
 
-        IList bombComponents = (IList)CommonReflectedTypeInfo.BombComponentsField.GetValue(bomb);
+        List<BombComponent> bombComponents = bomb.BombComponents;
 
 		var bombCommander = _bombCommanders[_bombCommanders.Count - 1];
 		if (bombComponents.Count > 12 || TwitchPlaySettings.data.ForceMultiDeckerMode)
@@ -620,7 +620,7 @@ public class BombMessageResponder : MessageResponder
 			bombCommander.multiDecker = true;
         }
 
-        foreach (MonoBehaviour bombComponent in bombComponents)
+        foreach (BombComponent bombComponent in bombComponents)
         {
             object componentType = CommonReflectedTypeInfo.ComponentTypeField.GetValue(bombComponent);
             int componentTypeInt = (int)Convert.ChangeType(componentType, typeof(int));
@@ -632,7 +632,7 @@ public class BombMessageResponder : MessageResponder
                     continue;
 
                 case ComponentTypeEnum.Timer:
-                    _bombCommanders[_bombCommanders.Count - 1].timerComponent = bombComponent;
+                    _bombCommanders[_bombCommanders.Count - 1].timerComponent = (TimerComponent)bombComponent;
                     continue;
 
                 default:
@@ -723,7 +723,7 @@ public class BombMessageResponder : MessageResponder
 
     private bool HasOverlap(TwitchComponentHandle thisHandle, Rect handleRect, Rect bombComponentBasicRect, IList bombComponents)
     {
-        foreach (MonoBehaviour bombComponent in bombComponents)
+        foreach (BombComponent bombComponent in bombComponents)
         {
             Vector3 bombComponentCenter = thisHandle.transform.InverseTransformPoint(bombComponent.transform.position);
 

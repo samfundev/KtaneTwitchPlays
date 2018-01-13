@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class ListeningComponentSolver : ComponentSolver
 {
-    public ListeningComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public ListeningComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         Component component = bombComponent.GetComponent("Listening");

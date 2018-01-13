@@ -22,7 +22,7 @@ public class TwoBitsComponentSolver : ComponentSolver
 
     private const string ButtonLabels = "bcdegkptvz";
 
-    public TwoBitsComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         c = bombComponent.GetComponent(_componentSolverType);

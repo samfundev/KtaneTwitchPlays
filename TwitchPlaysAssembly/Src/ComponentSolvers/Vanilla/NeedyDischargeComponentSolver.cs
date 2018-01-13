@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class NeedyDischargeComponentSolver : ComponentSolver
 {
-    public NeedyDischargeComponentSolver(BombCommander bombCommander, MonoBehaviour bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public NeedyDischargeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         _dischargeButton = (MonoBehaviour)_dischargeButtonField.GetValue(bombComponent);
