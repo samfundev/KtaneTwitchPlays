@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Missions;
 using UnityEngine;
 
 [RequireComponent(typeof(KMGameCommands))]
@@ -32,9 +33,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 	string resolveMissionID(string targetID, out string failureMessage)
 	{
 	    failureMessage = null;
-		object modManager = CommonReflectedTypeInfo.ModManagerInstanceField.GetValue(null);
-		IEnumerable<ScriptableObject> missions = ((IEnumerable) CommonReflectedTypeInfo.ModMissionsField.GetValue(modManager, null)).Cast<ScriptableObject>();
-		ScriptableObject mission = missions.FirstOrDefault(obj => Regex.IsMatch(obj.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
+	    ModManager modManager = ModManager.Instance;
+	    List<Mission> missions = modManager.ModMissions;
+
+	    Mission mission = missions.FirstOrDefault(x => Regex.IsMatch(x.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
 	    if (mission == null)
 	    {
 	        failureMessage = string.Format("Unable to find a mission with an ID of \"{0}\".", targetID);
@@ -46,11 +48,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 	        availableMods.Add("Multiple Bombs");
 	    List<string> missingMods = new List<string>();
 
-	    object generatorSetting = CommonReflectedTypeInfo.GeneratorSettingField.GetValue(mission);
-	    IList componentPools = (IList) CommonReflectedTypeInfo.ComponentPoolField.GetValue(generatorSetting);
-	    foreach (object componentPool in componentPools)
+	    GeneratorSetting generatorSetting = mission.GeneratorSetting;
+	    List<ComponentPool> componentPools = generatorSetting.ComponentPools;
+	    foreach (ComponentPool componentPool in componentPools)
 	    {
-	        List<string> modTypes = (List<string>) CommonReflectedTypeInfo.ComponentPoolModTypesField.GetValue(componentPool);
+	        List<string> modTypes = componentPool.ModTypes;
 	        if (modTypes == null || modTypes.Count == 0) continue;
 	        missingMods.AddRange(modTypes.Where(x => !availableMods.Contains(x) && !missingMods.Contains(x)));
 	    }
