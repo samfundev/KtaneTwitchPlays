@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Components.VennWire;
 using UnityEngine;
 
 public static class ComponentSolverFactory
@@ -381,46 +382,46 @@ public static class ComponentSolverFactory
 		switch (componentType)
 		{
 			case ComponentTypeEnum.Wires:
-				return new WireSetComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new WireSetComponentSolver(bombCommander, (WireSetComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Keypad:
-				return new KeypadComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new KeypadComponentSolver(bombCommander, (KeypadComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.BigButton:
-				return new ButtonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new ButtonComponentSolver(bombCommander, (ButtonComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Memory:
-				return new MemoryComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new MemoryComponentSolver(bombCommander, (MemoryComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Simon:
-				return new SimonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new SimonComponentSolver(bombCommander, (SimonComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Venn:
-				return new VennWireComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new VennWireComponentSolver(bombCommander, (VennWireComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Morse:
-				return new MorseCodeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new MorseCodeComponentSolver(bombCommander, (MorseCodeComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.WireSequence:
-				return new WireSequenceComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new WireSequenceComponentSolver(bombCommander, (WireSequenceComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Password:
-				return new PasswordComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new PasswordComponentSolver(bombCommander, (PasswordComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Maze:
-				return new InvisibleWallsComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new InvisibleWallsComponentSolver(bombCommander, (InvisibleWallsComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.WhosOnFirst:
-				return new WhosOnFirstComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new WhosOnFirstComponentSolver(bombCommander, (WhosOnFirstComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.NeedyVentGas:
-				return new NeedyVentComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new NeedyVentComponentSolver(bombCommander, (NeedyVentComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.NeedyCapacitor:
-				return new NeedyDischargeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new NeedyDischargeComponentSolver(bombCommander, (NeedyDischargeComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.NeedyKnob:
-				return new NeedyKnobComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+				return new NeedyKnobComponentSolver(bombCommander, (NeedyKnobComponent)bombComponent, ircConnection, canceller);
 
 			case ComponentTypeEnum.Mod:
 				KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
