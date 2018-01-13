@@ -2,70 +2,18 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Missions;
 using UnityEngine;
 
 public class BombBinderCommander : ICommandResponder
 {
     #region Constructors
-    static BombBinderCommander()
-    {
-        _floatingHoldableType = ReflectionHelper.FindType("FloatingHoldable");
-        if (_floatingHoldableType == null)
-        {
-            return;
-        }
-        _pickupTimeField = _floatingHoldableType.GetField("PickupTime", BindingFlags.Public | BindingFlags.Instance);
-        _holdStateProperty = _floatingHoldableType.GetProperty("HoldState", BindingFlags.Public | BindingFlags.Instance);
-
-        _selectableType = ReflectionHelper.FindType("Selectable");
-        _handleSelectMethod = _selectableType.GetMethod("HandleSelect", BindingFlags.Public | BindingFlags.Instance);
-        _handleDeselectMethod = _selectableType.GetMethod("HandleDeselect", BindingFlags.Public | BindingFlags.Instance);
-        _onInteractEndedMethod = _selectableType.GetMethod("OnInteractEnded", BindingFlags.Public | BindingFlags.Instance);
-        _getCurrentChildMethod = _selectableType.GetMethod("GetCurrentChild", BindingFlags.Public | BindingFlags.Instance);
-        _childrenField = _selectableType.GetField("Children", BindingFlags.Public | BindingFlags.Instance);
-
-        _selectableManagerType = ReflectionHelper.FindType("SelectableManager");
-        if (_selectableManagerType == null)
-        {
-            return;
-        }
-        _selectMethod = _selectableManagerType.GetMethod("Select", BindingFlags.Public | BindingFlags.Instance);
-        _handleInteractMethod = _selectableManagerType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
-        _handleCancelMethod = _selectableManagerType.GetMethod("HandleCancel", BindingFlags.Public | BindingFlags.Instance);
-        _setZSpinMethod = _selectableManagerType.GetMethod("SetZSpin", BindingFlags.Public | BindingFlags.Instance);
-        _setControlsRotationMethod = _selectableManagerType.GetMethod("SetControlsRotation", BindingFlags.Public | BindingFlags.Instance);
-        _getBaseHeldObjectTransformMethod = _selectableManagerType.GetMethod("GetBaseHeldObjectTransform", BindingFlags.Public | BindingFlags.Instance);
-        _handleFaceSelectionMethod = _selectableManagerType.GetMethod("HandleFaceSelection", BindingFlags.Public | BindingFlags.Instance);
-
-        _inputManagerType = ReflectionHelper.FindType("KTInputManager");
-        if (_inputManagerType == null)
-        {
-            return;
-        }
-        _instanceProperty = _inputManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
-        _selectableManagerProperty = _inputManagerType.GetProperty("SelectableManager", BindingFlags.Public | BindingFlags.Instance);
-
-        _inputManager = (MonoBehaviour)_instanceProperty.GetValue(null, null);
-
-        _missionTableOfContentsMissionEntryType = ReflectionHelper.FindType("MissionTableOfContentsMissionEntry");
-        _missionIDField = _missionTableOfContentsMissionEntryType.GetField("MissionID", BindingFlags.Public | BindingFlags.Instance);
-        _missionEntryTextField = _missionTableOfContentsMissionEntryType.GetField("EntryText", BindingFlags.Public | BindingFlags.Instance);
-        _missionSubsectionTextField = _missionTableOfContentsMissionEntryType.GetField("SubsectionText", BindingFlags.Public | BindingFlags.Instance);
-
-        _missionManagerType = ReflectionHelper.FindType("Assets.Scripts.Missions.MissionManager");
-        _missionManagerInstanceProperty = _missionManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
-        _getMissionMethod = _missionManagerType.GetMethod("GetMission", BindingFlags.Public | BindingFlags.Instance);
-
-        _missionType = ReflectionHelper.FindType("Assets.Scripts.Missions.Mission");
-        _isTutorialProperty = _missionType.GetProperty("IsTutorial", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    public BombBinderCommander(MonoBehaviour bombBinder)
+    public BombBinderCommander(BombBinder bombBinder)
     {
         BombBinder = bombBinder;
-        Selectable = (MonoBehaviour)BombBinder.GetComponent(_selectableType);
-        FloatingHoldable = (MonoBehaviour)BombBinder.GetComponent(_floatingHoldableType);
-        SelectableManager = (MonoBehaviour)_selectableManagerProperty.GetValue(_inputManager, null);
+        Selectable = BombBinder.GetComponent<Selectable>();
+        FloatingHoldable = BombBinder.GetComponent<FloatingHoldable>();
+        SelectableManager = KTInputManager.Instance.SelectableManager;
     }
     #endregion
 
@@ -83,8 +31,8 @@ public class BombBinderCommander : ICommandResponder
         }
         else
         {
-            int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
-            if (holdState != 0)
+            FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+            if (holdState != FloatingHoldable.HoldStateEnum.Held)
             {
                 yield break;
             }
@@ -144,13 +92,13 @@ public class BombBinderCommander : ICommandResponder
     #region Helper Methods
     public IEnumerator HoldBombBinder()
     {
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 
-        if (holdState != 0)
+        if (holdState != FloatingHoldable.HoldStateEnum.Held)
         {
             SelectObject(Selectable);
 
-            float holdTime = (float)_pickupTimeField.GetValue(FloatingHoldable);
+            float holdTime = FloatingHoldable.PickupTime;
             IEnumerator forceRotationCoroutine = ForceHeldRotation(holdTime);
             while (forceRotationCoroutine.MoveNext())
             {
@@ -165,8 +113,8 @@ public class BombBinderCommander : ICommandResponder
 
     public void LetGoBombBinder()
     {
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
-        if (holdState == 0)
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+        if (holdState == FloatingHoldable.HoldStateEnum.Held)
         {
             DeselectObject(Selectable);
         }
@@ -174,18 +122,18 @@ public class BombBinderCommander : ICommandResponder
     
     private void InitialisePage()
     {
-        MonoBehaviour currentPage = (MonoBehaviour)Selectable.GetComponentsInChildren(_selectableType, false).Where((x) => x != Selectable).FirstOrDefault();
-        _currentSelectable = (MonoBehaviour)_getCurrentChildMethod.Invoke(currentPage, null);
+        Selectable currentPage = Selectable.GetComponentsInChildren<Selectable>(false).Where((x) => x != Selectable).FirstOrDefault();
+        _currentSelectable = currentPage.GetCurrentChild();
 
-        _handleSelectMethod.Invoke(_currentSelectable, new object[] { true });
+        _currentSelectable.HandleSelect(true);
 
-        _currentSelectables = (Array)_childrenField.GetValue(currentPage);
+        _currentSelectables = currentPage.Children;
 
         _currentSelectableIndex = 0;
         for (; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
         {
-            object selectable = _currentSelectables.GetValue(_currentSelectableIndex);
-            if (selectable != null && _currentSelectable == (MonoBehaviour)selectable)
+            Selectable selectable = _currentSelectables[_currentSelectableIndex];
+            if (selectable != null && _currentSelectable == selectable)
             {
                 return;
             }
@@ -205,12 +153,12 @@ public class BombBinderCommander : ICommandResponder
 
         for (++_currentSelectableIndex; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
         {
-            MonoBehaviour newSelectable = (MonoBehaviour)_currentSelectables.GetValue(_currentSelectableIndex);
+            Selectable newSelectable = _currentSelectables[_currentSelectableIndex];
             if (newSelectable != null)
             {
-                _handleDeselectMethod.Invoke(_currentSelectable, new object[] { null });
+                _currentSelectable.HandleDeselect(null);
                 _currentSelectable = newSelectable;
-                _handleSelectMethod.Invoke(_currentSelectable, new object[] { true });
+                _currentSelectable.HandleSelect(true);
                 return;
             }
         }
@@ -229,12 +177,12 @@ public class BombBinderCommander : ICommandResponder
 
         for (--_currentSelectableIndex; _currentSelectableIndex >= 0; --_currentSelectableIndex)
         {
-            MonoBehaviour newSelectable = (MonoBehaviour)_currentSelectables.GetValue(_currentSelectableIndex);
+            Selectable newSelectable = _currentSelectables[_currentSelectableIndex];
             if (newSelectable != null)
             {
-                _handleDeselectMethod.Invoke(_currentSelectable, new object[] { null });
+                _currentSelectable.HandleDeselect(null);
                 _currentSelectable = newSelectable;
-                _handleSelectMethod.Invoke(_currentSelectable, new object[] { true });
+                _currentSelectable.HandleSelect(true);
                 return;
             }
         }
@@ -252,10 +200,10 @@ public class BombBinderCommander : ICommandResponder
             }
 
             int i = 0;
-            MonoBehaviour newSelectable = null;
+            Selectable newSelectable = null;
             for (_currentSelectableIndex = 0; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
             {
-                newSelectable = (MonoBehaviour)_currentSelectables.GetValue(_currentSelectableIndex);
+                newSelectable = _currentSelectables[_currentSelectableIndex];
                 if (newSelectable != null)
                 {
                     // Index mode
@@ -269,23 +217,16 @@ public class BombBinderCommander : ICommandResponder
                     // Search mode
                     else
                     {
-                        object tableOfContentsEntryObject = newSelectable.GetComponent(_missionTableOfContentsMissionEntryType);
+                        MissionTableOfContentsMissionEntry tableOfContentsEntryObject = newSelectable.GetComponent<MissionTableOfContentsMissionEntry>();
                         if (tableOfContentsEntryObject == null)
                         {
                             // Previous/Next buttons!
                             newSelectable = null;
                             break;
                         }
-                        
-                        object entryTextField = _missionEntryTextField.GetValue(tableOfContentsEntryObject);
-                        Type entryTextType = entryTextField.GetType();
-                        PropertyInfo entryTextProperty = entryTextType.GetProperty("text");
-                        string entryText = entryTextProperty.GetValue(entryTextField, null).ToString().ToLowerInvariant();
 
-                        object subsectionTextField = _missionSubsectionTextField.GetValue(tableOfContentsEntryObject);
-                        Type subsectionTextType = subsectionTextField.GetType();
-                        PropertyInfo subsectionTextProperty = subsectionTextType.GetProperty("text");
-                        string subsectionText = subsectionTextProperty.GetValue(subsectionTextField, null).ToString().ToLowerInvariant();
+                        string entryText = tableOfContentsEntryObject.EntryText.text.ToLowerInvariant();
+                        string subsectionText = tableOfContentsEntryObject.SubsectionText.text.ToLowerInvariant();
 
                         if (subsectionText.Equals(search[0]))
                         {
@@ -313,9 +254,9 @@ public class BombBinderCommander : ICommandResponder
 
             if (newSelectable != null)
             {
-                _handleDeselectMethod.Invoke(_currentSelectable, new object[] { null });
+                _currentSelectable.HandleDeselect(null);
                 _currentSelectable = newSelectable;
-                _handleSelectMethod.Invoke(_currentSelectable, new object[] { true });
+                _currentSelectable.HandleSelect(true);
             }
             else
             {
@@ -326,13 +267,13 @@ public class BombBinderCommander : ICommandResponder
         if (_currentSelectable != null)
         {
             //Some protection to prevent going into a tutorial; don't have complete support for that!
-            object tableOfContentsEntryObject = _currentSelectable.GetComponent(_missionTableOfContentsMissionEntryType);
+            MissionTableOfContentsMissionEntry tableOfContentsEntryObject = _currentSelectable.GetComponent<MissionTableOfContentsMissionEntry>();
             if (tableOfContentsEntryObject != null)
             {
-                object missionID = _missionIDField.GetValue(tableOfContentsEntryObject);
-                object missionManager = _missionManagerInstanceProperty.GetValue(null, null);
-                object mission = _getMissionMethod.Invoke(missionManager, new object[] { missionID });
-                bool isTutorial = (bool)_isTutorialProperty.GetValue(mission, null);
+                string missionID = tableOfContentsEntryObject.MissionID;
+                MissionManager missionManager = MissionManager.Instance;
+                Mission mission = missionManager.GetMission(missionID);
+                bool isTutorial = mission.IsTutorial;
                 if (isTutorial)
                 {
                     yield break;
@@ -345,91 +286,54 @@ public class BombBinderCommander : ICommandResponder
         }
     }
 
-    private void SelectObject(MonoBehaviour selectable)
+    private void SelectObject(Selectable selectable)
     {
-        _handleSelectMethod.Invoke(selectable, new object[] { true });
-        _selectMethod.Invoke(SelectableManager, new object[] { selectable, true });
-        _handleInteractMethod.Invoke(SelectableManager, null);
-        _onInteractEndedMethod.Invoke(selectable, null);
+        selectable.HandleSelect(true);
+        SelectableManager.Select(selectable, true);
+        SelectableManager.HandleInteract();
+        selectable.OnInteractEnded();
     }
 
-    private void DeselectObject(MonoBehaviour selectable)
+    private void DeselectObject(Selectable selectable)
     {
-        _handleCancelMethod.Invoke(SelectableManager, null);
+        SelectableManager.HandleCancel();
     }
 
     private IEnumerator ForceHeldRotation(float duration)
     {
-        Transform baseTransform = (Transform)_getBaseHeldObjectTransformMethod.Invoke(SelectableManager, null);
+        Transform baseTransform = SelectableManager.GetBaseHeldObjectTransform();
 
         float initialTime = Time.time;
         while (Time.time - initialTime < duration)
         {
             Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
-            _setZSpinMethod.Invoke(SelectableManager, new object[] { 0.0f });
-            _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * currentRotation });
-            _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+            SelectableManager.SetZSpin(0.0f);
+            SelectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+            SelectableManager.HandleFaceSelection();
             yield return null;
         }
 
-        _setZSpinMethod.Invoke(SelectableManager, new object[] { 0.0f });
-        _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, 0.0f) });
-        _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+        SelectableManager.SetZSpin(0.0f);
+        SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, 0.0f));
+        SelectableManager.HandleFaceSelection();
     }
     #endregion
 
     #region Readonly Fields
-    public readonly MonoBehaviour BombBinder = null;
-    public readonly MonoBehaviour Selectable = null;
-    public readonly MonoBehaviour FloatingHoldable = null;
-    private readonly MonoBehaviour SelectableManager = null;
+    public readonly BombBinder BombBinder = null;
+    public readonly Selectable Selectable = null;
+    public readonly FloatingHoldable FloatingHoldable = null;
+    private readonly SelectableManager SelectableManager = null;
     #endregion
 
     #region Private Static Fields
-    private static Type _floatingHoldableType = null;
-    private static FieldInfo _pickupTimeField = null;
-    private static PropertyInfo _holdStateProperty = null;
-
-    private static Type _selectableType = null;
-    private static MethodInfo _handleSelectMethod = null;
-    private static MethodInfo _handleDeselectMethod = null;
-    private static MethodInfo _onInteractEndedMethod = null;
-    private static MethodInfo _getCurrentChildMethod = null;
-    private static FieldInfo _childrenField = null;
-
-    private static Type _selectableManagerType = null;
-    private static MethodInfo _selectMethod = null;
-    private static MethodInfo _handleInteractMethod = null;
-    private static MethodInfo _handleCancelMethod = null;
-    private static MethodInfo _setZSpinMethod = null;
-    private static MethodInfo _setControlsRotationMethod = null;
-    private static MethodInfo _getBaseHeldObjectTransformMethod = null;
-    private static MethodInfo _handleFaceSelectionMethod = null;
-
-    private static Type _inputManagerType = null;
-    private static PropertyInfo _instanceProperty = null;
-    private static PropertyInfo _selectableManagerProperty = null;
-
-    private static Type _missionTableOfContentsMissionEntryType = null;
-    private static FieldInfo _missionIDField = null;
-    private static FieldInfo _missionEntryTextField = null;
-    private static FieldInfo _missionSubsectionTextField = null;
-
-    private static Type _missionManagerType = null;
-    private static PropertyInfo _missionManagerInstanceProperty = null;
-    private static MethodInfo _getMissionMethod = null;
-
-    private static Type _missionType = null;
-    private static PropertyInfo _isTutorialProperty = null;
-
-    private static MonoBehaviour _inputManager = null;
     #endregion
 
     #region Private Fields
-    private MonoBehaviour _currentSelectable = null;
+    private Selectable _currentSelectable = null;
     private int _currentSelectableIndex = int.MinValue;
-    private Array _currentSelectables = null;
+    private Selectable[] _currentSelectables = null;
     #endregion
 }
 

@@ -32,10 +32,10 @@ public class MissionMessageResponder : MessageResponder
 
         while (true)
         {
-            UnityEngine.Object[] bombBinders = FindObjectsOfType(CommonReflectedTypeInfo.BombBinderType);
+            BombBinder[] bombBinders = FindObjectsOfType<BombBinder>();
             if (bombBinders != null && bombBinders.Length > 0)
             {
-                _bombBinderCommander = new BombBinderCommander((MonoBehaviour)bombBinders[0]);
+                _bombBinderCommander = new BombBinderCommander(bombBinders[0]);
                 break;
             }
 
