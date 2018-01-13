@@ -10,12 +10,6 @@ using UnityEngine;
 public class BombCommander : ICommandResponder
 {
     #region Constructors
-    static BombCommander()
-    {
-        DebugHelper.Log("[BombCommander] - Running static constructor");
-        DebugHelper.Log("[BombCommander] - Static constructor finished");
-    }
-
     public BombCommander(Bomb bomb)
     {
         Bomb = bomb;
@@ -543,9 +537,6 @@ public class BombCommander : ICommandResponder
     public readonly DateTime BombTimeStamp;
 
     private readonly SelectableManager SelectableManager = null;
-    #endregion
-
-    #region Private Static Fields
     #endregion
 
     public TwitchBombHandle twitchBombHandle = null;
