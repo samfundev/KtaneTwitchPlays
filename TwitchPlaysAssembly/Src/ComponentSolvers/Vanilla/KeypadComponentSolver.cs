@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public class KeypadComponentSolver : ComponentSolver
 {
-    public KeypadComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public KeypadComponentSolver(BombCommander bombCommander, KeypadComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _buttons = (Array)_buttonsField.GetValue(bombComponent);
+		_buttons = bombComponent.buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver");
     }
 
@@ -40,21 +38,11 @@ public class KeypadComponentSolver : ComponentSolver
                     Canceller.ResetCancel();
                     yield break;
                 }
-
-                MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(buttonIndex);
-                yield return DoInteractionClick(button);
+				
+                yield return DoInteractionClick(_buttons[buttonIndex]);
             }
         }
     }
 
-    static KeypadComponentSolver()
-    {
-        _keypadComponentType = ReflectionHelper.FindType("KeypadComponent");
-        _buttonsField = _keypadComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _keypadComponentType = null;
-    private static FieldInfo _buttonsField = null;
-
-    private Array _buttons = null;
+    private KeypadButton[] _buttons = null;
 }

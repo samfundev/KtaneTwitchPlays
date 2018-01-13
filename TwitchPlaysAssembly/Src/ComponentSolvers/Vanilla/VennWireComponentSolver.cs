@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Components.VennWire;
+using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -6,11 +7,10 @@ using UnityEngine;
 
 public class VennWireComponentSolver : ComponentSolver
 {
-    public VennWireComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _wires = (Array)_activeWiresProperty.GetValue(bombComponent, null);
-        _cutWires = new bool[6];
+		_wires = bombComponent.Wires;
         modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver");
     }
 
@@ -61,6 +61,6 @@ public class VennWireComponentSolver : ComponentSolver
     private static Type _vennWireComponentType = null;
     private static PropertyInfo _activeWiresProperty = null;
 
-    private Array _wires = null;
+    private VennSnippableWire[] _wires = null;
     private bool[] _cutWires = null;
 }

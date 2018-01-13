@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Reflection;
-using UnityEngine;
+﻿using System.Collections;
 
 public class NeedyVentComponentSolver : ComponentSolver
 {
-    public NeedyVentComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public NeedyVentComponentSolver(BombCommander bombCommander, NeedyVentComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _yesButton = (MonoBehaviour)_yesButtonField.GetValue(bombComponent);
-        _noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent);
+		_yesButton = bombComponent.YesButton;
+		_noButton = bombComponent.NoButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentComponentSolver");
     }
 
@@ -28,17 +25,6 @@ public class NeedyVentComponentSolver : ComponentSolver
         }
     }
 
-    static NeedyVentComponentSolver()
-    {
-        _needyVentComponentSolverType = ReflectionHelper.FindType("NeedyVentComponent");
-        _yesButtonField = _needyVentComponentSolverType.GetField("YesButton", BindingFlags.Public | BindingFlags.Instance);
-        _noButtonField = _needyVentComponentSolverType.GetField("NoButton", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _needyVentComponentSolverType = null;
-    private static FieldInfo _yesButtonField = null;
-    private static FieldInfo _noButtonField = null;
-
-    private MonoBehaviour _yesButton = null;
-    private MonoBehaviour _noButton = null;
+    private KeypadButton _yesButton = null;
+    private KeypadButton _noButton = null;
 }

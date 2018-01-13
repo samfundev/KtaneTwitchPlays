@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class MorseCodeComponentSolver : ComponentSolver
 {
-    public MorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public MorseCodeComponentSolver(BombCommander bombCommander, MorseCodeComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _upButton = (MonoBehaviour)_upButtonField.GetValue(bombComponent);
-        _downButton = (MonoBehaviour)_downButtonField.GetValue(bombComponent);
-        _transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(bombComponent);
+		_upButton = bombComponent.UpButton;
+		_downButton = bombComponent.DownButton;
+		_transmitButton = bombComponent.TransmitButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver");
     }
 
@@ -31,7 +31,7 @@ public class MorseCodeComponentSolver : ComponentSolver
         }
 
         int initialFrequency = CurrentFrequency;
-        MonoBehaviour buttonToShift = targetFrequency < initialFrequency ? _downButton : _upButton;
+        KeypadButton buttonToShift = targetFrequency < initialFrequency ? _downButton : _upButton;
 
         while (CurrentFrequency != targetFrequency && (CurrentFrequency == initialFrequency || Mathf.Sign(CurrentFrequency - initialFrequency) != Mathf.Sign(CurrentFrequency - targetFrequency)))
         {
@@ -63,17 +63,8 @@ public class MorseCodeComponentSolver : ComponentSolver
     {
         get
         {
-            return (int)_currentFrequencyProperty.GetValue(BombComponent, null);
+			return ((MorseCodeComponent) BombComponent).CurrentFrequency;
         }
-    }
-
-    static MorseCodeComponentSolver()
-    {
-        _morseCodeComponentType = ReflectionHelper.FindType("MorseCodeComponent");
-        _upButtonField = _morseCodeComponentType.GetField("UpButton", BindingFlags.Public | BindingFlags.Instance);
-        _downButtonField = _morseCodeComponentType.GetField("DownButton", BindingFlags.Public | BindingFlags.Instance);
-        _transmitButtonField = _morseCodeComponentType.GetField("TransmitButton", BindingFlags.Public | BindingFlags.Instance);
-        _currentFrequencyProperty = _morseCodeComponentType.GetProperty("CurrentFrequency", BindingFlags.Public | BindingFlags.Instance);
     }
 
     private static readonly int[] Frequencies = new int[]
@@ -101,13 +92,7 @@ public class MorseCodeComponentSolver : ComponentSolver
         600
     };
 
-    private static Type _morseCodeComponentType = null;
-    private static FieldInfo _upButtonField = null;
-    private static FieldInfo _downButtonField = null;
-    private static FieldInfo _transmitButtonField = null;
-    private static PropertyInfo _currentFrequencyProperty = null;
-
-    private MonoBehaviour _upButton = null;
-    private MonoBehaviour _downButton = null;
-    private MonoBehaviour _transmitButton = null;
+    private KeypadButton _upButton = null;
+    private KeypadButton _downButton = null;
+    private KeypadButton _transmitButton = null;
 }

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
 using UnityEngine;
 
 public class NeedyDischargeComponentSolver : ComponentSolver
 {
-    public NeedyDischargeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public NeedyDischargeComponentSolver(BombCommander bombCommander, NeedyDischargeComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _dischargeButton = (MonoBehaviour)_dischargeButtonField.GetValue(bombComponent);
+		_dischargeButton = bombComponent.DischargeButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver");
     }
 
@@ -16,42 +15,20 @@ public class NeedyDischargeComponentSolver : ComponentSolver
     {
         string[] commandParts = inputCommand.Split(' ');
 
-        if (commandParts.Length != 2)
-        {
+        if (commandParts.Length != 2 && !commandParts[0].Equals("hold", StringComparison.InvariantCultureIgnoreCase))
             yield break;
-        }
 
-        if (!commandParts[0].Equals("hold", StringComparison.InvariantCultureIgnoreCase))
-        {
-            yield break;
-        }
-
-        int holdTime = 0;
-        if (!int.TryParse(commandParts[1], out holdTime))
-        {
-            yield break;
-        }
+        float holdTime = 0;
+        if (!float.TryParse(commandParts[1], out holdTime))  yield break;
 
         yield return "hold";
 
-        if (holdTime > 10.0f)
-        {
-            yield return "elevator music";
-        }
+        if (holdTime > 9) yield return "elevator music";
 
         DoInteractionStart(_dischargeButton);
         yield return new WaitForSecondsWithCancel(holdTime, Canceller);
         DoInteractionEnd(_dischargeButton);
     }
 
-    static NeedyDischargeComponentSolver()
-    {
-        _needyDischargeComponentType = ReflectionHelper.FindType("NeedyDischargeComponent");
-        _dischargeButtonField = _needyDischargeComponentType.GetField("DischargeButton", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _needyDischargeComponentType = null;
-    private static FieldInfo _dischargeButtonField = null;
-
-    private MonoBehaviour _dischargeButton = null;
+    private SpringedSwitch _dischargeButton = null;
 }

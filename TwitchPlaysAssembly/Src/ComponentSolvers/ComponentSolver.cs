@@ -350,15 +350,14 @@ public abstract class ComponentSolver : ICommandResponder
     #region Protected Helper Methods
     protected void DoInteractionStart(MonoBehaviour interactable)
     {
-        MonoBehaviour selectable = (MonoBehaviour)interactable.GetComponent(_selectableType);
-        _interactMethod.Invoke(selectable, null);
+		interactable.GetComponent<Selectable>().HandleInteract();
     }
 
     protected void DoInteractionEnd(MonoBehaviour interactable)
     {
-        MonoBehaviour selectable = (MonoBehaviour)interactable.GetComponent(_selectableType);
-        _interactEndedMethod.Invoke(selectable, null);
-        _setHighlightMethod.Invoke(selectable, new object[] { false });
+		Selectable selectable = interactable.GetComponent<Selectable>();
+		selectable.OnInteractEnded();
+		selectable.SetHighlight(false);
     }
 
     protected string GetModuleType()

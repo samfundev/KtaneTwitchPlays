@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
-using UnityEngine;
+using System.Collections.Generic;
 
 public class WireSetComponentSolver : ComponentSolver
 {
-    public WireSetComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public WireSetComponentSolver(BombCommander bombCommander, WireSetComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _wires = (IList)_wiresField.GetValue(bombComponent);
-        modInfo = ComponentSolverFactory.GetModuleInfo("WireSetComponentSolver");
+		_wires = bombComponent.wires;
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -19,32 +17,13 @@ public class WireSetComponentSolver : ComponentSolver
             yield break;
         }
         inputCommand = inputCommand.Substring(4);
+		
+		int wireIndex = 0;
+        if (!int.TryParse(inputCommand, out wireIndex) || wireIndex < 0 && wireIndex > _wires.Count) yield break;
 
-        int wireIndex = 0;
-        if (!int.TryParse(inputCommand, out wireIndex))
-        {
-            yield break;
-        }
-
-        wireIndex--;
-
-        if (wireIndex >= 0 && wireIndex < _wires.Count)
-        {
-            yield return inputCommand;
-
-            MonoBehaviour wireToCut = (MonoBehaviour)_wires[wireIndex];
-            yield return DoInteractionClick(wireToCut);
-        }
+		yield return null;
+		yield return DoInteractionClick(_wires[wireIndex - 1]);
     }
 
-    static WireSetComponentSolver()
-    {
-        _wireSetComponentType = ReflectionHelper.FindType("WireSetComponent");
-        _wiresField = _wireSetComponentType.GetField("wires", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _wireSetComponentType = null;
-    private static FieldInfo _wiresField = null;
-
-    private IList _wires = null;
+	private List<SnippableWire> _wires;
 }

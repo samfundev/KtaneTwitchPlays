@@ -1,14 +1,11 @@
-using System;
 using System.Collections;
-using System.Reflection;
-using UnityEngine;
 
 public class MemoryComponentSolver : ComponentSolver
 {
-    public MemoryComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public MemoryComponentSolver(BombCommander bombCommander, MemoryComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _buttons = (Array)_buttonsField.GetValue(bombComponent);
+		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("MemoryComponentSolver");
     }
 
@@ -32,17 +29,14 @@ public class MemoryComponentSolver : ComponentSolver
             if (commandParts[0].EqualsAny("position", "pos", "p"))
             {
                 yield return "position";
-
-                MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(buttonNumber - 1);
-                yield return DoInteractionClick(button);
+				
+                yield return DoInteractionClick(_buttons[buttonNumber - 1]);
             }
             else if (commandParts[0].EqualsAny("label", "lab", "l"))
             {
-                foreach(object buttonObject in _buttons)
+                foreach(KeypadButton button in _buttons)
                 {
-                    MonoBehaviour button = (MonoBehaviour)buttonObject;
-                    string buttonText = (string)_getTextMethod.Invoke(button, null);
-                    if (buttonText.Equals(buttonNumber.ToString()))
+                    if (button.GetText().Equals(buttonNumber.ToString()))
                     {
                         yield return "label";
                         yield return DoInteractionClick(button);
@@ -53,20 +47,5 @@ public class MemoryComponentSolver : ComponentSolver
         }
     }
 
-    static MemoryComponentSolver()
-    {
-        _memoryComponentType = ReflectionHelper.FindType("MemoryComponent");
-        _buttonsField = _memoryComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-
-        _keypadButtonType = ReflectionHelper.FindType("KeypadButton");
-        _getTextMethod = _keypadButtonType.GetMethod("GetText", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _memoryComponentType = null;
-    private static FieldInfo _buttonsField = null;
-
-    private static Type _keypadButtonType = null;
-    private static MethodInfo _getTextMethod = null;
-
-    private Array _buttons = null;
+    private KeypadButton[] _buttons = null;
 }

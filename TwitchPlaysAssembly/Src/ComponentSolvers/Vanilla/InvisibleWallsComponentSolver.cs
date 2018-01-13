@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public class InvisibleWallsComponentSolver : ComponentSolver
 {
-    public InvisibleWallsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public InvisibleWallsComponentSolver(BombCommander bombCommander, InvisibleWallsComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _buttons = (IList)_buttonsField.GetValue(bombComponent);
+		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver");
     }
 
@@ -30,7 +28,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 
         foreach (Match move in matches)
         {
-            MonoBehaviour button = (MonoBehaviour)_buttons[  buttonIndex[ move.Value.ToLowerInvariant() ]  ];
+            KeypadButton button = _buttons[ buttonIndex[ move.Value.ToLowerInvariant() ] ];
             
             if (button != null)
             {
@@ -46,19 +44,11 @@ public class InvisibleWallsComponentSolver : ComponentSolver
             }            
         }
     }
-
-    static InvisibleWallsComponentSolver()
-    {
-        _invisibleWallsComponentType = ReflectionHelper.FindType("InvisibleWallsComponent");
-        _buttonsField = _invisibleWallsComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _invisibleWallsComponentType = null;
-    private static FieldInfo _buttonsField = null;
+	
     private static readonly Dictionary<string, int> buttonIndex = new Dictionary<string, int>
     {
         {"u", 0}, {"l", 1}, {"r", 2}, {"d", 3}
     };
 
-    private IList _buttons = null;
+    private List<KeypadButton> _buttons = null;
 }

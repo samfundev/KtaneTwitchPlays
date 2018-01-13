@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class PasswordComponentSolver : ComponentSolver
 {
-    public PasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public PasswordComponentSolver(BombCommander bombCommander, PasswordComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _spinners = (IList)_spinnersField.GetValue(bombComponent);
-        _submitButton = (MonoBehaviour)_submitButtonField.GetValue(bombComponent);
+		_spinners = bombComponent.Spinners;
+		_submitButton = bombComponent.SubmitButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("PasswordComponentSolver");
     }
 
@@ -41,7 +42,7 @@ public class PasswordComponentSolver : ComponentSolver
 
                 if (spinnerIndex >= 0 && spinnerIndex < _spinners.Count)
                 {
-                    IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(GetCharSpinner(spinnerIndex));
+                    IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[spinnerIndex]);
                     while (spinnerCoroutine.MoveNext())
                     {
                         yield return spinnerCoroutine.Current;
@@ -61,11 +62,11 @@ public class PasswordComponentSolver : ComponentSolver
         }
     }
 
-    private IEnumerator CycleCharacterSpinnerCoroutine(MonoBehaviour spinner)
+    private IEnumerator CycleCharacterSpinnerCoroutine(CharSpinner spinner)
     {
         yield return "cycle";
 
-        MonoBehaviour downButton = (MonoBehaviour)_downButtonField.GetValue(spinner);
+		KeypadButton downButton = spinner.DownButton;
 
         for (int hitCount = 0; hitCount < 6; ++hitCount)
         {
@@ -91,7 +92,7 @@ public class PasswordComponentSolver : ComponentSolver
                 yield break;
             }
 
-            MonoBehaviour spinner = GetCharSpinner(characterIndex);
+            CharSpinner spinner = _spinners[characterIndex];
             IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(spinner, characters[characterIndex]);
             while (subcoroutine.MoveNext())
             {
@@ -99,60 +100,25 @@ public class PasswordComponentSolver : ComponentSolver
             }
 
             //Break out of the sequence if a column spinner doesn't have a matching character
-            if (char.ToLowerInvariant(GetCurrentChar(spinner)) != char.ToLowerInvariant(characters[characterIndex]))
+            if (char.ToLowerInvariant(spinner.GetCurrentChar()) != char.ToLowerInvariant(characters[characterIndex]))
             {
 				yield return "unsubmittablepenalty";
                 yield break;
             }
         }
 
-        DoInteractionStart(_submitButton);
-        yield return new WaitForSeconds(0.1f);
-        DoInteractionEnd(_submitButton);
+        yield return DoInteractionClick(_submitButton);
     }
 
-    private IEnumerator GetCharacterSpinnerToCharacterCoroutine(MonoBehaviour spinner, char desiredCharacter)
+    private IEnumerator GetCharacterSpinnerToCharacterCoroutine(CharSpinner spinner, char desiredCharacter)
     {
-        MonoBehaviour downButton = (MonoBehaviour) _downButtonField.GetValue(spinner);
-        for (int hitCount = 0; hitCount < 6 && char.ToLowerInvariant(GetCurrentChar(spinner)) != char.ToLowerInvariant(desiredCharacter); ++hitCount)
+		MonoBehaviour downButton = spinner.DownButton;
+        for (int hitCount = 0; hitCount < 6 && char.ToLowerInvariant(spinner.GetCurrentChar()) != char.ToLowerInvariant(desiredCharacter); ++hitCount)
         {
             yield return DoInteractionClick(downButton);
         }
     }
 
-    private MonoBehaviour GetCharSpinner(int spinnerIndex)
-    {
-        return (MonoBehaviour)_spinners[spinnerIndex];
-    }
-
-    private char GetCurrentChar(int spinnerIndex)
-    {
-        return GetCurrentChar(GetCharSpinner(spinnerIndex));
-    }
-
-    private char GetCurrentChar(MonoBehaviour spinner)
-    {
-        return (char)_getCurrentCharMethod.Invoke(spinner, null);
-    }
-
-    static PasswordComponentSolver()
-    {
-        _passwordComponentType = ReflectionHelper.FindType("PasswordComponent");
-        _spinnersField = _passwordComponentType.GetField("Spinners", BindingFlags.Public | BindingFlags.Instance);
-        _submitButtonField = _passwordComponentType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
-
-        _charSpinnerType = ReflectionHelper.FindType("CharSpinner");
-        _downButtonField = _charSpinnerType.GetField("DownButton", BindingFlags.Public | BindingFlags.Instance);
-        _getCurrentCharMethod = _charSpinnerType.GetMethod("GetCurrentChar", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _passwordComponentType = null;
-    private static Type _charSpinnerType = null;
-    private static FieldInfo _spinnersField = null;
-    private static FieldInfo _submitButtonField = null;
-    private static FieldInfo _downButtonField = null;
-    private static MethodInfo _getCurrentCharMethod = null;
-
-    private IList _spinners = null;
-    private MonoBehaviour _submitButton = null;
+    private List<CharSpinner> _spinners = null;
+    private KeypadButton _submitButton = null;
 }

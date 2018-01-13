@@ -7,12 +7,12 @@ using UnityEngine;
 
 public class WireSequenceComponentSolver : ComponentSolver
 {
-    public WireSequenceComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _wireSequence = (IList)_wireSequenceField.GetValue(bombComponent);
-        _upButton = (MonoBehaviour)_upButtonField.GetValue(bombComponent);
-        _downButton = (MonoBehaviour)_downButtonField.GetValue(bombComponent);
+        _wireSequence = (List<WireSequenceComponent.WireConfiguration>) _wireSequenceField.GetValue(bombComponent);
+		_upButton = bombComponent.UpButton;
+		_downButton = bombComponent.DownButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("WireSequenceComponentSolver");
     }
 
@@ -58,21 +58,13 @@ public class WireSequenceComponentSolver : ComponentSolver
                 }
 
                 int wireIndex;
-                if (!int.TryParse(wireIndexString, out wireIndex))
-                {
-                    yield break;
-                }
-                wireIndex--;
-                if (!CanInteractWithWire(wireIndex))
-                {
-                    yield break;
-                }
+                if (!int.TryParse(wireIndexString, out wireIndex)) yield break;
 
-                MonoBehaviour wire = GetWire(wireIndex);
-                if (wire == null)
-                {
-                    yield break;
-                }
+                wireIndex--;
+                if (!CanInteractWithWire(wireIndex)) yield break;
+
+                WireSequenceWire wire = GetWire(wireIndex);
+                if (wire == null) yield break;
                 buttons.Add(wire);
                 strikemessages.Add(string.Format("cutting Wire {0}.", wireIndex + 1));
             }
@@ -98,32 +90,23 @@ public class WireSequenceComponentSolver : ComponentSolver
         return wirePageIndex == (int)_currentPageField.GetValue(BombComponent);
     }
 
-    private MonoBehaviour GetWire(int wireIndex)
+    private WireSequenceWire GetWire(int wireIndex)
     {
-        return (MonoBehaviour)_wireField.GetValue(_wireSequence[wireIndex]);
+		return _wireSequence[wireIndex].Wire;
     }
 
     static WireSequenceComponentSolver()
     {
-        _wireSequenceComponentType = ReflectionHelper.FindType("WireSequenceComponent");
+		_wireSequenceComponentType = typeof(WireSequenceComponent);
         _wireSequenceField = _wireSequenceComponentType.GetField("wireSequence", BindingFlags.NonPublic | BindingFlags.Instance);
         _currentPageField = _wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
-        _upButtonField = _wireSequenceComponentType.GetField("UpButton", BindingFlags.Public | BindingFlags.Instance);
-        _downButtonField = _wireSequenceComponentType.GetField("DownButton", BindingFlags.Public | BindingFlags.Instance);
-
-        _wireConfigurationType = ReflectionHelper.FindType("WireSequenceComponent+WireConfiguration");
-        _wireField = _wireConfigurationType.GetField("Wire", BindingFlags.Public | BindingFlags.Instance);
     }
 
     private static Type _wireSequenceComponentType = null;
-    private static Type _wireConfigurationType = null;
     private static FieldInfo _wireSequenceField = null;
     private static FieldInfo _currentPageField = null;
-    private static FieldInfo _upButtonField = null;
-    private static FieldInfo _downButtonField = null;
-    private static FieldInfo _wireField = null;
 
-    private IList _wireSequence = null;
-    private MonoBehaviour _upButton = null;
-    private MonoBehaviour _downButton = null;
+    private List<WireSequenceComponent.WireConfiguration> _wireSequence = null;
+    private Selectable _upButton = null;
+    private Selectable _downButton = null;
 }

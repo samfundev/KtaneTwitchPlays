@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Reflection;
-using UnityEngine;
+﻿using System.Collections;
 
 public class NeedyKnobComponentSolver : ComponentSolver
 {
-    public NeedyKnobComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public NeedyKnobComponentSolver(BombCommander bombCommander, NeedyKnobComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-        _pointingKnob = (MonoBehaviour)_pointingKnobField.GetValue(bombComponent);
+		_pointingKnob = bombComponent.PointingKnob;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver");
     }
 
@@ -47,14 +44,5 @@ public class NeedyKnobComponentSolver : ComponentSolver
         }
     }
 
-    static NeedyKnobComponentSolver()
-    {
-        _needyKnobComponentType = ReflectionHelper.FindType("NeedyKnobComponent");
-        _pointingKnobField = _needyKnobComponentType.GetField("PointingKnob", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _needyKnobComponentType = null;
-    private static FieldInfo _pointingKnobField = null;
-
-    private MonoBehaviour _pointingKnob = null;
+    private PointingKnob _pointingKnob = null;
 }
