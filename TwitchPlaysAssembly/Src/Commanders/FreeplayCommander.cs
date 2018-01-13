@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Settings;
 using UnityEngine;
 
 public class FreeplayCommander : ICommandResponder
@@ -9,71 +10,16 @@ public class FreeplayCommander : ICommandResponder
     #region Constructors
     static FreeplayCommander()
     {
-        _freeplayDeviceType = CommonReflectedTypeInfo.FreeplayDeviceType;
-        _moduleCountIncrementField = _freeplayDeviceType.GetField("ModuleCountIncrement", BindingFlags.Public | BindingFlags.Instance);
-        _moduleCountDecrementField = _freeplayDeviceType.GetField("ModuleCountDecrement", BindingFlags.Public | BindingFlags.Instance);
-        _timeIncrementField = _freeplayDeviceType.GetField("TimeIncrement", BindingFlags.Public | BindingFlags.Instance);
-        _timeDecrementField = _freeplayDeviceType.GetField("TimeDecrement", BindingFlags.Public | BindingFlags.Instance);
-        _needyToggleField = _freeplayDeviceType.GetField("NeedyToggle", BindingFlags.Public | BindingFlags.Instance);
-        _hardcoreToggleField = _freeplayDeviceType.GetField("HardcoreToggle", BindingFlags.Public | BindingFlags.Instance);
-        _modsOnlyToggleField = _freeplayDeviceType.GetField("ModsOnly", BindingFlags.Public | BindingFlags.Instance);
-        _startButtonField = _freeplayDeviceType.GetField("StartButton", BindingFlags.Public | BindingFlags.Instance);
-        _currentSettingsField = _freeplayDeviceType.GetProperty("CurrentSettings", BindingFlags.Public | BindingFlags.Instance);
-        _maxModuleField = _freeplayDeviceType.GetField("maxModules", BindingFlags.NonPublic | BindingFlags.Instance);
-        _MAXSECONDSFIELD = _freeplayDeviceType.GetField("MAX_SECONDS_TO_SOLVE", BindingFlags.Public | BindingFlags.Static);
-
-        _freeplaySettingsType = ReflectionHelper.FindType("Assets.Scripts.Settings.FreeplaySettings");
-        _moduleCountField = _freeplaySettingsType.GetField("ModuleCount", BindingFlags.Public | BindingFlags.Instance);
-        _timeField = _freeplaySettingsType.GetField("Time", BindingFlags.Public | BindingFlags.Instance);
-        _isHardCoreField = _freeplaySettingsType.GetField("IsHardCore", BindingFlags.Public | BindingFlags.Instance);
-        _hasNeedyField = _freeplaySettingsType.GetField("HasNeedy", BindingFlags.Public | BindingFlags.Instance);
-        _onlyModsField = _freeplaySettingsType.GetField("OnlyMods", BindingFlags.Public | BindingFlags.Instance);
-
-        _floatingHoldableType = ReflectionHelper.FindType("FloatingHoldable");
-        if (_floatingHoldableType == null)
-        {
-            return;
-        }
-        _pickupTimeField = _floatingHoldableType.GetField("PickupTime", BindingFlags.Public | BindingFlags.Instance);
-        _holdStateProperty = _floatingHoldableType.GetProperty("HoldState", BindingFlags.Public | BindingFlags.Instance);
-
-        _selectableType = ReflectionHelper.FindType("Selectable");
-        _handleSelectMethod = _selectableType.GetMethod("HandleSelect", BindingFlags.Public | BindingFlags.Instance);
-        _onInteractEndedMethod = _selectableType.GetMethod("OnInteractEnded", BindingFlags.Public | BindingFlags.Instance);
-        _childrenField = _selectableType.GetField("Children", BindingFlags.Public | BindingFlags.Instance);
-        
-
-        _selectableManagerType = ReflectionHelper.FindType("SelectableManager");
-        if (_selectableManagerType == null)
-        {
-            return;
-        }
-        _selectMethod = _selectableManagerType.GetMethod("Select", BindingFlags.Public | BindingFlags.Instance);
-        _handleInteractMethod = _selectableManagerType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
-        _handleCancelMethod = _selectableManagerType.GetMethod("HandleCancel", BindingFlags.Public | BindingFlags.Instance);
-        _setZSpinMethod = _selectableManagerType.GetMethod("SetZSpin", BindingFlags.Public | BindingFlags.Instance);
-        _setControlsRotationMethod = _selectableManagerType.GetMethod("SetControlsRotation", BindingFlags.Public | BindingFlags.Instance);
-        _getBaseHeldObjectTransformMethod = _selectableManagerType.GetMethod("GetBaseHeldObjectTransform", BindingFlags.Public | BindingFlags.Instance);
-        _handleFaceSelectionMethod = _selectableManagerType.GetMethod("HandleFaceSelection", BindingFlags.Public | BindingFlags.Instance);
-
-        _inputManagerType = ReflectionHelper.FindType("KTInputManager");
-        if (_inputManagerType == null)
-        {
-            return;
-        }
-        _instanceProperty = _inputManagerType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
-        _selectableManagerProperty = _inputManagerType.GetProperty("SelectableManager", BindingFlags.Public | BindingFlags.Instance);
-
-        _inputManager = (MonoBehaviour)_instanceProperty.GetValue(null, null);
+        _maxModuleField = typeof(FreeplayDevice).GetField("maxModules", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
-    public FreeplayCommander(MonoBehaviour freeplayDevice)
+    public FreeplayCommander(FreeplayDevice freeplayDevice)
     {
         FreeplayDevice = freeplayDevice;
-        Selectable = (MonoBehaviour)FreeplayDevice.GetComponent(_selectableType);
-        SelectableChildren = (MonoBehaviour[]) _childrenField.GetValue(Selectable);
-        FloatingHoldable = (MonoBehaviour)FreeplayDevice.GetComponent(_floatingHoldableType);
-        SelectableManager = (MonoBehaviour)_selectableManagerProperty.GetValue(_inputManager, null);
+        Selectable = FreeplayDevice.GetComponent<Selectable>();
+        SelectableChildren = Selectable.Children;
+        FloatingHoldable = FreeplayDevice.GetComponent<FloatingHoldable>();
+        SelectableManager = KTInputManager.Instance.SelectableManager;
     }
     #endregion
 
@@ -103,9 +49,9 @@ public class FreeplayCommander : ICommandResponder
     public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
         message = message.ToLowerInvariant();
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
-        
-        if (holdState == 0)
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+
+        if (holdState == FloatingHoldable.HoldStateEnum.Held)
         {
             if (message.EqualsAny("drop","let go","put down"))
             {
@@ -394,32 +340,32 @@ public class FreeplayCommander : ICommandResponder
         int timeIndex = (hoursInt * 120) + (minutes * 2) + (seconds / 30);
         DebugHelper.Log("Freeplay time doubling section");
         //Double the available free play time. (The doubling stacks with the Multiple bombs module installed)
-        float originalMaxTime = (float) _MAXSECONDSFIELD.GetValue(null);
+        float originalMaxTime = FreeplayDevice.MAX_SECONDS_TO_SOLVE;
         int maxModules = (int)_maxModuleField.GetValue(FreeplayDevice);
         int multiplier = MultipleBombs.Installed() ? (MultipleBombs.GetMaximumBombCount() * 2) - 1 : 1;
         float newMaxTime = 600f + ((maxModules - 1) * multiplier * 60);
-        _MAXSECONDSFIELD.SetValue(null, newMaxTime);
+        FreeplayDevice.MAX_SECONDS_TO_SOLVE = newMaxTime;
 
 
         DebugHelper.Log("Freeplay settings reading section");
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice,null); DebugHelper.Log("1");
-        float currentTime = (float)_timeField.GetValue(currentSettings); DebugHelper.Log("2");
-        int currentTimeIndex = Mathf.FloorToInt(currentTime) / 30; DebugHelper.Log("3");
-        MonoBehaviour button = timeIndex > currentTimeIndex ? (MonoBehaviour)_timeIncrementField.GetValue(FreeplayDevice) : (MonoBehaviour)_timeDecrementField.GetValue(FreeplayDevice); DebugHelper.Log("4");
-        MonoBehaviour buttonSelectable = (MonoBehaviour)button.GetComponent(_selectableType); DebugHelper.Log("5");
+        FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings;
+        float currentTime = currentSettings.Time;
+        int currentTimeIndex = Mathf.FloorToInt(currentTime) / 30;
+        KeypadButton button = timeIndex > currentTimeIndex ? FreeplayDevice.TimeIncrement : FreeplayDevice.TimeDecrement;
+        Selectable buttonSelectable = button.GetComponent<Selectable>();
 
         DebugHelper.Log("Freeplay time setting section");
         for (int hitCount = 0; hitCount < Mathf.Abs(timeIndex - currentTimeIndex); ++hitCount)
         {
-            currentTime = (float)_timeField.GetValue(currentSettings);
+            currentTime = currentSettings.Time;
             SelectObject(buttonSelectable);
             yield return new WaitForSeconds(0.01f);
-            if (Mathf.FloorToInt(currentTime) == Mathf.FloorToInt((float) _timeField.GetValue(currentSettings)))
+            if (Mathf.FloorToInt(currentTime) == Mathf.FloorToInt(currentSettings.Time))
                 break;
         }
 
         //Restore original max time, just in case Multiple bombs module was NOT installed, to avoid false detection.
-        _MAXSECONDSFIELD.SetValue(null, originalMaxTime);
+        FreeplayDevice.MAX_SECONDS_TO_SOLVE = originalMaxTime;
     }
 
     public IEnumerator SetBombCount(string bombs)
@@ -436,7 +382,7 @@ public class FreeplayCommander : ICommandResponder
         }
 
         int currentBombCount = MultipleBombs.GetFreePlayBombCount();
-        MonoBehaviour buttonSelectable = bombCount > currentBombCount ? SelectableChildren[3] : SelectableChildren[2];
+        Selectable buttonSelectable = bombCount > currentBombCount ? SelectableChildren[3] : SelectableChildren[2];
 
         for (int hitCount = 0; hitCount < Mathf.Abs(bombCount - currentBombCount); ++hitCount)
         {
@@ -456,17 +402,17 @@ public class FreeplayCommander : ICommandResponder
             yield break;
         }
 
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null);
-        int currentModuleCount = (int)_moduleCountField.GetValue(currentSettings);
-        MonoBehaviour button = moduleCount > currentModuleCount ? (MonoBehaviour)_moduleCountIncrementField.GetValue(FreeplayDevice) : (MonoBehaviour)_moduleCountDecrementField.GetValue(FreeplayDevice);
-        MonoBehaviour buttonSelectable = (MonoBehaviour)button.GetComponent(_selectableType);
+        FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings;
+        int currentModuleCount = currentSettings.ModuleCount;
+        KeypadButton button = moduleCount > currentModuleCount ? FreeplayDevice.ModuleCountIncrement : FreeplayDevice.ModuleCountDecrement;
+        Selectable buttonSelectable = button.GetComponent<Selectable>();
 
         for (int hitCount = 0; hitCount < Mathf.Abs(moduleCount - currentModuleCount); ++hitCount)
         {
-            int lastModuleCount = (int)_moduleCountField.GetValue(currentSettings);
+            int lastModuleCount = currentSettings.ModuleCount;
             SelectObject(buttonSelectable);
             yield return new WaitForSeconds(0.01f);
-            if (lastModuleCount == (int)_moduleCountField.GetValue(currentSettings))
+            if (lastModuleCount == currentSettings.ModuleCount)
                 yield break;
         }
     }
@@ -475,8 +421,8 @@ public class FreeplayCommander : ICommandResponder
     {
         if (HasNeedy != on)
         {
-            MonoBehaviour needyToggle = (MonoBehaviour)_needyToggleField.GetValue(FreeplayDevice);
-            SelectObject( (MonoBehaviour)needyToggle.GetComponent(_selectableType) );
+            ToggleSwitch needyToggle = FreeplayDevice.NeedyToggle;
+            SelectObject( needyToggle.GetComponent<Selectable>() );
         }
     }
 
@@ -484,37 +430,37 @@ public class FreeplayCommander : ICommandResponder
     {
         if (IsHardcore != on)
         {
-            MonoBehaviour hardcoreToggle = (MonoBehaviour)_hardcoreToggleField.GetValue(FreeplayDevice);
-            SelectObject( (MonoBehaviour)hardcoreToggle.GetComponent(_selectableType) );
+            ToggleSwitch hardcoreToggle = FreeplayDevice.HardcoreToggle;
+            SelectObject( hardcoreToggle.GetComponent<Selectable>() );
         }
     }
 
     public void SetModsOnly(bool on = true)
     {
-        object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null);
-        bool onlyMods = (bool)_onlyModsField.GetValue(currentSettings);
+        FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings;
+        bool onlyMods = currentSettings.OnlyMods;
         if (onlyMods != on)
         {
-            MonoBehaviour modsToggle = (MonoBehaviour)_modsOnlyToggleField.GetValue(FreeplayDevice);
-            SelectObject( (MonoBehaviour)modsToggle.GetComponent(_selectableType) );
+            ToggleSwitch modsToggle = FreeplayDevice.ModsOnly;
+            SelectObject( modsToggle.GetComponent<Selectable>());
         }
     }
 
     public void StartBomb()
     {
-        MonoBehaviour startButton = (MonoBehaviour)_startButtonField.GetValue(FreeplayDevice);
-        SelectObject( (MonoBehaviour)startButton.GetComponent(_selectableType) );
+        KeypadButton startButton = FreeplayDevice.StartButton;
+        SelectObject( startButton.GetComponent<Selectable>());
     }
 
     public IEnumerator HoldFreeplayDevice()
     {
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 
-        if (holdState != 0)
+        if (holdState != FloatingHoldable.HoldStateEnum.Held)
         {
             SelectObject(Selectable);
 
-            float holdTime = (float)_pickupTimeField.GetValue(FloatingHoldable);
+            float holdTime = FloatingHoldable.PickupTime;
             IEnumerator forceRotationCoroutine = ForceHeldRotation(holdTime);
             while (forceRotationCoroutine.MoveNext())
             {
@@ -525,101 +471,60 @@ public class FreeplayCommander : ICommandResponder
 
     public void LetGoFreeplayDevice()
     {
-        int holdState = (int)_holdStateProperty.GetValue(FloatingHoldable, null);
-        if (holdState == 0)
+        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+        if (holdState == FloatingHoldable.HoldStateEnum.Held)
         {
             DeselectObject(Selectable);
         }
     }
 
-    private void SelectObject(MonoBehaviour selectable)
+    private void SelectObject(Selectable selectable)
     {
-        _handleSelectMethod.Invoke(selectable, new object[] { true });
-        _selectMethod.Invoke(SelectableManager, new object[] { selectable, true });
-        _handleInteractMethod.Invoke(SelectableManager, null);
-        _onInteractEndedMethod.Invoke(selectable, null);
+        selectable.HandleSelect(true);
+        SelectableManager.Select(selectable, true);
+        SelectableManager.HandleInteract();
+        selectable.OnInteractEnded();
     }
 
-    private void DeselectObject(MonoBehaviour selectable)
+    private void DeselectObject(Selectable selectable)
     {
-        _handleCancelMethod.Invoke(SelectableManager, null);
+        SelectableManager.HandleCancel();
     }
 
     private IEnumerator ForceHeldRotation(float duration)
     {
-        Transform baseTransform = (Transform)_getBaseHeldObjectTransformMethod.Invoke(SelectableManager, null);
+        Transform baseTransform = SelectableManager.GetBaseHeldObjectTransform();
 
         float initialTime = Time.time;
         while (Time.time - initialTime < duration)
         {
             Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
-            _setZSpinMethod.Invoke(SelectableManager, new object[] { 0.0f });
-            _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * currentRotation });
-            _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+
+            SelectableManager.SetZSpin(0.0f);
+            SelectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+            SelectableManager.HandleFaceSelection();
             yield return null;
         }
 
-        _setZSpinMethod.Invoke(SelectableManager, new object[] { 0.0f });
-        _setControlsRotationMethod.Invoke(SelectableManager, new object[] { baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, 0.0f) });
-        _handleFaceSelectionMethod.Invoke(SelectableManager, null);
+        SelectableManager.SetZSpin(0.0f);
+        SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, 0.0f));
+        SelectableManager.HandleFaceSelection();
     }
     #endregion
 
     #region Readonly Fields
-    public readonly MonoBehaviour FreeplayDevice = null;
-    public readonly MonoBehaviour Selectable = null;
-    public readonly MonoBehaviour[] SelectableChildren = null;
-    public readonly MonoBehaviour FloatingHoldable = null;
-    private readonly MonoBehaviour SelectableManager = null;
-    public bool HasNeedy { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null); return (bool)_hasNeedyField.GetValue(currentSettings); }}
-    public bool IsHardcore { get { object currentSettings = _currentSettingsField.GetValue(FreeplayDevice, null); return (bool)_isHardCoreField.GetValue(currentSettings); }}
+    public readonly FreeplayDevice FreeplayDevice = null;
+    public readonly Selectable Selectable = null;
+    public readonly Selectable[] SelectableChildren = null;
+    public readonly FloatingHoldable FloatingHoldable = null;
+    private readonly SelectableManager SelectableManager = null;
+    public bool HasNeedy { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.HasNeedy; }}
+    public bool IsHardcore { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.IsHardCore; }}
     #endregion
 
     #region Private Static Fields
-    private static Type _freeplayDeviceType = null;
-    private static FieldInfo _moduleCountIncrementField = null;
-    private static FieldInfo _moduleCountDecrementField = null;
-    private static FieldInfo _timeIncrementField = null;
-    private static FieldInfo _timeDecrementField = null;
-    private static FieldInfo _needyToggleField = null;
-    private static FieldInfo _hardcoreToggleField = null;
-    private static FieldInfo _modsOnlyToggleField = null;
-    private static FieldInfo _startButtonField = null;
     private static FieldInfo _maxModuleField = null;
-    private static FieldInfo _MAXSECONDSFIELD = null;
-    private static PropertyInfo _currentSettingsField = null;
-
-    private static Type _freeplaySettingsType = null;
-    private static FieldInfo _moduleCountField = null;
-    private static FieldInfo _timeField = null;
-    private static FieldInfo _isHardCoreField = null;
-    private static FieldInfo _hasNeedyField = null;
-    private static FieldInfo _onlyModsField = null;
-
-    private static Type _floatingHoldableType = null;
-    private static FieldInfo _pickupTimeField = null;
-    private static PropertyInfo _holdStateProperty = null;
-
-    private static Type _selectableType = null;
-    private static MethodInfo _handleSelectMethod = null;
-    private static MethodInfo _onInteractEndedMethod = null;
-    private static FieldInfo _childrenField = null;
-
-    private static Type _selectableManagerType = null;
-    private static MethodInfo _selectMethod = null;
-    private static MethodInfo _handleInteractMethod = null;
-    private static MethodInfo _handleCancelMethod = null;
-    private static MethodInfo _setZSpinMethod = null;
-    private static MethodInfo _setControlsRotationMethod = null;
-    private static MethodInfo _getBaseHeldObjectTransformMethod = null;
-    private static MethodInfo _handleFaceSelectionMethod = null;
-
-    private static Type _inputManagerType = null;
-    private static PropertyInfo _instanceProperty = null;
-    private static PropertyInfo _selectableManagerProperty = null;
-
-    private static MonoBehaviour _inputManager = null;
     #endregion
 }
 

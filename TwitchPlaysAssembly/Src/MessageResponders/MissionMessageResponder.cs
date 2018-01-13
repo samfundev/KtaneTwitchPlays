@@ -44,10 +44,10 @@ public class MissionMessageResponder : MessageResponder
 
         while (true)
         {
-            UnityEngine.Object[] freeplayDevices = FindObjectsOfType(CommonReflectedTypeInfo.FreeplayDeviceType);
+            FreeplayDevice[] freeplayDevices = FindObjectsOfType<FreeplayDevice>();
             if (freeplayDevices != null && freeplayDevices.Length > 0)
             {
-                _freeplayCommander = new FreeplayCommander((MonoBehaviour)freeplayDevices[0]);
+                _freeplayCommander = new FreeplayCommander(freeplayDevices[0]);
                 break;
             }
 
