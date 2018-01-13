@@ -308,7 +308,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out modules) ||
 							modules < 1 || modules > GameInfo.GetMaximumBombModules())
 						{
-						    _ircConnection.SendMessage("{0}", failureMessage);
+						    _ircConnection.SendMessage(failureMessage);
 						}
 						else
 						{
@@ -319,6 +319,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					else
 					{
+                        if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+                        if (CurrentState != KMGameInfo.State.Setup) break;
+
 						GameCommands.StartMission(missionID, "-1");
 					}
 				}
