@@ -1,16 +1,14 @@
 ﻿using Assets.Scripts.Components.VennWire;
 using System;
 using System.Collections;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public class VennWireComponentSolver : ComponentSolver
 {
     public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-		_wires = bombComponent.Wires;
+        _wires = bombComponent.ActiveWires;
         modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver");
     }
 
@@ -29,14 +27,12 @@ public class VennWireComponentSolver : ComponentSolver
             {
                 continue;
             }
-
             wireIndex--;
 
             if (wireIndex >= 0 && wireIndex < _wires.Length)
             {
-                if (_cutWires[wireIndex])
+                if (_wires[wireIndex].Snipped)
                     continue;
-                _cutWires[wireIndex] = true;
 
                 yield return wireIndexString.Value;
 
@@ -45,22 +41,11 @@ public class VennWireComponentSolver : ComponentSolver
                     Canceller.ResetCancel();
                     yield break;
                 }
-
-                MonoBehaviour wire = (MonoBehaviour)_wires.GetValue(wireIndex);
+                VennSnippableWire wire = _wires[wireIndex];
                 yield return DoInteractionClick(wire, string.Format("cutting wire {0}", wireIndexString.Value));
             }
         }
     }
 
-    static VennWireComponentSolver()
-    {
-        _vennWireComponentType = ReflectionHelper.FindType("Assets.Scripts.Components.VennWire.VennWireComponent");
-        _activeWiresProperty = _vennWireComponentType.GetProperty("ActiveWires", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private static Type _vennWireComponentType = null;
-    private static PropertyInfo _activeWiresProperty = null;
-
     private VennSnippableWire[] _wires = null;
-    private bool[] _cutWires = null;
 }

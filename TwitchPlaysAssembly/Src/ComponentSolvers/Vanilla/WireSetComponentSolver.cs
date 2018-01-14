@@ -7,7 +7,8 @@ public class WireSetComponentSolver : ComponentSolver
     public WireSetComponentSolver(BombCommander bombCommander, WireSetComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
-		_wires = bombComponent.wires;
+        _wires = bombComponent.wires;
+        modInfo = ComponentSolverFactory.GetModuleInfo("WireSetComponentSolver");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
