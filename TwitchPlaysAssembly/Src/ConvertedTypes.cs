@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Assets.Scripts.Records;
 
 public static class CommonReflectedTypeInfo
