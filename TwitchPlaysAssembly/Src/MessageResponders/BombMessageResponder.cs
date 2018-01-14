@@ -578,14 +578,12 @@ public class BombMessageResponder : MessageResponder
 
         foreach (TwitchComponentHandle componentHandle in _componentHandles)
         {
+            if (!Factory.IsCurrentBomb(factory, componentHandle.bombID)) continue;
             IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text);
             if (onMessageReceived != null)
             {
                 if (_currentBomb != componentHandle.bombID)
                 {
-                    if (!Factory.IsCurrentBomb(factory, componentHandle.bombID))
-                        continue;
-
                     _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), componentHandle.bombID);
                     _coroutineQueue.AddToQueue(_bombHandles[componentHandle.bombID].ShowMainUIWindow(), componentHandle.bombID);
                     _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(),componentHandle.bombID);
