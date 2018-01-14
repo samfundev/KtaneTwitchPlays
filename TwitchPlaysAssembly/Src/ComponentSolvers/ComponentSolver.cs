@@ -9,19 +9,6 @@ public abstract class ComponentSolver : ICommandResponder
     public delegate IEnumerator RegexResponse(Match match);
 
     #region Constructors
-    static ComponentSolver()
-    {
-        _selectableType = ReflectionHelper.FindType("Selectable");
-        _interactMethod = _selectableType.GetMethod("HandleInteract", BindingFlags.Public | BindingFlags.Instance);
-        _interactEndedMethod = _selectableType.GetMethod("OnInteractEnded", BindingFlags.Public | BindingFlags.Instance);
-        _setHighlightMethod = _selectableType.GetMethod("SetHighlight", BindingFlags.Public | BindingFlags.Instance);
-        _getFocusDistanceMethod = _selectableType.GetMethod("GetFocusDistance", BindingFlags.Public | BindingFlags.Instance);
-
-        Type thisType = typeof(ComponentSolver);
-        _onPassInternalMethod = thisType.GetMethod("OnPass", BindingFlags.NonPublic | BindingFlags.Instance);
-        _onStrikeInternalMethod = thisType.GetMethod("OnStrike", BindingFlags.NonPublic | BindingFlags.Instance);
-    }
-
     public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller)
     {
         BombCommander = bombCommander;
@@ -672,8 +659,8 @@ public abstract class ComponentSolver : ICommandResponder
     {
         get
         {
-            MonoBehaviour selectable = (MonoBehaviour)BombComponent.GetComponent(_selectableType);
-            return (float)_getFocusDistanceMethod.Invoke(selectable, null);
+            Selectable selectable = BombComponent.GetComponent<Selectable>();
+            return selectable.GetFocusDistance();
         }
     }
 
@@ -755,17 +742,6 @@ public abstract class ComponentSolver : ICommandResponder
     protected readonly Selectable Selectable = null;
     protected readonly IRCConnection IRCConnection = null;
     public readonly CoroutineCanceller Canceller = null;
-    #endregion
-
-    #region Private Static Fields
-    private static Type _selectableType = null;
-    private static MethodInfo _interactMethod = null;
-    private static MethodInfo _interactEndedMethod = null;
-    private static MethodInfo _setHighlightMethod = null;
-    private static MethodInfo _getFocusDistanceMethod = null;
-
-    private static MethodInfo _onPassInternalMethod = null;
-    private static MethodInfo _onStrikeInternalMethod = null;
     #endregion
 
     #region Private Fields
