@@ -6,13 +6,14 @@ using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
 {
-    public ButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
+    public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
         ModuleInformation squarebuttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonV2");
 
-        _button = (MonoBehaviour)_buttonField.GetValue(bombComponent);
+        bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
+        _button = bombComponent.button;
         modInfo = new ModuleInformation
         {
             builtIntoTwitchPlays = buttonInfo.builtIntoTwitchPlays,
@@ -27,8 +28,6 @@ public class ButtonComponentSolver : ComponentSolver
                 ? buttonInfo.moduleScore
                 : squarebuttonInfo.moduleScore
         };
-
-        _bombComponent = bombComponent;
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -38,9 +37,7 @@ public class ButtonComponentSolver : ComponentSolver
         if (!_held && inputCommand.EqualsAny("tap", "click"))
         {
             yield return "tap";
-            DoInteractionClick(_button);
-            _buttonCloseMethod.Invoke(_bombComponent, null);
-            yield return new WaitForSeconds(0.1f);
+            yield return DoInteractionClick(_button);
 
         }
         if (!_held && (inputCommand.StartsWith("tap ") ||
@@ -99,7 +96,7 @@ public class ButtonComponentSolver : ComponentSolver
     private IEnumerator ReleaseCoroutineVanilla(int second)
     {
         yield return "release";
-        MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
+        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
         string secondString = second.ToString();
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f && _held)
@@ -111,12 +108,11 @@ public class ButtonComponentSolver : ComponentSolver
                 yield break;
             }
 
-            timeRemaining = (float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent);
+            timeRemaining = timerComponent.TimeRemaining;
 
             if (BombCommander.CurrentTimerFormatted.Contains(secondString))
             {
                 DoInteractionEnd(_button);
-                _buttonCloseMethod.Invoke(_bombComponent, null);
                 _held = false;
             }
 
@@ -156,12 +152,12 @@ public class ButtonComponentSolver : ComponentSolver
 
         yield return "release";
 
-        MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
+        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
         int timeTarget = sortedTimes[0];
         sortedTimes.RemoveAt(0);
 
-        int waitTime = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
+        int waitTime = (int)(timerComponent.TimeRemaining + 0.25f);
         waitTime -= timeTarget;
         if (waitTime >= 30)
         {
@@ -185,18 +181,16 @@ public class ButtonComponentSolver : ComponentSolver
                     yield return string.Format("sendtochat The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModifier.GetRuleSeed());
                 else
                     yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
-                _buttonCloseMethod.Invoke(_bombComponent, null);
                 yield break;
             }
 
-            timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
+            timeRemaining = (int)(timerComponent.TimeRemaining + 0.25f);
 
             if (timeRemaining < timeTarget)
             {
                 if (sortedTimes.Count == 0)
                 {
                     yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are greater than the time remaining.", _held ? "released" : "tapped");
-                    _buttonCloseMethod.Invoke(_bombComponent, null);
                     yield break;
                 }
                 timeTarget = sortedTimes[0];
@@ -218,7 +212,7 @@ public class ButtonComponentSolver : ComponentSolver
 
                 continue;
             }
-            if (timeRemaining == timeTarget)
+            if (Math.Abs(timeRemaining - timeTarget) < 0.1f)
             {
                 if (!_held)
                 {
@@ -226,7 +220,6 @@ public class ButtonComponentSolver : ComponentSolver
                     yield return new WaitForSeconds(0.1f);
                 }
                 DoInteractionEnd(_button);
-                _buttonCloseMethod.Invoke(_bombComponent, null);
                 _held = false;
                 yield break;
             }
@@ -235,19 +228,6 @@ public class ButtonComponentSolver : ComponentSolver
         }
     }
 
-    static ButtonComponentSolver()
-    {
-        _buttonComponentType = ReflectionHelper.FindType("ButtonComponent");
-        _buttonField = _buttonComponentType.GetField("button", BindingFlags.Public | BindingFlags.Instance);
-        _buttonCloseMethod = _buttonComponentType.GetMethod("CloseLid", BindingFlags.NonPublic | BindingFlags.Instance);
-    }
-
-    private static Type _buttonComponentType = null;
-    private static FieldInfo _buttonField = null;
-    private static MethodInfo _buttonCloseMethod = null;
-
-    private MonoBehaviour _button = null;
-    private MonoBehaviour _bombComponent;
+    private PressableButton _button = null;
     private bool _held = false;
-
 }
