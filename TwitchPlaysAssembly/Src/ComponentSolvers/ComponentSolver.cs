@@ -404,14 +404,9 @@ public abstract class ComponentSolver : ICommandResponder
 
 	#region Private Methods
 	private void HookUpEvents()
-    {
-        Delegate gameOnPassDelegate = (Delegate)CommonReflectedTypeInfo.OnPassField.GetValue(BombComponent);
-        Delegate internalOnPassDelegate = Delegate.CreateDelegate(CommonReflectedTypeInfo.PassEventType, this, _onPassInternalMethod);
-        CommonReflectedTypeInfo.OnPassField.SetValue(BombComponent, Delegate.Combine(internalOnPassDelegate, gameOnPassDelegate));
-
-        Delegate gameOnStrikeDelegate = (Delegate)CommonReflectedTypeInfo.OnStrikeField.GetValue(BombComponent);
-        Delegate internalOnStrikeDelegate = Delegate.CreateDelegate(CommonReflectedTypeInfo.StrikeEventType, this, _onStrikeInternalMethod);
-        CommonReflectedTypeInfo.OnStrikeField.SetValue(BombComponent, Delegate.Combine(internalOnStrikeDelegate, gameOnStrikeDelegate));
+	{
+	    BombComponent.OnPass += OnPass;
+	    BombComponent.OnStrike += OnStrike;
     }
 
     private bool OnPass(object _ignore)
@@ -559,7 +554,7 @@ public abstract class ComponentSolver : ICommandResponder
 
     private void AwardSolve(string userNickName, ICommandResponseNotifier responseNotifier, int ComponentValue)
     {
-        string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
+        string headerText = BombComponent.GetModuleDisplayName();
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Value: " + ComponentValue;
         responseNotifier.ProcessResponse(CommandResponse.EndComplete, ComponentValue);
@@ -569,7 +564,7 @@ public abstract class ComponentSolver : ICommandResponder
         {
             float multiplier = OtherModes.getMultiplier();
             float time = multiplier * ComponentValue;
-            CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, BombCommander.CurrentTimer + time);
+            BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
             IRCConnection.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
             if (multiplier < 10)
             {
@@ -581,7 +576,7 @@ public abstract class ComponentSolver : ICommandResponder
 
     private void AwardStrikes(string userNickName, ICommandResponseNotifier responseNotifier, int strikeCount)
     {
-        string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
+        string headerText = BombComponent.GetModuleDisplayName();
         int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
@@ -606,14 +601,14 @@ public abstract class ComponentSolver : ICommandResponder
             }
             if (BombCommander.CurrentTimer < 60)
             {
-                CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, BombCommander.CurrentTimer - 15);
+                BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - 15;
                 tempMessage = tempMessage + " reduced by 15 seconds.";
             }
             else
             {
                 float timeReducer = BombCommander.CurrentTimer * .25f;
                 double easyText = Math.Round(timeReducer, 1);
-                CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, BombCommander.CurrentTimer - timeReducer);
+                BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
                 tempMessage = tempMessage + " reduced by 25%. (" + easyText + " seconds)";
             }
             IRCConnection.SendMessage(tempMessage);
@@ -630,7 +625,7 @@ public abstract class ComponentSolver : ICommandResponder
         }
         if (OtherModes.timedModeOn)
         {
-            CommonReflectedTypeInfo.NumStrikesField.SetValue(BombCommander.Bomb, -1);
+            BombCommander.Bomb.NumStrikes = -1;
             BombMessageResponder.moduleCameras.UpdateStrikes();
         }
         StrikeMessage = string.Empty;
@@ -655,16 +650,13 @@ public abstract class ComponentSolver : ICommandResponder
     {
         get
         {
-            return (bool)CommonReflectedTypeInfo.IsSolvedField.GetValue(BombComponent);
+            return BombComponent.IsSolved;
         }
     }
 
     protected bool Detonated
     {
-        get
-        {
-            return (bool)CommonReflectedTypeInfo.HasDetonatedProperty.GetValue(BombCommander.Bomb, null);
-        }
+        get { return BombCommander.Bomb.HasDetonated; }
     }
 
     private int _strikeCount = 0;

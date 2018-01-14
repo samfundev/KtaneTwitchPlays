@@ -10,12 +10,12 @@ public class ModuleCameras : MonoBehaviour
 {
     public class ModuleItem
     {
-        public MonoBehaviour component = null;
+        public BombComponent component = null;
         public TwitchComponentHandle handle = null;
         public int priority = CameraNotInUse;
         public int index = 0;
 
-        public ModuleItem(MonoBehaviour c, TwitchComponentHandle h, int p)
+        public ModuleItem(BombComponent c, TwitchComponentHandle h, int p)
         {
             component = c;
             handle = h;
@@ -104,7 +104,7 @@ public class ModuleCameras : MonoBehaviour
         {
             get
             {
-                return (bool)CommonReflectedTypeInfo.IsSolvedField.GetValue(module.component);
+                return module.component.IsSolved;
             }
         }
 
@@ -205,7 +205,7 @@ public class ModuleCameras : MonoBehaviour
     #endregion
 
     #region Public Methods
-    public void AttachToModule(MonoBehaviour component, TwitchComponentHandle handle, int priority = CameraInUse)
+    public void AttachToModule(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
         if ( handle != null && (handle.claimed) && (priority == CameraClaimed) )
         {
@@ -293,7 +293,7 @@ public class ModuleCameras : MonoBehaviour
     {
         if (currentBomb != null)
         {
-            currentTotalStrikes = (int)CommonReflectedTypeInfo.NumStrikesToLoseField.GetValue(currentBomb.Bomb);
+            currentTotalStrikes = currentBomb.Bomb.NumStrikesToLose;
             string totalStrikesText = currentTotalStrikes.ToString();
             Debug.Log(LogPrefix + "Updating strike limit to " + totalStrikesText);
             strikeLimitPrefab.text = "/" + totalStrikesText;
@@ -428,8 +428,8 @@ public class ModuleCameras : MonoBehaviour
         }
         if (currentBomb != null)
         {
-            currentStrikes = (int)CommonReflectedTypeInfo.NumStrikesField.GetValue(currentBomb.Bomb);
-            currentTotalStrikes = (int)CommonReflectedTypeInfo.NumStrikesToLoseField.GetValue(currentBomb.Bomb);
+            currentStrikes = currentBomb.Bomb.NumStrikes;
+            currentTotalStrikes = currentBomb.Bomb.NumStrikesToLose;
             string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, Char.Parse("0"));
             Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
             strikesPrefab.text = strikesText;
@@ -437,7 +437,7 @@ public class ModuleCameras : MonoBehaviour
         yield break;
     }
 
-    private void AddModuleToStack(MonoBehaviour component, TwitchComponentHandle handle, int priority = CameraInUse)
+    private void AddModuleToStack(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
         if (!Factory.IsCurrentBomb(BombMessageResponder.factory,handle.bombID))
         {

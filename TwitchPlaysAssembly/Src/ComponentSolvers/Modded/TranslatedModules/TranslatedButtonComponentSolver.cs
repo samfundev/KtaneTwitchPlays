@@ -10,7 +10,9 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	{
 	    _button = (KMSelectable) _buttonField.GetValue(bombComponent.GetComponent(_componentType));
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-    }
+	    Selectable selectable = bombComponent.GetComponent<Selectable>();
+	    selectable.OnCancel += () => { _selectedField.SetValue(bombComponent.GetComponent(_componentType), false); return true; };
+	}
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
@@ -56,7 +58,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
     {
         yield return "release";
 
-        MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
+        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
         string secondString = second.ToString();
 
@@ -69,7 +71,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
                 yield break;
             }
 
-            timeRemaining = (float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent);
+            timeRemaining = timerComponent.TimeRemaining;
 
             if (BombCommander.CurrentTimerFormatted.Contains(secondString))
             {
@@ -85,10 +87,12 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	{
 		_componentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
 		_buttonField = _componentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
+	    _selectedField = _componentType.GetField("isSelected", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
 	private static FieldInfo _buttonField = null;
+    private static FieldInfo _selectedField = null;
 
     private KMSelectable _button = null;
     private bool _held = false;

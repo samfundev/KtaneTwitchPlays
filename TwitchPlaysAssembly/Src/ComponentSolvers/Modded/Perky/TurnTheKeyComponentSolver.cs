@@ -21,9 +21,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         {
             int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
             float currentBombTime = BombCommander.CurrentTimer;
-            CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, time + 0.5f);
+            BombCommander.timerComponent.TimeRemaining = time + 0.5f;
             _onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-            CommonReflectedTypeInfo.TimeRemainingField.SetValue(BombCommander.timerComponent, currentBombTime);
+            BombCommander.timerComponent.TimeRemaining = currentBombTime;
         }
         return false;
     }
@@ -85,11 +85,11 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
         yield return "release";
 
-        MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
+        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
         int timeTarget = sortedTimes[0];
         sortedTimes.RemoveAt(0);
-        int waitingTime = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
+        int waitingTime = (int)(timerComponent.TimeRemaining + 0.25f);
         waitingTime -= timeTarget;
 
         if (waitingTime >= 30)
@@ -106,7 +106,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
                 break;
             }
 
-            timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
+            timeRemaining = (int)(timerComponent.TimeRemaining + 0.25f);
 
             if (timeRemaining < timeTarget)
             {

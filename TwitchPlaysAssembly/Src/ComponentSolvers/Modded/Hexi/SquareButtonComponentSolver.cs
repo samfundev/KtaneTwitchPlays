@@ -82,12 +82,12 @@ public class SquareButtonComponentSolver : ComponentSolver
 
         yield return "release";
 
-        MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
+        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
         int timeTarget = sortedTimes[0];
         sortedTimes.RemoveAt(0);
 
-        int waitTime = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
+        int waitTime = (int)(timerComponent.TimeRemaining + 0.25f);
         waitTime -= timeTarget;
         if (waitTime >= 30)
             yield return "elevator music";
@@ -102,7 +102,7 @@ public class SquareButtonComponentSolver : ComponentSolver
 				yield break;
             }
 
-            timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent) + 0.25f);
+            timeRemaining = (int)(timerComponent.TimeRemaining + 0.25f);
 
             if (timeRemaining < timeTarget)
             {

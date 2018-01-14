@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Components.VennWire;
+using Assets.Scripts.Missions;
 using UnityEngine;
 
 public static class ComponentSolverFactory
@@ -451,7 +452,7 @@ public static class ComponentSolverFactory
 
 			default:
                 LogAllComponentTypes(bombComponent);
-				throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays'.", (string) CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(bombComponent, null)));
+			    throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays'.", bombComponent.GetModuleDisplayName()));
 		}
 	}
 
@@ -469,7 +470,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(bombComponent, moduleType, displayName);
 		if (modComponentSolverCreator == null)
 		{
-			throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", (string) CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(bombComponent, null)));
+			throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
 		}
 
 		ModComponentSolverCreators[moduleType] = modComponentSolverCreator;

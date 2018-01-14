@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Missions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -139,7 +140,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	{
 		if (bombComponent != null)
 		{
-			headerText.text = (string) CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(bombComponent, null);
+		    headerText.text = bombComponent.GetModuleDisplayName();
 		}
 
 		idText.text = string.Format("!{0}", _code);
@@ -554,6 +555,14 @@ public class TwitchComponentHandle : MonoBehaviour
 						{
 							messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, headerText.text);
 						}
+					}
+                    else if (playerName != null)
+					{
+					    messageOut = string.Format("@{0}, you already have a claim on {1} ({2})", userNickName, targetModule, headerText.text);
+					}
+					else
+					{
+					    messageOut = ClaimModule(userNickName, targetModule);
 					}
 				}
 				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))

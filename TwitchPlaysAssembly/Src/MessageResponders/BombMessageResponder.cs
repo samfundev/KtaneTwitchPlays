@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Missions;
+using Assets.Scripts.Props;
 using UnityEngine;
 
 public class BombMessageResponder : MessageResponder
@@ -20,7 +22,7 @@ public class BombMessageResponder : MessageResponder
     private int _currentBomb = -1;
     private string[] _notes = new string[4];
 
-    private UnityEngine.Object AlarmClock;
+    private AlarmClock alarmClock;
 
     public static ModuleCameras moduleCameras = null;
     public static Factory factory = null;
@@ -130,7 +132,7 @@ public class BombMessageResponder : MessageResponder
 
         foreach (var commander in _bombCommanders)
         {
-            HasDetonated |= (bool) CommonReflectedTypeInfo.HasDetonatedProperty.GetValue(commander.Bomb, null);
+            HasDetonated |= commander.Bomb.HasDetonated;
             HasBeenSolved &= commander.IsSolved;
             if (timeRemaining > commander.CurrentTimer)
             {
@@ -319,13 +321,13 @@ public class BombMessageResponder : MessageResponder
             }
         } while (bombs == null || bombs.Length == 0);
 
-        UnityEngine.Object[] clocks;
+        AlarmClock[] clocks;
         do
         {
             yield return null;
-            clocks = FindObjectsOfType(CommonReflectedTypeInfo.AlarmClockType);
+            clocks = FindObjectsOfType<AlarmClock>();
         } while (clocks == null || clocks.Length == 0);
-        AlarmClock = clocks[0];
+        alarmClock = clocks[0];
 
         try
         {
@@ -424,8 +426,10 @@ public class BombMessageResponder : MessageResponder
         if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            MethodInfo method = TwitchPlaySettings.data.AllowSnoozeOnly ? CommonReflectedTypeInfo.AlarmClockTurnOff : CommonReflectedTypeInfo.AlarmClockSnooze;
-            method.Invoke(AlarmClock, TwitchPlaySettings.data.AllowSnoozeOnly ? null : new object[] { 0 });
+            if (TwitchPlaySettings.data.AllowSnoozeOnly)
+                alarmClock.TurnOff();
+            else
+                alarmClock.ButtonDown(0);
             return;
         }
 
@@ -620,11 +624,9 @@ public class BombMessageResponder : MessageResponder
 
         foreach (BombComponent bombComponent in bombComponents)
         {
-            object componentType = CommonReflectedTypeInfo.ComponentTypeField.GetValue(bombComponent);
-            int componentTypeInt = (int)Convert.ChangeType(componentType, typeof(int));
-            ComponentTypeEnum componentTypeEnum = (ComponentTypeEnum)componentTypeInt;
+            ComponentTypeEnum componentType = bombComponent.ComponentType;
 
-            switch (componentTypeEnum)
+            switch (componentType)
             {
                 case ComponentTypeEnum.Empty:
                     continue;
@@ -642,7 +644,7 @@ public class BombMessageResponder : MessageResponder
             handle.ircConnection = _ircConnection;
             handle.bombCommander = bombCommander;
             handle.bombComponent = bombComponent;
-            handle.componentType = componentTypeEnum;
+            handle.componentType = componentType;
             handle.coroutineQueue = _coroutineQueue;
             handle.coroutineCanceller = _coroutineCanceller;
             handle.leaderboard = leaderboard;

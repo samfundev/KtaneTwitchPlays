@@ -27,20 +27,20 @@ public class CrazyTalkComponentSolver : ComponentSolver
             yield break;
 
         yield return "Crazy Talk Solve Attempt";
-        MonoBehaviour timerComponent = (MonoBehaviour)CommonReflectedTypeInfo.GetTimerMethod.Invoke(BombCommander.Bomb, null);
-        int timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent));
+        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+        int timeRemaining = (int)(timerComponent.TimeRemaining);
 
         while ((timeRemaining%10) != downtime)
         {
             yield return null;
-            timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent));
+            timeRemaining = (int)(timerComponent.TimeRemaining);
         }
         yield return DoInteractionClick(_toggle);
 
         while ((timeRemaining % 10) != uptime)
         {
             yield return null;
-            timeRemaining = (int)((float)CommonReflectedTypeInfo.TimeRemainingField.GetValue(timerComponent));
+            timeRemaining = (int)(timerComponent.TimeRemaining);
         }
         yield return DoInteractionClick(_toggle);
     }
