@@ -10,6 +10,7 @@ public class ModuleCameras : MonoBehaviour
 {
     public class ModuleItem
     {
+        public Dictionary<Transform, int> OriginalLayers = new Dictionary<Transform, int>();
         public BombComponent component = null;
         public TwitchComponentHandle handle = null;
         public int priority = CameraNotInUse;
@@ -20,6 +21,26 @@ public class ModuleCameras : MonoBehaviour
             component = c;
             handle = h;
             priority = p;
+
+            if (component != null)
+            {
+                foreach (Transform trans in component.gameObject.GetComponentsInChildren<Transform>(true))
+                {
+                    if (OriginalLayers.ContainsKey(trans)) continue;
+                    OriginalLayers.Add(trans, trans.gameObject.layer);
+                    if(trans.gameObject.GetComponent<SelectableArea>() != null)
+                        Debug.Log($"[ModuleCameras] - {c.transform.name} - SelectableArea layer = {trans.gameObject.layer}");
+                }
+            }
+
+            if (handle != null)
+            {
+                foreach (Transform trans in handle.gameObject.GetComponentsInChildren<Transform>(true))
+                {
+                    if (OriginalLayers.ContainsKey(trans)) continue;
+                    OriginalLayers.Add(trans, trans.gameObject.layer);
+                }
+            }
         }
     }
 
@@ -73,7 +94,8 @@ public class ModuleCameras : MonoBehaviour
                 priority = module.priority;
 
                 // We know the camera's culling mask is pointing at a single layer, so let's find out what that layer is
-                int newLayer = (int)Math.Log(cameraInstance.cullingMask, 2);
+                int newLayer = 11;
+                cameraInstance.cullingMask = 1 << 11;
                 originalLayer = module.component.gameObject.layer;
                 Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", originalLayer, newLayer);
                 SetRenderLayer(newLayer);
@@ -93,7 +115,7 @@ public class ModuleCameras : MonoBehaviour
         {
             if (module != null)
             {
-                SetRenderLayer(originalLayer);
+                SetRenderLayer(-1);
             }
             cameraInstance.gameObject.SetActive(false);
             module = null;
@@ -110,16 +132,11 @@ public class ModuleCameras : MonoBehaviour
 
         private void SetRenderLayer(int layer)
         {
-            foreach (Transform trans in module.component.gameObject.GetComponentsInChildren<Transform>(true))
+            foreach (KeyValuePair<Transform, int> kvp in module.OriginalLayers)
             {
-                trans.gameObject.layer = layer;
-            }
-            if (module.handle != null)
-            {
-                foreach (Transform trans in module.handle.gameObject.GetComponentsInChildren<Transform>(true))
-                {
-                    trans.gameObject.layer = layer;
-                }
+                kvp.Key.gameObject.layer = layer < 0 || layer > 31 
+                    ? kvp.Value 
+                    : layer;
             }
         }
 
@@ -141,6 +158,7 @@ public class ModuleCameras : MonoBehaviour
     #endregion
 
     #region Private Fields
+    private Dictionary<BombComponent, ModuleItem> moduleItems = new Dictionary<BombComponent, ModuleItem>();
     private Stack<ModuleItem>[] stacks = new Stack<ModuleItem>[4];
     private Stack<ModuleItem> moduleStack = new Stack<ModuleItem>();
     private Stack<ModuleItem> claimedModuleStack = new Stack<ModuleItem>();
@@ -153,7 +171,7 @@ public class ModuleCameras : MonoBehaviour
     private int currentStrikes;
     private int currentTotalModules;
     private int currentTotalStrikes;
-    private float currentSuccess;
+    //private float currentSuccess;
     #endregion
 
     #region Public Constants
@@ -444,7 +462,17 @@ public class ModuleCameras : MonoBehaviour
             return;
         }
 
-        ModuleItem item = new ModuleItem(component, handle, priority);
+        if (!moduleItems.TryGetValue(component, out ModuleItem item))
+        {
+            item = new ModuleItem(component, handle, priority);
+            moduleItems.Add(component, item);
+        }
+        else
+        {
+            item.priority = priority;
+        }
+
+
         if (priority >= CameraPinned)
         {
             pinnedModuleStack.Push(item);
