@@ -483,6 +483,7 @@ public class BombMessageResponder : MessageResponder
                 if (handle == null || !Factory.IsCurrentBomb(factory, handle.bombID)) continue;
                 handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} claim", claim));
             }
+            return;
         }
 
         if (text.EqualsAny("!unclaim all", "!release all","!unclaimall","!releaseall"))
@@ -501,6 +502,7 @@ public class BombMessageResponder : MessageResponder
                 if (handle == null || !Factory.IsCurrentBomb(factory, handle.bombID)) continue;
                 handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} unclaim", claim));
             }
+            return;
         }
 
         
