@@ -5,17 +5,16 @@ public static class InputInterceptor
 {
     static InputInterceptor()
     {
-        Type abstractControlsType = ReflectionHelper.FindType("AbstractControls");
-        _inputSystems = Resources.FindObjectsOfTypeAll(abstractControlsType);
+        _inputSystems = Resources.FindObjectsOfTypeAll<AbstractControls>();
     }
 
     public static void EnableInput()
     {
-        foreach (UnityEngine.Object inputSystem in _inputSystems)
+        foreach (AbstractControls inputSystem in _inputSystems)
         {
             try
             {
-                ((MonoBehaviour)inputSystem).gameObject.SetActive(true);
+                inputSystem.gameObject.SetActive(true);
                 Cursor.visible = true;
             }
             catch (Exception ex)
@@ -27,11 +26,11 @@ public static class InputInterceptor
 
     public static void DisableInput()
     {
-        foreach (UnityEngine.Object inputSystem in _inputSystems)
+        foreach (AbstractControls inputSystem in _inputSystems)
         {
             try
             {
-                ((MonoBehaviour)inputSystem).gameObject.SetActive(false);
+                inputSystem.gameObject.SetActive(false);
             }
             catch (Exception ex)
             {
@@ -40,6 +39,6 @@ public static class InputInterceptor
         }
     }
 
-    private static UnityEngine.Object[] _inputSystems = null;
+    private static AbstractControls[] _inputSystems = null;
 }
 
