@@ -474,6 +474,37 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
+        if (text.StartsWith("!claim ", StringComparison.InvariantCultureIgnoreCase))
+        {
+            var split = text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var claim in split.Skip(1))
+            {
+                TwitchComponentHandle handle = _componentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+                if (handle == null || !Factory.IsCurrentBomb(factory, handle.bombID)) continue;
+                handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} claim", claim));
+            }
+        }
+
+        if (text.EqualsAny("!unclaim all", "!release all","!unclaimall","!releaseall"))
+        {
+            string[] moduleIDs = _componentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
+                .Select(x => x.Code).ToArray();
+            text = string.Format("!unclaim {0}", string.Join(" ", moduleIDs));
+        }
+
+        if (text.StartsWith("!unclaim ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!release ", StringComparison.InvariantCultureIgnoreCase))
+        {
+            var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var claim in split.Skip(1))
+            {
+                TwitchComponentHandle handle = _componentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+                if (handle == null || !Factory.IsCurrentBomb(factory, handle.bombID)) continue;
+                handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} unclaim", claim));
+            }
+        }
+
+        
+
 		if (text.Equals("!unclaimed", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
