@@ -16,7 +16,7 @@ public class LogUploader : MonoBehaviour
     [HideInInspector]
     public string LOGPREFIX;
 
-    private string output;
+    //private string output;
 
     private OrderedDictionary domainNames = new OrderedDictionary
     {

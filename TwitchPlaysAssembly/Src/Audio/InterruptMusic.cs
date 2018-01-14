@@ -14,7 +14,6 @@ public class InterruptMusic : MonoBehaviour
 
     private static InterruptMusic _instance = null;
     private static FieldInfo _volumeLevelField = null;
-    private static MethodInfo _setVolumeMethod = null;
     private Dictionary<int, float> _oldVolumes = new Dictionary<int, float>();
 
     static InterruptMusic()
