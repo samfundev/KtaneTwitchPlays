@@ -340,6 +340,7 @@ public class BombCommander : ICommandResponder
 
         float focusTime = FloatingHoldable.FocusTime;
         FloatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+        selectable.HandleSelect(false);
         selectable.HandleInteract();
     }
 
@@ -347,6 +348,7 @@ public class BombCommander : ICommandResponder
     {
         FloatingHoldable.Defocus(false, false);
         selectable.HandleCancel();
+        selectable.HandleDeselect();
         yield break;
     }
 
