@@ -40,14 +40,16 @@ public class InterruptMusic : MonoBehaviour
         object[] gameplayMusicControllers = FindObjectsOfType(_gameplayMusicControllerType);
         foreach (object musicController in gameplayMusicControllers)
         {
+            int musicControllerInstanceID = ((MonoBehaviour) musicController).GetInstanceID();
             if (enableInterrupt)
             {
-                _oldVolumes[((MonoBehaviour)musicController).GetInstanceID()] = (float)_volumeLevelField.GetValue(musicController);
+                _oldVolumes[musicControllerInstanceID] = (float)_volumeLevelField.GetValue(musicController);
                 _setVolumeMethod.Invoke(musicController, new object[] { 0.0f, true });
             }
             else
             {
-                _setVolumeMethod.Invoke(musicController, new object[] { _oldVolumes[((MonoBehaviour)musicController).GetInstanceID()], true });
+                if(_oldVolumes.ContainsKey(musicControllerInstanceID))
+                    _setVolumeMethod.Invoke(musicController, new object[] { _oldVolumes[musicControllerInstanceID], true });
             }
         }
     }
