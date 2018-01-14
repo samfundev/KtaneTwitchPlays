@@ -21,11 +21,12 @@ public class CoroutineCanceller
 
 public class WaitForSecondsWithCancel : CustomYieldInstruction
 {
-    public WaitForSecondsWithCancel(float seconds, CoroutineCanceller canceller)
+    public WaitForSecondsWithCancel(float seconds, CoroutineCanceller canceller, bool resetCancel=true)
     {
         _seconds = seconds;
         _canceller = canceller;
         _startingTime = Time.time;
+        _resetCancel = resetCancel;
     }
 
     public override bool keepWaiting
@@ -34,7 +35,8 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
         {
             if (_canceller.ShouldCancel)
             {
-                _canceller.ResetCancel();
+                if(_resetCancel)
+                    _canceller.ResetCancel();
                 return false;
             }
 
@@ -45,5 +47,6 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
     private readonly float _seconds = 0.0f;
     private readonly CoroutineCanceller _canceller = null;
     private readonly float _startingTime = 0.0f;
+    private readonly bool _resetCancel = true;
 }
 

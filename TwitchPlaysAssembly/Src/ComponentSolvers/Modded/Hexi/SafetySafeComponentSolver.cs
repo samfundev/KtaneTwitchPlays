@@ -63,6 +63,8 @@ public class SafetySafeComponentSolver : ComponentSolver
                     yield return cycle.Current;
                 }
             }
+            if (Canceller.ShouldCancel)
+                Canceller.ResetCancel();
         }
         else if (DialPosNames.TryGetValue(split[0], out pos))
         {
@@ -108,17 +110,16 @@ public class SafetySafeComponentSolver : ComponentSolver
         yield return "cycle " + pos;
         for (var j = 0; j < 12; j++)
         {
-            yield return DoInteractionClick(_buttons[pos]);
-            yield return new WaitForSeconds(0.3f);
             if (Canceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
                 yield break;
             }
+            yield return DoInteractionClick(_buttons[pos]);
+            yield return new WaitForSecondsWithCancel(0.3f, Canceller, false);
         }
         if (wait)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsWithCancel(0.5f, Canceller, false);
         }
     }
 
