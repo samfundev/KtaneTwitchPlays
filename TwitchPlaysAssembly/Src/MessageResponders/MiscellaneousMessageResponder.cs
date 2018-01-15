@@ -88,9 +88,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 		if (!text.StartsWith("!")) return;
 		text = text.Substring(1);
 
-		string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-		string textAfter = split.Skip(1).Join();
-		if (text.Equals("cancel", StringComparison.InvariantCultureIgnoreCase))
+        string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        string textAfter = split.Skip(1).Join();
+        if (text.Equals("cancel", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             _coroutineCanceller.SetCancel();
@@ -118,8 +118,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                 return;
             }
             string playerrewarded = split[1];
-            int scorerewarded;
-            if (!int.TryParse(split[2], out scorerewarded))
+            if (!int.TryParse(split[2], out int scorerewarded))
             {
                 return;
             }
@@ -153,8 +152,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             Leaderboard.LeaderboardEntry entry = null;
             if (split.Length >= 1)
             {
-                int desiredRank;
-                if (split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank))
+                if (split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out int desiredRank))
                 {
                     leaderboard.GetSoloRank(desiredRank, out entry);
                 }
@@ -306,8 +304,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					if (missionID == null)
 					{
 						string distributionName = distributions.Keys.OrderByDescending(x => x.Length).FirstOrDefault(y => split[1].Contains(y));
-						int modules;
-						if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out modules) ||
+					    if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out int modules) ||
 							modules < 1 || modules > GameInfo.GetMaximumBombModules())
 						{
 						    _ircConnection.SendMessage(failureMessage);
@@ -330,16 +327,14 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 3)
 				{
-					int modules;
-
-					if (distributions.ContainsKey(split[1]))
+				    if (distributions.ContainsKey(split[1]))
 					{
 						string temp = split[1];
 						split[1] = split[2];
 						split[2] = temp;
 					}
 
-					if (int.TryParse(split[1], out modules) && modules > 0)
+					if (int.TryParse(split[1], out int modules) && modules > 0)
 					{
 						int maxModules = GameInfo.GetMaximumBombModules();
 						if (modules > maxModules)
@@ -429,7 +424,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				break;
 			case "profile":
 			case "profiles":
-				var profileList = TwitchPlaySettings.data.ProfileWhitelist;
+				List<string> profileList = TwitchPlaySettings.data.ProfileWhitelist;
 				if (profileList.Count == 0)
 				{
 					_ircConnection.SendMessage(TwitchPlaySettings.data.ProfileCommandDisabled, userNickName);
