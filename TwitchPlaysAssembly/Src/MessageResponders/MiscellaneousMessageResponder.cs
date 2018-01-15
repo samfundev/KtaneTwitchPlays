@@ -85,8 +85,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
-		if (!text.StartsWith("!")) return;
-		text = text.Substring(1);
+		if (!text.StartsWith("!") || text.Equals("!")) return;
+        text = text.Substring(1);
 
         string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         string textAfter = split.Skip(1).Join();
