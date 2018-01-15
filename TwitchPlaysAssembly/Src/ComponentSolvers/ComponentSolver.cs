@@ -616,6 +616,7 @@ public abstract class ComponentSolver : ICommandResponder
         {
             BombCommander.Bomb.NumStrikes = 0;
             BombMessageResponder.moduleCameras.UpdateStrikes();
+            BombCommander.twitchBombHandle.HandleStrikeChanges();
         }
         StrikeMessage = string.Empty;
     }

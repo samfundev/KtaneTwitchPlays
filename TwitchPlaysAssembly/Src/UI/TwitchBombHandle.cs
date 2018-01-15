@@ -273,10 +273,8 @@ public class TwitchBombHandle : MonoBehaviour
     {
         StartCoroutine(DelayBombExplosionCoroutine(message, reason,0.1f));
     }
-    #endregion
-
-    #region Private Methods
-    private void HandleStrikeChanges()
+    
+    public void HandleStrikeChanges()
     {
         int strikeLimit = bombCommander.StrikeLimit;
         int strikeCount = Math.Min(bombCommander.StrikeCount, strikeLimit);
@@ -312,7 +310,9 @@ public class TwitchBombHandle : MonoBehaviour
             bombCommander.Bomb.StrikeIndicator.StrikeCount = strikeCount;
         }
     }
+    #endregion
 
+    #region Private Methods
     private bool IsAuthorizedDefuser(string userNickName)
     {
         if (userNickName.EqualsAny(nameText.text,"Bomb Factory"))
