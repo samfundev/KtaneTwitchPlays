@@ -612,7 +612,7 @@ public abstract class ComponentSolver : ICommandResponder
         }
         if (OtherModes.timedModeOn)
         {
-            BombCommander.Bomb.NumStrikes = -1;
+            BombCommander.Bomb.NumStrikes = 0;
             BombMessageResponder.moduleCameras.UpdateStrikes();
         }
         StrikeMessage = string.Empty;
