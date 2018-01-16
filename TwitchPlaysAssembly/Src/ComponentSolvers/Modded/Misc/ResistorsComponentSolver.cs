@@ -64,21 +64,23 @@ public class ResistorsComponentSolver : ComponentSolver
 					DoInteractionClick(pinSelectable);
 					yield return new WaitForSeconds(0.1f);
 				}
+
+				yield break;
 			}
 		}
-		else if (commands.Length == 1 && commands[0].EqualsAny("check", "submit"))
+
+		if (commands.Length == 2 && commands[0].EqualsAny("hit", "press", "click"))
+			commands = commands.Skip(1).ToArray();
+
+		if (commands.Length == 1 && commands[0].EqualsAny("check", "submit"))
 		{
 			yield return null;
-
-			DoInteractionClick(_checkButton);
-			yield return new WaitForSeconds(0.1f);
+			yield return DoInteractionClick(_checkButton);
 		}
 		else if (commands.Length == 1 && commands[0].EqualsAny("clear", "reset"))
 		{
 			yield return null;
-
-			DoInteractionClick(_clearButton);
-			yield return new WaitForSeconds(0.1f);
+			yield return DoInteractionClick(_clearButton);
 		}
 	}
 
