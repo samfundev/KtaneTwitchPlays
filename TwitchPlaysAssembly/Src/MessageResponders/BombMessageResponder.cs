@@ -24,7 +24,6 @@ public class BombMessageResponder : MessageResponder
     private AlarmClock alarmClock;
 
     public static ModuleCameras moduleCameras = null;
-    public static Factory factory = null;
 
     public static bool BombActive { get; private set; }
 
@@ -32,34 +31,6 @@ public class BombMessageResponder : MessageResponder
     {
         BombActive = false;
     }
-
-    private float specialNameProbability = 0.25f;
-    private string[] singleNames = new string[]
-    {
-        "Bomblebee",
-        "Big Bomb",
-        "Big Bomb Man",
-        "Explodicus",
-        "Little Boy",
-        "Fat Man",
-        "Bombadillo",
-        "The Dud",
-        "Molotov",
-        "Sergeant Cluster",
-        "La Bomba",
-        "Bombchu",
-        "Bomboleo"
-    };
-    private string[,] doubleNames = new string[,]
-    {
-        { null, "The Bomb 2: Bomb Harder" },
-        { null, "The Bomb 2: The Second Bombing" },
-        { "Bomb", "Bomber" },
-        { null, "The Bomb Reloaded" },
-        { "Bombic", "& Knuckles" },
-        { null, "The River Kwai" },
-        { "Bomboleo", "Bombolea" }
-    };
 
     #region Unity Lifecycle
 
@@ -252,72 +223,23 @@ public class BombMessageResponder : MessageResponder
                 bombs = FindObjectsOfType<Bomb>();
             }
 
-            if (Factory.FactoryType() != null)
+            for (int i = 0; i < GameRoom.GameRoomTypes.Length; i++)
             {
-                factory = Factory.SetupFactory(FindObjectsOfType(Factory.FactoryType()));
+                if (GameRoom.GameRoomTypes[i]() != null && GameRoom.CreateRooms[i](FindObjectsOfType(GameRoom.GameRoomTypes[i]()),out GameRoom.Instance))
+                {
+                    break;
+                }
             }
-
-            System.Random rand = new System.Random();
-
-            if (factory != null)
+            _currentBomb = bombs.Length == 1 ? -1 : 0;
+            for (int i = 0; i < bombs.Length; i++)
             {
-                _currentBomb = bombs.Length == 1 ? -1 : 0;
-                for (int i = 0; i < bombs.Length; i++)
-                {
-                    SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
-                    _bombHandles[i].nameText.text = string.Format("Bomb {0} of {1}", i + 1, bombs.Length);
-                }
-                StartCoroutine(factory.ReportBombStatus(_bombHandles));
+                SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
             }
-            else if (bombs.Length == 1)
-            {
-                _currentBomb = -1;
-                SetBomb(bombs[0], -1);
+            GameRoom.Instance.InitializeBombNames(_bombHandles);
+            StartCoroutine(GameRoom.Instance.ReportBombStatus(_bombHandles));
 
-                if (rand.NextDouble() < specialNameProbability)
-                {
-                    _bombHandles[0].nameText.text = singleNames[rand.Next(0, singleNames.Length - 1)];
-                }
-                _coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), -1);
-            }
-            else
-            {
-                _currentBomb = 0;
-                int id = 0;
-                for (int i = bombs.Length - 1; i >= 0; i--)
-                {
-                    SetBomb(bombs[i], id++);
-                }
-
-                if (bombs.Length == 2 && rand.NextDouble() < specialNameProbability)
-                {
-                    int nameIndex = rand.Next(0, doubleNames.Length - 1);
-                    string nameText = null;
-                    for (int i = 0; i < 2; i++)
-                    {
-                        nameText = doubleNames[nameIndex, i];
-                        if (nameText != null)
-                        {
-                            _bombHandles[i].nameText.text = nameText;
-                        }
-                    }
-                }
-                else
-                {
-                    if (bombs.Length == 2)
-                    {
-                        _bombHandles[1].nameText.text = "The Other Bomb";
-                    }
-                    else
-                    {
-                        for (var i = 0; i < bombs.Length; i++)
-                        {
-                            _bombHandles[i].nameText.text = singleNames[rand.Next(0, singleNames.Length - 1)];
-                        }
-                    }
-                }
-                _coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), 0);
-            }
+            if (GameRoom.Instance.HoldBomb)
+                _coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), _currentBomb);
         } while (bombs == null || bombs.Length == 0);
 
         AlarmClock[] clocks;
@@ -480,7 +402,7 @@ public class BombMessageResponder : MessageResponder
             foreach (var claim in split.Skip(1))
             {
                 TwitchComponentHandle handle = _componentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-                if (handle == null || !Factory.IsCurrentBomb(factory, handle.bombID)) continue;
+                if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
                 handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} claim", claim));
             }
             return;
@@ -499,7 +421,7 @@ public class BombMessageResponder : MessageResponder
             foreach (var claim in split.Skip(1))
             {
                 TwitchComponentHandle handle = _componentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-                if (handle == null || !Factory.IsCurrentBomb(factory, handle.bombID)) continue;
+                if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
                 handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} unclaim", claim));
             }
             return;
@@ -556,10 +478,7 @@ public class BombMessageResponder : MessageResponder
 			return;
 		}
 
-        if (!Factory.IsCurrentBomb(factory, _currentBomb))
-        {
-            _currentBomb = factory.BombID;
-        }
+        GameRoom.Instance.RefreshBombID(ref _currentBomb);
 
         if (_currentBomb > -1)
         {
@@ -599,7 +518,7 @@ public class BombMessageResponder : MessageResponder
 
                 if (_currentBomb != handle.bombID)
                 {
-                    if (!Factory.IsCurrentBomb(factory,handle.bombID))
+                    if (!GameRoom.Instance.IsCurrentBomb(handle.bombID))
                         continue;
 
                     _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), handle.bombID);
@@ -614,7 +533,7 @@ public class BombMessageResponder : MessageResponder
 
         foreach (TwitchComponentHandle componentHandle in _componentHandles)
         {
-            if (!Factory.IsCurrentBomb(factory, componentHandle.bombID)) continue;
+            if (!GameRoom.Instance.IsCurrentBomb(componentHandle.bombID)) continue;
             IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text);
             if (onMessageReceived != null)
             {

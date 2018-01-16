@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-public class Factory
+public class Factory : GameRoom
 {
     public static Type FactoryType()
     {
@@ -19,27 +19,54 @@ public class Factory
         return _factoryType;
     }
 
-    public static Factory SetupFactory(UnityEngine.Object[] factoryObject)
+    public static bool TrySetupFactory(UnityEngine.Object[] factoryObject, out GameRoom room)
     {
-        return (factoryObject == null || factoryObject.Length == 0) ? null : new Factory {_factory = factoryObject[0], BombID = -1};
+        if (factoryObject == null || factoryObject.Length == 0)
+        {
+            room = null;
+            return false;
+        }
+        room = new Factory(factoryObject[0]);
+        return true;
     }
 
-    public int BombID { get; private set; }
+    private Factory(UnityEngine.Object roomObject)
+    {
+        DebugHelper.Log("Found gameplay room of type Factory Room");
+        _factory = roomObject;
+        BombID = -1;
+        HoldBomb = false;
+    }
+
+    // ReSharper disable once RedundantAssignment
+    public override void RefreshBombID(ref int bombID)
+    {
+        bombID = BombID;
+    }
 
     private UnityEngine.Object GetBomb
     {
         get { return (UnityEngine.Object) _currentBombField.GetValue(_factory); }
     }
 
-    public static bool IsCurrentBomb(Factory factory, int bombID)
+    public override bool IsCurrentBomb(int bombID)
     {
-        if (factory == null || bombID == -1)
+        if (bombID == -1)
             return true;
-        return factory.BombID== bombID;
+        return BombID== bombID;
     }
 
-    public IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
+    public override void InitializeBombNames(List<TwitchBombHandle> bombHandles)
     {
+        for (int i = 0; i < bombHandles.Count; i++)
+        {
+            bombHandles[i].nameText.text = $"Bomb {i + 1} of {bombHandles.Count}";
+        }
+    }
+
+    public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
+    {
+        
         yield return new WaitUntil(() => GetBomb != null);
         BombID = 0;
         while (GetBomb != null)
