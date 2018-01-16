@@ -457,7 +457,7 @@ public class ModuleCameras : MonoBehaviour
 
     private void AddModuleToStack(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
-        if (!GameRoom.Instance.IsCurrentBomb(handle.bombID))
+        if (handle != null && !GameRoom.Instance.IsCurrentBomb(handle.bombID))
         {
             return;
         }
