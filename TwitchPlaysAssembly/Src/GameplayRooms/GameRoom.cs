@@ -15,7 +15,8 @@ public abstract class GameRoom
     {
         //Supported Mod gameplay room types
         Factory.FactoryType,
-        
+        PortalRoom.PortalRoomType,
+
         //Supported vanilla gameplay room types.  (Also catches all unknown Mod gameplay rooms, as ModGameplayRoom inherits FacilityRoom)
         Facility.RoomType,
 
@@ -26,6 +27,7 @@ public abstract class GameRoom
     public static CreateRoom[] CreateRooms =
     {
         Factory.TrySetupFactory,
+        PortalRoom.TryCreatePortalRoom,
         Facility.TryCreateFacility,
         DefaultGameRoom.TryCreateRoom
     };
