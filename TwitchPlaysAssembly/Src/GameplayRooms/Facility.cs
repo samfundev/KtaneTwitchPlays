@@ -1,12 +1,9 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Assets.Scripts.Pacing;
-using UnityEngine;
 
 public class Facility : GameRoom
 {
@@ -34,6 +31,9 @@ public class Facility : GameRoom
 
     public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
     {
+        if (!SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled)
+            yield break;
+
         _facilityRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
         while (bombHandles.TrueForAll(handle => !handle.bombCommander.Bomb.HasDetonated))
         {
@@ -61,8 +61,8 @@ public class Facility : GameRoom
         _turnOnEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOnEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
-    private static MethodInfo _turnOffEmergencyLightsMethod = null;
-    private static MethodInfo _turnOnEmergencyLightsMethod = null;
+    private static readonly MethodInfo _turnOffEmergencyLightsMethod = null;
+    private static readonly MethodInfo _turnOnEmergencyLightsMethod = null;
 
-    private FacilityRoom _facilityRoom = null;
+    private readonly FacilityRoom _facilityRoom = null;
 }
