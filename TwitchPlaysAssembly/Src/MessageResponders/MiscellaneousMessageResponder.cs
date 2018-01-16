@@ -150,19 +150,19 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
         {
             Leaderboard.LeaderboardEntry entry = null;
-            if (split.Length >= 1)
+            if (split.Length > 1)
             {
-                if (split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out int desiredRank))
+                int desiredRank;
+                switch (split.Length)
                 {
-                    leaderboard.GetSoloRank(desiredRank, out entry);
-                }
-                else if (int.TryParse(split[1], out desiredRank))
-                {
-                    leaderboard.GetRank(desiredRank, out entry);
-                }
-                else
-                {
-                    return;
+                    case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank):
+                        leaderboard.GetSoloRank(desiredRank, out entry);
+                        break;
+                    case 2 when int.TryParse(split[1], out desiredRank):
+                        leaderboard.GetRank(desiredRank, out entry);
+                        break;
+                    default:
+                        return;
                 }
                 if (entry == null)
                 {
