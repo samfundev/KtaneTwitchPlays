@@ -79,8 +79,7 @@ public static class UserAccess
 
     public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
     {
-        AccessLevel userAccessLevel = AccessLevel.User;
-        if (!AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out userAccessLevel))
+        if (!AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
         {
             return accessLevel == AccessLevel.User;
         }
@@ -103,16 +102,14 @@ public static class UserAccess
 
     public static void AddUser(string userNickName, AccessLevel level)
     {
-        AccessLevel userAccessLevel = AccessLevel.User;
-        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out userAccessLevel);
+        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
         userAccessLevel |= level;
         AccessLevels[userNickName.ToLowerInvariant()] = userAccessLevel;
     }
 
     public static void RemoveUser(string userNickName, AccessLevel level)
     {
-        AccessLevel userAccessLevel = AccessLevel.User;
-        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out userAccessLevel);
+        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
         userAccessLevel &= ~level;
         AccessLevels[userNickName.ToLowerInvariant()] = userAccessLevel;
     }

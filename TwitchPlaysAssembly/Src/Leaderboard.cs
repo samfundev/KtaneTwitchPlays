@@ -112,8 +112,7 @@ public class Leaderboard
 
     private LeaderboardEntry GetEntry(string userName)
     {
-        LeaderboardEntry entry = null;
-        if (!GetEntry(userName, out entry))
+        if (!GetEntry(userName, out LeaderboardEntry entry))
         {
             entry = new LeaderboardEntry();
             _entryDictionary[userName.ToLowerInvariant()] = entry;
@@ -162,8 +161,7 @@ public class Leaderboard
         ResetSortFlag();
 
         string name = userName.ToLowerInvariant();
-        int value = 0;
-        CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out value) ? value + 1 : 1;
+        CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out int value) ? value + 1 : 1;
     }
 
     public void AddStrike(string userName, int numStrikes)
@@ -216,9 +214,8 @@ public class Leaderboard
     {
         var entries = new List<LeaderboardEntry>();
 
-        LeaderboardEntry entry;
         foreach (string name in extras)
-            if (GetEntry(name, out entry))
+            if (GetEntry(name, out LeaderboardEntry entry))
                 entries.Add(entry);
 
         if (entries.Count < count)

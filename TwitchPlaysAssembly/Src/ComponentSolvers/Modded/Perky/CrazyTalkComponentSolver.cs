@@ -14,13 +14,10 @@ public class CrazyTalkComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        int downtime;
-        int uptime;
-
         var commands = inputCommand.ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
         if (commands.Length != 3 || !commands[0].EqualsAny("toggle", "flip", "switch") ||
-            !int.TryParse(commands[1], out downtime) || !int.TryParse(commands[2], out uptime))
+            !int.TryParse(commands[1], out int downtime) || !int.TryParse(commands[2], out int uptime))
             yield break;
 
         if (downtime < 0 || downtime > 9 || uptime < 0 || uptime > 9)

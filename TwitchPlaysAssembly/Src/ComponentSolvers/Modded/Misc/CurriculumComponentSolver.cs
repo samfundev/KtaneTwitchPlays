@@ -18,8 +18,7 @@ public class CurriculumComponentSolver : ComponentSolver
 
 		if (commands.Length.InRange(2, 3) && commands[0].EqualsAny("click", "press"))
 		{
-			int buttonPosition = 0;
-			if (int.TryParse(commands[1], out buttonPosition))
+		    if (int.TryParse(commands[1], out int buttonPosition))
 			{
 				if (!buttonPosition.InRange(1, 5)) yield break;
 

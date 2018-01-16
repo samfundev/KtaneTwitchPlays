@@ -28,8 +28,7 @@ public class VanillaRuleModifier
 
     public static int GetRuleSeed()
     {
-        object value;
-        return (Properties != null && Properties.TryGetValue(RuleSeed, out value))
+        return (Properties != null && Properties.TryGetValue(RuleSeed, out object value))
             ? (int) value
             : 1;
     }
@@ -42,22 +41,19 @@ public class VanillaRuleModifier
 
     public static string GetRuleManualDirectory()
     {
-        object value;
-        return (Properties != null && Properties.TryGetValue(GetRuleManual, out value))
+        return (Properties != null && Properties.TryGetValue(GetRuleManual, out object value))
             ? (string) value
             : null;
     }
 
     public static bool IsSeedVanilla()
     {
-        object value;
-        return (Properties == null || !Properties.TryGetValue(SeedIsVanilla, out value)) || (bool) value;
+        return (Properties == null || !Properties.TryGetValue(SeedIsVanilla, out object value)) || (bool) value;
     }
 
     public static bool IsSeedModded()
     {
-        object value;
-        return (Properties != null && Properties.TryGetValue(SeedIsModded, out value)) && (bool) value;
+        return (Properties != null && Properties.TryGetValue(SeedIsModded, out object value)) && (bool) value;
     }
 
     public static bool Installed()

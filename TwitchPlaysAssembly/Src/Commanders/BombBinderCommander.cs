@@ -51,10 +51,9 @@ public class BombBinderCommander : ICommandResponder
             else if (message.StartsWith("select"))
             {
                 string[] commandParts = message.Split(' ');
-                int index = 0;
                 IEnumerator selectCoroutine = null;
                 if ( (commandParts.Length == 2) &&
-                    (int.TryParse(commandParts[1], out index)) )
+                    (int.TryParse(commandParts[1], out int index)) )
                 {
                     selectCoroutine = SelectOnPage(index);
                 }

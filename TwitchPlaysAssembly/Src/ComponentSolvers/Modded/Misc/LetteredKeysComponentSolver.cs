@@ -21,8 +21,7 @@ public class LetteredKeysComponentSolver : ComponentSolver
 	            yield break;
 	        }
 
-	        int buttonID;
-	        if (int.TryParse(match.Value, out buttonID))
+	        if (int.TryParse(match.Value, out int buttonID))
 	        {
 	            yield return null;
 	            yield return DoInteractionClick(_buttons[buttonID - 1]);

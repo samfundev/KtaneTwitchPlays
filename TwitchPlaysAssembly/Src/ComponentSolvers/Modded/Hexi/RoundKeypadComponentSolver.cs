@@ -26,8 +26,7 @@ public class RoundKeypadComponentSolver : ComponentSolver
 
         foreach (string buttonString in sequence)
         {
-            int val = -1;
-            if (!int.TryParse(buttonString, out val) || val < 1 || val > 8)
+            if (!int.TryParse(buttonString, out int val) || val < 1 || val > 8)
             {
                 yield break;
             }

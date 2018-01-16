@@ -35,8 +35,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
             string[] commandParts = inputCommand.Split(' ');
             if (commandParts.Length == 2 && commandParts[0].Equals("release"))
             {
-                int second = 0;
-                if (!int.TryParse(commandParts[1], out second))
+                if (!int.TryParse(commandParts[1], out int second))
                 {
                     yield break;
                 }

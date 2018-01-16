@@ -41,8 +41,7 @@ public class IRCConnection
             if (match.Success)
             {
                 string color = match.Groups[1].Value.ToLowerInvariant();
-                string hexcolor;
-                return UserColors.TryGetValue(color, out hexcolor) ? hexcolor : color;
+                return UserColors.TryGetValue(color, out string hexcolor) ? hexcolor : color;
             }
             return null;
         }

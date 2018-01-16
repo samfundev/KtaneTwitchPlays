@@ -33,16 +33,14 @@ public class MultipleBombs
 
     public static int GetMaximumBombCount()
     {
-        object count;
-        return (Properties != null && Properties.TryGetValue(MaxBombCount, out count))
+        return (Properties != null && Properties.TryGetValue(MaxBombCount, out object count))
             ? (int) count
             : 1;
     }
 
     public static int GetFreePlayBombCount()
     {
-        object count;
-        return (Properties != null && Properties.TryGetValue(BombCount, out count))
+        return (Properties != null && Properties.TryGetValue(BombCount, out object count))
             ? (int) count
             : 2;
     }

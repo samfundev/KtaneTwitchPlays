@@ -22,8 +22,7 @@ public class MorseCodeComponentSolver : ComponentSolver
             yield break;
         }
 
-        int targetFrequency = 0;
-        if (!int.TryParse(commandParts[1], out targetFrequency) || !Frequencies.Contains(targetFrequency))
+        if (!int.TryParse(commandParts[1], out int targetFrequency) || !Frequencies.Contains(targetFrequency))
         {
             yield break;
         }

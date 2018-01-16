@@ -21,8 +21,7 @@ public class KeypadComponentSolver : ComponentSolver
 
         foreach (Match buttonIndexString in Regex.Matches(inputCommand, @"[1-4]"))
         {
-            int buttonIndex = 0;
-            if (!int.TryParse(buttonIndexString.Value, out buttonIndex))
+            if (!int.TryParse(buttonIndexString.Value, out int buttonIndex))
             {
                 continue;
             }

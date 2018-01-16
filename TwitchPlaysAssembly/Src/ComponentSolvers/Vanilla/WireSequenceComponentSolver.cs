@@ -57,8 +57,7 @@ public class WireSequenceComponentSolver : ComponentSolver
                     break;
                 }
 
-                int wireIndex;
-                if (!int.TryParse(wireIndexString, out wireIndex)) yield break;
+                if (!int.TryParse(wireIndexString, out int wireIndex)) yield break;
 
                 wireIndex--;
                 if (!CanInteractWithWire(wireIndex)) yield break;

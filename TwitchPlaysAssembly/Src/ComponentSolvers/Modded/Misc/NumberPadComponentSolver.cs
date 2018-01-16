@@ -48,8 +48,7 @@ public class NumberPadComponentSolver : ComponentSolver
 			case "clear":
 				return 2;
 			default:
-				int i;
-				if (int.TryParse(button, out i))
+			    if (int.TryParse(button, out int i))
 				{
 					return i + 2;
 				}

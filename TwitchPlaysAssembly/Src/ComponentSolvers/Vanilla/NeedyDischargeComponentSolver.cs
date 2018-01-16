@@ -18,8 +18,7 @@ public class NeedyDischargeComponentSolver : ComponentSolver
         if (commandParts.Length != 2 && !commandParts[0].Equals("hold", StringComparison.InvariantCultureIgnoreCase))
             yield break;
 
-        float holdTime = 0;
-        if (!float.TryParse(commandParts[1], out holdTime))  yield break;
+        if (!float.TryParse(commandParts[1], out float holdTime))  yield break;
 
         yield return "hold";
 

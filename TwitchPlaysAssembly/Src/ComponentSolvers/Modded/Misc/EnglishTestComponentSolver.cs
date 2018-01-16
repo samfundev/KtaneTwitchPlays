@@ -21,9 +21,8 @@ public class EnglishTestComponentSolver : ComponentSolver
 	    {
 	        yield break;
 	    }
-	    
-	    int desiredIndex;
-	    if (!int.TryParse(split[1], out desiredIndex) || desiredIndex < 1)
+
+	    if (!int.TryParse(split[1], out int desiredIndex) || desiredIndex < 1)
 	    {
 	        yield break;
 	    }

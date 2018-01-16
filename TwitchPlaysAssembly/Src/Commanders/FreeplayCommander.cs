@@ -191,9 +191,7 @@ public class FreeplayCommander : ICommandResponder
 
             while (modulesMatch.Success)
             {
-                int count = 0;
-
-                if (int.TryParse(modulesMatch.Value, out count))
+                if (int.TryParse(modulesMatch.Value, out int count))
                 {
                     if (count <= 2)
                     {
@@ -324,8 +322,7 @@ public class FreeplayCommander : ICommandResponder
             yield break;
         }
 
-        int minutes = 0;
-        if (!int.TryParse(mins, out minutes))
+        if (!int.TryParse(mins, out int minutes))
         {
             yield break;
         }
@@ -370,8 +367,7 @@ public class FreeplayCommander : ICommandResponder
 
     public IEnumerator SetBombCount(string bombs)
     {
-        int bombCount = 0;
-        if (!int.TryParse(bombs, out bombCount))
+        if (!int.TryParse(bombs, out int bombCount))
         {
             yield break;
         }
@@ -396,8 +392,7 @@ public class FreeplayCommander : ICommandResponder
 
     public IEnumerator SetBombModules(string mods)
     {
-        int moduleCount = 0;
-        if (!int.TryParse(mods, out moduleCount))
+        if (!int.TryParse(mods, out int moduleCount))
         {
             yield break;
         }

@@ -30,8 +30,7 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
             yield break;
         }
 
-        int targetFrequency = 0;
-        if (!int.TryParse(commandParts[1].Substring(commandParts[1].Length - 3), out targetFrequency))
+        if (!int.TryParse(commandParts[1].Substring(commandParts[1].Length - 3), out int targetFrequency))
         {
             yield break;
         }

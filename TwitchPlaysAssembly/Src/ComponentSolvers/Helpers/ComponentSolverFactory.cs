@@ -480,18 +480,10 @@ public static class ComponentSolverFactory
 
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)
 	{
-		ModCommandType commandType = ModCommandType.Simple;
-		Type commandComponentType = null;
-		MethodInfo method = FindProcessCommandMethod(bombComponent, out commandType, out commandComponentType);
-		string help;
-		string manual;
-		bool statusLeft;
-		bool statusBottom;
-		float rotation;
-		string[] regexList;
+	    MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
 
-		ModuleInformation info = GetModuleInfo(moduleType);
-		if (!info.helpTextOverride && FindHelpMessage(bombComponent, out help))
+	    ModuleInformation info = GetModuleInfo(moduleType);
+		if (!info.helpTextOverride && FindHelpMessage(bombComponent, out string help))
 		{
 			if (help != null)
 				ModuleData.DataHasChanged |= !help.Equals(info.helpText);
@@ -500,7 +492,7 @@ public static class ComponentSolverFactory
 			info.helpText = help;
 		}
 
-		if (!info.manualCodeOverride && FindManualCode(bombComponent, out manual))
+		if (!info.manualCodeOverride && FindManualCode(bombComponent, out string manual))
 		{
 			if (manual != null)
 				ModuleData.DataHasChanged |= !manual.Equals(info.manualCode);
@@ -509,7 +501,7 @@ public static class ComponentSolverFactory
 			info.manualCode = manual;
 		}
 
-		if (!info.statusLightOverride && FindStatusLightPosition(bombComponent, out statusLeft, out statusBottom, out rotation))
+		if (!info.statusLightOverride && FindStatusLightPosition(bombComponent, out bool statusLeft, out bool statusBottom, out float rotation))
 		{
 			ModuleData.DataHasChanged |= info.statusLightLeft != statusLeft;
 			ModuleData.DataHasChanged |= info.statusLightDown != statusBottom;
@@ -519,7 +511,7 @@ public static class ComponentSolverFactory
 			info.chatRotation = rotation;
 		}
 
-		if (!info.validCommandsOverride && FindRegexList(bombComponent, out regexList))
+		if (!info.validCommandsOverride && FindRegexList(bombComponent, out string[] regexList))
 		{
 			if (info.validCommands != null && regexList == null)
 				ModuleData.DataHasChanged = true;
@@ -557,9 +549,7 @@ public static class ComponentSolverFactory
 						return new SimpleModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent);
 					};
 				case ModCommandType.Coroutine:
-					FieldInfo cancelfield;
-					Type canceltype;
-					FindCancelBool(bombComponent, out cancelfield, out canceltype);
+				    FindCancelBool(bombComponent, out FieldInfo cancelfield, out Type canceltype);
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent, IRCConnection _ircConnection, CoroutineCanceller _canceller)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);

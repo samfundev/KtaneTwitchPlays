@@ -33,9 +33,8 @@ public class ProbingComponentSolver : ComponentSolver
             yield break;
         }
 
-        int red, blue;
         if (split.Length != 3 || split[0] != "connect" ||
-            !int.TryParse(split[1], out red) || !int.TryParse(split[2], out blue) ||
+            !int.TryParse(split[1], out int red) || !int.TryParse(split[2], out int blue) ||
             red < 1 || red > 6 || blue < 1 || blue > 6 || red == blue)
             yield break;
 

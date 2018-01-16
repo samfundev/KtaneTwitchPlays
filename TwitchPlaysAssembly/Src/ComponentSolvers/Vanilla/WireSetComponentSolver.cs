@@ -18,9 +18,8 @@ public class WireSetComponentSolver : ComponentSolver
             yield break;
         }
         inputCommand = inputCommand.Substring(4);
-		
-		int wireIndex = 0;
-        if (!int.TryParse(inputCommand, out wireIndex) || wireIndex < 0 && wireIndex > _wires.Count) yield break;
+
+        if (!int.TryParse(inputCommand, out int wireIndex) || wireIndex < 0 && wireIndex > _wires.Count) yield break;
 
 		yield return null;
 		yield return DoInteractionClick(_wires[wireIndex - 1]);

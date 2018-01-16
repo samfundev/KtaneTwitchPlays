@@ -22,8 +22,7 @@ public class VennWireComponentSolver : ComponentSolver
 
         foreach (Match wireIndexString in Regex.Matches(inputCommand, @"[1-6]"))
         {
-            int wireIndex = 0;
-            if (!int.TryParse(wireIndexString.Value, out wireIndex))
+            if (!int.TryParse(wireIndexString.Value, out int wireIndex))
             {
                 continue;
             }

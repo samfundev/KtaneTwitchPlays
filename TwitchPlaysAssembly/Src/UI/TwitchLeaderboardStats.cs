@@ -27,11 +27,8 @@ public class TwitchLeaderboardStats : MonoBehaviour
         }
 
         int bombCount = leaderboard.BombsCleared;
-        int solveCount = 0;
-        int strikeCount = 0;
-        int SolveScore = 0;
         int totalSolveScore = 0;
-        leaderboard.GetTotalSolveStrikeCounts(out solveCount, out strikeCount,out SolveScore);
+        leaderboard.GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount,out int SolveScore);
 
             totalSolveScore = SolveScore;
 

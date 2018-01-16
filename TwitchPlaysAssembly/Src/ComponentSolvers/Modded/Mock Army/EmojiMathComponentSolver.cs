@@ -30,8 +30,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 				}
 				else
 				{
-					int num;
-					if (int.TryParse(c.ToString(), out num))
+				    if (int.TryParse(c.ToString(), out int num))
 					{
 						buttonIndexes.Add(num);
 					}

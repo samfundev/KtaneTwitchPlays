@@ -67,14 +67,12 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         List<int> sortedTimes = new List<int>();
         foreach (string value in list)
         {
-            int time = -1;
-            if (!int.TryParse(value, out time))
+            if (!int.TryParse(value, out int time))
             {
                 int pos = value.IndexOf(':');
                 if (pos == -1) continue;
-                int min, sec;
-                if (!int.TryParse(value.Substring(0, pos), out min)) continue;
-                if (!int.TryParse(value.Substring(pos + 1), out sec)) continue;
+                if (!int.TryParse(value.Substring(0, pos), out int min)) continue;
+                if (!int.TryParse(value.Substring(pos + 1), out int sec)) continue;
                 time = min * 60 + sec;
             }
             sortedTimes.Add(time);

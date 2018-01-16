@@ -69,8 +69,7 @@ public class ButtonComponentSolver : ComponentSolver
 
                 if (!isModdedSeed)
                 {
-                    int second = 0;
-                    if (!int.TryParse(commandParts[1], out second))
+                    if (!int.TryParse(commandParts[1], out int second))
                     {
                         yield break;
                     }
@@ -126,21 +125,19 @@ public class ButtonComponentSolver : ComponentSolver
         List<int> sortedTimes = new List<int>();
         foreach (string value in list)
         {
-            int time = -1;
-            if (!int.TryParse(value, out time))
+            if (!int.TryParse(value, out int time))
             {
                 int pos = value.LastIndexOf(':');
                 if (pos == -1) continue;
                 int hour = 0;
-                int min, sec;
-                if (!int.TryParse(value.Substring(0, pos), out min))
+                if (!int.TryParse(value.Substring(0, pos), out int min))
                 {
                     int pos2 = value.IndexOf(":");
                     if ((pos2 == -1) || (pos == pos2)) continue;
                     if (!int.TryParse(value.Substring(0, pos2), out hour)) continue;
                     if (!int.TryParse(value.Substring(pos2 + 1, pos - pos2 - 1), out min)) continue;
                 }
-                if (!int.TryParse(value.Substring(pos + 1), out sec)) continue;
+                if (!int.TryParse(value.Substring(pos + 1), out int sec)) continue;
                 time = (hour * 3600) + (min * 60) + sec;
             }
             sortedTimes.Add(time);

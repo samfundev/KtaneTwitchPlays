@@ -29,27 +29,23 @@ public class NeedyRotaryPhoneComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if (inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            int val = -1;
-            if(int.TryParse(inputCommand.Substring(6), out val) && val >= 0)
-            {
-                yield return "press";
+        if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase) || (!int.TryParse(inputCommand.Substring(6), out int val) || val < 0))
+            yield break;
 
-                int first = val / 100 % 10;
-                int second = (val / 10) % 10;
-                int third = val % 10;
+        yield return "press";
 
-                yield return DoInteractionClick(_buttons[first]);
-                yield return new WaitForSeconds(delayTimes[first]);
+        int first = val / 100 % 10;
+        int second = (val / 10) % 10;
+        int third = val % 10;
 
-                yield return DoInteractionClick(_buttons[second]);
-                yield return new WaitForSeconds(delayTimes[second]);
+        yield return DoInteractionClick(_buttons[first]);
+        yield return new WaitForSeconds(delayTimes[first]);
 
-                yield return DoInteractionClick(_buttons[third]);
-                yield return "strike";
-            }
-        }
+        yield return DoInteractionClick(_buttons[second]);
+        yield return new WaitForSeconds(delayTimes[second]);
+
+        yield return DoInteractionClick(_buttons[third]);
+        yield return "strike";
     }
 
     static NeedyRotaryPhoneComponentSolver()

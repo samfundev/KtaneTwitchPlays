@@ -18,8 +18,7 @@ public class MemoryComponentSolver : ComponentSolver
             yield break;
         }
 
-        int buttonNumber = 0;
-        if (!int.TryParse(commandParts[1], out buttonNumber))
+        if (!int.TryParse(commandParts[1], out int buttonNumber))
         {
             yield break;
         }

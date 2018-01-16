@@ -75,8 +75,7 @@ public class SafetySafeComponentSolver : ComponentSolver
             }
             else if (split.Length == 2)
             {
-                int val = 0;
-                if (!int.TryParse(split[1], out val)) yield break;
+                if (!int.TryParse(split[1], out int val)) yield break;
 
                 IEnumerator set = SetDial(pos, val);
                 while (set.MoveNext())

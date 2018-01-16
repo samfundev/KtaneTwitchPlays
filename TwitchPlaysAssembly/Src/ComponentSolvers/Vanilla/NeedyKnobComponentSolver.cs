@@ -23,8 +23,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
             yield break;
         }
 
-        int totalTurnCount = 0;
-        if (!int.TryParse(commandParts[1], out totalTurnCount))
+        if (!int.TryParse(commandParts[1], out int totalTurnCount))
         {
             yield break;
         }
