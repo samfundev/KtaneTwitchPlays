@@ -177,24 +177,18 @@ public class TwitchBombHandle : MonoBehaviour
 						foreach (string part in split.Skip(2))
 						{
 							bool valid = false;
-							foreach (string name in timeLengths.Keys)
+							foreach (string unit in timeLengths.Keys)
 							{
-								if (part.EndsWith(name))
-								{
-									float length;
-									if (float.TryParse(part.Substring(0, part.Length - name.Length), out length))
-									{
-										time += length * timeLengths[name];
-										valid = true;
-										break;
-									}
-								}
+							    if (!part.EndsWith(unit) || !float.TryParse(part.Substring(0, part.Length - unit.Length), out float length)) continue;
+							    time += length * timeLengths[unit];
+							    valid = true;
+							    break;
 							}
 
 							if (!valid) return null;
 						}
 
-						if (time == 0) break;
+						if (Math.Abs(time) < (1f / 60f)) break;
 						if (negitive) time = -time;
 
 					    bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
@@ -203,8 +197,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "strikes":
 					case "strike":
 					case "s":
-						int strikes;
-						if (int.TryParse(split[2], out strikes) && strikes != 0)
+					    if (int.TryParse(split[2], out int strikes) && strikes != 0)
 						{
 							if (negitive) strikes = -strikes;
 
@@ -212,26 +205,23 @@ public class TwitchBombHandle : MonoBehaviour
 						    {
 						        strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
 						    }
-						    bombCommander.Bomb.NumStrikes = bombCommander.StrikeCount + strikes;
-						    ircConnection.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), strikes > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
+						    bombCommander.StrikeCount += strikes;
+						    ircConnection.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
                             BombMessageResponder.moduleCameras.UpdateStrikes();
-							HandleStrikeChanges();
 						}
 						break;
 					case "strikelimit":
 					case "sl":
 					case "maxstrikes":
 					case "ms":
-						int maxStrikes;
-						if (int.TryParse(split[2], out maxStrikes) && maxStrikes != 0)
+					    if (int.TryParse(split[2], out int maxStrikes) && maxStrikes != 0)
 						{
 							if (negitive) maxStrikes = -maxStrikes;
 
-						    bombCommander.Bomb.NumStrikesToLose = bombCommander.StrikeLimit + maxStrikes;
-							ircConnection.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), maxStrikes > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
+						    bombCommander.StrikeLimit += maxStrikes;
+							ircConnection.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
 						    BombMessageResponder.moduleCameras.UpdateStrikes();
                             BombMessageResponder.moduleCameras.UpdateStrikeLimit();
-							HandleStrikeChanges();
 						}
 						break;
 				}
@@ -274,42 +264,7 @@ public class TwitchBombHandle : MonoBehaviour
         StartCoroutine(DelayBombExplosionCoroutine(message, reason,0.1f));
     }
     
-    public void HandleStrikeChanges()
-    {
-        int strikeLimit = bombCommander.StrikeLimit;
-        int strikeCount = Math.Min(bombCommander.StrikeCount, strikeLimit);
-
-        RecordManager RecordManager = RecordManager.Instance;
-        GameRecord GameRecord = RecordManager.GetCurrentRecord();
-        StrikeSource[] Strikes = GameRecord.Strikes;
-        if (Strikes.Length != strikeLimit)
-        {
-            StrikeSource[] newStrikes = new StrikeSource[Math.Max(strikeLimit, 1)];
-            Array.Copy(Strikes, newStrikes, Math.Min(Strikes.Length, newStrikes.Length));
-            GameRecord.Strikes = newStrikes;
-        }
-
-        if (strikeCount == strikeLimit)
-        {
-            if (strikeLimit < 1)
-            {
-                bombCommander.Bomb.NumStrikesToLose = 1;
-                strikeLimit = 1;
-            }
-            bombCommander.Bomb.NumStrikes = strikeLimit - 1;
-            CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeLimit - 1);
-            bombCommander.CauseStrike("Strike count / limit changed.");
-        }
-        else
-        {
-            Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", bombCommander.StrikeCount, bombCommander.StrikeLimit));
-            CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeCount);
-            //MasterAudio.PlaySound3DAtTransformAndForget("strike", base.transform, 1f, null, 0f, null);
-            float[] rates = {1, 1.25f, 1.5f, 1.75f, 2};
-            bombCommander.timerComponent.SetRateModifier(rates[Math.Min(strikeCount, 4)]);
-            bombCommander.Bomb.StrikeIndicator.StrikeCount = strikeCount;
-        }
-    }
+    
     #endregion
 
     #region Private Methods
@@ -333,8 +288,7 @@ public class TwitchBombHandle : MonoBehaviour
 
     private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
     {
-        bombCommander.Bomb.NumStrikes = bombCommander.StrikeLimit - 1;
-        HandleStrikeChanges();
+        bombCommander.StrikeCount = bombCommander.StrikeLimit - 1;
         if (!string.IsNullOrEmpty(message))
             ircConnection.SendMessage(message);
         yield return new WaitForSeconds(delay);

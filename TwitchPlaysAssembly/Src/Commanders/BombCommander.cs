@@ -449,72 +449,81 @@ public class BombCommander : ICommandResponder
         RotateByLocalQuaternion(target);
     }
 
-    public bool IsSolved
+    private void HandleStrikeChanges()
     {
-        get { return Bomb.IsSolved(); }
+        int strikeLimit = StrikeCount;
+        int strikeCount = Math.Min(StrikeCount, StrikeLimit);
+
+        RecordManager RecordManager = RecordManager.Instance;
+        GameRecord GameRecord = RecordManager.GetCurrentRecord();
+        StrikeSource[] Strikes = GameRecord.Strikes;
+        if (Strikes.Length != strikeLimit)
+        {
+            StrikeSource[] newStrikes = new StrikeSource[Math.Max(strikeLimit, 1)];
+            Array.Copy(Strikes, newStrikes, Math.Min(Strikes.Length, newStrikes.Length));
+            GameRecord.Strikes = newStrikes;
+        }
+
+        if (strikeCount == strikeLimit)
+        {
+            if (strikeLimit < 1)
+            {
+                Bomb.NumStrikesToLose = 1;
+                strikeLimit = 1;
+            }
+            Bomb.NumStrikes = strikeLimit - 1;
+            CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeLimit - 1);
+            CauseStrike("Strike count / limit changed.");
+        }
+        else
+        {
+            Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", StrikeCount, StrikeLimit));
+            CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeCount);
+            //MasterAudio.PlaySound3DAtTransformAndForget("strike", base.transform, 1f, null, 0f, null);
+            float[] rates = { 1, 1.25f, 1.5f, 1.75f, 2 };
+            timerComponent.SetRateModifier(rates[Math.Min(strikeCount, 4)]);
+            Bomb.StrikeIndicator.StrikeCount = strikeCount;
+        }
     }
 
-    public float CurrentTimerElapsed
-    {
-        get { return timerComponent.TimeElapsed; }
-    }
+    public bool IsSolved => Bomb.IsSolved();
+
+    public float CurrentTimerElapsed => timerComponent.TimeElapsed;
 
     public float CurrentTimer
     {
-        get { return timerComponent.TimeRemaining; }
+        get => timerComponent.TimeRemaining;
+        set => timerComponent.TimeRemaining = (value < 0) ? 0 : value;
     }
 
-    public string CurrentTimerFormatted
-    {
-        get
-        {
-            return timerComponent.GetFormattedTime(CurrentTimer, true);
-        }
-    }
+    public string CurrentTimerFormatted => timerComponent.GetFormattedTime(CurrentTimer, true);
 
-    public string StartingTimerFormatted
-    {
-        get
-        {
-            return timerComponent.GetFormattedTime(bombStartingTimer, true);
-        }
-    }
+    public string StartingTimerFormatted => timerComponent.GetFormattedTime(bombStartingTimer, true);
 
-    public string GetFullFormattedTime
-    {
-        get
-        {
-            return Math.Max(CurrentTimer, 0).FormatTime();
-        }
-    }
-	
-    public string GetFullStartingTime
-    {
-        get
-        {
-			return Math.Max(bombStartingTimer, 0).FormatTime();
-        }
-    }
-	
+    public string GetFullFormattedTime => Math.Max(CurrentTimer, 0).FormatTime();
+
+    public string GetFullStartingTime => Math.Max(bombStartingTimer, 0).FormatTime();
+
     public int StrikeCount
     {
-        get { return Bomb.NumStrikes; }
+        get => Bomb.NumStrikes;
+        set
+        {
+            if (value < 0) value = 0;   //Simon says is unsolvable with less than zero strikes.
+            Bomb.NumStrikes = value;
+            HandleStrikeChanges();
+        }
     }
 
     public int StrikeLimit
     {
-        get { return Bomb.NumStrikesToLose; }
+        get => Bomb.NumStrikesToLose;
+        set { Bomb.NumStrikesToLose = value; HandleStrikeChanges(); }
     }
 
-    public int NumberModules
-    {
-        get
-        {
-            return bombSolvableModules;
-        }
-    }
+    public int NumberModules => bombSolvableModules;
 
-	private static string[] solveBased = new string[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced" };
+    private static string[] solveBased = new string[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced" };
 	private bool removedSolveBasedModules = false;
 	public void RemoveSolveBasedModules()
 	{

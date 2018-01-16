@@ -207,8 +207,7 @@ public abstract class ComponentSolver : ICommandResponder
                 }
                 else if (currentString.StartsWith("award strikes ", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    int awardStrikeCount;
-                    if (int.TryParse(currentString.Substring(14), out awardStrikeCount))
+                    if (int.TryParse(currentString.Substring(14), out int awardStrikeCount))
                     {
                         _strikeCount += awardStrikeCount;
                         AwardStrikes(_currentUserNickName, _currentResponseNotifier, awardStrikeCount);
@@ -614,9 +613,8 @@ public abstract class ComponentSolver : ICommandResponder
         }
         if (OtherModes.timedModeOn)
         {
-            BombCommander.Bomb.NumStrikes = 0;
+            BombCommander.StrikeCount = 0;
             BombMessageResponder.moduleCameras.UpdateStrikes();
-            BombCommander.twitchBombHandle.HandleStrikeChanges();
         }
         StrikeMessage = string.Empty;
     }

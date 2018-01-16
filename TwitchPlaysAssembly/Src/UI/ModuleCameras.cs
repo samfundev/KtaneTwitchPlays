@@ -311,7 +311,7 @@ public class ModuleCameras : MonoBehaviour
     {
         if (currentBomb != null)
         {
-            currentTotalStrikes = currentBomb.Bomb.NumStrikesToLose;
+            currentTotalStrikes = currentBomb.StrikeLimit;
             string totalStrikesText = currentTotalStrikes.ToString();
             Debug.Log(LogPrefix + "Updating strike limit to " + totalStrikesText);
             strikeLimitPrefab.text = "/" + totalStrikesText;
@@ -446,8 +446,8 @@ public class ModuleCameras : MonoBehaviour
         }
         if (currentBomb != null)
         {
-            currentStrikes = currentBomb.Bomb.NumStrikes;
-            currentTotalStrikes = currentBomb.Bomb.NumStrikesToLose;
+            currentStrikes = currentBomb.StrikeCount;
+            currentTotalStrikes = currentBomb.StrikeLimit;
             string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, Char.Parse("0"));
             Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
             strikesPrefab.text = strikesText;
