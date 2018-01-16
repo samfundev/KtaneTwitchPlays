@@ -235,7 +235,7 @@ public abstract class ComponentSolver : ICommandResponder
             }
             else if (currentValue is Quaternion)
             {
-				if (!needQuaternionReset)
+				/*if (!needQuaternionReset)
 				{
 				    if (BombMessageResponder.moduleCameras != null)
 				    {
@@ -247,7 +247,7 @@ public abstract class ComponentSolver : ICommandResponder
 				    {
 				        yield return hideUI.Current;
 				    }
-				}
+				}*/
 
                 Quaternion localQuaternion = (Quaternion)currentValue;
                 BombCommander.RotateByLocalQuaternion(localQuaternion);
@@ -283,7 +283,7 @@ public abstract class ComponentSolver : ICommandResponder
         if (needQuaternionReset)
         {
             BombCommander.RotateByLocalQuaternion(Quaternion.identity);
-            if (BombMessageResponder.moduleCameras != null)
+            /*if (BombMessageResponder.moduleCameras != null)
             {
                 BombMessageResponder.moduleCameras.Show();
                 BombMessageResponder.moduleCameras.ShowHUD();
@@ -292,7 +292,7 @@ public abstract class ComponentSolver : ICommandResponder
             while (showUI.MoveNext())
             {
                 yield return showUI.Current;
-            }
+            }*/
         }
 
         if (_musicPlayer != null)
