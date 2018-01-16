@@ -188,7 +188,8 @@ public class TwitchBombHandle : MonoBehaviour
 							if (!valid) return null;
 						}
 
-						if (Math.Abs(time) < (1f / 60f)) break;
+						time = (float) Math.Round((decimal) time, 2, MidpointRounding.AwayFromZero);
+						if (Math.Abs(time) == 0) break;
 						if (negitive) time = -time;
 
 					    bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
