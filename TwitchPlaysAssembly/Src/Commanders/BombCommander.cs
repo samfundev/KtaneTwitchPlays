@@ -451,7 +451,7 @@ public class BombCommander : ICommandResponder
 
     private void HandleStrikeChanges()
     {
-        int strikeLimit = StrikeCount;
+        int strikeLimit = StrikeLimit;
         int strikeCount = Math.Min(StrikeCount, StrikeLimit);
 
         RecordManager RecordManager = RecordManager.Instance;
