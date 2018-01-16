@@ -15,7 +15,6 @@ public abstract class GameRoom
     {
         //Supported Mod gameplay room types
         Factory.FactoryType,
-
         
         //Supported vanilla gameplay room types.  (Also catches all unknown Mod gameplay rooms, as ModGameplayRoom inherits FacilityRoom)
         Facility.RoomType,
@@ -104,23 +103,8 @@ public abstract class GameRoom
         }
     }
 
-
     public virtual IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
     {
         yield break;
     }
-
-    static GameRoom()
-    {
-        _hasTickedLastMinuteField = typeof(PaceMaker).GetField("hasTickedLastMinute", BindingFlags.NonPublic | BindingFlags.Instance);
-    }
-
-    protected bool HasTickedLastMinute
-    {
-        get => (bool) _hasTickedLastMinuteField.GetValue(paceMaker);
-        set => _hasTickedLastMinuteField.SetValue(paceMaker, value);
-    }
-
-    private static FieldInfo _hasTickedLastMinuteField = null;
-    public PaceMaker paceMaker = null;
 }

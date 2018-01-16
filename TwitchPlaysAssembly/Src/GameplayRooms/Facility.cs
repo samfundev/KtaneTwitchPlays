@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Pacing;
+using UnityEngine;
 
 public class Facility : GameRoom
 {
@@ -32,6 +34,7 @@ public class Facility : GameRoom
 
     public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
     {
+        _facilityRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
         while (bombHandles.TrueForAll(handle => !handle.bombCommander.Bomb.HasDetonated))
         {
             if (bombHandles.TrueForAll(handle => handle.bombCommander.Bomb.IsSolved()))
