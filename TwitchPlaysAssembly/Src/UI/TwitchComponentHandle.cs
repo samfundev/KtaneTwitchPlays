@@ -594,6 +594,10 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					messageOut = string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
 				}
+				else
+				{
+					messageOut = string.Format("Sorry @{0}, nobody has claimed Module {1} ({2}).", userNickName, targetModule, headerText.text);
+				}
 			}
 		}
 
