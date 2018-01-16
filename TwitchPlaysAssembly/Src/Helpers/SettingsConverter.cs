@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -18,12 +19,6 @@ class SettingsConverter
 
 class ColorConverter : JsonConverter
 {
-	private int? ParseInt(string number)
-	{
-		int i;
-		return int.TryParse(number, out i) ? (int?) i : null;
-	}
-
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
 		Color color = (Color) value;
@@ -35,10 +30,10 @@ class ColorConverter : JsonConverter
 
 	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 	{
-		var parts = ((string) reader.Value).Split(',').Select(str => ParseInt(str.Trim()));
+		IEnumerable<int?> parts = ((string) reader.Value).Split(',').Select(str => str.Trim().TryParseInt());
 		if (parts.Any(x => x == null)) return existingValue;
 
-		var values = parts.Select(i => (int) i / 255f).ToArray();
+		float[] values = parts.Select(i => (int) i / 255f).ToArray();
 		switch (values.Count())
 		{
 			case 3:

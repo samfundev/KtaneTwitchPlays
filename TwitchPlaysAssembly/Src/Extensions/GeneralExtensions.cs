@@ -106,4 +106,9 @@ public static class GeneralExtensions
         // No whitespace chars, just break the word at the maxlength.
         return str.Substring(0, maxLength);
     }
+    
+    public static int? TryParseInt(this string number)
+    {
+        return int.TryParse(number, out int i) ? (int?)i : null;
+    }
 }
