@@ -77,8 +77,10 @@ public class TwitchPlaySettingsData
 
     public string ModuleClaimed = "{1} has claimed Module {0} ({2}).";
     public string ModuleUnclaimed = "{1} has released Module {0} ({2}).";
+	public string ModuleNotClaimed = "Sorry @{0}, nobody has claimed Module {1} ({2}).";
+	public string ModuleAlreadyOwned = "@{0}, you already have a claim on {1} ({2})";
 
-    public string AssignModule = "Module {0} ({3}) assigned to {1} by {2}";
+	public string AssignModule = "Module {0} ({3}) assigned to {1} by {2}";
     public string ModuleReady = "{1} says module {0} ({2}) is ready to be submitted";
 
     public string TakeModule = "@{0}, {1} wishes to take Module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
@@ -186,6 +188,8 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref ModuleClaimed, data.ModuleClaimed, 3);
         valid &= ValidateString(ref ModuleUnclaimed, data.ModuleUnclaimed, 3);
+	    valid &= ValidateString(ref ModuleNotClaimed, data.ModuleNotClaimed, 3);
+	    valid &= ValidateString(ref ModuleAlreadyOwned, data.ModuleAlreadyOwned, 3);
 
         valid &= ValidateString(ref AssignModule, data.AssignModule, 4);
         valid &= ValidateString(ref ModuleReady, data.ModuleReady, 3);

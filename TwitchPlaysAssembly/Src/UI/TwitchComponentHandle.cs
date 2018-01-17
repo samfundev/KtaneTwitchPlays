@@ -555,7 +555,7 @@ public class TwitchComponentHandle : MonoBehaviour
 					}
                     else if (playerName != null)
 					{
-					    messageOut = string.Format("@{0}, you already have a claim on {1} ({2})", userNickName, targetModule, headerText.text);
+					    messageOut = string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, targetModule, headerText.text);
 					}
 					else
 					{
@@ -593,7 +593,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else
 				{
-					messageOut = string.Format("Sorry @{0}, nobody has claimed Module {1} ({2}).", userNickName, targetModule, headerText.text);
+					messageOut = string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, headerText.text);
 				}
 			}
 		}
