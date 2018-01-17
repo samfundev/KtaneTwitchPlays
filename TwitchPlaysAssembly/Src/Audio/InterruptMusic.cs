@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class InterruptMusic : MonoBehaviour
 {
-    public static InterruptMusic Instance
-    {
-        get
-        {
-            return _instance;
-        }
-    }
+    public static InterruptMusic Instance => _instance;
 
-    private static InterruptMusic _instance = null;
+	private static InterruptMusic _instance = null;
     private static FieldInfo _volumeLevelField = null;
     private Dictionary<int, float> _oldVolumes = new Dictionary<int, float>();
 
