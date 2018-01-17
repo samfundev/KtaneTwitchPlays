@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -18,36 +19,21 @@ public class PasswordComponentSolver : ComponentSolver
     {
         if (!Regex.IsMatch(inputCommand, @"^[a-zA-Z]{5}$"))
         {
+	        HashSet<int> alreadyCycled = new HashSet<int>();
             string[] commandParts = inputCommand.Split(' ');
-            if (commandParts.Length > 2)
-            {
-                yield break;
-            }
+	        if (!commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase)) yield break;
 
-            if (commandParts[0].Equals("claim"))
-            {
-                yield break;
-            }
+	        foreach (string cycle in commandParts.Skip(1))
+	        {
+		        if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _spinners.Count)
+			        continue;
 
-            if (commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
-            {
-                int spinnerIndex = 1;
-                if (commandParts.Length == 2 && !int.TryParse(commandParts[1], out spinnerIndex))
-                {
-                    yield break;
-                }
-
-                spinnerIndex--;
-
-                if (spinnerIndex >= 0 && spinnerIndex < _spinners.Count)
-                {
-                    IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[spinnerIndex]);
-                    while (spinnerCoroutine.MoveNext())
-                    {
-                        yield return spinnerCoroutine.Current;
-                    }
-                }
-            }
+		        IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[spinnerIndex-1]);
+		        while (spinnerCoroutine.MoveNext())
+		        {
+			        yield return spinnerCoroutine.Current;
+		        }
+	        }
         }
         else
         {

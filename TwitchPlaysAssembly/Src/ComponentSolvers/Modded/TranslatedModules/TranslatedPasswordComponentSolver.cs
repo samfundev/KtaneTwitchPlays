@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -16,31 +18,27 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        string[] commandParts = inputCommand.Split(' ');
-        if (commandParts.Length > 2 || commandParts[0].Length != 5 || commandParts[0] == "claim")
+	    HashSet<int> alreadyCycled = new HashSet<int>();
+		string[] commandParts = inputCommand.Split(' ');
+        if (commandParts[0].Length != 5)
         {
             yield break;
         }
 
         if (commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
         {
-            int spinnerIndex = 1;
-            if (commandParts.Length == 2 && !int.TryParse(commandParts[1], out spinnerIndex))
-            {
-                yield break;
-            }
+	        foreach (string cycle in commandParts.Skip(1))
+	        {
+		        if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _downButtons.Length)
+			        continue;
 
-            spinnerIndex--;
-
-            if (spinnerIndex >= 0 && spinnerIndex < _downButtons.Length)
-            {
-                IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(spinnerIndex);
-                while (spinnerCoroutine.MoveNext())
-                {
-                    yield return spinnerCoroutine.Current;
-                }
-            }
-            yield break;
+				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(spinnerIndex-1);
+		        while (spinnerCoroutine.MoveNext())
+		        {
+			        yield return spinnerCoroutine.Current;
+		        }
+			}
+			yield break;
         }
 
         yield return "password";
