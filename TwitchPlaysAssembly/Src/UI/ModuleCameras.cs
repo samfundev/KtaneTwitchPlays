@@ -38,8 +38,6 @@ public class ModuleCameras : MonoBehaviour
 				    {
 					    if (OriginalLayers.ContainsKey(trans)) continue;
 					    OriginalLayers.Add(trans, trans.gameObject.layer);
-					    if (trans.gameObject.GetComponent<SelectableArea>() != null)
-						    Debug.Log($"[ModuleCameras] - {component.transform.name} - SelectableArea layer = {trans.gameObject.layer}");
 					    if (EnableCamera)
 						    trans.gameObject.layer = cameraLayer;
 				    }
@@ -239,17 +237,16 @@ public class ModuleCameras : MonoBehaviour
 	
 	private void LateUpdate()
     {
-        if (currentBomb != null)
-        {
-			string formattedTime = currentBomb.GetFullFormattedTime;
-			timerPrefab.text = formattedTime;
-			timerShadowPrefab.text = Regex.Replace(formattedTime, @"\d", "8");
-			UpdateConfidence();
-        }
-	    foreach (ModuleCamera camera in cameras.Where(x => x.module != null))
+	    foreach (ModuleCamera camera in cameras)
 	    {
-		    camera.module.UpdateLayerData();
+		    camera.module?.UpdateLayerData();
 	    }
+
+	    if (currentBomb == null) return;
+	    string formattedTime = currentBomb.GetFullFormattedTime;
+	    timerPrefab.text = formattedTime;
+	    timerShadowPrefab.text = Regex.Replace(formattedTime, @"\d", "8");
+	    UpdateConfidence();
     }
     #endregion
 
@@ -350,35 +347,29 @@ public class ModuleCameras : MonoBehaviour
 
     public void UpdateStrikeLimit()
     {
-        if (currentBomb != null)
-        {
-            currentTotalStrikes = currentBomb.StrikeLimit;
-            string totalStrikesText = currentTotalStrikes.ToString();
-            Debug.Log(LogPrefix + "Updating strike limit to " + totalStrikesText);
-            strikeLimitPrefab.text = "/" + totalStrikesText;
-        }
+	    if (currentBomb == null) return;
+	    currentTotalStrikes = currentBomb.StrikeLimit;
+	    string totalStrikesText = currentTotalStrikes.ToString();
+	    Debug.Log(LogPrefix + "Updating strike limit to " + totalStrikesText);
+	    strikeLimitPrefab.text = "/" + totalStrikesText;
     }
 
     public void UpdateSolves()
     {
-        if (currentBomb != null)
-        {
-            currentSolves = currentBomb.bombSolvedModules;
-            string solves = currentSolves.ToString().PadLeft(currentBomb.bombSolvableModules.ToString().Length, Char.Parse("0"));
-            Debug.Log(LogPrefix + "Updating solves to " + solves);
-            solvesPrefab.text = solves;
-        }
+	    if (currentBomb == null) return;
+	    currentSolves = currentBomb.bombSolvedModules;
+	    string solves = currentSolves.ToString().PadLeft(currentBomb.bombSolvableModules.ToString().Length, Char.Parse("0"));
+	    Debug.Log(LogPrefix + "Updating solves to " + solves);
+	    solvesPrefab.text = solves;
     }
 
     public void UpdateTotalModules()
     {
-        if (currentBomb != null)
-        {
-            currentTotalModules = currentBomb.bombSolvableModules;
-            string total = currentTotalModules.ToString();
-            Debug.Log(LogPrefix + "Updating total modules to " + total);
-            totalModulesPrefab.text = "/" + total;
-        }
+	    if (currentBomb == null) return;
+	    currentTotalModules = currentBomb.bombSolvableModules;
+	    string total = currentTotalModules.ToString();
+	    Debug.Log(LogPrefix + "Updating total modules to " + total);
+	    totalModulesPrefab.text = "/" + total;
     }
 
     public void UpdateConfidence()
@@ -485,20 +476,17 @@ public class ModuleCameras : MonoBehaviour
             // Necessary since the bomb doesn't update its internal counter until all its OnStrike handlers are finished
             yield return 0;
         }
-        if (currentBomb != null)
-        {
-            currentStrikes = currentBomb.StrikeCount;
-            currentTotalStrikes = currentBomb.StrikeLimit;
-            string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, Char.Parse("0"));
-            Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
-            strikesPrefab.text = strikesText;
-        }
-        yield break;
+	    if (currentBomb == null) yield break;
+	    currentStrikes = currentBomb.StrikeCount;
+	    currentTotalStrikes = currentBomb.StrikeLimit;
+	    string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, Char.Parse("0"));
+	    Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
+	    strikesPrefab.text = strikesText;
     }
 
     private void AddModuleToStack(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
-        if (handle != null && !GameRoom.Instance.IsCurrentBomb(handle.bombID))
+        if (component == null || handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID))
         {
             return;
         }
@@ -532,22 +520,19 @@ public class ModuleCameras : MonoBehaviour
     {
         foreach (ModuleCamera camera in cameras)
         {
-            if ((camera.module != null) &&
-                (object.ReferenceEquals(camera.module.component, component)))
-            {
-                if (delay)
-                {
-                    yield return new WaitForSeconds(1.0f);
-                }
-                // This second check is necessary, in case another module has moved in during the delay
-                // As long as the delay ends before the current move does, this won't be an issue for most modules
-                // But some modules with delayed solves would fall foul of it
-                if ((camera.module != null) &&
-                    (object.ReferenceEquals(camera.module.component, component)))
-                {
-                    camera.Refresh();
-                }
-            }
+	        if ((camera.module == null) || (!object.ReferenceEquals(camera.module.component, component))) continue;
+	        if (delay)
+	        {
+		        yield return new WaitForSeconds(1.0f);
+	        }
+	        // This second check is necessary, in case another module has moved in during the delay
+	        // As long as the delay ends before the current move does, this won't be an issue for most modules
+	        // But some modules with delayed solves would fall foul of it
+	        if ((camera.module != null) &&
+	            (object.ReferenceEquals(camera.module.component, component)))
+	        {
+		        camera.Refresh();
+	        }
         }
         yield break;
     }

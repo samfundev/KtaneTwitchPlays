@@ -181,7 +181,7 @@ public class BombMessageResponder : MessageResponder
 
 		moduleCameras?.gameObject.SetActive(false);
 
-        foreach (var handle in _bombHandles)
+        foreach (TwitchBombHandle handle in _bombHandles)
         {
             if (handle != null)
             {
@@ -197,8 +197,8 @@ public class BombMessageResponder : MessageResponder
             {
                 Destroy(handle.gameObject, 2.0f);
             }
-        }
-        _componentHandles.Clear();
+	        _componentHandles.Clear();
+		}
 
         MusicPlayer.StopAllMusic();
     }
@@ -237,7 +237,7 @@ public class BombMessageResponder : MessageResponder
 
             if (GameRoom.Instance.HoldBomb)
                 _coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), _currentBomb);
-        } while (bombs == null || bombs.Length == 0);
+        } while (bombs.Length == 0);
 
         AlarmClock[] clocks;
         do
@@ -500,44 +500,41 @@ public class BombMessageResponder : MessageResponder
 
         foreach (TwitchBombHandle handle in _bombHandles)
         {
-            if (handle != null)
-            {
-                IEnumerator onMessageReceived = handle.OnMessageReceived(userNickName, userColorCode, text);
-                if (onMessageReceived == null)
-                {
-                    continue;
-                }
+	        if (handle == null) continue;
+	        IEnumerator onMessageReceived = handle.OnMessageReceived(userNickName, userColorCode, text);
+	        if (onMessageReceived == null)
+	        {
+		        continue;
+	        }
 
-                if (_currentBomb != handle.bombID)
-                {
-                    if (!GameRoom.Instance.IsCurrentBomb(handle.bombID))
-                        continue;
+	        if (_currentBomb != handle.bombID)
+	        {
+		        if (!GameRoom.Instance.IsCurrentBomb(handle.bombID))
+			        continue;
 
-                    _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), handle.bombID);
-                    _coroutineQueue.AddToQueue(handle.ShowMainUIWindow(), handle.bombID);
-                    _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(), handle.bombID);
+		        _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), handle.bombID);
+		        _coroutineQueue.AddToQueue(handle.ShowMainUIWindow(), handle.bombID);
+		        _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(), handle.bombID);
 
-                    _currentBomb = handle.bombID;
-                }
-                _coroutineQueue.AddToQueue(onMessageReceived, handle.bombID);
-            }
+		        _currentBomb = handle.bombID;
+	        }
+	        _coroutineQueue.AddToQueue(onMessageReceived, handle.bombID);
         }
 
         foreach (TwitchComponentHandle componentHandle in _componentHandles)
         {
             if (!GameRoom.Instance.IsCurrentBomb(componentHandle.bombID)) continue;
             IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text);
-            if (onMessageReceived != null)
-            {
-                if (_currentBomb != componentHandle.bombID)
-                {
-                    _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), componentHandle.bombID);
-                    _coroutineQueue.AddToQueue(_bombHandles[componentHandle.bombID].ShowMainUIWindow(), componentHandle.bombID);
-                    _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(),componentHandle.bombID);
-                    _currentBomb = componentHandle.bombID;
-                }
-                _coroutineQueue.AddToQueue(onMessageReceived,componentHandle.bombID);
-            }
+	        if (onMessageReceived == null) continue;
+
+	        if (_currentBomb != componentHandle.bombID)
+	        {
+		        _coroutineQueue.AddToQueue(_bombHandles[_currentBomb].HideMainUIWindow(), componentHandle.bombID);
+		        _coroutineQueue.AddToQueue(_bombHandles[componentHandle.bombID].ShowMainUIWindow(), componentHandle.bombID);
+		        _coroutineQueue.AddToQueue(_bombCommanders[_currentBomb].LetGoBomb(),componentHandle.bombID);
+		        _currentBomb = componentHandle.bombID;
+	        }
+	        _coroutineQueue.AddToQueue(onMessageReceived,componentHandle.bombID);
         }
     }
 
@@ -687,19 +684,14 @@ public class BombMessageResponder : MessageResponder
         yield return new WaitForSeconds(delay);
         _ircConnection.SendMessage(message);
 
-        if (callback != null)
-        {
-            callback();
-        }
+	    callback?.Invoke();
     }
 
     private void SendAnalysisLink()
     {
-        if (!TwitchPlaysService.logUploader.PostToChat())
-        {
-            Debug.Log("[BombMessageResponder] Analysis URL not found, instructing LogUploader to post when it's ready");
-            TwitchPlaysService.logUploader.postOnComplete = true;
-        }
+	    if (TwitchPlaysService.logUploader.PostToChat()) return;
+	    Debug.Log("[BombMessageResponder] Analysis URL not found, instructing LogUploader to post when it's ready");
+	    TwitchPlaysService.logUploader.postOnComplete = true;
     }
     #endregion
 }
