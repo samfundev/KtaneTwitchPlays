@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class ModuleCameras : MonoBehaviour
 {
+	public const int cameraLayer = 11;
+
     public class ModuleItem
     {
         public Dictionary<Transform, int> OriginalLayers = new Dictionary<Transform, int>();
@@ -15,6 +17,7 @@ public class ModuleCameras : MonoBehaviour
         public TwitchComponentHandle handle = null;
         public int priority = CameraNotInUse;
         public int index = 0;
+	    public bool EnableCamera = false;
 
         public ModuleItem(BombComponent c, TwitchComponentHandle h, int p)
         {
@@ -22,27 +25,67 @@ public class ModuleCameras : MonoBehaviour
             handle = h;
             priority = p;
 
-            if (component != null)
-            {
-                foreach (Transform trans in component.gameObject.GetComponentsInChildren<Transform>(true))
-                {
-                    if (OriginalLayers.ContainsKey(trans)) continue;
-                    OriginalLayers.Add(trans, trans.gameObject.layer);
-                    if(trans.gameObject.GetComponent<SelectableArea>() != null)
-                        Debug.Log($"[ModuleCameras] - {c.transform.name} - SelectableArea layer = {trans.gameObject.layer}");
-                }
-            }
-
-            if (handle != null)
-            {
-                foreach (Transform trans in handle.gameObject.GetComponentsInChildren<Transform>(true))
-                {
-                    if (OriginalLayers.ContainsKey(trans)) continue;
-                    OriginalLayers.Add(trans, trans.gameObject.layer);
-                }
-            }
+	        UpdateLayerData();
         }
-    }
+
+	    public void UpdateLayerData()
+	    {
+			if (component != null)
+		    {
+			    foreach (Transform trans in component.gameObject.GetComponentsInChildren<Transform>(true))
+			    {
+				    try
+				    {
+					    if (OriginalLayers.ContainsKey(trans)) continue;
+					    OriginalLayers.Add(trans, trans.gameObject.layer);
+					    if (trans.gameObject.GetComponent<SelectableArea>() != null)
+						    Debug.Log($"[ModuleCameras] - {component.transform.name} - SelectableArea layer = {trans.gameObject.layer}");
+					    if (EnableCamera)
+						    trans.gameObject.layer = cameraLayer;
+				    }
+				    catch
+				    {
+					    continue;
+				    }
+			    }
+		    }
+
+		    if (handle == null) return;
+
+		    foreach (Transform trans in handle.gameObject.GetComponentsInChildren<Transform>(true))
+		    {
+			    try
+			    {
+				    if (OriginalLayers.ContainsKey(trans)) continue;
+				    OriginalLayers.Add(trans, trans.gameObject.layer);
+				    if (EnableCamera)
+					    trans.gameObject.layer = cameraLayer;
+			    }
+			    catch
+			    {
+				    continue;
+			    }
+		    }
+		}
+
+	    public void SetRenderLayer(bool enableCamera)
+	    {
+		    EnableCamera = enableCamera;
+			foreach (KeyValuePair<Transform, int> kvp in OriginalLayers)
+		    {
+			    try
+			    {
+				    kvp.Key.gameObject.layer = EnableCamera
+					    ? cameraLayer
+					    : kvp.Value;
+			    }
+			    catch
+			    {
+				    continue;
+			    }
+		    }
+	    }
+	}
 
     public class ModuleCamera : MonoBehaviour
     {
@@ -52,7 +95,6 @@ public class ModuleCameras : MonoBehaviour
         public ModuleItem module = null;
 
         private ModuleCameras parent = null;
-        private int originalLayer = 0;
 
         public ModuleCamera(Camera instantiatedCamera, ModuleCameras parentInstance)
         {
@@ -94,11 +136,9 @@ public class ModuleCameras : MonoBehaviour
                 priority = module.priority;
 
                 // We know the camera's culling mask is pointing at a single layer, so let's find out what that layer is
-                int newLayer = 11;
-                cameraInstance.cullingMask = 1 << 11;
-                originalLayer = module.component.gameObject.layer;
-                Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", originalLayer, newLayer);
-                SetRenderLayer(newLayer);
+                cameraInstance.cullingMask = 1 << cameraLayer;
+                Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", module.component.gameObject.layer, cameraLayer);
+	            module.SetRenderLayer(true);
                 cameraInstance.transform.SetParent(module.component.transform, false);
                 cameraInstance.gameObject.SetActive(true);
 
@@ -113,11 +153,8 @@ public class ModuleCameras : MonoBehaviour
 
         public void Deactivate()
         {
-            if (module != null)
-            {
-                SetRenderLayer(-1);
-            }
-            cameraInstance.gameObject.SetActive(false);
+	        module?.SetRenderLayer(false);
+	        cameraInstance.gameObject.SetActive(false);
             module = null;
             priority = CameraNotInUse;
         }
@@ -127,16 +164,6 @@ public class ModuleCameras : MonoBehaviour
             get
             {
                 return module.component.IsSolved;
-            }
-        }
-
-        private void SetRenderLayer(int layer)
-        {
-            foreach (KeyValuePair<Transform, int> kvp in module.OriginalLayers)
-            {
-                kvp.Key.gameObject.layer = layer < 0 || layer > 31 
-                    ? kvp.Value 
-                    : layer;
             }
         }
 
@@ -219,6 +246,10 @@ public class ModuleCameras : MonoBehaviour
 			timerShadowPrefab.text = Regex.Replace(formattedTime, @"\d", "8");
 			UpdateConfidence();
         }
+	    foreach (ModuleCamera camera in cameras.Where(x => x.module != null))
+	    {
+		    camera.module.UpdateLayerData();
+	    }
     }
     #endregion
 
