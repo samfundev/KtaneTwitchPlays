@@ -34,32 +34,11 @@ public class UrlHelper : MonoBehaviour
         return string.Format(LogAnalyser + "#url={0}", url);
     }
 
-    public string Reference(bool modded)
-    {
-        return (modded) ? ModdedReference : VanillaReference;
-    }
-
     public string CommandReference
     {
         get
         {
-            return (shortMode) ? "http://bombch.us/CeEz" : "https://github.com/ashbash1987/ktanemod-twitchplays/wiki/Pre-Game-Commands";
-        }
-    }
-
-    public string VanillaReference
-    {
-        get
-        {
-            return (shortMode) ? "http://bombch.us/CdqJ" : "https://github.com/ashbash1987/ktanemod-twitchplays/wiki/Vanilla-Module-Commands"; // todo send this to the right short url
-        }
-    }
-
-    public string ModdedReference
-    {
-        get
-        {
-            return (shortMode) ? "http://bombch.us/CdqJ" : "https://github.com/ashbash1987/ktanemod-twitchplays/wiki/Mod-Module-Commands";
+            return shortMode ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
         }
     }
 
