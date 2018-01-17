@@ -308,6 +308,16 @@ public class ModuleCameras : MonoBehaviour
         }
     }
 
+	public void SetNotes(int noteIndex, string noteText)
+	{
+		notesTexts[noteIndex].text = noteText;
+	}
+
+	public void AppendNotes(int noteIndex, string noteText)
+	{
+		notesTexts[noteIndex].text += " " + noteText;
+	}
+
     public void DetachFromModule(MonoBehaviour component, bool delay = false)
     {
         StartCoroutine(DetachFromModuleCoroutine(component, delay));

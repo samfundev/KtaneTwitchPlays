@@ -260,8 +260,7 @@ public class BombMessageResponder : MessageResponder
         for (int i = 0; i < 4; i++)
         {
             _notes[i] = TwitchPlaySettings.data.NotesSpaceFree;
-            if (moduleCameras != null)
-                moduleCameras.notesTexts[i].text = TwitchPlaySettings.data.NotesSpaceFree;
+			moduleCameras?.SetNotes(i,TwitchPlaySettings.data.NotesSpaceFree);
         }
 
         if (EnableDisableInput())
@@ -297,8 +296,7 @@ public class BombMessageResponder : MessageResponder
             _ircConnection.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
 
             _notes[index] = notes;
-            if(moduleCameras != null)
-                moduleCameras.notesTexts[index].text = notes;
+	        moduleCameras?.SetNotes(index, notes);
             return;
         }
 
@@ -319,8 +317,7 @@ public class BombMessageResponder : MessageResponder
             _ircConnection.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
 
             _notes[index] += " " + notes;
-            if(moduleCameras != null)
-                moduleCameras.notesTexts[index].text += " " + notes;
+	        moduleCameras?.AppendNotes(index, notes);
             return;
         }
 
@@ -336,8 +333,7 @@ public class BombMessageResponder : MessageResponder
             _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
             _ircConnection.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index + 1);
 
-            if (moduleCameras != null)
-                moduleCameras.notesTexts[index].text = TwitchPlaySettings.data.NotesSpaceFree;
+	        moduleCameras?.SetNotes(index, TwitchPlaySettings.data.NotesSpaceFree);
             return;
         }
 
