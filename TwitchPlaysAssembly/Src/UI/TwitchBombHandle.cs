@@ -111,7 +111,7 @@ public class TwitchBombHandle : MonoBehaviour
 
         internalCommand = match.Groups[1].Value;
 
-        TwitchMessage message = (TwitchMessage)Instantiate(messagePrefab, messageScrollContents.transform, false);
+        TwitchMessage message = Instantiate<TwitchMessage>(messagePrefab, messageScrollContents.transform, false);
         if (string.IsNullOrEmpty(userColor))
         {
             message.SetMessage(string.Format("<b>{0}</b>: {1}", userNickName, internalCommand));

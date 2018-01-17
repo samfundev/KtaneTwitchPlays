@@ -591,7 +591,7 @@ public class BombMessageResponder : MessageResponder
                     break;
             }
 
-            TwitchComponentHandle handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
+            TwitchComponentHandle handle = Instantiate<TwitchComponentHandle>(twitchComponentHandlePrefab, bombComponent.transform, false);
             handle.ircConnection = _ircConnection;
             handle.bombCommander = bombCommander;
             handle.bombComponent = bombComponent;

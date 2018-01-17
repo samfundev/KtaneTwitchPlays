@@ -604,7 +604,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			return null;
 		}
 
-		TwitchMessage message = (TwitchMessage) Instantiate(messagePrefab, messageScrollContents.transform, false);
+		TwitchMessage message = Instantiate<TwitchMessage>(messagePrefab, messageScrollContents.transform, false);
 		message.leaderboard = leaderboard;
 		message.userName = userNickName;
 		if (string.IsNullOrEmpty(userColor))
