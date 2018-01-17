@@ -39,26 +39,30 @@ public class MiscellaneousMessageResponder : MessageResponder
 	    Mission mission = missions.FirstOrDefault(x => Regex.IsMatch(x.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
 	    if (mission == null)
 	    {
-	        failureMessage = string.Format("Unable to find a mission with an ID of \"{0}\".", targetID);
+	        failureMessage = $"Unable to find a mission with an ID of \"{targetID}\".";
 	        return null;
 	    }
 
 	    List<string> availableMods = GameInfo.GetAvailableModuleInfo().Where(x => x.IsMod).Select(y => y.ModuleId).ToList();
 	    if (MultipleBombs.Installed())
 	        availableMods.Add("Multiple Bombs");
-	    List<string> missingMods = new List<string>();
+	    HashSet<string> missingMods = new HashSet<string>();
+		List<ModuleInformation> modules = ComponentSolverFactory.GetModuleInformation().ToList();
 
-	    GeneratorSetting generatorSetting = mission.GeneratorSetting;
+		GeneratorSetting generatorSetting = mission.GeneratorSetting;
 	    List<ComponentPool> componentPools = generatorSetting.ComponentPools;
 	    foreach (ComponentPool componentPool in componentPools)
 	    {
 	        List<string> modTypes = componentPool.ModTypes;
 	        if (modTypes == null || modTypes.Count == 0) continue;
-	        missingMods.AddRange(modTypes.Where(x => !availableMods.Contains(x) && !missingMods.Contains(x)));
+		    foreach (string mod in modTypes.Where(x => !availableMods.Contains(x)))
+		    {
+			    missingMods.Add(modules.FirstOrDefault(x => x.moduleID == mod)?.moduleDisplayName ?? mod);
+		    }
 	    }
 	    if (missingMods.Count > 0)
 	    {
-	        failureMessage = string.Format("Mission {0} was found, however, the following mods are not installed / loaded: {1}", targetID, string.Join(", ", missingMods.ToArray()));
+	        failureMessage = $"Mission \"{targetID}\" was found, however, the following mods are not installed / loaded: {string.Join(", ", missingMods.OrderBy(x => x).ToArray())}";
             return null;
 	    }
         
