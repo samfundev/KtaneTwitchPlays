@@ -408,21 +408,18 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public string ClaimModule(string userNickName, string targetModule)
 	{
-		if (playerName == null)
+		if (playerName != null) return string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
+		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !_solved)
 		{
-			if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !_solved)
-			{
-				return string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit);
-			}
-			else
-			{
-				ClaimedList.Add(userNickName);
-				SetBannerColor(claimedBackgroundColour);
-				playerName = userNickName;
-				return string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, playerName, headerText.text);
-			}
+			return string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit);
 		}
-		return null;
+		else
+		{
+			ClaimedList.Add(userNickName);
+			SetBannerColor(claimedBackgroundColour);
+			playerName = userNickName;
+			return string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, playerName, headerText.text);
+		}
 	}
 
 	public void CommandError(string userNickName, string message)
@@ -580,7 +577,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
 				{
-					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
 						SetBannerColor(markedBackgroundColor);
 						return null;
