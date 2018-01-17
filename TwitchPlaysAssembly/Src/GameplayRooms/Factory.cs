@@ -90,13 +90,6 @@ public class Factory : GameRoom
 
             yield return new WaitUntil(() => currentBomb != GetBomb);
 
-            //Just in case there is an Active bomb view, it needs to be removed, as it Won't otherwise be removable by the user.
-            IEnumerator bombUnview = bombHandles[BombID].OnMessageReceived("Bomb Factory", "red", string.Format("!bomb{0} unview", bombHandles.Count == 1 ? "" : (BombID + 1).ToString()));
-            while (bombUnview.MoveNext())
-            {
-                yield return bombUnview.Current;
-            }
-
             IEnumerator hideWindow = bombHandles[BombID++].HideMainUIWindow();
             while (hideWindow.MoveNext())
             {
