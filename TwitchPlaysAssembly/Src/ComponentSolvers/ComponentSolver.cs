@@ -127,6 +127,7 @@ public abstract class ComponentSolver : ICommandResponder
         int previousStrikeCount = StrikeCount;
         bool parseError = false;
         bool needQuaternionReset = false;
+	    bool hideCamera = false;
 		bool exceptionThrown = false;
 		
         while (previousStrikeCount == StrikeCount && !Solved)
@@ -150,10 +151,9 @@ public abstract class ComponentSolver : ICommandResponder
 			}
 
             object currentValue = subcoroutine.Current;
-            if (currentValue is string)
+            if (currentValue is string currentString)
             {
-                string currentString = (string)currentValue;
-                if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
+	            if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _delegatedStrikeUserNickName = userNickName;
                     _delegatedStrikeResponseNotifier = responseNotifier;
@@ -209,7 +209,7 @@ public abstract class ComponentSolver : ICommandResponder
                 {
                     if (int.TryParse(currentString.Substring(14), out int awardStrikeCount))
                     {
-                        _strikeCount += awardStrikeCount;
+                        StrikeCount += awardStrikeCount;
                         AwardStrikes(_currentUserNickName, _currentResponseNotifier, awardStrikeCount);
                         DisableOnStrike = false;
                     }
@@ -232,47 +232,54 @@ public abstract class ComponentSolver : ICommandResponder
                         _musicPlayer = MusicPlayer.StartRandomMusic();
                     }
                 }
+				else if (currentString.ToLowerInvariant().Equals("hide camera"))
+	            {
+		            if (!hideCamera)
+		            {
+			            if (BombMessageResponder.moduleCameras != null)
+			            {
+				            BombMessageResponder.moduleCameras.Hide();
+				            BombMessageResponder.moduleCameras.HideHUD();
+			            }
+			            IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
+			            while (hideUI.MoveNext())
+			            {
+				            yield return hideUI.Current;
+			            }
+		            }
+					hideCamera = true;
+	            }
             }
-            else if (currentValue is Quaternion)
+            else if (currentValue is Quaternion localQuaternion)
             {
-				/*if (!needQuaternionReset)
-				{
-				    if (BombMessageResponder.moduleCameras != null)
-				    {
-				        BombMessageResponder.moduleCameras.Hide();
-				        BombMessageResponder.moduleCameras.HideHUD();
-				    }
-				    IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
-				    while (hideUI.MoveNext())
-				    {
-				        yield return hideUI.Current;
-				    }
-				}*/
-
-                Quaternion localQuaternion = (Quaternion)currentValue;
                 BombCommander.RotateByLocalQuaternion(localQuaternion);
                 needQuaternionReset = true;
             }
-            else if (currentValue is string[])
-            {
-                string[] currentStrings = (string[]) currentValue;
-                if (currentStrings.Length >= 1)
-                {
-                    if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode"))
-                    {
-                        AwardStrikes(_currentUserNickName, _currentResponseNotifier, BombCommander.StrikeLimit - BombCommander.StrikeCount);
-                        if (currentStrings.Length == 2)
-                            BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], modInfo.moduleDisplayName);
-                        else if (currentStrings.Length == 3)
-                            BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], currentStrings[2]);
-                        else
-                            BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
-                        break;
-                    }
-                }
+            else if (currentValue is string[] currentStrings)
+			{
+				if (currentStrings.Length >= 1)
+				{
+					if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode"))
+					{
+						AwardStrikes(_currentUserNickName, _currentResponseNotifier, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+						switch (currentStrings.Length)
+						{
+							case 2:
+								BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], modInfo.moduleDisplayName);
+								break;
+							case 3:
+								BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], currentStrings[2]);
+								break;
+							default:
+								BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
+								break;
+						}
+						break;
+					}
+				}
 
-            }
-            yield return currentValue;
+			}
+			yield return currentValue;
         }
 
 		if (!_responded && !exceptionThrown)
@@ -283,17 +290,21 @@ public abstract class ComponentSolver : ICommandResponder
         if (needQuaternionReset)
         {
             BombCommander.RotateByLocalQuaternion(Quaternion.identity);
-            /*if (BombMessageResponder.moduleCameras != null)
-            {
-                BombMessageResponder.moduleCameras.Show();
-                BombMessageResponder.moduleCameras.ShowHUD();
-            }
-            IEnumerator showUI = BombCommander.twitchBombHandle.ShowMainUIWindow();
-            while (showUI.MoveNext())
-            {
-                yield return showUI.Current;
-            }*/
         }
+
+	    if (hideCamera)
+	    {
+			if (BombMessageResponder.moduleCameras != null)
+		    {
+			    BombMessageResponder.moduleCameras.Show();
+			    BombMessageResponder.moduleCameras.ShowHUD();
+		    }
+		    IEnumerator showUI = BombCommander.twitchBombHandle.ShowMainUIWindow();
+		    while (showUI.MoveNext())
+		    {
+			    yield return showUI.Current;
+		    }
+		}
 
         if (_musicPlayer != null)
         {
@@ -492,7 +503,7 @@ public abstract class ComponentSolver : ICommandResponder
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
         if (DisableOnStrike) return false;
 
-        _strikeCount++;
+        StrikeCount++;
 
 
         if (_delegatedStrikeUserNickName != null && _delegatedStrikeResponseNotifier != null)
@@ -520,7 +531,7 @@ public abstract class ComponentSolver : ICommandResponder
 
     public bool OnStrikes(object _ignore)
     {
-        _strikeCount++;
+        StrikeCount++;
         if (BombMessageResponder.moduleCameras != null)
         {
             BombMessageResponder.moduleCameras.UpdateStrikes(true);
@@ -634,27 +645,11 @@ public abstract class ComponentSolver : ICommandResponder
         set;
     }
 
-    protected bool Solved
-    {
-        get
-        {
-            return BombComponent.IsSolved;
-        }
-    }
+    protected bool Solved => BombComponent.IsSolved;
 
-    protected bool Detonated
-    {
-        get { return BombCommander.Bomb.HasDetonated; }
-    }
+	protected bool Detonated => BombCommander.Bomb.HasDetonated;
 
-    private int _strikeCount = 0;
-    protected int StrikeCount
-	{
-		get
-		{
-            return _strikeCount;
-		}
-	}
+	protected int StrikeCount { get; private set; } = 0;
 
 	protected float FocusDistance
     {
