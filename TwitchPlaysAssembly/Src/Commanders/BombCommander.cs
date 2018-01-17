@@ -76,17 +76,6 @@ public class BombCommander : ICommandResponder
 
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
-        else if (message.Equals("unview"))
-        {
-            if (BombMessageResponder.moduleCameras != null)
-                BombMessageResponder.moduleCameras.DetachFromModule(timerComponent);
-        }
-        else if (message.StartsWith("view"))
-        {
-            int priority = (message.Equals("view pin")) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
-            if (BombMessageResponder.moduleCameras != null)
-                BombMessageResponder.moduleCameras.AttachToModule(timerComponent, null, priority);
-        }
         else
         {
             responseNotifier.ProcessResponse(CommandResponse.NoResponse);
