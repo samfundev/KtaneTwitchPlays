@@ -30,6 +30,9 @@ public class KeypadComponentSolver : ComponentSolver
 
             if (buttonIndex >= 0 && buttonIndex < _buttons.Length)
             {
+	            if (_buttons[buttonIndex].IsStayingDown)
+		            continue;
+
                 yield return buttonIndexString.Value;
 
                 if (Canceller.ShouldCancel)
