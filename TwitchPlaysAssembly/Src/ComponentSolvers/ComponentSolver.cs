@@ -236,11 +236,8 @@ public abstract class ComponentSolver : ICommandResponder
 	            {
 		            if (!hideCamera)
 		            {
-			            if (BombMessageResponder.moduleCameras != null)
-			            {
-				            BombMessageResponder.moduleCameras.Hide();
-				            BombMessageResponder.moduleCameras.HideHUD();
-			            }
+				        BombMessageResponder.moduleCameras?.Hide();
+				        BombMessageResponder.moduleCameras?.HideHUD();
 			            IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
 			            while (hideUI.MoveNext())
 			            {
@@ -294,19 +291,16 @@ public abstract class ComponentSolver : ICommandResponder
 
 	    if (hideCamera)
 	    {
-			if (BombMessageResponder.moduleCameras != null)
-		    {
-			    BombMessageResponder.moduleCameras.Show();
-			    BombMessageResponder.moduleCameras.ShowHUD();
-		    }
+		    BombMessageResponder.moduleCameras?.Show();
+		    BombMessageResponder.moduleCameras?.ShowHUD();
 		    IEnumerator showUI = BombCommander.twitchBombHandle.ShowMainUIWindow();
 		    while (showUI.MoveNext())
 		    {
 			    yield return showUI.Current;
 		    }
-		}
+	    }
 
-        if (_musicPlayer != null)
+	    if (_musicPlayer != null)
         {
             _musicPlayer.StopMusic();
             _musicPlayer = null;
@@ -454,10 +448,7 @@ public abstract class ComponentSolver : ICommandResponder
         }
 
         BombCommander.bombSolvedModules++;
-        if (BombMessageResponder.moduleCameras != null)
-        {
-            BombMessageResponder.moduleCameras.UpdateSolves();
-        }
+        BombMessageResponder.moduleCameras?.UpdateSolves();
 
         if (_turnQueued)
         {
@@ -468,10 +459,7 @@ public abstract class ComponentSolver : ICommandResponder
 
         ComponentHandle.OnPass();
 
-        if (BombMessageResponder.moduleCameras != null)
-        {
-            BombMessageResponder.moduleCameras.DetachFromModule(BombComponent, true);
-        }
+        BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent, true);
 
         return false;
     }
@@ -521,10 +509,7 @@ public abstract class ComponentSolver : ICommandResponder
             AwardStrikes(ComponentHandle.PlayerName, null, 1);
         }
 
-        if (BombMessageResponder.moduleCameras != null)
-        {
-            BombMessageResponder.moduleCameras.UpdateStrikes(true);
-        }
+        BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 
         return false;
     }
@@ -532,12 +517,8 @@ public abstract class ComponentSolver : ICommandResponder
     public bool OnStrikes(object _ignore)
     {
         StrikeCount++;
-        if (BombMessageResponder.moduleCameras != null)
-        {
-            BombMessageResponder.moduleCameras.UpdateStrikes(true);
-        }
+        BombMessageResponder.moduleCameras?.UpdateStrikes(true);
         return false;
-
     }
 
 	public void SolveSilently()
@@ -698,10 +679,7 @@ public abstract class ComponentSolver : ICommandResponder
         if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
         {
             cameraPriority = ModuleCameras.CameraNotInUse;
-            if (BombMessageResponder.moduleCameras != null)
-            {
-                BombMessageResponder.moduleCameras.DetachFromModule(BombComponent);
-            }
+			BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent);
             _responded = true;
         }
         else
@@ -714,9 +692,9 @@ public abstract class ComponentSolver : ICommandResponder
 
                 cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
             }
-            if ( (BombCommander.multiDecker) || (cameraPriority > ModuleCameras.CameraNotInUse)  && BombMessageResponder.moduleCameras != null)
+            if ( (BombCommander.multiDecker) || (cameraPriority > ModuleCameras.CameraNotInUse))
             {
-                BombMessageResponder.moduleCameras.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
+                BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
             }
         }
 

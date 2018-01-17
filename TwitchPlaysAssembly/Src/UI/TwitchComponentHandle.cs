@@ -255,18 +255,15 @@ public class TwitchComponentHandle : MonoBehaviour
 		            module.OnPass += delegate
 		            {
 		                bombCommander.bombSolvedModules++;
-		                if (BombMessageResponder.moduleCameras != null)
-                            BombMessageResponder.moduleCameras.UpdateSolves();
+						BombMessageResponder.moduleCameras?.UpdateSolves();
 		                OnPass();
-		                if (BombMessageResponder.moduleCameras != null)
-                            BombMessageResponder.moduleCameras.DetachFromModule(bombComponent);
+						BombMessageResponder.moduleCameras?.DetachFromModule(bombComponent);
 		                return false;
 		            };
 
 		            module.OnStrike += delegate
 		            {
-		                if (BombMessageResponder.moduleCameras != null)
-                            BombMessageResponder.moduleCameras.UpdateStrikes();
+						BombMessageResponder.moduleCameras?.UpdateStrikes();
 		                return false;
 		            };
 		        }
@@ -274,8 +271,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		        {
 		            bombComponent.GetComponent<KMNeedyModule>().OnStrike += delegate
 		            {
-		                if (BombMessageResponder.moduleCameras != null)
-                            BombMessageResponder.moduleCameras.UpdateStrikes();
+						BombMessageResponder.moduleCameras?.UpdateStrikes();
 		                return false;
 		            };
 		        }

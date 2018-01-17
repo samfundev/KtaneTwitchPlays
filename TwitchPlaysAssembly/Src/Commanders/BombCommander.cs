@@ -93,8 +93,7 @@ public class BombCommander : ICommandResponder
         {
             SelectObject(Selectable);
             doForceRotate = true;
-            if (BombMessageResponder.moduleCameras != null)
-                BombMessageResponder.moduleCameras.ChangeBomb(this);
+            BombMessageResponder.moduleCameras?.ChangeBomb(this);
         }
         else if (frontFace != _heldFrontFace)
         {
@@ -138,8 +137,7 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator ShowEdgework(string edge, bool _45Degrees)
     {
-        if (BombMessageResponder.moduleCameras != null)
-            BombMessageResponder.moduleCameras.Hide();
+        BombMessageResponder.moduleCameras?.Hide();
 
         IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
         while (holdCoroutine.MoveNext())
@@ -282,8 +280,7 @@ public class BombCommander : ICommandResponder
             yield return returnToFace.Current;
         }
 
-        if (BombMessageResponder.moduleCameras != null)
-            BombMessageResponder.moduleCameras.Show();
+        BombMessageResponder.moduleCameras?.Show();
     }
 
 	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null)

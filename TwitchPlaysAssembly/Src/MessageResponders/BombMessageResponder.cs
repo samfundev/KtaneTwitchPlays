@@ -179,10 +179,7 @@ public class BombMessageResponder : MessageResponder
         }
         parentService.StartCoroutine(SendDelayedMessage(1.0f, bombMessage, SendAnalysisLink));
 
-        if (moduleCameras != null)
-        {
-            moduleCameras.gameObject.SetActive(false);
-        }
+		moduleCameras?.gameObject.SetActive(false);
 
         foreach (var handle in _bombHandles)
         {
@@ -364,8 +361,7 @@ public class BombMessageResponder : MessageResponder
         if (text.Equals("!modules", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            if (moduleCameras != null)
-                moduleCameras.AttachToModules(_componentHandles);
+            moduleCameras?.AttachToModules(_componentHandles);
             return;
         }
 
