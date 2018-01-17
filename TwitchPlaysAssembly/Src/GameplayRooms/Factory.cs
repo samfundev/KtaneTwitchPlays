@@ -44,12 +44,9 @@ public class Factory : GameRoom
         bombID = BombID;
     }
 
-    private UnityEngine.Object GetBomb
-    {
-        get { return (UnityEngine.Object) _currentBombField.GetValue(_factory); }
-    }
+    private UnityEngine.Object GetBomb => (UnityEngine.Object) _currentBombField.GetValue(_factory);
 
-    public override bool IsCurrentBomb(int bombID)
+	public override bool IsCurrentBomb(int bombID)
     {
         if (bombID == -1)
             return true;
