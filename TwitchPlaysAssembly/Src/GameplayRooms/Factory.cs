@@ -38,9 +38,9 @@ public class Factory : GameRoom
         HoldBomb = false;
     }
 
-    // ReSharper disable once RedundantAssignment
     public override void RefreshBombID(ref int bombID)
     {
+	    if (bombID == -1) return;
         bombID = BombID;
     }
 
