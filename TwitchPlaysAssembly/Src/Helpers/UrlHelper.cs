@@ -21,28 +21,16 @@ public class UrlHelper : MonoBehaviour
         return Regex.Replace(toEscape, @"[^\w%]", m => "%" + ((int)m.Value[0]).ToString("X2"));
     }
 
-    public string LogAnalyser
-    {
-        get
-        {
-            return "https://ktane.timwi.de/More/Logfile%20Analyzer.html";
-        }
-    }
+    public string LogAnalyser => "https://ktane.timwi.de/More/Logfile%20Analyzer.html";
 
-    public string LogAnalyserFor(string url)
+	public string LogAnalyserFor(string url)
     {
         return string.Format(LogAnalyser + "#url={0}", url);
     }
 
-    public string CommandReference
-    {
-        get
-        {
-            return shortMode ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
-        }
-    }
+    public string CommandReference => shortMode ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
 
-    public string ManualFor(string module, string type = "html")
+	public string ManualFor(string module, string type = "html")
     {
         return string.Format(Repository + "{0}/{1}.{2}", type.ToUpper(), Escape(module), type);
     }

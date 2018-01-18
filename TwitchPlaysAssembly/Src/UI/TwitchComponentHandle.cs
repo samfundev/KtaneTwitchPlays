@@ -81,43 +81,26 @@ public class TwitchComponentHandle : MonoBehaviour
 	public Leaderboard leaderboard = null;
 
 	[HideInInspector]
-	public bool claimed { get { return (playerName != null); } }
+	public bool claimed => (playerName != null);
 
 	[HideInInspector]
 	public int bombID;
 
 	[HideInInspector]
-	public string PlayerName
-	{
-		get
-		{
-			return playerName;
-		}
-	}
+	public string PlayerName => playerName;
 
 	[HideInInspector]
-	public bool Solved
-	{
-		get
-		{
-			return _solved;
-		}
-	}
+	public bool Solved { get; private set; } = false;
 
-	public string Code
-	{
-		get
-		{
-			return _code;
-		}
-	}
+	public string Code { get; private set; } = null;
+
 	#endregion
 
 	#region Private Fields
-	private string _code = null;
+
 	private ComponentSolver _solver = null;
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
-	private bool _solved = false;
+
 	#endregion
 
 	#region Private Statics
@@ -133,7 +116,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Unity Lifecycle
 	private void Awake()
 	{
-		_code = GetNewID().ToString();
+		Code = GetNewID().ToString();
 	}
 
 	private void Start()
@@ -143,8 +126,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		    headerText.text = bombComponent.GetModuleDisplayName();
 		}
 
-		idText.text = string.Format("!{0}", _code);
-		idTextMultiDecker.text = _code;
+		idText.text = string.Format("!{0}", Code);
+		idTextMultiDecker.text = Code;
 
 		canvasGroup.alpha = 0.0f;
 		highlightGroup.alpha = 0.0f;
@@ -160,7 +143,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 				if (_solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = _solver.modInfo.unclaimedColor;
 
-				_solver.Code = _code;
+				_solver.Code = Code;
 				_solver.ComponentHandle = this;
 				Vector3 pos = canvasGroupMultiDecker.transform.localPosition;
 				canvasGroupMultiDecker.transform.localPosition = new Vector3(_solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, _solver.modInfo.statusLightDown ? -pos.z : pos.z);
@@ -352,7 +335,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public void OnPass()
 	{
 		canvasGroupMultiDecker.alpha = 0.0f;
-		_solved = true;
+		Solved = true;
 		if (playerName != null)
 		{
 			ClaimedList.Remove(playerName);
@@ -405,7 +388,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public string ClaimModule(string userNickName, string targetModule)
 	{
 		if (playerName != null) return string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
-		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !_solved)
+		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
 		{
 			return string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit);
 		}
@@ -420,12 +403,12 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void CommandError(string userNickName, string message)
 	{
-		ircConnection.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, _code, headerText.text, message);
+		ircConnection.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, Code, headerText.text, message);
 	}
 
 	public void CommandInvalid(string userNickName)
 	{
-		ircConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, _code, headerText.text);
+		ircConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, headerText.text);
 	}
 
 	public IEnumerator TakeInProgress = null;
@@ -434,7 +417,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Message Interface
 	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
 	{
-		Match match = Regex.Match(text, string.Format("^!({0}) (.+)", _code), RegexOptions.IgnoreCase);
+		Match match = Regex.Match(text, string.Format("^!({0}) (.+)", Code), RegexOptions.IgnoreCase);
 		if (!match.Success)
 		{
 			return null;
@@ -453,14 +436,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				manualType = "pdf";
 			}
 
-			if (string.IsNullOrEmpty(_solver.modInfo.manualCode))
-			{
-				manualText = headerText.text;
-			}
-			else
-			{
-				manualText = _solver.modInfo.manualCode;
-			}
+			manualText = string.IsNullOrEmpty(_solver.modInfo.manualCode) ? headerText.text : _solver.modInfo.manualCode;
 
 			if (manualText.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
 				manualText.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
@@ -473,7 +449,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				messageOut = string.Format("{0} : {1} : {2}", headerText.text, _solver.modInfo.helpText, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
 			}
 		}
-		else if (!_solved)
+		else if (!Solved)
 		{
 			if (IsAuthorizedDefuser(userNickName, false))
 			{
@@ -583,20 +559,15 @@ public class TwitchComponentHandle : MonoBehaviour
 
 			if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
 			{
-				if (playerName != null)
-				{
-					messageOut = string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text);
-				}
-				else
-				{
-					messageOut = string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, headerText.text);
-				}
+				messageOut = playerName != null 
+					? string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text) 
+					: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, headerText.text);
 			}
 		}
 
 		if (!string.IsNullOrEmpty(messageOut))
 		{
-			ircConnection.SendMessage(messageOut, _code, headerText.text);
+			ircConnection.SendMessage(messageOut, Code, headerText.text);
 			return null;
 		}
 
@@ -705,10 +676,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			if (value != null) claimedDisplay.transform.Find("Username").GetComponent<Text>().text = value;
 			claimedDisplay.gameObject.SetActive(value != null);
 		}
-		get
-		{
-			return _playerName;
-		}
+		get => _playerName;
 	}
 
 	private Image Arrow

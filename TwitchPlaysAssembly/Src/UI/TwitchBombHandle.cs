@@ -112,16 +112,11 @@ public class TwitchBombHandle : MonoBehaviour
         internalCommand = match.Groups[1].Value;
 
         TwitchMessage message = Instantiate<TwitchMessage>(messagePrefab, messageScrollContents.transform, false);
-        if (string.IsNullOrEmpty(userColor))
-        {
-            message.SetMessage(string.Format("<b>{0}</b>: {1}", userNickName, internalCommand));
-        }
-        else
-        {
-            message.SetMessage(string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, userColor));
-        }
+	    message.SetMessage(string.IsNullOrEmpty(userColor) 
+			? string.Format("<b>{0}</b>: {1}", userNickName, internalCommand) 
+			: string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, userColor));
 
-        string internalCommandLower = internalCommand.ToLowerInvariant();
+	    string internalCommandLower = internalCommand.ToLowerInvariant();
 		string[] split = internalCommandLower.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		//Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
@@ -310,8 +305,7 @@ public class TwitchBombHandle : MonoBehaviour
         IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message, ircConnection);
         while (commandResponseCoroutine.MoveNext())
         {
-            string chatmessage = commandResponseCoroutine.Current as string;
-            if (chatmessage != null)
+	        if (commandResponseCoroutine.Current is string chatmessage)
             {
                 if(chatmessage.StartsWith("sendtochat "))
                 {

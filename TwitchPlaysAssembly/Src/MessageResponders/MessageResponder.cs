@@ -8,10 +8,7 @@ public abstract class MessageResponder : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_ircConnection != null)
-        {
-            _ircConnection.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
-        }
+	    _ircConnection?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
     }
 
     public void SetupResponder(IRCConnection ircConnection, CoroutineQueue coroutineQueue, CoroutineCanceller coroutineCanceller)

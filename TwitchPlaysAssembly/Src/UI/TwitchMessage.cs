@@ -60,20 +60,17 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
             case CommandResponse.EndError:
                 StopAllCoroutines();
                 StartCoroutine(DoBackgroundColorChange(errorColor));
-                if (leaderboard != null)
-                {
-                    leaderboard.AddStrike(userName, userColor, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? value : 1);
-                }
-                break;
+	            leaderboard?.AddStrike(userName, userColor, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? value : 1);
+	            break;
             case CommandResponse.NoResponse:
                 StopAllCoroutines();
                 StartCoroutine(DoBackgroundColorChange(ignoreColor));
                 break;
 
             case CommandResponse.EndErrorSubtractScore:
-                if (leaderboard != null && !UserAccess.HasAccess(userName, AccessLevel.NoPoints))
+                if (!UserAccess.HasAccess(userName, AccessLevel.NoPoints))
                 {
-                    leaderboard.AddScore(userName, userColor, value);
+                    leaderboard?.AddScore(userName, userColor, value);
                 }
                 break;
 
