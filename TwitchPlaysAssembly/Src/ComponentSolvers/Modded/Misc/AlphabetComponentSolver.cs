@@ -17,32 +17,17 @@ public class AlphabetComponentSolver : ComponentSolver
 	{
 		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length >= 2 && commands[0].EqualsAny("submit", "press"))
+		if (commands.Length < 2 || !commands[0].EqualsAny("submit", "press")) yield break;
+		string buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLower()).Join(string.Empty);
+
+		List<int> buttons = commands.Skip(1).Join(string.Empty).ToCharArray().Select(x => buttonLabels.IndexOf(x)).ToList();
+	    if (buttons.Any(x => x < 0)) yield break;
+
+		yield return null;
+
+		foreach (int button in buttons)
 		{
-			List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
-
-			if (!buttonLabels.Any(label => label == " "))
-			{
-				IEnumerable<string> submittedText = commands.Where((_, i) => i > 0);
-				List<string> fixedLabels = new List<string>();
-				foreach (string text in submittedText)
-				{
-					if (buttonLabels.Any(label => label.Equals(text)))
- 					{
- 						fixedLabels.Add(text);
- 					}
-				}
-
-				if (fixedLabels.Count == submittedText.Count())
-				{
-					yield return null;
-
-					foreach (string fixedLabel in fixedLabels)
-					{
-						yield return DoInteractionClick(_buttons[buttonLabels.IndexOf(fixedLabel)]);
-					}
-				}
-			}
+			yield return DoInteractionClick(_buttons[button]);
 		}
 	}
 
