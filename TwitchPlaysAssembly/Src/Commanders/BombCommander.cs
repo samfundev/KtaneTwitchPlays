@@ -122,18 +122,20 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator LetGoBomb()
     {
-        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
-        if (holdState == FloatingHoldable.HoldStateEnum.Held)
-        {
-            IEnumerator turnBombCoroutine = HoldBomb(true);
-            while (turnBombCoroutine.MoveNext())
-            {
-                yield return turnBombCoroutine.Current;
-            }
+	    if (FloatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
 
-            DeselectObject(Selectable);
-        }
-    }
+	    IEnumerator turnBombCoroutine = HoldBomb(true);
+	    while (turnBombCoroutine.MoveNext())
+	    {
+		    yield return turnBombCoroutine.Current;
+	    }
+
+	    while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
+	    {
+		    DeselectObject(Selectable);
+		    yield return new WaitForSeconds(0.1f);
+	    }
+	}
 
     public IEnumerator ShowEdgework(string edge, bool _45Degrees)
     {
