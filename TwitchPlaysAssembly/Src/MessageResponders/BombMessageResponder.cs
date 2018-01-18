@@ -425,10 +425,10 @@ public class BombMessageResponder : MessageResponder
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 
-			IEnumerable<string> unclaimed = _componentHandles.Where(handle => !handle.claimed && !handle.Solved).Shuffle().Take(3)
-				.Select(handle => string.Format("{0} ({1})", handle.headerText.text, handle.Code));
+			IEnumerable<string> unclaimed = _componentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
+				.Select(handle => string.Format("{0} ({1})", handle.headerText.text, handle.Code)).ToList();
 			
-			if (unclaimed.Count() > 0) _ircConnection.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
+			if (unclaimed.Any()) _ircConnection.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
 			else _ircConnection.SendMessage("There are no more unclaimed modules.");
 
 			return;
@@ -440,13 +440,13 @@ public class BombMessageResponder : MessageResponder
 
 			var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			string query = split.Skip(1).Join(" ");
-			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ToLowerInvariant().Contains(query))
-                .OrderBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
+			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ToLowerInvariant().Contains(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+                .OrderBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).ThenByDescending(handle => handle.headerText.text.ToLowerInvariant().Equals(query)).Take(3)
 				.Select(handle => string.Format("{0} ({1}) - {2}", handle.headerText.text, handle.Code, 
 					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
-				));
+				)).ToList();
 
-			if (modules.Count() > 0) _ircConnection.SendMessage("Modules: {0}", modules.Join(", "));
+			if (modules.Any()) _ircConnection.SendMessage("Modules: {0}", modules.Join(", "));
 			else _ircConnection.SendMessage("Couldn't find any modules containing \"{0}\".", query);
 
 			return;
