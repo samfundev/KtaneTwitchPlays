@@ -1,6 +1,7 @@
 ﻿//ListeningComponentSolver
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -48,42 +49,25 @@ public class ListeningComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        MonoBehaviour button;
+	    if (inputCommand.EqualsAny("play", "press play"))
+	    {
+		    yield return null;
+		    yield return DoInteractionClick(_play);
+		    yield break;
+	    }
 
-        var split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+	    string[] split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (split.Length < 2 || split[0] != "press")
             yield break;
 
-        var letters = "$#*&";
-
-        foreach (var cmd in split.Skip(1))
-            switch (cmd)
-            {
-                case "play": if (split.Length > 2) yield break; break;
-                default:
-                    foreach(var x in cmd)
-                        if (!letters.Contains(x))
-                            yield break;
-                    break;
-            }   //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
+	    string buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLower()).Join(string.Empty);
+		List<int> buttons = (from cmd in split.Skip(1) from x in cmd select buttonLabels.IndexOf(x)).ToList();
+	    if (buttons.Any(x => x == -1)) yield break;
+	    //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
 
         yield return "Listening Solve Attempt";
-        foreach (var cmd in split.Skip(1))
-        {
-            switch (cmd)
-            {
-                case "play":
-                    yield return DoInteractionClick(_play);
-                    break;
-                default:
-                    foreach (var x in cmd)
-                    {
-                        button = _buttons[letters.IndexOf(x)];
-                        yield return DoInteractionClick(button);
-                    }
-                    break;
-            }
-        }
+	    foreach (int button in buttons)
+		    yield return DoInteractionClick(_buttons[button]);
     }
 
     private MonoBehaviour _play = null;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -19,49 +20,40 @@ public class OrientationCubeComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        MonoBehaviour button;
+	    List<MonoBehaviour> buttons = new List<MonoBehaviour>();
 
-        var split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (split.Length < 2 || split[0] != "press")
             yield break;
 
-        if (_submit == null || _left == null || _right == null || _ccw == null || _cw == null)
-            yield break;
+	    if (_submit == null || _left == null || _right == null || _ccw == null || _cw == null)
+	    {
+		    yield return "autosolve due to required buttons not present.";
+		    yield break;
+	    }
 
-        foreach(var cmd in split.Skip(1))
-            switch (cmd)
-            {
-                case "left": case "l":
-                case "right": case "r":
-                case "counterclockwise": case "counter-clockwise": case "ccw":
-                case "anticlockwise": case "anti-clockwise": case "acw":
-                case "clockwise": case "cw":
-                case "set": case "submit":
-                    break;
-                default: yield break;
-            }   //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
+		foreach(string cmd in split.Skip(1))
+		{
+			switch (cmd)
+			{
+				case "left": case "l": buttons.Add(_left); break;
 
-        yield return "Orientation Cube Solve Attempt";
-        foreach (var cmd in split.Skip(1))
-        {
-            switch (cmd)
-            {
-                case "left": case "l": button = _left; break;
+				case "right": case "r": buttons.Add(_right); break;
 
-                case "right": case "r": button = _right; break;
+				case "counterclockwise": case "counter-clockwise": case "ccw":
+				case "anticlockwise": case "anti-clockwise": case "acw": buttons.Add(_ccw); break;
 
-                case "anticlockwise": case "anti-clockwise": case "acw":
-                case "counterclockwise": case "counter-clockwise": case "ccw": button = _ccw; break;
+				case "clockwise": case "cw": buttons.Add(_cw); break;
 
-                case "clockwise": case "cw": button = _cw; break;
+				case "set": case "submit":buttons.Add(_submit); break;
 
-                case "set": case "submit": button = _submit; break;
+				default: yield break;
+			}   //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
+		}
 
-                default: yield break;
-            }
-
-            yield return DoInteractionClick(button);
-        }
+	    yield return "Orientation Cube Solve Attempt";
+	    foreach (MonoBehaviour button in buttons)
+		    yield return DoInteractionClick(button);
     }
 
     static OrientationCubeComponentSolver()

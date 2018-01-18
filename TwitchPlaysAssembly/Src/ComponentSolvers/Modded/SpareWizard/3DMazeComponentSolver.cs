@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ThreeDMazeComponentSolver : ComponentSolver
@@ -16,70 +17,51 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
-	private string ShortenDirection(string direction)
+	private KMSelectable[] ShortenDirection(string direction)
 	{
 		switch (direction)
 		{
+			case "l":
 			case "left":
-				return "l";
+				return new[] {_buttonLeft};
+			case "r":
 			case "right":
-				return "r";
+				return new[] {_buttonRight};
+			case "f":
 			case "forward":
-				return "f";
+				return new[] {_buttonStraight};
+			case "u":
 			case "u-turn":
 	        case "uturn":
 		    case "turnaround":
 		    case "turn-around":
-				return "u";
+				return new[] {_buttonRight, _buttonRight};
 			default:
-				return direction;
+				return new KMSelectable[] {null};
 		}
 	}
 	
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length > 1 && commands[0].EqualsAny("move", "m", "walk", "w"))
+		if (commands.Length <= 1 || !commands[0].EqualsAny("move", "m", "walk", "w")) yield break;
+
+		List<KMSelectable> moves = commands.Where((_, i) => i > 0).SelectMany(ShortenDirection).ToList();
+		if (moves.Any(m => m == null)) yield break;
+		yield return null;
+
+		bool moving = commands[0].EqualsAny("move", "m");
+		if (moves.Count > (moving ? 64 : 16))
 		{
-			var moves = commands.Where((_, i) => i > 0).Select(dir => ShortenDirection(dir));
+			yield return "elevator music";
+		}
 
-			if (moves.All(m => validMoves.Contains(m)))
-			{
-				yield return null;
-
-				bool moving = commands[0].EqualsAny("move", "m");
-				if (moves.Count() > (moving ? 64 : 16))
-			    {
-			        yield return "elevator music";
-			    }
-
-				float moveDelay = moving ? 0.1f : 0.4f;
-				foreach (string move in moves)
-				{
-					KMSelectable button = null;
-					switch (move)
-					{
-						case "l":
-							button = _buttonLeft;
-							break;
-						case "r":
-							button = _buttonRight;
-							break;
-						case "f":
-							button = _buttonStraight;
-							break;
-						case "u":
-							button = _buttonRight;
-							DoInteractionClick(button);
-							yield return new WaitForSeconds(moveDelay);
-							break;
-					}
-
-					DoInteractionClick(button);
-					yield return new WaitForSeconds(moveDelay);
-				}
-			}
+		float moveDelay = moving ? 0.1f : 0.4f;
+				
+		foreach (KMSelectable move in moves)
+		{
+			yield return DoInteractionClick(move, moveDelay);
 		}
 	}
 
@@ -95,8 +77,6 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 	private static FieldInfo _buttonLeftField = null;
 	private static FieldInfo _buttonRightField = null;
 	private static FieldInfo _buttonStraightField = null;
-
-	private static string[] validMoves = { "f", "l", "r", "u" };
 
 	private KMSelectable _buttonLeft = null;
 	private KMSelectable _buttonRight = null;
