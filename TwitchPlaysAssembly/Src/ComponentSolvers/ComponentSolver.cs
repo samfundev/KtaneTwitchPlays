@@ -362,7 +362,9 @@ public abstract class ComponentSolver : ICommandResponder
         return null;
     }
 
-	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, string strikeMessage=null)
+	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, float delay) => DoInteractionClick(interactable, null, delay);
+
+	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, string strikeMessage=null, float delay=0.1f)
 	{
 	    if (strikeMessage != null)
 	    {
@@ -371,7 +373,7 @@ public abstract class ComponentSolver : ICommandResponder
 
         DoInteractionStart(interactable);
 		DoInteractionEnd(interactable);
-	    return new WaitForSeconds(0.1f);
+	    return new WaitForSeconds(delay);
 	}
 
 	protected void HandleModuleException(Exception e)
