@@ -21,6 +21,27 @@ public class WireSequenceComponentSolver : ComponentSolver
         inputCommand = inputCommand.ToLowerInvariant();
 	    Dictionary<MonoBehaviour, string> buttons = new Dictionary<MonoBehaviour, string>();
 
+	    if (inputCommand.Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
+	    {
+		    yield return null;
+			int page = (int)_currentPageField.GetValue(BombComponent);
+		    for (int i = page-1; i >= 0; i--)
+		    {
+			    IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i + 1, i);
+			    while (changePage.MoveNext())
+				    yield return changePage.Current;
+		    }
+		    for (int i = 0; i < page; i++)
+		    {
+			    yield return new WaitForSeconds(3.0f);
+			    IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i, i + 1);
+			    while (changePage.MoveNext())
+				    yield return changePage.Current;
+		    }
+		    yield return null;
+			yield break;
+	    }
+
         if (inputCommand.EqualsAny("up", "u"))
         {
             yield return "up";
