@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -47,50 +49,71 @@ public class MurderComponentSolver : ComponentSolver
 	        bool cycleAll = (inputCommand.Equals("cycle"));
 	        for (int i = 0; i < 3; i++)
 	        {
-	            if ((cycleAll) || (inputCommand.EndsWith(NameTypes[i])))
-	            {
-	                yield return inputCommand;
-	                foreach (var item in CycleThroughCategory(i))
-	                {
-	                    yield return new WaitForSeconds(1.9f);
-                        yield return DoInteractionClick((MonoBehaviour) item);
-	                }
-	            }
+		        if ((!cycleAll) && (!inputCommand.EndsWith(NameTypes[i]))) continue;
+
+		        yield return inputCommand;
+		        yield return null;
+		        foreach (var item in CycleThroughCategory(i))
+		        {
+			        if (Canceller.ShouldCancel)
+			        {
+				        Canceller.ResetCancel();
+				        yield break;
+			        }
+			        yield return DoInteractionClick((MonoBehaviour) item, 2.0f);
+		        }
 	        }
 	        yield break;
 	    }
 
-	    string category, value;
-	    int catIndex;
-	    bool[] set = new bool[3] { false, false, false };
+		bool[] set = new bool[3] { false, false, false };
         bool[] tried = new bool[3] { false, false, false };
 
-	    foreach (Match match in Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)"))
-	    {
-	        category = match.Groups[1].ToString();
-	        value = match.Groups[2].ToString().Trim();
+		List<Match> matches = Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)").Cast<Match>()
+			.Where(match => Array.IndexOf(Commands, match.Groups[1].ToString()) > -1).ToList();
 
-	        catIndex = Array.IndexOf(Commands, category);
-	        if ((catIndex == -1) || (set[catIndex]))
-	        {
-	            continue;
-	        }
-	        tried[catIndex] = true;
+		int[] catIndexes = matches.Select(match => Array.IndexOf(Commands, match.Groups[1].ToString())).ToArray();
+		string[] values = matches.Select(match => match.Groups[2].ToString().Trim()).ToArray();
 
-	        foreach (var item in CycleThroughCategory(catIndex, value))
-	        {
-	            if ((item is bool) && ((bool)item))
-	            {
-	                set[catIndex] = true;
-	            }
-	            else
-	            {
-	                yield return DoInteractionClick((MonoBehaviour) item);
-	            }
-	        }
-	    }
+		bool misspelled = false;
+		for (int i = 0; i < catIndexes.Length; i++)
+		{
+			int catIndex = catIndexes[i];
+			string value = values[i];
 
-	    if ((set[0]) && (set[1]) && (set[2]))
+			if (set[catIndex]) continue;
+
+			misspelled |= !NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase));
+			if (!misspelled) continue;
+
+			yield return null;
+			yield return $"sendtochat {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
+			set[catIndex] = true;
+		}
+		if (misspelled) yield break;
+
+		for(int i = 0; i < catIndexes.Length; i++)
+		{
+			int catIndex = catIndexes[i];
+			string value = values[i];
+			if (set[catIndex]) continue;
+
+			tried[catIndex] = true;
+
+			foreach (var item in CycleThroughCategory(catIndex, value))
+			{
+				if ((item is bool b) && b)
+				{
+					yield return null;
+					yield return null;
+					set[catIndex] = true;
+					break;
+				}
+				yield return DoInteractionClick((MonoBehaviour) item);
+			}
+		}
+
+		if ((set[0]) && (set[1]) && (set[2]))
 	    {
 	        yield return DoInteractionClick(_buttons[6]);
 	    }
@@ -116,8 +139,16 @@ public class MurderComponentSolver : ComponentSolver
 	private static FieldInfo _buttonsField = null;
 	private static FieldInfo _displayField = null;
 
-    private static readonly string[] Commands = new string[3] { "it was", "with the", "in the" };
+	private static readonly string[] People = new string[6] { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
+	private static readonly string[] Weapons = new string[6] { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };
+	private static readonly string[] Rooms = new string[9] { "Ballroom", "Billiard Room", "Conservatory", "Dining Room", "Hall", "Kitchen", "Library", "Lounge", "Study"};
+
+	private static readonly string[] Commands = new string[3] { "it was", "with the", "in the" };
     private static readonly string[] NameTypes = new string[3] { "people", "weapons", "rooms" };
+	private static readonly string[][] NameSpellings = new string[3][] { People, Weapons, Rooms };
+	private static readonly string[] NameMisspelled = new string[3] {"Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}."};
+
+	
 
     private object _component = null;
 	private KMSelectable[] _buttons = null;
