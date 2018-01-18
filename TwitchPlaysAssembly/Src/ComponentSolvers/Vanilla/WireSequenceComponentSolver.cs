@@ -19,8 +19,7 @@ public class WireSequenceComponentSolver : ComponentSolver
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
         inputCommand = inputCommand.ToLowerInvariant();
-        List<MonoBehaviour> buttons = new List<MonoBehaviour>();
-        List<string> strikemessages = new List<string>();
+	    Dictionary<MonoBehaviour, string> buttons = new Dictionary<MonoBehaviour, string>();
 
         if (inputCommand.EqualsAny("up", "u"))
         {
@@ -45,15 +44,13 @@ public class WireSequenceComponentSolver : ComponentSolver
             {
                 if (wireIndexString.EqualsAny("up", "u"))
                 {
-                    buttons.Add(_upButton);
-                    strikemessages.Add("This will never cause a strike Kappa");
+	                buttons.Add(_upButton, "This will never cause a strike Kappa");
                     break;
                 }
 
                 if (wireIndexString.EqualsAny("down", "d"))
                 {
-                    buttons.Add(_downButton);
-                    strikemessages.Add("attempting to move down.");
+                    buttons.Add(_downButton, "attempting to move down.");
                     break;
                 }
 
@@ -64,22 +61,21 @@ public class WireSequenceComponentSolver : ComponentSolver
 
                 WireSequenceWire wire = GetWire(wireIndex);
                 if (wire == null) yield break;
-                buttons.Add(wire);
-                strikemessages.Add(string.Format("cutting Wire {0}.", wireIndex + 1));
+	            if (wire.Snipped || buttons.ContainsKey(wire)) continue;
+				buttons.Add(wire, string.Format("cutting Wire {0}.", wireIndex + 1));
             }
 
             yield return "wire sequence";
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                yield return DoInteractionClick(buttons[i], strikemessages[i]);
-                if (Canceller.ShouldCancel)
-                {
-                    Canceller.ResetCancel();
-                    yield break;
-                }
-            }
-            if (Canceller.ShouldCancel)
-                Canceller.ResetCancel();
+	        foreach (KeyValuePair<MonoBehaviour, string> button in buttons)
+	        {
+		        if (Canceller.ShouldCancel)
+		        {
+			        Canceller.ResetCancel();
+			        yield break;
+		        }
+		        yield return DoInteractionClick(button.Key, button.Value);
+
+	        }
         }
     }
 
