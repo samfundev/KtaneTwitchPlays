@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -111,4 +112,14 @@ public static class GeneralExtensions
     {
         return int.TryParse(number, out int i) ? (int?)i : null;
     }
+
+	public static bool ContainsIgnoreCase(this string str, string value)
+	{
+		return str.ToLowerInvariant().Contains(value.ToLowerInvariant());
+	}
+
+	public static bool EqualsIgnoreCase(this string str, string value)
+	{
+		return str.Equals(value, StringComparison.InvariantCultureIgnoreCase);
+	}
 }

@@ -440,8 +440,8 @@ public class BombMessageResponder : MessageResponder
 
 			var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			string query = split.Skip(1).Join(" ");
-			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ToLowerInvariant().Contains(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-                .OrderBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).ThenByDescending(handle => handle.headerText.text.ToLowerInvariant().Equals(query)).Take(3)
+			IEnumerable<string> modules = _componentHandles.Where(handle => handle.headerText.text.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+                .OrderByDescending(handle => handle.headerText.text.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
 				.Select(handle => string.Format("{0} ({1}) - {2}", handle.headerText.text, handle.Code, 
 					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
 				)).ToList();
@@ -466,7 +466,7 @@ public class BombMessageResponder : MessageResponder
 
         if (text.Equals("!solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
-			foreach (var handle in _componentHandles) if (!handle.Solved) handle.SolveSilently();
+			foreach (var handle in _componentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
 			return;
 		}
 
