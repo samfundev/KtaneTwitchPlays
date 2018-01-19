@@ -25,9 +25,11 @@ public class TwitchComponentHandle : MonoBehaviour
 	public CanvasGroup canvasGroup = null;
 	public CanvasGroup highlightGroup = null;
 	public CanvasGroup canvasGroupMultiDecker = null;
+	public CanvasGroup canvasGroupUnsupported = null;
 	public Text headerText = null;
 	public Text idText = null;
 	public Text idTextMultiDecker = null;
+	public Text idTextUnsupported = null;
 	public Image claimedUser = null;
 	public Image claimedUserMultiDecker = null;
 	public ScrollRect messageScroll = null;
