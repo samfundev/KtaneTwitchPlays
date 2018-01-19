@@ -433,11 +433,11 @@ public static class ComponentSolverFactory
                 }
                 catch
                 {
-	                return new UnsupportedModComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+	                DebugHelper.Log("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
+	                DebugHelper.Log("Using Fallback Compoment solver instead.");
+	                LogAllComponentTypes(solvableModule);
 
-                    DebugHelper.Log("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
-                    LogAllComponentTypes(solvableModule);
-                    throw;
+					return new UnsupportedModComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
                 }
 
 			case ComponentTypeEnum.NeedyMod:
@@ -448,9 +448,11 @@ public static class ComponentSolverFactory
                 }
                 catch
                 {
-                    DebugHelper.Log("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
-                    LogAllComponentTypes(needyModule);
-                    throw;
+	                DebugHelper.Log("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
+	                DebugHelper.Log("Using Fallback Compoment solver instead.");
+					LogAllComponentTypes(needyModule);
+
+					return new UnsupportedModComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
                 }
 
 			default:

@@ -383,14 +383,15 @@ public abstract class ComponentSolver : ICommandResponder
 		SolveModule("Looks like a module ran into a problem while running a command, automatically solving module.");
 	}
 
-	protected void SolveModule(string reason = "A module is being automatically solved.")
+	protected void SolveModule(string reason = "A module is being automatically solved.", bool removeSolveBasedModules = true)
 	{
-		IRCConnection.SendMessage("{0} Some other modules may also be solved to prevent problems.", reason);
+		IRCConnection.SendMessage("{0}{1}", reason, removeSolveBasedModules ? " Some other modules may also be solved to prevent problems." : "");
 
 		_currentUserNickName = null;
 		_delegatedSolveUserNickName = null;
 
-		TwitchComponentHandle.RemoveSolveBasedModules();
+		if(removeSolveBasedModules)
+			TwitchComponentHandle.RemoveSolveBasedModules();
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
 	}
 	#endregion
@@ -710,9 +711,9 @@ public abstract class ComponentSolver : ICommandResponder
             yield return null;
         }
 		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !UnsupportedModule)
-		{
-			SolveModule(string.Format("A module ({0}) is being automatically solved.", modInfo.moduleDisplayName));
-		}
+        {
+	        SolveModule($"A module ({modInfo.moduleDisplayName}) is being automatically solved.", false);
+        }
     }
     #endregion
 

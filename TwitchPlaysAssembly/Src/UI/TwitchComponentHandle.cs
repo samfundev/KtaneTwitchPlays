@@ -157,7 +157,12 @@ public class TwitchComponentHandle : MonoBehaviour
 				rectTransform.pivot = new Vector2(_solver.modInfo.statusLightLeft ? 0 : 1, _solver.modInfo.statusLightDown ? 0 : 1);
 
 				canvasGroupUnsupported.gameObject.SetActive(_solver.UnsupportedModule);
-				idTextUnsupported.text = $"To solve this\nmodule, use\n!{Code} solve";
+
+				idTextUnsupported.text = bombComponent is ModBombComponent 
+					? $"To solve this\nmodule, use\n!{Code} solve" 
+					: $"To disarm this\nneedy, use\n!{Code} solve";
+				if (_solver.UnsupportedModule)
+					_unsupportedComponents.Add(this);
 
 				/*Vector3 angle = canvasGroupMultiDecker.transform.eulerAngles;
                 canvasGroupMultiDecker.transform.localEulerAngles = new Vector3(angle.x, _solver.modInfo.chatRotation, angle.z);
@@ -284,20 +289,26 @@ public class TwitchComponentHandle : MonoBehaviour
 		HighlightArrow.gameObject.SetActive(true);
 	}
 
+	public static void DeactivateNeedyModule(TwitchComponentHandle handle)
+	{
+		handle.ircConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
+		KMNeedyModule needyModule = handle.bombComponent.GetComponent<KMNeedyModule>();
+		needyModule.OnNeedyActivation = () => { needyModule.StartCoroutine(KeepUnsupportedNeedySilent(needyModule)); };
+		needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
+		needyModule.OnTimerExpired = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
+		needyModule.WarnAtFiveSeconds = false;
+	}
+
 	public static bool SolveUnsupportedModules()
 	{
-		bool result = _unsupportedComponents.Count > 0;
+		bool result = _unsupportedComponents.Where(x => !x.Solved).ToList().Count > 0;
 		if (result)
 		{
 			foreach (TwitchComponentHandle handle in _unsupportedComponents)
 			{
 			    if (handle.bombComponent.GetComponent<KMNeedyModule>() != null)
 			    {
-				    handle.ircConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
-					KMNeedyModule needyModule = handle.bombComponent.GetComponent<KMNeedyModule>();
-				    needyModule.OnNeedyActivation = () => { needyModule.StartCoroutine(KeepUnsupportedNeedySilent(needyModule)); };
-				    needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
-				    needyModule.OnTimerExpired = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
+				    DeactivateNeedyModule(handle);
 			    }
                 else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
 			    {
