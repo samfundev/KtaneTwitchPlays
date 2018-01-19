@@ -184,7 +184,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1000011942570588
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,7 +523,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1584112141618856
 GameObject:
   m_ObjectHideFlags: 1
@@ -1270,6 +1270,8 @@ MonoBehaviour:
   solvedBackgroundColor: {r: 0, g: 128, b: 0, a: 1}
   markedBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
   takeModuleSound: {fileID: 82000011491038258}
+  bombComponent: {fileID: 0}
+  componentType: 0
   basePosition: {x: 0, y: 0, z: 0}
   idealHandlePositionOffset: {x: 0, y: 0, z: 0}
   direction: 0

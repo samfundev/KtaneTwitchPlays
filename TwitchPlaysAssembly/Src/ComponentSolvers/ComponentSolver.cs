@@ -406,8 +406,10 @@ public abstract class ComponentSolver : ICommandResponder
     {
         //string componentType = ComponentHandle.componentType.ToString();
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
+		if(UnsupportedModule)
+			ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
 
-        if (modInfo == null)
+		if (modInfo == null)
             return false;
 
         int moduleScore = modInfo.moduleScore;
@@ -534,9 +536,9 @@ public abstract class ComponentSolver : ICommandResponder
 
     private void AwardSolve(string userNickName, ICommandResponseNotifier responseNotifier, int ComponentValue)
     {
-        string headerText = BombComponent.GetModuleDisplayName();
+        string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
-        string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Value: " + ComponentValue;
+        string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
         responseNotifier.ProcessResponse(CommandResponse.EndComplete, ComponentValue);
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
         TwitchPlaySettings.AppendToPlayerLog(userNickName);
@@ -557,11 +559,11 @@ public abstract class ComponentSolver : ICommandResponder
     private void AwardStrikes(string userNickName, ICommandResponseNotifier responseNotifier, int strikeCount)
     {
         string headerText = BombComponent.GetModuleDisplayName();
-        int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         if (strikeCount <= 0) return;
 
-        string RecordMessageTone = "Module ID: " + Code + " | Player: " + userNickName + " | Module Name: " + headerText + " | Strike";
+        string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         
         int currentReward = TwitchPlaySettings.GetRewardBonus();
@@ -619,6 +621,8 @@ public abstract class ComponentSolver : ICommandResponder
         get;
         set;
     }
+
+	public bool UnsupportedModule { get; set; } = false;
     
     #region Protected Properties
 
@@ -705,7 +709,7 @@ public abstract class ComponentSolver : ICommandResponder
 			yield return "show";
             yield return null;
         }
-		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !UnsupportedModule)
 		{
 			SolveModule(string.Format("A module ({0}) is being automatically solved.", modInfo.moduleDisplayName));
 		}

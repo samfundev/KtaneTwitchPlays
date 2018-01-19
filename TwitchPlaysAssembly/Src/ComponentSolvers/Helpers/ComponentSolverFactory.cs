@@ -17,7 +17,8 @@ public static class ComponentSolverFactory
 	private enum ModCommandType
 	{
 		Simple,
-		Coroutine
+		Coroutine,
+		Unsupported
 	}
 
 	static ComponentSolverFactory()
@@ -148,9 +149,6 @@ public static class ComponentSolverFactory
          */
 
 		//All of these modules are built into Twitch plays.
-
-		//Unsupported Module
-		ModComponentSolverInformation["UnsupportedTwitchPlaysModule"] = new ModuleInformation { moduleID = "UnsupportedTwitchPlaysModule", moduleScore = 0, builtIntoTwitchPlays = true, DoesTheRightThing = true, helpText = "Solve this module with !{0} solve", moduleDisplayName = "Unsupported Twitchplays Module" };
 
 		//Asimir
 		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
@@ -473,12 +471,8 @@ public static class ComponentSolverFactory
 		DebugHelper.Log("Attempting to find a valid process command method to respond with on component {0}...", moduleType);
 
 		ModComponentSolverDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(bombComponent, moduleType, displayName);
-		if (modComponentSolverCreator == null)
-		{
-			throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
-		}
 
-		ModComponentSolverCreators[moduleType] = modComponentSolverCreator;
+		ModComponentSolverCreators[moduleType] = modComponentSolverCreator ?? throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
 
         return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
 	}
@@ -560,7 +554,9 @@ public static class ComponentSolverFactory
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
 						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent, cancelfield, canceltype);
 					};
-
+				case ModCommandType.Unsupported:
+					return (_bombCommander, _bombComponent, _ircConnection, _canceller) => new UnsupportedModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller);
+					
 				default:
 					break;
 			}
@@ -723,7 +719,7 @@ public static class ComponentSolverFactory
 			}
 		}
 
-		commandType = ModCommandType.Simple;
+		commandType = ModCommandType.Unsupported;
 		commandComponentType = null;
 		return null;
 	}

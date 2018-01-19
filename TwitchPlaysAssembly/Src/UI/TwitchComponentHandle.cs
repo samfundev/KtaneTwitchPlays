@@ -156,6 +156,9 @@ public class TwitchComponentHandle : MonoBehaviour
 				rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(_solver.modInfo.statusLightLeft ? 1 : 0, _solver.modInfo.statusLightDown ? 0 : 1);
 				rectTransform.pivot = new Vector2(_solver.modInfo.statusLightLeft ? 0 : 1, _solver.modInfo.statusLightDown ? 0 : 1);
 
+				canvasGroupUnsupported.gameObject.SetActive(_solver.UnsupportedModule);
+				idTextUnsupported.text = $"To solve this\nmodule, use\n!{Code} solve";
+
 				/*Vector3 angle = canvasGroupMultiDecker.transform.eulerAngles;
                 canvasGroupMultiDecker.transform.localEulerAngles = new Vector3(angle.x, _solver.modInfo.chatRotation, angle.z);
                 angle = canvasGroupMultiDecker.transform.localEulerAngles;
@@ -229,6 +232,9 @@ public class TwitchComponentHandle : MonoBehaviour
 			idBannerPrefab.gameObject.SetActive(false);
 			canvasGroupMultiDecker.alpha = 0.0f;
 			_unsupportedComponents.Add(this);
+
+			canvasGroupUnsupported.gameObject.SetActive(true);
+			idTextUnsupported.gameObject.SetActive(false);
 
 			if (TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode)
 			{
@@ -600,7 +606,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (_solver != null)
 		{
 		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !Unsupported))))
+            if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)))))
 			{
 				ircConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
 				return null;
