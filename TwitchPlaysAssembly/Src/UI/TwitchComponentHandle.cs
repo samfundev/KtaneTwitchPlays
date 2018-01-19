@@ -94,6 +94,9 @@ public class TwitchComponentHandle : MonoBehaviour
 	[HideInInspector]
 	public bool Solved { get; private set; } = false;
 
+	[HideInInspector]
+	public bool Unsupported = false;
+
 	public string Code { get; private set; } = null;
 
 	#endregion
@@ -597,7 +600,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (_solver != null)
 		{
 		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)))))
+            if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !Unsupported))))
 			{
 				ircConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
 				return null;

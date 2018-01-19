@@ -149,6 +149,9 @@ public static class ComponentSolverFactory
 
 		//All of these modules are built into Twitch plays.
 
+		//Unsupported Module
+		ModComponentSolverInformation["UnsupportedTwitchPlaysModule"] = new ModuleInformation { moduleID = "UnsupportedTwitchPlaysModule", moduleScore = 0, builtIntoTwitchPlays = true, DoesTheRightThing = true, helpText = "Solve this module with !{0} solve", moduleDisplayName = "Unsupported Twitchplays Module" };
+
 		//Asimir
 		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Murder", moduleScore = 10, helpText = "CycleCycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
 		ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.", moduleScore = 7 };
@@ -432,6 +435,8 @@ public static class ComponentSolverFactory
                 }
                 catch
                 {
+	                return new UnsupportedModComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+
                     DebugHelper.Log("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
                     LogAllComponentTypes(solvableModule);
                     throw;
