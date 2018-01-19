@@ -282,7 +282,11 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 			    if (handle.bombComponent.GetComponent<KMNeedyModule>() != null)
 			    {
-			        handle.ircConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
+				    handle.ircConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
+					KMNeedyModule needyModule = handle.bombComponent.GetComponent<KMNeedyModule>();
+				    needyModule.OnNeedyActivation = () => { needyModule.StartCoroutine(KeepUnsupportedNeedySilent(needyModule)); };
+				    needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
+				    needyModule.OnTimerExpired = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
 			    }
                 else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
 			    {
@@ -660,6 +664,15 @@ public class TwitchComponentHandle : MonoBehaviour
 
 			idBannerPrefab.GetComponent<Image>().color = color;
 			claimedUser.color = color;
+		}
+	}
+
+	private static IEnumerator KeepUnsupportedNeedySilent(KMNeedyModule needyModule)
+	{
+		while (true)
+		{
+			yield return null;
+			needyModule.SetNeedyTimeRemaining(99f);
 		}
 	}
 	#endregion

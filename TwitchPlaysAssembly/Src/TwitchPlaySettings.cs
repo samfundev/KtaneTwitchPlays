@@ -130,7 +130,7 @@ public class TwitchPlaySettingsData
 
     public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
 
-    public string UnsupportedNeedyWarning = "Warning: This bomb is unlikely to live long due to an uninteractable needy being present.";
+    public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
     private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
     {
@@ -234,7 +234,7 @@ public class TwitchPlaySettingsData
 
         valid &= ValidateString(ref UnsubmittableAnswerPenalty, data.UnsubmittableAnswerPenalty, 5);
 
-        valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0);
+        valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0, SettingsVersion < 2);
 
         return valid;
     }
@@ -242,7 +242,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-    public static int SettingsVersion = 1;  //Bump this up each time there is a breaking file format change. (like a changed to the string formats themselves)
+    public static int SettingsVersion = 2;  //Bump this up each time there is a breaking file format change. (like a changed to the string formats themselves)
     public static TwitchPlaySettingsData data;
 
     private static List<string> Players = new List<string>();
