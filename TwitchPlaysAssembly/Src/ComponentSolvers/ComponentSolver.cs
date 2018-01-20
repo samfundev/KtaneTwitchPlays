@@ -407,9 +407,6 @@ public abstract class ComponentSolver : ICommandResponder
     {
         //string componentType = ComponentHandle.componentType.ToString();
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
-		if(UnsupportedModule)
-			ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
-
 		if (modInfo == null)
             return false;
 
@@ -427,21 +424,13 @@ public abstract class ComponentSolver : ICommandResponder
             }
         }
 
-        switch (modInfo.moduleID)
-        {
-            case "NeedyVentComponentSolver":
-            case "NeedyKnobComponentSolver":
-            case "NeedyDischargeComponentSolver":
-                return false;
-            default:
-                if (BombComponent.GetComponent<KMNeedyModule>() != null)
-                {
-                    return false;
-                }
-                break;
-        }
+	    if (BombComponent is NeedyComponent)
+		    return false;
 
-        if (_delegatedSolveUserNickName != null && _delegatedSolveResponseNotifier != null)
+	    if (UnsupportedModule)
+		    ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
+
+		if (_delegatedSolveUserNickName != null && _delegatedSolveResponseNotifier != null)
         {
             AwardSolve(_delegatedSolveUserNickName, _delegatedSolveResponseNotifier, moduleScore);
             _delegatedSolveUserNickName = null;
@@ -559,7 +548,7 @@ public abstract class ComponentSolver : ICommandResponder
 
     private void AwardStrikes(string userNickName, ICommandResponseNotifier responseNotifier, int strikeCount)
     {
-        string headerText = BombComponent.GetModuleDisplayName();
+	    string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         if (strikeCount <= 0) return;
