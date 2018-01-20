@@ -18,7 +18,6 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		Selectable[] selectables = bombComponent.GetComponentsInChildren<Selectable>();
 		HashSet<Selectable> selectableHashSet = new HashSet<Selectable>(selectables) {selectable};
 
-
 		selectable.OnInteract += () => { ComponentHandle?.canvasGroupUnsupported?.gameObject.SetActive(false); return true; };
 		selectable.OnDeselect += (x) => { ComponentHandle?.canvasGroupUnsupported?.gameObject.SetActive(x == null || !selectableHashSet.Contains(x)); };
 	}
@@ -29,10 +28,8 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		yield return null;
 		yield return null;
 
-		if (bombModule != null)
-			bombModule.HandlePass();
-		else
-			needyModule.HandlePass();
+		bombModule?.HandlePass();
+		needyModule?.HandlePass();
 	}
 
 	private KMBombModule bombModule = null;
