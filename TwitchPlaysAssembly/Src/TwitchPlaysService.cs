@@ -1,5 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Assets.Scripts.Missions;
 using UnityEngine;
 
 public class TwitchPlaysService : MonoBehaviour
@@ -32,6 +37,8 @@ public class TwitchPlaysService : MonoBehaviour
     public static bool DebugMode = false;
     public static LogUploader logUploader = null;
     public static UrlHelper urlHelper = null;
+
+	private HashSet<Mod> CheckedMods = null;
 
     private void Start()
     {
@@ -158,6 +165,8 @@ public class TwitchPlaysService : MonoBehaviour
             case KMGameInfo.State.Setup:
                 StartCoroutine(VanillaRuleModifier.Refresh());
                 StartCoroutine(MultipleBombs.Refresh());
+	            StartCoroutine(CreateSolversForAllBombComponents());
+
                 return missionMessageResponder;
 
             case KMGameInfo.State.PostGame:
@@ -172,4 +181,72 @@ public class TwitchPlaysService : MonoBehaviour
                 return null;
         }
     }
+
+	private IEnumerator CreateSolversForAllBombComponents()
+	{
+		yield return null;
+		if (CheckedMods == null) CheckedMods = new HashSet<Mod>();
+		if (!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods)) yield break;
+
+		Mod[] mods = loadedMods.Values.Where(x => CheckedMods.Add(x)).ToArray();
+		KMBombModule[] bombModules = mods.SelectMany(x => x.GetModObjects<KMBombModule>()).ToArray();
+		KMNeedyModule[] needyModules = mods.SelectMany(x => x.GetModObjects<KMNeedyModule>()).ToArray();
+		DebugHelper.Log($"Found {bombModules.Length} solvable modules and {needyModules.Length} needy modules in {mods.Length} mods");
+		DebugHelper.Log($"Solvable Modules: {string.Join(", ",bombModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
+		DebugHelper.Log($"Needy Modules: {string.Join(", ", needyModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
+
+		bool newModules = false;
+		if (bombModules.Length > 0)
+		{
+			ComponentSolverFactory.SilentMode = true;
+			newModules = true;
+			DebugHelper.Log("Creating a solver for each Solvable module");
+			foreach (KMBombModule bombComponent in bombModules)
+			{
+				ComponentSolver solver = null;
+				try
+				{
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>(), ComponentTypeEnum.Mod, _ircConnection, _coroutineCanceller);
+				}
+				catch (Exception e)
+				{
+					DebugHelper.LogException(e, "Couldn't Create a component solver during startup for the following reason:");
+				}
+				DebugHelper.Log(solver != null
+					? $"Found a solver of type \"{solver.GetType().FullName}\" for solvable component \"{bombComponent.ModuleDisplayName}\". This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
+					: $"No solver found for solvable component \"{bombComponent.ModuleDisplayName}\". This module is not supported by Twitch Plays.");
+			}
+			DebugHelper.Log("Finished creating solvers for each Solvable module");
+		}
+
+		if (needyModules.Length > 0)
+		{
+			ComponentSolverFactory.SilentMode = true;
+			newModules = true;
+			DebugHelper.Log("Creating a solver for each Needy module");
+			foreach (KMNeedyModule bombComponent in needyModules)
+			{
+				ComponentSolver solver = null;
+				try
+				{
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>(), ComponentTypeEnum.NeedyMod, _ircConnection, _coroutineCanceller);
+				}
+				catch (Exception e)
+				{
+					DebugHelper.LogException(e, "Couldn't Create a component solver during startup for the following reason:");
+				}
+				DebugHelper.Log(solver != null
+					? $"Found a solver of type \"{solver.GetType().FullName}\" for needy component \"{bombComponent.ModuleDisplayName}\". This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
+					: $"No solver found for needy component \"{bombComponent.ModuleDisplayName}\". This module is not supported by Twitch Plays.");
+			}
+			DebugHelper.Log("Finished creating solvers for each Needy module");
+		}
+
+		ComponentSolverFactory.SilentMode = false;
+		if (newModules)
+		{
+			ModuleData.DataHasChanged = true;
+			ModuleData.WriteDataToFile();
+		}
+	}
 }

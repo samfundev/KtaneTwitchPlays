@@ -17,7 +17,8 @@ public abstract class ComponentSolver : ICommandResponder
         IRCConnection = ircConnection;
         Canceller = canceller;
     
-        HookUpEvents();
+		if(bombCommander != null)
+			HookUpEvents();
     }
     #endregion
 

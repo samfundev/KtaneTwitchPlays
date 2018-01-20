@@ -9,6 +9,13 @@ using UnityEngine;
 
 public static class ComponentSolverFactory
 {
+	public static bool SilentMode = false;
+	private static void DebugLog(string format, params object[] args)
+	{
+		if (SilentMode) return;
+		DebugHelper.Log(format, args);
+	}
+
 	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
     private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
@@ -23,6 +30,7 @@ public static class ComponentSolverFactory
 
 	static ComponentSolverFactory()
 	{
+		DebugHelper.Log();
 		ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
         ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
 		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
@@ -429,12 +437,12 @@ public static class ComponentSolverFactory
 				KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
                 try
                 {
-				return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
+					return CreateModComponentSolver(bombCommander, bombComponent, ircConnection, canceller, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
                 }
                 catch
                 {
-	                DebugHelper.Log("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
-	                DebugHelper.Log("Using Fallback Compoment solver instead.");
+	                DebugLog("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
+	                DebugLog("Using Fallback Compoment solver instead.");
 	                LogAllComponentTypes(solvableModule);
 
 					return new UnsupportedModComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -448,8 +456,8 @@ public static class ComponentSolverFactory
                 }
                 catch
                 {
-	                DebugHelper.Log("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
-	                DebugHelper.Log("Using Fallback Compoment solver instead.");
+	                DebugLog("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
+	                DebugLog("Using Fallback Compoment solver instead.");
 					LogAllComponentTypes(needyModule);
 
 					return new UnsupportedModComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -470,13 +478,13 @@ public static class ComponentSolverFactory
 			return solver;
 		}
 
-		DebugHelper.Log("Attempting to find a valid process command method to respond with on component {0}...", moduleType);
+		DebugLog("Attempting to find a valid process command method to respond with on component {0}...", moduleType);
 
 		ModComponentSolverDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(bombComponent, moduleType, displayName);
 
 		ModComponentSolverCreators[moduleType] = modComponentSolverCreator ?? throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
 
-        return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
+		return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, ircConnection, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, ircConnection, canceller);
 	}
 
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)
@@ -537,6 +545,7 @@ public static class ComponentSolverFactory
 			ModuleData.DataHasChanged |= info.moduleID != null;
 
 		info.moduleDisplayName = displayName;
+		ModuleData.DataHasChanged &= !SilentMode;
 		ModuleData.WriteDataToFile();
 
 		if (method != null)
@@ -557,6 +566,7 @@ public static class ComponentSolverFactory
 						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent, cancelfield, canceltype);
 					};
 				case ModCommandType.Unsupported:
+					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
 					return (_bombCommander, _bombComponent, _ircConnection, _canceller) => new UnsupportedModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller);
 					
 				default:
@@ -577,41 +587,40 @@ public static class ComponentSolverFactory
         foreach (Component component in allComponents)
         {
             string fullName = component.GetType().FullName;
-            Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.FullName.Equals(fullName)).ToArray();
-            if (FullNamesLogged.Contains(fullName) || types.Length < 2)
+	        if (FullNamesLogged.Contains(fullName)) continue;
+	        FullNamesLogged.Add(fullName);
+
+			Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
+            if (types.Length < 2)
                 continue;
 
-            FullNamesLogged.Add(fullName);
-            DebugHelper.Log("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
+
+	        DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
             foreach (Type type in types)
             {
-                DebugHelper.Log("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
+	            DebugLog("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
             }
         }
     }
 
 	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom, out float Rotation)
 	{
-		DebugHelper.Log("Attempting to find the modules StatusLightParent");
-		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
-		foreach (Component component in allComponents)
+		string statusLightStatus = "Attempting to find the modules StatusLightParent...";
+		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component) bombComponent.GetComponentInChildren<KMStatusLightParent>();
+		if (component == null)
 		{
-			Type type = component.GetType();
-			if (type == ReflectionHelper.FindType("StatusLightParent"))
-			{
-				DebugHelper.Log("Local Position - X = {0}, Y = {1}, Z = {2}", component.transform.localPosition.x, component.transform.localPosition.y, component.transform.localPosition.z);
-				DebugHelper.Log("Local Euler Angles - X = {0}, Y = {1}, Z = {2}", component.transform.localEulerAngles.x, component.transform.localEulerAngles.y, component.transform.localEulerAngles.z);
-				StatusLightLeft = (component.transform.localPosition.x < 0);
-				StatusLightBottom = (component.transform.localPosition.z < 0);
-				Rotation = component.transform.localEulerAngles.y;
-				return true;
-			}
+			DebugLog($"{statusLightStatus} Not found.");
+			StatusLightLeft = false;
+			StatusLightBottom = false;
+			Rotation = 0;
+			return false;
 		}
-		DebugHelper.Log("StatusLightParent not found :(");
-		StatusLightLeft = false;
-		StatusLightBottom = false;
-		Rotation = 0;
-		return false;
+
+		StatusLightLeft = (component.transform.localPosition.x < 0);
+		StatusLightBottom = (component.transform.localPosition.z < 0);
+		Rotation = component.transform.localEulerAngles.y;
+		DebugLog($"{statusLightStatus} Found in the {(StatusLightBottom ? "bottom" : "top")} {(StatusLightLeft ? "left" : "right")} corner, rotated {((int) Rotation)} degrees.");
+		return true;
 	}
 
 	private static bool FindRegexList(MonoBehaviour bombComponent, out string[] validCommands)
@@ -620,17 +629,12 @@ public static class ComponentSolverFactory
 		foreach (Component component in allComponents)
 		{
 			Type type = component.GetType();
-			//DebugHelper.Log("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
+			//DebugLog("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
 			FieldInfo candidateString = type.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			if (candidateString == null)
-			{
-				continue;
-			}
-			if (candidateString.GetValue(bombComponent.GetComponent(type)) is string[])
-			{
-				validCommands = (string[]) candidateString.GetValue(bombComponent.GetComponent(type));
-				return true;
-			}
+
+			if (!(candidateString?.GetValue(bombComponent.GetComponent(type)) is string[])) continue;
+			validCommands = (string[]) candidateString.GetValue(bombComponent.GetComponent(type));
+			return true;
 		}
 		validCommands = null;
 		return false;
@@ -642,17 +646,12 @@ public static class ComponentSolverFactory
 		foreach (Component component in allComponents)
 		{
 			Type type = component.GetType();
-			//DebugHelper.Log("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
+			//DebugLog("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
 			FieldInfo candidateString = type.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			if (candidateString == null)
-			{
-				continue;
-			}
-			if (candidateString.GetValue(bombComponent.GetComponent(type)) is string)
-			{
-				manualCode = (string) candidateString.GetValue(bombComponent.GetComponent(type));
-				return true;
-			}
+
+			if (!(candidateString?.GetValue(bombComponent.GetComponent(type)) is string)) continue;
+			manualCode = (string) candidateString.GetValue(bombComponent.GetComponent(type));
+			return true;
 		}
 		manualCode = null;
 		return false;
@@ -665,15 +664,10 @@ public static class ComponentSolverFactory
 		{
 			Type type = component.GetType();
 			FieldInfo candidateString = type.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			if (candidateString == null)
-			{
-				continue;
-			}
-			if (candidateString.GetValue(bombComponent.GetComponent(type)) is string)
-			{
-				helpText = (string) candidateString.GetValue(bombComponent.GetComponent(type));
-				return true;
-			}
+
+			if (!(candidateString?.GetValue(bombComponent.GetComponent(type)) is string)) continue;
+			helpText = (string) candidateString.GetValue(bombComponent.GetComponent(type));
+			return true;
 		}
 		helpText = null;
 		return false;
@@ -686,16 +680,11 @@ public static class ComponentSolverFactory
 		{
 			Type type = component.GetType();
 			FieldInfo candidateBoolField = type.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			if (candidateBoolField == null)
-			{
-				continue;
-			}
-			if (candidateBoolField.GetValue(bombComponent.GetComponent(type)) is bool)
-			{
-				CancelField = candidateBoolField;
-				CancelType = type;
-				return true;
-			}
+
+			if (!(candidateBoolField?.GetValue(bombComponent.GetComponent(type)) is bool)) continue;
+			CancelField = candidateBoolField;
+			CancelType = type;
+			return true;
 		}
 		CancelField = null;
 		CancelType = null;
@@ -728,37 +717,37 @@ public static class ComponentSolverFactory
 
 	private static bool ValidateMethodCommandMethod(Type type, MethodInfo candidateMethod, out ModCommandType commandType)
 	{
-		commandType = ModCommandType.Simple;
+		commandType = ModCommandType.Unsupported;
 
 		ParameterInfo[] parameters = candidateMethod.GetParameters();
 		if (parameters == null || parameters.Length == 0)
 		{
-			DebugHelper.Log("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
+			DebugLog("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
 			return false;
 		}
 
 		if (parameters.Length > 1)
 		{
-			DebugHelper.Log("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too many parameters).", type.FullName);
+			DebugLog("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too many parameters).", type.FullName);
 			return false;
 		}
 
 		if (parameters[0].ParameterType != typeof(string))
 		{
-			DebugHelper.Log("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (expected a single string parameter, got a single {1} parameter).", type.FullName, parameters[0].ParameterType.FullName);
+			DebugLog("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (expected a single string parameter, got a single {1} parameter).", type.FullName, parameters[0].ParameterType.FullName);
 			return false;
 		}
 
 		if (candidateMethod.ReturnType == typeof(KMSelectable[]))
 		{
-			DebugHelper.Log("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
+			DebugLog("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
 			commandType = ModCommandType.Simple;
 			return true;
 		}
 
 		if (candidateMethod.ReturnType == typeof(IEnumerator))
 		{
-			DebugHelper.Log("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
+			DebugLog("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
 			commandType = ModCommandType.Coroutine;
 			return true;
 		}

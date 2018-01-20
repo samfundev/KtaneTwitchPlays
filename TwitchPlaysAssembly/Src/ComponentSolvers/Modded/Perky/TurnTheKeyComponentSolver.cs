@@ -11,7 +11,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
     {
         _lock = (MonoBehaviour)_lockField.GetValue(BombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-        BombCommander.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
+	    bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
     }
 
     private bool OnKeyTurn()

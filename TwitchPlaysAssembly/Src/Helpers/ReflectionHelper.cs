@@ -15,7 +15,7 @@ public static class ReflectionHelper
         return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).FirstOrDefault(t => t.FullName != null && t.FullName.Equals(fullName) && t.Assembly.GetName().Name.Equals(assemblyName));
     }
 
-	private static IEnumerable<Type> GetSafeTypes(this Assembly assembly)
+	public static IEnumerable<Type> GetSafeTypes(this Assembly assembly)
 	{
 		try
 		{

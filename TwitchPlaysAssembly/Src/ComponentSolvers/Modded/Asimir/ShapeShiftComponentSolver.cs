@@ -10,8 +10,10 @@ public class ShapeShiftComponentSolver : ComponentSolver
 	{
 		object _component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		bombComponent.StartCoroutine(GetDisplay(_component));
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+
+		if(bombComponent.gameObject.activeInHierarchy)
+			bombComponent.StartCoroutine(GetDisplay(_component));
 	}
 
 	private int? ToShapeIndex(string shape)
