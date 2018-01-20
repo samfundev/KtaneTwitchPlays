@@ -265,7 +265,7 @@ public class BombMessageResponder : MessageResponder
 
         if (EnableDisableInput())
         {
-            TwitchComponentHandle.SolveUnsupportedModules();
+            TwitchComponentHandle.SolveUnsupportedModules(true);
         }
     }
 

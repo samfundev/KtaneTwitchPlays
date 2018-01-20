@@ -237,6 +237,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			idBannerPrefab.gameObject.SetActive(false);
 			canvasGroupMultiDecker.alpha = 0.0f;
 			_unsupportedComponents.Add(this);
+			_solver = null;
 
 			canvasGroupUnsupported.gameObject.SetActive(true);
 			idTextUnsupported.gameObject.SetActive(false);
@@ -299,28 +300,29 @@ public class TwitchComponentHandle : MonoBehaviour
 		needyModule.WarnAtFiveSeconds = false;
 	}
 
-	public static bool SolveUnsupportedModules()
+	public static bool SolveUnsupportedModules(bool bombStartup=false)
 	{
-		bool result = _unsupportedComponents.Where(x => !x.Solved).ToList().Count > 0;
-		if (result)
+		List<TwitchComponentHandle> componentsToRemove = bombStartup
+			? _unsupportedComponents.Where(x => x._solver == null).ToList()
+			: _unsupportedComponents.Where(x => x._solver == null || !x.Solved).ToList();
+
+		if (componentsToRemove.Count == 0) return false;
+
+		foreach (TwitchComponentHandle handle in componentsToRemove)
 		{
-			foreach (TwitchComponentHandle handle in _unsupportedComponents)
+			if (handle.bombComponent.GetComponent<KMNeedyModule>() != null)
 			{
-			    if (handle.bombComponent.GetComponent<KMNeedyModule>() != null)
-			    {
-				    DeactivateNeedyModule(handle);
-			    }
-                else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
-			    {
-			        handle.bombComponent.GetComponent<KMBombModule>().HandlePass();
-			    }
-            }
-
-			RemoveSolveBasedModules();
-
-			_unsupportedComponents.Clear();
+				DeactivateNeedyModule(handle);
+			}
+			else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
+			{
+				handle.bombComponent.GetComponent<KMBombModule>().HandlePass();
+			}
 		}
-		return result;
+		RemoveSolveBasedModules();
+
+		_unsupportedComponents.Clear();
+		return true;
 	}
 
 	public static void RemoveSolveBasedModules()
