@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -14,10 +16,29 @@ public class ExtendedPasswordComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
+		if (inputCommand.StartsWith("cycle ", StringComparison.InvariantCultureIgnoreCase))
+	    {
+		    HashSet<int> alreadyCycled = new HashSet<int>();
+		    string[] commandParts = inputCommand.Split(' ');
+		    
+		    foreach (string cycle in commandParts.Skip(1))
+		    {
+			    if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > 6)
+				    continue;
+
+			    IEnumerator spinnerCoroutine = (IEnumerator)_ProcessCommandMethod.Invoke(_component, new object[] { $"cycle {cycle}" });
+				while (spinnerCoroutine.MoveNext())
+			    {
+				    yield return spinnerCoroutine.Current;
+			    }
+		    }
+		    yield break;
+	    }
+
         IEnumerator command = (IEnumerator)_ProcessCommandMethod.Invoke(_component, new object[] { inputCommand });
         while (command.MoveNext())
         {
-            yield return command.Current;
+			yield return command.Current;
         }
         if (inputCommand.Trim().Length == 6)
         {
