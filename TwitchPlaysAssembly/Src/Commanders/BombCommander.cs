@@ -349,7 +349,27 @@ public class BombCommander : ICommandResponder
         SelectableManager.HandleFaceSelection();
     }
 
-    public void CauseStrikesToExplosion(string reason)
+	public void RotateCameraByLocalQuaternion(BombComponent bombComponent, Quaternion localQuaternion)
+	{
+		Transform twitchPlaysCameraTransform = bombComponent?.transform.Find("TwitchPlayModuleCamera");
+		Camera cam = twitchPlaysCameraTransform?.GetComponentInChildren<Camera>();
+		if (cam == null) return;
+
+		int layer = localQuaternion == Quaternion.identity ? ModuleCameras.cameraLayer : ModuleCameras.cameraLayer + 1;
+
+		if (cam.cullingMask != (1 << layer))
+		{
+			cam.cullingMask = 1 << layer;
+			foreach (Transform trans in bombComponent.gameObject.GetComponentsInChildren<Transform>(true))
+			{
+				trans.gameObject.layer = layer;
+			}
+		}
+
+		twitchPlaysCameraTransform.localRotation = Quaternion.Euler(_heldFrontFace ? -localQuaternion.eulerAngles : localQuaternion.eulerAngles);
+	}
+
+	public void CauseStrikesToExplosion(string reason)
     {
         for (int strikesToMake = StrikeLimit - StrikeCount; strikesToMake > 0; --strikesToMake)
         {

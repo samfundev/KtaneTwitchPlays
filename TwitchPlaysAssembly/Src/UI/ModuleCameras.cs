@@ -137,7 +137,14 @@ public class ModuleCameras : MonoBehaviour
                 cameraInstance.cullingMask = 1 << cameraLayer;
                 Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", module.component.gameObject.layer, cameraLayer);
 	            module.SetRenderLayer(true);
-                cameraInstance.transform.SetParent(module.component.transform, false);
+	            Transform t = module.component.transform.Find("TwitchPlayModuleCamera");
+	            if (t == null)
+	            {
+		            t = new GameObject().transform;
+		            t.name = "TwitchPlayModuleCamera";
+		            t.SetParent(module.component.transform, false);
+				}
+                cameraInstance.transform.SetParent(t, false);
                 cameraInstance.gameObject.SetActive(true);
 
                 Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1}", module.component.gameObject.layer, cameraInstance.cullingMask);
@@ -454,7 +461,6 @@ public class ModuleCameras : MonoBehaviour
         }
     }
 
-
     public void ChangeBomb(BombCommander bomb)
     {
         Debug.Log(LogPrefix + "Switching bomb");
@@ -648,8 +654,8 @@ public class ModuleCameras : MonoBehaviour
                 }
             }
             */
-            
-            return null;
+
+			return null;
         }
     }
 

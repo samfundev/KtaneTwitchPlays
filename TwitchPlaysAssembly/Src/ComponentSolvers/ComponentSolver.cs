@@ -250,8 +250,17 @@ public abstract class ComponentSolver : ICommandResponder
             }
             else if (currentValue is Quaternion localQuaternion)
             {
-                BombCommander.RotateByLocalQuaternion(localQuaternion);
-                needQuaternionReset = true;
+				BombCommander.RotateByLocalQuaternion(localQuaternion);
+	            needQuaternionReset = true;
+            }
+			else if (currentValue is Quaternion[] localQuaternions)
+            {
+	            if (localQuaternions.Length == 2)
+	            {
+		            BombCommander.RotateByLocalQuaternion(localQuaternions[0]);
+					BombCommander.RotateCameraByLocalQuaternion(BombComponent, localQuaternions[1]);
+		            needQuaternionReset = true;
+	            }
             }
             else if (currentValue is string[] currentStrings)
 			{
@@ -287,7 +296,8 @@ public abstract class ComponentSolver : ICommandResponder
 
         if (needQuaternionReset)
         {
-            BombCommander.RotateByLocalQuaternion(Quaternion.identity);
+			BombCommander.RotateByLocalQuaternion(Quaternion.identity);
+	        BombCommander.RotateCameraByLocalQuaternion(BombComponent, Quaternion.identity);
         }
 
 	    if (hideCamera)
