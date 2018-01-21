@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class Factory : GameRoom
 {
@@ -14,7 +15,12 @@ public class Factory : GameRoom
         _factoryType = ReflectionHelper.FindType("FactoryAssembly.FactoryRoom");
         if (_factoryType == null)
             return null;
-        _currentBombField = _factoryType.GetField("_currentBomb", BindingFlags.NonPublic | BindingFlags.Instance);
+
+		_factoryStaticModeType = ReflectionHelper.FindType("FactoryAssembly.StaticMode");
+		_factoryFiniteModeType = ReflectionHelper.FindType("FactoryAssembly.FiniteSequenceMode");
+		_currentBombField = _factoryFiniteModeType.GetField("_currentBomb", BindingFlags.NonPublic | BindingFlags.Instance);
+
+	    _gameModeField = _factoryType.GetField("_gameMode", BindingFlags.NonPublic | BindingFlags.Instance);
 
         return _factoryType;
     }
@@ -26,7 +32,8 @@ public class Factory : GameRoom
             room = null;
             return false;
         }
-        room = new Factory(factoryObject[0]);
+
+	    room = new Factory(factoryObject[0]);
         return true;
     }
 
@@ -34,20 +41,32 @@ public class Factory : GameRoom
     {
         DebugHelper.Log("Found gameplay room of type Factory Room");
         _factory = roomObject;
+	    _gameroom = _gameModeField.GetValue(_factory);
+	    if (_gameroom.GetType() == _factoryStaticModeType) return;
         BombID = -1;
         HoldBomb = false;
     }
 
     public override void RefreshBombID(ref int bombID)
     {
-	    if (bombID == -1) return;
+	    if (_gameroom.GetType() == _factoryStaticModeType)
+	    {
+		    base.RefreshBombID(ref bombID);
+		    return;
+	    }
+		if (bombID == -1) return;
         bombID = BombID;
     }
 
-    private UnityEngine.Object GetBomb => (UnityEngine.Object) _currentBombField.GetValue(_factory);
+	private UnityEngine.Object GetBomb => _gameroom.GetType() == _factoryFiniteModeType ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
 
 	public override bool IsCurrentBomb(int bombID)
     {
+	    if (_gameroom.GetType() == _factoryStaticModeType)
+	    {
+		    return base.IsCurrentBomb(bombID);
+	    }
+
         if (bombID == -1)
             return true;
         return BombID== bombID;
@@ -55,7 +74,13 @@ public class Factory : GameRoom
 
     public override void InitializeBombNames(List<TwitchBombHandle> bombHandles)
     {
-        for (int i = 0; i < bombHandles.Count; i++)
+	    if (_gameroom.GetType() == _factoryStaticModeType)
+	    {
+		    base.InitializeBombNames(bombHandles);
+		    return;
+	    }
+
+		for (int i = 0; i < bombHandles.Count; i++)
         {
             bombHandles[i].nameText.text = $"Bomb {i + 1} of {bombHandles.Count}";
         }
@@ -63,8 +88,17 @@ public class Factory : GameRoom
 
     public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
     {
-        
-        yield return new WaitUntil(() => GetBomb != null);
+		if (_gameroom.GetType() == _factoryStaticModeType)
+		{
+			IEnumerator reportBombStatus = base.ReportBombStatus(bombHandles);
+			while (reportBombStatus.MoveNext())
+			{
+				yield return reportBombStatus.Current;
+			}
+			yield break;
+		}
+
+		yield return new WaitUntil(() => GetBomb != null);
         BombID = 0;
         while (GetBomb != null)
         {
@@ -96,7 +130,13 @@ public class Factory : GameRoom
     }
 
     private static Type _factoryType = null;
-    private static FieldInfo _currentBombField = null;
+	private static Type _factoryGameModeType = null;
+	private static Type _factoryStaticModeType = null;
+	private static Type _factoryFiniteModeType = null;
+
+	private static FieldInfo _gameModeField = null;
+	private static FieldInfo _currentBombField = null;
 
     private object _factory = null;
+	private object _gameroom = null;
 }
