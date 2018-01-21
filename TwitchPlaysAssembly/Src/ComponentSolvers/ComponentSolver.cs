@@ -251,6 +251,9 @@ public abstract class ComponentSolver : ICommandResponder
             else if (currentValue is Quaternion localQuaternion)
             {
 				BombCommander.RotateByLocalQuaternion(localQuaternion);
+	            if (BombComponent.GetComponent<KMBombModule>()?.ModuleType.Equals("spwizPerspectivePegs") ?? false)
+		            BombCommander.RotateCameraByLocalQuaternion(BombComponent, localQuaternion);
+					//Whitelist perspective pegs as it only returns Quaternion.Euler(x,0,0), which is compatible with the RotateCamaraByQuaternion.
 	            needQuaternionReset = true;
             }
 			else if (currentValue is Quaternion[] localQuaternions)
