@@ -205,71 +205,59 @@ public class BombMessageResponder : MessageResponder
     #endregion
 
     #region Protected/Private Methods
-    private IEnumerator CheckForBomb()
-    {
-        TwitchComponentHandle.ResetId();
 
-        Bomb[] bombs;
-        do
-        {
-            yield return null;
-            bombs = FindObjectsOfType<Bomb>();
-            if (bombs.Length > 0)
-            {
-                yield return new WaitForSeconds(0.1f);
-                bombs = FindObjectsOfType<Bomb>();
-            }
+	private IEnumerator CheckForBomb()
+	{
+		TwitchComponentHandle.ResetId();
 
-            for (int i = 0; i < GameRoom.GameRoomTypes.Length; i++)
-            {
-                if (GameRoom.GameRoomTypes[i]() != null && GameRoom.CreateRooms[i](FindObjectsOfType(GameRoom.GameRoomTypes[i]()),out GameRoom.Instance))
-                {
-                    break;
-                }
-            }
-            _currentBomb = bombs.Length == 1 ? -1 : 0;
-            for (int i = 0; i < bombs.Length; i++)
-            {
-                SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
-            }
-            GameRoom.Instance.InitializeBombNames(_bombHandles);
-            StartCoroutine(GameRoom.Instance.ReportBombStatus(_bombHandles));
+		
+		yield return new WaitUntil(() => (SceneManager.Instance.GameplayState.Bombs != null && SceneManager.Instance.GameplayState.Bombs.Count > 0));
+		List<Bomb> bombs = SceneManager.Instance.GameplayState.Bombs;
 
-            if (GameRoom.Instance.HoldBomb)
-                _coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), _currentBomb);
-        } while (bombs.Length == 0);
+		for (int i = 0; i < GameRoom.GameRoomTypes.Length; i++)
+		{
+			if (GameRoom.GameRoomTypes[i]() != null && GameRoom.CreateRooms[i](FindObjectsOfType(GameRoom.GameRoomTypes[i]()), out GameRoom.Instance))
+			{
+				break;
+			}
+		}
 
-        AlarmClock[] clocks;
-        do
-        {
-            yield return null;
-            clocks = FindObjectsOfType<AlarmClock>();
-        } while (clocks == null || clocks.Length == 0);
-        alarmClock = clocks[0];
+		_currentBomb = bombs.Count == 1 ? -1 : 0;
+		for (int i = 0; i < bombs.Count; i++)
+		{
+			SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
+		}
+		GameRoom.Instance.InitializeBombNames(_bombHandles);
+		StartCoroutine(GameRoom.Instance.ReportBombStatus(_bombHandles));
 
-        try
-        {
-            moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogException(ex, "Failed to Instantiate the module Camera system due to an Exception: ");
-            moduleCameras = null;
-        }
+		if (GameRoom.Instance.HoldBomb)
+			_coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), _currentBomb);
 
-        for (int i = 0; i < 4; i++)
-        {
-            _notes[i] = TwitchPlaySettings.data.NotesSpaceFree;
-			moduleCameras?.SetNotes(i,TwitchPlaySettings.data.NotesSpaceFree);
-        }
+		alarmClock = FindObjectOfType<AlarmClock>();
 
-        if (EnableDisableInput())
-        {
-            TwitchComponentHandle.SolveUnsupportedModules(true);
-        }
-    }
+		try
+		{
+			moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "Failed to Instantiate the module Camera system due to an Exception: ");
+			moduleCameras = null;
+		}
 
-    private void SetBomb(Bomb bomb, int id)
+		for (int i = 0; i < 4; i++)
+		{
+			_notes[i] = TwitchPlaySettings.data.NotesSpaceFree;
+			moduleCameras?.SetNotes(i, TwitchPlaySettings.data.NotesSpaceFree);
+		}
+
+		if (EnableDisableInput())
+		{
+			TwitchComponentHandle.SolveUnsupportedModules(true);
+		}
+	}
+
+	private void SetBomb(Bomb bomb, int id)
     {
         _bombCommanders.Add(new BombCommander(bomb));
         CreateBombHandleForBomb(bomb, id);
@@ -338,12 +326,12 @@ public class BombMessageResponder : MessageResponder
         }
 
         if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
-        {
+		{ 
             if (!IsAuthorizedDefuser(userNickName)) return;
             if (TwitchPlaySettings.data.AllowSnoozeOnly)
-                alarmClock.TurnOff();
+                alarmClock?.TurnOff();
             else
-                alarmClock.ButtonDown(0);
+                alarmClock?.ButtonDown(0);
             return;
         }
 
