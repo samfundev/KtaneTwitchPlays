@@ -98,8 +98,7 @@ public static class ComponentSolverFactory
 
         //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 	    ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent, ircConnection, canceller) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-        ModComponentSolverCreatorShims["RubiksCubeModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new RubiksCubeComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
-
+        
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
 		/*
@@ -238,14 +237,13 @@ public static class ComponentSolverFactory
 
         //Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 	    ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, helpText = "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]", DoesTheRightThing = true };
-        ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleDisplayName = "Rubik's Cube", moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", validCommands = new[] { "^reset$", "^rotate$", "(?>[fbudlr]['2]?)(?> [fbudlr]['2]?)*$" }, DoesTheRightThing = false };
-
+        
 		//Modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)", DoesTheRightThing = false };
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12, helpText = "Set the Letters with !{0} set W D J S. (warning, this will unset ALL letters not specified.) Submit your answer with !{0} submit." };
 		ModComponentSolverInformation["spwizAstrology"] = new ModuleInformation { moduleScore = 7, helpText = "Press good on 3 with !{0} press good on 3. Press bad on 2 with !{0} press bad on 2. No Omen is !{0} press no", DoesTheRightThing = true };
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 12, helpText = "Scan the safe spots with !{0} scan A2 B3 E5. Mark the spots as water with !{0} miss A1 A3 B4. Mark the spots as ships with !{0} hit E3 E4. Fill in the rows with !{0} row 3 4. Fill in columns with !{0} col B D" };
-		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true, moduleDisplayName = "Big Circle" };
 		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit the correct answer with !{0} press 2." };
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise Operators", validCommands = new[] { "^submit [0-1]{8}$" } };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6, helpText = "Hit the correct spots with !{0} press bl mm tm tl. (Locations are tl, tm, ml, mm, mr, bl, bm, br)" };
@@ -289,7 +287,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
-		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
+		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false, moduleDisplayName = "Morse-A-Maze" };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20, helpText = "Move with !{0} forward back. Turn with !{0} left right u-turn. The first letter only can be used instead. Submit with !{0} submit." };
 		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9, helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", DoesTheRightThing = false };
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move the numbers around with !{0} press 1 3 2 1 3 4 6 8.", DoesTheRightThing = false };
@@ -301,7 +299,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["PointOfOrderModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["RockPaperScissorsLizardSpockModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press scissors lizard.", manualCode = "Rock-Paper-Scissors-Lizard-Spock" };
-		ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", validCommands = new[] { "^reset$", "^rotate$", "(?>[fbudlr]['2]?)(?> [fbudlr]['2]?)*$" } };
+		ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", DoesTheRightThing = true };
 		ModComponentSolverInformation["screw"] = new ModuleInformation { moduleScore = 9, helpText = "Screw with !{0} screw tr or !{0} screw 3. Options are TL, TM, TR, BL, BM, BR. Press a button with !{0} press b or !{0} press 2." };
 		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["Semaphore"] = new ModuleInformation { moduleScore = 7, helpText = "Move to the next flag with !{0} move right or !{0} press right. Move to previous flag with !{0} move left or !{0} press left. Submit with !{0} press ok.", DoesTheRightThing = false };
