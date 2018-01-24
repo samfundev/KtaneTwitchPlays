@@ -355,7 +355,7 @@ public class BombMessageResponder : MessageResponder
         if (text.StartsWith("claims ", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            userNickName = text.Substring(8);
+            userNickName = text.Substring(7);
             text = "claims";
             if (userNickName == "")
             {
