@@ -36,6 +36,16 @@ public class TwitchPlaySettingsData
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();
 
+	public Dictionary<string, string> BombCustomMessages = new Dictionary<string, string>
+	{
+		{"ttks", "Turn the Keys is a module on this bomb. It dictates some modules be delayed until others are finished. Until Turn the Keys is finished, you should avoid doing the following modules:\nMaze, Memory, Complicated Wires, Wire Sequence, Simon Says, Cryptography, Semaphore, Combination Lock, Astrology, Switches, Plubming"}
+	};
+
+	public Dictionary<string, string> GeneralCustomMessages = new Dictionary<string, string>
+	{
+		{"welcome", "Welcome, this is a Twitch Plays version of Keep Talking and Nobody Explodes. For some basic info and how to get started, you may find this link useful: https://docs.google.com/document/d/1ESin9CKWtt4nT3oxDvYqCmbf3xyFLpjM1wcXL78v29A/edit?usp=sharing" }
+	};
+
 	public string TwitchBotColorOnQuit = string.Empty;
 
     public bool AllowSnoozeOnly = false;

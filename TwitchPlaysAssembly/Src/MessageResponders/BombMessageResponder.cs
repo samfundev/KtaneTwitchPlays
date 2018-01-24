@@ -527,6 +527,11 @@ public class BombMessageResponder : MessageResponder
 	        }
 	        _coroutineQueue.AddToQueue(onMessageReceived,componentHandle.bombID);
         }
+
+	    if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))
+	    {
+		    _ircConnection.SendMessage(TwitchPlaySettings.data.BombCustomMessages[text.ToLowerInvariant()]);
+	    }
     }
 
     private void CreateBombHandleForBomb(MonoBehaviour bomb, int id)

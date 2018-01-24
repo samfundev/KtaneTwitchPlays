@@ -474,8 +474,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				break;
 		}
-		
-        if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+
+	    if (TwitchPlaySettings.data.GeneralCustomMessages.ContainsKey(text.ToLowerInvariant()))
+	    {
+		    _ircConnection.SendMessage(TwitchPlaySettings.data.GeneralCustomMessages[text.ToLowerInvariant()]);
+	    }
+
+		if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
         {
             if (text.Equals("reloaddata", StringComparison.InvariantCultureIgnoreCase))
             {
