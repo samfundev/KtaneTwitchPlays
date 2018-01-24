@@ -162,13 +162,17 @@ public class MiscellaneousMessageResponder : MessageResponder
                     case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank):
                         leaderboard.GetSoloRank(desiredRank, out entry);
                         break;
-                    case 2 when int.TryParse(split[1], out desiredRank):
+					case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && !int.TryParse(split[2], out _):
+						leaderboard.GetRank(split[2], out entry);
+						if (entry != null) break;
+						_ircConnection.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[2]);
+						return;
+					case 2 when int.TryParse(split[1], out desiredRank):
                         leaderboard.GetRank(desiredRank, out entry);
                         break;
 					case 2 when !int.TryParse(split[1], out _):
 						leaderboard.GetRank(split[1], out entry);
 						if (entry != null) break;
-
 						_ircConnection.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]);
 						return;
 	                default:
