@@ -113,7 +113,7 @@ public class Factory : GameRoom
             bombHandles[BombID].ircConnection.SendMessage("Bomb {0} of {1} is now live.", BombID + 1, bombHandles.Count);
             if (bombHandles[BombID].edgeworkText.text != TwitchPlaySettings.data.BlankBombEdgework)
                 bombHandles[BombID].ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, bombHandles[BombID].edgeworkText.text);
-            IEnumerator bombHold = bombHandles[BombID].OnMessageReceived("Bomb Factory", "red", string.Format("!bomb{0} hold",bombHandles.Count == 1 ? "" : (BombID + 1).ToString()));
+            IEnumerator bombHold = bombHandles[BombID].OnMessageReceived("Bomb Factory", "red", string.Format("bomb{0} hold",bombHandles.Count == 1 ? "" : (BombID + 1).ToString()));
             while (bombHold.MoveNext())
             {
                 yield return bombHold.Current;

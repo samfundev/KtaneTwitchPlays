@@ -231,7 +231,7 @@ public class BombMessageResponder : MessageResponder
 		StartCoroutine(GameRoom.Instance.ReportBombStatus(_bombHandles));
 
 		if (GameRoom.Instance.HoldBomb)
-			_coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "!bomb hold"), _currentBomb);
+			_coroutineQueue.AddToQueue(_bombHandles[0].OnMessageReceived(_bombHandles[0].nameText.text, "red", "bomb hold"), _currentBomb);
 
 		alarmClock = FindObjectOfType<AlarmClock>();
 
@@ -266,19 +266,22 @@ public class BombMessageResponder : MessageResponder
 
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
-        if (text.EqualsAny("!notes1","!notes2","!notes3","!notes4"))
+	    if (!text.StartsWith("!") || text.Equals("!")) return;
+	    text = text.Substring(1);
+
+		if (text.EqualsAny("notes1","notes2","notes3","notes4"))
         {
-            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
+            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
             _ircConnection.SendMessage(TwitchPlaySettings.data.Notes, index+1, _notes[index]);
             return;
         }
 
-        if (text.StartsWith("!notes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes2 ", StringComparison.InvariantCultureIgnoreCase) ||
-            text.StartsWith("!notes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes4 ", StringComparison.InvariantCultureIgnoreCase))
+        if (text.StartsWith("notes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes2 ", StringComparison.InvariantCultureIgnoreCase) ||
+            text.StartsWith("notes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes4 ", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
-            string notes = text.Substring(8);
+            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
+            string notes = text.Substring(7);
             if (notes == "") return;
 
             _ircConnection.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
@@ -288,18 +291,18 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
-        if (text.StartsWith("!appendnotes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!appendnotes2 ", StringComparison.InvariantCultureIgnoreCase) ||
-            text.StartsWith("!appendnotes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!appendnotes4 ", StringComparison.InvariantCultureIgnoreCase))
+        if (text.StartsWith("appendnotes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("appendnotes2 ", StringComparison.InvariantCultureIgnoreCase) ||
+            text.StartsWith("appendnotes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("appendnotes4 ", StringComparison.InvariantCultureIgnoreCase))
         {
-            text = text.Substring(0, 1) + text.Substring(7, 6) + text.Substring(1, 6) + text.Substring(13);
+            text = text.Substring(6, 6) + text.Substring(0, 6) + text.Substring(12);
         }
 
-        if (text.StartsWith("!notes1append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes2append ", StringComparison.InvariantCultureIgnoreCase) ||
-            text.StartsWith("!notes3append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!notes4append ", StringComparison.InvariantCultureIgnoreCase))
+        if (text.StartsWith("notes1append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes2append ", StringComparison.InvariantCultureIgnoreCase) ||
+            text.StartsWith("notes3append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes4append ", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
-            string notes = text.Substring(14);
+            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
+            string notes = text.Substring(13);
             if (notes == "") return;
 
             _ircConnection.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
@@ -309,15 +312,15 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
-        if (text.EqualsAny("!clearnotes1", "!clearnotes2", "!clearnotes3", "!clearnotes4"))
+        if (text.EqualsAny("clearnotes1", "clearnotes2", "clearnotes3", "clearnotes4"))
         {
-            text = text.Substring(0, 1) + text.Substring(6, 6) + text.Substring(1, 5);
+            text = text.Substring(5, 6) + text.Substring(0, 5);
         }
 
-        if (text.EqualsAny("!notes1clear", "!notes2clear", "!notes3clear", "!notes4clear"))
+        if (text.EqualsAny("notes1clear", "notes2clear", "notes3clear", "notes4clear"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            int index = "1234".IndexOf(text.Substring(6, 1), StringComparison.Ordinal);
+            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
             _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
             _ircConnection.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index + 1);
 
@@ -325,7 +328,7 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
-        if (text.Equals("!snooze", StringComparison.InvariantCultureIgnoreCase))
+        if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
 		{ 
             if (!IsAuthorizedDefuser(userNickName)) return;
             if (TwitchPlaySettings.data.AllowSnoozeOnly)
@@ -335,32 +338,32 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
-        if (text.Equals("!stop", StringComparison.InvariantCultureIgnoreCase))
+        if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName, true)) return;
             _currentBomb = _coroutineQueue.CurrentBombID;
             return;
         }
 
-        if (text.Equals("!modules", StringComparison.InvariantCultureIgnoreCase))
+        if (text.Equals("modules", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             moduleCameras?.AttachToModules(_componentHandles);
             return;
         }
 
-        if (text.StartsWith("!claims ", StringComparison.InvariantCultureIgnoreCase))
+        if (text.StartsWith("claims ", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             userNickName = text.Substring(8);
-            text = "!claims";
+            text = "claims";
             if (userNickName == "")
             {
                 return;
             }
         }
 
-        if (text.Equals("!claims", StringComparison.InvariantCultureIgnoreCase))
+        if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             List<string> claimed = (from handle in _componentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idText.text.Replace("!", ""), handle.headerText.text)).ToList();
@@ -376,40 +379,40 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
-        if (text.StartsWith("!claim ", StringComparison.InvariantCultureIgnoreCase))
+        if (text.StartsWith("claim ", StringComparison.InvariantCultureIgnoreCase))
         {
             var split = text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
             foreach (var claim in split.Skip(1))
             {
                 TwitchComponentHandle handle = _componentHandles.FirstOrDefault(x => x.Code.Equals(claim));
                 if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-                handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} claim", claim));
+                handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} claim", claim));
             }
             return;
         }
 
-        if (text.EqualsAny("!unclaim all", "!release all","!unclaimall","!releaseall"))
+        if (text.EqualsAny("unclaim all", "release all","unclaimall","releaseall"))
         {
             string[] moduleIDs = _componentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
                 .Select(x => x.Code).ToArray();
-            text = string.Format("!unclaim {0}", string.Join(" ", moduleIDs));
+            text = string.Format("unclaim {0}", string.Join(" ", moduleIDs));
         }
 
-        if (text.StartsWith("!unclaim ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!release ", StringComparison.InvariantCultureIgnoreCase))
+        if (text.StartsWith("unclaim ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("release ", StringComparison.InvariantCultureIgnoreCase))
         {
             var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var claim in split.Skip(1))
             {
                 TwitchComponentHandle handle = _componentHandles.FirstOrDefault(x => x.Code.Equals(claim));
                 if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-                handle.OnMessageReceived(userNickName, userColorCode, string.Format("!{0} unclaim", claim));
+                handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} unclaim", claim));
             }
             return;
         }
 
         
 
-		if (text.Equals("!unclaimed", StringComparison.InvariantCultureIgnoreCase))
+		if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 
@@ -422,7 +425,7 @@ public class BombMessageResponder : MessageResponder
 			return;
 		}
 
-		if (text.StartsWith("!find ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("!search ", StringComparison.InvariantCultureIgnoreCase))
+		if (text.StartsWith("find ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("search ", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 
@@ -440,19 +443,19 @@ public class BombMessageResponder : MessageResponder
 			return;
 		}
 
-		if (text.Equals("!filledgework", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
 		    foreach (var commander in _bombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
 			return;
 		}
 
-        if (text.StartsWith("!setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+        if (text.StartsWith("setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
         {
             float tempNumber = float.Parse(text.Substring(15));
             OtherModes.setMultiplier(tempNumber);
         }
 
-        if (text.Equals("!solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+        if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			foreach (var handle in _componentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
 			return;
@@ -463,25 +466,25 @@ public class BombMessageResponder : MessageResponder
         if (_currentBomb > -1)
         {
             //Check for !bomb messages, and pass them off to the currently held bomb.
-            Match match = Regex.Match(text, "^!bomb (.+)", RegexOptions.IgnoreCase);
+            Match match = Regex.Match(text, "^bomb (.+)", RegexOptions.IgnoreCase);
             if (match.Success)
             {
                 string internalCommand = match.Groups[1].Value;
-                text = string.Format("!bomb{0} {1}", _currentBomb + 1, internalCommand);
+                text = string.Format("bomb{0} {1}", _currentBomb + 1, internalCommand);
             }
 
-            match = Regex.Match(text, "^!edgework$");
+            match = Regex.Match(text, "^edgework$");
             if (match.Success)
             {
-                text = string.Format("!edgework{0}", _currentBomb + 1);
+                text = string.Format("edgework{0}", _currentBomb + 1);
             }
             else
             {
-                match = Regex.Match(text, "^!edgework (.+)");
+                match = Regex.Match(text, "^edgework (.+)");
                 if (match.Success)
                 {
                     string internalCommand = match.Groups[1].Value;
-                    text = string.Format("!edgework{0} {1}", _currentBomb + 1, internalCommand);
+                    text = string.Format("edgework{0} {1}", _currentBomb + 1, internalCommand);
                 }
             }
         }

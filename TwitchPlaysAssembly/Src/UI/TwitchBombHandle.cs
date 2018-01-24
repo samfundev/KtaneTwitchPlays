@@ -92,10 +92,10 @@ public class TwitchBombHandle : MonoBehaviour
     public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
     {
         string internalCommand;
-        Match match = Regex.Match(text, string.Format("^!{0} (.+)", _code), RegexOptions.IgnoreCase);
+        Match match = Regex.Match(text, string.Format("^{0} (.+)", _code), RegexOptions.IgnoreCase);
         if (!match.Success)
         {
-            match = Regex.Match(text, string.Format("^!{0}(?> (.+))?", _edgeworkCode), RegexOptions.IgnoreCase);
+            match = Regex.Match(text, string.Format("^{0}(?> (.+))?", _edgeworkCode), RegexOptions.IgnoreCase);
             if (match.Success)
             {
                 internalCommand = match.Groups[1].Value;

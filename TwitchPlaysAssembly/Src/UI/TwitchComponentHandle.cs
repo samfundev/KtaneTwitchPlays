@@ -445,7 +445,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Message Interface
 	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
 	{
-		Match match = Regex.Match(text, string.Format("^!({0}) (.+)", Code), RegexOptions.IgnoreCase);
+		Match match = Regex.Match(text, string.Format("^({0}) (.+)", Code), RegexOptions.IgnoreCase);
 		if (!match.Success)
 		{
 			return null;
