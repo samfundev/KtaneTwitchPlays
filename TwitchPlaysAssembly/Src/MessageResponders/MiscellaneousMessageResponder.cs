@@ -165,7 +165,13 @@ public class MiscellaneousMessageResponder : MessageResponder
                     case 2 when int.TryParse(split[1], out desiredRank):
                         leaderboard.GetRank(desiredRank, out entry);
                         break;
-                    default:
+					case 2 when !int.TryParse(split[1], out _):
+						leaderboard.GetRank(split[1], out entry);
+						if (entry != null) break;
+
+						_ircConnection.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]);
+						return;
+	                default:
                         return;
                 }
                 if (entry == null)
