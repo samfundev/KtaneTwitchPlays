@@ -16,13 +16,27 @@ public class BombCommander : ICommandResponder
         widgetManager = Bomb.WidgetManager;
         Selectable = Bomb.GetComponent<Selectable>();
         FloatingHoldable = Bomb.GetComponent<FloatingHoldable>();
-        SelectableManager = KTInputManager.Instance.SelectableManager;
+        _selectableManager = KTInputManager.Instance.SelectableManager;
         BombTimeStamp = DateTime.Now;
         bombStartingTimer = CurrentTimer;
     }
-    #endregion
+	#endregion
 
-    #region Interface Implementation
+	#region Interface Implementation
+	public void ReuseBombCommander(Bomb bomb)
+	{
+		Bomb = bomb;
+		timerComponent = Bomb.GetTimer();
+		widgetManager = Bomb.WidgetManager;
+		Selectable = Bomb.GetComponent<Selectable>();
+		FloatingHoldable = Bomb.GetComponent<FloatingHoldable>();
+		_selectableManager = KTInputManager.Instance.SelectableManager;
+		BombTimeStamp = DateTime.Now;
+		bombStartingTimer = CurrentTimer;
+		bombSolvableModules = 0;
+		bombSolvedModules = 0;
+	}
+    
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
     {
         message = message.ToLowerInvariant();
@@ -341,12 +355,12 @@ public class BombCommander : ICommandResponder
 
     public void RotateByLocalQuaternion(Quaternion localQuaternion)
     {
-        Transform baseTransform = SelectableManager.GetBaseHeldObjectTransform();
+        Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
 
         float currentZSpin = _heldFrontFace ? 0.0f : 180.0f;
 
-        SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
-        SelectableManager.HandleFaceSelection();
+        _selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
+        _selectableManager.HandleFaceSelection();
     }
 
 	public void RotateCameraByLocalQuaternion(BombComponent bombComponent, Quaternion localQuaternion)
@@ -394,19 +408,19 @@ public class BombCommander : ICommandResponder
     private void SelectObject(Selectable selectable)
     {
         selectable.HandleSelect(true);
-        SelectableManager.Select(selectable, true);
-        SelectableManager.HandleInteract();
+        _selectableManager.Select(selectable, true);
+        _selectableManager.HandleInteract();
         selectable.OnInteractEnded();
     }
 
     private void DeselectObject(Selectable selectable)
     {
-        SelectableManager.HandleCancel();
+        _selectableManager.HandleCancel();
     }
 
     private IEnumerator ForceHeldRotation(bool frontFace, float duration)
     {
-        Transform baseTransform = SelectableManager.GetBaseHeldObjectTransform();
+        Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
 
         float oldZSpin = _heldFrontFace ? 0.0f : 180.0f;
         float targetZSpin = frontFace ? 0.0f : 180.0f;
@@ -419,15 +433,15 @@ public class BombCommander : ICommandResponder
 
             Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 
-            SelectableManager.SetZSpin(currentZSpin);
-            SelectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
-            SelectableManager.HandleFaceSelection();
+            _selectableManager.SetZSpin(currentZSpin);
+            _selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+            _selectableManager.HandleFaceSelection();
             yield return null;
         }
 
-        SelectableManager.SetZSpin(targetZSpin);
-        SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
-        SelectableManager.HandleFaceSelection();
+        _selectableManager.SetZSpin(targetZSpin);
+        _selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+        _selectableManager.HandleFaceSelection();
 
         _heldFrontFace = frontFace;
     }
@@ -548,14 +562,12 @@ public class BombCommander : ICommandResponder
 	}
 	#endregion
 
-	#region Readonly Fields
-	public readonly Bomb Bomb = null;
-    public readonly Selectable Selectable = null;
-    public readonly FloatingHoldable FloatingHoldable = null;
-    public readonly DateTime BombTimeStamp;
+	public Bomb Bomb = null;
+    public Selectable Selectable = null;
+    public FloatingHoldable FloatingHoldable = null;
+    public DateTime BombTimeStamp;
 
-    private readonly SelectableManager SelectableManager = null;
-    #endregion
+    private SelectableManager _selectableManager = null;
 
     public TwitchBombHandle twitchBombHandle = null;
     public TimerComponent timerComponent = null;

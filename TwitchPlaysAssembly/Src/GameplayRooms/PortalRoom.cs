@@ -40,9 +40,10 @@ public class PortalRoom : GameRoom
         _room = room;
     }
 
-    public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
+    public override IEnumerator ReportBombStatus()
     {
-        yield return new WaitUntil(() => SceneManager.Instance.GameplayState.RoundStarted);
+	    List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+		yield return new WaitUntil(() => SceneManager.Instance.GameplayState.RoundStarted);
         yield return new WaitForSeconds(0.1f);
         _roomLight = (GameObject) _roomLightField.GetValue(_room);
 

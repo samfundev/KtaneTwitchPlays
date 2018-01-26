@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using Assets.Scripts.Pacing;
+using Random = System.Random;
 
 public abstract class GameRoom
 {
@@ -11,7 +10,10 @@ public abstract class GameRoom
     public delegate Type GameRoomType();
     public delegate bool CreateRoom(UnityEngine.Object[] roomObjects, out GameRoom room);
 
-    public static GameRoomType[] GameRoomTypes =
+	protected bool ReuseBombCommander = false;
+	protected int BombCount;
+
+	public static GameRoomType[] GameRoomTypes =
     {
         //Supported Mod gameplay room types
         Factory.FactoryType,
@@ -32,7 +34,7 @@ public abstract class GameRoom
         DefaultGameRoom.TryCreateRoom
     };
 
-    public bool HoldBomb = true;
+	public bool HoldBomb = true;
 
     public int BombID { get; protected set; }
 
@@ -47,8 +49,39 @@ public abstract class GameRoom
         return true;
     }
 
-    public virtual void InitializeBombNames(List<TwitchBombHandle> bombHandles)
+	public virtual int InitializeBombs(List<Bomb> bombs)
+	{
+		int _currentBomb = bombs.Count == 1 ? -1 : 0;
+		for (int i = 0; i < bombs.Count; i++)
+		{
+			BombMessageResponder.Instance.SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
+		}
+		BombCount = (_currentBomb == -1) ? -1 : bombs.Count;
+		return _currentBomb;
+	}
+
+	protected void InitializeBomb(Bomb bomb)
+	{
+		if (ReuseBombCommander)
+		{
+			//Destroy existing component handles, and instantiate a new set.
+			BombMessageResponder.Instance.BombHandles[0].bombCommander.ReuseBombCommander(bomb);
+			BombMessageResponder.Instance.DestroyComponentHandles();
+			BombMessageResponder.Instance.CreateComponentHandlesForBomb(bomb);
+		}
+		else
+		{
+			//Set another bomb, and add it to the list.
+			BombMessageResponder.Instance.SetBomb(bomb, BombCount++);
+		}
+
+
+	}
+
+    public virtual void InitializeBombNames()
     {
+	    List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+
         Random rand = new Random();
         const float specialNameProbability = 0.25f;
         string[] singleNames = 
@@ -105,7 +138,7 @@ public abstract class GameRoom
         }
     }
 
-    public virtual IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
+    public virtual IEnumerator ReportBombStatus()
     {
         yield break;
     }

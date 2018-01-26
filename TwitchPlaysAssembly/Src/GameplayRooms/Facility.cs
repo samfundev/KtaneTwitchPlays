@@ -29,8 +29,9 @@ public class Facility : GameRoom
         _facilityRoom = facilityRoom;
     }
 
-    public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
+    public override IEnumerator ReportBombStatus()
     {
+	    List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
         if (!SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled)
             yield break;
 

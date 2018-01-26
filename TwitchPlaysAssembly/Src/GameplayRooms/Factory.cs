@@ -8,6 +8,10 @@ using Object = UnityEngine.Object;
 
 public class Factory : GameRoom
 {
+	private bool _finiteMode = false;
+	private bool _infiniteMode = false;
+	private bool _zenMode = false;	//For future use.
+
     public static Type FactoryType()
     {
         if (_factoryType != null) return _factoryType;
@@ -16,8 +20,12 @@ public class Factory : GameRoom
         if (_factoryType == null)
             return null;
 
+	    _factoryBombType = ReflectionHelper.FindType("FactoryAssembly.FactoryBomb");
+	    _internalBombProperty = _factoryBombType.GetProperty("InternalBomb", BindingFlags.Public | BindingFlags.Instance);
+
 		_factoryStaticModeType = ReflectionHelper.FindType("FactoryAssembly.StaticMode");
 		_factoryFiniteModeType = ReflectionHelper.FindType("FactoryAssembly.FiniteSequenceMode");
+		_factoryInfiniteModeType = ReflectionHelper.FindType("FactoryAssembly.InfiniteSequenceMode");
 		_currentBombField = _factoryFiniteModeType.GetField("_currentBomb", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	    _gameModeField = _factoryType.GetField("_gameMode", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -43,96 +51,102 @@ public class Factory : GameRoom
         _factory = roomObject;
 	    _gameroom = _gameModeField.GetValue(_factory);
 	    if (_gameroom.GetType() == _factoryStaticModeType) return;
+
+
+	    _infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
+	    _finiteMode = _gameroom.GetType() == _factoryFiniteModeType;
         BombID = -1;
         HoldBomb = false;
     }
 
-    public override void RefreshBombID(ref int bombID)
-    {
-	    if (_gameroom.GetType() == _factoryStaticModeType)
-	    {
-		    base.RefreshBombID(ref bombID);
-		    return;
-	    }
-		if (bombID == -1) return;
-        bombID = BombID;
-    }
+	private UnityEngine.Object GetBomb => (_finiteMode || _infiniteMode)  ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
 
-	private UnityEngine.Object GetBomb => _gameroom.GetType() == _factoryFiniteModeType ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
-
-	public override bool IsCurrentBomb(int bombID)
-    {
-	    if (_gameroom.GetType() == _factoryStaticModeType)
-	    {
-		    return base.IsCurrentBomb(bombID);
-	    }
-
-        if (bombID == -1)
-            return true;
-        return BombID== bombID;
-    }
-
-    public override void InitializeBombNames(List<TwitchBombHandle> bombHandles)
-    {
-	    if (_gameroom.GetType() == _factoryStaticModeType)
-	    {
-		    base.InitializeBombNames(bombHandles);
-		    return;
-	    }
-
-		for (int i = 0; i < bombHandles.Count; i++)
-        {
-            bombHandles[i].nameText.text = $"Bomb {i + 1} of {bombHandles.Count}";
-        }
-    }
-
-    public override IEnumerator ReportBombStatus(List<TwitchBombHandle> bombHandles)
-    {
+	public override int InitializeBombs(List<Bomb> bombs)
+	{
 		if (_gameroom.GetType() == _factoryStaticModeType)
 		{
-			IEnumerator reportBombStatus = base.ReportBombStatus(bombHandles);
+			return base.InitializeBombs(bombs);
+		}
+
+		ReuseBombCommander = true;
+		BombMessageResponder.Instance.SetBomb(bombs[0], -1);
+		BombCount = bombs.Count;
+		return -1;
+	}
+
+	public IEnumerator DestroyBomb(Bomb bomb)
+	{
+		yield return new WaitForSeconds(5);
+		SceneManager.Instance.GameplayState.RemoveBomb(bomb);
+	}
+
+    public override IEnumerator ReportBombStatus()
+    {   
+	    TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
+		if (_gameroom.GetType() == _factoryStaticModeType)
+		{
+			IEnumerator reportBombStatus = base.ReportBombStatus();
 			while (reportBombStatus.MoveNext())
 			{
 				yield return reportBombStatus.Current;
 			}
 			yield break;
 		}
+	    bombHandle.nameText.text = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
 
-		yield return new WaitUntil(() => GetBomb != null);
-        BombID = 0;
-        while (GetBomb != null)
+		yield return new WaitUntil(() => GetBomb != null || bombHandle.bombCommander.Bomb.HasDetonated);
+	    if (bombHandle.bombCommander.Bomb.HasDetonated && !_zenMode) yield break;
+
+	    int currentBombID = 1;
+	    while (GetBomb != null)
         {
-            UnityEngine.Object currentBomb = GetBomb;
-            IEnumerator showWindow = bombHandles[BombID].ShowMainUIWindow();
-            while (showWindow.MoveNext())
-            {
-                yield return showWindow.Current;
-            }
+	        int reward = TwitchPlaySettings.GetRewardBonus();
+			UnityEngine.Object currentBomb = GetBomb;
+	        Bomb bomb = (Bomb)_internalBombProperty.GetValue(currentBomb, null);
 
-            yield return new WaitForSeconds(3.0f);
-            bombHandles[BombID].ircConnection.SendMessage("Bomb {0} of {1} is now live.", BombID + 1, bombHandles.Count);
-            if (bombHandles[BombID].edgeworkText.text != TwitchPlaySettings.data.BlankBombEdgework)
-                bombHandles[BombID].ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, bombHandles[BombID].edgeworkText.text);
-            IEnumerator bombHold = bombHandles[BombID].OnMessageReceived("Bomb Factory", "red", string.Format("bomb{0} hold",bombHandles.Count == 1 ? "" : (BombID + 1).ToString()));
+			yield return new WaitForSeconds(3.0f);
+	        bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
+			bombHandle.ircConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
+	        if (TwitchPlaySettings.data.EnableAutomaticEdgework)
+	        {
+		        bombHandle.bombCommander.FillEdgework();
+	        }
+	        else
+	        {
+		        bombHandle.edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
+	        }
+	        
+			IEnumerator bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
             while (bombHold.MoveNext())
             {
                 yield return bombHold.Current;
             }
 
-            yield return new WaitUntil(() => currentBomb != GetBomb);
+	        Bomb bomb1 = bomb;
+	        yield return new WaitUntil(() => bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive);
+	        if (!BombMessageResponder.BombActive) yield break;
 
-            IEnumerator hideWindow = bombHandles[BombID++].HideMainUIWindow();
-            while (hideWindow.MoveNext())
-            {
-                yield return hideWindow.Current;
-            }
+	        bombHandle.ircConnection.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
+			TwitchPlaySettings.SetRewardBonus(reward);
+
+	        yield return new WaitUntil(() => currentBomb != GetBomb);
+	        bombHandle.StartCoroutine(DestroyBomb(bomb));
+
+	        if (GetBomb == null) continue;
+	        bomb = (Bomb)_internalBombProperty.GetValue(GetBomb, null);
+	        InitializeBomb(bomb);
         }
     }
+
+	private static Type _factoryBombType = null;
+	private static PropertyInfo _internalBombProperty = null;
+
 
     private static Type _factoryType = null;
 	private static Type _factoryGameModeType = null;
 	private static Type _factoryStaticModeType = null;
 	private static Type _factoryFiniteModeType = null;
+	private static Type _factoryInfiniteModeType = null;
 
 	private static FieldInfo _gameModeField = null;
 	private static FieldInfo _currentBombField = null;
