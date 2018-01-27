@@ -373,35 +373,36 @@ public class MiscellaneousMessageResponder : MessageResponder
 						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
 						List<KMComponentPool> pools = new List<KMComponentPool>();
 
-						if (vanillaModules > 0)
+						for(int i = 0; i < vanillaModules; i++)
 						{
 							pools.Add(new KMComponentPool()
 							{
 								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
 								AllowedSources = KMComponentPool.ComponentSource.Base,
-								Count = vanillaModules
+								Count = 1
 							});
 						}
 
-						if (moddedModules > 0)
+						for (int i = 0; i < moddedModules; i++)
 						{
 							pools.Add(new KMComponentPool()
 							{
 								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
 								AllowedSources = KMComponentPool.ComponentSource.Mods,
-								Count = moddedModules
+								Count = 1
 							});
 						}
 
 						int bothModules = modules - moddedModules - vanillaModules;
-						if (bothModules > 0)
+						for (int i = 0; i < bothModules; i++)
 						{
 							pools.Add(new KMComponentPool() {
 								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
 								AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
-								Count = bothModules
+								Count = 1
 							});
 						}
+						pools = pools.OrderBy(x => UnityEngine.Random.value).ToList();
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;
