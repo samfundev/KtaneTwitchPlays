@@ -410,7 +410,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							mission.GeneratorSetting = new KMGeneratorSetting()
 							{
 								ComponentPools = pools,
-								TimeLimit = 300,
+								TimeLimit = TwitchPlaySettings.data.TimeModeStartingTime * 60,
 								NumStrikes = 9
 							};
 						}

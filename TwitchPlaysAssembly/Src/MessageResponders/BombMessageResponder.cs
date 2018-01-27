@@ -79,8 +79,8 @@ public class BombMessageResponder : MessageResponder
 			}
 
             if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
-            OtherModes.setMultiplier(9);
-        };
+			OtherModes.setMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
+		};
 
         StartCoroutine(CheckForBomb());
     }
@@ -467,8 +467,8 @@ public class BombMessageResponder : MessageResponder
 
         if (text.StartsWith("setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
         {
-            float tempNumber = float.Parse(text.Substring(15));
-            OtherModes.setMultiplier(tempNumber);
+			if(float.TryParse(text.Substring(14), out float tempNumber))
+				OtherModes.setMultiplier(tempNumber);
         }
 
         if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))

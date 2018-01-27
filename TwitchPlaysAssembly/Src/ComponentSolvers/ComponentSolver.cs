@@ -552,9 +552,9 @@ public abstract class ComponentSolver : ICommandResponder
             float time = multiplier * ComponentValue;
             BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
             IRCConnection.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
-            if (multiplier < 10)
+            if (multiplier < TwitchPlaySettings.data.TimeModeMaxMultiplier)
             {
-                multiplier = multiplier + 0.1f;
+                multiplier = multiplier + TwitchPlaySettings.data.TimeModeSolveBonus;
                 OtherModes.setMultiplier(multiplier);
             }
         }
@@ -585,19 +585,19 @@ public abstract class ComponentSolver : ICommandResponder
             }
             else
             {
-                tempMessage = "Mutliplier set at 1, cannot be further reduced.  Time";
+                tempMessage = $"Mutliplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
             }
             if (BombCommander.CurrentTimer < 60)
             {
-                BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - 15;
-                tempMessage = tempMessage + " reduced by 15 seconds.";
+                BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
+                tempMessage = tempMessage + $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
             }
             else
             {
-                float timeReducer = BombCommander.CurrentTimer * .25f;
+                float timeReducer = BombCommander.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
                 double easyText = Math.Round(timeReducer, 1);
                 BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
-                tempMessage = tempMessage + " reduced by 25%. (" + easyText + " seconds)";
+                tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
             }
             IRCConnection.SendMessage(tempMessage);
         }

@@ -62,14 +62,14 @@ public static class OtherModes
 
     public static bool dropMultiplier()
     {
-        if (timedMultiplier > 2.5)
+        if (timedMultiplier > (TwitchPlaySettings.data.TimeModeMinMultiplier + TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty))
         {
-            timedMultiplier = timedMultiplier - 1.5f;
+            timedMultiplier = timedMultiplier - TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty;
             return true;
         }
         else
         {
-            timedMultiplier = 1;
+            timedMultiplier = TwitchPlaySettings.data.TimeModeMinMultiplier;
             return false;
         }
     }

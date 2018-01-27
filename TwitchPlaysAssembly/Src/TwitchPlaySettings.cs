@@ -33,6 +33,16 @@ public class TwitchPlaySettingsData
     public bool DisableTurnTheKeysSoftLock = false;
     public bool EnforceSolveAllBeforeTurningKeys = true;
 
+	public int TimeModeStartingTime = 5;
+	public float TimeModeStartingMultiplier = 9.0f;
+	public float TimeModeMaxMultiplier = 10.0f;
+	public float TimeModeMinMultiplier = 1.0f;
+	public float TimeModeSolveBonus = 0.1f;
+	public float TimeModeMultiplierStrikePenalty = 1.5f;
+	public float TimeModeTimerStrikePenalty = 0.25f;
+	public int TimeModeMinimumTimeLost = 15;
+
+
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();
 
