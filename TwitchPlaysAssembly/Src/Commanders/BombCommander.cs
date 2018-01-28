@@ -369,15 +369,18 @@ public class BombCommander : ICommandResponder
 		Camera cam = twitchPlaysCameraTransform?.GetComponentInChildren<Camera>();
 		if (cam == null) return;
 
-		int layer = localQuaternion == Quaternion.identity ? ModuleCameras.cameraLayer : ModuleCameras.cameraLayer + 1;
-
-		if (cam.cullingMask != (1 << layer))
+		int originalLayer = -1;
+		for (int i = 0; i < 32 && originalLayer < 0; i++)
 		{
-			cam.cullingMask = 1 << layer;
-			foreach (Transform trans in bombComponent.gameObject.GetComponentsInChildren<Transform>(true))
-			{
-				trans.gameObject.layer = layer;
-			}
+			if ((cam.cullingMask & (1 << i)) != (1 << i)) continue;
+			originalLayer = i;
+		}
+
+		int layer = localQuaternion == Quaternion.identity ? originalLayer : 31;
+
+		foreach (Transform trans in bombComponent.gameObject.GetComponentsInChildren<Transform>(true))
+		{
+			trans.gameObject.layer = layer;
 		}
 
 		twitchPlaysCameraTransform.localRotation = Quaternion.Euler(_heldFrontFace ? -localQuaternion.eulerAngles : localQuaternion.eulerAngles);

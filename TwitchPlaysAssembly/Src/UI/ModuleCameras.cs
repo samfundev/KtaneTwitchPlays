@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public class ModuleCameras : MonoBehaviour
 {
 	public const int cameraLayer = 11;
+	public bool LastInteractiveState;
+	public bool EscapePressed;
 
     public class ModuleItem
     {
@@ -17,6 +19,7 @@ public class ModuleCameras : MonoBehaviour
         public TwitchComponentHandle handle = null;
         public int priority = CameraNotInUse;
         public int index = 0;
+	    public int nonInteractiveCameraLayer = cameraLayer;
 	    public bool EnableCamera = false;
 
         public ModuleItem(BombComponent c, TwitchComponentHandle h, int p)
@@ -39,7 +42,7 @@ public class ModuleCameras : MonoBehaviour
 					    if (OriginalLayers.ContainsKey(trans)) continue;
 					    OriginalLayers.Add(trans, trans.gameObject.layer);
 					    if (EnableCamera)
-						    trans.gameObject.layer = cameraLayer;
+						    trans.gameObject.layer = nonInteractiveCameraLayer;
 				    }
 				    catch
 				    {
@@ -57,7 +60,7 @@ public class ModuleCameras : MonoBehaviour
 				    if (OriginalLayers.ContainsKey(trans)) continue;
 				    OriginalLayers.Add(trans, trans.gameObject.layer);
 				    if (EnableCamera)
-					    trans.gameObject.layer = cameraLayer;
+					    trans.gameObject.layer = nonInteractiveCameraLayer;
 			    }
 			    catch
 			    {
@@ -74,7 +77,7 @@ public class ModuleCameras : MonoBehaviour
 			    try
 			    {
 				    kvp.Key.gameObject.layer = EnableCamera
-					    ? cameraLayer
+					    ? nonInteractiveCameraLayer
 					    : kvp.Value;
 			    }
 			    catch
@@ -88,6 +91,7 @@ public class ModuleCameras : MonoBehaviour
     public class ModuleCamera : MonoBehaviour
     {
         public Camera cameraInstance = null;
+	    public int nonInteractiveCameraLayer;
         public int priority = CameraNotInUse;
         public int index = 0;
         public ModuleItem module = null;
@@ -133,9 +137,11 @@ public class ModuleCameras : MonoBehaviour
                 }
                 priority = module.priority;
 
-                // We know the camera's culling mask is pointing at a single layer, so let's find out what that layer is
-                cameraInstance.cullingMask = 1 << cameraLayer;
-                Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", module.component.gameObject.layer, cameraLayer);
+	            int layer = (parent.LastInteractiveState ? cameraLayer : nonInteractiveCameraLayer);
+
+				cameraInstance.cullingMask = (1 << layer) | (1 << 31);
+	            module.nonInteractiveCameraLayer = layer;
+                Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", module.component.gameObject.layer, layer);
 	            module.SetRenderLayer(true);
 	            Transform t = module.component.transform.Find("TwitchPlayModuleCamera");
 	            if (t == null)
@@ -231,11 +237,13 @@ public class ModuleCameras : MonoBehaviour
 
     private void Start()
     {
+	    int layer = 8;
         foreach (Camera camera in cameraPrefabs)
         {
             Camera instantiatedCamera = Instantiate<Camera>(camera);
-            cameras.Add( new ModuleCamera(instantiatedCamera, this) );
+	        cameras.Add(new ModuleCamera(instantiatedCamera, this) { nonInteractiveCameraLayer = layer++ });
 	        instantiatedCamera.aspect = 1f;
+			
         }
         stacks[0] = pinnedModuleStack;
         stacks[1] = priorityModuleStack;
@@ -244,10 +252,30 @@ public class ModuleCameras : MonoBehaviour
 	}
 	
 	private void LateUpdate()
-    {
-	    foreach (ModuleCamera camera in cameras)
+	{
+		if (Input.GetKey(KeyCode.Escape))
+			EscapePressed = true;
+
+	    if (LastInteractiveState != (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode) || EscapePressed)
 	    {
-		    camera.module?.UpdateLayerData();
+		    LastInteractiveState = !TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode || EscapePressed;
+		    foreach (ModuleCamera camera in cameras)
+		    {
+			    int layer = LastInteractiveState ? cameraLayer : camera.nonInteractiveCameraLayer;
+			    if (camera.module == null) continue;
+
+			    camera.cameraInstance.cullingMask = (1 << layer) | (1 << 31);
+			    camera.module.nonInteractiveCameraLayer = layer;
+			    camera.module.UpdateLayerData();
+			    camera.module.SetRenderLayer(true);
+		    }
+	    }
+	    else
+	    {
+		    foreach (ModuleCamera camera in cameras)
+		    {
+			    camera.module?.UpdateLayerData();
+		    }
 	    }
 
 	    if (currentBomb == null) return;
