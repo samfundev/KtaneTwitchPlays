@@ -235,6 +235,7 @@ public class ModuleCameras : MonoBehaviour
         {
             Camera instantiatedCamera = Instantiate<Camera>(camera);
             cameras.Add( new ModuleCamera(instantiatedCamera, this) );
+	        instantiatedCamera.aspect = (9f / 16f) / (instantiatedCamera.rect.width / instantiatedCamera.rect.height);
         }
         stacks[0] = pinnedModuleStack;
         stacks[1] = priorityModuleStack;
