@@ -243,11 +243,25 @@ public class BombMessageResponder : MessageResponder
 			}
 		}
 
-		GameRoom.Instance.InitializeBombNames();
+		try
+		{
+			GameRoom.Instance.InitializeBombNames();
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "An exception has occured while setting the bomb names");
+		}
 		StartCoroutine(GameRoom.Instance.ReportBombStatus());
 
-		if (GameRoom.Instance.HoldBomb)
-			_coroutineQueue.AddToQueue(BombHandles[0].OnMessageReceived(BombHandles[0].nameText.text, "red", "bomb hold"), _currentBomb);
+		try
+		{
+			if (GameRoom.Instance.HoldBomb)
+				_coroutineQueue.AddToQueue(BombHandles[0].OnMessageReceived(BombHandles[0].nameText.text, "red", "bomb hold"), _currentBomb);
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "An exception has occured attempting to hold the bomb.");
+		}
 
 		alarmClock = FindObjectOfType<AlarmClock>();
 
