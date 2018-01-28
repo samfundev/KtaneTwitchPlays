@@ -182,20 +182,21 @@ public class ModuleCameras : MonoBehaviour
 
 
     #region Public Fields
-    public Text timerPrefab = null;
-	public Text timerShadowPrefab = null;
-	public Text strikesPrefab = null;
-    public Text strikeLimitPrefab = null;
-    public Text solvesPrefab = null;
-    public Text totalModulesPrefab = null;
-    public Text confidencePrefab = null;
-    public Camera[] cameraPrefabs = null;
-    public RectTransform bombStatus = null;
-    public int firstBackupCamera = 3;
-    public Text[] notesTexts = null;
-    #endregion
+    public Text timerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
+	public Text timerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
+	public Text strikesPrefab { get => _data.strikesPrefab; set => _data.strikesPrefab = value; }
+	public Text strikeLimitPrefab { get => _data.strikeLimitPrefab; set => _data.strikeLimitPrefab = value; }
+	public Text solvesPrefab { get => _data.solvesPrefab; set => _data.solvesPrefab = value; }
+	public Text totalModulesPrefab { get => _data.totalModulesPrefab; set => _data.totalModulesPrefab = value; }
+	public Text confidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
+	public Camera[] cameraPrefabs { get => _data.cameraPrefabs; set => _data.cameraPrefabs = value; }
+	public RectTransform bombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
+	public int firstBackupCamera { get => _data.firstBackupCamera; set => _data.firstBackupCamera = value; }
+	public Text[] notesTexts { get => _data.notesTexts; set => _data.notesTexts = value; }
+	#endregion
 
-    #region Private Fields
+	#region Private Fields
+	private ModuleCamerasData _data = null;
     private Dictionary<BombComponent, ModuleItem> moduleItems = new Dictionary<BombComponent, ModuleItem>();
     private Stack<ModuleItem>[] stacks = new Stack<ModuleItem>[4];
     private Stack<ModuleItem> moduleStack = new Stack<ModuleItem>();
@@ -232,8 +233,8 @@ public class ModuleCameras : MonoBehaviour
     #region Unity Lifecycle
     private void Awake()
     {
-        
-    }
+		_data = GetComponent<ModuleCamerasData>();
+	}
 
     private void Start()
     {

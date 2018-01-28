@@ -42,6 +42,15 @@ public class TwitchPlaysService : MonoBehaviour
 
     private void Start()
     {
+	    bombMessageResponder = GetComponentInChildren<BombMessageResponder>(true);
+	    postGameMessageResponder = GetComponentInChildren<PostGameMessageResponder>(true);
+	    missionMessageResponder = GetComponentInChildren<MissionMessageResponder>(true);
+	    miscellaneousMessageResponder = GetComponentInChildren<MiscellaneousMessageResponder>(true);
+
+	    bombMessageResponder.twitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
+	    bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchComponentHandle>(true);
+	    bombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
+
         _gameInfo = GetComponent<KMGameInfo>();
         _gameInfo.OnStateChange += OnStateChange;
 

@@ -10,8 +10,11 @@ using UnityEngine;
 [RequireComponent(typeof(KMGameInfo))]
 public class MiscellaneousMessageResponder : MessageResponder
 {
+	[HideInInspector]
     public Leaderboard leaderboard = null;
-    public int moduleCountBonus = 0;
+
+	[HideInInspector]
+	public int moduleCountBonus = 0;
 
     [HideInInspector]
     public BombComponent bombComponent = null;

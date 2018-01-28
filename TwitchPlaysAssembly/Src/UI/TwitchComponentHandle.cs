@@ -18,38 +18,38 @@ public class TwitchComponentHandle : MonoBehaviour
 	}
 
 	#region Public Fields
-	public TwitchMessage messagePrefab = null;
-	public Image unsupportedPrefab = null;
-	public Image idBannerPrefab = null;
+	public TwitchMessage messagePrefab {get => _data.messagePrefab; set => _data.messagePrefab = value;}
+	public Image unsupportedPrefab { get => _data.unsupportedPrefab; set => _data.unsupportedPrefab = value; }
+	public Image idBannerPrefab { get => _data.idBannerPrefab; set => _data.idBannerPrefab = value; }
 
-	public CanvasGroup canvasGroup = null;
-	public CanvasGroup highlightGroup = null;
-	public CanvasGroup canvasGroupMultiDecker = null;
-	public CanvasGroup canvasGroupUnsupported = null;
-	public Text headerText = null;
-	public Text idText = null;
-	public Text idTextMultiDecker = null;
-	public Text idTextUnsupported = null;
-	public Image claimedUser = null;
-	public Image claimedUserMultiDecker = null;
-	public ScrollRect messageScroll = null;
-	public GameObject messageScrollContents = null;
+	public CanvasGroup canvasGroup { get => _data.canvasGroup; set => _data.canvasGroup = value; }
+	public CanvasGroup highlightGroup { get => _data.highlightGroup; set => _data.highlightGroup = value; }
+	public CanvasGroup canvasGroupMultiDecker { get => _data.canvasGroupMultiDecker; set => _data.canvasGroupMultiDecker = value; }
+	public CanvasGroup canvasGroupUnsupported { get => _data.canvasGroupUnsupported; set => _data.canvasGroupUnsupported = value; }
+	public Text headerText { get => _data.headerText; set => _data.headerText = value; }
+	public Text idText { get => _data.idText; set => _data.idText = value; }
+	public Text idTextMultiDecker { get => _data.idTextMultiDecker; set => _data.idTextMultiDecker = value; }
+	public Text idTextUnsupported { get => _data.idTextUnsupported; set => _data.idTextUnsupported = value; }
+	public Image claimedUser { get => _data.claimedUser; set => _data.claimedUser = value; }
+	public Image claimedUserMultiDecker { get => _data.claimedUserMultiDecker; set => _data.claimedUserMultiDecker = value; }
+	public ScrollRect messageScroll { get => _data.messageScroll; set => _data.messageScroll = value; }
+	public GameObject messageScrollContents { get => _data.messageScrollContents; set => _data.messageScrollContents = value; }
 
-	public Image upArrow = null;
-	public Image downArrow = null;
-	public Image leftArrow = null;
-	public Image rightArrow = null;
+	public Image upArrow { get => _data.upArrow; set => _data.upArrow = value; }
+	public Image downArrow { get => _data.downArrow; set => _data.downArrow = value; }
+	public Image leftArrow { get => _data.leftArrow; set => _data.leftArrow = value; }
+	public Image rightArrow { get => _data.rightArrow; set => _data.rightArrow = value; }
 
-	public Image upArrowHighlight = null;
-	public Image downArrowHighlight = null;
-	public Image leftArrowHighlight = null;
-	public Image rightArrowHighlight = null;
+	public Image upArrowHighlight { get => _data.upArrowHighlight; set => _data.upArrowHighlight = value; }
+	public Image downArrowHighlight { get => _data.downArrowHighlight; set => _data.downArrowHighlight = value; }
+	public Image leftArrowHighlight { get => _data.leftArrowHighlight; set => _data.leftArrowHighlight = value; }
+	public Image rightArrowHighlight { get => _data.rightArrowHighlight; set => _data.rightArrowHighlight = value; }
 
-	public Color claimedBackgroundColour = new Color(255, 0, 0);
-	public Color solvedBackgroundColor = new Color(0, 128, 0);
-	public Color markedBackgroundColor = new Color(0, 0, 0);
+	public Color claimedBackgroundColour { get => _data.claimedBackgroundColour; set => _data.claimedBackgroundColour = value; }
+	public Color solvedBackgroundColor { get => _data.solvedBackgroundColor; set => _data.solvedBackgroundColor = value; }
+	public Color markedBackgroundColor { get => _data.markedBackgroundColor; set => _data.markedBackgroundColor = value; }
 
-	public AudioSource takeModuleSound = null;
+	public AudioSource takeModuleSound { get => _data.takeModuleSound; set => _data.takeModuleSound = value; }
 
 
 	[HideInInspector]
@@ -105,6 +105,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	private ComponentSolver _solver = null;
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
+	private TwitchComponentHandleData _data;
 
 	#endregion
 
@@ -121,6 +122,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Unity Lifecycle
 	private void Awake()
 	{
+		_data = GetComponent<TwitchComponentHandleData>();
 		Code = GetNewID().ToString();
 	}
 

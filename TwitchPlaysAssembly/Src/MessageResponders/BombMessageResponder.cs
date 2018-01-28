@@ -12,6 +12,7 @@ public class BombMessageResponder : MessageResponder
     public TwitchBombHandle twitchBombHandlePrefab = null;
     public TwitchComponentHandle twitchComponentHandlePrefab = null;
     public ModuleCameras moduleCamerasPrefab = null;
+
     public Leaderboard leaderboard = null;
     public TwitchPlaysService parentService = null;
 
