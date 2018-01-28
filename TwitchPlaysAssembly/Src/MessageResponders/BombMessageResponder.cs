@@ -238,7 +238,7 @@ public class BombMessageResponder : MessageResponder
 		{
 			if (GameRoom.GameRoomTypes[i]() != null && GameRoom.CreateRooms[i](FindObjectsOfType(GameRoom.GameRoomTypes[i]()), out GameRoom.Instance))
 			{
-				_currentBomb = GameRoom.Instance.InitializeBombs(bombs);
+				GameRoom.Instance.InitializeBombs(bombs);
 				break;
 			}
 		}
@@ -274,7 +274,9 @@ public class BombMessageResponder : MessageResponder
 	}
 
 	public void SetBomb(Bomb bomb, int id)
-    {
+	{
+		if(BombCommanders.Count == 0)
+			_currentBomb = id == -1 ? -1 : 0;
         BombCommanders.Add(new BombCommander(bomb));
         CreateBombHandleForBomb(bomb, id);
         CreateComponentHandlesForBomb(bomb);

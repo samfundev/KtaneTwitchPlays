@@ -49,7 +49,7 @@ public abstract class GameRoom
         return true;
     }
 
-	public virtual int InitializeBombs(List<Bomb> bombs)
+	public virtual void InitializeBombs(List<Bomb> bombs)
 	{
 		int _currentBomb = bombs.Count == 1 ? -1 : 0;
 		for (int i = 0; i < bombs.Count; i++)
@@ -57,7 +57,6 @@ public abstract class GameRoom
 			BombMessageResponder.Instance.SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
 		}
 		BombCount = (_currentBomb == -1) ? -1 : bombs.Count;
-		return _currentBomb;
 	}
 
 	protected void InitializeBomb(Bomb bomb)
@@ -74,8 +73,6 @@ public abstract class GameRoom
 			//Set another bomb, and add it to the list.
 			BombMessageResponder.Instance.SetBomb(bomb, BombCount++);
 		}
-
-
 	}
 
     public virtual void InitializeBombNames()

@@ -65,17 +65,17 @@ public class Factory : GameRoom
 
 	private UnityEngine.Object GetBomb => (_finiteMode || _infiniteMode)  ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
 
-	public override int InitializeBombs(List<Bomb> bombs)
+	public override void InitializeBombs(List<Bomb> bombs)
 	{
 		if (_gameroom.GetType() == _factoryStaticModeType)
 		{
-			return base.InitializeBombs(bombs);
+			base.InitializeBombs(bombs);
+			return;
 		}
 
 		ReuseBombCommander = true;
 		BombMessageResponder.Instance.SetBomb(bombs[0], -1);
 		BombCount = bombs.Count;
-		return -1;
 	}
 
 	public IEnumerator DestroyBomb(UnityEngine.Object bomb)
