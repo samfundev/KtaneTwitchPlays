@@ -165,7 +165,8 @@ public class ModuleCameras : MonoBehaviour
         public void Deactivate()
         {
 	        module?.SetRenderLayer(false);
-	        cameraInstance.gameObject.SetActive(false);
+	        cameraInstance?.gameObject?.SetActive(false);
+	        cameraInstance?.transform?.SetParent(parent.transform, false);
             module = null;
             priority = CameraNotInUse;
         }
