@@ -221,6 +221,22 @@ public class ModuleCameras : MonoBehaviour
 		new Rect(0.0000000f, 0.00f, 0.1666667f, 0.28f),
 		new Rect(0.0000000f, 0.28f, 0.1666667f, 0.28f),
 		new Rect(0.0000000f, 0.56f, 0.1666667f, 0.28f),
+
+		//Wall of Cameras
+		new Rect(0.1666667f, 0.651f, 0.1666667f, 0.27f),
+		new Rect(0.3333333f, 0.651f, 0.1666667f, 0.27f),
+		new Rect(0.5000000f, 0.651f, 0.1666667f, 0.27f),
+		new Rect(0.6666667f, 0.651f, 0.1666667f, 0.27f),
+
+		new Rect(0.1666667f, 0.371f, 0.1666667f, 0.28f),
+		new Rect(0.3333333f, 0.371f, 0.1666667f, 0.28f),
+		new Rect(0.5000000f, 0.371f, 0.1666667f, 0.28f),
+		new Rect(0.6666667f, 0.371f, 0.1666667f, 0.28f),
+
+		new Rect(0.1666667f, 0.091f, 0.1666667f, 0.28f),
+		new Rect(0.3333333f, 0.091f, 0.1666667f, 0.28f),
+		new Rect(0.5000000f, 0.091f, 0.1666667f, 0.28f),
+		new Rect(0.6666667f, 0.091f, 0.1666667f, 0.28f)
 	};
     //private float currentSuccess;
     #endregion
@@ -506,6 +522,55 @@ public class ModuleCameras : MonoBehaviour
             //    confidencePrefab.text = conf;
         }
     }
+
+	public void EnableWallOfCameras()
+	{
+		DebugHelper.Log("Enabling Wall of Cameras");
+		if (firstBackupCamera == 6)
+		{
+			DebugHelper.Log("Wall of Cameras Already enabled");
+			return;
+		}
+		firstBackupCamera = 6;
+		for (int i = 6; i < cameraLocations.Length; i++)
+		{
+			InstantiateCamera(i);
+			cameras[i].Refresh();
+		}
+		DebugHelper.Log("Wall of Cameras Enabled");
+	}
+
+	public void DisableWallOfCameras()
+	{
+		DebugHelper.Log("Disabling Wall of Cameras");
+		if (firstBackupCamera == 3)
+		{
+			DebugHelper.Log("Wall of Cameras already disabled");
+			return;
+		}
+		firstBackupCamera = 3;
+		while (cameras.Count > 6)
+		{
+			ModuleCamera camera = cameras[6];
+			cameras.RemoveAt(6);
+			if (camera.module != null)	//Return the module back to the appropriate stack if applicable.
+				AddModuleToStack(camera.module.component, camera.module.handle, camera.module.priority);
+			camera.Deactivate();
+			Destroy(camera.cameraInstance);
+			Destroy(camera);
+		}
+		for (int i = 0; i < 6; i++)
+		{
+			//Now, just in case there were any active view pins on the camera wall, refresh the side cameras so that the view pins remain.
+			if (cameras[i].module != null)
+			{
+				AddModuleToStack(cameras[i].module.component, cameras[i].module.handle, cameras[i].module.priority);
+			}
+			cameras[i].Refresh();
+		}
+
+		DebugHelper.Log("Wall of Cameras Disabled");
+	}
 
     public void ChangeBomb(BombCommander bomb)
     {

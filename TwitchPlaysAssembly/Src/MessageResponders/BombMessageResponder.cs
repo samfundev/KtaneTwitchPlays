@@ -494,6 +494,16 @@ public class BombMessageResponder : MessageResponder
 			return;
 		}
 
+	    if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+	    {
+		    moduleCameras.EnableWallOfCameras();
+	    }
+
+	    if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+	    {
+		    moduleCameras.DisableWallOfCameras();
+	    }
+
         GameRoom.Instance.RefreshBombID(ref _currentBomb);
 
         if (_currentBomb > -1)
