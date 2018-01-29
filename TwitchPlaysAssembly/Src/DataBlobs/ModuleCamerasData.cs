@@ -10,7 +10,7 @@ public class ModuleCamerasData : MonoBehaviour
 	public Text solvesPrefab = null;
 	public Text totalModulesPrefab = null;
 	public Text confidencePrefab = null;
-	public Camera[] cameraPrefabs = null;
+	public Camera cameraPrefab = null;
 	public RectTransform bombStatus = null;
 	public int firstBackupCamera = 3;
 	public Text[] notesTexts = null;

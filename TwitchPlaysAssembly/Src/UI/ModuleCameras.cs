@@ -190,7 +190,7 @@ public class ModuleCameras : MonoBehaviour
 	public Text solvesPrefab { get => _data.solvesPrefab; set => _data.solvesPrefab = value; }
 	public Text totalModulesPrefab { get => _data.totalModulesPrefab; set => _data.totalModulesPrefab = value; }
 	public Text confidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
-	public Camera[] cameraPrefabs { get => _data.cameraPrefabs; set => _data.cameraPrefabs = value; }
+	public Camera cameraPrefab { get => _data.cameraPrefab; set => _data.cameraPrefab = value; }
 	public RectTransform bombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
 	public int firstBackupCamera { get => _data.firstBackupCamera; set => _data.firstBackupCamera = value; }
 	public Text[] notesTexts { get => _data.notesTexts; set => _data.notesTexts = value; }
@@ -211,6 +211,17 @@ public class ModuleCameras : MonoBehaviour
     private int currentStrikes;
     private int currentTotalModules;
     private int currentTotalStrikes;
+
+	private Rect[] cameraLocations = new Rect[]
+	{
+		new Rect(0.8333333f, 0.56f, 0.1666667f, 0.28f),
+		new Rect(0.8333333f, 0.28f, 0.1666667f, 0.28f),
+		new Rect(0.8333333f, 0.00f, 0.1666667f, 0.28f),
+
+		new Rect(0.0000000f, 0.00f, 0.1666667f, 0.28f),
+		new Rect(0.0000000f, 0.28f, 0.1666667f, 0.28f),
+		new Rect(0.0000000f, 0.56f, 0.1666667f, 0.28f),
+	};
     //private float currentSuccess;
     #endregion
 
@@ -237,16 +248,20 @@ public class ModuleCameras : MonoBehaviour
 		_data = GetComponent<ModuleCamerasData>();
 	}
 
+	private void InstantiateCamera(int layer)
+	{
+		Camera instantiatedCamera = Instantiate<Camera>(cameraPrefab);
+		instantiatedCamera.rect = cameraLocations[layer];
+		instantiatedCamera.aspect = 1f;
+		cameras.Add(new ModuleCamera(instantiatedCamera, this) { nonInteractiveCameraLayer = 8 + layer });
+	}
+
     private void Start()
     {
-	    int layer = 8;
-        foreach (Camera camera in cameraPrefabs)
-        {
-            Camera instantiatedCamera = Instantiate<Camera>(camera);
-	        cameras.Add(new ModuleCamera(instantiatedCamera, this) { nonInteractiveCameraLayer = layer++ });
-	        instantiatedCamera.aspect = 1f;
-			
-        }
+	    for (int i = 0; i < 6; i++)
+	    {
+		    InstantiateCamera(i);
+	    }
         stacks[0] = pinnedModuleStack;
         stacks[1] = priorityModuleStack;
         stacks[2] = claimedModuleStack;
