@@ -258,7 +258,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		            {
 		                bombCommander.bombSolvedModules++;
 						BombMessageResponder.moduleCameras?.UpdateSolves();
-		                OnPass();
+		                OnPass(null);
 						BombMessageResponder.moduleCameras?.DetachFromModule(bombComponent);
 		                return false;
 		            };
@@ -362,13 +362,17 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	public void OnPass()
+	public void OnPass(string userNickname)
 	{
 		canvasGroupMultiDecker.alpha = 0.0f;
 		Solved = true;
 		if (playerName != null)
 		{
 			ClaimedList.Remove(playerName);
+		}
+		else
+		{
+			playerName = userNickname;
 		}
 		if (TakeInProgress != null)
 		{
@@ -586,13 +590,13 @@ public class TwitchComponentHandle : MonoBehaviour
 					}
 				}
 			}
+		}
 
-			if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
-			{
-				messageOut = playerName != null 
-					? string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text) 
-					: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, headerText.text);
-			}
+		if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
+		{
+			messageOut = playerName != null
+				? string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, headerText.text)
+				: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, headerText.text);
 		}
 
 		if (!string.IsNullOrEmpty(messageOut))

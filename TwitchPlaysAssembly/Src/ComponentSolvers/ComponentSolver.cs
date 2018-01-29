@@ -444,14 +444,17 @@ public abstract class ComponentSolver : ICommandResponder
 	    if (UnsupportedModule)
 		    ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
 
+	    string solverNickname = null;
 		if (_delegatedSolveUserNickName != null && _delegatedSolveResponseNotifier != null)
-        {
+		{
+			solverNickname = _delegatedSolveUserNickName;
             AwardSolve(_delegatedSolveUserNickName, _delegatedSolveResponseNotifier, moduleScore);
             _delegatedSolveUserNickName = null;
             _delegatedSolveResponseNotifier = null;
         }
         else if (_currentUserNickName != null && _currentResponseNotifier != null)
-        {
+		{
+			solverNickname = _currentUserNickName;
             AwardSolve(_currentUserNickName, _currentResponseNotifier, moduleScore);
         }
 
@@ -465,7 +468,7 @@ public abstract class ComponentSolver : ICommandResponder
             _turnQueued = false;
         }
 
-        ComponentHandle.OnPass();
+	    ComponentHandle?.OnPass(solverNickname);
 
         BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent, true);
 
