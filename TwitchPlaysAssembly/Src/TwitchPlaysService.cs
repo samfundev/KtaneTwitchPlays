@@ -222,7 +222,7 @@ public class TwitchPlaysService : MonoBehaviour
 					DebugHelper.LogException(e, "Couldn't Create a component solver during startup for the following reason:");
 				}
 				DebugHelper.Log(solver != null
-					? $"Found a solver of type \"{solver.GetType().FullName}\" for solvable component \"{bombComponent.ModuleDisplayName}\". This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
+					? $"Found a solver of type \"{solver.GetType().FullName}\" for solvable component \"{bombComponent.ModuleDisplayName}\" ({bombComponent.ModuleType}). This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
 					: $"No solver found for solvable component \"{bombComponent.ModuleDisplayName}\". This module is not supported by Twitch Plays.");
 			}
 			DebugHelper.Log("Finished creating solvers for each Solvable module");
@@ -245,7 +245,7 @@ public class TwitchPlaysService : MonoBehaviour
 					DebugHelper.LogException(e, "Couldn't Create a component solver during startup for the following reason:");
 				}
 				DebugHelper.Log(solver != null
-					? $"Found a solver of type \"{solver.GetType().FullName}\" for needy component \"{bombComponent.ModuleDisplayName}\". This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
+					? $"Found a solver of type \"{solver.GetType().FullName}\" for needy component \"{bombComponent.ModuleDisplayName}\" ({bombComponent.ModuleType}). This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
 					: $"No solver found for needy component \"{bombComponent.ModuleDisplayName}\". This module is not supported by Twitch Plays.");
 			}
 			DebugHelper.Log("Finished creating solvers for each Needy module");
