@@ -23,6 +23,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
         MatchCollection matches = Regex.Matches(inputCommand, @"[udlr]", RegexOptions.IgnoreCase);
         if (matches.Count > 35)
         {
+	        yield return null;
             yield return "elevator music";
         }
 
