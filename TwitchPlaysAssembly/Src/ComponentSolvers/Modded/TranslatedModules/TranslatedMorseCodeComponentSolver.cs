@@ -14,9 +14,22 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         _downButton = (MonoBehaviour)_downButtonField.GetValue(_component);
         _transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(_component);
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-    }
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+	    if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
+	    modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		if (bombCommander != null)
+		{
+			bombComponent.StartCoroutine(SetHeaderText());
+		}
+	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	private IEnumerator SetHeaderText()
+	{
+		yield return new WaitUntil(() => ComponentHandle != null);
+		ComponentHandle.headerText.text = modInfo.moduleDisplayName;
+	}
+
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
         string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
@@ -78,6 +91,8 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         _downButtonField = _morseCodeComponentType.GetField("ButtonLeft", BindingFlags.Public | BindingFlags.Instance);
         _transmitButtonField = _morseCodeComponentType.GetField("ButtonTX", BindingFlags.Public | BindingFlags.Instance);
         _currentFrqIndexField = _morseCodeComponentType.GetField("currentFrqIndex", BindingFlags.NonPublic | BindingFlags.Instance);
+
+	    
     }
 
     private static readonly int[] Frequencies = new int[]
@@ -99,6 +114,8 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         595,
         600
     };
+
+	
 
     private static Type _morseCodeComponentType = null;
     private static FieldInfo _upButtonField = null;

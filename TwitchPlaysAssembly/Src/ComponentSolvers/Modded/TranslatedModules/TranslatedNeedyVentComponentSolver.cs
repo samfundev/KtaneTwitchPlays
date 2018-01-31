@@ -11,9 +11,23 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
         _yesButton = (MonoBehaviour)_yesButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
         _noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-    }
+	    string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		if (language != null) modInfo.manualCode = "Venting%20Gas";
+		//if (language != null) modInfo.manualCode = $"Venting%20Gas{language}";
+	    modInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		if (bombCommander != null)
+		{
+			bombComponent.StartCoroutine(SetHeaderText());
+		}
+	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	private IEnumerator SetHeaderText()
+	{
+		yield return new WaitUntil(() => ComponentHandle != null);
+		ComponentHandle.headerText.text = modInfo.moduleDisplayName;
+	}
+
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
         inputCommand = inputCommand.ToLowerInvariant();
         if (inputCommand.EqualsAny("y", "yes", "press y", "press yes"))

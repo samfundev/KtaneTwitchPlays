@@ -14,9 +14,22 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
         _submitButton = (MonoBehaviour)_submitButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
         _display = (TextMesh[]) _displayField.GetValue(bombComponent.GetComponent(_passwordComponentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-    }
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+	    if (language != null) modInfo.manualCode = $"Passwords{language}";
+	    modInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		if (bombCommander != null)
+		{
+			bombComponent.StartCoroutine(SetHeaderText());
+		}
+	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	private IEnumerator SetHeaderText()
+	{
+		yield return new WaitUntil(() => ComponentHandle != null);
+		ComponentHandle.headerText.text = modInfo.moduleDisplayName;
+	}
+
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
 	    HashSet<int> alreadyCycled = new HashSet<int>();
 		string[] commandParts = inputCommand.Split(' ');

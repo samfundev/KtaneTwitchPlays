@@ -12,6 +12,20 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	    Selectable selectable = bombComponent.GetComponent<Selectable>();
 	    selectable.OnCancel += () => { _selectedField.SetValue(bombComponent.GetComponent(_componentType), false); return true; };
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		if(language != null) modInfo.manualCode = $"The%20Button{language}";
+		modInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+
+		if (bombCommander != null)
+		{
+			bombComponent.StartCoroutine(SetHeaderText());
+		}
+	}
+
+	private IEnumerator SetHeaderText()
+	{
+		yield return new WaitUntil(() => ComponentHandle != null);
+		ComponentHandle.headerText.text = modInfo.moduleDisplayName;
 	}
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
