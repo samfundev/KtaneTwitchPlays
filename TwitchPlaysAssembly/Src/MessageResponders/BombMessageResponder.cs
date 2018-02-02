@@ -186,6 +186,7 @@ public class BombMessageResponder : MessageResponder
 
     private void OnDisable()
     {
+	    _hideBombs = false;
         BombActive = false;
         EnableDisableInput();
         TwitchComponentHandle.ClaimedList.Clear();
@@ -517,11 +518,13 @@ public class BombMessageResponder : MessageResponder
 	    if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 	    {
 		    moduleCameras.EnableWallOfCameras();
+			StartCoroutine(HideBombs());
 	    }
 
 	    if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 	    {
 		    moduleCameras.DisableWallOfCameras();
+		    _hideBombs = false;
 	    }
 
         GameRoom.Instance.RefreshBombID(ref _currentBomb);
@@ -609,6 +612,21 @@ public class BombMessageResponder : MessageResponder
 		    _ircConnection.SendMessage(TwitchPlaySettings.data.BombCustomMessages[text.ToLowerInvariant()]);
 	    }
     }
+
+	private bool _hideBombs = false;
+	private IEnumerator HideBombs()
+	{
+		if (_hideBombs) yield break;
+		_hideBombs = true;
+		while (_hideBombs)
+		{
+			foreach (BombCommander commander in BombCommanders)
+			{
+				commander.Bomb.transform.localPosition = new Vector3(0, -1.25f, 0);
+			}
+			yield return null;
+		}
+	}
 
     private void CreateBombHandleForBomb(MonoBehaviour bomb, int id)
     {

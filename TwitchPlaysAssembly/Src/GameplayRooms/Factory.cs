@@ -135,7 +135,13 @@ public class Factory : GameRoom
 			TwitchPlaySettings.SetRewardBonus(reward);
 
 	        yield return new WaitUntil(() => currentBomb != GetBomb);
-	        bombHandle.StartCoroutine(DestroyBomb(currentBomb));
+	        foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
+	        {
+				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
+		        BombMessageResponder.moduleCameras.DetachFromModule(handle.bombComponent);
+	        }
+
+			bombHandle.StartCoroutine(DestroyBomb(currentBomb));
 
 	        if (GetBomb == null) continue;
 	        Bomb bomb = (Bomb)_internalBombProperty.GetValue(GetBomb, null);
