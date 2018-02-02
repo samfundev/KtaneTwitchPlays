@@ -8,6 +8,10 @@ public class AlarmClockHoldableHandler : HoldableHandler
 	public AlarmClockHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller) : base(commander, holdable, connection, canceller)
 	{
 		clock = Holdable.GetComponentInChildren<AlarmClock>();
+		HelpMessage = "Snooze the alarm clock with !{0} snooze";
+		HelpMessage += TwitchPlaySettings.data.AllowSnoozeOnly 
+			? " (Current Twitch play settings forbids turning the Alarm clock back on.)" 
+			: " Alarm clock may also be turned back on with !{0} snooze";
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string command)
