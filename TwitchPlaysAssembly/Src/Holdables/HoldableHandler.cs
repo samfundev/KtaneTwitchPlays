@@ -51,21 +51,19 @@ public abstract class HoldableHandler : ICommandResponder
 						if (!heldSelectables.Contains(kmSelectable))
 						{
 							heldSelectables.Add(kmSelectable);
-							kmSelectable.OnInteract();
+							DoInteractionStart(kmSelectable);
 						}
 						else
 						{
 							heldSelectables.Remove(kmSelectable);
-							kmSelectable.OnInteractEnded();
+							DoInteractionEnd(kmSelectable);
 						}
 						break;
 
 					case KMSelectable[] kmSelectables:
 						foreach (KMSelectable selectable in kmSelectables)
 						{
-							selectable.OnInteract();
-							selectable.OnInteractEnded();
-							yield return new WaitForSeconds(0.1f);
+							yield return DoInteractionClick(selectable);
 						}
 						break;
 
@@ -101,6 +99,31 @@ public abstract class HoldableHandler : ICommandResponder
 	protected IEnumerator RespondToCommandCommon(string command)
 	{
 		yield break;
+	}
+
+	protected void DoInteractionStart(MonoBehaviour interactable)
+	{
+		interactable.GetComponent<Selectable>().HandleInteract();
+	}
+
+	protected void DoInteractionEnd(MonoBehaviour interactable)
+	{
+		Selectable selectable = interactable.GetComponent<Selectable>();
+		selectable.OnInteractEnded();
+		selectable.SetHighlight(false);
+	}
+
+	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, float delay = 0.1f)
+	{
+		DoInteractionStart(interactable);
+		DoInteractionEnd(interactable);
+		return new WaitForSeconds(delay);
+	}
+
+	public void ShowHelp()
+	{
+		if (!string.IsNullOrEmpty(HelpMessage))
+			ircConnection.SendMessage(HelpMessage, HoldableCommander.ID);
 	}
 
 	protected ICommandResponseNotifier ResponseNotifier;

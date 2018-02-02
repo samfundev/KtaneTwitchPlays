@@ -127,6 +127,11 @@ public class MissionMessageResponder : MessageResponder
 				foreach (KMHoldableCommander commander in _holdableCommanders)
 				{
 					if (string.IsNullOrEmpty(commander?.ID) || !commander.ID.Equals(split[0])) continue;
+					if (textAfter.EqualsAny("help", "manual"))
+					{
+						commander.Handler.ShowHelp();
+						break;
+					}
 					_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
 					break;
 				}

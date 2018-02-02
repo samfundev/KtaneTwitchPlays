@@ -19,6 +19,7 @@ public class BombMessageResponder : MessageResponder
     public List<BombCommander> BombCommanders = new List<BombCommander>();
 	public List<TwitchBombHandle> BombHandles = new List<TwitchBombHandle>();
     public List<TwitchComponentHandle> ComponentHandles = new List<TwitchComponentHandle>();
+	public List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
     private int _currentBomb = -1;
     private string[] _notes = new string[4];
 
@@ -206,6 +207,7 @@ public class BombMessageResponder : MessageResponder
         }
         BombHandles.Clear();
         BombCommanders.Clear();
+	    HoldableCommanders.Clear();
 
 	    DestroyComponentHandles();
 
@@ -285,6 +287,24 @@ public class BombMessageResponder : MessageResponder
 		if (EnableDisableInput())
 		{
 			TwitchComponentHandle.SolveUnsupportedModules(true);
+		}
+
+		FloatingHoldable[] holdables = FindObjectsOfType<FloatingHoldable>();
+		foreach (FloatingHoldable holdable in holdables)
+		{
+			//Bombs are blacklisted, as they are already handled by BombCommander.
+			if (holdable.name.StartsWith("BasicRectangleBomb")) continue;
+			if (holdable.GetComponentInChildren<KMBomb>() != null) continue;
+			try
+			{
+				DebugHelper.Log($"Creating holdable handler for {holdable.name}");
+				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection, _coroutineCanceller);
+				HoldableCommanders.Add(holdableCommander);
+			}
+			catch (Exception ex)
+			{
+				DebugHelper.LogException(ex, $"Could not create a handler for holdable {holdable.name} due to an exception:");
+			}
 		}
 	}
 
@@ -570,6 +590,19 @@ public class BombMessageResponder : MessageResponder
 	        }
 	        _coroutineQueue.AddToQueue(onMessageReceived,componentHandle.bombID);
         }
+
+	    foreach (KMHoldableCommander commander in HoldableCommanders)
+	    {
+		    string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		    string textAfter = split.Skip(1).Join();
+			if (string.IsNullOrEmpty(commander?.ID) || !commander.ID.Equals(split[0])) continue;
+		    if (textAfter.EqualsAny("help", "manual"))
+		    {
+			    commander.Handler.ShowHelp();
+			    break;
+		    }
+		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
+		}
 
 	    if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))
 	    {
