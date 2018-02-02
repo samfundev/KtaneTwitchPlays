@@ -58,9 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\**\*" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Src\DataBlobs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods\Twitch Plays\$(TargetFileName)"</PostBuildEvent>

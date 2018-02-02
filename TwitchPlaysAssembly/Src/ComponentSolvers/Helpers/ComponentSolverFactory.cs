@@ -21,13 +21,6 @@ public static class ComponentSolverFactory
     private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
 
-	private enum ModCommandType
-	{
-		Simple,
-		Coroutine,
-		Unsupported
-	}
-
 	static ComponentSolverFactory()
 	{
 		DebugHelper.Log();

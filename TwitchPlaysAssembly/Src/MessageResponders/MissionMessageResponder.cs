@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MissionMessageResponder : MessageResponder
 {
     private BombBinderCommander _bombBinderCommander = null;
     private FreeplayCommander _freeplayCommander = null;
+	private List<KMHoldableCommander> _holdableCommanders = null;
 
     #region Unity Lifecycle
     private void OnEnable()
@@ -22,6 +24,7 @@ public class MissionMessageResponder : MessageResponder
 
         _bombBinderCommander = null;
         _freeplayCommander = null;
+	    _holdableCommanders = null;
     }
     #endregion
 
@@ -53,6 +56,37 @@ public class MissionMessageResponder : MessageResponder
 
             yield return null;
         }
+
+	    while (true)
+	    {
+		    _holdableCommanders = new List<KMHoldableCommander>();
+		    string[] blacklistedHoldables =
+		    {
+			    "FreeplayDevice", "BombBinder"
+		    };
+
+		    FloatingHoldable[] holdables = FindObjectsOfType<FloatingHoldable>();
+		    if (holdables != null)
+		    {
+			    foreach (FloatingHoldable holdable in holdables)
+			    {
+				    if (blacklistedHoldables.Contains(holdable.name.Replace("(Clone)", ""))) continue;
+				    try
+				    {
+						DebugHelper.Log($"Creating holdable handler for {holdable.name}");
+					    KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection, _coroutineCanceller);
+					    _holdableCommanders.Add(holdableCommander);
+				    }
+				    catch (Exception ex)
+				    {
+						DebugHelper.LogException(ex, $"Could not create a handler for holdable {holdable.name} due to an exception:");
+				    }
+			    }
+			    break;
+		    }
+
+		    yield return null;
+	    }
     }
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
@@ -87,6 +121,14 @@ public class MissionMessageResponder : MessageResponder
 				else
 				{
 					_ircConnection.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
+				}
+				break;
+			default:
+				foreach (KMHoldableCommander commander in _holdableCommanders)
+				{
+					if (string.IsNullOrEmpty(commander?.ID) || !commander.ID.Equals(split[0])) continue;
+					_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
+					break;
 				}
 				break;
 		}

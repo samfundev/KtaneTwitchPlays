@@ -555,7 +555,7 @@ public class BombCommander : ICommandResponder
 		if (removedSolveBasedModules) return;
 		removedSolveBasedModules = true;
 
-		foreach (KMBombModule module in MonoBehaviour.FindObjectsOfType<KMBombModule>())
+		foreach (KMBombModule module in Bomb.GetComponentsInChildren<KMBombModule>())
 		{
 			if (solveBased.Contains(module.ModuleType))
 			{
