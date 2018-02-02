@@ -18,11 +18,13 @@ public static class HoldableFactory
 
 	private delegate HoldableHandler ModHoldableHandlerDelegate(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller);
 	private static readonly Dictionary<string, ModHoldableHandlerDelegate> ModHoldableCreators = new Dictionary<string, ModHoldableHandlerDelegate>();
-	private static List<Type> ModHoldableTypes = new List<Type>();
+	private static readonly List<Type> ModHoldableTypes = new List<Type>();
 
 	static HoldableFactory()
 	{
-		
+		ModHoldableCreators[typeof(AlarmClock).FullName] = (commander, holdable, ircConnection, canceller) => new AlarmClockHoldableHandler(commander, holdable, ircConnection, canceller);
+
+		ModHoldableTypes.Add(typeof(AlarmClock));
 	}
 
 	public static HoldableHandler CreateHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller)

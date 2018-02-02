@@ -1,0 +1,28 @@
+﻿using System.Collections;
+using System.Reflection;
+using Assets.Scripts.Props;
+using UnityEngine;
+
+public class AlarmClockHoldableHandler : HoldableHandler
+{
+	public AlarmClockHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller) : base(commander, holdable, connection, canceller)
+	{
+		clock = Holdable.GetComponentInChildren<AlarmClock>();
+	}
+
+	protected override IEnumerator RespondToCommandInternal(string command)
+	{
+		if ((TwitchPlaySettings.data.AllowSnoozeOnly && (!(bool) _alarmClockOnField.GetValue(clock)))) yield break;
+
+		yield return null;
+		yield return DoInteractionClick(clock.SnoozeButton);
+	}
+
+	static AlarmClockHoldableHandler()
+	{
+		_alarmClockOnField = typeof(AlarmClock).GetField("isOn", BindingFlags.NonPublic | BindingFlags.Instance);
+	}
+
+	private static FieldInfo _alarmClockOnField = null;
+	private AlarmClock clock;
+}
