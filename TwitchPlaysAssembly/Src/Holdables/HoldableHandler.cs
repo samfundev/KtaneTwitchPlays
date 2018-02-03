@@ -105,6 +105,43 @@ public abstract class HoldableHandler : ICommandResponder
 							}
 						}
 						break;
+					case object[] objects:
+						if (objects == null) break;
+						switch (objects.Length)
+						{
+							case 3 when objects[0] is string objstr && objects[1] is Action actionTrue:
+								switch (objstr)
+								{
+									case "streamer" when UserAccess.HasAccess(userNickName, AccessLevel.Streamer, true):
+									case "streamer-only" when UserAccess.HasAccess(userNickName, AccessLevel.Streamer):
+									case "superuser" when UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true):
+									case "superuser-only" when UserAccess.HasAccess(userNickName, AccessLevel.SuperUser):
+									case "admin" when UserAccess.HasAccess(userNickName, AccessLevel.Admin , true):
+									case "admin-only" when UserAccess.HasAccess(userNickName, AccessLevel.Admin):
+									case "mod" when UserAccess.HasAccess(userNickName, AccessLevel.Mod, true):
+									case "mod-only" when UserAccess.HasAccess(userNickName, AccessLevel.Mod):
+									case "defuser" when UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true):
+									case "defuser-only" when UserAccess.HasAccess(userNickName, AccessLevel.Defuser):
+										actionTrue.Invoke();
+										break;
+									default:
+										if (objects[2] is Action actionFalse)
+											actionFalse.Invoke();
+										if (objects[2] is string objStr2)
+										{
+											if (objStr2.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase))
+												SendToChat(objStr2, userNickName);
+											if (objStr2.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase))
+											{
+												SendToChat(objStr2, userNickName);
+												parseError = true;
+											}
+										}
+										break;
+								}
+								break;
+						}
+						break;
 
 					default:
 						break;
