@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public abstract class HoldableHandler : ICommandResponder
@@ -37,6 +38,7 @@ public abstract class HoldableHandler : ICommandResponder
 			processCommand = RespondToCommandInternal(message);
 			bool cancelled = false;
 			bool parseError = false;
+			bool cancelling = false;
 			processIEnumerators.Push(processCommand);
 			do
 			{
@@ -51,6 +53,7 @@ public abstract class HoldableHandler : ICommandResponder
 						if (result)
 							processIEnumerators.Push(processCommand);
 					}
+					if (!result) break;
 				}
 				catch (Exception ex)
 				{
@@ -62,25 +65,29 @@ public abstract class HoldableHandler : ICommandResponder
 						if(iEnumerator != null)
 							processIEnumerators.Push(iEnumerator);
 						continue;
-					case KMSelectable kmSelectable:
-						if (!heldSelectables.Contains(kmSelectable))
+					case KMSelectable kmSelectable when kmSelectable != null:
+						if (heldSelectables.Contains(kmSelectable))
 						{
-							heldSelectables.Add(kmSelectable);
-							DoInteractionStart(kmSelectable);
+							DebugHelper.Log("Ending Interaction");
+							DoInteractionEnd(kmSelectable);
+							heldSelectables.Remove(kmSelectable);
 						}
 						else
 						{
-							heldSelectables.Remove(kmSelectable);
-							DoInteractionEnd(kmSelectable);
+							DebugHelper.Log("Starting Interaction");
+							DoInteractionStart(kmSelectable);
+							heldSelectables.Add(kmSelectable);
 						}
-						break;
+						continue;
 
 					case KMSelectable[] kmSelectables:
 						foreach (KMSelectable selectable in kmSelectables)
 						{
-							yield return DoInteractionClick(selectable);
+							selectable?.OnInteract?.Invoke();
+							selectable?.OnInteractEnded?.Invoke();
+							yield return new WaitForSeconds(0.1f);
 						}
-						break;
+						continue;
 
 					case Quaternion quaternion:
 						HoldableCommander.RotateByLocalQuaternion(quaternion);
@@ -115,6 +122,12 @@ public abstract class HoldableHandler : ICommandResponder
 							{
 								_musicPlayer = MusicPlayer.StartRandomMusic();
 							}
+						}
+						else if (currentString.ToLowerInvariant().Equals("cancelled") && cancelling)
+						{
+							CancelBool?.SetValue(CommandComponent, false);
+							Canceller.ResetCancel();
+							cancelled = true;
 						}
 						break;
 					case object[] objects:
@@ -160,6 +173,11 @@ public abstract class HoldableHandler : ICommandResponder
 				}
 				yield return processCommand.Current;
 
+				if (Canceller.ShouldCancel && !cancelling && CommandComponent != null)
+				{
+					CancelBool?.SetValue(CommandComponent, true);
+					cancelling = CancelBool != null;
+				}
 			} while (processIEnumerators.Count > 0 && !parseError && !cancelled);
 			processIEnumerators.Clear();
 			if (_musicPlayer != null)
@@ -226,6 +244,9 @@ public abstract class HoldableHandler : ICommandResponder
 			ircConnection.SendMessage(HelpMessage, HoldableCommander.ID);
 	}
 
+	protected Component CommandComponent;
+	protected MethodInfo HandlerMethod;
+	protected FieldInfo CancelBool;
 	protected ICommandResponseNotifier ResponseNotifier;
 	protected IRCConnection ircConnection;
 	protected string UserNickName;

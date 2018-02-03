@@ -16,27 +16,11 @@ public class CoroutineHoldableHandler : HoldableHandler
 	protected override IEnumerator RespondToCommandInternal(string command)
 	{
 		IEnumerator handler = (IEnumerator) HandlerMethod.Invoke(CommandComponent, new object[] {command});
-		bool cancelling = false;
 		CancelBool?.SetValue(CommandComponent, false);
 		while (handler.MoveNext())
 		{
 			yield return handler.Current;
-			if (Canceller.ShouldCancel && !cancelling)
-			{
-				CancelBool?.SetValue(CommandComponent, true);
-				cancelling = CancelBool != null;
-			}
-			else if (cancelling && handler.Current is string strCurrent)
-			{
-				if (!strCurrent.Equals("cancelled")) continue;
-				CancelBool?.SetValue(CommandComponent, false);
-				Canceller.ResetCancel();
-				yield break;
-			}
+			
 		}
 	}
-
-	protected Component CommandComponent;
-	protected FieldInfo CancelBool;
-	protected MethodInfo HandlerMethod;
 }
