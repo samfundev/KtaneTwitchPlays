@@ -7,12 +7,15 @@ public class InterruptMusic : MonoBehaviour
     public static InterruptMusic Instance => _instance;
 
 	private static InterruptMusic _instance = null;
-    private static FieldInfo _volumeLevelField = null;
-    private Dictionary<int, float> _oldVolumes = new Dictionary<int, float>();
+    private static FieldInfo _volumeLevelGameplayField = null;
+    private Dictionary<int, float> _oldVolumesGameplay = new Dictionary<int, float>();
+	private static FieldInfo _volumeLevelOtherField = null;
+	private Dictionary<int, float> _oldVolumesOther = new Dictionary<int, float>();
 
-    static InterruptMusic()
+	static InterruptMusic()
     {
-        _volumeLevelField = typeof(GameplayMusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
+        _volumeLevelGameplayField = typeof(GameplayMusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
+	    _volumeLevelOtherField = typeof(MusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
     private void Awake()
@@ -28,14 +31,32 @@ public class InterruptMusic : MonoBehaviour
             int musicControllerInstanceID = musicController.GetInstanceID();
             if (enableInterrupt)
             {
-                _oldVolumes[musicControllerInstanceID] = (float)_volumeLevelField.GetValue(musicController);
+                _oldVolumesGameplay[musicControllerInstanceID] = (float)_volumeLevelGameplayField.GetValue(musicController);
                 musicController.SetVolume(0.0f, true);
             }
             else
             {
-                if (_oldVolumes.ContainsKey(musicControllerInstanceID))
-                    musicController.SetVolume(_oldVolumes[musicControllerInstanceID], true);
+                if (_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
+                    musicController.SetVolume(_oldVolumesGameplay[musicControllerInstanceID], true);
             }
         }
+
+	    MusicController[] musicControllers = FindObjectsOfType<MusicController>();
+	    {
+		    foreach (MusicController musicController in musicControllers)
+		    {
+				int musicControllerInstanceID = musicController.GetInstanceID();
+			    if (enableInterrupt)
+			    {
+				    _oldVolumesOther[musicControllerInstanceID] = (float)_volumeLevelOtherField.GetValue(musicController);
+				    musicController.SetVolume(0.0f, true);
+			    }
+			    else
+			    {
+				    if (_oldVolumesOther.ContainsKey(musicControllerInstanceID))
+					    musicController.SetVolume(_oldVolumesOther[musicControllerInstanceID], true);
+			    }
+			}
+	    }
     }
 }
