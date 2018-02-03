@@ -21,7 +21,4 @@ public class SimpleHoldableHandler : HoldableHandler
 		yield return null;
 		yield return selectables;
 	}
-
-	protected Component CommandComponent;
-	protected MethodInfo HandlerMethod;
 }
