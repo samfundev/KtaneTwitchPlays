@@ -31,13 +31,17 @@ public class InterruptMusic : MonoBehaviour
             int musicControllerInstanceID = musicController.GetInstanceID();
             if (enableInterrupt)
             {
-                _oldVolumesGameplay[musicControllerInstanceID] = (float)_volumeLevelGameplayField.GetValue(musicController);
+				if(!_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
+					_oldVolumesGameplay[musicControllerInstanceID] = (float)_volumeLevelGameplayField.GetValue(musicController);
                 musicController.SetVolume(0.0f, true);
             }
             else
             {
-                if (_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
-                    musicController.SetVolume(_oldVolumesGameplay[musicControllerInstanceID], true);
+	            if (_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
+	            {
+		            musicController.SetVolume(_oldVolumesGameplay[musicControllerInstanceID], true);
+		            _oldVolumesGameplay.Remove(musicControllerInstanceID);
+	            }
             }
         }
 
@@ -48,13 +52,18 @@ public class InterruptMusic : MonoBehaviour
 				int musicControllerInstanceID = musicController.GetInstanceID();
 			    if (enableInterrupt)
 			    {
-				    _oldVolumesOther[musicControllerInstanceID] = (float)_volumeLevelOtherField.GetValue(musicController);
+					if(!_oldVolumesOther.ContainsKey(musicControllerInstanceID))
+						_oldVolumesOther[musicControllerInstanceID] = (float)_volumeLevelOtherField.GetValue(musicController);
 				    musicController.SetVolume(0.0f, true);
 			    }
 			    else
 			    {
 				    if (_oldVolumesOther.ContainsKey(musicControllerInstanceID))
+				    {
 					    musicController.SetVolume(_oldVolumesOther[musicControllerInstanceID], true);
+					    _oldVolumesOther.Remove(musicControllerInstanceID);
+
+				    }
 			    }
 			}
 	    }
