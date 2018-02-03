@@ -89,12 +89,12 @@ public abstract class HoldableHandler : ICommandResponder
 						else if (currentString.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) &&
 						         currentString.Substring(11).Trim() != string.Empty)
 						{
-							ircConnection.SendMessage(currentString.Substring(11));
+							SendToChat(currentString, userNickName);
 						}
 						else if (currentString.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) &&
 						         currentString.Substring(16).Trim() != string.Empty)
 						{
-							ircConnection.SendMessage($"Sorry @{userNickName}, !{HoldableCommander.ID} responed with the following error: {currentString.Substring(16)}");
+							SendToChat(currentString, userNickName);
 							parseError = true;
 						}
 						else if (currentString.ToLowerInvariant().EqualsAny("elevator music", "hold music", "waiting music"))
@@ -130,6 +130,18 @@ public abstract class HoldableHandler : ICommandResponder
 		}
 
 		yield break;
+	}
+
+	private void SendToChat(string message, string userNickname)
+	{
+		bool error = message.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase);
+		message = message.Replace("sendtochat ", "").Replace("sendtochaterror ", "");
+		if (error)
+		{
+			//ircConnection.SendMessage($"Sorry @{userNickName}, !{HoldableCommander.ID} responed with the following error: {currentString.Substring(16)}");
+			message = "Sorry @{1}, !{0} responded with the following error: " + message;
+		}
+		ircConnection.SendMessage(message, HoldableCommander.ID, userNickname);
 	}
 
 	protected abstract IEnumerator RespondToCommandInternal(string command);
