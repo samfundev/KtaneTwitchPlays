@@ -9,7 +9,7 @@ using UnityEngine.Events;
 
 public class IRCConnection
 {
-    #region Nested Types
+	#region Nested Types
     public class MessageEvent : UnityEvent<string, string, string>
     {
     }
@@ -112,6 +112,7 @@ public class IRCConnection
         _channelName = channelName;
         _server = server;
         _port = port;
+	    Instance = this;
     }
     #endregion
 
@@ -353,6 +354,7 @@ public class IRCConnection
     #region Public Fields
     public readonly MessageEvent OnMessageReceived = new MessageEvent();
     public string ColorOnDisconnect = null;
+	public static IRCConnection Instance { get; private set; }
     #endregion
 
     #region Private Fields

@@ -39,8 +39,9 @@ public class TwitchPlaysService : MonoBehaviour
     public static UrlHelper urlHelper = null;
 
 	private HashSet<Mod> CheckedMods = null;
+	private TwitchPlaysProperties _publicProperties;
 
-    private void Start()
+	private void Start()
     {
 	    bombMessageResponder = GetComponentInChildren<BombMessageResponder>(true);
 	    postGameMessageResponder = GetComponentInChildren<PostGameMessageResponder>(true);
@@ -101,7 +102,12 @@ public class TwitchPlaysService : MonoBehaviour
         miscellaneousMessageResponder.leaderboard = _leaderboard;
 
         bombMessageResponder.parentService = this;
-    }
+
+	    GameObject infoObject = new GameObject("TwitchPlays_Info");
+	    infoObject.transform.parent = gameObject.transform;
+	    _publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
+	    _publicProperties.TwitchPlaysService = this;
+	}
 
     private void Update()
     {
