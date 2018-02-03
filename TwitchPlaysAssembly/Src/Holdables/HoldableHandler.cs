@@ -44,9 +44,9 @@ public abstract class HoldableHandler : ICommandResponder
 				{
 					result = processCommand.MoveNext();
 				}
-				catch
+				catch (Exception ex)
 				{
-					DebugHelper.Log("Error Processing command. Invocation will not continue.");
+					DebugHelper.LogException(ex, "Error Processing command due to an exception. Invocation will not continue.:");
 				}
 				switch (processCommand.Current)
 				{
