@@ -68,26 +68,29 @@ public abstract class HoldableHandler : ICommandResponder
 					case KMSelectable kmSelectable when kmSelectable != null:
 						if (heldSelectables.Contains(kmSelectable))
 						{
-							DebugHelper.Log("Ending Interaction");
 							DoInteractionEnd(kmSelectable);
 							heldSelectables.Remove(kmSelectable);
 						}
 						else
 						{
-							DebugHelper.Log("Starting Interaction");
 							DoInteractionStart(kmSelectable);
 							heldSelectables.Add(kmSelectable);
 						}
-						continue;
+						break;
 
 					case KMSelectable[] kmSelectables:
 						foreach (KMSelectable selectable in kmSelectables)
 						{
-							selectable?.OnInteract?.Invoke();
-							selectable?.OnInteractEnded?.Invoke();
-							yield return new WaitForSeconds(0.1f);
+							if (selectable != null)
+							{
+								yield return DoInteractionClick(selectable);
+							}
+							else
+							{
+								yield return new WaitForSeconds(0.1f);
+							}
 						}
-						continue;
+						break;
 
 					case Quaternion quaternion:
 						HoldableCommander.RotateByLocalQuaternion(quaternion);
