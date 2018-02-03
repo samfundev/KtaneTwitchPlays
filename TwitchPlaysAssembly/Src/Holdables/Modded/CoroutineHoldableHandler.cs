@@ -28,7 +28,7 @@ public class CoroutineHoldableHandler : HoldableHandler
 			}
 			else if (cancelling && handler.Current is string strCurrent)
 			{
-				if (!strCurrent.Equals("Cancelled")) continue;
+				if (!strCurrent.Equals("cancelled")) continue;
 				CancelBool?.SetValue(CommandComponent, false);
 				Canceller.ResetCancel();
 				yield break;

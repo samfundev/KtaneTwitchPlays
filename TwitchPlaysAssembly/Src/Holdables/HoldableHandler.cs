@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,6 +35,8 @@ public abstract class HoldableHandler : ICommandResponder
 		{	
 			DebugHelper.Log("Running RespondToCommandInternal()");
 			processCommand = RespondToCommandInternal(message);
+			bool cancelled = false;
+			bool parseError = false;
 			bool result = false;
 			do
 			{
@@ -71,14 +74,49 @@ public abstract class HoldableHandler : ICommandResponder
 						HoldableCommander.RotateByLocalQuaternion(quaternion);
 						break;
 
-					case string str:
+					case string currentString:
+						if (currentString.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase))
+						{
+							ircConnection.SendMessage($"Sorry @{userNickName}, there was an error parsing the command for !{HoldableCommander.ID}");
+							parseError = true;
+						}
+						else if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) &&
+						         Canceller.ShouldCancel)
+						{
+							Canceller.ResetCancel();
+							cancelled = true;
+						}
+						else if (currentString.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) &&
+						         currentString.Substring(11).Trim() != string.Empty)
+						{
+							ircConnection.SendMessage(currentString.Substring(11));
+						}
+						else if (currentString.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) &&
+						         currentString.Substring(16).Trim() != string.Empty)
+						{
+							ircConnection.SendMessage($"Sorry @{userNickName}, !{HoldableCommander.ID} responed with the following error: {currentString.Substring(16)}");
+							parseError = true;
+						}
+						else if (currentString.ToLowerInvariant().EqualsAny("elevator music", "hold music", "waiting music"))
+						{
+							if (_musicPlayer == null)
+							{
+								_musicPlayer = MusicPlayer.StartRandomMusic();
+							}
+						}
 						break;
 
 					default:
 						break;
 				}
 				yield return processCommand.Current;
-			} while (result);
+
+			} while (result && !parseError && !cancelled);
+			if (_musicPlayer != null)
+			{
+				_musicPlayer.StopMusic();
+				_musicPlayer = null;
+			}
 			DebugHelper.Log("RespondToCommandInternal() Complete");
 		}
 		else
@@ -129,6 +167,7 @@ public abstract class HoldableHandler : ICommandResponder
 	protected ICommandResponseNotifier ResponseNotifier;
 	protected IRCConnection ircConnection;
 	protected string UserNickName;
+	private MusicPlayer _musicPlayer;
 
 	public string HelpMessage;
 	public CoroutineCanceller Canceller;
