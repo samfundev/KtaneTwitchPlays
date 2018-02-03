@@ -37,12 +37,20 @@ public abstract class HoldableHandler : ICommandResponder
 			processCommand = RespondToCommandInternal(message);
 			bool cancelled = false;
 			bool parseError = false;
-			bool result = false;
+			processIEnumerators.Push(processCommand);
 			do
 			{
 				try
 				{
-					result = processCommand.MoveNext();
+					bool result = false;
+					while(!result && processIEnumerators.Count > 0)
+					{
+						if (processIEnumerators.Count > 0)
+							processCommand = processIEnumerators.Pop();
+						result = processCommand.MoveNext();
+						if (result)
+							processIEnumerators.Push(processCommand);
+					}
 				}
 				catch (Exception ex)
 				{
@@ -50,6 +58,10 @@ public abstract class HoldableHandler : ICommandResponder
 				}
 				switch (processCommand.Current)
 				{
+					case IEnumerator iEnumerator:
+						if(iEnumerator != null)
+							processIEnumerators.Push(iEnumerator);
+						continue;
 					case KMSelectable kmSelectable:
 						if (!heldSelectables.Contains(kmSelectable))
 						{
@@ -148,7 +160,8 @@ public abstract class HoldableHandler : ICommandResponder
 				}
 				yield return processCommand.Current;
 
-			} while (result && !parseError && !cancelled);
+			} while (processIEnumerators.Count > 0 && !parseError && !cancelled);
+			processIEnumerators.Clear();
 			if (_musicPlayer != null)
 			{
 				_musicPlayer.StopMusic();
@@ -223,6 +236,7 @@ public abstract class HoldableHandler : ICommandResponder
 	public KMHoldableCommander HoldableCommander;
 	public FloatingHoldable Holdable;
 	protected HashSet<KMSelectable> heldSelectables = new HashSet<KMSelectable>();
+	protected Stack<IEnumerator> processIEnumerators = new Stack<IEnumerator>();
 
 
 
