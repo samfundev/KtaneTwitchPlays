@@ -13,11 +13,12 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-		if (language != null) modInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
-		modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		
 		if (bombCommander != null)
 		{
+			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+			if (language != null) modInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
+			modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
 			bombComponent.StartCoroutine(SetHeaderText());
 		}
 	}

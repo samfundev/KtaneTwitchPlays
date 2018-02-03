@@ -14,11 +14,12 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         _downButton = (MonoBehaviour)_downButtonField.GetValue(_component);
         _transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(_component);
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-	    if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
-	    modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		
 		if (bombCommander != null)
 		{
+			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+			if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
+			modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
 			bombComponent.StartCoroutine(SetHeaderText());
 		}
 	}
