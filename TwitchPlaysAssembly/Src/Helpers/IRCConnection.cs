@@ -138,6 +138,8 @@ public class IRCConnection
 		    StreamWriter outputStream = new StreamWriter(networkStream);
 
 		    _keepThreadAlive = true;
+		    _isDisconnecting = false;
+		    Disconnected = false;
 
 		    _inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
 		    _inputThread.Start();
@@ -151,6 +153,8 @@ public class IRCConnection
 	    }
 	    catch (Exception ex)
 	    {
+		    _keepThreadAlive = false;
+		    Disconnected = true;
 		    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Exception:", _server, _port);
 			DebugHelper.LogException(ex);
 		    return false;
@@ -159,6 +163,8 @@ public class IRCConnection
 
     public void Disconnect()
     {
+	    if (Disconnected) return;
+	    ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
         _isDisconnecting = true;
         _keepThreadAlive = false;
         UnityEngine.Debug.Log("[IRC:Disconnect] Disconnecting from chat IRC.");
@@ -223,22 +229,42 @@ public class IRCConnection
 
     private void InputThreadMethod(TextReader input, NetworkStream networkStream)
     {
-        while (_keepThreadAlive || _isDisconnecting)
-        {
-            if (!networkStream.DataAvailable)
-            {
-                continue;
-            }
+	    Stopwatch stopwatch = new Stopwatch();
+	    try
+	    {
+		    stopwatch.Start();
+		    while (_keepThreadAlive || _isDisconnecting)
+		    {
+			    if (stopwatch.ElapsedMilliseconds > 360000)
+			    {
+				    stopwatch.Reset();
+				    _keepThreadAlive = false;
+				    Disconnected = true;
+				    continue;
+			    }
 
-            string buffer = input.ReadLine();
-            foreach (ActionMap action in Actions)
-            {
-                if (action.TryMatch(this, buffer))
-                {
-                    break;
-                }
-            }
-        }
+			    if (!networkStream.DataAvailable)
+			    {
+				    continue;
+			    }
+
+			    stopwatch.Reset();
+			    stopwatch.Start();
+			    string buffer = input.ReadLine();
+			    foreach (ActionMap action in Actions)
+			    {
+				    if (action.TryMatch(this, buffer))
+				    {
+					    break;
+				    }
+			    }
+		    }
+	    }
+	    catch
+	    {
+		    _keepThreadAlive = false;
+		    Disconnected = true;
+	    }
     }
 
     private void OutputThreadMethod(TextWriter output)
@@ -248,43 +274,58 @@ public class IRCConnection
 
         while (_keepThreadAlive)
         {
-            lock (_commandQueue)
-            {
-                if (_commandQueue.Count > 0)
-                {
-                    if (stopWatch.ElapsedMilliseconds > _messageDelay)
-                    {
-                        Commands command = _commandQueue.Dequeue();
-                        if (command.CommandIsColor() && _currentColor.Equals(command.GetColor(), StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            continue;
-                        }
+	        try
+	        {
+		        lock (_commandQueue)
+		        {
+			        if (_commandQueue.Count > 0)
+			        {
+				        if (stopWatch.ElapsedMilliseconds > _messageDelay)
+				        {
+					        Commands command = _commandQueue.Dequeue();
+					        if (command.CommandIsColor() && _currentColor.Equals(command.GetColor(), StringComparison.InvariantCultureIgnoreCase))
+					        {
+						        continue;
+					        }
 
-                        output.WriteLine(command.Command);
-                        output.Flush();
+					        output.WriteLine(command.Command);
+					        output.Flush();
 
-                        stopWatch.Reset();
-                        stopWatch.Start();
+					        stopWatch.Reset();
+					        stopWatch.Start();
 
-                        _messageDelay = _isModerator ? MessageDelayMod : MessageDelayUser;
-                        _messageDelay += (command.CommandIsColor() && _isModerator) ? 700 : 0;
-                    }
-                }
-            }
+					        _messageDelay = _isModerator ? MessageDelayMod : MessageDelayUser;
+					        _messageDelay += (command.CommandIsColor() && _isModerator) ? 700 : 0;
+				        }
+			        }
+		        }
+	        }
+	        catch
+	        {
+		        _keepThreadAlive = false;
+		        Disconnected = true;
+	        }
         }
 
-        Commands setColor = new Commands(string.Format("PRIVMSG #{0} :.color {1}", _channelName, ColorOnDisconnect));
-        if (setColor.CommandIsColor())
-        {
-            UnityEngine.Debug.LogFormat("[IRC:Disconnect] Color {0} was requested, setting it now.",ColorOnDisconnect);
-            while (stopWatch.ElapsedMilliseconds < _messageDelay){}
-            output.WriteLine(setColor.Command);
-            output.Flush();
+	    if (!Disconnected)
+	    {
+		    Commands setColor = new Commands(string.Format("PRIVMSG #{0} :.color {1}", _channelName, ColorOnDisconnect));
+		    if (setColor.CommandIsColor())
+		    {
+			    UnityEngine.Debug.LogFormat("[IRC:Disconnect] Color {0} was requested, setting it now.", ColorOnDisconnect);
+			    while (stopWatch.ElapsedMilliseconds < _messageDelay)
+			    {
+			    }
+			    output.WriteLine(setColor.Command);
+			    output.Flush();
 
-            stopWatch.Reset();
-            stopWatch.Start();
-            while (stopWatch.ElapsedMilliseconds < 1200){}
-        }
+			    stopWatch.Reset();
+			    stopWatch.Start();
+			    while (stopWatch.ElapsedMilliseconds < 1200)
+			    {
+			    }
+		    }
+	    }
 
         _isDisconnecting = false;
         UnityEngine.Debug.Log("[IRC:Disconnect] Disconnected from chat IRC.");
@@ -364,7 +405,8 @@ public class IRCConnection
     public readonly MessageEvent OnMessageReceived = new MessageEvent();
     public string ColorOnDisconnect = null;
 	public static IRCConnection Instance { get; private set; }
-    #endregion
+	public bool Disconnected { get; private set; } = true;
+	#endregion
 
     #region Private Fields
     private readonly string _oauth = null;

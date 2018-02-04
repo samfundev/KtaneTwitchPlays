@@ -5,6 +5,8 @@ using UnityEngine;
 public class LogUploader : MonoBehaviour
 {
     public string log { get; private set; }
+
+	[HideInInspector]
     public IRCConnection ircConnection = null;
 
     [HideInInspector]
