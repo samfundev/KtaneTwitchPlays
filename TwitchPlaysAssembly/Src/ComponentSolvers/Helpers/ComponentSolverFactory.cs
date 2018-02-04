@@ -81,6 +81,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent, ircConnection, canceller) => new CurriculumComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent, ircConnection, canceller) => new EdgeworkComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
+		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent, ircConnection, canceller) => new NeedyBeerComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent, ircConnection, canceller) => new TranslatedButtonComponentSolver(bombCommander, bombComponent, ircConnection, canceller);
@@ -203,6 +204,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", helpText = "Flip switches using !{0} flip 1 5 3 2.", moduleScore = 3 };
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Curriculum", helpText = "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.", moduleScore = 12 };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework", helpText = "Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position." };
+		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod", helpText = "Refill that beer with !{0} refill."};
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simple Wires", helpText = "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted", moduleScore = 1 };
