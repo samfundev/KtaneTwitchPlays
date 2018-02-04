@@ -29,8 +29,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-/Assets/Editor/Resources/ModConfig.asset.meta
 /Assets/Editor/Resources/WorkshopItem.asset
 /Assets/Editor/Resources/WorkshopItem.asset.meta
-/Assets/Editor/Resources/ModConfig.asset
-/Assets/Editor/Resources.meta
