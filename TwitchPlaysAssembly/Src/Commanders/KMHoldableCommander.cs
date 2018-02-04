@@ -10,7 +10,6 @@ public class KMHoldableCommander : ICommandResponder
 		Holdable = holdable;
 		Selectable = Holdable.GetComponent<Selectable>();
 		FloatingHoldable = Holdable.GetComponent<FloatingHoldable>();
-		_selectableManager = KTInputManager.Instance.SelectableManager;
 		Handler = HoldableFactory.CreateHandler(this, holdable, ircConnection, canceller);
 	}
 
@@ -80,12 +79,13 @@ public class KMHoldableCommander : ICommandResponder
 
 	public IEnumerator Hold(bool frontFace = true)
 	{
-		FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+		FloatingHoldable holdable = FloatingHoldable.GetComponent<FloatingHoldable>();
+		FloatingHoldable.HoldStateEnum holdState = holdable.HoldState;
 		bool doForceRotate = false;
 
-		if (holdState != FloatingHoldable.HoldStateEnum.Held)
+		if (holdState != global::FloatingHoldable.HoldStateEnum.Held)
 		{
-			SelectObject(Selectable);
+			SelectObject(Selectable.GetComponent<Selectable>());
 			doForceRotate = true;
 		}
 		else if (frontFace != _heldFrontFace)
@@ -95,7 +95,7 @@ public class KMHoldableCommander : ICommandResponder
 
 		if (!doForceRotate) yield break;
 
-		float holdTime = FloatingHoldable.PickupTime;
+		float holdTime = holdable.PickupTime;
 		IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
 		while (forceRotationCoroutine.MoveNext())
 		{
@@ -114,7 +114,7 @@ public class KMHoldableCommander : ICommandResponder
 
 	public IEnumerator LetGoBomb()
 	{
-		if (FloatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
+		if (FloatingHoldable.GetComponent<FloatingHoldable>().HoldState != global::FloatingHoldable.HoldStateEnum.Held) yield break;
 
 		IEnumerator turnCoroutine = Hold(true);
 		while (turnCoroutine.MoveNext())
@@ -122,9 +122,9 @@ public class KMHoldableCommander : ICommandResponder
 			yield return turnCoroutine.Current;
 		}
 
-		while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
+		while (FloatingHoldable.GetComponent<FloatingHoldable>().HoldState == global::FloatingHoldable.HoldStateEnum.Held)
 		{
-			DeselectObject(Selectable);
+			DeselectObject(Selectable.GetComponent<Selectable>());
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
@@ -132,30 +132,34 @@ public class KMHoldableCommander : ICommandResponder
 
 	public void RotateByLocalQuaternion(Quaternion localQuaternion)
 	{
-		Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
+		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
+		Transform baseTransform = selectableManager.GetBaseHeldObjectTransform();
 
 		float currentZSpin = _heldFrontFace ? 0.0f : 180.0f;
 
-		_selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
-		_selectableManager.HandleFaceSelection();
+		selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
+		selectableManager.HandleFaceSelection();
 	}
 
 	private void SelectObject(Selectable selectable)
 	{
+		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
 		selectable.HandleSelect(true);
-		_selectableManager.Select(selectable, true);
-		_selectableManager.HandleInteract();
+		selectableManager.Select(selectable, true);
+		selectableManager.HandleInteract();
 		selectable.OnInteractEnded();
 	}
 
 	private void DeselectObject(Selectable selectable)
 	{
-		_selectableManager.HandleCancel();
+		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
+		selectableManager.HandleCancel();
 	}
 
 	private IEnumerator ForceHeldRotation(bool frontFace, float duration)
 	{
-		Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
+		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
+		Transform baseTransform = selectableManager.GetBaseHeldObjectTransform();
 
 		float oldZSpin = _heldFrontFace ? 0.0f : 180.0f;
 		float targetZSpin = frontFace ? 0.0f : 180.0f;
@@ -168,15 +172,15 @@ public class KMHoldableCommander : ICommandResponder
 
 			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 
-			_selectableManager.SetZSpin(currentZSpin);
-			_selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
-			_selectableManager.HandleFaceSelection();
+			selectableManager.SetZSpin(currentZSpin);
+			selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+			selectableManager.HandleFaceSelection();
 			yield return null;
 		}
 
-		_selectableManager.SetZSpin(targetZSpin);
-		_selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
-		_selectableManager.HandleFaceSelection();
+		selectableManager.SetZSpin(targetZSpin);
+		selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+		selectableManager.HandleFaceSelection();
 
 		_heldFrontFace = frontFace;
 	}
@@ -206,13 +210,11 @@ public class KMHoldableCommander : ICommandResponder
 		RotateByLocalQuaternion(target);
 	}
 
-	public FloatingHoldable Holdable = null;
-	public HoldableHandler Handler = null;
+	public MonoBehaviour Holdable;
+	public HoldableHandler Handler;
 	public string ID = null;
-	
 
-	public Selectable Selectable = null;
-	public FloatingHoldable FloatingHoldable = null;
-	private SelectableManager _selectableManager = null;
+	public MonoBehaviour Selectable;
+	public MonoBehaviour FloatingHoldable;
 	private bool _heldFrontFace = true;
 }
