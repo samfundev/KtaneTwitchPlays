@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public static class OtherModes
+﻿public static class OtherModes
 {
     public static bool timedModeOn = false;
     public static float timedMultiplier = 9;

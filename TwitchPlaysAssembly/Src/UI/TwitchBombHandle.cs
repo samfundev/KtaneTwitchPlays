@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Assets.Scripts.Records;
 
 public class TwitchBombHandle : MonoBehaviour
 {
