@@ -496,6 +496,24 @@ public abstract class ComponentSolver : ICommandResponder
         yield return new WaitForSeconds(0.5f);
     }
 
+	public void OnFakeStrike()
+	{
+		if (_delegatedStrikeUserNickName != null && _delegatedStrikeResponseNotifier != null)
+		{
+			AwardStrikes(_delegatedStrikeUserNickName, _delegatedStrikeResponseNotifier, 0);
+			_delegatedStrikeUserNickName = null;
+			_delegatedStrikeResponseNotifier = null;
+		}
+		else if (_currentUserNickName != null && _currentResponseNotifier != null)
+		{
+			AwardStrikes(_currentUserNickName, _currentResponseNotifier, 0);
+		}
+		else if (ComponentHandle.PlayerName != null)
+		{
+			AwardStrikes(ComponentHandle.PlayerName, null, 0);
+		}
+	}
+
     private bool DisableOnStrike;
     private bool OnStrike(object _ignore)
     {

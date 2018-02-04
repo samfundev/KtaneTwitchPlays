@@ -99,11 +99,11 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public string Code { get; private set; } = null;
 
+	public ComponentSolver Solver { get; private set; } = null;
+
 	#endregion
 
 	#region Private Fields
-
-	private ComponentSolver _solver = null;
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
 	private TwitchComponentHandleData _data;
 
@@ -145,25 +145,25 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		try
 		{
-			_solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, ircConnection, coroutineCanceller);
-			if (_solver != null)
+			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, ircConnection, coroutineCanceller);
+			if (Solver != null)
 			{
-				if (_solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = _solver.modInfo.unclaimedColor;
+				if (Solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;
 
-				_solver.Code = Code;
-				_solver.ComponentHandle = this;
+				Solver.Code = Code;
+				Solver.ComponentHandle = this;
 				Vector3 pos = canvasGroupMultiDecker.transform.localPosition;
-				canvasGroupMultiDecker.transform.localPosition = new Vector3(_solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, _solver.modInfo.statusLightDown ? -pos.z : pos.z);
+				canvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.modInfo.statusLightDown ? -pos.z : pos.z);
 				RectTransform rectTransform = claimedUserMultiDecker.rectTransform;
-				rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(_solver.modInfo.statusLightLeft ? 1 : 0, _solver.modInfo.statusLightDown ? 0 : 1);
-				rectTransform.pivot = new Vector2(_solver.modInfo.statusLightLeft ? 0 : 1, _solver.modInfo.statusLightDown ? 0 : 1);
+				rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(Solver.modInfo.statusLightLeft ? 1 : 0, Solver.modInfo.statusLightDown ? 0 : 1);
+				rectTransform.pivot = new Vector2(Solver.modInfo.statusLightLeft ? 0 : 1, Solver.modInfo.statusLightDown ? 0 : 1);
 
-				canvasGroupUnsupported.gameObject.SetActive(_solver.UnsupportedModule);
+				canvasGroupUnsupported.gameObject.SetActive(Solver.UnsupportedModule);
 
 				idTextUnsupported.text = bombComponent is ModBombComponent 
 					? $"To solve this\nmodule, use\n!{Code} solve" 
 					: $"To disarm this\nneedy, use\n!{Code} solve";
-				if (_solver.UnsupportedModule)
+				if (Solver.UnsupportedModule)
 					_unsupportedComponents.Add(this);
 
 				/*Vector3 angle = canvasGroupMultiDecker.transform.eulerAngles;
@@ -239,7 +239,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			idBannerPrefab.gameObject.SetActive(false);
 			canvasGroupMultiDecker.alpha = 0.0f;
 			_unsupportedComponents.Add(this);
-			_solver = null;
+			Solver = null;
 
 			canvasGroupUnsupported.gameObject.SetActive(true);
 			idTextUnsupported.gameObject.SetActive(false);
@@ -305,8 +305,8 @@ public class TwitchComponentHandle : MonoBehaviour
 	public static bool SolveUnsupportedModules(bool bombStartup=false)
 	{
 		List<TwitchComponentHandle> componentsToRemove = bombStartup
-			? _unsupportedComponents.Where(x => x._solver == null).ToList()
-			: _unsupportedComponents.Where(x => x._solver == null || !x.Solved).ToList();
+			? _unsupportedComponents.Where(x => x.Solver == null).ToList()
+			: _unsupportedComponents.Where(x => x.Solver == null || !x.Solved).ToList();
 
 		if (componentsToRemove.Count == 0) return false;
 
@@ -337,7 +337,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void SolveSilently()
 	{
-		_solver.SolveSilently();
+		Solver.SolveSilently();
 	}
 
 	public static void ClearUnsupportedModules()
@@ -470,17 +470,17 @@ public class TwitchComponentHandle : MonoBehaviour
 				manualType = "pdf";
 			}
 
-			manualText = string.IsNullOrEmpty(_solver.modInfo.manualCode) ? headerText.text : _solver.modInfo.manualCode;
+			manualText = string.IsNullOrEmpty(Solver.modInfo.manualCode) ? headerText.text : Solver.modInfo.manualCode;
 
 			if (manualText.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
 				manualText.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
 			{
-				messageOut = string.Format("{0} : {1} : {2}", headerText.text, _solver.modInfo.helpText, manualText);
+				messageOut = string.Format("{0} : {1} : {2}", headerText.text, Solver.modInfo.helpText, manualText);
 			}
 			else
 			{
 				//messageOut = string.Format("{0}: {1}", headerText.text, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
-				messageOut = string.Format("{0} : {1} : {2}", headerText.text, _solver.modInfo.helpText, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
+				messageOut = string.Format("{0} : {1} : {2}", headerText.text, Solver.modInfo.helpText, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
 			}
 		}
 		else if (!Solved)
@@ -489,16 +489,16 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 				if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
 				{
-					if (!_solver._turnQueued)
+					if (!Solver._turnQueued)
 					{
-						_solver._turnQueued = true;
-						StartCoroutine(_solver.TurnBombOnSolve());
+						Solver._turnQueued = true;
+						StartCoroutine(Solver.TurnBombOnSolve());
 					}
 					messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, targetModule, headerText.text);
 				}
 				else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
 				{
-					_solver._turnQueued = false;
+					Solver._turnQueued = false;
 					messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, headerText.text);
 				}
 				else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
@@ -622,7 +622,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 		}
 
-		if (_solver != null)
+		if (Solver != null)
 		{
 		    if (!IsAuthorizedDefuser(userNickName)) return null;
             if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)))))
@@ -663,9 +663,9 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 		highlightGroup.alpha = 1.0f;
 
-		if (_solver != null)
+		if (Solver != null)
 		{
-			IEnumerator commandResponseCoroutine = _solver.RespondToCommand(userNickName, internalCommand, message, ircConnection);
+			IEnumerator commandResponseCoroutine = Solver.RespondToCommand(userNickName, internalCommand, message, ircConnection);
 			while (commandResponseCoroutine.MoveNext())
 			{
 				yield return commandResponseCoroutine.Current;
