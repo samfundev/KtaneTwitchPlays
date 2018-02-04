@@ -151,6 +151,13 @@ public class IRCConnection
 
 		    return true;
 	    }
+	    catch (SocketException ex)
+	    {
+		    Disconnected = true;
+		    _keepThreadAlive = false;
+		    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Socket Exception: {2} - {3}", _server, _port, ex.SocketErrorCode, ex.Message);
+		    return false;
+	    }
 	    catch (Exception ex)
 	    {
 		    _keepThreadAlive = false;
@@ -184,7 +191,7 @@ public class IRCConnection
 
     public void SendMessage(string message)
     {
-        if (_silenceMode) return;
+        if (_silenceMode || Disconnected) return;
         foreach (string line in message.Wrap(MaxMessageLength).Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
         {
             SendCommand(string.Format("PRIVMSG #{0} :{1}", _channelName, line));
@@ -237,9 +244,10 @@ public class IRCConnection
 		    {
 			    if (stopwatch.ElapsedMilliseconds > 360000)
 			    {
-				    stopwatch.Reset();
-				    _keepThreadAlive = false;
+				    UnityEngine.Debug.Log("[IRC:Disconnect] Connection timed out.");
+					stopwatch.Reset();
 				    Disconnected = true;
+					_keepThreadAlive = false;
 				    continue;
 			    }
 
@@ -262,8 +270,9 @@ public class IRCConnection
 	    }
 	    catch
 	    {
-		    _keepThreadAlive = false;
+		    UnityEngine.Debug.Log("[IRC:Disconnect] Connection failed.");
 		    Disconnected = true;
+			_keepThreadAlive = false;
 	    }
     }
 
@@ -302,8 +311,9 @@ public class IRCConnection
 	        }
 	        catch
 	        {
-		        _keepThreadAlive = false;
+		        UnityEngine.Debug.Log("[IRC:Disconnect] Connection failed.");
 		        Disconnected = true;
+				_keepThreadAlive = false;
 	        }
         }
 
@@ -325,10 +335,13 @@ public class IRCConnection
 			    {
 			    }
 		    }
+		    _isDisconnecting = false;
+		    UnityEngine.Debug.Log("[IRC:Disconnect] Disconnected from chat IRC.");
 	    }
-
-        _isDisconnecting = false;
-        UnityEngine.Debug.Log("[IRC:Disconnect] Disconnected from chat IRC.");
+	    lock (_commandQueue)
+	    {
+		    _commandQueue.Clear();
+	    }
     }
 
     private void SetDelay(string badges, string nickname, string channel)

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Assets.Scripts.Missions;
@@ -40,6 +41,9 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private HashSet<Mod> CheckedMods = null;
 	private TwitchPlaysProperties _publicProperties;
+	private IEnumerator _keepConnectionAlive = null;
+	private Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
+	
 
 	private void Start()
     {
@@ -67,7 +71,8 @@ public class TwitchPlaysService : MonoBehaviour
         DebugMode = (settings.debug == true);
 		
         _ircConnection = new IRCConnection(settings.authToken, settings.userName, settings.channelName, settings.serverName, settings.serverPort);
-	    StartCoroutine(KeepConnectionAlive(_ircConnection));
+	    _keepConnectionAlive = KeepConnectionAlive(_ircConnection);
+		StartCoroutine(_keepConnectionAlive);
 
         _coroutineCanceller = new CoroutineCanceller();
 
@@ -111,18 +116,22 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private IEnumerator KeepConnectionAlive(IRCConnection connection)
 	{
-		float[] connectionRetryDelay = { 0.1f, 1, 2, 5, 10, 20, 30, 40, 50, 60 };
+		Stopwatch stopwatch = new Stopwatch();
+		int[] connectionRetryDelay = { 100, 1000, 2000, 5000, 10000, 20000, 30000, 40000, 50000, 60000 };
 		while (true)
 		{
 			int connectionRetryIndex = 0;
 			while (connection.Disconnected)
 			{
-				yield return new WaitForSeconds(connectionRetryDelay[connectionRetryIndex++]);
-				if (connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
+				stopwatch.Start();
+				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex]) yield return new WaitForSeconds(0.1f);
+				stopwatch.Reset();
+				
+				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
 				bool result = connection.Connect();
 				if (!result)
 				{
-					DebugHelper.Log($"[IRC:Connection Failed] - Retrying in {connectionRetryDelay[connectionRetryIndex]} seconds");
+					DebugHelper.Log($"[IRC:Connection Failed] - Retrying in {connectionRetryDelay[connectionRetryIndex]/1000} seconds");
 					//TODO
 					//Post information on how long the connection will be waiting for.
 				}
@@ -133,7 +142,7 @@ public class TwitchPlaysService : MonoBehaviour
 					//Post successful result.
 				}
 			}
-			yield return new WaitUntil(() => connection.Disconnected);
+			while (!connection.Disconnected) yield return new WaitForSeconds(0.1f);
 			DebugHelper.Log("[IRC:Disconnected] - Retrying to reconnect");
 			//TODO
 			//Show the connection status field and updated the fact that we are no longer connected.
@@ -154,6 +163,9 @@ public class TwitchPlaysService : MonoBehaviour
     {
         if (_ircConnection != null)
         {
+	        if (_keepConnectionAlive != null)
+				StopCoroutine(_keepConnectionAlive);
+	        _keepConnectionAlive = null;
             _ircConnection.ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
             _ircConnection.Disconnect();
         }
@@ -167,6 +179,8 @@ public class TwitchPlaysService : MonoBehaviour
         }
 
         StartCoroutine(StopEveryCoroutine());
+		if(_keepConnectionAlive != null)
+			_coroutinesToStart.Enqueue(_keepConnectionAlive);
 
         if (_activeMessageResponder != null)
         {
@@ -188,6 +202,9 @@ public class TwitchPlaysService : MonoBehaviour
         _coroutineQueue.StopQueue();
         _coroutineQueue.CancelFutureSubcoroutines();
         StopAllCoroutines();
+	    while (_coroutinesToStart.Count > 0)
+		    StartCoroutine(_coroutinesToStart.Dequeue());
+
     }
 
     private void SetupResponder(MessageResponder responder)
@@ -206,9 +223,9 @@ public class TwitchPlaysService : MonoBehaviour
                 return bombMessageResponder;
 
             case KMGameInfo.State.Setup:
-                StartCoroutine(VanillaRuleModifier.Refresh());
-                StartCoroutine(MultipleBombs.Refresh());
-	            StartCoroutine(CreateSolversForAllBombComponents());
+	            _coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
+	            _coroutinesToStart.Enqueue(MultipleBombs.Refresh());
+	            _coroutinesToStart.Enqueue(CreateSolversForAllBombComponents());
 
                 return missionMessageResponder;
 
