@@ -119,33 +119,42 @@ public class IRCConnection
     #region Public Methods
     public bool Connect()
     {
-        UnityEngine.Debug.LogFormat("[IRC:Connect] Starting connection to chat IRC {0}:{1}...", _server, _port);
+	    try
+	    {
+		    UnityEngine.Debug.LogFormat("[IRC:Connect] Starting connection to chat IRC {0}:{1}...", _server, _port);
 
-        TcpClient sock = new TcpClient();
-        sock.Connect(_server, _port);
-        if (!sock.Connected)
-        {
-            UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}.", _server, _port);
-            return false;
-        }
+		    TcpClient sock = new TcpClient();
+		    sock.Connect(_server, _port);
+		    if (!sock.Connected)
+		    {
+			    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}.", _server, _port);
+			    return false;
+		    }
 
-        UnityEngine.Debug.Log("[IRC:Connect] Connection to chat IRC successful.");
+		    UnityEngine.Debug.Log("[IRC:Connect] Connection to chat IRC successful.");
 
-        NetworkStream networkStream = sock.GetStream();
-        StreamReader inputStream = new StreamReader(networkStream);
-        StreamWriter outputStream = new StreamWriter(networkStream);
+		    NetworkStream networkStream = sock.GetStream();
+		    StreamReader inputStream = new StreamReader(networkStream);
+		    StreamWriter outputStream = new StreamWriter(networkStream);
 
-        _keepThreadAlive = true;
+		    _keepThreadAlive = true;
 
-        _inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
-        _inputThread.Start();
+		    _inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
+		    _inputThread.Start();
 
-        _outputThread = new Thread(() => OutputThreadMethod(outputStream));
-        _outputThread.Start();
-		
-        SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands", _oauth, Environment.NewLine, _nickName));
+		    _outputThread = new Thread(() => OutputThreadMethod(outputStream));
+		    _outputThread.Start();
 
-        return true;
+		    SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands", _oauth, Environment.NewLine, _nickName));
+
+		    return true;
+	    }
+	    catch (Exception ex)
+	    {
+		    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Exception:", _server, _port);
+			DebugHelper.LogException(ex);
+		    return false;
+	    }
     }
 
     public void Disconnect()
