@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -14,19 +15,40 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	    bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
     }
 
+
+	private bool CanTurnEarlyWithoutStrike()
+	{
+		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
+		int timeRemaining = (int)BombCommander.Bomb.GetTimer().TimeRemaining;
+		if (timeRemaining < time) return false;
+		IEnumerable<BombComponent> components = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved && x.bombComponent != BombComponent).Select(x => x.bombComponent).ToArray();
+		if (components.Any(x => x.GetComponent(_componentType) == null)) return false;
+		return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time));
+	}
+
     private bool OnKeyTurn()
     {
-        _onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-        if (TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate && !(bool)_solvedField.GetValue(BombComponent.GetComponent(_componentType)))
-        {
-            int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
-            float currentBombTime = BombCommander.CurrentTimer;
-            BombCommander.timerComponent.TimeRemaining = time + 0.5f;
-            _onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-            BombCommander.timerComponent.TimeRemaining = currentBombTime;
-        }
-        return false;
+	    bool result = CanTurnEarlyWithoutStrike();
+	    if (!result)
+	    {
+		    _onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
+		    if (!TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate || (bool) _solvedField.GetValue(BombComponent.GetComponent(_componentType))) return false;
+	    }
+	    BombCommander.twitchBombHandle.StartCoroutine(DelayKeyTurn(!result));
+	    return false;
     }
+
+	private IEnumerator DelayKeyTurn(bool restoreBombTimer)
+	{
+		
+		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
+		float currentBombTime = BombCommander.CurrentTimer;
+		BombCommander.timerComponent.TimeRemaining = time + 0.5f + Time.deltaTime;
+		yield return null;
+		_onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
+		if (restoreBombTimer)
+			BombCommander.timerComponent.TimeRemaining = currentBombTime;
+	}
 
     private IEnumerator ReWriteTurnTheKey()
     {
@@ -90,7 +112,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         int waitingTime = (int)(timerComponent.TimeRemaining + 0.25f);
         waitingTime -= timeTarget;
 
-        if (waitingTime >= 30)
+        if (waitingTime >= 30 && !CanTurnEarlyWithoutStrike())
         {
             yield return "elevator music";
         }
@@ -113,7 +135,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
                 sortedTimes.RemoveAt(0);
                 continue;
             }
-            if (timeRemaining == timeTarget)
+            if (timeRemaining == timeTarget || CanTurnEarlyWithoutStrike())
             {
                 yield return DoInteractionClick(_lock);
                 break;
