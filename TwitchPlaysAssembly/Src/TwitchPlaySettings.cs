@@ -41,6 +41,8 @@ public class TwitchPlaySettingsData
 	public float TimeModeTimerStrikePenalty = 0.25f;
 	public int TimeModeMinimumTimeLost = 15;
 
+	public string IRCManagerBackgroundImage = Path.Combine(Application.persistentDataPath, "TwitchPlaysIRCManagerBackground.png");
+	public Color IRCManagerTextColor = new Color(1.00f, 0.44f, 0.00f);
 
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();
@@ -151,7 +153,7 @@ public class TwitchPlaySettingsData
 
     public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
-    private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
+	private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
     {
         MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
         int count = matches.Count > 0 

@@ -41,7 +41,6 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private HashSet<Mod> CheckedMods = null;
 	private TwitchPlaysProperties _publicProperties;
-	private IEnumerator _keepConnectionAlive = null;
 	private Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
 	
 
@@ -70,9 +69,9 @@ public class TwitchPlaysService : MonoBehaviour
 
         DebugMode = (settings.debug == true);
 		
-        _ircConnection = new IRCConnection(settings.authToken, settings.userName, settings.channelName, settings.serverName, settings.serverPort);
-	    _keepConnectionAlive = KeepConnectionAlive(_ircConnection);
-		StartCoroutine(_keepConnectionAlive);
+        _ircConnection = IRCConnection.MakeIRCConnection(settings.authToken, settings.userName, settings.channelName, settings.serverName, settings.serverPort);
+	    if (_ircConnection != null)
+		    _ircConnection.transform.SetParent(transform);
 
         _coroutineCanceller = new CoroutineCanceller();
 
@@ -114,45 +113,10 @@ public class TwitchPlaysService : MonoBehaviour
 	    _publicProperties.TwitchPlaysService = this;
 	}
 
-	private IEnumerator KeepConnectionAlive(IRCConnection connection)
-	{
-		Stopwatch stopwatch = new Stopwatch();
-		int[] connectionRetryDelay = { 100, 1000, 2000, 5000, 10000, 20000, 30000, 40000, 50000, 60000 };
-		while (true)
-		{
-			int connectionRetryIndex = 0;
-			while (connection.Disconnected)
-			{
-				stopwatch.Start();
-				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex]) yield return new WaitForSeconds(0.1f);
-				stopwatch.Reset();
-				
-				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
-				bool result = connection.Connect();
-				if (!result)
-				{
-					DebugHelper.Log($"[IRC:Connection Failed] - Retrying in {connectionRetryDelay[connectionRetryIndex]/1000} seconds");
-					//TODO
-					//Post information on how long the connection will be waiting for.
-				}
-				else
-				{
-					DebugHelper.Log("[IRC:Connection] Successful");
-					//TODO
-					//Post successful result.
-				}
-			}
-			while (!connection.Disconnected) yield return new WaitForSeconds(0.1f);
-			DebugHelper.Log("[IRC:Disconnected] - Retrying to reconnect");
-			//TODO
-			//Show the connection status field and updated the fact that we are no longer connected.
-		}
-	}
+	
 
 	private void Update()
     {
-	    _ircConnection?.Update();
-
         if (Input.GetKey(KeyCode.Escape))
         {
             InputInterceptor.EnableInput();
@@ -163,9 +127,6 @@ public class TwitchPlaysService : MonoBehaviour
     {
         if (_ircConnection != null)
         {
-	        if (_keepConnectionAlive != null)
-				StopCoroutine(_keepConnectionAlive);
-	        _keepConnectionAlive = null;
             _ircConnection.ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
             _ircConnection.Disconnect();
         }
@@ -179,8 +140,6 @@ public class TwitchPlaysService : MonoBehaviour
         }
 
         StartCoroutine(StopEveryCoroutine());
-		if(_keepConnectionAlive != null)
-			_coroutinesToStart.Enqueue(_keepConnectionAlive);
 
         if (_activeMessageResponder != null)
         {

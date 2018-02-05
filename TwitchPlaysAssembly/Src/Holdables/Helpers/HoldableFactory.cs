@@ -22,8 +22,10 @@ public static class HoldableFactory
 	static HoldableFactory()
 	{
 		ModHoldableCreators[typeof(AlarmClock).FullName] = (commander, holdable, ircConnection, canceller) => new AlarmClockHoldableHandler(commander, holdable, ircConnection, canceller);
-
 		ModHoldableTypes.Add(typeof(AlarmClock));
+
+		ModHoldableCreators[typeof(IRCConnectionManagerHoldable).FullName] = (commander, holdable, ircConnection, canceller) => new IRCConnectionManagerHandler(commander, holdable, ircConnection, canceller);
+		ModHoldableTypes.Add(typeof(IRCConnectionManagerHoldable));
 	}
 
 	public static HoldableHandler CreateHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller)
