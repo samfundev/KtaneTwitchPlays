@@ -209,7 +209,7 @@ public class IRCConnection : MonoBehaviour
 
 	private bool IsAuthTokenValid(string authtoken)
 	{
-		return !string.IsNullOrEmpty(authtoken) && authtoken.StartsWith("oauth:");
+		return !string.IsNullOrEmpty(authtoken) && Regex.IsMatch(authtoken, "^oauth:[a-z0-9]{30}$");
 	}
 
 	public void Connect()
@@ -247,8 +247,27 @@ public class IRCConnection : MonoBehaviour
 
 			if (!IsAuthTokenValid(_settings.authToken) || !IsUsernameValid(_settings.channelName) || !IsUsernameValid(_settings.userName) || string.IsNullOrEmpty(_settings.serverName) || _settings.serverPort < 1 || _settings.serverPort > 65535)
 			{
-				AddTextToHoldable("Your settings file is not configured correctly.");
-				DebugHelper.LogError("Your settings file is not configured correctly.");
+				AddTextToHoldable("Your settings file is not configured correctly.\nThe following items need to be configured:\n");
+				if (!IsAuthTokenValid(_settings.authToken))
+				{
+					AddTextToHoldable("AuthToken - Be sure oauth: is included.\n-   Retrieve from https://twitchapps.com/tmi/");
+				}
+				if (!IsUsernameValid(_settings.userName))
+				{
+					AddTextToHoldable("userName");
+				}
+				if (!IsUsernameValid(_settings.channelName))
+				{
+					AddTextToHoldable("channelName");
+				}
+				if (string.IsNullOrEmpty(_settings.serverName))
+				{
+					AddTextToHoldable("serverName - Most likely to be irc.twitch.tv");
+				}
+				if (_settings.serverPort < 1 || _settings.serverPort > 65535)
+				{
+					AddTextToHoldable("serverPort - Most likely to be 6667");
+				}
 				return;
 			}
 		}

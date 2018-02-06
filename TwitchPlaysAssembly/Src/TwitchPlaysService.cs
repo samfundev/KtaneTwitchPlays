@@ -12,11 +12,11 @@ public class TwitchPlaysService : MonoBehaviour
 {
     public class ModSettingsJSON
     {
-        public string authToken;
-        public string userName;
-        public string channelName;
-        public string serverName;
-        public int serverPort;
+	    public string authToken = "";
+	    public string userName = "";
+        public string channelName = "";
+        public string serverName = "irc.twitch.tv";
+        public int serverPort = 6667;
         public bool debug = false;
         public bool shortUrls = false;
     }
