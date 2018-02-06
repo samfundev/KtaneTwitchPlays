@@ -115,9 +115,7 @@ GameObject:
   - component: {fileID: 114732843032173912}
   - component: {fileID: 54713257787495892}
   - component: {fileID: 114904243049114518}
-  - component: {fileID: 114195732005270464}
   - component: {fileID: 114165197754960094}
-  - component: {fileID: 114760867221342492}
   m_Layer: 0
   m_Name: IRCManager
   m_TagString: Untagged
@@ -628,7 +626,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - GUI/Text Shader
+  - GUI/KT 3D Text
 --- !u!114 &114148277867681138
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -656,17 +654,6 @@ MonoBehaviour:
   ConnectButton: {fileID: 114950019523852864}
   ConnectButtonText: {fileID: 102800978427937984}
   IRCText: {fileID: 102270407139426480}
---- !u!114 &114195732005270464
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1850551670494914}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1675560866, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114247134355424304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -679,7 +666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Standard
+  - KT/Mobile/DiffuseTint
 --- !u!114 &114296709722602914
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -692,7 +679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Standard
+  - KT/Mobile/DiffuseTint
 --- !u!114 &114304808105723516
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -705,7 +692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - GUI/Text Shader
+  - GUI/KT 3D Text
 --- !u!114 &114401464468199732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -778,17 +765,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 759786898, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114760867221342492
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1850551670494914}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1675560866, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114800186103900648

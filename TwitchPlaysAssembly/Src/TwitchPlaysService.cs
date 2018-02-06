@@ -45,7 +45,8 @@ public class TwitchPlaysService : MonoBehaviour
 	
 
 	private void Start()
-    {
+	{
+		transform.Find("Prefabs").gameObject.SetActive(false);
 	    bombMessageResponder = GetComponentInChildren<BombMessageResponder>(true);
 	    postGameMessageResponder = GetComponentInChildren<PostGameMessageResponder>(true);
 	    missionMessageResponder = GetComponentInChildren<MissionMessageResponder>(true);
@@ -68,10 +69,8 @@ public class TwitchPlaysService : MonoBehaviour
         }
 
         DebugMode = (settings.debug == true);
-		
-        _ircConnection = IRCConnection.MakeIRCConnection(_modSettings);
-	    if (_ircConnection != null)
-		    _ircConnection.transform.SetParent(transform);
+
+	    _ircConnection = GetComponent<IRCConnection>();
 
         _coroutineCanceller = new CoroutineCanceller();
 
@@ -91,10 +90,6 @@ public class TwitchPlaysService : MonoBehaviour
         ModuleData.WriteDataToFile();
 
         TwitchPlaySettings.LoadDataFromFile();
-
-        UserAccess.AddUser(settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
-        UserAccess.AddUser(settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
-        UserAccess.WriteAccessList();
 
         SetupResponder(bombMessageResponder);
         SetupResponder(postGameMessageResponder);

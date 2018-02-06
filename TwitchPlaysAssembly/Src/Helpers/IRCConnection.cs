@@ -107,20 +107,11 @@ public class IRCConnection : MonoBehaviour
     }
     #endregion
 
-    #region Constructor
-    public static IRCConnection MakeIRCConnection(KMModSettings settings)
-    {
-	    GameObject go = new GameObject("IRCConnection");
-	    IRCConnection connection = go.AddComponent<IRCConnection>();
-	    connection._ircConnectionSettings = settings;
-	    Instance = connection;
-	    return connection;
-    }
-	#endregion
-
 	#region UnityLifeCycle
 	private void Start()
 	{
+		Instance = this;
+		_ircConnectionSettings = GetComponent<KMModSettings>();
 		Connect();
 	}
 
@@ -525,7 +516,7 @@ public class IRCConnection : MonoBehaviour
 	    {
 		    _commandQueue.Clear();
 	    }
-    }
+	}
 
     private void SetDelay(string badges, string nickname, string channel)
     {
@@ -596,7 +587,10 @@ public class IRCConnection : MonoBehaviour
         {
 	        AddTextToHoldable(groups[0].Value);
             connection.SendCommand(string.Format("JOIN #{0}", connection._settings.channelName));
-        }),
+	        UserAccess.AddUser(connection._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+	        UserAccess.AddUser(connection._settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+	        UserAccess.WriteAccessList();
+		}),
 
 		new ActionMap(@"\S* NOTICE \* :Login authentication failed", delegate(IRCConnection connection, GroupCollection groups)
 		{
