@@ -464,7 +464,18 @@ public class BombMessageResponder : MessageResponder
             return;
         }
 
-        
+	    if (text.StartsWith("assign ", StringComparison.InvariantCultureIgnoreCase))
+	    {
+		    var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || split.Length < 3) return;
+		    foreach (var assign in split.Skip(2))
+		    {
+			    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
+			    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+			    handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} assign {1}", assign, split[1]));
+		    }
+		    return;
+	    }
 
 		if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase))
 		{
