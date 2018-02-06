@@ -6,6 +6,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -107,16 +108,11 @@ public class IRCConnection : MonoBehaviour
     #endregion
 
     #region Constructor
-    public static IRCConnection MakeIRCConnection(string oauth, string nickName, string channelName, string server, int port)
+    public static IRCConnection MakeIRCConnection(KMModSettings settings)
     {
 	    GameObject go = new GameObject("IRCConnection");
 	    IRCConnection connection = go.AddComponent<IRCConnection>();
-
-	    connection._oauth = oauth;
-	    connection._nickName = nickName.ToLower();
-	    connection._channelName = channelName;
-	    connection._server = server;
-	    connection._port = port;
+	    connection._ircConnectionSettings = settings;
 	    Instance = connection;
 	    return connection;
     }
@@ -125,7 +121,7 @@ public class IRCConnection : MonoBehaviour
 	#region UnityLifeCycle
 	private void Start()
 	{
-		StartCoroutine(KeepConnectionAlive());
+		Connect();
 	}
 
 	private void Update()
@@ -136,16 +132,20 @@ public class IRCConnection : MonoBehaviour
 			{
 				Message message = _messageQueue.Dequeue();
 				OnMessageReceived.Invoke(message.UserNickName, message.UserColorCode, message.Text);
-				IRCConnectionManagerHoldable.ircTextToDisplay.AddRange($"{message.UserNickName}: {message.Text}".Wrap(60).Split(new[] { "\n" }, StringSplitOptions.None));
 			}
 		}
+	}
+
+	private static void AddTextToHoldable(string text, params object[]args)
+	{
+		IRCConnectionManagerHoldable.IRCTextToDisplay.AddRange(string.Format(text,args).Wrap(60).Split(new[] { "\n" }, StringSplitOptions.None));
 	}
 	#endregion
 
 	#region Public Methods
 	public IEnumerator KeepConnectionAlive()
 	{
-		IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Connection] Connecting to IRC");
+		AddTextToHoldable("[IRC:Connection] Connecting to IRC");
 		Stopwatch stopwatch = new Stopwatch();
 		int[] connectionRetryDelay = { 100, 1000, 2000, 5000, 10000, 20000, 30000, 40000, 50000, 60000 };
 		while (true)
@@ -154,54 +154,144 @@ public class IRCConnection : MonoBehaviour
 			while (State != IRCConnectionState.Connected)
 			{
 				stopwatch.Start();
-				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex]) yield return new WaitForSeconds(0.1f);
+				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex])
+				{
+					yield return new WaitForSeconds(0.1f);
+					if (State == IRCConnectionState.DoNotRetry)
+					{
+						State = IRCConnectionState.Disconnected;
+						AddTextToHoldable("\nCancelled connection retry attempt");
+						yield break;
+					}
+				}
 				stopwatch.Reset();
 
 				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
-				bool result = ConnectToIRC();
-				if (!result)
+				Thread connectionAttempt = new Thread(ConnectToIRC);
+				connectionAttempt.Start();
+				while (connectionAttempt.IsAlive) yield return null;
+				switch (State)
 				{
-					State = IRCConnectionState.Retrying;
-					IRCConnectionManagerHoldable.ircTextToDisplay.Add($"[IRC:Connection Failed] - Retrying in {connectionRetryDelay[connectionRetryIndex] / 1000} seconds");
-				}
-				else
-				{
-					IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Connection] Successful");
+					case IRCConnectionState.DoNotRetry:
+						State = IRCConnectionState.Disconnected;
+						AddTextToHoldable("Connection attempt aborted.");
+						yield break;
+					case IRCConnectionState.Connected:
+						AddTextToHoldable("[IRC:Connection] Successful");
+						break;
+					default:
+						State = IRCConnectionState.Retrying;
+						AddTextToHoldable($"[IRC:Connection Failed] - Retrying in {connectionRetryDelay[connectionRetryIndex] / 1000} seconds");
+						break;
 				}
 			}
 			while (State == IRCConnectionState.Connected) yield return new WaitForSeconds(0.1f);
-			IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Disconnected] - Retrying to reconnect");
+			switch (State)
+			{
+				case IRCConnectionState.DoNotRetry:
+					State = IRCConnectionState.Disconnected;
+					yield break;
+				case IRCConnectionState.Disconnecting:
+					UnityEngine.Debug.Log("[IRC:Disconnect] Disconnecting from chat IRC.");
+					AddTextToHoldable("[IRC:Disconnect] Disconnecting from chat IRC.");
+					yield break;
+				default:
+					AddTextToHoldable("[IRC:Disconnected] - Retrying to reconnect");
+					break;
+			}
 		}
+	}
+
+	private bool IsUsernameValid(string username)
+	{
+		return !string.IsNullOrEmpty(username) && Regex.IsMatch(username, "^(#)?[a-z0-9][a-z0-9_]{2,24}$");
+	}
+
+	private bool IsAuthTokenValid(string authtoken)
+	{
+		return !string.IsNullOrEmpty(authtoken) && authtoken.StartsWith("oauth:");
 	}
 
 	public void Connect()
 	{
+		if (!File.Exists(_ircConnectionSettings.SettingsPath))
+		{
+			AddTextToHoldable("The settings file does not exist. Trying to create it now.");
+			DebugHelper.LogError("The settings file does not exist. Trying to create it now.");
+			try
+			{
+				File.WriteAllText(_ircConnectionSettings.SettingsPath, JsonConvert.SerializeObject(new TwitchPlaysService.ModSettingsJSON(), Formatting.Indented));
+				AddTextToHoldable("Settings file successfully created. Configure it now.");
+			}
+			catch (Exception ex)
+			{
+				AddTextToHoldable("Could not create the settings file due to Exception:\n{0}\nLook at output_log.txt for stack trace", ex.Message);
+				DebugHelper.LogException(ex, "Settings file did not exist and could not be created:");
+			}
+			return;
+		}
+		try
+		{
+			_settings = JsonConvert.DeserializeObject<TwitchPlaysService.ModSettingsJSON>(File.ReadAllText(_ircConnectionSettings.SettingsPath));
+			if (_settings == null)
+			{
+				AddTextToHoldable("Failed to read connection settings from mod settings.");
+				DebugHelper.LogError("Failed to read connection settings from mod settings.");
+				return;
+			}
+
+			_settings.authToken = _settings.authToken.ToLowerInvariant();
+			_settings.channelName = _settings.channelName.Replace("#","").ToLowerInvariant();
+			_settings.userName = _settings.userName.Replace("#","").ToLowerInvariant();
+			_settings.serverName = _settings.serverName.ToLowerInvariant();
+
+			if (!IsAuthTokenValid(_settings.authToken) || !IsUsernameValid(_settings.channelName) || !IsUsernameValid(_settings.userName) || string.IsNullOrEmpty(_settings.serverName) || _settings.serverPort < 1 || _settings.serverPort > 65535)
+			{
+				AddTextToHoldable("Your settings file is not configured correctly.");
+				DebugHelper.LogError("Your settings file is not configured correctly.");
+				return;
+			}
+		}
+		catch (Exception ex)
+		{
+			AddTextToHoldable("Failed to read connection settings from mod settings due to an Exception:\n{0}\nLook at output_log.txt for stack trace", ex.Message);
+			DebugHelper.LogException(ex, "Failed to read connection settings from mod settings due to an exception:");
+			return;
+		}
+
 		StartCoroutine(KeepConnectionAlive());
 	}
 
-	private bool ConnectToIRC()
+	private void ConnectToIRC()
 	{
 		State = IRCConnectionState.Connecting;
 	    try
 	    {
-		    UnityEngine.Debug.LogFormat("[IRC:Connect] Starting connection to chat IRC {0}:{1}...", _server, _port);
-		    IRCConnectionManagerHoldable.ircTextToDisplay.Add(string.Format("[IRC:Connect] Starting connection to chat IRC {0}:{1}...", _server, _port));
+		    UnityEngine.Debug.LogFormat("[IRC:Connect] Starting connection to chat IRC {0}:{1}...", _settings.serverName, _settings.serverPort);
+		    AddTextToHoldable("[IRC:Connect] Starting connection to chat IRC {0}:{1}...", _settings.serverName, _settings.serverPort);
 
 			TcpClient sock = new TcpClient();
-		    sock.Connect(_server, _port);
+		    sock.Connect(_settings.serverName, _settings.serverPort);
 		    if (!sock.Connected)
 		    {
-			    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}.", _server, _port);
-			    IRCConnectionManagerHoldable.ircTextToDisplay.Add(string.Format("[IRC:Connect] Failed to connect to chat IRC {0}:{1}.", _server, _port));
-				return false;
+			    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}.", _settings.serverName, _settings.serverPort);
+			    AddTextToHoldable("[IRC:Connect] Failed to connect to chat IRC {0}:{1}.", _settings.serverName, _settings.serverPort);
+				return;
 		    }
 
 		    UnityEngine.Debug.Log("[IRC:Connect] Connection to chat IRC successful.");
-		    IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Connect] Connection to chat IRC successful.");
+		    AddTextToHoldable("[IRC:Connect] Connection to chat IRC successful.");
 
 			NetworkStream networkStream = sock.GetStream();
 		    StreamReader inputStream = new StreamReader(networkStream);
 		    StreamWriter outputStream = new StreamWriter(networkStream);
+
+		    if (State == IRCConnectionState.DoNotRetry)
+		    {
+			    networkStream.Close();
+			    sock.Close();
+			    return;
+		    }
 
 		    State = IRCConnectionState.Connected;
 
@@ -211,48 +301,62 @@ public class IRCConnection : MonoBehaviour
 		    _outputThread = new Thread(() => OutputThreadMethod(outputStream));
 		    _outputThread.Start();
 
-		    SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands", _oauth, Environment.NewLine, _nickName));
-
-		    return true;
+		    SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands", _settings.authToken, Environment.NewLine, _settings.userName));
+			AddTextToHoldable("PASS oauth:*****REDACTED******\nNICK {0}\nCAP REQ :twitch.tv/tags\nCAP REQ :twitch.tv/commands", _settings.userName);
 	    }
 	    catch (SocketException ex)
 	    {
-		    State = IRCConnectionState.Disconnected;
-		    string connectionFailure = string.Format("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Socket Exception: {2} - {3}", _server, _port, ex.SocketErrorCode, ex.Message);
+			
+		    string connectionFailure = string.Format("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Socket Exception: {2} - {3}", _settings.serverName, _settings.serverPort, ex.SocketErrorCode, ex.Message);
 		    UnityEngine.Debug.LogErrorFormat(connectionFailure);
-			IRCConnectionManagerHoldable.ircTextToDisplay.AddRange(connectionFailure.Wrap(60).Split(new []{"\n"},StringSplitOptions.None));
-		    return false;
+		    AddTextToHoldable(connectionFailure);
+		    switch (ex.SocketErrorCode)
+		    {
+				case SocketError.ConnectionRefused:
+				case SocketError.AccessDenied:
+					State = IRCConnectionState.DoNotRetry;
+					break;
+				default:
+					if(State != IRCConnectionState.DoNotRetry)
+						State = IRCConnectionState.Disconnected;
+					break;
+			}
 	    }
 	    catch (Exception ex)
 	    {
-		    State = IRCConnectionState.Disconnected;
-		    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Exception:", _server, _port);
+		    State = IRCConnectionState.DoNotRetry;
+		    UnityEngine.Debug.LogErrorFormat("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Exception:", _settings.serverName, _settings.serverPort);
+		    AddTextToHoldable("[IRC:Connect] Failed to connect to chat IRC {0}:{1}. Due to the following Exception:\n{2}\nSee output_log.txt for Stack trace", _settings.serverName, _settings.serverPort, ex.Message);
 			DebugHelper.LogException(ex);
-		    return false;
 	    }
     }
 
     public void Disconnect()
     {
-	    DebugHelper.Log("[IRC] Stopping All coroutines");
-	    StopAllCoroutines();
-	    DebugHelper.Log($"[IRC] State = {State.ToString()}");
-		if (State != IRCConnectionState.Connected) return;
-	    DebugHelper.Log("[IRC] Setting IRC disconnect color");
-		ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
-	    DebugHelper.Log("[IRC] Setting the Disconnecting state");
-		State = IRCConnectionState.Disconnecting;
-	    DebugHelper.Log("[IRC] Output final disconnect message to log");
-		UnityEngine.Debug.Log("[IRC:Disconnect] Disconnecting from chat IRC.");
-	    IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Disconnect] Disconnecting from chat IRC.");
-	}
+	    // ReSharper disable once SwitchStatementMissingSomeCases
+	    switch (State)
+	    {
+			case IRCConnectionState.Connecting:
+			case IRCConnectionState.Retrying:
+				State = IRCConnectionState.DoNotRetry;
+				break;
+			case IRCConnectionState.Connected:
+				ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
+				State = IRCConnectionState.Disconnecting;
+				break;
+			default:
+				State = IRCConnectionState.Disconnected;
+				break;
+
+		}
+    }
 
     public new void SendMessage(string message)
     {
         if (_silenceMode || State == IRCConnectionState.Disconnected) return;
         foreach (string line in message.Wrap(MaxMessageLength).Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
         {
-            SendCommand(string.Format("PRIVMSG #{0} :{1}", _channelName, line));
+            SendCommand(string.Format("PRIVMSG #{0} :{1}", _settings.channelName, line));
         }
     }
 
@@ -265,12 +369,12 @@ public class IRCConnection : MonoBehaviour
     {
         if (!_silenceMode)
         {
-            SendCommand(string.Format("PRIVMSG #{0} :Silence mode on", _channelName));
+            SendCommand(string.Format("PRIVMSG #{0} :Silence mode on", _settings.channelName));
         }
         _silenceMode = !_silenceMode;
         if (!_silenceMode)
         {
-            SendCommand(string.Format("PRIVMSG #{0} :Silence mode off", _channelName));
+            SendCommand(string.Format("PRIVMSG #{0} :Silence mode off", _settings.channelName));
         }
     }
     #endregion
@@ -303,7 +407,7 @@ public class IRCConnection : MonoBehaviour
 			    if (stopwatch.ElapsedMilliseconds > 360000)
 			    {
 				    UnityEngine.Debug.Log("[IRC:Disconnect] Connection timed out.");
-				    IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Disconnect] Connection timed out.");
+				    AddTextToHoldable("[IRC:Disconnect] Connection timed out.");
 					stopwatch.Reset();
 				    State = IRCConnectionState.Disconnected;
 				    continue;
@@ -329,7 +433,7 @@ public class IRCConnection : MonoBehaviour
 	    catch
 	    {
 		    UnityEngine.Debug.Log("[IRC:Disconnect] Connection failed.");
-		    IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Disconnect] Connection failed.");
+		    AddTextToHoldable("[IRC:Disconnect] Connection failed.");
 			State = IRCConnectionState.Disconnected;
 	    }
     }
@@ -370,18 +474,18 @@ public class IRCConnection : MonoBehaviour
 	        catch
 	        {
 		        UnityEngine.Debug.Log("[IRC:Disconnect] Connection failed.");
-		        IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Disconnect] Connection failed.");
+		        AddTextToHoldable("[IRC:Disconnect] Connection failed.");
 				State = IRCConnectionState.Disconnected;
 	        }
         }
 
 	    if (State == IRCConnectionState.Disconnecting)
 	    {
-		    Commands setColor = new Commands(string.Format("PRIVMSG #{0} :.color {1}", _channelName, ColorOnDisconnect));
+		    Commands setColor = new Commands(string.Format("PRIVMSG #{0} :.color {1}", _settings.channelName, ColorOnDisconnect));
 		    if (setColor.CommandIsColor())
 		    {
 			    UnityEngine.Debug.LogFormat("[IRC:Disconnect] Color {0} was requested, setting it now.", ColorOnDisconnect);
-			    IRCConnectionManagerHoldable.ircTextToDisplay.Add(string.Format("[IRC:Disconnect] Color {0} was requested, setting it now.", ColorOnDisconnect));
+			    AddTextToHoldable("[IRC:Disconnect] Color {0} was requested, setting it now.", ColorOnDisconnect);
 				while (stopWatch.ElapsedMilliseconds < _messageDelay)
 			    {
 			    }
@@ -396,7 +500,7 @@ public class IRCConnection : MonoBehaviour
 		    }
 		    State = IRCConnectionState.Disconnected;
 		    UnityEngine.Debug.Log("[IRC:Disconnect] Disconnected from chat IRC.");
-		    IRCConnectionManagerHoldable.ircTextToDisplay.Add("[IRC:Disconnect] Disconnected from chat IRC.");
+		    AddTextToHoldable("[IRC:Disconnect] Disconnected from chat IRC.");
 		}
 	    lock (_commandQueue)
 	    {
@@ -406,8 +510,8 @@ public class IRCConnection : MonoBehaviour
 
     private void SetDelay(string badges, string nickname, string channel)
     {
-        if (channel.Equals(_channelName, StringComparison.InvariantCultureIgnoreCase) &&
-            nickname.Equals(_nickName, StringComparison.InvariantCultureIgnoreCase))
+        if (channel.Equals(_settings.channelName, StringComparison.InvariantCultureIgnoreCase) &&
+            nickname.Equals(_settings.userName, StringComparison.InvariantCultureIgnoreCase))
         {
             _messageDelay = MessageDelayUser;
             if (string.IsNullOrEmpty(badges))
@@ -440,11 +544,13 @@ public class IRCConnection : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(groups[2].Value))
             {
-                connection.ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
+	            AddTextToHoldable($"<{groups[2].Value}>: {groups[5].Value}");
+				connection.ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
             }
             else
             {
-                connection.ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
+	            AddTextToHoldable($"<{groups[3].Value}>: {groups[5].Value}");
+				connection.ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
             }
         }),
 
@@ -457,20 +563,38 @@ public class IRCConnection : MonoBehaviour
 
         new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(IRCConnection connection, GroupCollection groups)
         {
-            connection.ReceiveMessage(groups[1].Value, null, groups[3].Value);
+	        AddTextToHoldable($"<{groups[1].Value}>: {groups[3].Value}");
+			connection.ReceiveMessage(groups[1].Value, null, groups[3].Value);
         }),
 
         new ActionMap(@"PING (.+)", delegate(IRCConnection connection, GroupCollection groups)
         {
-            connection.SendCommand(string.Format("PONG {0}", groups[1].Value));
+	        AddTextToHoldable($"---PING--- ---PONG--- {groups[1].Value}");
+			connection.SendCommand(string.Format("PONG {0}", groups[1].Value));
         }),
 
-        new ActionMap(@"\S* 001", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@"\S* 001.*", delegate(IRCConnection connection, GroupCollection groups)
         {
-            connection.SendCommand(string.Format("JOIN #{0}", connection._channelName));
+	        AddTextToHoldable(groups[0].Value);
+            connection.SendCommand(string.Format("JOIN #{0}", connection._settings.channelName));
         }),
 
-        new ActionMap(@".+", delegate(IRCConnection connection, GroupCollection groups){})  //Log otherwise uncaptured lines.
+		new ActionMap(@"\S* NOTICE \* :Login authentication failed", delegate(IRCConnection connection, GroupCollection groups)
+		{
+			AddTextToHoldable(groups[0].Value);
+			connection.State = IRCConnectionState.DoNotRetry;
+		}),
+
+		new ActionMap(@"\S* RECONNECT.*", delegate(IRCConnection connection, GroupCollection groups)
+		{
+			AddTextToHoldable(groups[0].Value);
+			connection.State = IRCConnectionState.Disconnected;
+		}),
+
+        new ActionMap(@".+", delegate(IRCConnection connection, GroupCollection groups)
+        {
+	        AddTextToHoldable(groups[0].Value);
+		})  //Log otherwise uncaptured lines.
     };
     #endregion
 
@@ -481,12 +605,9 @@ public class IRCConnection : MonoBehaviour
 	public IRCConnectionState State { get; private set; } = IRCConnectionState.Disconnected;
 	#endregion
 
-    #region Private Fields
-    private string _oauth = null;
-    private string _nickName = null;
-    private string _channelName = null;
-    private string _server = null;
-    private int _port = 0;
+	#region Private Fields
+	private KMModSettings _ircConnectionSettings;
+	private TwitchPlaysService.ModSettingsJSON _settings;
     private const int MessageDelayUser = 2000;
     private const int MessageDelayMod = 500;
     private const int MaxMessageLength = 480;
@@ -501,11 +622,12 @@ public class IRCConnection : MonoBehaviour
 
     private Queue<Message> _messageQueue = new Queue<Message>();
     private Queue<Commands> _commandQueue = new Queue<Commands>();
-    #endregion
+	#endregion
 }
 
 public enum IRCConnectionState
 {
+	DoNotRetry,
 	Disconnected,
 	Disconnecting,
 	Retrying,

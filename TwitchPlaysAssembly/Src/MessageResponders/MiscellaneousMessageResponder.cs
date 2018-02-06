@@ -509,7 +509,7 @@ public class MiscellaneousMessageResponder : MessageResponder
                     UserAccess.AddUser(userNickName, AccessLevel.Streamer);
                 if (superuser)
                     UserAccess.AddUser(userNickName, AccessLevel.SuperUser);
-	            IRCConnectionManagerHoldable.ircTextToDisplay.Add("TWITCHPLAYS DATA RELOADED");
+	            IRCConnectionManagerHoldable.TwitchPlaysDataRefreshed = true;
 				_ircConnection.SendMessage("Data reloaded");
             }
             else if (text.Equals("enabletwitchplays", StringComparison.InvariantCultureIgnoreCase))

@@ -50,17 +50,24 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 	public TextMesh ConnectButtonText;
 	public TextMesh IRCText;
 
-	private string backgroundImage = "";
-	private Color textColor = new Color(1.00f, 0.44f, 0.00f);
+	private static bool _imageLoadingDisabled = false;
+	private Transform _imageTransform;
+	private Transform _originalTransform;
 
 	[HideInInspector]
-	public static List<string> ircTextToDisplay = new List<string>();
+	public static List<string> IRCTextToDisplay = new List<string>();
+
+	[HideInInspector]
+	public static bool TwitchPlaysDataRefreshed = false;
 
 	private void Start()
 	{
+		_originalTransform = transform.Find("TPQuad");
+		_imageTransform = Instantiate(_originalTransform.gameObject, transform).transform;
+
 		ConnectButton.OnInteract += ConnectDisconnect;
 		ConnectButton.OnInteractEnded += () => MasterAudio.PlaySound3DAtTransformAndForget("press-release", transform, 1f, null, 0f, null);
-
+		StartCoroutine(RefreshIRCBackground());
 	}
 
 	private bool ConnectDisconnect()
@@ -76,39 +83,54 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 		{
 			IRCConnection.Instance.Disconnect();
 		}
-
 		return false;
+	}
+
+	private IEnumerator RefreshIRCBackground()
+	{
+		yield return null;
+
+		if (_imageLoadingDisabled) yield break;
+		yield return null;
+		IRCText.color = TwitchPlaySettings.data.IRCManagerTextColor;
+		try
+		{
+			//Image loading at runtime found at https://forum.unity.com/threads/solved-apply-image-to-plane-primitive.320489/
+			if (!File.Exists(TwitchPlaySettings.data.IRCManagerBackgroundImage))
+			{
+				_originalTransform.gameObject.SetActive(true);
+				_imageTransform?.gameObject.SetActive(false);
+				yield break;
+			}
+
+			_originalTransform.gameObject.SetActive(false);
+			_imageTransform.gameObject.SetActive(true);
+
+			MeshRenderer background = _imageTransform.GetComponent<MeshRenderer>();
+			var bytes = File.ReadAllBytes(TwitchPlaySettings.data.IRCManagerBackgroundImage);
+			var tex = new Texture2D(1, 1);
+			tex.LoadImage(bytes);
+			background.material.mainTexture = tex;
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "Could NOT set a custom background image due to an exception. Feature is being disabled for the rest of this session:");
+			_imageLoadingDisabled = true;
+			TwitchPlaySettings.WriteDataToFile();
+			_originalTransform.gameObject.SetActive(true);
+			_imageTransform?.gameObject.SetActive(false);
+		}
 	}
 
 	private void Update()
 	{
-		bool forceRefresh = ircTextToDisplay.Contains("TWITCHPLAYS DATA RELOADED");
-		ircTextToDisplay.Remove("TWITCHPLAYS DATA RELOADED");
-
 		ConnectButtonText.text = IRCConnection.Instance.State.ToString();
-		if (ircTextToDisplay.Count > 28)
-			ircTextToDisplay = ircTextToDisplay.TakeLast(28).ToList();
-		IRCText.text = string.Join("\n", ircTextToDisplay.ToArray());
+		if (IRCTextToDisplay.Count > 28)
+			IRCTextToDisplay = IRCTextToDisplay.TakeLast(28).ToList();
+		IRCText.text = string.Join("\n", IRCTextToDisplay.ToArray());
 
-		if (textColor != TwitchPlaySettings.data.IRCManagerTextColor || forceRefresh)
-		{
-			textColor = TwitchPlaySettings.data.IRCManagerTextColor;
-			IRCText.color = textColor;
-		}
-
-		if (backgroundImage != TwitchPlaySettings.data.IRCManagerBackgroundImage || forceRefresh)
-		{
-			backgroundImage = TwitchPlaySettings.data.IRCManagerBackgroundImage;
-			//Image loading at runtime found at https://forum.unity.com/threads/solved-apply-image-to-plane-primitive.320489/
-			if (File.Exists(backgroundImage))
-			{
-				MeshRenderer background = transform.Find("TPQuad").GetComponent<MeshRenderer>();
-				var bytes = File.ReadAllBytes(backgroundImage);
-				var tex = new Texture2D(1, 1);
-				tex.LoadImage(bytes);
-				background.material.mainTexture = tex;
-			}
-		}
-
+		if (!TwitchPlaysDataRefreshed) return;
+		StartCoroutine(RefreshIRCBackground());
+		TwitchPlaysDataRefreshed = false;
 	}
 }

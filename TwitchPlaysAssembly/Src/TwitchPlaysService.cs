@@ -69,7 +69,7 @@ public class TwitchPlaysService : MonoBehaviour
 
         DebugMode = (settings.debug == true);
 		
-        _ircConnection = IRCConnection.MakeIRCConnection(settings.authToken, settings.userName, settings.channelName, settings.serverName, settings.serverPort);
+        _ircConnection = IRCConnection.MakeIRCConnection(_modSettings);
 	    if (_ircConnection != null)
 		    _ircConnection.transform.SetParent(transform);
 
