@@ -2,9 +2,6 @@
 {
     Start,
     EndNotComplete,
-    EndComplete,
-    EndError,
-    EndErrorSubtractScore,
     NoResponse
 }
 

@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield) :
+        base(bombCommander, bombComponent, canceller)
+	{
         ProcessMethod = processMethod;
         CommandComponent = commandComponent;
         TryCancelField = cancelfield;
@@ -95,19 +95,17 @@ public class CoroutineModComponentSolver : ComponentSolver
                     HeldSelectables.Add(selectable);
                 }
             }
-            if (currentObject is KMSelectable[])
+            if (currentObject is KMSelectable[] selectables)
             {
-                KMSelectable[] selectables = (KMSelectable[]) currentObject;
-                foreach (KMSelectable selectable in selectables)
+	            foreach (KMSelectable selectable in selectables)
                 {
                     DoInteractionClick(selectable);
 					yield return new WaitForSeconds(0.1f);
                 }
             }
-            if (currentObject is string)
+            if (currentObject is string str)
             {
-                string str = (string) currentObject;
-                if (str.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase))
+	            if (str.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Canceller.ResetCancel();
                     TryCancel = false;
