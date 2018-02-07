@@ -7,13 +7,13 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield, Type canceltype) :
+    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield) :
         base(bombCommander, bombComponent, ircConnection, canceller)
     {
         ProcessMethod = processMethod;
         CommandComponent = commandComponent;
         TryCancelField = cancelfield;
-        TryCancelComponentSolverType = canceltype;
+        TryCancelComponentSolverType = commandComponent.GetType();
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 

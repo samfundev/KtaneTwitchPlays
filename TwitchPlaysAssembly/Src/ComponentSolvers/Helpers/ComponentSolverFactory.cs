@@ -484,7 +484,7 @@ public static class ComponentSolverFactory
 	    MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
 
 	    ModuleInformation info = GetModuleInfo(moduleType);
-		if (!info.helpTextOverride && FindHelpMessage(bombComponent, out string help))
+		if (!info.helpTextOverride && FindHelpMessage(bombComponent, commandComponentType, out string help))
 		{
 			if (help != null)
 				ModuleData.DataHasChanged |= !help.Equals(info.helpText);
@@ -493,7 +493,7 @@ public static class ComponentSolverFactory
 			info.helpText = help;
 		}
 
-		if (!info.manualCodeOverride && FindManualCode(bombComponent, out string manual))
+		if (!info.manualCodeOverride && FindManualCode(bombComponent, commandComponentType, out string manual))
 		{
 			if (manual != null)
 				ModuleData.DataHasChanged |= !manual.Equals(info.manualCode);
@@ -512,7 +512,7 @@ public static class ComponentSolverFactory
 			info.chatRotation = rotation;
 		}
 
-		if (!info.validCommandsOverride && FindRegexList(bombComponent, out string[] regexList))
+		if (!info.validCommandsOverride && FindRegexList(bombComponent, commandComponentType, out string[] regexList))
 		{
 			if (info.validCommands != null && regexList == null)
 				ModuleData.DataHasChanged = true;
@@ -551,11 +551,11 @@ public static class ComponentSolverFactory
 						return new SimpleModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent);
 					};
 				case ModCommandType.Coroutine:
-				    FindCancelBool(bombComponent, out FieldInfo cancelfield, out Type canceltype);
+				    FindCancelBool(bombComponent, commandComponentType, out FieldInfo cancelfield);
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent, IRCConnection _ircConnection, CoroutineCanceller _canceller)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent, cancelfield, canceltype);
+						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, _ircConnection, _canceller, method, commandComponent, cancelfield);
 					};
 				case ModCommandType.Unsupported:
 					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
@@ -615,72 +615,46 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	private static bool FindRegexList(MonoBehaviour bombComponent, out string[] validCommands)
+	private static bool FindRegexList(MonoBehaviour bombComponent, Type commandComponentType, out string[] validCommands)
 	{
-		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
-		foreach (Component component in allComponents)
+		FieldInfo candidateString = commandComponentType.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		if (!(candidateString?.GetValue(bombComponent.GetComponent(commandComponentType)) is string[]))
 		{
-			Type type = component.GetType();
-			//DebugLog("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
-			FieldInfo candidateString = type.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			if (!(candidateString?.GetValue(bombComponent.GetComponent(type)) is string[])) continue;
-			validCommands = (string[]) candidateString.GetValue(bombComponent.GetComponent(type));
-			return true;
+			validCommands = null;
+			return false;
 		}
-		validCommands = null;
-		return false;
+		validCommands = (string[])candidateString.GetValue(bombComponent.GetComponent(commandComponentType));
+		return true;
 	}
 
-	private static bool FindManualCode(MonoBehaviour bombComponent, out string manualCode)
+	private static bool FindManualCode(MonoBehaviour bombComponent, Type commandComponentType, out string manualCode)
 	{
-		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
-		foreach (Component component in allComponents)
+		FieldInfo candidateString = commandComponentType.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		if (!(candidateString?.GetValue(bombComponent.GetComponent(commandComponentType)) is string))
 		{
-			Type type = component.GetType();
-			//DebugLog("component.GetType(): FullName = {0}, Name = {1}",type.FullName, type.Name);
-			FieldInfo candidateString = type.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			if (!(candidateString?.GetValue(bombComponent.GetComponent(type)) is string)) continue;
-			manualCode = (string) candidateString.GetValue(bombComponent.GetComponent(type));
-			return true;
+			manualCode = null;
+			return false;
 		}
-		manualCode = null;
-		return false;
+		manualCode = (string)candidateString.GetValue(bombComponent.GetComponent(commandComponentType));
+		return true;
 	}
 
-	private static bool FindHelpMessage(MonoBehaviour bombComponent, out string helpText)
+	private static bool FindHelpMessage(MonoBehaviour bombComponent, Type commandComponentType, out string helpText)
 	{
-		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
-		foreach (Component component in allComponents)
+		FieldInfo candidateString = commandComponentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		if (!(candidateString?.GetValue(bombComponent.GetComponent(commandComponentType)) is string))
 		{
-			Type type = component.GetType();
-			FieldInfo candidateString = type.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			if (!(candidateString?.GetValue(bombComponent.GetComponent(type)) is string)) continue;
-			helpText = (string) candidateString.GetValue(bombComponent.GetComponent(type));
-			return true;
+			helpText = null;
+			return false;
 		}
-		helpText = null;
-		return false;
+		helpText = (string)candidateString.GetValue(bombComponent.GetComponent(commandComponentType));
+		return true;
 	}
 
-	private static bool FindCancelBool(MonoBehaviour bombComponent, out FieldInfo CancelField, out Type CancelType)
+	private static bool FindCancelBool(MonoBehaviour bombComponent, Type commandComponentType, out FieldInfo CancelField)
 	{
-		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
-		foreach (Component component in allComponents)
-		{
-			Type type = component.GetType();
-			FieldInfo candidateBoolField = type.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			if (!(candidateBoolField?.GetValue(bombComponent.GetComponent(type)) is bool)) continue;
-			CancelField = candidateBoolField;
-			CancelType = type;
-			return true;
-		}
-		CancelField = null;
-		CancelType = null;
-		return false;
+		CancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		return CancelField?.GetValue(bombComponent.GetComponent(commandComponentType)) is bool;
 	}
 
 	private static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)
