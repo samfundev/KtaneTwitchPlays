@@ -67,8 +67,12 @@ public class TwitchPlaySettingsData
     public string InvalidCommand = "Sorry @{0}, that command for {1} ({2}) is invalid.";
     public string CommandError = "Sorry @{0}, Module {1} ({2}) responded with: {3}";
 
-    public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
+	public string HoldableInvalidCommand = "Sorry @{1}, that command for Holdable !{0} is invalid.";
+	public string HoldableCommandError = "Sorry @{1}, Holdable !{0} responded with the following error: {2}";
+
+	public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
     public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
+	public string AwardHoldableStrike = "VoteNay Holdable !{0} got {1} strike{2}! {3} points from {4}{5} VoteNay";
 
     public string BombLiveMessage = "The next bomb is now live! Start sending your commands! MrDestructoid";
     public string MultiBombLiveMessage = "The next set of bombs are now live! Start sending your commands! MrDestructoid";
@@ -178,8 +182,12 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref InvalidCommand, data.InvalidCommand, 3);
         valid &= ValidateString(ref CommandError, data.CommandError, 4);
 
+	    valid &= ValidateString(ref HoldableInvalidCommand, data.HoldableInvalidCommand, 2);
+	    valid &= ValidateString(ref HoldableCommandError, data.HoldableCommandError, 3);
+
         valid &= ValidateString(ref AwardSolve, data.AwardSolve, 4);
         valid &= ValidateString(ref AwardStrike, data.AwardStrike, 8);
+	    valid &= ValidateString(ref AwardHoldableStrike, data.AwardHoldableStrike, 6);
 
         valid &= ValidateString(ref BombLiveMessage, data.BombLiveMessage, 0);
         valid &= ValidateString(ref MultiBombLiveMessage, data.MultiBombLiveMessage, 0);
