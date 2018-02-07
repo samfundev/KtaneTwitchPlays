@@ -616,7 +616,7 @@ public class BombMessageResponder : MessageResponder
 			    break;
 		    }
 		    _coroutineQueue.AddToQueue(BombCommanders[_currentBomb != -1 ? _currentBomb : 0].LetGoBomb(), _currentBomb);
-		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
+		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, _ircConnection));
 		}
 
 	    if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))

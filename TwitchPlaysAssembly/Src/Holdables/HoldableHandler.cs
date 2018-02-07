@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-public abstract class HoldableHandler : ICommandResponder
+public abstract class HoldableHandler
 {
 	public HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller)
 	{
@@ -14,9 +14,8 @@ public abstract class HoldableHandler : ICommandResponder
 		Canceller = canceller;
 	}
 
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
+	private void AwardStrikes(string userNickName, int strikeCount)
 	{
-		ResponseNotifier = responseNotifier;
 
 		FloatingHoldable.HoldStateEnum holdState = Holdable.HoldState;
 

@@ -131,7 +131,7 @@ public class MissionMessageResponder : MessageResponder
 						commander.Handler.ShowHelp();
 						break;
 					}
-					_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
+					_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, _ircConnection));
 					break;
 				}
 				break;

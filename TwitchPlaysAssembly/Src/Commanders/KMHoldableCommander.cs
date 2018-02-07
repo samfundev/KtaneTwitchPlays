@@ -2,9 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
-public class KMHoldableCommander : ICommandResponder
+public class KMHoldableCommander
 {
-
 	public KMHoldableCommander(FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller)
 	{
 		Holdable = holdable;
@@ -13,47 +12,35 @@ public class KMHoldableCommander : ICommandResponder
 		Handler = HoldableFactory.CreateHandler(this, holdable, ircConnection, canceller);
 	}
 
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
+	public IEnumerator RespondToCommand(string userNickName, string message, IRCConnection connection)
 	{
 		if (message.EqualsAny("hold", "pick up"))
 		{
-			responseNotifier?.ProcessResponse(CommandResponse.Start);
-
 			IEnumerator holdCoroutine = Hold(_heldFrontFace);
 			while (holdCoroutine.MoveNext())
 			{
 				yield return holdCoroutine.Current;
 			}
-			responseNotifier?.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (message.EqualsAny("turn", "turn round", "turn around", "rotate", "flip", "spin"))
 		{
-			responseNotifier?.ProcessResponse(CommandResponse.Start);
-
 			IEnumerator holdCoroutine = Hold(!_heldFrontFace);
 			while (holdCoroutine.MoveNext())
 			{
 				yield return holdCoroutine.Current;
 			}
-
-			responseNotifier?.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (message.EqualsAny("drop", "let go", "put down"))
 		{
-			responseNotifier?.ProcessResponse(CommandResponse.Start);
-
 			IEnumerator letGoCoroutine = LetGoBomb();
 			while (letGoCoroutine.MoveNext())
 			{
 				yield return letGoCoroutine.Current;
 			}
-
-			responseNotifier?.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else
 		{
-			responseNotifier?.ProcessResponse(CommandResponse.Start);
-			IEnumerator handler = Handler.RespondToCommand(userNickName, message, responseNotifier, connection);
+			IEnumerator handler = Handler.RespondToCommand(userNickName, message, connection);
 			bool result;
 			DebugHelper.Log($"Coroutine for holdable {Holdable.name} started");
 			do
@@ -65,14 +52,12 @@ public class KMHoldableCommander : ICommandResponder
 				catch (Exception ex)
 				{
 					DebugHelper.LogException(ex, "Could not process holdable handler command due to an Exception:");
-					responseNotifier?.ProcessResponse(CommandResponse.EndError);
 					yield break;
 				}
 				if (result)
 					yield return handler.Current;
 			} while (result);
 			DebugHelper.Log($"Coroutine for holdable {Holdable.name} finished");
-			responseNotifier?.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 	}
 
