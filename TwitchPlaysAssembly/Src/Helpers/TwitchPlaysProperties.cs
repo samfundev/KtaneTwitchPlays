@@ -25,6 +25,7 @@ public class TwitchPlaysProperties : PropertiesBehaviour
 			default:
 				return;
 		}
+		if (component == null) return;
 
 		foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
 		{
