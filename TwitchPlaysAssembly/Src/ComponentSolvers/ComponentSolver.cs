@@ -131,7 +131,7 @@ public abstract class ComponentSolver : ICommandResponder
 	    bool hideCamera = false;
 		bool exceptionThrown = false;
 		
-        while (previousStrikeCount == StrikeCount && !Solved)
+        while ((previousStrikeCount == StrikeCount || DisableOnStrike) && !Solved)
         {
 			try
 			{
@@ -205,15 +205,6 @@ public abstract class ComponentSolver : ICommandResponder
                 else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
                 {
                     DisableOnStrike = true;
-                }
-                else if (currentString.StartsWith("award strikes ", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    if (int.TryParse(currentString.Substring(14), out int awardStrikeCount))
-                    {
-                        StrikeCount += awardStrikeCount;
-                        AwardStrikes(_currentUserNickName, _currentResponseNotifier, awardStrikeCount);
-                        DisableOnStrike = false;
-                    }
                 }
                 else if (currentString.StartsWith("autosolve", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -319,6 +310,12 @@ public abstract class ComponentSolver : ICommandResponder
             _musicPlayer.StopMusic();
             _musicPlayer = null;
         }
+
+	    if (DisableOnStrike)
+	    {
+		    AwardStrikes(_currentUserNickName, _currentResponseNotifier, StrikeCount - previousStrikeCount);
+		    DisableOnStrike = false;
+	    }
 
         if (parseError)
         {
@@ -521,12 +518,10 @@ public abstract class ComponentSolver : ICommandResponder
     private bool OnStrike(object _ignore)
     {
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
-        if (DisableOnStrike) return false;
-
         StrikeCount++;
+	    if (DisableOnStrike) return false;
 
-
-        if (_delegatedStrikeUserNickName != null && _delegatedStrikeResponseNotifier != null)
+		if (_delegatedStrikeUserNickName != null && _delegatedStrikeResponseNotifier != null)
         {
             AwardStrikes(_delegatedStrikeUserNickName, _delegatedStrikeResponseNotifier, 1);
             _delegatedStrikeUserNickName = null;
