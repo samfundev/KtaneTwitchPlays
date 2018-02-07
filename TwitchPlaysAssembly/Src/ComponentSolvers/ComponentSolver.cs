@@ -415,7 +415,10 @@ public abstract class ComponentSolver : ICommandResponder
 	{
 	    BombComponent.OnPass += OnPass;
 	    BombComponent.OnStrike += OnStrike;
-    }
+		KMGameCommands gameCommands = BombComponent.GetComponentInChildren<KMGameCommands>();
+		if (gameCommands == null) return;
+		gameCommands.OnCauseStrike += x => { OnStrike(x); };
+	}
 
     private bool OnPass(object _ignore)
     {
