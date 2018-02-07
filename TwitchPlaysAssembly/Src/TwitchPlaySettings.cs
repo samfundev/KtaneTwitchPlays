@@ -17,7 +17,6 @@ public class TwitchPlaySettingsData
     public bool EnableFreeplayModsOnly = true;
 	public bool EnableRunCommand = true;
 	public bool EnableSoloPlayMode = true;
-    public bool ForceMultiDeckerMode = false;
     public bool EnableRetryButton = true;
     public bool EnableTwitchPlaysMode = true;
     public bool EnableInteractiveMode = false;

@@ -27,7 +27,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	private IEnumerator SetHeaderText()
 	{
 		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.headerText.text = modInfo.moduleDisplayName;
+		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

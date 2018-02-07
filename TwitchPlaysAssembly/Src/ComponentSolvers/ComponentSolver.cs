@@ -160,7 +160,7 @@ public abstract class ComponentSolver
 
 					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, ComponentHandle.idText.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
+					IRCConnection.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.idTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(14).Trim() != string.Empty)
@@ -698,10 +698,7 @@ public abstract class ComponentSolver
 
                 cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
             }
-            if ( (BombCommander.multiDecker) || (cameraPriority > ModuleCameras.CameraNotInUse))
-            {
-                BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
-            }
+            BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
         }
 
         if (inputCommand.Equals("show", StringComparison.InvariantCultureIgnoreCase))

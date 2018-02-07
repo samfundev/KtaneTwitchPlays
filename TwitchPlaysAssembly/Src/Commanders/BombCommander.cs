@@ -578,7 +578,6 @@ public class BombCommander : ICommandResponder
 	public int bombSolvableModules;
     public int bombSolvedModules;
     public float bombStartingTimer;
-    public bool multiDecker = false;
 
     private bool _heldFrontFace = true;
 }

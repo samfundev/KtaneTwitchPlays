@@ -43,8 +43,6 @@ public class TwitchPlaysService : MonoBehaviour
 	private HashSet<Mod> CheckedMods = null;
 	private TwitchPlaysProperties _publicProperties;
 	private Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
-	private IRCConnectionState _lastConnectionState;
-
 
 	private void Start()
 	{

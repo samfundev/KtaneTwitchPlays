@@ -420,7 +420,7 @@ public class BombMessageResponder : MessageResponder
         if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idText.text.Replace("!", ""), handle.headerText.text)).ToList();
+            List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idTextMultiDecker.text, handle.HeaderText)).ToList();
             if (claimed.Count > 0)
             {
                 string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
@@ -482,7 +482,7 @@ public class BombMessageResponder : MessageResponder
 			if (!IsAuthorizedDefuser(userNickName)) return;
 
 			IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
-				.Select(handle => string.Format("{0} ({1})", handle.headerText.text, handle.Code)).ToList();
+				.Select(handle => string.Format("{0} ({1})", handle.HeaderText, handle.Code)).ToList();
 			
 			if (unclaimed.Any()) _ircConnection.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
 			else _ircConnection.SendMessage("There are no more unclaimed modules.");
@@ -496,9 +496,9 @@ public class BombMessageResponder : MessageResponder
 
 			var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			string query = split.Skip(1).Join(" ");
-			IEnumerable<string> modules = ComponentHandles.Where(handle => handle.headerText.text.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-                .OrderByDescending(handle => handle.headerText.text.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
-				.Select(handle => string.Format("{0} ({1}) - {2}", handle.headerText.text, handle.Code, 
+			IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+                .OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
+				.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, 
 					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
 				)).ToList();
 
@@ -659,10 +659,6 @@ public class BombMessageResponder : MessageResponder
         List<BombComponent> bombComponents = bomb.BombComponents;
 
 		var bombCommander = BombCommanders[BombCommanders.Count - 1];
-		if (bombComponents.Count > 12 || TwitchPlaySettings.data.ForceMultiDeckerMode)
-        {
-			bombCommander.multiDecker = true;
-        }
 
         foreach (BombComponent bombComponent in bombComponents)
         {
@@ -699,91 +695,13 @@ public class BombMessageResponder : MessageResponder
             handle.leaderboard = leaderboard;
             handle.bombID = _currentBomb == -1 ? -1 : BombCommanders.Count - 1;
 
-            Vector3 idealOffset = handle.transform.TransformDirection(GetIdealPositionForHandle(handle, bombComponents, out handle.direction));
             handle.transform.SetParent(bombComponent.transform.parent, true);
             handle.basePosition = handle.transform.localPosition;
-            handle.idealHandlePositionOffset = bombComponent.transform.parent.InverseTransformDirection(idealOffset);
 
             ComponentHandles.Add(handle);
 		}
 
         return foundComponents;
-    }
-
-    private Vector3 GetIdealPositionForHandle(TwitchComponentHandle thisHandle, IList bombComponents, out TwitchComponentHandle.Direction direction)
-    {
-        Rect handleBasicRect = new Rect(-0.155f, -0.1f, 0.31f, 0.2f);
-        Rect bombComponentBasicRect = new Rect(-0.1f, -0.1f, 0.2f, 0.2f);
-
-        float baseUp = (handleBasicRect.height + bombComponentBasicRect.height) * 0.55f;
-        float baseRight = (handleBasicRect.width + bombComponentBasicRect.width) * 0.55f;
-
-        Vector2 extentUp = new Vector2(0.0f, baseUp * 0.1f);
-        Vector2 extentRight = new Vector2(baseRight * 0.2f, 0.0f);
-
-        Vector2 extentResult = Vector2.zero;
-
-        while (true)
-        {
-            Rect handleRect = handleBasicRect;
-            handleRect.position += extentRight;
-            if (!HasOverlap(thisHandle, handleRect, bombComponentBasicRect, bombComponents))
-            {
-                extentResult = extentRight;
-                direction = TwitchComponentHandle.Direction.Left;
-                break;
-            }
-
-            handleRect = handleBasicRect;
-            handleRect.position -= extentRight;
-            if (!HasOverlap(thisHandle, handleRect, bombComponentBasicRect, bombComponents))
-            {
-                extentResult = -extentRight;
-                direction = TwitchComponentHandle.Direction.Right;
-                break;
-            }
-
-            handleRect = handleBasicRect;
-            handleRect.position += extentUp;
-            if (!HasOverlap(thisHandle, handleRect, bombComponentBasicRect, bombComponents))
-            {
-                extentResult = extentUp;
-                direction = TwitchComponentHandle.Direction.Down;
-                break;
-            }
-
-            handleRect = handleBasicRect;
-            handleRect.position -= extentUp;
-            if (!HasOverlap(thisHandle, handleRect, bombComponentBasicRect, bombComponents))
-            {
-                extentResult = -extentUp;
-                direction = TwitchComponentHandle.Direction.Up;
-                break;
-            }
-
-            extentUp.y += baseUp * 0.1f;
-            extentRight.x += baseRight * 0.1f;
-        }
-
-        return new Vector3(extentResult.x, 0.0f, extentResult.y);
-    }
-
-    private bool HasOverlap(TwitchComponentHandle thisHandle, Rect handleRect, Rect bombComponentBasicRect, IList bombComponents)
-    {
-        foreach (BombComponent bombComponent in bombComponents)
-        {
-            Vector3 bombComponentCenter = thisHandle.transform.InverseTransformPoint(bombComponent.transform.position);
-
-            Rect bombComponentRect = bombComponentBasicRect;
-            bombComponentRect.position += new Vector2(bombComponentCenter.x, bombComponentCenter.z);
-
-            if (bombComponentRect.Overlaps(handleRect))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
