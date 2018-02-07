@@ -24,9 +24,9 @@ public class SafetySafeComponentSolver : ComponentSolver
         "bottom left", "bottom middle", "bottom right"
     };
 
-    public SafetySafeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public SafetySafeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _buttons = (MonoBehaviour[])_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         _lever = (MonoBehaviour)_leverField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

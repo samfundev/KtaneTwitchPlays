@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class NeedyRotaryPhoneComponentSolver : ComponentSolver
 {
-    public NeedyRotaryPhoneComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public NeedyRotaryPhoneComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _buttons = new MonoBehaviour[10];
         _buttons[0] = (MonoBehaviour)_button0Field.GetValue(bombComponent.GetComponent(_componentSolverType));
         _buttons[1] = (MonoBehaviour)_button1Field.GetValue(bombComponent.GetComponent(_componentSolverType));

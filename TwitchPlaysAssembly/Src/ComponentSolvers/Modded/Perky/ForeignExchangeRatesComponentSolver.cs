@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class ForeignExchangeRatesComponentSolver : ComponentSolver
 {
-    public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _buttons = (MonoBehaviour[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }

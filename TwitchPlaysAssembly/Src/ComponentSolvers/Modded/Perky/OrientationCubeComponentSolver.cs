@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class OrientationCubeComponentSolver : ComponentSolver
 {
-    public OrientationCubeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public OrientationCubeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _submit = (MonoBehaviour)_submitField.GetValue(bombComponent.GetComponent(_componentType));
         _left = (MonoBehaviour)_leftField.GetValue(bombComponent.GetComponent(_componentType));
         _right = (MonoBehaviour)_rightField.GetValue(bombComponent.GetComponent(_componentType));

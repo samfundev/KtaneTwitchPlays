@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class SquareButtonComponentSolver : ComponentSolver
 {
-    public SquareButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public SquareButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _button = (MonoBehaviour)_buttonField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }

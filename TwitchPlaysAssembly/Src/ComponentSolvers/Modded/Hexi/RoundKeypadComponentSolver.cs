@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class RoundKeypadComponentSolver : ComponentSolver
 {
-    public RoundKeypadComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public RoundKeypadComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }

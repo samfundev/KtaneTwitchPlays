@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class TurnTheKeyComponentSolver : ComponentSolver
 {
-    public TurnTheKeyComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public TurnTheKeyComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _lock = (MonoBehaviour)_lockField.GetValue(BombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	    bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());

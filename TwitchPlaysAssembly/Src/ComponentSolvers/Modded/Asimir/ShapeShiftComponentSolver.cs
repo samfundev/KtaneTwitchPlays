@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ShapeShiftComponentSolver : ComponentSolver
 {
-	public ShapeShiftComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, ircConnection, canceller)
+	public ShapeShiftComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+		base(bombCommander, bombComponent, canceller)
 	{
 		object _component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);

@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class TranslatedPasswordComponentSolver : ComponentSolver
 {
-    public TranslatedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public TranslatedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _downButtons = (KMSelectable[]) _downButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
         _submitButton = (MonoBehaviour)_submitButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
         _display = (TextMesh[]) _displayField.GetValue(bombComponent.GetComponent(_passwordComponentType));

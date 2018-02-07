@@ -108,10 +108,14 @@ public class IRCConnection : MonoBehaviour
     #endregion
 
 	#region UnityLifeCycle
-	private void Start()
+	private void Awake()
 	{
 		Instance = this;
 		_ircConnectionSettings = GetComponent<KMModSettings>();
+	}
+
+	private void Start()
+	{
 		Connect();
 	}
 
@@ -124,6 +128,36 @@ public class IRCConnection : MonoBehaviour
 				Message message = _messageQueue.Dequeue();
 				OnMessageReceived.Invoke(message.UserNickName, message.UserColorCode, message.Text);
 			}
+		}
+	}
+
+	private void OnDisable()
+	{
+		StopAllCoroutines();
+		_onDisableState = State;
+		Disconnect();
+		_onDisableThread = new Thread(() =>
+		{
+			while (IRCConnection.Instance.State != IRCConnectionState.Disconnected)
+				Thread.Sleep(25);
+			IRCConnection.Instance.State = IRCConnectionState.Disabled;
+		});
+		_onDisableThread.Start();
+	}
+
+	private void OnEnable()
+	{
+		switch (_onDisableState)
+		{
+			case IRCConnectionState.Retrying:
+			case IRCConnectionState.Connecting:
+			case IRCConnectionState.Connected:
+			case IRCConnectionState.Disabled:
+				Connect();
+				break;
+			default:
+				State = IRCConnectionState.Disconnected;
+				break;
 		}
 	}
 
@@ -160,7 +194,7 @@ public class IRCConnection : MonoBehaviour
 				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
 				Thread connectionAttempt = new Thread(ConnectToIRC);
 				connectionAttempt.Start();
-				while (connectionAttempt.IsAlive) yield return null;
+				while (connectionAttempt.IsAlive) yield return new WaitForSeconds(0.1f);
 				switch (State)
 				{
 					case IRCConnectionState.DoNotRetry:
@@ -205,6 +239,7 @@ public class IRCConnection : MonoBehaviour
 
 	public void Connect()
 	{
+		if (!gameObject.activeInHierarchy) return;
 		if (!File.Exists(_ircConnectionSettings.SettingsPath))
 		{
 			AddTextToHoldable("The settings file does not exist. Trying to create it now.");
@@ -269,7 +304,8 @@ public class IRCConnection : MonoBehaviour
 			return;
 		}
 
-		StartCoroutine(KeepConnectionAlive());
+		_keepConnnectionAlive = KeepConnectionAlive();
+		StartCoroutine(_keepConnnectionAlive);
 	}
 
 	private void ConnectToIRC()
@@ -354,6 +390,9 @@ public class IRCConnection : MonoBehaviour
 				ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
 				State = IRCConnectionState.Disconnecting;
 				break;
+			case IRCConnectionState.Disabled:
+				AddTextToHoldable("Twitch plays is currently disabled");
+				break;
 			default:
 				State = IRCConnectionState.Disconnected;
 				break;
@@ -387,9 +426,26 @@ public class IRCConnection : MonoBehaviour
             SendCommand(string.Format("PRIVMSG #{0} :Silence mode off", _settings.channelName));
         }
     }
+
+	public Color GetUserColor(string userNickName)
+	{
+		lock(_userColors)
+		{
+			return _userColors.TryGetValue(userNickName, out Color color) ? color : Color.black;
+		}
+	}
     #endregion
 
     #region Private Methods
+	private void SetOwnColor()
+	{
+		if (!ColorUtility.TryParseHtmlString(_currentColor, out Color color)) return;
+		lock (_userColors)
+		{
+			_userColors[_settings.userName] = color;
+		}
+	}
+
     private void SendCommand(string command)
     {
         lock (_commandQueue)
@@ -404,6 +460,13 @@ public class IRCConnection : MonoBehaviour
         {
             _messageQueue.Enqueue(new Message(userNickName, userColorCode, text));
         }
+
+
+	    if (!ColorUtility.TryParseHtmlString(userColorCode, out Color color)) return;
+	    lock (_userColors)
+	    {
+		    _userColors[userNickName] = color;
+	    }
     }
 
     private void InputThreadMethod(TextReader input, NetworkStream networkStream)
@@ -425,6 +488,7 @@ public class IRCConnection : MonoBehaviour
 
 			    if (!networkStream.DataAvailable)
 			    {
+				    Thread.Sleep(25);
 				    continue;
 			    }
 
@@ -480,6 +544,7 @@ public class IRCConnection : MonoBehaviour
 				        }
 			        }
 		        }
+		        Thread.Sleep(25);
 	        }
 	        catch
 	        {
@@ -561,15 +626,15 @@ public class IRCConnection : MonoBehaviour
             {
 	            AddTextToHoldable($"<{groups[3].Value}>: {groups[5].Value}");
 				connection.ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
-            }
+			}
         }),
 
         new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", delegate(IRCConnection connection, GroupCollection groups)
         {
             connection._currentColor = string.IsNullOrEmpty(groups[2].Value) ? string.Empty : groups[2].Value;
             connection.SetDelay(groups[1].Value, groups[3].Value, groups[4].Value);
-            
-        }, false), 
+	        connection.SetOwnColor();
+		}, false), 
 
         new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(IRCConnection connection, GroupCollection groups)
         {
@@ -627,6 +692,7 @@ public class IRCConnection : MonoBehaviour
 
     private Thread _inputThread = null;
     private Thread _outputThread = null;
+	private Thread _onDisableThread = null;
     private bool _isModerator = false;
     private int _messageDelay = 2000;
     private bool _silenceMode = false;
@@ -635,6 +701,9 @@ public class IRCConnection : MonoBehaviour
 
     private Queue<Message> _messageQueue = new Queue<Message>();
     private Queue<Commands> _commandQueue = new Queue<Commands>();
+	private Dictionary<string, Color> _userColors = new Dictionary<string, Color>();
+	private IRCConnectionState _onDisableState = IRCConnectionState.Connected;
+	private IEnumerator _keepConnnectionAlive;
 	#endregion
 }
 
@@ -645,5 +714,6 @@ public enum IRCConnectionState
 	Disconnecting,
 	Retrying,
 	Connecting,
-	Connected
+	Connected,
+	Disabled
 }

@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class PasswordComponentSolver : ComponentSolver
 {
-    public PasswordComponentSolver(BombCommander bombCommander, PasswordComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public PasswordComponentSolver(BombCommander bombCommander, PasswordComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_spinners = bombComponent.Spinners;
 		_submitButton = bombComponent.SubmitButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("PasswordComponentSolver");

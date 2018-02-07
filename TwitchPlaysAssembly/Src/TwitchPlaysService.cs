@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Assets.Scripts.Missions;
 using UnityEngine;
 
@@ -42,7 +43,8 @@ public class TwitchPlaysService : MonoBehaviour
 	private HashSet<Mod> CheckedMods = null;
 	private TwitchPlaysProperties _publicProperties;
 	private Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
-	
+	private IRCConnectionState _lastConnectionState;
+
 
 	private void Start()
 	{
@@ -108,6 +110,17 @@ public class TwitchPlaysService : MonoBehaviour
 	    _publicProperties.TwitchPlaysService = this;
 	}
 
+	private void OnDisable()
+	{
+		_coroutineQueue.StopQueue();
+		_coroutineQueue.CancelFutureSubcoroutines();
+		StopAllCoroutines();
+	}
+
+	private void OnEnable()
+	{
+		OnStateChange(KMGameInfo.State.Setup);
+	}
 	
 
 	private void Update()
@@ -118,21 +131,10 @@ public class TwitchPlaysService : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        if (_ircConnection != null)
-        {
-            _ircConnection.ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
-            _ircConnection.Disconnect();
-        }
-    }
-
     private void OnStateChange(KMGameInfo.State state)
     {
-        if (_ircConnection == null)
-        {
-            return;
-        }
+	    if (!transform.gameObject.activeInHierarchy)
+		    return;
 
         StartCoroutine(StopEveryCoroutine());
 

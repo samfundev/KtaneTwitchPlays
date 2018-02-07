@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 public class InvisibleWallsComponentSolver : ComponentSolver
 {
-    public InvisibleWallsComponentSolver(BombCommander bombCommander, InvisibleWallsComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public InvisibleWallsComponentSolver(BombCommander bombCommander, InvisibleWallsComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver");
     }

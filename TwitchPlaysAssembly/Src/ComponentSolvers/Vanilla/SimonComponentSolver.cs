@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 public class SimonComponentSolver : ComponentSolver
 {
-    public SimonComponentSolver(BombCommander bombCommander, SimonComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public SimonComponentSolver(BombCommander bombCommander, SimonComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_buttons = bombComponent.buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver");
     }

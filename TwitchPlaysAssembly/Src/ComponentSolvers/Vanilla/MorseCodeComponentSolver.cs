@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class MorseCodeComponentSolver : ComponentSolver
 {
-    public MorseCodeComponentSolver(BombCommander bombCommander, MorseCodeComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public MorseCodeComponentSolver(BombCommander bombCommander, MorseCodeComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_upButton = bombComponent.UpButton;
 		_downButton = bombComponent.DownButton;
 		_transmitButton = bombComponent.TransmitButton;

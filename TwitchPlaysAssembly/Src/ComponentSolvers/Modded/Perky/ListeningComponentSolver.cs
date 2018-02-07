@@ -8,9 +8,9 @@ using UnityEngine;
 
 public class ListeningComponentSolver : ComponentSolver
 {
-    public ListeningComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public ListeningComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         Component component = bombComponent.GetComponent("Listening");
         if (component == null)
         {

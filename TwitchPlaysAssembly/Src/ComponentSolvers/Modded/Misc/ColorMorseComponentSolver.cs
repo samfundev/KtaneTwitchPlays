@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 public class ColorMorseComponentSolver : ComponentSolver
 {
-	public ColorMorseComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, ircConnection, canceller)
+	public ColorMorseComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+		base(bombCommander, bombComponent, canceller)
 	{
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

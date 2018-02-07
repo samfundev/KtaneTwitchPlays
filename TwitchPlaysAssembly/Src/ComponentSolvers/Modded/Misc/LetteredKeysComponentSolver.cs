@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LetteredKeysComponentSolver : ComponentSolver
 {
-	public LetteredKeysComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, ircConnection, canceller)
+	public LetteredKeysComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+		base(bombCommander, bombComponent, canceller)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

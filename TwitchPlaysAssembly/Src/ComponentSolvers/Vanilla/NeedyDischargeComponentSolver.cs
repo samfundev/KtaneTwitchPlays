@@ -3,9 +3,9 @@ using System.Collections;
 
 public class NeedyDischargeComponentSolver : ComponentSolver
 {
-    public NeedyDischargeComponentSolver(BombCommander bombCommander, NeedyDischargeComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public NeedyDischargeComponentSolver(BombCommander bombCommander, NeedyDischargeComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_dischargeButton = bombComponent.DischargeButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver");
     }

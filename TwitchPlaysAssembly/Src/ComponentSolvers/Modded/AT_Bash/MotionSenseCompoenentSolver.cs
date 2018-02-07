@@ -5,16 +5,22 @@ using UnityEngine;
 
 public class MotionSenseComponentSolver : ComponentSolver
 {
-    private readonly IRCConnection _connection;
-    public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
-
-        _connection = ircConnection;
+    public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _component = bombComponent.GetComponent(_componentType);
         _needy = (KMNeedyModule) _needyField.GetValue(_component);
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-    }
+		_needy.OnNeedyActivation += () =>
+		{
+			IRCConnection.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");
+		};
+
+		_needy.OnTimerExpired += () =>
+		{
+			IRCConnection.SendMessage($"Motion Sense now Inactive.");
+		};
+	}
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
@@ -22,7 +28,7 @@ public class MotionSenseComponentSolver : ComponentSolver
             yield break;
 
         bool active = (bool)_activeField.GetValue(_component);
-        _connection.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
+        IRCConnection.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
     }
 
     static MotionSenseComponentSolver()

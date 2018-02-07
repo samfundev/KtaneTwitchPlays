@@ -8,9 +8,9 @@ public class SimonStatesComponentSolver : ComponentSolver
 {
     private Component c;
 
-    public SimonStatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public SimonStatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         c = bombComponent.GetComponent(_componentType);
         _buttons = new MonoBehaviour[4];
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

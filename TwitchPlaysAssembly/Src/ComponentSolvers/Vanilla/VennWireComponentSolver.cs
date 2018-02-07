@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 public class VennWireComponentSolver : ComponentSolver
 {
-    public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _wires = bombComponent.ActiveWires;
         modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver");
     }

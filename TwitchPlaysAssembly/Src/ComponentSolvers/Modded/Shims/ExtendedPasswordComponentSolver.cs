@@ -6,9 +6,9 @@ using System.Reflection;
 
 public class ExtendedPasswordComponentSolver : ComponentSolver
 {
-    public ExtendedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public ExtendedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _component = bombComponent.GetComponent(_componentType);
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }

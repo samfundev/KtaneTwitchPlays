@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class WireSequenceComponentSolver : ComponentSolver
 {
-    public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _wireSequence = (List<WireSequenceComponent.WireConfiguration>) _wireSequenceField.GetValue(bombComponent);
 		_upButton = bombComponent.UpButton;
 		_downButton = bombComponent.DownButton;

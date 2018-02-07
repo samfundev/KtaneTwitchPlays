@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent) :
+        base(bombCommander, bombComponent, canceller)
+	{
         ProcessMethod = processMethod;
         CommandComponent = commandComponent;
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

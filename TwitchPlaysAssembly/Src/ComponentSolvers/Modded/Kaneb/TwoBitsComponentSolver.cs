@@ -22,9 +22,9 @@ public class TwoBitsComponentSolver : ComponentSolver
 
     private const string ButtonLabels = "bcdegkptvz";
 
-    public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         c = bombComponent.GetComponent(_componentSolverType);
 
         _submit = (MonoBehaviour)_submitButtonField.GetValue(c);

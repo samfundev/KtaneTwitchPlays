@@ -2,9 +2,9 @@ using System.Collections;
 
 public class MemoryComponentSolver : ComponentSolver
 {
-    public MemoryComponentSolver(BombCommander bombCommander, MemoryComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public MemoryComponentSolver(BombCommander bombCommander, MemoryComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("MemoryComponentSolver");
     }

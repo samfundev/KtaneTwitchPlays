@@ -2,9 +2,9 @@
 
 public class NeedyKnobComponentSolver : ComponentSolver
 {
-    public NeedyKnobComponentSolver(BombCommander bombCommander, NeedyKnobComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public NeedyKnobComponentSolver(BombCommander bombCommander, NeedyKnobComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_pointingKnob = bombComponent.PointingKnob;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver");
     }

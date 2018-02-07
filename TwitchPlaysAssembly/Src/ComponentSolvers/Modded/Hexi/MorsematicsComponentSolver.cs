@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class MorsematicsComponentSolver : ComponentSolver
 {
-    public MorsematicsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public MorsematicsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _component = bombComponent.GetComponent(_componentType);
         _transmit = (KMSelectable)_transmitField.GetValue(_component);
         _switch = (KMSelectable)_switchField.GetValue(_component);

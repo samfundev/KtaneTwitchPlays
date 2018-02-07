@@ -2,9 +2,9 @@
 
 public class NeedyVentComponentSolver : ComponentSolver
 {
-    public NeedyVentComponentSolver(BombCommander bombCommander, NeedyVentComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public NeedyVentComponentSolver(BombCommander bombCommander, NeedyVentComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_yesButton = bombComponent.YesButton;
 		_noButton = bombComponent.NoButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentComponentSolver");

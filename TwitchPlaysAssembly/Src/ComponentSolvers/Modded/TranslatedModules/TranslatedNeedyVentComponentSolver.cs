@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class TranslatedNeedyVentComponentSolver : ComponentSolver
 {
-    public TranslatedNeedyVentComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public TranslatedNeedyVentComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _yesButton = (MonoBehaviour)_yesButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
         _noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

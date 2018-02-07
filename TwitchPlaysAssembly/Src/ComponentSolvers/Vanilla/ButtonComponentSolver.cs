@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
 {
-    public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
         ModuleInformation squarebuttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonV2");
 

@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 public class KeypadComponentSolver : ComponentSolver
 {
-    public KeypadComponentSolver(BombCommander bombCommander, KeypadComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public KeypadComponentSolver(BombCommander bombCommander, KeypadComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_buttons = bombComponent.buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver");
     }

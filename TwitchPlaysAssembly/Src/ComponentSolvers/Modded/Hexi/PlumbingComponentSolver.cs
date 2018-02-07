@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class PlumbingComponentSolver : ComponentSolver
 {
-    public PlumbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public PlumbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
         _check = (MonoBehaviour)_checkField.GetValue(bombComponent.GetComponent(_componentType));
 
         _pipes = new MonoBehaviour[6][];

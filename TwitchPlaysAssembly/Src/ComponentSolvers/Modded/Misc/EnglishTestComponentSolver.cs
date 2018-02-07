@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class EnglishTestComponentSolver : ComponentSolver
 {
-	public EnglishTestComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, ircConnection, canceller)
+	public EnglishTestComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
+		base(bombCommander, bombComponent, canceller)
 	{
 	    _englishTestCompoent = bombComponent.GetComponent(_componentType);
 	    selectButton = findChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();

@@ -105,6 +105,11 @@ public class Leaderboard
 
     }
 
+	private Color SafeGetColor(string userName)
+	{
+		return IRCConnection.Instance?.GetUserColor(userName) ?? Color.black;
+	}
+
     private bool GetEntry(string UserName, out LeaderboardEntry entry)
     {
         return _entryDictionary.TryGetValue(UserName.ToLowerInvariant(), out entry);
@@ -112,12 +117,13 @@ public class Leaderboard
 
     private LeaderboardEntry GetEntry(string userName)
     {
+		DebugHelper.Log($"Getting entry for user {userName}");
         if (!GetEntry(userName, out LeaderboardEntry entry))
         {
             entry = new LeaderboardEntry();
             _entryDictionary[userName.ToLowerInvariant()] = entry;
             _entryList.Add(entry);
-            entry.UserColor = Color.black;
+	        entry.UserColor = SafeGetColor(userName);
         }
         entry.UserName = userName;
         return entry;
@@ -152,9 +158,9 @@ public class Leaderboard
         return entry;
     }
 
-    public void AddSolve(string userName, Color userColor)
+    public void AddSolve(string userName)
     {
-        LeaderboardEntry entry = GetEntry(userName, userColor);
+        LeaderboardEntry entry = GetEntry(userName, SafeGetColor(userName));
 
         entry.AddSolve();
         entry.LastAction = DateTime.Now;
@@ -166,10 +172,7 @@ public class Leaderboard
 
     public void AddStrike(string userName, int numStrikes)
     {
-        LeaderboardEntry entry = GetEntry(userName);
-        entry.AddStrike(numStrikes);
-        entry.LastAction = DateTime.Now;
-        ResetSortFlag();
+	    AddStrike(userName, SafeGetColor(userName), numStrikes);
     }
 
     public void AddStrike(string userName, Color userColor, int numStrikes)
@@ -183,10 +186,7 @@ public class Leaderboard
 
     public void AddScore(string userName, int numScore)
     {
-        LeaderboardEntry entry = GetEntry(userName);
-        entry.AddScore(numScore);
-        entry.LastAction = DateTime.Now;
-        ResetSortFlag();
+	    AddScore(userName, SafeGetColor(userName), numScore);
     }
 
     public void AddScore(string userName, Color userColor, int numScore)

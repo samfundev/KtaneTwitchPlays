@@ -51,10 +51,6 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public AudioSource takeModuleSound { get => _data.takeModuleSound; set => _data.takeModuleSound = value; }
 
-
-	[HideInInspector]
-	public IRCConnection ircConnection = null;
-
 	[HideInInspector]
 	public BombCommander bombCommander = null;
 
@@ -145,7 +141,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		try
 		{
-			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, ircConnection, coroutineCanceller);
+			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, IRCConnection.Instance, coroutineCanceller);
 			if (Solver != null)
 			{
 				if (Solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;
@@ -294,7 +290,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public static void DeactivateNeedyModule(TwitchComponentHandle handle)
 	{
-		handle.ircConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
+		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
 		KMNeedyModule needyModule = handle.bombComponent.GetComponent<KMNeedyModule>();
 		needyModule.OnNeedyActivation = () => { needyModule.StartCoroutine(KeepUnsupportedNeedySilent(needyModule)); };
 		needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
@@ -403,7 +399,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		SetBannerColor(unclaimedBackgroundColor);
 		if (playerName != null)
 		{
-			ircConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, playerName, headerText.text);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, playerName, headerText.text);
 			ClaimedList.Remove(playerName);
 			playerName = null;
 			TakeInProgress = null;
@@ -437,12 +433,12 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void CommandError(string userNickName, string message)
 	{
-		ircConnection.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, Code, headerText.text, message);
+		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, Code, headerText.text, message);
 	}
 
 	public void CommandInvalid(string userNickName)
 	{
-		ircConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, headerText.text);
+		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, headerText.text);
 	}
 
 	public IEnumerator TakeInProgress = null;
@@ -601,7 +597,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		if (!string.IsNullOrEmpty(messageOut))
 		{
-			ircConnection.SendMessage(messageOut, Code, headerText.text);
+			IRCConnection.Instance.SendMessage(messageOut, Code, headerText.text);
 			return null;
 		}
 
@@ -627,12 +623,12 @@ public class TwitchComponentHandle : MonoBehaviour
 		    if (!IsAuthorizedDefuser(userNickName)) return null;
             if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)))))
 			{
-				ircConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, headerText.text);
 				return null;
 			}
 			else
 			{
-				return RespondToCommandCoroutine(userNickName, internalCommand, message);
+				return RespondToCommandCoroutine(userNickName, internalCommand);
 			}
 		}
 		else
@@ -647,12 +643,12 @@ public class TwitchComponentHandle : MonoBehaviour
     {
         bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
         if (!result && sendMessage)
-            ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 
         return result;
     }
 
-    private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)
+    private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)
 	{
 		float time = Time.time;
 		while (Time.time - time < fadeDuration)
@@ -665,7 +661,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		if (Solver != null)
 		{
-			IEnumerator commandResponseCoroutine = Solver.RespondToCommand(userNickName, internalCommand, message, ircConnection);
+			IEnumerator commandResponseCoroutine = Solver.RespondToCommand(userNickName, internalCommand);
 			while (commandResponseCoroutine.MoveNext())
 			{
 				yield return commandResponseCoroutine.Current;

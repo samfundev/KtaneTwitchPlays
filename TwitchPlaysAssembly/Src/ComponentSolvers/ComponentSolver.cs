@@ -4,17 +4,17 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public abstract class ComponentSolver : ICommandResponder
+public abstract class ComponentSolver
 {
     public delegate IEnumerator RegexResponse(Match match);
 
     #region Constructors
-    public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller)
-    {
+    public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller)
+	{
         BombCommander = bombCommander;
         BombComponent = bombComponent;
         Selectable = bombComponent.GetComponent<Selectable>();
-        IRCConnection = ircConnection;
+        IRCConnection = IRCConnection.Instance;
         Canceller = canceller;
     
 		if(bombCommander != null)
@@ -23,18 +23,16 @@ public abstract class ComponentSolver : ICommandResponder
     #endregion
 
     #region Interface Implementation
-    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
+    public IEnumerator RespondToCommand(string userNickName, string message)
     {
 		_responded = false;
         _processingTwitchCommand = true;
         if (Solved)
         {
-            responseNotifier.ProcessResponse(CommandResponse.NoResponse);
             _processingTwitchCommand = false;
             yield break;
         }
 
-        _currentResponseNotifier = responseNotifier;
         _currentUserNickName = userNickName;
 
         int beforeStrikeCount = StrikeCount;
@@ -93,8 +91,6 @@ public abstract class ComponentSolver : ICommandResponder
                     }
                     yield return new WaitForSeconds(0.5f);
 
-                    responseNotifier.ProcessResponse(Solved ? CommandResponse.EndComplete : CommandResponse.EndError);
-
                     focusDefocus = BombCommander.Defocus(Selectable, FrontFace);
                     while (focusDefocus.MoveNext())
                     {
@@ -105,17 +101,13 @@ public abstract class ComponentSolver : ICommandResponder
                 else
                 {
                     ComponentHandle.CommandInvalid(userNickName);
-                    responseNotifier.ProcessResponse(CommandResponse.NoResponse);
 				}
 
-                _currentResponseNotifier = null;
                 _currentUserNickName = null;
                 _processingTwitchCommand = false;
                 yield break;
             }
         }
-
-        responseNotifier.ProcessResponse(CommandResponse.Start);
 
         IEnumerator focusCoroutine = BombCommander.Focus(Selectable, FocusDistance, FrontFace);
         while (focusCoroutine.MoveNext())
@@ -157,12 +149,10 @@ public abstract class ComponentSolver : ICommandResponder
 	            if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _delegatedStrikeUserNickName = userNickName;
-                    _delegatedStrikeResponseNotifier = responseNotifier;
                 }
                 else if (currentString.Equals("solve", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _delegatedSolveUserNickName = userNickName;
-                    _delegatedSolveResponseNotifier = responseNotifier;
 				}
 				else if (currentString.Equals("unsubmittablepenalty", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -213,7 +203,7 @@ public abstract class ComponentSolver : ICommandResponder
                 }
                 else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode"))
                 {
-                    AwardStrikes(_currentUserNickName, _currentResponseNotifier, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+                    AwardStrikes(_currentUserNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
                     BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
                     break;
                 }
@@ -262,7 +252,7 @@ public abstract class ComponentSolver : ICommandResponder
 				{
 					if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode"))
 					{
-						AwardStrikes(_currentUserNickName, _currentResponseNotifier, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+						AwardStrikes(_currentUserNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
 						switch (currentStrings.Length)
 						{
 							case 2:
@@ -313,21 +303,12 @@ public abstract class ComponentSolver : ICommandResponder
 
 	    if (DisableOnStrike)
 	    {
-		    AwardStrikes(_currentUserNickName, _currentResponseNotifier, StrikeCount - previousStrikeCount);
+		    AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
 		    DisableOnStrike = false;
 	    }
 
-        if (parseError)
+        if(!parseError)
         {
-            responseNotifier.ProcessResponse(CommandResponse.NoResponse);
-        }
-        else
-        {
-            if (!Solved && (previousStrikeCount == StrikeCount))
-            {
-                responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
-            }
-
             yield return new WaitForSeconds(0.5f);
         }
 
@@ -339,7 +320,6 @@ public abstract class ComponentSolver : ICommandResponder
 
         yield return new WaitForSeconds(0.5f);
 
-        _currentResponseNotifier = null;
         _currentUserNickName = null;
         _processingTwitchCommand = false;
     }
@@ -445,17 +425,16 @@ public abstract class ComponentSolver : ICommandResponder
 		    ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
 
 	    string solverNickname = null;
-		if (_delegatedSolveUserNickName != null && _delegatedSolveResponseNotifier != null)
+		if (_delegatedSolveUserNickName != null)
 		{
 			solverNickname = _delegatedSolveUserNickName;
-            AwardSolve(_delegatedSolveUserNickName, _delegatedSolveResponseNotifier, moduleScore);
+            AwardSolve(_delegatedSolveUserNickName, moduleScore);
             _delegatedSolveUserNickName = null;
-            _delegatedSolveResponseNotifier = null;
         }
-        else if (_currentUserNickName != null && _currentResponseNotifier != null)
+        else if (_currentUserNickName != null)
 		{
 			solverNickname = _currentUserNickName;
-            AwardSolve(_currentUserNickName, _currentResponseNotifier, moduleScore);
+            AwardSolve(_currentUserNickName, moduleScore);
         }
 
         BombCommander.bombSolvedModules++;
@@ -498,19 +477,18 @@ public abstract class ComponentSolver : ICommandResponder
 
 	public void OnFakeStrike()
 	{
-		if (_delegatedStrikeUserNickName != null && _delegatedStrikeResponseNotifier != null)
+		if (_delegatedStrikeUserNickName != null)
 		{
-			AwardStrikes(_delegatedStrikeUserNickName, _delegatedStrikeResponseNotifier, 0);
+			AwardStrikes(_delegatedStrikeUserNickName, 0);
 			_delegatedStrikeUserNickName = null;
-			_delegatedStrikeResponseNotifier = null;
 		}
-		else if (_currentUserNickName != null && _currentResponseNotifier != null)
+		else if (_currentUserNickName != null)
 		{
-			AwardStrikes(_currentUserNickName, _currentResponseNotifier, 0);
+			AwardStrikes(_currentUserNickName, 0);
 		}
 		else if (ComponentHandle.PlayerName != null)
 		{
-			AwardStrikes(ComponentHandle.PlayerName, null, 0);
+			AwardStrikes(ComponentHandle.PlayerName, 0);
 		}
 	}
 
@@ -521,19 +499,18 @@ public abstract class ComponentSolver : ICommandResponder
         StrikeCount++;
 	    if (DisableOnStrike) return false;
 
-		if (_delegatedStrikeUserNickName != null && _delegatedStrikeResponseNotifier != null)
+		if (_delegatedStrikeUserNickName != null)
         {
-            AwardStrikes(_delegatedStrikeUserNickName, _delegatedStrikeResponseNotifier, 1);
+            AwardStrikes(_delegatedStrikeUserNickName, 1);
             _delegatedStrikeUserNickName = null;
-            _delegatedStrikeResponseNotifier = null;
         }
-        else if (_currentUserNickName != null && _currentResponseNotifier != null)
+        else if (_currentUserNickName != null)
         {
-            AwardStrikes(_currentUserNickName, _currentResponseNotifier, 1);
+            AwardStrikes(_currentUserNickName, 1);
         }
         else if (ComponentHandle.PlayerName != null)
         {
-            AwardStrikes(ComponentHandle.PlayerName, null, 1);
+            AwardStrikes(ComponentHandle.PlayerName, 1);
         }
 
         BombMessageResponder.moduleCameras?.UpdateStrikes(true);
@@ -557,13 +534,21 @@ public abstract class ComponentSolver : ICommandResponder
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
 	}
 
-    private void AwardSolve(string userNickName, ICommandResponseNotifier responseNotifier, int ComponentValue)
+    private void AwardSolve(string userNickName, int ComponentValue)
     {
         string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
         IRCConnection.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
         string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
-        responseNotifier.ProcessResponse(CommandResponse.EndComplete, ComponentValue);
-        TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
+		Leaderboard.Instance?.AddSolve(userNickName);
+	    if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
+	    {
+		    Leaderboard.Instance?.AddScore(userNickName, ComponentValue);
+	    }
+	    else
+	    {
+		    TwitchPlaySettings.AddRewardBonus(ComponentValue);
+	    }
+		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
         TwitchPlaySettings.AppendToPlayerLog(userNickName);
         if (OtherModes.timedModeOn)
         {
@@ -579,7 +564,7 @@ public abstract class ComponentSolver : ICommandResponder
         }
     }
 
-    private void AwardStrikes(string userNickName, ICommandResponseNotifier responseNotifier, int strikeCount)
+    private void AwardStrikes(string userNickName, int strikeCount)
     {
 	    string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
@@ -620,16 +605,8 @@ public abstract class ComponentSolver : ICommandResponder
             }
             IRCConnection.SendMessage(tempMessage);
         }
-        if (responseNotifier != null)
-        {
-            responseNotifier.ProcessResponse(CommandResponse.EndErrorSubtractScore, strikePenalty);
-            responseNotifier.ProcessResponse(CommandResponse.EndError, strikeCount);
-        }
-        else
-        {
-            ComponentHandle.leaderboard.AddScore(userNickName, strikePenalty);
-            ComponentHandle.leaderboard.AddStrike(userNickName, strikeCount);
-        }
+        ComponentHandle.leaderboard.AddScore(userNickName, strikePenalty);
+        ComponentHandle.leaderboard.AddStrike(userNickName, strikeCount);
         if (OtherModes.timedModeOn)
         {
             BombCommander.StrikeCount = 0;
@@ -748,13 +725,8 @@ public abstract class ComponentSolver : ICommandResponder
     #endregion
 
     #region Private Fields
-    private ICommandResponseNotifier _delegatedStrikeResponseNotifier = null;
     private string _delegatedStrikeUserNickName = null;
-
-    private ICommandResponseNotifier _delegatedSolveResponseNotifier = null;
     private string _delegatedSolveUserNickName = null;
-
-    private ICommandResponseNotifier _currentResponseNotifier = null;
     private string _currentUserNickName = null;
 
     private MusicPlayer _musicPlayer = null;

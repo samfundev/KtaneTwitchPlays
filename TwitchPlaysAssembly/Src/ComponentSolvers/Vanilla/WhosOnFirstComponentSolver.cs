@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class WhosOnFirstComponentSolver : ComponentSolver
 {
-    public WhosOnFirstComponentSolver(BombCommander bombCommander, WhosOnFirstComponent bombComponent, IRCConnection ircConnection, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, ircConnection, canceller)
-    {
+    public WhosOnFirstComponentSolver(BombCommander bombCommander, WhosOnFirstComponent bombComponent, CoroutineCanceller canceller) :
+        base(bombCommander, bombComponent, canceller)
+	{
 		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver");
     }
