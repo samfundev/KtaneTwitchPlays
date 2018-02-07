@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent) :
-        base(bombCommander, bombComponent, canceller)
+    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, Component commandComponent) :
+        base(bombCommander, bombComponent)
 	{
         ProcessMethod = processMethod;
         CommandComponent = commandComponent;
@@ -60,9 +60,9 @@ public class SimpleModComponentSolver : ComponentSolver
 
         for(int selectableIndex = 0; selectableIndex < selectableSequence.Length; ++selectableIndex)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 

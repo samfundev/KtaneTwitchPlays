@@ -3,8 +3,8 @@ using System.Collections;
 
 public class NeedyDischargeComponentSolver : ComponentSolver
 {
-    public NeedyDischargeComponentSolver(BombCommander bombCommander, NeedyDischargeComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public NeedyDischargeComponentSolver(BombCommander bombCommander, NeedyDischargeComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_dischargeButton = bombComponent.DischargeButton;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver");
@@ -24,7 +24,7 @@ public class NeedyDischargeComponentSolver : ComponentSolver
         if (holdTime > 9) yield return "elevator music";
 
         DoInteractionStart(_dischargeButton);
-        yield return new WaitForSecondsWithCancel(holdTime, Canceller);
+        yield return new WaitForSecondsWithCancel(holdTime);
         DoInteractionEnd(_dischargeButton);
     }
 

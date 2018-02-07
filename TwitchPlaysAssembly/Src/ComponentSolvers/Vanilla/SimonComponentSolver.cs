@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 
 public class SimonComponentSolver : ComponentSolver
 {
-    public SimonComponentSolver(BombCommander bombCommander, SimonComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public SimonComponentSolver(BombCommander bombCommander, SimonComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver");
@@ -30,9 +30,9 @@ public class SimonComponentSolver : ComponentSolver
                 yield return move.Value;
                 sequence += move.Value + " ";
 
-                if (Canceller.ShouldCancel)
+                if (CoroutineCanceller.ShouldCancel)
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     yield break;
                 }
 

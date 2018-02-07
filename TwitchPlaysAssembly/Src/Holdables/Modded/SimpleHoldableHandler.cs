@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class SimpleHoldableHandler : HoldableHandler
 {
-	public SimpleHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller, Component commandComponent, MethodInfo handler, string helpMessage)
-		: base(commander, holdable, connection, canceller)
+	public SimpleHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, Component commandComponent, MethodInfo handler, string helpMessage)
+		: base(commander, holdable, connection)
 	{
 		CommandComponent = commandComponent;
 		HandlerMethod = handler;

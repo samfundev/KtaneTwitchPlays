@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class CryptographyComponentSolver : ComponentSolver
 {
-    public CryptographyComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public CryptographyComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _buttons = (KMSelectable[])_keysField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

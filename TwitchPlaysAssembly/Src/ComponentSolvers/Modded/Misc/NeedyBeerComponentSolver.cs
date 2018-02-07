@@ -4,8 +4,8 @@ using System.Linq;
 
 public class NeedyBeerComponentSolver : ComponentSolver
 {
-	public NeedyBeerComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) 
-		: base(bombCommander, bombComponent, canceller)
+	public NeedyBeerComponentSolver(BombCommander bombCommander, BombComponent bombComponent) 
+		: base(bombCommander, bombComponent)
 	{
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}

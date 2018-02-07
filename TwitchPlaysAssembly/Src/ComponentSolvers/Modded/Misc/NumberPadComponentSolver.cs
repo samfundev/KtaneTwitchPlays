@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class NumberPadComponentSolver : ComponentSolver
 {
-	public NumberPadComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public NumberPadComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 	    Component component = bombComponent.GetComponent("NumberPadModule");
 	    if (component == null)

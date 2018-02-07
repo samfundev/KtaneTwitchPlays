@@ -40,9 +40,6 @@ public class TwitchComponentHandle : MonoBehaviour
 	public CoroutineQueue coroutineQueue = null;
 
 	[HideInInspector]
-	public CoroutineCanceller coroutineCanceller = null;
-
-	[HideInInspector]
 	public Leaderboard leaderboard = null;
 
 	[HideInInspector]
@@ -105,7 +102,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		try
 		{
-			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, IRCConnection.Instance, coroutineCanceller);
+			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, IRCConnection.Instance);
 			if (Solver != null)
 			{
 				if (Solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;

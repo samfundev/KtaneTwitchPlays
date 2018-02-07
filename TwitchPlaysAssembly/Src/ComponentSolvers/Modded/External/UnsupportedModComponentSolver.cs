@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class UnsupportedModComponentSolver : ComponentSolver
 {
-	public UnsupportedModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) 
-		: base(bombCommander, bombComponent, canceller)
+	public UnsupportedModComponentSolver(BombCommander bombCommander, BombComponent bombComponent) 
+		: base(bombCommander, bombComponent)
 	{
 		bombModule = bombComponent.GetComponent<KMBombModule>();
 		needyModule = bombComponent.GetComponent<KMNeedyModule>();

@@ -16,7 +16,7 @@ public static class ComponentSolverFactory
 		DebugHelper.Log(format, args);
 	}
 
-	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller);
+	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
     private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
@@ -29,69 +29,69 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
 		//AT_Bash Modules
-		ModComponentSolverCreators["MotionSense"] = (bombCommander, bombComponent, canceller) => new MotionSenseComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["MotionSense"] = (bombCommander, bombComponent) => new MotionSenseComponentSolver(bombCommander, bombComponent);
 
 		//Hexi Modules
-		ModComponentSolverCreators["MemoryV2"] = (bombCommander, bombComponent, canceller) => new ForgetMeNotComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["KeypadV2"] = (bombCommander, bombComponent, canceller) => new RoundKeypadComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["ButtonV2"] = (bombCommander, bombComponent, canceller) => new SquareButtonComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["SimonV2"] = (bombCommander, bombComponent, canceller) => new SimonStatesComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["PasswordV2"] = (bombCommander, bombComponent, canceller) => new SafetySafeComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent, canceller) => new PlumbingComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["MorseV2"] = (bombCommander, bombComponent, canceller) => new MorsematicsComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["NeedyVentV2"] = (bombCommander, bombComponent, canceller) => new NeedyQuizComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["NeedyKnobV2"] = (bombCommander, bombComponent, canceller) => new NeedyRotaryPhoneComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["MemoryV2"] = (bombCommander, bombComponent) => new ForgetMeNotComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["KeypadV2"] = (bombCommander, bombComponent) => new RoundKeypadComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["ButtonV2"] = (bombCommander, bombComponent) => new SquareButtonComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["SimonV2"] = (bombCommander, bombComponent) => new SimonStatesComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["PasswordV2"] = (bombCommander, bombComponent) => new SafetySafeComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new PlumbingComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["MorseV2"] = (bombCommander, bombComponent) => new MorsematicsComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["NeedyVentV2"] = (bombCommander, bombComponent) => new NeedyQuizComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["NeedyKnobV2"] = (bombCommander, bombComponent) => new NeedyRotaryPhoneComponentSolver(bombCommander, bombComponent);
 
 		//Perky Modules (Silly Slots is maintained by Timwi, and as such its handler lives there.)
-		ModComponentSolverCreators["CrazyTalk"] = (bombCommander, bombComponent, canceller) => new CrazyTalkComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["CryptModule"] = (bombCommander, bombComponent, canceller) => new CryptographyComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["ForeignExchangeRates"] = (bombCommander, bombComponent, canceller) => new ForeignExchangeRatesComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["Listening"] = (bombCommander, bombComponent, canceller) => new ListeningComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["OrientationCube"] = (bombCommander, bombComponent, canceller) => new OrientationCubeComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["Probing"] = (bombCommander, bombComponent, canceller) => new ProbingComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["TurnTheKey"] = (bombCommander, bombComponent, canceller) => new TurnTheKeyComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["TurnTheKeyAdvanced"] = (bombCommander, bombComponent, canceller) => new TurnTheKeyAdvancedComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["CrazyTalk"] = (bombCommander, bombComponent) => new CrazyTalkComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["CryptModule"] = (bombCommander, bombComponent) => new CryptographyComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["ForeignExchangeRates"] = (bombCommander, bombComponent) => new ForeignExchangeRatesComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["Listening"] = (bombCommander, bombComponent) => new ListeningComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["OrientationCube"] = (bombCommander, bombComponent) => new OrientationCubeComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["Probing"] = (bombCommander, bombComponent) => new ProbingComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["TurnTheKey"] = (bombCommander, bombComponent) => new TurnTheKeyComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["TurnTheKeyAdvanced"] = (bombCommander, bombComponent) => new TurnTheKeyAdvancedComponentSolver(bombCommander, bombComponent);
 
 		//Kaneb Modules
-		ModComponentSolverCreators["TwoBits"] = (bombCommander, bombComponent, canceller) => new TwoBitsComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["TwoBits"] = (bombCommander, bombComponent) => new TwoBitsComponentSolver(bombCommander, bombComponent);
 
 		//Asimir Modules
-		ModComponentSolverCreators["murder"] = (bombCommander, bombComponent, canceller) => new MurderComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent, canceller) => new SeaShellsComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent, canceller) => new ShapeShiftComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent, canceller) => new ThirdBaseComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["murder"] = (bombCommander, bombComponent) => new MurderComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent) => new SeaShellsComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent) => new ShapeShiftComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent) => new ThirdBaseComponentSolver(bombCommander, bombComponent);
 
 		//Spare Wizard Modules
-		ModComponentSolverCreators["spwiz3DMaze"] = (bombCommander, bombComponent, canceller) => new ThreeDMazeComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["spwiz3DMaze"] = (bombCommander, bombComponent) => new ThreeDMazeComponentSolver(bombCommander, bombComponent);
 
 		//Mock Army Modules
-		ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent, canceller) => new AnagramsComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent, canceller) => new EmojiMathComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent, canceller) => new AnagramsComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent) => new EmojiMathComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 
 		//Misc Modules
-		ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent, canceller) => new AlphabetComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent, canceller) => new ChordQualitiesComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["ColorMorseModule"] = (bombCommander, bombComponent, canceller) => new ColorMorseComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent, canceller) => new EnglishTestComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent, canceller) => new LetteredKeysComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent, canceller) => new MicrocontrollerComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent, canceller) => new NumberPadComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent, canceller) => new ResistorsComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent, canceller) => new SwitchesComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent, canceller) => new CurriculumComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent, canceller) => new EdgeworkComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent, canceller) => new NeedyBeerComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent) => new AlphabetComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent) => new ChordQualitiesComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["ColorMorseModule"] = (bombCommander, bombComponent) => new ColorMorseComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetteredKeysComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent) => new NumberPadComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent) => new ResistorsComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent) => new SwitchesComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent) => new CurriculumComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent) => new EdgeworkComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
 
 		//Translated Modules
-		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent, canceller) => new TranslatedButtonComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent, canceller) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent, canceller) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent, canceller) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent, canceller);
-		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent, canceller) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent, canceller);
+		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent);
 
         //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
-	    ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent, canceller) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent, canceller);
+	    ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
         
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -379,57 +379,57 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType, IRCConnection ircConnection, CoroutineCanceller canceller)
+	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType, IRCConnection ircConnection)
 	{
 		switch (componentType)
 		{
 			case ComponentTypeEnum.Wires:
-				return new WireSetComponentSolver(bombCommander, (WireSetComponent)bombComponent, canceller);
+				return new WireSetComponentSolver(bombCommander, (WireSetComponent)bombComponent);
 
 			case ComponentTypeEnum.Keypad:
-				return new KeypadComponentSolver(bombCommander, (KeypadComponent)bombComponent, canceller);
+				return new KeypadComponentSolver(bombCommander, (KeypadComponent)bombComponent);
 
 			case ComponentTypeEnum.BigButton:
-				return new ButtonComponentSolver(bombCommander, (ButtonComponent)bombComponent, canceller);
+				return new ButtonComponentSolver(bombCommander, (ButtonComponent)bombComponent);
 
 			case ComponentTypeEnum.Memory:
-				return new MemoryComponentSolver(bombCommander, (MemoryComponent)bombComponent, canceller);
+				return new MemoryComponentSolver(bombCommander, (MemoryComponent)bombComponent);
 
 			case ComponentTypeEnum.Simon:
-				return new SimonComponentSolver(bombCommander, (SimonComponent)bombComponent, canceller);
+				return new SimonComponentSolver(bombCommander, (SimonComponent)bombComponent);
 
 			case ComponentTypeEnum.Venn:
-				return new VennWireComponentSolver(bombCommander, (VennWireComponent)bombComponent, canceller);
+				return new VennWireComponentSolver(bombCommander, (VennWireComponent)bombComponent);
 
 			case ComponentTypeEnum.Morse:
-				return new MorseCodeComponentSolver(bombCommander, (MorseCodeComponent)bombComponent, canceller);
+				return new MorseCodeComponentSolver(bombCommander, (MorseCodeComponent)bombComponent);
 
 			case ComponentTypeEnum.WireSequence:
-				return new WireSequenceComponentSolver(bombCommander, (WireSequenceComponent)bombComponent, canceller);
+				return new WireSequenceComponentSolver(bombCommander, (WireSequenceComponent)bombComponent);
 
 			case ComponentTypeEnum.Password:
-				return new PasswordComponentSolver(bombCommander, (PasswordComponent)bombComponent, canceller);
+				return new PasswordComponentSolver(bombCommander, (PasswordComponent)bombComponent);
 
 			case ComponentTypeEnum.Maze:
-				return new InvisibleWallsComponentSolver(bombCommander, (InvisibleWallsComponent)bombComponent, canceller);
+				return new InvisibleWallsComponentSolver(bombCommander, (InvisibleWallsComponent)bombComponent);
 
 			case ComponentTypeEnum.WhosOnFirst:
-				return new WhosOnFirstComponentSolver(bombCommander, (WhosOnFirstComponent)bombComponent, canceller);
+				return new WhosOnFirstComponentSolver(bombCommander, (WhosOnFirstComponent)bombComponent);
 
 			case ComponentTypeEnum.NeedyVentGas:
-				return new NeedyVentComponentSolver(bombCommander, (NeedyVentComponent)bombComponent, canceller);
+				return new NeedyVentComponentSolver(bombCommander, (NeedyVentComponent)bombComponent);
 
 			case ComponentTypeEnum.NeedyCapacitor:
-				return new NeedyDischargeComponentSolver(bombCommander, (NeedyDischargeComponent)bombComponent, canceller);
+				return new NeedyDischargeComponentSolver(bombCommander, (NeedyDischargeComponent)bombComponent);
 
 			case ComponentTypeEnum.NeedyKnob:
-				return new NeedyKnobComponentSolver(bombCommander, (NeedyKnobComponent)bombComponent, canceller);
+				return new NeedyKnobComponentSolver(bombCommander, (NeedyKnobComponent)bombComponent);
 
 			case ComponentTypeEnum.Mod:
 				KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
                 try
                 {
-					return CreateModComponentSolver(bombCommander, bombComponent, canceller, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
+					return CreateModComponentSolver(bombCommander, bombComponent, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
                 }
                 catch
                 {
@@ -437,14 +437,14 @@ public static class ComponentSolverFactory
 	                DebugLog("Using Fallback Compoment solver instead.");
 	                LogAllComponentTypes(solvableModule);
 
-					return new UnsupportedModComponentSolver(bombCommander, bombComponent, canceller);
+					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
                 }
 
 			case ComponentTypeEnum.NeedyMod:
 				KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
                 try
                 {
-				    return CreateModComponentSolver(bombCommander, bombComponent, canceller, needyModule.ModuleType, needyModule.ModuleDisplayName);
+				    return CreateModComponentSolver(bombCommander, bombComponent, needyModule.ModuleType, needyModule.ModuleDisplayName);
                 }
                 catch
                 {
@@ -452,7 +452,7 @@ public static class ComponentSolverFactory
 	                DebugLog("Using Fallback Compoment solver instead.");
 					LogAllComponentTypes(needyModule);
 
-					return new UnsupportedModComponentSolver(bombCommander, bombComponent, canceller);
+					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
                 }
 
 			default:
@@ -461,12 +461,12 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller, string moduleType, string displayName)
+	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
 	{
         bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
 		if (ModComponentSolverCreators.ContainsKey(moduleType))
 		{
-            ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, canceller);
+            ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent);
 			return solver;
 		}
 
@@ -476,7 +476,7 @@ public static class ComponentSolverFactory
 
 		ModComponentSolverCreators[moduleType] = modComponentSolverCreator ?? throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
 
-		return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent, canceller) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent, canceller);
+		return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent);
 	}
 
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)
@@ -545,21 +545,21 @@ public static class ComponentSolverFactory
 			switch (commandType)
 			{
 				case ModCommandType.Simple:
-					return delegate (BombCommander _bombCommander, BombComponent _bombComponent, CoroutineCanceller _canceller)
+					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(_bombCommander, _bombComponent, _canceller, method, commandComponent);
+						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, commandComponent);
 					};
 				case ModCommandType.Coroutine:
 				    FindCancelBool(bombComponent, commandComponentType, out FieldInfo cancelfield);
-					return delegate (BombCommander _bombCommander, BombComponent _bombComponent, CoroutineCanceller _canceller)
+					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, _canceller, method, commandComponent, cancelfield);
+						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, commandComponent, cancelfield);
 					};
 				case ModCommandType.Unsupported:
 					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
-					return (_bombCommander, _bombComponent, _canceller) => new UnsupportedModComponentSolver(_bombCommander, _bombComponent, _canceller);
+					return (_bombCommander, _bombComponent) => new UnsupportedModComponentSolver(_bombCommander, _bombComponent);
 					
 				default:
 					break;

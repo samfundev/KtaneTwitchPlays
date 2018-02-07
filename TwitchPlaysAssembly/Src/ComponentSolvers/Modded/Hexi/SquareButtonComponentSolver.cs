@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class SquareButtonComponentSolver : ComponentSolver
 {
-    public SquareButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public SquareButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _button = (MonoBehaviour)_buttonField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
@@ -93,9 +93,9 @@ public class SquareButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
 				yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
 				yield break;
             }

@@ -31,7 +31,6 @@ public class TwitchPlaysService : MonoBehaviour
     private KMModSettings _modSettings = null;
     private IRCConnection _ircConnection = null;
     private CoroutineQueue _coroutineQueue = null;
-    private CoroutineCanceller _coroutineCanceller = null;
 
     private MessageResponder _activeMessageResponder = null;
     private Leaderboard _leaderboard = null;
@@ -72,10 +71,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 	    _ircConnection = GetComponent<IRCConnection>();
 
-        _coroutineCanceller = new CoroutineCanceller();
-
         _coroutineQueue = GetComponent<CoroutineQueue>();
-        _coroutineQueue.coroutineCanceller = _coroutineCanceller;
 
         logUploader = GetComponent<LogUploader>();
         logUploader.ircConnection = _ircConnection;
@@ -165,7 +161,7 @@ public class TwitchPlaysService : MonoBehaviour
     {
         if (responder != null)
         {
-            responder.SetupResponder(_ircConnection, _coroutineQueue, _coroutineCanceller);
+            responder.SetupResponder(_ircConnection, _coroutineQueue);
         }
     }
 
@@ -220,7 +216,7 @@ public class TwitchPlaysService : MonoBehaviour
 				ComponentSolver solver = null;
 				try
 				{
-					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>(), ComponentTypeEnum.Mod, _ircConnection, _coroutineCanceller);
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>(), ComponentTypeEnum.Mod, _ircConnection);
 				}
 				catch (Exception e)
 				{
@@ -243,7 +239,7 @@ public class TwitchPlaysService : MonoBehaviour
 				ComponentSolver solver = null;
 				try
 				{
-					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>(), ComponentTypeEnum.NeedyMod, _ircConnection, _coroutineCanceller);
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>(), ComponentTypeEnum.NeedyMod, _ircConnection);
 				}
 				catch (Exception e)
 				{

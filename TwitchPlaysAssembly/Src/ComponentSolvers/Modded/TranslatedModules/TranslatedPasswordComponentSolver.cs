@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class TranslatedPasswordComponentSolver : ComponentSolver
 {
-    public TranslatedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public TranslatedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _downButtons = (KMSelectable[]) _downButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
         _submitButton = (MonoBehaviour)_submitButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
@@ -72,9 +72,9 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
         for (int hitCount = 0; hitCount < 6; ++hitCount)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 
@@ -88,9 +88,9 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
         char[] characters = word.ToCharArray();
         for (int characterIndex = 0; characterIndex < characters.Length; ++characterIndex)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 

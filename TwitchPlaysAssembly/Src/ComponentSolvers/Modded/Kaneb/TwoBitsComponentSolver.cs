@@ -22,8 +22,8 @@ public class TwoBitsComponentSolver : ComponentSolver
 
     private const string ButtonLabels = "bcdegkptvz";
 
-    public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         c = bombComponent.GetComponent(_componentSolverType);
 

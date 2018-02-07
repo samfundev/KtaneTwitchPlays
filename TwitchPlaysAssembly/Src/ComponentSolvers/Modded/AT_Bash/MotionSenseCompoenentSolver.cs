@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class MotionSenseComponentSolver : ComponentSolver
 {
-    public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _component = bombComponent.GetComponent(_componentType);
         _needy = (KMNeedyModule) _needyField.GetValue(_component);

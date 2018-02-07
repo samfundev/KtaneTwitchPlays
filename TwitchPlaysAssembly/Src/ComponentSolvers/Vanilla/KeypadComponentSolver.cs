@@ -4,8 +4,8 @@ using System.Text.RegularExpressions;
 
 public class KeypadComponentSolver : ComponentSolver
 {
-    public KeypadComponentSolver(BombCommander bombCommander, KeypadComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public KeypadComponentSolver(BombCommander bombCommander, KeypadComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver");
@@ -35,9 +35,9 @@ public class KeypadComponentSolver : ComponentSolver
 
                 yield return buttonIndexString.Value;
 
-                if (Canceller.ShouldCancel)
+                if (CoroutineCanceller.ShouldCancel)
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     yield break;
                 }
 				

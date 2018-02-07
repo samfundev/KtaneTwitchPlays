@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class KMHoldableCommander
 {
-	public KMHoldableCommander(FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller)
+	public KMHoldableCommander(FloatingHoldable holdable, IRCConnection ircConnection)
 	{
 		Holdable = holdable;
 		Selectable = Holdable.GetComponent<Selectable>();
 		FloatingHoldable = Holdable.GetComponent<FloatingHoldable>();
-		Handler = HoldableFactory.CreateHandler(this, holdable, ircConnection, canceller);
+		Handler = HoldableFactory.CreateHandler(this, holdable, ircConnection);
 	}
 
 	public IEnumerator RespondToCommand(string userNickName, string message, IRCConnection connection)

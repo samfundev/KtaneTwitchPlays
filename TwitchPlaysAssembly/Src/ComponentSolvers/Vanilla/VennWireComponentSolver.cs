@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 
 public class VennWireComponentSolver : ComponentSolver
 {
-    public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _wires = bombComponent.ActiveWires;
         modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver");
@@ -35,9 +35,9 @@ public class VennWireComponentSolver : ComponentSolver
 
                 yield return wireIndexString.Value;
 
-                if (Canceller.ShouldCancel)
+                if (CoroutineCanceller.ShouldCancel)
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     yield break;
                 }
                 VennSnippableWire wire = _wires[wireIndex];

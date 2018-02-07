@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 
 public class InvisibleWallsComponentSolver : ComponentSolver
 {
-    public InvisibleWallsComponentSolver(BombCommander bombCommander, InvisibleWallsComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public InvisibleWallsComponentSolver(BombCommander bombCommander, InvisibleWallsComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver");
@@ -35,9 +35,9 @@ public class InvisibleWallsComponentSolver : ComponentSolver
             {
                 yield return move.Value;
 
-                if (Canceller.ShouldCancel)
+                if (CoroutineCanceller.ShouldCancel)
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     yield break;
                 }
 

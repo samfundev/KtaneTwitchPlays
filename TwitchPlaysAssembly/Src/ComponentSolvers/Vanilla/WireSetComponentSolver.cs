@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class WireSetComponentSolver : ComponentSolver
 {
-    public WireSetComponentSolver(BombCommander bombCommander, WireSetComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public WireSetComponentSolver(BombCommander bombCommander, WireSetComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _wires = bombComponent.wires;
         modInfo = ComponentSolverFactory.GetModuleInfo("WireSetComponentSolver");

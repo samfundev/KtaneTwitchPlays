@@ -299,7 +299,7 @@ public class BombMessageResponder : MessageResponder
 			try
 			{
 				DebugHelper.Log($"Creating holdable handler for {holdable.name}");
-				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection, _coroutineCanceller);
+				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection);
 				HoldableCommanders.Add(holdableCommander);
 			}
 			catch (Exception ex)
@@ -647,7 +647,6 @@ public class BombMessageResponder : MessageResponder
         _bombHandle.ircConnection = _ircConnection;
         _bombHandle.bombCommander = BombCommanders[BombCommanders.Count-1];
         _bombHandle.coroutineQueue = _coroutineQueue;
-        _bombHandle.coroutineCanceller = _coroutineCanceller;
         BombHandles.Add(_bombHandle);
         BombCommanders[BombCommanders.Count - 1].twitchBombHandle = _bombHandle;
     }
@@ -691,7 +690,6 @@ public class BombMessageResponder : MessageResponder
             handle.bombComponent = bombComponent;
             handle.componentType = componentType;
             handle.coroutineQueue = _coroutineQueue;
-            handle.coroutineCanceller = _coroutineCanceller;
             handle.leaderboard = leaderboard;
             handle.bombID = _currentBomb == -1 ? -1 : BombCommanders.Count - 1;
 

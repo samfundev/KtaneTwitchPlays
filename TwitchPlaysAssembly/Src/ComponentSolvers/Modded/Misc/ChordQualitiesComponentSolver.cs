@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class ChordQualitiesComponentSolver : ComponentSolver
 {
-	public ChordQualitiesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public ChordQualitiesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		object _component = bombComponent.GetComponent(_componentType);
 		_wheelButton = (KMSelectable) _wheelButtonField.GetValue(_component);

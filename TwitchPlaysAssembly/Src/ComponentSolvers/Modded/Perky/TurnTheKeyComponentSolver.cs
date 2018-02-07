@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class TurnTheKeyComponentSolver : ComponentSolver
 {
-    public TurnTheKeyComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public TurnTheKeyComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _lock = (MonoBehaviour)_lockField.GetValue(BombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
@@ -120,9 +120,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 break;
             }
 

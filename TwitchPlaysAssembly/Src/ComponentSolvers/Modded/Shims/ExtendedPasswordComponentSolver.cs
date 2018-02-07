@@ -6,8 +6,8 @@ using System.Reflection;
 
 public class ExtendedPasswordComponentSolver : ComponentSolver
 {
-    public ExtendedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public ExtendedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _component = bombComponent.GetComponent(_componentType);
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

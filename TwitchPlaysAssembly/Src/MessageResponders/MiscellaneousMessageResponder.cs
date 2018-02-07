@@ -100,13 +100,13 @@ public class MiscellaneousMessageResponder : MessageResponder
         if (text.Equals("cancel", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            _coroutineCanceller.SetCancel();
+	        CoroutineCanceller.SetCancel();
             return;
         }
         else if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            _coroutineCanceller.SetCancel();
+	        CoroutineCanceller.SetCancel();
             _coroutineQueue.CancelFutureSubcoroutines();
             return;
         }

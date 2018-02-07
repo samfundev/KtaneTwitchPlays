@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class ResistorsComponentSolver : ComponentSolver
 {
-	public ResistorsComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public ResistorsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		object _component = bombComponent.GetComponent(_componentType);
 		_pins = (KMSelectable[]) _pinsField.GetValue(_component);

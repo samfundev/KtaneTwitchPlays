@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class RoundKeypadComponentSolver : ComponentSolver
 {
-    public RoundKeypadComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public RoundKeypadComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
@@ -37,9 +37,9 @@ public class RoundKeypadComponentSolver : ComponentSolver
         yield return inputCommand;
         foreach (MonoBehaviour button in buttons)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
             yield return DoInteractionClick(button);

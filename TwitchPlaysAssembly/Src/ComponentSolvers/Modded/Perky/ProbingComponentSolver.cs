@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ProbingComponentSolver : ComponentSolver
 {
-    public ProbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public ProbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _wires = (MonoBehaviour[])_wiresField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

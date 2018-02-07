@@ -8,8 +8,8 @@ using UnityEngine;
 
 public class MurderComponentSolver : ComponentSolver
 {
-	public MurderComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public MurderComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
@@ -55,9 +55,9 @@ public class MurderComponentSolver : ComponentSolver
 		        yield return null;
 		        foreach (var item in CycleThroughCategory(i))
 		        {
-			        if (Canceller.ShouldCancel)
+			        if (CoroutineCanceller.ShouldCancel)
 			        {
-				        Canceller.ResetCancel();
+				        CoroutineCanceller.ResetCancel();
 				        yield break;
 			        }
 			        yield return DoInteractionClick((MonoBehaviour) item, 2.0f);

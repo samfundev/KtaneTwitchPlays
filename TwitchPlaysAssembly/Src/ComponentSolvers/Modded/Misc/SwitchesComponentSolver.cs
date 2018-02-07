@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class SwitchesComponentSolver : ComponentSolver
 {
-	public SwitchesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public SwitchesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

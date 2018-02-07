@@ -8,8 +8,8 @@ public class SimonStatesComponentSolver : ComponentSolver
 {
     private Component c;
 
-    public SimonStatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public SimonStatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         c = bombComponent.GetComponent(_componentType);
         _buttons = new MonoBehaviour[4];
@@ -67,9 +67,9 @@ public class SimonStatesComponentSolver : ComponentSolver
         yield return inputCommand;
         foreach (MonoBehaviour button in buttons)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 

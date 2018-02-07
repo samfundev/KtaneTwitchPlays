@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class PlumbingComponentSolver : ComponentSolver
 {
-    public PlumbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public PlumbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _check = (MonoBehaviour)_checkField.GetValue(bombComponent.GetComponent(_componentType));
 
@@ -67,9 +67,9 @@ public class PlumbingComponentSolver : ComponentSolver
         }
         foreach (MonoBehaviour button in pipes)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
             yield return DoInteractionClick(button);

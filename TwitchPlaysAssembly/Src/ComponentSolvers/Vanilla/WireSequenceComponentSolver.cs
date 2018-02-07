@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class WireSequenceComponentSolver : ComponentSolver
 {
-    public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _wireSequence = (List<WireSequenceComponent.WireConfiguration>) _wireSequenceField.GetValue(bombComponent);
 		_upButton = bombComponent.UpButton;
@@ -89,9 +89,9 @@ public class WireSequenceComponentSolver : ComponentSolver
             yield return "wire sequence";
 	        foreach (KeyValuePair<MonoBehaviour, string> button in buttons)
 	        {
-		        if (Canceller.ShouldCancel)
+		        if (CoroutineCanceller.ShouldCancel)
 		        {
-			        Canceller.ResetCancel();
+			        CoroutineCanceller.ResetCancel();
 			        yield break;
 		        }
 		        yield return DoInteractionClick(button.Key, button.Value);

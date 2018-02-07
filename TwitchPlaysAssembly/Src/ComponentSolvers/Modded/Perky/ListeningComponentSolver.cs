@@ -8,8 +8,8 @@ using UnityEngine;
 
 public class ListeningComponentSolver : ComponentSolver
 {
-    public ListeningComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public ListeningComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         Component component = bombComponent.GetComponent("Listening");
         if (component == null)

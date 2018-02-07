@@ -2,8 +2,8 @@
 
 public class NeedyVentComponentSolver : ComponentSolver
 {
-    public NeedyVentComponentSolver(BombCommander bombCommander, NeedyVentComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public NeedyVentComponentSolver(BombCommander bombCommander, NeedyVentComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_yesButton = bombComponent.YesButton;
 		_noButton = bombComponent.NoButton;

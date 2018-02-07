@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class TranslatedButtonComponentSolver : ComponentSolver
 {
-	public TranslatedButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public TranslatedButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 	    _button = (KMSelectable) _buttonField.GetValue(bombComponent.GetComponent(_componentType));
 	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
@@ -78,9 +78,9 @@ public class TranslatedButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f && _held)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 

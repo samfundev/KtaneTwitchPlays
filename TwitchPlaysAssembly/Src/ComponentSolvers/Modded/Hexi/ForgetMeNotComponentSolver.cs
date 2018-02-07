@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ForgetMeNotComponentSolver : ComponentSolver
 {
-    public ForgetMeNotComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public ForgetMeNotComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
@@ -29,9 +29,9 @@ public class ForgetMeNotComponentSolver : ComponentSolver
 
                 yield return buttonString;
 
-                if (Canceller.ShouldCancel)
+                if (CoroutineCanceller.ShouldCancel)
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     yield break;
                 }
 

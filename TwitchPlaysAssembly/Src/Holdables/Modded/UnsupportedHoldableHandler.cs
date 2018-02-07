@@ -3,8 +3,8 @@
 
 public class UnsupportedHoldableHandler : HoldableHandler
 {
-	public UnsupportedHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller)
-		: base(commander, holdable, connection, canceller)
+	public UnsupportedHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection)
+		: base(commander, holdable, connection)
 	{
 		HelpMessage = "!{0} is not supported by Twitch Plays yet.";
 	}

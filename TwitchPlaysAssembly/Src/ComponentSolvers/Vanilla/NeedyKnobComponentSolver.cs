@@ -2,8 +2,8 @@
 
 public class NeedyKnobComponentSolver : ComponentSolver
 {
-    public NeedyKnobComponentSolver(BombCommander bombCommander, NeedyKnobComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public NeedyKnobComponentSolver(BombCommander bombCommander, NeedyKnobComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_pointingKnob = bombComponent.PointingKnob;
         modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver");
@@ -34,9 +34,9 @@ public class NeedyKnobComponentSolver : ComponentSolver
 
         for (int turnCount = 0; turnCount < totalTurnCount; ++turnCount)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
             yield return DoInteractionClick(_pointingKnob);

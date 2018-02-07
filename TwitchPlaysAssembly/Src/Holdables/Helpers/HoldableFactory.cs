@@ -15,20 +15,20 @@ public static class HoldableFactory
 		DebugHelper.Log(format, args);
 	}
 
-	private delegate HoldableHandler ModHoldableHandlerDelegate(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller);
+	private delegate HoldableHandler ModHoldableHandlerDelegate(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection);
 	private static readonly Dictionary<string, ModHoldableHandlerDelegate> ModHoldableCreators = new Dictionary<string, ModHoldableHandlerDelegate>();
 	private static readonly List<Type> ModHoldableTypes = new List<Type>();
 
 	static HoldableFactory()
 	{
-		ModHoldableCreators[typeof(AlarmClock).FullName] = (commander, holdable, ircConnection, canceller) => new AlarmClockHoldableHandler(commander, holdable, ircConnection, canceller);
+		ModHoldableCreators[typeof(AlarmClock).FullName] = (commander, holdable, ircConnection) => new AlarmClockHoldableHandler(commander, holdable, ircConnection);
 		ModHoldableTypes.Add(typeof(AlarmClock));
 
-		ModHoldableCreators[typeof(IRCConnectionManagerHoldable).FullName] = (commander, holdable, ircConnection, canceller) => new IRCConnectionManagerHandler(commander, holdable, ircConnection, canceller);
+		ModHoldableCreators[typeof(IRCConnectionManagerHoldable).FullName] = (commander, holdable, ircConnection) => new IRCConnectionManagerHandler(commander, holdable, ircConnection);
 		ModHoldableTypes.Add(typeof(IRCConnectionManagerHoldable));
 	}
 
-	public static HoldableHandler CreateHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller)
+	public static HoldableHandler CreateHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection)
 	{
 		if (commander != null)
 			commander.ID = holdable.name.ToLowerInvariant().Replace("(clone)", "");
@@ -37,13 +37,13 @@ public static class HoldableFactory
 		{
 			if (type?.FullName == null) continue;
 			if (holdable.GetComponent(type) == null || !ModHoldableCreators.ContainsKey(type.FullName)) continue;
-			return ModHoldableCreators[type.FullName](commander, holdable, ircConnection, canceller);
+			return ModHoldableCreators[type.FullName](commander, holdable, ircConnection);
 		}
 
-		return CreateModComponentSolver(commander, holdable, ircConnection, canceller);
+		return CreateModComponentSolver(commander, holdable, ircConnection);
 	}
 
-	private static HoldableHandler CreateModComponentSolver(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection, CoroutineCanceller canceller)
+	private static HoldableHandler CreateModComponentSolver(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection)
 	{
 
 		DebugLog("Attempting to find a valid process command method to respond with on holdable {0}...", holdable.name);
@@ -51,11 +51,11 @@ public static class HoldableFactory
 		ModHoldableHandlerDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(holdable, out Type holdableType);
 
 		if (holdableType?.FullName == null || modComponentSolverCreator == null)
-			return new UnsupportedHoldableHandler(commander, holdable, ircConnection, canceller);
+			return new UnsupportedHoldableHandler(commander, holdable, ircConnection);
 
 		ModHoldableCreators[holdableType.FullName] = modComponentSolverCreator;
 
-		return ModHoldableCreators[holdableType.FullName](commander, holdable, ircConnection, canceller);
+		return ModHoldableCreators[holdableType.FullName](commander, holdable, ircConnection);
 	}
 
 	private static ModHoldableHandlerDelegate GenerateModComponentSolverCreator(FloatingHoldable holdable, out Type holdableType)
@@ -86,12 +86,12 @@ public static class HoldableFactory
 
 	private static ModHoldableHandlerDelegate SimpleHandlerDelegate(MethodInfo method, Component component, string helpText)
 	{
-		return (commander, flholdable, ircConnection, canceller) => new SimpleHoldableHandler(commander, flholdable, ircConnection, canceller, component, method, helpText);
+		return (commander, flholdable, ircConnection) => new SimpleHoldableHandler(commander, flholdable, ircConnection, component, method, helpText);
 	}
 
 	private static ModHoldableHandlerDelegate CoroutineHandlerDelegate(MethodInfo method, Component component, string helpText, FieldInfo cancelBool)
 	{
-		return (commander, flholdable, ircConnection, canceller) => new CoroutineHoldableHandler(commander, flholdable, ircConnection, canceller, component, method, helpText, cancelBool);
+		return (commander, flholdable, ircConnection) => new CoroutineHoldableHandler(commander, flholdable, ircConnection, component, method, helpText, cancelBool);
 	}
 
 	private static readonly List<string> FullNamesLogged = new List<string>();

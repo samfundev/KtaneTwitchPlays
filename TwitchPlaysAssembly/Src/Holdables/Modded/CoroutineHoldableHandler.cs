@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CoroutineHoldableHandler : HoldableHandler
 {
-	public CoroutineHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller, Component commandComponent, MethodInfo handler, string helpMessage, FieldInfo cancelbool) 
-		: base(commander, holdable, connection, canceller)
+	public CoroutineHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, Component commandComponent, MethodInfo handler, string helpMessage, FieldInfo cancelbool) 
+		: base(commander, holdable, connection)
 	{
 		CommandComponent = commandComponent;
 		HandlerMethod = handler;

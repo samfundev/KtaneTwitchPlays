@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PasswordComponentSolver : ComponentSolver
 {
-    public PasswordComponentSolver(BombCommander bombCommander, PasswordComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public PasswordComponentSolver(BombCommander bombCommander, PasswordComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_spinners = bombComponent.Spinners;
 		_submitButton = bombComponent.SubmitButton;
@@ -55,9 +55,9 @@ public class PasswordComponentSolver : ComponentSolver
 
         for (int hitCount = 0; hitCount < 6; ++hitCount)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 
@@ -71,9 +71,9 @@ public class PasswordComponentSolver : ComponentSolver
         char[] characters = word.ToCharArray();
         for (int characterIndex = 0; characterIndex < characters.Length; ++characterIndex)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 

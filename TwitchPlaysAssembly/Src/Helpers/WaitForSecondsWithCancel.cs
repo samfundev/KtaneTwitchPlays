@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 
-public class CoroutineCanceller
+public static class CoroutineCanceller
 {
-    public void SetCancel()
+	public static void SetCancel()
     {
         ShouldCancel = true;
     }
 
-    public void ResetCancel()
+    public static void ResetCancel()
     {
         ShouldCancel = false;
     }
 
-    public bool ShouldCancel
+    public static bool ShouldCancel
     {
         get;
         private set;
@@ -21,10 +21,9 @@ public class CoroutineCanceller
 
 public class WaitForSecondsWithCancel : CustomYieldInstruction
 {
-    public WaitForSecondsWithCancel(float seconds, CoroutineCanceller canceller, bool resetCancel=true)
+    public WaitForSecondsWithCancel(float seconds, bool resetCancel=true)
     {
         _seconds = seconds;
-        _canceller = canceller;
         _startingTime = Time.time;
         _resetCancel = resetCancel;
     }
@@ -33,19 +32,17 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
     {
         get
         {
-            if (_canceller.ShouldCancel)
-            {
-                if(_resetCancel)
-                    _canceller.ResetCancel();
-                return false;
-            }
+	        if (!CoroutineCanceller.ShouldCancel)
+				return (Time.time - _startingTime) < _seconds;
 
-            return (Time.time - _startingTime) < _seconds;
+	        if(_resetCancel)
+		        CoroutineCanceller.ResetCancel();
+
+	        return false;
         }
     }
 
     private readonly float _seconds = 0.0f;
-    private readonly CoroutineCanceller _canceller = null;
     private readonly float _startingTime = 0.0f;
     private readonly bool _resetCancel = true;
 }

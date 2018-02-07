@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AlarmClockHoldableHandler : HoldableHandler
 {
-	public AlarmClockHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller) : base(commander, holdable, connection, canceller)
+	public AlarmClockHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection) : base(commander, holdable, connection)
 	{
 		clock = Holdable.GetComponentInChildren<AlarmClock>();
 		HelpMessage = "Snooze the alarm clock with !{0} snooze.";

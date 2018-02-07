@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CoroutineQueue : MonoBehaviour
 {
-    public CoroutineCanceller coroutineCanceller = null;
-
     private void Awake()
     {
         _coroutineQueue = new Queue<IEnumerator>();
@@ -48,12 +46,12 @@ public class CoroutineQueue : MonoBehaviour
 
         _processing = false;
 
-        coroutineCanceller.ResetCancel();
+        CoroutineCanceller.ResetCancel();
     }
 
     private IEnumerator ProcessQueueCoroutine()
     {
-        coroutineCanceller.ResetCancel();
+        CoroutineCanceller.ResetCancel();
 
         while (_coroutineQueue.Count > 0)
         {
@@ -69,7 +67,7 @@ public class CoroutineQueue : MonoBehaviour
         _processing = false;
         _activeCoroutine = null;
 
-        coroutineCanceller.ResetCancel();
+        CoroutineCanceller.ResetCancel();
     }
 
     private Queue<IEnumerator> _coroutineQueue = null;

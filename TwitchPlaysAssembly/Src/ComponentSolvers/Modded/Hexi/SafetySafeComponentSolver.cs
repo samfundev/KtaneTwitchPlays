@@ -24,8 +24,8 @@ public class SafetySafeComponentSolver : ComponentSolver
         "bottom left", "bottom middle", "bottom right"
     };
 
-    public SafetySafeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public SafetySafeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _buttons = (MonoBehaviour[])_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
         _lever = (MonoBehaviour)_leverField.GetValue(bombComponent.GetComponent(_componentType));
@@ -53,6 +53,7 @@ public class SafetySafeComponentSolver : ComponentSolver
                     {
                         yield return cycle.Current;
                     }
+	                if (CoroutineCanceller.ShouldCancel) break;
                 }
             }
             else if (DialPosNames.TryGetValue(split[1], out pos))
@@ -63,8 +64,8 @@ public class SafetySafeComponentSolver : ComponentSolver
                     yield return cycle.Current;
                 }
             }
-            if (Canceller.ShouldCancel)
-                Canceller.ResetCancel();
+            if (CoroutineCanceller.ShouldCancel)
+	            CoroutineCanceller.ResetCancel();
         }
         else if (DialPosNames.TryGetValue(split[0], out pos))
         {
@@ -100,7 +101,11 @@ public class SafetySafeComponentSolver : ComponentSolver
                 {
                     yield return set.Current;
                 }
+	            if (CoroutineCanceller.ShouldCancel)
+		            break;
             }
+	        if (CoroutineCanceller.ShouldCancel)
+		        CoroutineCanceller.ResetCancel();
         }
     }
 
@@ -109,16 +114,16 @@ public class SafetySafeComponentSolver : ComponentSolver
         yield return "cycle " + pos;
         for (var j = 0; j < 12; j++)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
                 yield break;
             }
             yield return DoInteractionClick(_buttons[pos]);
-            yield return new WaitForSecondsWithCancel(0.3f, Canceller, false);
+            yield return new WaitForSecondsWithCancel(0.3f, false);
         }
-        if (wait)
+        if (wait && !CoroutineCanceller.ShouldCancel)
         {
-            yield return new WaitForSecondsWithCancel(0.5f, Canceller, false);
+            yield return new WaitForSecondsWithCancel(0.5f, false);
         }
     }
 
@@ -129,10 +134,9 @@ public class SafetySafeComponentSolver : ComponentSolver
         for (int i = 0; i < value; i++)
         {
             yield return DoInteractionClick(_buttons[pos]);
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
                 yield return "sendtochat Setting the " + DialNames[pos] + " dial on safety safe was interrupted due to a request to cancel.";
-                Canceller.ResetCancel();
                 yield break;
             }
         }

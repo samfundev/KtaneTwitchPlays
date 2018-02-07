@@ -9,13 +9,12 @@ public abstract class ComponentSolver
     public delegate IEnumerator RegexResponse(Match match);
 
     #region Constructors
-    public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller)
+    public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
 	{
         BombCommander = bombCommander;
         BombComponent = bombComponent;
         Selectable = bombComponent.GetComponent<Selectable>();
         IRCConnection = IRCConnection.Instance;
-        Canceller = canceller;
     
 		if(bombCommander != null)
 			HookUpEvents();
@@ -172,10 +171,10 @@ public abstract class ComponentSolver
                     parseError = true;
                     break;
                 }
-                else if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) && 
-                    Canceller.ShouldCancel)
+                else if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) &&
+                         CoroutineCanceller.ShouldCancel)
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     break;
                 }
                 else if (currentString.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && 
@@ -718,7 +717,6 @@ public abstract class ComponentSolver
     protected readonly BombComponent BombComponent = null;
     protected readonly Selectable Selectable = null;
     protected readonly IRCConnection IRCConnection = null;
-    public readonly CoroutineCanceller Canceller = null;
     #endregion
 
     #region Private Fields

@@ -73,7 +73,7 @@ public class MissionMessageResponder : MessageResponder
 				    try
 				    {
 						DebugHelper.Log($"Creating holdable handler for {holdable.name}");
-					    KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection, _coroutineCanceller);
+					    KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection);
 					    _holdableCommanders.Add(holdableCommander);
 				    }
 				    catch (Exception ex)

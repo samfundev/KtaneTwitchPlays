@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield) :
-        base(bombCommander, bombComponent, canceller)
+    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, Component commandComponent, FieldInfo cancelfield) :
+        base(bombCommander, bombComponent)
 	{
         ProcessMethod = processMethod;
         CommandComponent = commandComponent;
@@ -107,13 +107,13 @@ public class CoroutineModComponentSolver : ComponentSolver
             {
 	            if (str.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Canceller.ResetCancel();
+	                CoroutineCanceller.ResetCancel();
                     TryCancel = false;
                 }
             }
             yield return currentObject;
 
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
                 TryCancel = true;
         } 
     }

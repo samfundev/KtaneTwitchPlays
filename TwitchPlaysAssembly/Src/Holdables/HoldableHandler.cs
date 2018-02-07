@@ -6,12 +6,11 @@ using UnityEngine;
 
 public abstract class HoldableHandler
 {
-	public HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection, CoroutineCanceller canceller)
+	public HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection)
 	{
 		HoldableCommander = commander;
 		Holdable = holdable;
 		ircConnection = connection;
-		Canceller = canceller;
 
 		if (!BombMessageResponder.BombActive) return;
 		KMGameCommands gameCommands = holdable.GetComponent<KMGameCommands>();
@@ -215,9 +214,9 @@ public abstract class HoldableHandler
 					case string currentString when !string.IsNullOrEmpty(currentString):
 						DebugHelper.Log(currentString);
 						if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) &&
-						    Canceller.ShouldCancel)
+						    CoroutineCanceller.ShouldCancel)
 						{
-							Canceller.ResetCancel();
+							CoroutineCanceller.ResetCancel();
 							cancelled = true;
 						}
 						else if (currentString.ToLowerInvariant().EqualsAny("elevator music", "hold music", "waiting music"))
@@ -230,7 +229,7 @@ public abstract class HoldableHandler
 						else if (currentString.ToLowerInvariant().Equals("cancelled") && cancelling)
 						{
 							CancelBool?.SetValue(CommandComponent, false);
-							Canceller.ResetCancel();
+							CoroutineCanceller.ResetCancel();
 							cancelled = true;
 						}
 						else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) &&
@@ -333,7 +332,7 @@ public abstract class HoldableHandler
 				
 				yield return processCommand.Current;
 
-				if (Canceller.ShouldCancel && !cancelling && CommandComponent != null)
+				if (CoroutineCanceller.ShouldCancel && !cancelling && CommandComponent != null)
 				{
 					CancelBool?.SetValue(CommandComponent, true);
 					cancelling = CancelBool != null;
@@ -447,7 +446,6 @@ public abstract class HoldableHandler
 	private MusicPlayer _musicPlayer;
 
 	public string HelpMessage;
-	public CoroutineCanceller Canceller;
 	public KMHoldableCommander HoldableCommander;
 	public FloatingHoldable Holdable;
 	protected HashSet<KMSelectable> heldSelectables = new HashSet<KMSelectable>();

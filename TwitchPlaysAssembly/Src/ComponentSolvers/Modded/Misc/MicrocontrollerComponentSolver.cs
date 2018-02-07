@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class MicrocontrollerComponentSolver : ComponentSolver
 {
-	public MicrocontrollerComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public MicrocontrollerComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		object _component = bombComponent.GetComponent(_componentType);
 		_buttonOK = (KMSelectable) _buttonOKField.GetValue(_component);

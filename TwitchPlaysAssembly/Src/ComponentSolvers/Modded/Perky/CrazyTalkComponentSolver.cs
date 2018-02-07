@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CrazyTalkComponentSolver : ComponentSolver
 {
-    public CrazyTalkComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public CrazyTalkComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _toggle = (MonoBehaviour)_toggleField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

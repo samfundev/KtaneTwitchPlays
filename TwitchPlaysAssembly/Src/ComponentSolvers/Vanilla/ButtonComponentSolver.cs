@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
 {
-    public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
         ModuleInformation squarebuttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonV2");
@@ -99,9 +99,9 @@ public class ButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f && _held)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
                 yield break;
             }
@@ -170,9 +170,9 @@ public class ButtonComponentSolver : ComponentSolver
         
         while (timeRemaining > 0.0f)
         {
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 if (timeTarget < 10)
                     yield return string.Format("sendtochat The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModifier.GetRuleSeed());
                 else

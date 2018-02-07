@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 public class ThreeDMazeComponentSolver : ComponentSolver
 {
-	public ThreeDMazeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public ThreeDMazeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		object _component = bombComponent.GetComponent(_componentType);
 		_buttonLeft = (KMSelectable) _buttonLeftField.GetValue(_component);

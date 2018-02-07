@@ -35,9 +35,6 @@ public class TwitchBombHandle : MonoBehaviour
     public CoroutineQueue coroutineQueue = null;
 
     [HideInInspector]
-    public CoroutineCanceller coroutineCanceller = null;
-
-    [HideInInspector]
     public int bombID = -1;
     #endregion
 

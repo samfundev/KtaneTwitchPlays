@@ -2,8 +2,8 @@ using System.Collections;
 
 public class MemoryComponentSolver : ComponentSolver
 {
-    public MemoryComponentSolver(BombCommander bombCommander, MemoryComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public MemoryComponentSolver(BombCommander bombCommander, MemoryComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.Buttons;
         modInfo = ComponentSolverFactory.GetModuleInfo("MemoryComponentSolver");

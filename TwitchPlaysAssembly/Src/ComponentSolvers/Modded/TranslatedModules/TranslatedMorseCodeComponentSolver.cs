@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class TranslatedMorseCodeComponentSolver : ComponentSolver
 {
-    public TranslatedMorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-        base(bombCommander, bombComponent, canceller)
+    public TranslatedMorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+        base(bombCommander, bombComponent)
 	{
         _component = bombComponent.GetComponent(_morseCodeComponentType);
         _upButton = (MonoBehaviour)_upButtonField.GetValue(_component);
@@ -61,9 +61,9 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         {
             yield return "change frequency";
 
-            if (Canceller.ShouldCancel)
+            if (CoroutineCanceller.ShouldCancel)
             {
-                Canceller.ResetCancel();
+	            CoroutineCanceller.ResetCancel();
                 yield break;
             }
 

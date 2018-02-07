@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 {
-	public TranslatedWhosOnFirstComponentSolver(BombCommander bombCommander, BombComponent bombComponent, CoroutineCanceller canceller) :
-		base(bombCommander, bombComponent, canceller)
+	public TranslatedWhosOnFirstComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
