@@ -456,6 +456,10 @@ public class Leaderboard
         }
     }
 
+	public Leaderboard()
+	{
+		Instance = this;
+	}
 
     private Dictionary<string, LeaderboardEntry> _entryDictionary = new Dictionary<string, LeaderboardEntry>();
     private List<LeaderboardEntry> _entryList = new List<LeaderboardEntry>();
@@ -479,4 +483,5 @@ public class Leaderboard
     public static int RequiredSoloSolves = 11;
     public static string usersSavePath = "TwitchPlaysUsers.xml";
     public static string statsSavePath = "TwitchPlaysStats.json";
+	public static Leaderboard Instance;
 }
