@@ -15,16 +15,16 @@ public static class HoldableFactory
 		DebugHelper.Log(format, args);
 	}
 
-	private delegate HoldableHandler ModHoldableHandlerDelegate(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection);
+	private delegate HoldableHandler ModHoldableHandlerDelegate(KMHoldableCommander commander, FloatingHoldable holdable);
 	private static readonly Dictionary<string, ModHoldableHandlerDelegate> ModHoldableCreators = new Dictionary<string, ModHoldableHandlerDelegate>();
 	private static readonly List<Type> ModHoldableTypes = new List<Type>();
 
 	static HoldableFactory()
 	{
-		ModHoldableCreators[typeof(AlarmClock).FullName] = (commander, holdable, ircConnection) => new AlarmClockHoldableHandler(commander, holdable, ircConnection);
+		ModHoldableCreators[typeof(AlarmClock).FullName] = (commander, holdable) => new AlarmClockHoldableHandler(commander, holdable);
 		ModHoldableTypes.Add(typeof(AlarmClock));
 
-		ModHoldableCreators[typeof(IRCConnectionManagerHoldable).FullName] = (commander, holdable, ircConnection) => new IRCConnectionManagerHandler(commander, holdable, ircConnection);
+		ModHoldableCreators[typeof(IRCConnectionManagerHoldable).FullName] = (commander, holdable) => new IRCConnectionManagerHandler(commander, holdable);
 		ModHoldableTypes.Add(typeof(IRCConnectionManagerHoldable));
 	}
 
@@ -37,7 +37,7 @@ public static class HoldableFactory
 		{
 			if (type?.FullName == null) continue;
 			if (holdable.GetComponent(type) == null || !ModHoldableCreators.ContainsKey(type.FullName)) continue;
-			return ModHoldableCreators[type.FullName](commander, holdable, ircConnection);
+			return ModHoldableCreators[type.FullName](commander, holdable);
 		}
 
 		return CreateModComponentSolver(commander, holdable, ircConnection);
@@ -51,11 +51,11 @@ public static class HoldableFactory
 		ModHoldableHandlerDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(holdable, out Type holdableType);
 
 		if (holdableType?.FullName == null || modComponentSolverCreator == null)
-			return new UnsupportedHoldableHandler(commander, holdable, ircConnection);
+			return new UnsupportedHoldableHandler(commander, holdable);
 
 		ModHoldableCreators[holdableType.FullName] = modComponentSolverCreator;
 
-		return ModHoldableCreators[holdableType.FullName](commander, holdable, ircConnection);
+		return ModHoldableCreators[holdableType.FullName](commander, holdable);
 	}
 
 	private static ModHoldableHandlerDelegate GenerateModComponentSolverCreator(FloatingHoldable holdable, out Type holdableType)
@@ -86,12 +86,12 @@ public static class HoldableFactory
 
 	private static ModHoldableHandlerDelegate SimpleHandlerDelegate(MethodInfo method, Component component, string helpText)
 	{
-		return (commander, flholdable, ircConnection) => new SimpleHoldableHandler(commander, flholdable, ircConnection, component, method, helpText);
+		return (commander, flholdable) => new SimpleHoldableHandler(commander, flholdable, component, method, helpText);
 	}
 
 	private static ModHoldableHandlerDelegate CoroutineHandlerDelegate(MethodInfo method, Component component, string helpText, FieldInfo cancelBool)
 	{
-		return (commander, flholdable, ircConnection) => new CoroutineHoldableHandler(commander, flholdable, ircConnection, component, method, helpText, cancelBool);
+		return (commander, flholdable) => new CoroutineHoldableHandler(commander, flholdable, component, method, helpText, cancelBool);
 	}
 
 	private static readonly List<string> FullNamesLogged = new List<string>();

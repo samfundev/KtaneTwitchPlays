@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class IRCConnectionManagerHandler : HoldableHandler
 {
-	public IRCConnectionManagerHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection) : base(commander, holdable, connection)
+	public IRCConnectionManagerHandler(KMHoldableCommander commander, FloatingHoldable holdable) : base(commander, holdable)
 	{
 		_connectButton = holdable.GetComponent<IRCConnectionManagerHoldable>().ConnectButton;
 		HelpMessage = "Disconnect the IRC from twitch plays with !{0} disconnect.  For obvious reasons, only the streamer may do this.";

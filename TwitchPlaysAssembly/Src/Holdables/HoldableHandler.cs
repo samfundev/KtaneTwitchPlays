@@ -6,11 +6,10 @@ using UnityEngine;
 
 public abstract class HoldableHandler
 {
-	public HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection connection)
+	public HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable)
 	{
 		HoldableCommander = commander;
 		Holdable = holdable;
-		ircConnection = connection;
 
 		if (!BombMessageResponder.BombActive) return;
 		KMGameCommands gameCommands = holdable.GetComponent<KMGameCommands>();
@@ -40,8 +39,8 @@ public abstract class HoldableHandler
 		BombCommander BombCommander = BombMessageResponder.Instance.BombCommanders[0];
 		int strikePenalty = -5;
 		strikePenalty = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? (strikeCount * strikePenalty) : (Math.Min(strikePenalty, strikeCount * strikePenalty));
-	
-		ircConnection.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike, 
+
+		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike, 
 			HoldableCommander.ID, 
 			strikeCount == 1 ? "a" : strikeCount.ToString(), 
 			strikeCount == 1 ? "" : "s",
@@ -56,7 +55,7 @@ public abstract class HoldableHandler
 		int currentReward = TwitchPlaySettings.GetRewardBonus();
 		currentReward = Convert.ToInt32(currentReward * .80);
 		TwitchPlaySettings.SetRewardBonus(currentReward);
-		ircConnection.SendMessage("Reward reduced to " + currentReward + " points.");
+		IRCConnection.Instance.SendMessage("Reward reduced to " + currentReward + " points.");
 		if (OtherModes.timedModeOn)
 		{
 			bool multiDropped = OtherModes.dropMultiplier();
@@ -82,7 +81,7 @@ public abstract class HoldableHandler
 				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
 				tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
-			ircConnection.SendMessage(tempMessage);
+			IRCConnection.Instance.SendMessage(tempMessage);
 			BombCommander.StrikeCount = 0;
 			BombMessageResponder.moduleCameras?.UpdateStrikes();
 		}
@@ -369,22 +368,22 @@ public abstract class HoldableHandler
 	{
 		if (string.IsNullOrEmpty(message))
 		{
-			ircConnection.SendMessage(TwitchPlaySettings.data.HoldableInvalidCommand, HoldableCommander.ID, userNickname);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.HoldableInvalidCommand, HoldableCommander.ID, userNickname);
 			return;
 		}
 		if (message.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(11).Trim() != string.Empty)
 		{
-			ircConnection.SendMessage(message.Substring(11), HoldableCommander.ID, userNickname);
+			IRCConnection.Instance.SendMessage(message.Substring(11), HoldableCommander.ID, userNickname);
 			return;
 		}
 		if (message.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(16).Trim() != string.Empty)
 		{
-			ircConnection.SendMessage(TwitchPlaySettings.data.HoldableCommandError, HoldableCommander.ID, userNickname, message.Substring(16));
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.HoldableCommandError, HoldableCommander.ID, userNickname, message.Substring(16));
 			parseerror = true;
 			return;
 		}
 		if (!message.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase)) return;
-		ircConnection.SendMessage($"Sorry @{userNickname}, there was an error parsing the command for !{HoldableCommander.ID}");
+		IRCConnection.Instance.SendMessage($"Sorry @{userNickname}, there was an error parsing the command for !{HoldableCommander.ID}");
 		parseerror = true;
 	}
 
@@ -424,7 +423,7 @@ public abstract class HoldableHandler
 	public void ShowHelp()
 	{
 		if (!string.IsNullOrEmpty(HelpMessage))
-			ircConnection.SendMessage(HelpMessage, HoldableCommander.ID);
+			IRCConnection.Instance.SendMessage(HelpMessage, HoldableCommander.ID);
 	}
 
 
@@ -441,7 +440,6 @@ public abstract class HoldableHandler
 	protected Component CommandComponent;
 	protected MethodInfo HandlerMethod;
 	protected FieldInfo CancelBool;
-	protected IRCConnection ircConnection;
 	protected string UserNickName;
 	private MusicPlayer _musicPlayer;
 
