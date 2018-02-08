@@ -13,12 +13,11 @@ public class TwitchLeaderboardTable : MonoBehaviour
     [Header("Values")]
     public int maximumRowCount = 20;
 
-    public Leaderboard leaderboard = null;
     private List<TwitchLeaderboardRow> _instancedRows = new List<TwitchLeaderboardRow>();
 
     private void Start()
     {
-        if (leaderboard == null)
+        if (Leaderboard.Instance == null)
         {
             return;
         }
@@ -26,7 +25,7 @@ public class TwitchLeaderboardTable : MonoBehaviour
         float delay = 0.6f;
         int index = 0;
 
-        foreach (Leaderboard.LeaderboardEntry entry in leaderboard.GetSortedEntriesIncluding(leaderboard.CurrentSolvers.Keys, maximumRowCount))
+        foreach (Leaderboard.LeaderboardEntry entry in Leaderboard.Instance.GetSortedEntriesIncluding(Leaderboard.Instance.CurrentSolvers.Keys, maximumRowCount))
         {
             TwitchLeaderboardRow row = Instantiate<TwitchLeaderboardRow>(index < specialRows.Length ? specialRows[index] : normalRow);
 

@@ -32,7 +32,6 @@ public class TwitchPlaysService : MonoBehaviour
     private CoroutineQueue _coroutineQueue = null;
 
     private MessageResponder _activeMessageResponder = null;
-    private Leaderboard _leaderboard = null;
 
     public static bool DebugMode = false;
     public static LogUploader logUploader = null;
@@ -75,8 +74,7 @@ public class TwitchPlaysService : MonoBehaviour
         urlHelper = GetComponent<UrlHelper>();
         urlHelper.ChangeMode(settings.shortUrls == true);
 
-        _leaderboard = new Leaderboard();
-        _leaderboard.LoadDataFromFile();
+		Leaderboard.Instance.LoadDataFromFile();
 
         ModuleData.LoadDataFromFile();
         ModuleData.WriteDataToFile();
@@ -87,10 +85,6 @@ public class TwitchPlaysService : MonoBehaviour
         SetupResponder(postGameMessageResponder);
         SetupResponder(missionMessageResponder);
         SetupResponder(miscellaneousMessageResponder);
-
-        bombMessageResponder.leaderboard = _leaderboard;
-        postGameMessageResponder.leaderboard = _leaderboard;
-        miscellaneousMessageResponder.leaderboard = _leaderboard;
 
         bombMessageResponder.parentService = this;
 

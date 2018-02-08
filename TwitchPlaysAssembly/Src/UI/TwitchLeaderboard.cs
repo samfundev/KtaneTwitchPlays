@@ -16,19 +16,18 @@ public class TwitchLeaderboard : MonoBehaviour
 	public RectTransform runTransform = null;
 	public RectTransform leftMaskTransform = null;
 
-    public Leaderboard leaderboard = null;
     private TwitchLeaderboardTable mainTable = null;
     private TwitchLeaderboardTableSolo soloTable = null;
     private TwitchLeaderboardStats statsTable = null;
 
     private void Start()
     {
-        if (leaderboard == null)
+        if (Leaderboard.Instance == null)
         {
             return;
         }
 
-        if (leaderboard.Success || !TwitchPlaySettings.data.EnableRetryButton)
+        if (Leaderboard.Instance.Success || !TwitchPlaySettings.data.EnableRetryButton)
         {
             retryTransform.gameObject.SetActive(false);
         }
@@ -37,23 +36,20 @@ public class TwitchLeaderboard : MonoBehaviour
 			runTransform.gameObject.SetActive(false);
 
         statsTable = Instantiate<TwitchLeaderboardStats>(twitchLeaderboardStatsPrefab);
-        statsTable.leaderboard = leaderboard;
         
-        if (leaderboard.Count > 0)
+        if (Leaderboard.Instance.Count > 0)
         {
             mainTable = Instantiate<TwitchLeaderboardTable>(twitchLeaderboardTablePrefab);
-            mainTable.leaderboard = leaderboard;
         }
 
-        if (leaderboard.SoloCount > 0)
+        if (Leaderboard.Instance.SoloCount > 0)
         {
             soloTable = Instantiate<TwitchLeaderboardTableSolo>(twitchLeaderboardTableSoloPrefab);
-            soloTable.leaderboard = leaderboard;
             leftMaskTransform.gameObject.SetActive(true);
 
-            bool prioritiseSolo = (leaderboard.SoloSolver != null);
-            int countOnRight = prioritiseSolo ? leaderboard.SoloCount : leaderboard.Count;
-            int countOnLeft = prioritiseSolo ? leaderboard.Count : leaderboard.SoloCount;
+            bool prioritiseSolo = (Leaderboard.Instance.SoloSolver != null);
+            int countOnRight = prioritiseSolo ? Leaderboard.Instance.SoloCount : Leaderboard.Instance.Count;
+            int countOnLeft = prioritiseSolo ? Leaderboard.Instance.Count : Leaderboard.Instance.SoloCount;
             int maxOnRight = prioritiseSolo ? soloTable.maximumRowCount : mainTable.maximumRowCount;
             bool statsOnRight = (countOnRight <= (maxOnRight - statsTable.entriesLess)) // Right (priority) wouldn't be made smaller than its total count by fitting the stats in
                 && (countOnRight < countOnLeft); // and right is smaller than left (only possible if solo is on right)
@@ -74,7 +70,7 @@ public class TwitchLeaderboard : MonoBehaviour
         }
         else
         {
-            if ((leaderboard.Count - statsTable.entriesLess) > mainTable.maximumRowCount)
+            if ((Leaderboard.Instance.Count - statsTable.entriesLess) > mainTable.maximumRowCount)
             {
                 statsTable.transform.SetParent(altTableTransform, false);
                 leftMaskTransform.gameObject.SetActive(true);

@@ -3,7 +3,6 @@
 public class PostGameMessageResponder : MessageResponder
 {
     public TwitchLeaderboard twitchLeaderboardPrefab = null;
-    public Leaderboard leaderboard = null;
 
     private PostGameCommander _postGameCommander = null;
     private TwitchLeaderboard _leaderboardDisplay = null;
@@ -14,9 +13,9 @@ public class PostGameMessageResponder : MessageResponder
         StartCoroutine(CheckForResultsPage());
 
         _leaderboardDisplay = Instantiate<TwitchLeaderboard>(twitchLeaderboardPrefab);
-        _leaderboardDisplay.leaderboard = leaderboard;
 
-        leaderboard.SaveDataToFile();
+
+	    Leaderboard.Instance.SaveDataToFile();
     }
 
     private void OnDisable()

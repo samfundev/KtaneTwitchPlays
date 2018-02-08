@@ -10,7 +10,6 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
     public Color errorColor = Color.white;
     public Color ignoreColor = Color.white;
 
-    public Leaderboard leaderboard = null;
     public string userName = null;
     public Color userColor = Color.black;
 

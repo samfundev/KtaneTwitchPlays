@@ -11,9 +11,6 @@ using UnityEngine;
 public class MiscellaneousMessageResponder : MessageResponder
 {
 	[HideInInspector]
-    public Leaderboard leaderboard = null;
-
-	[HideInInspector]
 	public int moduleCountBonus = 0;
 
     [HideInInspector]
@@ -133,7 +130,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             {
 	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, split[1], split[2], userNickName);
                 Color usedColor = new Color(.31f, .31f, .31f);
-                leaderboard.AddScore(playerrewarded, usedColor, scorerewarded);
+	            Leaderboard.Instance.AddScore(playerrewarded, usedColor, scorerewarded);
             }
             return;
         }
@@ -163,18 +160,18 @@ public class MiscellaneousMessageResponder : MessageResponder
                 switch (split.Length)
                 {
                     case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank):
-                        leaderboard.GetSoloRank(desiredRank, out entry);
+	                    Leaderboard.Instance.GetSoloRank(desiredRank, out entry);
                         break;
 					case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && !int.TryParse(split[2], out _):
-						leaderboard.GetRank(split[2], out entry);
+						Leaderboard.Instance.GetRank(split[2], out entry);
 						if (entry != null) break;
 						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[2]);
 						return;
 					case 2 when int.TryParse(split[1], out desiredRank):
-                        leaderboard.GetRank(desiredRank, out entry);
+						Leaderboard.Instance.GetRank(desiredRank, out entry);
                         break;
 					case 2 when !int.TryParse(split[1], out _):
-						leaderboard.GetRank(split[1], out entry);
+						Leaderboard.Instance.GetRank(split[1], out entry);
 						if (entry != null) break;
 						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]);
 						return;
@@ -189,7 +186,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             if (entry == null)
             {
-                leaderboard.GetRank(userNickName, out entry);
+	            Leaderboard.Instance.GetRank(userNickName, out entry);
             }
             if (entry != null)
             {

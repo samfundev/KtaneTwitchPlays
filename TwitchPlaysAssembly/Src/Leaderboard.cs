@@ -440,30 +440,14 @@ public class Leaderboard
         }
     }
 
-    public int Count
-    {
-        get
-        {
-            return _entryList.Count;
-        }
-    }
+    public int Count => _entryList.Count;
 
-    public int SoloCount
-    {
-        get
-        {
-            return _entryListSolo.Count;
-        }
-    }
+	public int SoloCount => _entryListSolo.Count;
 
-	public Leaderboard()
-	{
-		Instance = this;
-	}
-
-    private Dictionary<string, LeaderboardEntry> _entryDictionary = new Dictionary<string, LeaderboardEntry>();
+	private Dictionary<string, LeaderboardEntry> _entryDictionary = new Dictionary<string, LeaderboardEntry>();
     private List<LeaderboardEntry> _entryList = new List<LeaderboardEntry>();
     private List<LeaderboardEntry> _entryListSolo = new List<LeaderboardEntry>();
+	private static Leaderboard _instance;
     private bool _sorted = false;
     public bool Success = false;
 
@@ -483,5 +467,6 @@ public class Leaderboard
     public static int RequiredSoloSolves = 11;
     public static string usersSavePath = "TwitchPlaysUsers.xml";
     public static string statsSavePath = "TwitchPlaysStats.json";
-	public static Leaderboard Instance;
+
+	public static Leaderboard Instance => _instance ?? (_instance = new Leaderboard());
 }

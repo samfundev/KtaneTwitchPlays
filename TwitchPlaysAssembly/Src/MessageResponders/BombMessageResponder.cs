@@ -13,7 +13,6 @@ public class BombMessageResponder : MessageResponder
     public TwitchComponentHandle twitchComponentHandlePrefab = null;
     public ModuleCameras moduleCamerasPrefab = null;
 
-    public Leaderboard leaderboard = null;
     public TwitchPlaysService parentService = null;
 
     public List<BombCommander> BombCommanders = new List<BombCommander>();
@@ -57,7 +56,7 @@ public class BombMessageResponder : MessageResponder
 	    Instance = this;
         BombActive = true;
         EnableDisableInput();
-        leaderboard.ClearSolo();
+        Leaderboard.Instance.ClearSolo();
         TwitchPlaysService.logUploader.Clear();
 
 		bool bombStarted = false;
@@ -119,43 +118,43 @@ public class BombMessageResponder : MessageResponder
 		if (HasDetonated)
 		{
 			bombMessage = string.Format(TwitchPlaySettings.data.BombExplodedMessage, timeRemainingFormatted);
-			leaderboard.BombsExploded += BombCommanders.Count;
+			Leaderboard.Instance.BombsExploded += BombCommanders.Count;
 			if (lastBomb)
 			{
-				leaderboard.Success = false;
+				Leaderboard.Instance.Success = false;
 				TwitchPlaySettings.ClearPlayerLog();
 			}
 		}
 		else if (HasBeenSolved)
 		{
 			bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedMessage, timeRemainingFormatted);
-			leaderboard.BombsCleared += BombCommanders.Count;
-			bombMessage += TwitchPlaySettings.GiveBonusPoints(leaderboard);
+			Leaderboard.Instance.BombsCleared += BombCommanders.Count;
+			bombMessage += TwitchPlaySettings.GiveBonusPoints();
 
 			if (lastBomb)
 			{
-				leaderboard.Success = true;
+				Leaderboard.Instance.Success = true;
 			}
 
-			if (leaderboard.CurrentSolvers.Count == 1)
+			if (Leaderboard.Instance.CurrentSolvers.Count == 1)
 			{
 				float previousRecord = 0.0f;
 				float elapsedTime = timeStarting - timeRemaining;
 				string userName = "";
-				foreach (string uName in leaderboard.CurrentSolvers.Keys)
+				foreach (string uName in Leaderboard.Instance.CurrentSolvers.Keys)
 				{
 					userName = uName;
 					break;
 				}
-				if (leaderboard.CurrentSolvers[userName] == (Leaderboard.RequiredSoloSolves * BombCommanders.Count))
+				if (Leaderboard.Instance.CurrentSolvers[userName] == (Leaderboard.RequiredSoloSolves * BombCommanders.Count))
 				{
-					leaderboard.AddSoloClear(userName, elapsedTime, out previousRecord);
+					Leaderboard.Instance.AddSoloClear(userName, elapsedTime, out previousRecord);
 					if (TwitchPlaySettings.data.EnableSoloPlayMode)
 					{
 						//Still record solo information, should the defuser be the only one to actually defuse a 11 * bomb-count bomb, but display normal leaderboards instead if
 						//solo play is disabled.
 						TimeSpan elapsedTimeSpan = TimeSpan.FromSeconds(elapsedTime);
-						string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, leaderboard.SoloSolver.UserName, (int)elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
+						string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, Leaderboard.Instance.SoloSolver.UserName, (int)elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
 						if (elapsedTime < previousRecord)
 						{
 							TimeSpan previousTimeSpan = TimeSpan.FromSeconds(previousRecord);
@@ -166,19 +165,19 @@ public class BombMessageResponder : MessageResponder
 					}
 					else
 					{
-						leaderboard.ClearSolo();
+						Leaderboard.Instance.ClearSolo();
 					}
 				}
 				else
 				{
-					leaderboard.ClearSolo();
+					Leaderboard.Instance.ClearSolo();
 				}
 			}
 		}
 		else
 		{
 			bombMessage = string.Format(TwitchPlaySettings.data.BombAbortedMessage, timeRemainingFormatted);
-			leaderboard.Success = false;
+			Leaderboard.Instance.Success = false;
 			TwitchPlaySettings.ClearPlayerLog();
 		}
 		return bombMessage;
@@ -192,7 +191,7 @@ public class BombMessageResponder : MessageResponder
         TwitchComponentHandle.ClaimedList.Clear();
         TwitchComponentHandle.ClearUnsupportedModules();
         StopAllCoroutines();
-        leaderboard.BombsAttempted++;
+	    Leaderboard.Instance.BombsAttempted++;
 
         TwitchPlaysService.logUploader.Post();
         parentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
@@ -689,7 +688,6 @@ public class BombMessageResponder : MessageResponder
             handle.bombComponent = bombComponent;
             handle.componentType = componentType;
             handle.coroutineQueue = _coroutineQueue;
-            handle.leaderboard = leaderboard;
             handle.bombID = _currentBomb == -1 ? -1 : BombCommanders.Count - 1;
 
             handle.transform.SetParent(bombComponent.transform.parent, true);

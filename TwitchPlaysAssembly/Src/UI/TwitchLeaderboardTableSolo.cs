@@ -13,14 +13,13 @@ public class TwitchLeaderboardTableSolo : MonoBehaviour
     [Header("Values")]
     public int maximumRowCount = 20;
 
-    public Leaderboard leaderboard = null;
     private List<TwitchLeaderboardSoloRow> _instancedRows = new List<TwitchLeaderboardSoloRow>();
     public Leaderboard.LeaderboardEntry solver = null;
     public int bombCount = 0;
 
     private void Start()
     {
-        if (leaderboard == null)
+        if (Leaderboard.Instance == null)
         {
             return;
         }
@@ -28,11 +27,11 @@ public class TwitchLeaderboardTableSolo : MonoBehaviour
         float delay = 0.6f;
         int index = 0;
 
-        solver = leaderboard.SoloSolver;
+        solver = Leaderboard.Instance.SoloSolver;
 
         IEnumerable<Leaderboard.LeaderboardEntry> entries = (solver == null) ?
-            leaderboard.GetSortedSoloEntries(maximumRowCount) :
-            leaderboard.GetSortedSoloEntriesIncluding(solver.UserName, maximumRowCount);
+	        Leaderboard.Instance.GetSortedSoloEntries(maximumRowCount) :
+	        Leaderboard.Instance.GetSortedSoloEntriesIncluding(solver.UserName, maximumRowCount);
 
         foreach (Leaderboard.LeaderboardEntry entry in entries)
         {

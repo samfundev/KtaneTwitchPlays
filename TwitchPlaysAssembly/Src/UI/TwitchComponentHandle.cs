@@ -40,9 +40,6 @@ public class TwitchComponentHandle : MonoBehaviour
 	public CoroutineQueue coroutineQueue = null;
 
 	[HideInInspector]
-	public Leaderboard leaderboard = null;
-
-	[HideInInspector]
 	public bool claimed => (playerName != null);
 
 	[HideInInspector]

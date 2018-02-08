@@ -157,7 +157,7 @@ public abstract class ComponentSolver
 					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
 
 					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
-					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
+					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.idTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
@@ -603,8 +603,8 @@ public abstract class ComponentSolver
             }
 	        IRCConnection.Instance.SendMessage(tempMessage);
         }
-        ComponentHandle.leaderboard.AddScore(userNickName, strikePenalty);
-        ComponentHandle.leaderboard.AddStrike(userNickName, strikeCount);
+	    Leaderboard.Instance.AddScore(userNickName, strikePenalty);
+	    Leaderboard.Instance.AddStrike(userNickName, strikeCount);
         if (OtherModes.timedModeOn)
         {
             BombCommander.StrikeCount = 0;

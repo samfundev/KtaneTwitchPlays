@@ -382,7 +382,7 @@ public static class TwitchPlaySettings
         ClearReward = 0;
     }
 
-    public static string GiveBonusPoints(Leaderboard leaderboard)
+    public static string GiveBonusPoints()
 	{
 		if (ClearReward == 0 || Players.Count == 0)
         {
@@ -392,7 +392,7 @@ public static class TwitchPlaySettings
 		string message = string.Format(data.BombDefusedBonusMessage, ClearReward2) + data.BombDefusedFooter;
 		foreach (string player in Players)
         {
-            leaderboard.AddScore(player, ClearReward2);
+	        Leaderboard.Instance.AddScore(player, ClearReward2);
         }
         ClearPlayerLog();
 		return message;
