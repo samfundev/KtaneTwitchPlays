@@ -73,7 +73,7 @@ public class MissionMessageResponder : MessageResponder
 				    try
 				    {
 						DebugHelper.Log($"Creating holdable handler for {holdable.name}");
-					    KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection);
+					    KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, IRCConnection.Instance);
 					    _holdableCommanders.Add(holdableCommander);
 				    }
 				    catch (Exception ex)
@@ -105,21 +105,21 @@ public class MissionMessageResponder : MessageResponder
 			case "binder":
 				if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 				{
-					_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
+					_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, textAfter, null, IRCConnection.Instance));
 				}
 				else
 				{
-					_ircConnection.SendMessage(TwitchPlaySettings.data.MissionBinderDisabled, userNickName);
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.MissionBinderDisabled, userNickName);
 				}
 				break;
 			case "freeplay":
 				if((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 				{
-					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, textAfter, null, _ircConnection));
+					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, textAfter, null, IRCConnection.Instance));
 				}
 				else
 				{
-					_ircConnection.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
 				}
 				break;
 			default:
@@ -131,7 +131,7 @@ public class MissionMessageResponder : MessageResponder
 						commander.Handler.ShowHelp();
 						break;
 					}
-					_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, _ircConnection));
+					_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, IRCConnection.Instance));
 					break;
 				}
 				break;

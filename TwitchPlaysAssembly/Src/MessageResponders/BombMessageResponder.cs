@@ -73,11 +73,11 @@ public class BombMessageResponder : MessageResponder
 
 			if (BombCommanders.Count == 1)
 			{
-				_ircConnection.SendMessage(TwitchPlaySettings.data.BombLiveMessage);
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombLiveMessage);
 			}
 			else
 			{
-				_ircConnection.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
 			}
 
             if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
@@ -299,7 +299,7 @@ public class BombMessageResponder : MessageResponder
 			try
 			{
 				DebugHelper.Log($"Creating holdable handler for {holdable.name}");
-				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, _ircConnection);
+				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, IRCConnection.Instance);
 				HoldableCommanders.Add(holdableCommander);
 			}
 			catch (Exception ex)
@@ -326,7 +326,7 @@ public class BombMessageResponder : MessageResponder
 		if (text.EqualsAny("notes1","notes2","notes3","notes4"))
         {
             int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
-            _ircConnection.SendMessage(TwitchPlaySettings.data.Notes, index+1, _notes[index]);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index+1, _notes[index]);
             return;
         }
 
@@ -338,7 +338,7 @@ public class BombMessageResponder : MessageResponder
             string notes = text.Substring(7);
             if (notes == "") return;
 
-            _ircConnection.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
 
             _notes[index] = notes;
 	        moduleCameras?.SetNotes(index, notes);
@@ -359,7 +359,7 @@ public class BombMessageResponder : MessageResponder
             string notes = text.Substring(13);
             if (notes == "") return;
 
-            _ircConnection.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
 
             _notes[index] += " " + notes;
 	        moduleCameras?.AppendNotes(index, notes);
@@ -376,7 +376,7 @@ public class BombMessageResponder : MessageResponder
             if (!IsAuthorizedDefuser(userNickName)) return;
             int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
             _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
-            _ircConnection.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index + 1);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index + 1);
 
 	        moduleCameras?.SetNotes(index, TwitchPlaySettings.data.NotesSpaceFree);
             return;
@@ -426,10 +426,10 @@ public class BombMessageResponder : MessageResponder
                 string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
                 if (claimed.Count > 5)
                     message += "...";
-                _ircConnection.SendMessage(message);
+	            IRCConnection.Instance.SendMessage(message);
             }
             else
-                _ircConnection.SendMessage(TwitchPlaySettings.data.NoOwnedModules, userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoOwnedModules, userNickName);
             return;
         }
 
@@ -484,8 +484,8 @@ public class BombMessageResponder : MessageResponder
 			IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
 				.Select(handle => string.Format("{0} ({1})", handle.HeaderText, handle.Code)).ToList();
 			
-			if (unclaimed.Any()) _ircConnection.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
-			else _ircConnection.SendMessage("There are no more unclaimed modules.");
+			if (unclaimed.Any()) IRCConnection.Instance.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
+			else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
 
 			return;
 		}
@@ -502,8 +502,8 @@ public class BombMessageResponder : MessageResponder
 					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
 				)).ToList();
 
-			if (modules.Any()) _ircConnection.SendMessage("Modules: {0}", modules.Join(", "));
-			else _ircConnection.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+			if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
+			else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
 
 			return;
 		}
@@ -616,12 +616,12 @@ public class BombMessageResponder : MessageResponder
 			    break;
 		    }
 		    _coroutineQueue.AddToQueue(BombCommanders[_currentBomb != -1 ? _currentBomb : 0].LetGoBomb(), _currentBomb);
-		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, _ircConnection));
+		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, IRCConnection.Instance));
 		}
 
 	    if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))
 	    {
-		    _ircConnection.SendMessage(TwitchPlaySettings.data.BombCustomMessages[text.ToLowerInvariant()]);
+		    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombCustomMessages[text.ToLowerInvariant()]);
 	    }
     }
 
@@ -644,7 +644,7 @@ public class BombMessageResponder : MessageResponder
     {
         TwitchBombHandle _bombHandle = Instantiate<TwitchBombHandle>(twitchBombHandlePrefab);
         _bombHandle.bombID = id;
-        _bombHandle.ircConnection = _ircConnection;
+        _bombHandle.ircConnection = IRCConnection.Instance;
         _bombHandle.bombCommander = BombCommanders[BombCommanders.Count-1];
         _bombHandle.coroutineQueue = _coroutineQueue;
         BombHandles.Add(_bombHandle);
@@ -705,7 +705,7 @@ public class BombMessageResponder : MessageResponder
     private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
     {
         yield return new WaitForSeconds(delay);
-        _ircConnection.SendMessage(message);
+	    IRCConnection.Instance.SendMessage(message);
 
 	    callback?.Invoke();
     }

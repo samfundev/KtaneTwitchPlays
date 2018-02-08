@@ -2,27 +2,25 @@
 
 public abstract class MessageResponder : MonoBehaviour
 {
-    protected IRCConnection _ircConnection = null;
     protected CoroutineQueue _coroutineQueue = null;
 
     private void OnDestroy()
     {
-	    _ircConnection?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
+	    IRCConnection.Instance?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
     }
 
     public void SetupResponder(IRCConnection ircConnection, CoroutineQueue coroutineQueue)
     {
-        _ircConnection = ircConnection;
         _coroutineQueue = coroutineQueue;
 
-        _ircConnection.OnMessageReceived.AddListener(OnInternalMessageReceived);
+	    IRCConnection.Instance?.OnMessageReceived.AddListener(OnInternalMessageReceived);
     }
 
     public bool IsAuthorizedDefuser(string userNickName, bool silent=false)
     {
         bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
         if (!result && !silent)
-            _ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+	        IRCConnection.Instance?.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 
         return result;
     }
