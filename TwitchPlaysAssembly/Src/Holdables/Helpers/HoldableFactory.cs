@@ -28,7 +28,7 @@ public static class HoldableFactory
 		ModHoldableTypes.Add(typeof(IRCConnectionManagerHoldable));
 	}
 
-	public static HoldableHandler CreateHandler(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection)
+	public static HoldableHandler CreateHandler(KMHoldableCommander commander, FloatingHoldable holdable)
 	{
 		if (commander != null)
 			commander.ID = holdable.name.ToLowerInvariant().Replace("(clone)", "");
@@ -40,10 +40,10 @@ public static class HoldableFactory
 			return ModHoldableCreators[type.FullName](commander, holdable);
 		}
 
-		return CreateModComponentSolver(commander, holdable, ircConnection);
+		return CreateModComponentSolver(commander, holdable);
 	}
 
-	private static HoldableHandler CreateModComponentSolver(KMHoldableCommander commander, FloatingHoldable holdable, IRCConnection ircConnection)
+	private static HoldableHandler CreateModComponentSolver(KMHoldableCommander commander, FloatingHoldable holdable)
 	{
 
 		DebugLog("Attempting to find a valid process command method to respond with on holdable {0}...", holdable.name);

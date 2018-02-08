@@ -379,7 +379,7 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType, IRCConnection ircConnection)
+	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType)
 	{
 		switch (componentType)
 		{

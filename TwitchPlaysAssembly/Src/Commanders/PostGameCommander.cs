@@ -11,8 +11,8 @@ public class PostGameCommander : ICommandResponder
     #endregion
 
     #region Interface Implementation
-    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
-    {
+    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	{
         Selectable button = null;
         message = message.ToLowerInvariant();
 
@@ -24,7 +24,7 @@ public class PostGameCommander : ICommandResponder
         {
             if (!TwitchPlaySettings.data.EnableRetryButton)
             {
-                connection.SendMessage(TwitchPlaySettings.data.RetryInactive);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RetryInactive);
             }
             button = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? RetryButton : ContinueButton;
         }

@@ -26,9 +26,6 @@ public class TwitchBombHandle : MonoBehaviour
     public RectTransform edgeworkHighlightTransform = null;
 
     [HideInInspector]
-    public IRCConnection ircConnection = null;
-
-    [HideInInspector]
     public BombCommander bombCommander = null;
 
     [HideInInspector]
@@ -100,7 +97,7 @@ public class TwitchBombHandle : MonoBehaviour
                     if (!IsAuthorizedDefuser(userNickName)) return null;
                     edgeworkText.text = internalCommand;
                 }
-                ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework,edgeworkText.text);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework,edgeworkText.text);
             }
             return null;
         }
@@ -122,21 +119,21 @@ public class TwitchBombHandle : MonoBehaviour
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 
 			notifier.ProcessResponse(CommandResponse.Start);
-			ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.Equals("help"))
 		{
 			notifier.ProcessResponse(CommandResponse.Start);
 
-			ircConnection.SendMessage(TwitchPlaySettings.data.BombHelp);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombHelp);
 
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.EqualsAny("time", "timer", "clock"))
 		{
 			notifier.ProcessResponse(CommandResponse.Start);
-			ircConnection.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.EqualsAny("explode", "detonate"))
@@ -184,7 +181,7 @@ public class TwitchBombHandle : MonoBehaviour
 						if (negitive) time = -time;
 
 					    bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
-						ircConnection.SendMessage("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from");
+						IRCConnection.Instance.SendMessage("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from");
 						break;
 					case "strikes":
 					case "strike":
@@ -198,7 +195,7 @@ public class TwitchBombHandle : MonoBehaviour
 						        strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
 						    }
 						    bombCommander.StrikeCount += strikes;
-						    ircConnection.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
+							IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
                             BombMessageResponder.moduleCameras.UpdateStrikes();
 						}
 						break;
@@ -211,7 +208,7 @@ public class TwitchBombHandle : MonoBehaviour
 							if (negitive) maxStrikes = -maxStrikes;
 
 						    bombCommander.StrikeLimit += maxStrikes;
-							ircConnection.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
+							IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
 						    BombMessageResponder.moduleCameras.UpdateStrikes();
                             BombMessageResponder.moduleCameras.UpdateStrikeLimit();
 						}
@@ -266,7 +263,7 @@ public class TwitchBombHandle : MonoBehaviour
             return true;
         bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
         if (!result)
-            ircConnection.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
 
         return result;
     }
@@ -282,7 +279,7 @@ public class TwitchBombHandle : MonoBehaviour
     {
         bombCommander.StrikeCount = bombCommander.StrikeLimit - 1;
         if (!string.IsNullOrEmpty(message))
-            ircConnection.SendMessage(message);
+	        IRCConnection.Instance.SendMessage(message);
         yield return new WaitForSeconds(delay);
         bombCommander.CauseStrikesToExplosion(reason);
     }
@@ -298,14 +295,14 @@ public class TwitchBombHandle : MonoBehaviour
         }
         highlightGroup.alpha = 1.0f;
 
-        IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message, ircConnection);
+        IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message);
         while (commandResponseCoroutine.MoveNext())
         {
 	        if (commandResponseCoroutine.Current is string chatmessage)
             {
                 if(chatmessage.StartsWith("sendtochat "))
                 {
-                    ircConnection.SendMessage(chatmessage.Substring(11));
+	                IRCConnection.Instance.SendMessage(chatmessage.Substring(11));
                 }
             }
 

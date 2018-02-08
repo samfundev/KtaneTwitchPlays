@@ -96,7 +96,7 @@ public abstract class HoldableHandler
 		yield return item;
 	}
 	
-	public IEnumerator RespondToCommand(string userNickName, string message, IRCConnection connection)
+	public IEnumerator RespondToCommand(string userNickName, string message)
 	{
 		DisableOnStrike = false;
 		Strike = false;

@@ -37,8 +37,8 @@ public class BombCommander : ICommandResponder
 		bombSolvedModules = 0;
 	}
     
-    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
-    {
+    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	{
         message = message.ToLowerInvariant();
 
         if(message.EqualsAny("hold","pick up"))
@@ -328,7 +328,7 @@ public class BombCommander : ICommandResponder
 		twitchBombHandle.edgeworkText.text = edgeworkString;
 
         if(!silent)
-		    twitchBombHandle.ircConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
 	}
 	
     public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)

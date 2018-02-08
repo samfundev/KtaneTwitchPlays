@@ -9,8 +9,8 @@ public abstract class MessageResponder : MonoBehaviour
 	    IRCConnection.Instance?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
     }
 
-    public void SetupResponder(IRCConnection ircConnection, CoroutineQueue coroutineQueue)
-    {
+    public void SetupResponder(CoroutineQueue coroutineQueue)
+	{
         _coroutineQueue = coroutineQueue;
 
 	    IRCConnection.Instance?.OnMessageReceived.AddListener(OnInternalMessageReceived);

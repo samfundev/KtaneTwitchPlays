@@ -14,7 +14,6 @@ public abstract class ComponentSolver
         BombCommander = bombCommander;
         BombComponent = bombComponent;
         Selectable = bombComponent.GetComponent<Selectable>();
-        IRCConnection = IRCConnection.Instance;
     
 		if(bombCommander != null)
 			HookUpEvents();
@@ -159,7 +158,7 @@ public abstract class ComponentSolver
 
 					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					ComponentHandle.leaderboard.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.idTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.idTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(14).Trim() != string.Empty)
@@ -180,7 +179,7 @@ public abstract class ComponentSolver
                 else if (currentString.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(11).Trim() != string.Empty)
                 {
-                    IRCConnection.SendMessage(currentString.Substring(11));
+	                IRCConnection.Instance.SendMessage(currentString.Substring(11));
                 }
                 else if (currentString.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) &&
                          currentString.Substring(16).Trim() != string.Empty)
@@ -375,7 +374,7 @@ public abstract class ComponentSolver
 
 	protected void SolveModule(string reason = "A module is being automatically solved.", bool removeSolveBasedModules = true)
 	{
-		IRCConnection.SendMessage("{0}{1}", reason, removeSolveBasedModules ? " Some other modules may also be solved to prevent problems." : "");
+		IRCConnection.Instance.SendMessage("{0}{1}", reason, removeSolveBasedModules ? " Some other modules may also be solved to prevent problems." : "");
 
 		_currentUserNickName = null;
 		_delegatedSolveUserNickName = null;
@@ -536,7 +535,7 @@ public abstract class ComponentSolver
     private void AwardSolve(string userNickName, int ComponentValue)
     {
         string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
-        IRCConnection.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
+	    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
         string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
 		Leaderboard.Instance?.AddSolve(userNickName);
 	    if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
@@ -554,7 +553,7 @@ public abstract class ComponentSolver
             float multiplier = OtherModes.getMultiplier();
             float time = multiplier * ComponentValue;
             BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
-            IRCConnection.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
+	        IRCConnection.Instance.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
             if (multiplier < TwitchPlaySettings.data.TimeModeMaxMultiplier)
             {
                 multiplier = multiplier + TwitchPlaySettings.data.TimeModeSolveBonus;
@@ -567,7 +566,7 @@ public abstract class ComponentSolver
     {
 	    string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
-        IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
+	    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         if (strikeCount <= 0) return;
 
         string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
@@ -576,7 +575,7 @@ public abstract class ComponentSolver
         int currentReward = TwitchPlaySettings.GetRewardBonus();
         currentReward = Convert.ToInt32(currentReward * .80);
         TwitchPlaySettings.SetRewardBonus(currentReward);
-        IRCConnection.SendMessage("Reward reduced to " + currentReward + " points.");
+	    IRCConnection.Instance.SendMessage("Reward reduced to " + currentReward + " points.");
         if (OtherModes.timedModeOn)
         {
             bool multiDropped = OtherModes.dropMultiplier();
@@ -602,7 +601,7 @@ public abstract class ComponentSolver
                 BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
                 tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
             }
-            IRCConnection.SendMessage(tempMessage);
+	        IRCConnection.Instance.SendMessage(tempMessage);
         }
         ComponentHandle.leaderboard.AddScore(userNickName, strikePenalty);
         ComponentHandle.leaderboard.AddStrike(userNickName, strikeCount);
@@ -716,7 +715,6 @@ public abstract class ComponentSolver
     protected readonly BombCommander BombCommander = null;
     protected readonly BombComponent BombComponent = null;
     protected readonly Selectable Selectable = null;
-    protected readonly IRCConnection IRCConnection = null;
     #endregion
 
     #region Private Fields

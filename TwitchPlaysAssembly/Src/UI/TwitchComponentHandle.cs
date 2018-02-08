@@ -102,7 +102,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		try
 		{
-			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType, IRCConnection.Instance);
+			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType);
 			if (Solver != null)
 			{
 				if (Solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;

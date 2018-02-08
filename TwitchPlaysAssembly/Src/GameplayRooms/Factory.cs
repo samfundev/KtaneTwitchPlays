@@ -109,7 +109,7 @@ public class Factory : GameRoom
 
 			yield return new WaitForSeconds(3.0f);
 	        bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
-			bombHandle.ircConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
+	        IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
 	        if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 	        {
 		        bombHandle.bombCommander.FillEdgework();
@@ -129,7 +129,7 @@ public class Factory : GameRoom
 	        yield return new WaitUntil(() => bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive);
 	        if (!BombMessageResponder.BombActive) yield break;
 
-	        bombHandle.ircConnection.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
+	        IRCConnection.Instance.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRewardBonus(reward);
 
 	        yield return new WaitUntil(() => currentBomb != GetBomb);

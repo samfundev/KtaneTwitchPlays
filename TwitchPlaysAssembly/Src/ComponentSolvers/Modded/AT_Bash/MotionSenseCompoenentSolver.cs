@@ -13,12 +13,12 @@ public class MotionSenseComponentSolver : ComponentSolver
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_needy.OnNeedyActivation += () =>
 		{
-			IRCConnection.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");
+			IRCConnection.Instance.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");
 		};
 
 		_needy.OnTimerExpired += () =>
 		{
-			IRCConnection.SendMessage($"Motion Sense now Inactive.");
+			IRCConnection.Instance.SendMessage($"Motion Sense now Inactive.");
 		};
 	}
 
@@ -28,7 +28,7 @@ public class MotionSenseComponentSolver : ComponentSolver
             yield break;
 
         bool active = (bool)_activeField.GetValue(_component);
-        IRCConnection.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
+	    IRCConnection.Instance.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
     }
 
     static MotionSenseComponentSolver()

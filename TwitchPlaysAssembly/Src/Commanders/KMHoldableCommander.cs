@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class KMHoldableCommander
 {
-	public KMHoldableCommander(FloatingHoldable holdable, IRCConnection ircConnection)
+	public KMHoldableCommander(FloatingHoldable holdable)
 	{
 		Holdable = holdable;
 		Selectable = Holdable.GetComponent<Selectable>();
 		FloatingHoldable = Holdable.GetComponent<FloatingHoldable>();
-		Handler = HoldableFactory.CreateHandler(this, holdable, ircConnection);
+		Handler = HoldableFactory.CreateHandler(this, holdable);
 	}
 
-	public IEnumerator RespondToCommand(string userNickName, string message, IRCConnection connection)
+	public IEnumerator RespondToCommand(string userNickName, string message)
 	{
 		if (message.EqualsAny("hold", "pick up"))
 		{
@@ -40,7 +40,7 @@ public class KMHoldableCommander
 		}
 		else
 		{
-			IEnumerator handler = Handler.RespondToCommand(userNickName, message, connection);
+			IEnumerator handler = Handler.RespondToCommand(userNickName, message);
 			bool result;
 			DebugHelper.Log($"Coroutine for holdable {Holdable.name} started");
 			do

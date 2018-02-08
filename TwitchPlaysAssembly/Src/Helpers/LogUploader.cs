@@ -6,9 +6,6 @@ public class LogUploader : MonoBehaviour
 {
     public string log { get; private set; }
 
-	[HideInInspector]
-    public IRCConnection ircConnection = null;
-
     [HideInInspector]
     public string analysisUrl = null;
 
@@ -119,7 +116,7 @@ public class LogUploader : MonoBehaviour
 
         if (tooLong)
         {
-            ircConnection.SendMessage("BibleThump The bomb log is too big to upload to any of the supported services, sorry!");
+	        IRCConnection.Instance.SendMessage("BibleThump The bomb log is too big to upload to any of the supported services, sorry!");
         }
 
         yield break;
@@ -134,7 +131,7 @@ public class LogUploader : MonoBehaviour
         }
         Debug.Log(LOGPREFIX + "Posting analysis URL to chat");
         emote = " " + emote + " ";
-        ircConnection.SendMessage(emote + format, analysisUrl);
+	    IRCConnection.Instance.SendMessage(emote + format, analysisUrl);
         return true;
     }
 

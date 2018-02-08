@@ -25,9 +25,9 @@ public class FreeplayCommander : ICommandResponder
 
     #region Interface Implementation
 
-    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
-    {
-        IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier, connection);
+    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	{
+        IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier);
         bool result;
         do
         {
@@ -46,8 +46,8 @@ public class FreeplayCommander : ICommandResponder
     }
 
 
-    public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, IRCConnection connection)
-    {
+    public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	{
         message = message.ToLowerInvariant();
         FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 
@@ -83,7 +83,7 @@ public class FreeplayCommander : ICommandResponder
             }
             else
             {
-                connection.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
             }
         }
         else if (message.EqualsAny("hardcore on", "hardcore off"))
@@ -94,7 +94,7 @@ public class FreeplayCommander : ICommandResponder
             }
             else
             {
-                connection.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
             }
         }
         else if (message.EqualsAny("mods only on", "mods only off"))
@@ -105,7 +105,7 @@ public class FreeplayCommander : ICommandResponder
             }
             else
             {
-                connection.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName);
             }
         }
         else if (message.Equals("start"))
@@ -217,7 +217,7 @@ public class FreeplayCommander : ICommandResponder
             }
             else if (message.Contains("hardcore") != IsHardcore)
             {
-                connection.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
                 startBomb = false;
             }
 
@@ -227,7 +227,7 @@ public class FreeplayCommander : ICommandResponder
             }
             else if (message.Contains("needy") != HasNeedy)
             {
-                connection.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
                 startBomb = false;
             }
 
@@ -244,7 +244,7 @@ public class FreeplayCommander : ICommandResponder
             }
             else if (message.Contains("vanilla") || message.Contains("mods"))
             {
-                connection.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled,userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled,userNickName);
                 startBomb = false;
             }
 

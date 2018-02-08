@@ -29,7 +29,6 @@ public class TwitchPlaysService : MonoBehaviour
 
     private KMGameInfo _gameInfo = null;
     private KMModSettings _modSettings = null;
-    private IRCConnection _ircConnection = null;
     private CoroutineQueue _coroutineQueue = null;
 
     private MessageResponder _activeMessageResponder = null;
@@ -69,12 +68,9 @@ public class TwitchPlaysService : MonoBehaviour
 
         DebugMode = (settings.debug == true);
 
-	    _ircConnection = GetComponent<IRCConnection>();
-
         _coroutineQueue = GetComponent<CoroutineQueue>();
 
         logUploader = GetComponent<LogUploader>();
-        logUploader.ircConnection = _ircConnection;
 
         urlHelper = GetComponent<UrlHelper>();
         urlHelper.ChangeMode(settings.shortUrls == true);
@@ -161,7 +157,7 @@ public class TwitchPlaysService : MonoBehaviour
     {
         if (responder != null)
         {
-            responder.SetupResponder(_ircConnection, _coroutineQueue);
+            responder.SetupResponder(_coroutineQueue);
         }
     }
 
@@ -216,7 +212,7 @@ public class TwitchPlaysService : MonoBehaviour
 				ComponentSolver solver = null;
 				try
 				{
-					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>(), ComponentTypeEnum.Mod, _ircConnection);
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>(), ComponentTypeEnum.Mod);
 				}
 				catch (Exception e)
 				{
@@ -239,7 +235,7 @@ public class TwitchPlaysService : MonoBehaviour
 				ComponentSolver solver = null;
 				try
 				{
-					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>(), ComponentTypeEnum.NeedyMod, _ircConnection);
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>(), ComponentTypeEnum.NeedyMod);
 				}
 				catch (Exception e)
 				{

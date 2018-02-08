@@ -299,7 +299,7 @@ public class BombMessageResponder : MessageResponder
 			try
 			{
 				DebugHelper.Log($"Creating holdable handler for {holdable.name}");
-				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable, IRCConnection.Instance);
+				KMHoldableCommander holdableCommander = new KMHoldableCommander(holdable);
 				HoldableCommanders.Add(holdableCommander);
 			}
 			catch (Exception ex)
@@ -616,7 +616,7 @@ public class BombMessageResponder : MessageResponder
 			    break;
 		    }
 		    _coroutineQueue.AddToQueue(BombCommanders[_currentBomb != -1 ? _currentBomb : 0].LetGoBomb(), _currentBomb);
-		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, IRCConnection.Instance));
+		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter));
 		}
 
 	    if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))
@@ -644,7 +644,6 @@ public class BombMessageResponder : MessageResponder
     {
         TwitchBombHandle _bombHandle = Instantiate<TwitchBombHandle>(twitchBombHandlePrefab);
         _bombHandle.bombID = id;
-        _bombHandle.ircConnection = IRCConnection.Instance;
         _bombHandle.bombCommander = BombCommanders[BombCommanders.Count-1];
         _bombHandle.coroutineQueue = _coroutineQueue;
         BombHandles.Add(_bombHandle);

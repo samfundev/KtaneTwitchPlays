@@ -80,19 +80,19 @@ public class IRCConnection : MonoBehaviour
 
     private class ActionMap
     {
-        public ActionMap(string regexString, Action<IRCConnection, GroupCollection> action, bool logLine=true)
+        public ActionMap(string regexString, Action<GroupCollection> action, bool logLine=true)
         {
             _matchingRegex = new Regex(regexString);
             _action = action;
             LogLine = logLine;
         }
 
-        public bool TryMatch(IRCConnection connection, string input)
-        {
+        public bool TryMatch(string input)
+		{
             Match match = _matchingRegex.Match(input);
             if (match.Success)
             {
-                _action(connection, match.Groups);
+                _action(match.Groups);
                 if (LogLine)
                 {
                     UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
@@ -105,7 +105,7 @@ public class IRCConnection : MonoBehaviour
 
         public readonly bool LogLine;
         private readonly Regex _matchingRegex;
-        private readonly Action<IRCConnection, GroupCollection> _action;
+        private readonly Action<GroupCollection> _action;
     }
     #endregion
 
@@ -519,7 +519,7 @@ public class IRCConnection : MonoBehaviour
 				string buffer = input.ReadLine();
 			    foreach (ActionMap action in Actions)
 			    {
-				    if (action.TryMatch(this, buffer))
+				    if (action.TryMatch(buffer))
 				    {
 					    break;
 				    }
@@ -668,59 +668,59 @@ public class IRCConnection : MonoBehaviour
 	#region Static Fields/Consts
 	private static readonly ActionMap[] Actions =
     {
-        new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+:(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+:(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
         {
             if (!string.IsNullOrEmpty(groups[2].Value))
             {
-				connection.ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
+	            Instance.ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
             }
             else
             {
-				connection.ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
+	            Instance.ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
 			}
         }),
 
-        new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", delegate(GroupCollection groups)
         {
-            connection._currentColor = string.IsNullOrEmpty(groups[2].Value) ? string.Empty : groups[2].Value;
-            connection.SetDelay(groups[1].Value, groups[3].Value, groups[4].Value);
-	        connection.SetOwnColor();
+	        Instance._currentColor = string.IsNullOrEmpty(groups[2].Value) ? string.Empty : groups[2].Value;
+	        Instance.SetDelay(groups[1].Value, groups[3].Value, groups[4].Value);
+	        Instance.SetOwnColor();
 		}, false), 
 
-        new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
         {
-			connection.ReceiveMessage(groups[1].Value, null, groups[3].Value);
+	        Instance.ReceiveMessage(groups[1].Value, null, groups[3].Value);
         }),
 
-        new ActionMap(@"PING (.+)", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@"PING (.+)", delegate(GroupCollection groups)
         {
 	        AddTextToHoldable($"---PING--- ---PONG--- {groups[1].Value}");
-			connection.SendCommand(string.Format("PONG {0}", groups[1].Value));
+	        Instance.SendCommand(string.Format("PONG {0}", groups[1].Value));
         }, false),
 
-        new ActionMap(@"\S* 001.*", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@"\S* 001.*", delegate(GroupCollection groups)
         {
 	        AddTextToHoldable(groups[0].Value);
-            connection.SendCommand(string.Format("JOIN #{0}", connection._settings.channelName));
-	        connection._state = IRCConnectionState.Connected;
-			UserAccess.AddUser(connection._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
-	        UserAccess.AddUser(connection._settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+	        Instance.SendCommand(string.Format("JOIN #{0}", Instance._settings.channelName));
+	        Instance._state = IRCConnectionState.Connected;
+			UserAccess.AddUser(Instance._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+	        UserAccess.AddUser(Instance._settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 	        UserAccess.WriteAccessList();
         }, false),
 
-		new ActionMap(@"\S* NOTICE \* :Login authentication failed", delegate(IRCConnection connection, GroupCollection groups)
+		new ActionMap(@"\S* NOTICE \* :Login authentication failed", delegate(GroupCollection groups)
 		{
 			AddTextToHoldable(groups[0].Value);
-			connection._state = IRCConnectionState.DoNotRetry;
+			Instance._state = IRCConnectionState.DoNotRetry;
 		}, false),
 
-		new ActionMap(@"\S* RECONNECT.*", delegate(IRCConnection connection, GroupCollection groups)
+		new ActionMap(@"\S* RECONNECT.*", delegate(GroupCollection groups)
 		{
 			AddTextToHoldable(groups[0].Value);
-			connection._state = IRCConnectionState.Disconnected;
+			Instance._state = IRCConnectionState.Disconnected;
 		}, false),
 
-        new ActionMap(@".+", delegate(IRCConnection connection, GroupCollection groups)
+        new ActionMap(@".+", delegate(GroupCollection groups)
         {
 	        AddTextToHoldable(groups[0].Value);
 		}, false)  //Log otherwise uncaptured lines.

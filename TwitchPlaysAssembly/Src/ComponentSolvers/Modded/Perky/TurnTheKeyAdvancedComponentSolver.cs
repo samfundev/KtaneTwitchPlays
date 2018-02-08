@@ -42,7 +42,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
             {
                 int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
                 TwitchPlaySettings.AddRewardBonus(2 * modules);
-                IRCConnection.SendMessage("Reward increased by {0} for defusing module !{1} ({2}).", modules * 2, Code, bombModule.ModuleDisplayName);
+	            IRCConnection.Instance.SendMessage("Reward increased by {0} for defusing module !{1} ({2}).", modules * 2, Code, bombModule.ModuleDisplayName);
             }
         }
         return false;
