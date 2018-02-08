@@ -31,3 +31,5 @@ sysinfo.txt
 *.unitypackage
 /Assets/Editor/Resources/WorkshopItem.asset
 /Assets/Editor/Resources/WorkshopItem.asset.meta
+Assets/Plugins/Managed/TwitchPlaysAssembly.dll.mdb
+Assets/Plugins/Managed/TwitchPlaysAssembly.dll.mdb.meta
