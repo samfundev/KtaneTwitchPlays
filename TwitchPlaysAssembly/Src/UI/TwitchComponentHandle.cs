@@ -348,7 +348,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			else
 			{
 				//messageOut = string.Format("{0}: {1}", headerText.text, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
-				messageOut = string.Format("{0} : {1} : {2}", HeaderText, Solver.modInfo.helpText, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
+				messageOut = string.Format("{0} : {1} : {2}", HeaderText, Solver.modInfo.helpText, UrlHelper.Instance.ManualFor(manualText, manualType));
 			}
 		}
 		else if (!Solved)

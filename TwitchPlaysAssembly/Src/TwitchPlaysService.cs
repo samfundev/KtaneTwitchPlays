@@ -18,8 +18,6 @@ public class TwitchPlaysService : MonoBehaviour
         public string channelName = "";
         public string serverName = "irc.twitch.tv";
         public int serverPort = 6667;
-        public bool debug = false;
-        public bool shortUrls = false;
     }
 
     public BombMessageResponder bombMessageResponder = null;
@@ -28,14 +26,9 @@ public class TwitchPlaysService : MonoBehaviour
     public MiscellaneousMessageResponder miscellaneousMessageResponder = null;
 
     private KMGameInfo _gameInfo = null;
-    private KMModSettings _modSettings = null;
     private CoroutineQueue _coroutineQueue = null;
 
     private MessageResponder _activeMessageResponder = null;
-
-    public static bool DebugMode = false;
-    public static LogUploader logUploader = null;
-    public static UrlHelper urlHelper = null;
 
 	private HashSet<Mod> CheckedMods = null;
 	private TwitchPlaysProperties _publicProperties;
@@ -56,23 +49,7 @@ public class TwitchPlaysService : MonoBehaviour
         _gameInfo = GetComponent<KMGameInfo>();
         _gameInfo.OnStateChange += OnStateChange;
 
-        _modSettings = GetComponent<KMModSettings>();
-
-        ModSettingsJSON settings = JsonConvert.DeserializeObject<ModSettingsJSON>(_modSettings.Settings);
-        if (settings == null)
-        {
-            DebugHelper.LogError("Failed to read connection settings from mod settings.");
-            return;
-        }
-
-        DebugMode = (settings.debug == true);
-
         _coroutineQueue = GetComponent<CoroutineQueue>();
-
-        logUploader = GetComponent<LogUploader>();
-
-        urlHelper = GetComponent<UrlHelper>();
-        urlHelper.ChangeMode(settings.shortUrls == true);
 
 		Leaderboard.Instance.LoadDataFromFile();
 

@@ -39,7 +39,7 @@ public class BombMessageResponder : MessageResponder
 
     public static bool EnableDisableInput()
     {
-        if (!TwitchPlaysService.DebugMode && TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode && BombActive)
+        if (IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode && BombActive)
         {
             InputInterceptor.DisableInput();
             return true;
@@ -57,7 +57,7 @@ public class BombMessageResponder : MessageResponder
         BombActive = true;
         EnableDisableInput();
         Leaderboard.Instance.ClearSolo();
-        TwitchPlaysService.logUploader.Clear();
+        LogUploader.Instance.Clear();
 
 		bool bombStarted = false;
 		parentService.GetComponent<KMGameInfo>().OnLightsChange += delegate (bool on)
@@ -193,7 +193,7 @@ public class BombMessageResponder : MessageResponder
         StopAllCoroutines();
 	    Leaderboard.Instance.BombsAttempted++;
 
-        TwitchPlaysService.logUploader.Post();
+	    LogUploader.Instance.Post();
         parentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
 
 		moduleCameras?.gameObject.SetActive(false);
@@ -709,9 +709,9 @@ public class BombMessageResponder : MessageResponder
 
     private void SendAnalysisLink()
     {
-	    if (TwitchPlaysService.logUploader.PostToChat()) return;
+	    if (LogUploader.Instance.PostToChat()) return;
 	    Debug.Log("[BombMessageResponder] Analysis URL not found, instructing LogUploader to post when it's ready");
-	    TwitchPlaysService.logUploader.postOnComplete = true;
+	    LogUploader.Instance.postOnComplete = true;
     }
     #endregion
 }

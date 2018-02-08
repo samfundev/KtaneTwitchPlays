@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LogUploader : MonoBehaviour
 {
+	public static LogUploader Instance;
+
     public string log { get; private set; }
 
     [HideInInspector]
@@ -25,6 +27,10 @@ public class LogUploader : MonoBehaviour
         { "ktane.w00ty.com", 2000000 }
     };
 
+	public void Awake()
+	{
+		Instance = this;
+	}
 
     public void OnEnable()
     {
@@ -99,7 +105,7 @@ public class LogUploader : MonoBehaviour
 
                 Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
 
-                analysisUrl = TwitchPlaysService.urlHelper.LogAnalyserFor(rawUrl);
+                analysisUrl = UrlHelper.Instance.LogAnalyserFor(rawUrl);
 
                 if (postOnComplete)
                 {

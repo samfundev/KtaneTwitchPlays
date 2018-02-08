@@ -30,6 +30,7 @@ public class TwitchPlaySettingsData
     public bool AllowTurnTheKeyEarlyLate = false;
     public bool DisableTurnTheKeysSoftLock = false;
     public bool EnforceSolveAllBeforeTurningKeys = true;
+	public bool LogUploaderShortUrls = false;
 
 	public int TimeModeStartingTime = 5;
 	public float TimeModeStartingMultiplier = 9.0f;

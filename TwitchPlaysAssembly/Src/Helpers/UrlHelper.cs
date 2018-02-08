@@ -3,17 +3,24 @@ using UnityEngine;
 
 public class UrlHelper : MonoBehaviour
 {
-    private bool shortMode = false;
+	public static UrlHelper Instance;
+
+	private void Awake()
+	{
+		Instance = this;
+	}
 
 	public void ChangeMode(bool toShort)
 	{
-        shortMode = toShort;
+		TwitchPlaySettings.data.LogUploaderShortUrls = toShort;
+		TwitchPlaySettings.WriteDataToFile();
 	}
 
     public bool ToggleMode()
     {
-        shortMode = !shortMode;
-        return shortMode;
+	    TwitchPlaySettings.data.LogUploaderShortUrls = !TwitchPlaySettings.data.LogUploaderShortUrls;
+	    TwitchPlaySettings.WriteDataToFile();
+        return TwitchPlaySettings.data.LogUploaderShortUrls;
     }
 
     private string Escape(string toEscape)
@@ -28,7 +35,7 @@ public class UrlHelper : MonoBehaviour
         return string.Format(LogAnalyser + "#url={0}", url);
     }
 
-    public string CommandReference => shortMode ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
+    public string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
 
 	public string ManualFor(string module, string type = "html")
     {

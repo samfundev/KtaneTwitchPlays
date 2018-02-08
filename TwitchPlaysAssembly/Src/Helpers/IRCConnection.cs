@@ -264,7 +264,7 @@ public class IRCConnection : MonoBehaviour
 			try
 			{
 				File.WriteAllText(_ircConnectionSettings.SettingsPath, JsonConvert.SerializeObject(new TwitchPlaysService.ModSettingsJSON(), Formatting.Indented));
-				AddTextToHoldable("Settings file successfully created. Configure it now.");
+				AddTextToHoldable("Settings file successfully created. Configure it now. Open up the Mod manager holdable, and select Open mod settins folder.");
 			}
 			catch (Exception ex)
 			{
@@ -309,6 +309,7 @@ public class IRCConnection : MonoBehaviour
 				{
 					AddTextToHoldable("serverPort - Most likely to be 6667");
 				}
+				AddTextToHoldable("\nOpen up the Mod manager holdable, and select Open mod settins folder.");
 				return;
 			}
 		}
@@ -573,6 +574,7 @@ public class IRCConnection : MonoBehaviour
 		        _state = IRCConnectionState.Disconnected;
 	        }
         }
+	    BombMessageResponder.EnableDisableInput();
 
 	    try
 	    {
@@ -703,6 +705,7 @@ public class IRCConnection : MonoBehaviour
 	        AddTextToHoldable(groups[0].Value);
 	        Instance.SendCommand(string.Format("JOIN #{0}", Instance._settings.channelName));
 	        Instance._state = IRCConnectionState.Connected;
+	        BombMessageResponder.EnableDisableInput();
 			UserAccess.AddUser(Instance._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 	        UserAccess.AddUser(Instance._settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 	        UserAccess.WriteAccessList();

@@ -110,8 +110,8 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.Equals("manual", StringComparison.InvariantCultureIgnoreCase) ||
                  text.Equals("help", StringComparison.InvariantCultureIgnoreCase))
         {
-            IRCConnection.Instance.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.VanillaManual);
-	        IRCConnection.Instance.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), TwitchPlaysService.urlHelper.CommandReference);
+            IRCConnection.Instance.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", UnityEngine.Random.Range(1, 100), UrlHelper.Instance.VanillaManual);
+	        IRCConnection.Instance.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), UrlHelper.Instance.CommandReference);
             return;
         }
         else if (text.StartsWith("bonusscore", StringComparison.InvariantCultureIgnoreCase))
@@ -208,13 +208,13 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.Equals("log", StringComparison.InvariantCultureIgnoreCase) || text.Equals("analysis", StringComparison.InvariantCultureIgnoreCase))
         {
-            TwitchPlaysService.logUploader.PostToChat("Analysis for the previous bomb: {0}");
+	        LogUploader.Instance.PostToChat("Analysis for the previous bomb: {0}");
             return;
         }
         else if (text.Equals("shorturl", StringComparison.InvariantCultureIgnoreCase))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-	        IRCConnection.Instance.SendMessage((TwitchPlaysService.urlHelper.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs");
+	        IRCConnection.Instance.SendMessage((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs");
         }
         else if (text.Equals("about", StringComparison.InvariantCultureIgnoreCase))
         {

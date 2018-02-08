@@ -289,9 +289,9 @@ public class ModuleCameras : MonoBehaviour
 		if (Input.GetKey(KeyCode.Escape))
 			EscapePressed = true;
 
-	    if (LastInteractiveState != (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode) || EscapePressed)
+	    if (LastInteractiveState != (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode) || EscapePressed || IRCConnection.Instance.State != IRCConnectionState.Connected)
 	    {
-		    LastInteractiveState = !TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode || EscapePressed;
+		    LastInteractiveState = !TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode || EscapePressed || IRCConnection.Instance.State != IRCConnectionState.Connected;
 		    foreach (ModuleCamera camera in cameras)
 		    {
 			    int layer = LastInteractiveState ? cameraLayer : camera.nonInteractiveCameraLayer;
