@@ -22,7 +22,6 @@ public class ModuleInformation
     public bool statusLightOverride;
     public bool statusLightLeft;
     public bool statusLightDown;
-    public float chatRotation;
 
     public bool validCommandsOverride;
     public string[] validCommands;

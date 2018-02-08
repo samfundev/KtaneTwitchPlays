@@ -111,7 +111,6 @@ public static class ComponentSolverFactory
                 "statusLightOverride": true,
                 "statusLightLeft": false,
                 "statusLightDown": false,
-                "chatRotation": 0.0,
                 "validCommandsOverride": false,
                 "validCommands": null,
                 "DoesTheRightThing": false,
@@ -135,7 +134,6 @@ public static class ComponentSolverFactory
          *      Above the status light, or if you wish to rotate the ID / chat box.)
          * statusLightLeft - Specifies whether the ID should be on the left side of the module.
          * statusLightDown - Specifies whether the ID should be on the bottom side of the module.
-         * chatRotation - Specifies whether the chat box / ID should be rotated.  (not currently implemented yet.)
          * 
          * Finally, validCommands, DoesTheRightThing and all of the override flags will only show up in modules not built into Twitch plays.
          * validCommandsOverride - Specifies whether the valid regular expression list should not be updated from the module.
@@ -359,7 +357,6 @@ public static class ComponentSolverFactory
 			i.DoesTheRightThing = info.DoesTheRightThing;
 			i.statusLightLeft = info.statusLightLeft;
 			i.statusLightDown = info.statusLightDown;
-			i.chatRotation = info.chatRotation;
 			i.validCommands = info.validCommands;
 
 			i.helpTextOverride = info.helpTextOverride;
@@ -502,14 +499,12 @@ public static class ComponentSolverFactory
 			info.manualCode = manual;
 		}
 
-		if (!info.statusLightOverride && FindStatusLightPosition(bombComponent, out bool statusLeft, out bool statusBottom, out float rotation))
+		if (!info.statusLightOverride && FindStatusLightPosition(bombComponent, out bool statusLeft, out bool statusBottom))
 		{
 			ModuleData.DataHasChanged |= info.statusLightLeft != statusLeft;
 			ModuleData.DataHasChanged |= info.statusLightDown != statusBottom;
-			ModuleData.DataHasChanged |= (Mathf.Abs(info.chatRotation - rotation) >= 0.2f);
 			info.statusLightLeft = statusLeft;
 			info.statusLightDown = statusBottom;
-			info.chatRotation = rotation;
 		}
 
 		if (!info.validCommandsOverride && FindRegexList(bombComponent, commandComponentType, out string[] regexList))
@@ -595,7 +590,7 @@ public static class ComponentSolverFactory
         }
     }
 
-	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom, out float Rotation)
+	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom)
 	{
 		string statusLightStatus = "Attempting to find the modules StatusLightParent...";
 		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component) bombComponent.GetComponentInChildren<KMStatusLightParent>();
@@ -604,14 +599,12 @@ public static class ComponentSolverFactory
 			DebugLog($"{statusLightStatus} Not found.");
 			StatusLightLeft = false;
 			StatusLightBottom = false;
-			Rotation = 0;
 			return false;
 		}
 
 		StatusLightLeft = (component.transform.localPosition.x < 0);
 		StatusLightBottom = (component.transform.localPosition.z < 0);
-		Rotation = component.transform.localEulerAngles.y;
-		DebugLog($"{statusLightStatus} Found in the {(StatusLightBottom ? "bottom" : "top")} {(StatusLightLeft ? "left" : "right")} corner, rotated {((int) Rotation)} degrees.");
+		DebugLog($"{statusLightStatus} Found in the {(StatusLightBottom ? "bottom" : "top")} {(StatusLightLeft ? "left" : "right")} corner.");
 		return true;
 	}
 
