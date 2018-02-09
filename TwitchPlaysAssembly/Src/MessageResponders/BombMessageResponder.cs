@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
+using Assets.Scripts.Props;
 using UnityEngine;
 
 public class BombMessageResponder : MessageResponder
@@ -20,7 +21,9 @@ public class BombMessageResponder : MessageResponder
     private int _currentBomb = -1;
     private string[] _notes = new string[4];
 
-    public static ModuleCameras moduleCameras = null;
+	private AlarmClock alarmClock;
+
+	public static ModuleCameras moduleCameras = null;
 
     public static bool BombActive { get; private set; }
 
@@ -549,8 +552,6 @@ public class BombMessageResponder : MessageResponder
             }
             else
             {
-	            Regex.IsMatch("", "");
-
                 if (text.RegexMatch(out match, "^edgework (.+)"))
                 {
                     string internalCommand = match.Groups[1].Value;
