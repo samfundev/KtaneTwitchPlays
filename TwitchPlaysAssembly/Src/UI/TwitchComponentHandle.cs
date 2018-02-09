@@ -58,6 +58,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public ComponentSolver Solver { get; private set; } = null;
 
+	public bool IsMod => bombComponent is ModBombComponent || bombComponent is ModNeedyComponent;
+
 	private string _headerText;
 	public string HeaderText
 	{

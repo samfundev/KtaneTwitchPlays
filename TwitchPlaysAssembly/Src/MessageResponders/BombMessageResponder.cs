@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
-using Assets.Scripts.Props;
 using UnityEngine;
 
 public class BombMessageResponder : MessageResponder
@@ -21,8 +20,6 @@ public class BombMessageResponder : MessageResponder
 	public List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
     private int _currentBomb = -1;
     private string[] _notes = new string[4];
-
-    private AlarmClock alarmClock;
 
     public static ModuleCameras moduleCameras = null;
 
@@ -266,8 +263,6 @@ public class BombMessageResponder : MessageResponder
 			DebugHelper.LogException(ex, "An exception has occured attempting to hold the bomb.");
 		}
 
-		alarmClock = FindObjectOfType<AlarmClock>();
-
 		try
 		{
 			moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
@@ -319,222 +314,238 @@ public class BombMessageResponder : MessageResponder
 
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
-	    if (!text.StartsWith("!") || text.Equals("!")) return;
-	    text = text.Substring(1);
+	    Match match;
+		if (!text.StartsWith("!") || text.Equals("!")) return;
+		text = text.Substring(1);
 
-		if (text.EqualsAny("notes1","notes2","notes3","notes4"))
-        {
-            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
-	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index+1, _notes[index]);
-            return;
-        }
-
-        if (text.StartsWith("notes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes2 ", StringComparison.InvariantCultureIgnoreCase) ||
-            text.StartsWith("notes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes4 ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
-            string notes = text.Substring(7);
-            if (notes == "") return;
-
-	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesTaken, index+1 , notes);
-
-            _notes[index] = notes;
-	        moduleCameras?.SetNotes(index, notes);
-            return;
-        }
-
-        if (text.StartsWith("appendnotes1 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("appendnotes2 ", StringComparison.InvariantCultureIgnoreCase) ||
-            text.StartsWith("appendnotes3 ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("appendnotes4 ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            text = text.Substring(6, 6) + text.Substring(0, 6) + text.Substring(12);
-        }
-
-        if (text.StartsWith("notes1append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes2append ", StringComparison.InvariantCultureIgnoreCase) ||
-            text.StartsWith("notes3append ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("notes4append ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
-            string notes = text.Substring(13);
-            if (notes == "") return;
-
-	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesAppended, index + 1, notes);
-
-            _notes[index] += " " + notes;
-	        moduleCameras?.AppendNotes(index, notes);
-            return;
-        }
-
-        if (text.EqualsAny("clearnotes1", "clearnotes2", "clearnotes3", "clearnotes4"))
-        {
-            text = text.Substring(5, 6) + text.Substring(0, 5);
-        }
-
-        if (text.EqualsAny("notes1clear", "notes2clear", "notes3clear", "notes4clear"))
-        {
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            int index = "1234".IndexOf(text.Substring(5, 1), StringComparison.Ordinal);
-            _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
-	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index + 1);
-
-	        moduleCameras?.SetNotes(index, TwitchPlaySettings.data.NotesSpaceFree);
-            return;
-        }
-
-        if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
-		{ 
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            if (TwitchPlaySettings.data.AllowSnoozeOnly)
-                alarmClock?.TurnOff();
-            else
-                alarmClock?.ButtonDown(0);
-            return;
-        }
-
-        if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
-        {
-            if (!IsAuthorizedDefuser(userNickName, true)) return;
-            _currentBomb = _coroutineQueue.CurrentBombID;
-            return;
-        }
-
-        if (text.Equals("modules", StringComparison.InvariantCultureIgnoreCase))
-        {
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            moduleCameras?.AttachToModules(ComponentHandles);
-            return;
-        }
-
-        if (text.StartsWith("claims ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            userNickName = text.Substring(7);
-            text = "claims";
-            if (userNickName == "")
-            {
-                return;
-            }
-        }
-
-        if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
-        {
-            if (!IsAuthorizedDefuser(userNickName)) return;
-            List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idTextMultiDecker.text, handle.HeaderText)).ToList();
-            if (claimed.Count > 0)
-            {
-                string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
-                if (claimed.Count > 5)
-                    message += "...";
-	            IRCConnection.Instance.SendMessage(message);
-            }
-            else
-	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoOwnedModules, userNickName);
-            return;
-        }
-
-        if (text.StartsWith("claim ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            var split = text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var claim in split.Skip(1))
-            {
-                TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-                if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-                handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} claim", claim));
-            }
-            return;
-        }
-
-        if (text.EqualsAny("unclaim all", "release all","unclaimall","releaseall"))
-        {
-            string[] moduleIDs = ComponentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
-                .Select(x => x.Code).ToArray();
-            text = string.Format("unclaim {0}", string.Join(" ", moduleIDs));
-        }
-
-        if (text.StartsWith("unclaim ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("release ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var claim in split.Skip(1))
-            {
-                TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-                if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-                handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} unclaim", claim));
-            }
-            return;
-        }
-
-	    if (text.StartsWith("assign ", StringComparison.InvariantCultureIgnoreCase))
+	    if (IsAuthorizedDefuser(userNickName))
 	    {
-		    var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || split.Length < 3) return;
-		    foreach (var assign in split.Skip(2))
+			if (text.RegexMatch(out match, "^notes([1-4]) (.+)$"))
+			{
+				int index = int.Parse(match.Groups[1].Value);
+				string notes = match.Groups[2].Value;
+
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesTaken, index--, notes);
+
+				_notes[index] = notes;
+				moduleCameras?.SetNotes(index, notes);
+				return;
+			}
+
+		    if (text.RegexMatch(out match, "^notes([1-4])append (.+)", "^appendnotes([1-4]) (.+)"))
 		    {
-			    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
-			    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-			    handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} assign {1}", assign, split[1]));
+			    int index = int.Parse(match.Groups[1].Value);
+			    string notes = match.Groups[2].Value;
+
+			    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesAppended, index--, notes);
+
+			    _notes[index] += " " + notes;
+			    moduleCameras?.AppendNotes(index, notes);
+			    return;
 		    }
-		    return;
-	    }
 
-		if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
+		    if (text.RegexMatch(out match, "^clearnotes([1-4])$", "^notes([1-4])clear$"))
+		    {
+			    int index = int.Parse(match.Groups[1].Value);
 
-			IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
-				.Select(handle => string.Format("{0} ({1})", handle.HeaderText, handle.Code)).ToList();
-			
-			if (unclaimed.Any()) IRCConnection.Instance.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
-			else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+			    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index--);
 
-			return;
+			    _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
+			    moduleCameras?.SetNotes(index, TwitchPlaySettings.data.NotesSpaceFree);
+			    return;
+		    }
+
+		    if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
+		    {
+			    text = "alarmclock snooze";
+		    }
+
+			if (text.Equals("modules", StringComparison.InvariantCultureIgnoreCase))
+			{
+				moduleCameras?.AttachToModules(ComponentHandles);
+				return;
+			}
+
+			if (text.RegexMatch(out match, "^claims (.+)"))
+			{
+				OnMessageReceived(match.Groups[1].Value, userColorCode, "claims");
+				return;
+			}
+
+			if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
+			{
+				List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idTextMultiDecker.text, handle.HeaderText)).ToList();
+				if (claimed.Count > 0)
+				{
+					string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
+					if (claimed.Count > 5)
+						message += "...";
+					IRCConnection.Instance.SendMessage(message);
+				}
+				else
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoOwnedModules, userNickName);
+				return;
+			}
+
+			if (text.StartsWith("claim ", StringComparison.InvariantCultureIgnoreCase))
+			{
+				var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (var claim in split.Skip(1))
+				{
+					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+					handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} claim", claim));
+				}
+				return;
+			}
+
+		    if (text.RegexMatch("^(unclaim|release) ?all$"))
+		    {
+			    string[] moduleIDs = ComponentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
+				    .Select(x => x.Code).ToArray();
+			    text = string.Format("unclaim {0}", string.Join(" ", moduleIDs));
+		    }
+
+		    if (text.RegexMatch(out match, "^(?:unclaim|release) (.+)"))
+		    {
+			    var split = match.Groups[1].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			    foreach (var claim in split)
+			    {
+				    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+				    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+				    handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} unclaim", claim));
+			    }
+			    return;
+		    }
+
+			if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
+					.Select(handle => string.Format("{0} ({1})", handle.HeaderText, handle.Code)).ToList();
+
+				if (unclaimed.Any()) IRCConnection.Instance.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+
+				return;
+			}
+
+			if (text.Equals("claimany", StringComparison.InvariantCultureIgnoreCase))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
+					.Select(handle => string.Format("!{0} claim", handle.Code)).ToList();
+
+				if (unclaimed.Any()) text = unclaimed[0];
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+			}
+
+			if (text.Equals("claimvan", StringComparison.InvariantCultureIgnoreCase))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+					.Select(handle => string.Format("!{0} claim", handle.Code)).ToList();
+
+				if (unclaimed.Any()) text = unclaimed[0];
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules of that type.");
+			}
+
+			if (text.Equals("claimmod", StringComparison.InvariantCultureIgnoreCase))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+					.Select(handle => string.Format("!{0} claim", handle.Code)).ToList();
+
+				if (unclaimed.Any()) text = unclaimed[0];
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules of that type.");
+			}
+
+			if (text.RegexMatch(out match, "^(?:find|search) (.+)"))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				string query = match.Groups[1].Value;
+				IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
+					.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code,
+						handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
+					)).ToList();
+
+				if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
+				else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+
+				return;
+			}
 		}
 
-		if (text.StartsWith("find ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("search ", StringComparison.InvariantCultureIgnoreCase))
+		if (text.RegexMatch(out match, "^notes([1-4])$"))
 		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			string query = split.Skip(1).Join(" ");
-			IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-                .OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
-				.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, 
-					handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
-				)).ToList();
-
-			if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
-			else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
-
-			return;
-		}
-
-		if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-		{
-		    foreach (var commander in BombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
-			return;
-		}
-
-        if (text.StartsWith("setmultiplier", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
-        {
-			if(float.TryParse(text.Substring(14), out float tempNumber))
-				OtherModes.setMultiplier(tempNumber);
+			int index = int.Parse(match.Groups[1].Value);
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notes[index-1]);
+            return;
         }
 
-        if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
 		{
-			foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
+			if (!IsAuthorizedDefuser(userNickName, true)) return;
+			_currentBomb = _coroutineQueue.CurrentBombID;
 			return;
 		}
 
-	    if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
-	    {
-		    moduleCameras.EnableWallOfCameras();
-			StartCoroutine(HideBombs());
-	    }
+	    
 
-	    if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+	    switch (UserAccess.HighestAccessLevel(userNickName))
 	    {
-		    moduleCameras.DisableWallOfCameras();
-		    _hideBombs = false;
+			case AccessLevel.Streamer:
+			case AccessLevel.SuperUser:
+				if (text.RegexMatch(out match, @"^setmultiplier ([0-9]+(?:\.[0-9]+))$"))
+				{
+					OtherModes.setMultiplier(float.Parse(match.Groups[1].Value));
+					return;
+				}
+
+				if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase))
+				{
+					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
+					return;
+				}
+				goto case AccessLevel.Admin;
+		    case AccessLevel.Admin:
+			    if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase))
+			    {
+				    moduleCameras.EnableWallOfCameras();
+				    StartCoroutine(HideBombs());
+			    }
+
+			    if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase))
+			    {
+				    moduleCameras.DisableWallOfCameras();
+				    _hideBombs = false;
+			    }
+				goto case AccessLevel.Mod;
+		    case AccessLevel.Mod:
+			    if (text.RegexMatch(out match, @"^assign (\S+) (.+)"))
+			    {
+				    var split = match.Groups[2].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				    foreach (var assign in split)
+				    {
+					    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
+					    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+					    handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} assign {1}", assign, match.Groups[1].Value));
+				    }
+				    return;
+			    }
+
+				if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase))
+			    {
+				    foreach (var commander in BombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
+				    return;
+			    }
+				break;
 	    }
 
         GameRoom.Instance.RefreshBombID(ref _currentBomb);
@@ -542,22 +553,21 @@ public class BombMessageResponder : MessageResponder
         if (_currentBomb > -1)
         {
             //Check for !bomb messages, and pass them off to the currently held bomb.
-            Match match = Regex.Match(text, "^bomb (.+)", RegexOptions.IgnoreCase);
-            if (match.Success)
+            if (text.RegexMatch(out match, "^bomb (.+)"))
             {
                 string internalCommand = match.Groups[1].Value;
                 text = string.Format("bomb{0} {1}", _currentBomb + 1, internalCommand);
             }
 
-            match = Regex.Match(text, "^edgework$");
-            if (match.Success)
+            if (text.RegexMatch(out match, "^edgework$"))
             {
                 text = string.Format("edgework{0}", _currentBomb + 1);
             }
             else
             {
-                match = Regex.Match(text, "^edgework (.+)");
-                if (match.Success)
+	            Regex.IsMatch("", "");
+
+                if (text.RegexMatch(out match, "^edgework (.+)"))
                 {
                     string internalCommand = match.Groups[1].Value;
                     text = string.Format("edgework{0} {1}", _currentBomb + 1, internalCommand);

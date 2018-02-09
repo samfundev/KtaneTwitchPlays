@@ -100,6 +100,20 @@ public static class UserAccess
         return false;
     }
 
+	public static AccessLevel HighestAccessLevel(string userNickName)
+	{
+		if (!AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
+		{
+			return AccessLevel.User;
+		}
+		for (AccessLevel level = (AccessLevel)0x40000000; level > 0; level = (AccessLevel)((int)level >> 1))
+		{
+			if ((userAccessLevel & level) == level)
+				return level;
+		}
+		return AccessLevel.User;
+	}
+
     public static void AddUser(string userNickName, AccessLevel level)
     {
         AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);

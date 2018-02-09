@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public static class DebugHelper
@@ -9,6 +10,7 @@ public static class DebugHelper
 		Log(string.Join(" ", args.Select(x => x.ToString()).ToArray()));
 	}
 
+	[StringFormatMethod("format")]
 	public static void Log(string format, params object[] args)
 	{
 		Debug.LogFormat("[TwitchPlays] " + format, args);
@@ -19,6 +21,7 @@ public static class DebugHelper
 		LogWarning(string.Join(" ", args.Select(x => x.ToString()).ToArray()));
 	}
 
+	[StringFormatMethod("format")]
 	public static void LogWarning(string format, params object[] args)
 	{
 		Debug.LogWarningFormat("[TwitchPlays] " + format, args);
@@ -29,6 +32,7 @@ public static class DebugHelper
 		LogError(string.Join(" ", args.Select(x => x.ToString()).ToArray()));
 	}
 
+	[StringFormatMethod("format")]
 	public static void LogError(string format, params object[] args)
 	{
 		Debug.LogErrorFormat("[TwitchPlays] " + format, args);

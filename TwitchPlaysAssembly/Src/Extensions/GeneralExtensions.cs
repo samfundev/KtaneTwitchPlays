@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 public static class GeneralExtensions
 {
@@ -126,5 +127,31 @@ public static class GeneralExtensions
 	public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int N)
 	{
 		return source.Skip(Math.Max(0, source.Count() - N));
+	}
+
+	public static bool RegexMatch(this string str, params string[]patterns)
+	{
+		return str.RegexMatch(out _, patterns);
+	}
+
+	public static bool RegexMatch(this string str, out Match match, params string []patterns)
+	{
+		if (patterns == null) throw new ArgumentNullException(nameof(patterns));
+		match = null;
+		foreach (string pattern in patterns)
+		{
+			try
+			{
+				Regex r = new Regex(pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+				match = r.Match(str);
+				if (match.Success)
+					return true;
+			}
+			catch (Exception ex)
+			{
+				DebugHelper.LogException(ex);
+			}
+		}
+		return false;
 	}
 }
