@@ -48,6 +48,12 @@ public class BombMessageResponder : MessageResponder
         }
     }
 
+	public void SetCurrentBomb()
+	{
+		if (!BombActive) return;
+		_currentBomb = _coroutineQueue.CurrentBombID;
+	}
+
     private void OnEnable()
     {
 	    Instance = this;
@@ -488,15 +494,6 @@ public class BombMessageResponder : MessageResponder
 	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notes[index-1]);
             return;
         }
-
-		if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName, true)) return;
-			_currentBomb = _coroutineQueue.CurrentBombID;
-			return;
-		}
-
-	    
 
 	    switch (UserAccess.HighestAccessLevel(userNickName))
 	    {

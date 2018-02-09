@@ -105,6 +105,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             if (!IsAuthorizedDefuser(userNickName)) return;
 	        CoroutineCanceller.SetCancel();
             _coroutineQueue.CancelFutureSubcoroutines();
+	        BombMessageResponder.Instance?.SetCurrentBomb();
             return;
         }
         else if (text.Equals("manual", StringComparison.InvariantCultureIgnoreCase) ||
