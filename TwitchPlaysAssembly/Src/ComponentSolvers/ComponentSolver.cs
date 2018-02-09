@@ -378,6 +378,7 @@ public abstract class ComponentSolver
 
 		_currentUserNickName = null;
 		_delegatedSolveUserNickName = null;
+		_silentlySolve = true;
 
 		if(removeSolveBasedModules)
 			TwitchComponentHandle.RemoveSolveBasedModules();
@@ -395,47 +396,59 @@ public abstract class ComponentSolver
 		gameCommands.OnCauseStrike += x => { OnStrike(x); };
 	}
 
+	private bool _silentlySolve;
     private bool OnPass(object _ignore)
     {
         //string componentType = ComponentHandle.componentType.ToString();
         //string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
-		if (modInfo == null)
-            return false;
+		if (modInfo != null)
+	    {
+		    int moduleScore = modInfo.moduleScore;
+		    if (modInfo.moduleScoreIsDynamic)
+		    {
+			    switch (modInfo.moduleScore)
+			    {
+				    case 0:
+					    moduleScore = (BombCommander.bombSolvableModules) / 2;
+					    break;
+				    default:
+					    moduleScore = 5;
+					    break;
+			    }
+		    }
 
-        int moduleScore = modInfo.moduleScore;
-        if (modInfo.moduleScoreIsDynamic)
-        {
-            switch (modInfo.moduleScore)
-            {
-                case 0:
-                    moduleScore = (BombCommander.bombSolvableModules) / 2;
-                    break;
-                default:
-                    moduleScore = 5;
-                    break;
-            }
-        }
+		    if (BombComponent is NeedyComponent)
+			    return false;
 
-	    if (BombComponent is NeedyComponent)
-		    return false;
+		    if (UnsupportedModule)
+			    ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
 
-	    if (UnsupportedModule)
-		    ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
+		    string solverNickname = null;
+			if (!_silentlySolve)
+		    {
+			    if (_delegatedSolveUserNickName != null)
+			    {
+				    solverNickname = _delegatedSolveUserNickName;
+				    _delegatedSolveUserNickName = null;
+			    }
+			    else if (_currentUserNickName != null)
+			    {
+				    solverNickname = _currentUserNickName;
+			    }
+			    else if (ComponentHandle?.PlayerName != null)
+			    {
+				    solverNickname = ComponentHandle.PlayerName;
+			    }
+			    else
+			    {
+				    solverNickname = IRCConnection.Instance.ChannelName;
+			    }
+			    AwardSolve(solverNickname, moduleScore);
+			}
+		    ComponentHandle?.OnPass(solverNickname);
+		}
 
-	    string solverNickname = null;
-		if (_delegatedSolveUserNickName != null)
-		{
-			solverNickname = _delegatedSolveUserNickName;
-            AwardSolve(_delegatedSolveUserNickName, moduleScore);
-            _delegatedSolveUserNickName = null;
-        }
-        else if (_currentUserNickName != null)
-		{
-			solverNickname = _currentUserNickName;
-            AwardSolve(_currentUserNickName, moduleScore);
-        }
-
-        BombCommander.bombSolvedModules++;
+	    BombCommander.bombSolvedModules++;
         BombMessageResponder.moduleCameras?.UpdateSolves();
 
         if (_turnQueued)
@@ -444,8 +457,6 @@ public abstract class ComponentSolver
             _readyToTurn = true;
             _turnQueued = false;
         }
-
-	    ComponentHandle?.OnPass(solverNickname);
 
         BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent, true);
 
@@ -488,6 +499,10 @@ public abstract class ComponentSolver
 		{
 			AwardStrikes(ComponentHandle.PlayerName, 0);
 		}
+		else
+		{
+			AwardStrikes(IRCConnection.Instance.ChannelName, 0);
+		}
 	}
 
     private bool DisableOnStrike;
@@ -507,26 +522,24 @@ public abstract class ComponentSolver
             AwardStrikes(_currentUserNickName, 1);
         }
         else if (ComponentHandle.PlayerName != null)
-        {
-            AwardStrikes(ComponentHandle.PlayerName, 1);
-        }
+		{
+			AwardStrikes(ComponentHandle.PlayerName, 1);
+		}
+		else
+		{
+			AwardStrikes(IRCConnection.Instance.ChannelName, 1);
+		}
 
         BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 
         return false;
     }
-
-    public bool OnStrikes(object _ignore)
-    {
-        StrikeCount++;
-        BombMessageResponder.moduleCameras?.UpdateStrikes(true);
-        return false;
-    }
-
+	
 	public void SolveSilently()
 	{
 		_delegatedSolveUserNickName = null;
 		_currentUserNickName = null;
+		_silentlySolve = true;
 
 		// TwitchComponentHandle.RemoveSolveBasedModules();
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
@@ -534,21 +547,28 @@ public abstract class ComponentSolver
 
     private void AwardSolve(string userNickName, int ComponentValue)
     {
-        string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
-	    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
-        string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
-		Leaderboard.Instance?.AddSolve(userNickName);
-	    if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
-	    {
-		    Leaderboard.Instance?.AddScore(userNickName, ComponentValue);
-	    }
-	    else
+	    if (userNickName == null)
 	    {
 		    TwitchPlaySettings.AddRewardBonus(ComponentValue);
 	    }
-		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
-        TwitchPlaySettings.AppendToPlayerLog(userNickName);
-        if (OtherModes.timedModeOn)
+	    else
+	    {
+		    string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
+		    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
+		    string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
+		    Leaderboard.Instance?.AddSolve(userNickName);
+		    if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
+		    {
+			    Leaderboard.Instance?.AddScore(userNickName, ComponentValue);
+		    }
+		    else
+		    {
+			    TwitchPlaySettings.AddRewardBonus(ComponentValue);
+		    }
+		    TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
+		    TwitchPlaySettings.AppendToPlayerLog(userNickName);
+	    }
+	    if (OtherModes.timedModeOn)
         {
             float multiplier = OtherModes.getMultiplier();
             float time = multiplier * ComponentValue;

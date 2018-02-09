@@ -281,9 +281,12 @@ public class IRCConnection : MonoBehaviour
 				return;
 			}
 
+			UserNickName = _settings.userName.Replace("#", "");
+			ChannelName = _settings.channelName.Replace("#", "");
+
 			_settings.authToken = _settings.authToken.ToLowerInvariant();
-			_settings.channelName = _settings.channelName.Replace("#","").ToLowerInvariant();
-			_settings.userName = _settings.userName.Replace("#","").ToLowerInvariant();
+			_settings.channelName = ChannelName.ToLowerInvariant();
+			_settings.userName = UserNickName.ToLowerInvariant();
 			_settings.serverName = _settings.serverName.ToLowerInvariant();
 
 			if (!IsAuthTokenValid(_settings.authToken) || !IsUsernameValid(_settings.channelName) || !IsUsernameValid(_settings.userName) || string.IsNullOrEmpty(_settings.serverName) || _settings.serverPort < 1 || _settings.serverPort > 65535)
@@ -419,7 +422,7 @@ public class IRCConnection : MonoBehaviour
 	        if (line.StartsWith(".") || line.StartsWith("/")) continue;
 	        lock (_messageQueue)
 	        {
-		        _messageQueue.Enqueue(new Message(_settings.userName, _currentColor, line, true));
+		        _messageQueue.Enqueue(new Message(UserNickName, _currentColor, line, true));
 	        }
         }
     }
@@ -436,7 +439,7 @@ public class IRCConnection : MonoBehaviour
             SendCommand(string.Format("PRIVMSG #{0} :Silence mode on", _settings.channelName));
 	        lock (_messageQueue)
 	        {
-		        _messageQueue.Enqueue(new Message(_settings.userName, _currentColor, "Silence mode on", true));
+		        _messageQueue.Enqueue(new Message(UserNickName, _currentColor, "Silence mode on", true));
 	        }
 		}
         _silenceMode = !_silenceMode;
@@ -445,7 +448,7 @@ public class IRCConnection : MonoBehaviour
             SendCommand(string.Format("PRIVMSG #{0} :Silence mode off", _settings.channelName));
 	        lock (_messageQueue)
 	        {
-		        _messageQueue.Enqueue(new Message(_settings.userName, _currentColor, "Silence mode off", true));
+		        _messageQueue.Enqueue(new Message(UserNickName, _currentColor, "Silence mode off", true));
 	        }
 		}
     }
@@ -735,6 +738,8 @@ public class IRCConnection : MonoBehaviour
     public string ColorOnDisconnect = null;
 	public static IRCConnection Instance { get; private set; }
 	public IRCConnectionState State => gameObject.activeInHierarchy ? _state : IRCConnectionState.Disabled;
+	public string UserNickName { get; private set; } = null;
+	public string ChannelName { get; private set; } = null;
 	#endregion
 
 	#region Private Fields

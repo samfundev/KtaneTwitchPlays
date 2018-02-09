@@ -21,7 +21,9 @@ public class BombMessageResponder : MessageResponder
     private int _currentBomb = -1;
     private string[] _notes = new string[4];
 
+#pragma warning disable 169
 	private AlarmClock alarmClock;
+#pragma warning restore 169
 
 	public static ModuleCameras moduleCameras = null;
 

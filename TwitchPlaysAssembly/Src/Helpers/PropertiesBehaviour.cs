@@ -81,7 +81,7 @@ public class PropertiesBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public ICollection<object> Values
 	{
-		get { throw new NotImplementedException("The Values property is not supported in this Dictionary."); }
+		get { throw new NotSupportedException("The Values property is not supported in this Dictionary."); }
 	}
 
 	public void Add(KeyValuePair<string, object> item)
