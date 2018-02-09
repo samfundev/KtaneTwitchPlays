@@ -143,13 +143,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 	        IRCConnection.Instance.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), UrlHelper.Instance.CommandReference);
             return;
         }
-        else if (text.StartsWith("bonusscore", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.RegexMatch(@"^bonusscore (\S+) (-?[0-9]+)$"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            if (split.Length < 3)
-            {
-                return;
-            }
             string playerrewarded = split[1];
             if (!int.TryParse(split[2], out int scorerewarded))
             {
@@ -163,7 +159,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             return;
         }
-        else if (text.StartsWith("reward", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.RegexMatch("^reward (-?[0-9].)$"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
@@ -255,13 +251,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 	        IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
             return;
         }
-        else if (text.StartsWith("add ", StringComparison.InvariantCultureIgnoreCase) || text.StartsWith("remove ", StringComparison.InvariantCultureIgnoreCase))
+        else if (text.RegexMatch(@"^(?:add|remove) \S+ .+"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            if (split.Length < 3)
-            {
-                return;
-            }
 
             bool stepdown = split[0].Equals("remove",StringComparison.InvariantCultureIgnoreCase) && split[1].Equals(userNickName, StringComparison.InvariantCultureIgnoreCase);
             if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) && !stepdown)
@@ -599,6 +591,12 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
 
         }
+
+		//For obvious reasons, only the streamer may do this, as this command is that powerful.
+	    if (UserAccess.HasAccess(userNickName, AccessLevel.Streamer) && text.RegexMatch(out Match sayasMatch, @"^(?:issue|say) ?commands?(?: ?as)? (\S+) (.+)"))
+	    {
+		    IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
+	    }
     }
 
 	private IEnumerator ReturnToSetup(string userNickName, string text)
