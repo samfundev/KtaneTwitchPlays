@@ -476,9 +476,16 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 
 		if (Solver != null)
-		{
-		    if (!IsAuthorizedDefuser(userNickName)) return null;
-            if ((bombCommander.CurrentTimer > 60.0f) && (playerName != null) && (playerName != userNickName) && (!(internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase) || (internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName,AccessLevel.Mod,true)) || (internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)))))
+		{ 
+			if (!IsAuthorizedDefuser(userNickName, false)) return null;
+			bool moduleAlreadyClaimed = bombCommander.CurrentTimer > 60.0f;
+			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) > 2;
+			moduleAlreadyClaimed &= playerName != null;
+			moduleAlreadyClaimed &= playerName != userNickName;
+			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
+			moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
+			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
+			if (moduleAlreadyClaimed)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, HeaderText);
 				return null;
