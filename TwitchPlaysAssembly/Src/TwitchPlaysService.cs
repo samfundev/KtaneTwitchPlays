@@ -115,7 +115,7 @@ public class TwitchPlaysService : MonoBehaviour
     private IEnumerator StopEveryCoroutine()
     {
         yield return new WaitForSeconds(2.0f);
-
+	    _coroutinesToStart.Enqueue(MiscellaneousMessageResponder.FindHoldables());
         _coroutineQueue.StopQueue();
         _coroutineQueue.CancelFutureSubcoroutines();
         StopAllCoroutines();
