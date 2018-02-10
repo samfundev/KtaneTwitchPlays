@@ -15,20 +15,24 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	    bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
     }
 
+	private bool IsTargetTurnTimeCorrect(int turnTime)
+	{
+		return turnTime < 0 || turnTime == (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
+	}
 
-	private bool CanTurnEarlyWithoutStrike()
+	private bool CanTurnEarlyWithoutStrike(int turnTime)
 	{
 		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 		int timeRemaining = (int)BombCommander.Bomb.GetTimer().TimeRemaining;
 		if (timeRemaining < time) return false;
 		IEnumerable<BombComponent> components = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved && x.bombComponent != BombComponent).Select(x => x.bombComponent).ToArray();
 		if (components.Any(x => x.GetComponent(_componentType) == null)) return false;
-		return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time));
+		return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time)) && IsTargetTurnTimeCorrect(turnTime);
 	}
 
-    private bool OnKeyTurn()
+    private bool OnKeyTurn(int turnTime = -1)
     {
-	    bool result = CanTurnEarlyWithoutStrike();
+	    bool result = CanTurnEarlyWithoutStrike(turnTime);
 	    if (!result)
 	    {
 		    _onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
@@ -56,9 +60,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         yield return new WaitForSeconds(0.1f);
         _stopAllCorotinesMethod.Invoke(BombComponent.GetComponent(_componentType), null);
 
-        ((KMSelectable)_lock).OnInteract = OnKeyTurn;
-        int expectedTime = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
-        while (true)
+		((KMSelectable)_lock).OnInteract = () => OnKeyTurn();
+		int expectedTime = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
+		while (!BombComponent.IsSolved)
         {
             int time = Mathf.FloorToInt(BombCommander.CurrentTimer);
             if (time < expectedTime &&
@@ -112,7 +116,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         int waitingTime = (int)(timerComponent.TimeRemaining + 0.25f);
         waitingTime -= timeTarget;
 
-        if (waitingTime >= 30 && !CanTurnEarlyWithoutStrike())
+        if (waitingTime >= 30 && !CanTurnEarlyWithoutStrike(timeTarget))
         {
             yield return "elevator music";
         }
@@ -135,9 +139,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
                 sortedTimes.RemoveAt(0);
                 continue;
             }
-            if (timeRemaining == timeTarget || CanTurnEarlyWithoutStrike())
+            if (timeRemaining == timeTarget || CanTurnEarlyWithoutStrike(timeTarget))
             {
-                yield return DoInteractionClick(_lock);
+	            OnKeyTurn(timeTarget);
+	            yield return new WaitForSeconds(0.1f);
                 break;
             }
 
