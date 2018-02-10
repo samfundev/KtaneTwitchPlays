@@ -44,7 +44,6 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 	private IEnumerator DelayKeyTurn(bool restoreBombTimer)
 	{
-		
 		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 		float currentBombTime = BombCommander.CurrentTimer;
 		BombCommander.timerComponent.TimeRemaining = time + 0.5f + Time.deltaTime;
@@ -89,31 +88,18 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
     private IEnumerator ReleaseCoroutine(string second)
     {
-        string[] list = second.Split(' ');
-        List<int> sortedTimes = new List<int>();
-        foreach (string value in list)
+        if (!int.TryParse(second, out int timeTarget))
         {
-            if (!int.TryParse(value, out int time))
-            {
-                int pos = value.IndexOf(':');
-                if (pos == -1) continue;
-                if (!int.TryParse(value.Substring(0, pos), out int min)) continue;
-                if (!int.TryParse(value.Substring(pos + 1), out int sec)) continue;
-                time = min * 60 + sec;
-            }
-            sortedTimes.Add(time);
+            string[] minsec = second.Split(':');
+            if (minsec.Length != 2 || !int.TryParse(minsec[0], out int min) || !int.TryParse(minsec[1], out int sec)) yield break;
+            timeTarget = min * 60 + sec;
         }
-        sortedTimes.Sort();
-        sortedTimes.Reverse();
-        if (sortedTimes.Count == 0) yield break;
 
         yield return "release";
 
         TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
-        int timeTarget = sortedTimes[0];
-        sortedTimes.RemoveAt(0);
-        int waitingTime = (int)(timerComponent.TimeRemaining + 0.25f);
+        int waitingTime = (int) (timerComponent.TimeRemaining + 0.25f);
         waitingTime -= timeTarget;
 
         if (waitingTime >= 30 && !CanTurnEarlyWithoutStrike(timeTarget))
@@ -126,31 +112,30 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         {
             if (CoroutineCanceller.ShouldCancel)
             {
-	            CoroutineCanceller.ResetCancel();
+                CoroutineCanceller.ResetCancel();
+                yield return "sendtochaterror The key turn was aborted due to a request to cancel";
                 break;
             }
 
-            timeRemaining = (int)(timerComponent.TimeRemaining + 0.25f);
+            timeRemaining = (int) (timerComponent.TimeRemaining + 0.25f);
 
             if (timeRemaining < timeTarget)
             {
-                if (sortedTimes.Count == 0) yield break;
-                timeTarget = sortedTimes[0];
-                sortedTimes.RemoveAt(0);
-                continue;
+                yield return "sendtochaterror The bomb timer has already gone past the time specified.";
+                yield break;
             }
             if (timeRemaining == timeTarget || CanTurnEarlyWithoutStrike(timeTarget))
             {
-	            OnKeyTurn(timeTarget);
-	            yield return new WaitForSeconds(0.1f);
+                OnKeyTurn(timeTarget);
+                yield return new WaitForSeconds(0.1f);
                 break;
             }
 
             yield return null;
         }
-    }
+	}
 
-    static TurnTheKeyComponentSolver()
+	static TurnTheKeyComponentSolver()
     {
         _componentType = ReflectionHelper.FindType("TurnKeyModule");
         _lockField = _componentType.GetField("Lock", BindingFlags.Public | BindingFlags.Instance);
