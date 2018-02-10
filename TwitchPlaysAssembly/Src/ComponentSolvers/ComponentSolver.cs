@@ -459,6 +459,7 @@ public abstract class ComponentSolver
         }
 
         BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent, true);
+	    CommonReflectedTypeInfo.UpdateTimerDisplayMethod.Invoke(BombCommander.timerComponent, null);
 
         return false;
     }
