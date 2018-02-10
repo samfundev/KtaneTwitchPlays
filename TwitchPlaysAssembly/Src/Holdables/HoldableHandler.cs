@@ -52,10 +52,11 @@ public abstract class HoldableHandler
 		string RecordMessageTone = $"Holdable ID: {HoldableCommander.ID} | Player: {userNickName} | Strike";
 		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 
-		int currentReward = TwitchPlaySettings.GetRewardBonus();
-		currentReward = Convert.ToInt32(currentReward * .80);
+		int originalReward = TwitchPlaySettings.GetRewardBonus();
+		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
 		TwitchPlaySettings.SetRewardBonus(currentReward);
-		IRCConnection.Instance.SendMessage("Reward reduced to " + currentReward + " points.");
+		if(currentReward != originalReward)
+			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 		if (OtherModes.timedModeOn)
 		{
 			bool multiDropped = OtherModes.dropMultiplier();

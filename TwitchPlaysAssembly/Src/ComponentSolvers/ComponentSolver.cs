@@ -592,12 +592,13 @@ public abstract class ComponentSolver
 
         string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
         TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
-        
-        int currentReward = TwitchPlaySettings.GetRewardBonus();
-        currentReward = Convert.ToInt32(currentReward * .80);
-        TwitchPlaySettings.SetRewardBonus(currentReward);
-	    IRCConnection.Instance.SendMessage("Reward reduced to " + currentReward + " points.");
-        if (OtherModes.timedModeOn)
+
+		int originalReward = TwitchPlaySettings.GetRewardBonus();
+	    int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
+	    TwitchPlaySettings.SetRewardBonus(currentReward);
+	    if (currentReward != originalReward)
+		    IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
+		if (OtherModes.timedModeOn)
         {
             bool multiDropped = OtherModes.dropMultiplier();
             float multiplier = OtherModes.getMultiplier();
