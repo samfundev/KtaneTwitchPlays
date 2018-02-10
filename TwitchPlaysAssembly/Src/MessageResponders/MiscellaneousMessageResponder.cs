@@ -394,36 +394,27 @@ public class MiscellaneousMessageResponder : MessageResponder
 						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
 						List<KMComponentPool> pools = new List<KMComponentPool>();
 
-						for(int i = 0; i < vanillaModules; i++)
+						pools.Add(new KMComponentPool()
 						{
-							pools.Add(new KMComponentPool()
-							{
-								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-								AllowedSources = KMComponentPool.ComponentSource.Base,
-								Count = 1
-							});
-						}
+							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+							AllowedSources = KMComponentPool.ComponentSource.Base,
+							Count = vanillaModules
+						});
 
-						for (int i = 0; i < moddedModules; i++)
+						pools.Add(new KMComponentPool()
 						{
-							pools.Add(new KMComponentPool()
-							{
-								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-								AllowedSources = KMComponentPool.ComponentSource.Mods,
-								Count = 1
-							});
-						}
+							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+							AllowedSources = KMComponentPool.ComponentSource.Mods,
+							Count = moddedModules
+						});
 
 						int bothModules = modules - moddedModules - vanillaModules;
-						for (int i = 0; i < bothModules; i++)
+						pools.Add(new KMComponentPool()
 						{
-							pools.Add(new KMComponentPool() {
-								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-								AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
-								Count = 1
-							});
-						}
-						pools = pools.OrderBy(x => UnityEngine.Random.value).ToList();
+							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+							AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
+							Count = bothModules
+						});
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;

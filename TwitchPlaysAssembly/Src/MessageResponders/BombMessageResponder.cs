@@ -636,7 +636,7 @@ public class BombMessageResponder : MessageResponder
     {
         bool foundComponents = false;
 
-        List<BombComponent> bombComponents = bomb.BombComponents;
+	    List<BombComponent> bombComponents = bomb.BombComponents.Shuffle().ToList();
 
 		var bombCommander = BombCommanders[BombCommanders.Count - 1];
 
