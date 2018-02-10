@@ -19,8 +19,8 @@ public class Factory : GameRoom
             return null;
 
 	    _factoryBombType = ReflectionHelper.FindType("FactoryAssembly.FactoryBomb");
-	    _internalBombProperty = _factoryBombType.GetProperty("InternalBomb", BindingFlags.Public | BindingFlags.Instance);
-	    _bombEndedProperty = _factoryBombType.GetProperty("Ended", BindingFlags.Public | BindingFlags.Instance);
+	    _internalBombProperty = _factoryBombType.GetProperty("InternalBomb", BindingFlags.NonPublic | BindingFlags.Instance);
+	    _bombEndedProperty = _factoryBombType.GetProperty("Ended", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	    _factoryModeType = ReflectionHelper.FindType("FactoryAssembly.FactoryGameMode");
 	    _destroyBombMethod = _factoryModeType.GetMethod("DestroyBomb", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -30,7 +30,7 @@ public class Factory : GameRoom
 		_factoryInfiniteModeType = ReflectionHelper.FindType("FactoryAssembly.InfiniteSequenceMode");
 		_currentBombField = _factoryFiniteModeType.GetField("_currentBomb", BindingFlags.NonPublic | BindingFlags.Instance);
 
-	    _gameModeField = _factoryType.GetField("_gameMode", BindingFlags.NonPublic | BindingFlags.Instance);
+	    _gameModeProperty = _factoryType.GetProperty("GameMode", BindingFlags.NonPublic | BindingFlags.Instance);
 
         return _factoryType;
     }
@@ -51,15 +51,15 @@ public class Factory : GameRoom
     {
         DebugHelper.Log("Found gameplay room of type Factory Room");
         _factory = roomObject;
-	    _gameroom = _gameModeField.GetValue(_factory);
-	    if (_gameroom.GetType() == _factoryStaticModeType) return;
+		_gameroom = _gameModeProperty.GetValue(_factory,new object[] {});
+		if (_gameroom.GetType() == _factoryStaticModeType) return;
 
 
-	    _infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
-	    _finiteMode = _gameroom.GetType() == _factoryFiniteModeType;
-        BombID = -1;
-        HoldBomb = false;
-    }
+		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
+		_finiteMode = _gameroom.GetType() == _factoryFiniteModeType;
+		BombID = -1;
+		HoldBomb = false;
+	}
 
 	private UnityEngine.Object GetBomb => (_finiteMode || _infiniteMode)  ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
 
@@ -160,7 +160,7 @@ public class Factory : GameRoom
 	private static Type _factoryFiniteModeType = null;
 	private static Type _factoryInfiniteModeType = null;
 
-	private static FieldInfo _gameModeField = null;
+	private static PropertyInfo _gameModeProperty = null;
 	private static FieldInfo _currentBombField = null;
 
     private object _factory = null;
