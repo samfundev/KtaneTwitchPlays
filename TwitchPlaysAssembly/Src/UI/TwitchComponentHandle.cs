@@ -478,8 +478,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (Solver != null)
 		{ 
 			if (!IsAuthorizedDefuser(userNickName, false)) return null;
-			bool moduleAlreadyClaimed = bombCommander.CurrentTimer > 60.0f;
-			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) > 2;
+			bool moduleAlreadyClaimed = bombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
+			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
 			moduleAlreadyClaimed &= playerName != null;
 			moduleAlreadyClaimed &= playerName != userNickName;
 			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);

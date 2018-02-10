@@ -41,6 +41,10 @@ public class TwitchPlaySettingsData
 	public float TimeModeMultiplierStrikePenalty = 1.5f;
 	public float TimeModeTimerStrikePenalty = 0.25f;
 	public int TimeModeMinimumTimeLost = 15;
+	public float AwardDropMultiplierOnStrike = 0.80f;
+
+	public int MinTimeLeftForClaims = 60;
+	public int MinUnsolvedModulesLeftForClaims = 3;
 
 	public string IRCManagerBackgroundImage = Path.Combine(Application.persistentDataPath, "TwitchPlaysIRCManagerBackground.png");
 	public Color IRCManagerTextColor = new Color(1.00f, 0.44f, 0.00f);
@@ -175,6 +179,30 @@ public class TwitchPlaySettingsData
         return true;
     }
 
+	private bool ValidateFloat(ref float input, float def, bool forceUpdate) => ValidateFloat(ref input, def, float.MinValue, float.MaxValue, forceUpdate);
+	private bool ValidateFloat(ref float input, float def, float min = float.MinValue, float max = float.MaxValue, bool forceUpdate = false)
+	{
+		if (input < min || input > max || forceUpdate)
+		{
+			DebugHelper.Log($"TwitchPlaySettings.ValidateFloat( {input}, {def}, {min}, {max}, {forceUpdate} ) - {(forceUpdate ? "Updated because of version breaking changes" : (input < min ? "Updated because value was less than minimum" : "Updated because value was greater than maximum"))}");
+			input = def;
+			return false;
+		}
+		return true;
+	}
+
+	private bool ValidateInt(ref int input, int def, bool forceUpdate) => ValidateInt(ref input, def, int.MinValue, int.MaxValue, forceUpdate);
+	private bool ValidateInt(ref int input, int def, int min = int.MinValue, int max = int.MaxValue, bool forceUpdate = false)
+	{
+		if (input < min || input > max || forceUpdate)
+		{
+			DebugHelper.Log($"TwitchPlaySettings.ValidateFloat( {input}, {def}, {min}, {max}, {forceUpdate} ) - {(forceUpdate ? "Updated because of version breaking changes" : (input < min ? "Updated because value was less than minimum" : "Updated because value was greater than maximum"))}");
+			input = def;
+			return false;
+		}
+		return true;
+	}
+
     public bool ValidateStrings()
     {
         TwitchPlaySettingsData data = new TwitchPlaySettingsData();
@@ -265,6 +293,8 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref UnsubmittableAnswerPenalty, data.UnsubmittableAnswerPenalty, 5);
 
         valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0, SettingsVersion < 2);
+
+	    valid &= ValidateFloat(ref AwardDropMultiplierOnStrike, data.AwardDropMultiplierOnStrike, 0, 1.0f);
 
         return valid;
     }
