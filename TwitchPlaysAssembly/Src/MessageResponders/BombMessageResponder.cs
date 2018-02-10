@@ -354,7 +354,7 @@ public class BombMessageResponder : MessageResponder
 
 		    if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
 		    {
-			    IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, userColorCode, "!alarmclock snooze");
+			    _coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze"));
 			    return;
 		    }
 

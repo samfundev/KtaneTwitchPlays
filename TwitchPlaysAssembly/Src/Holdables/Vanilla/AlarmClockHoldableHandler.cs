@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
 using Assets.Scripts.Props;
-using UnityEngine;
 
 public class AlarmClockHoldableHandler : HoldableHandler
 {
@@ -12,6 +11,7 @@ public class AlarmClockHoldableHandler : HoldableHandler
 		HelpMessage += TwitchPlaySettings.data.AllowSnoozeOnly 
 			? " (Current Twitch play settings forbids turning the Alarm clock back on.)" 
 			: " Alarm clock may also be turned back on with !{0} snooze.";
+		Instance = this;
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string command)
@@ -29,4 +29,5 @@ public class AlarmClockHoldableHandler : HoldableHandler
 
 	private static FieldInfo _alarmClockOnField = null;
 	private AlarmClock clock;
+	public static AlarmClockHoldableHandler Instance = null;
 }
