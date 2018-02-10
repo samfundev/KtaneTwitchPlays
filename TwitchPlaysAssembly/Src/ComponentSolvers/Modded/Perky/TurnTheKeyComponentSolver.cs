@@ -22,6 +22,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 	private bool CanTurnEarlyWithoutStrike(int turnTime)
 	{
+		if (!TwitchPlaySettings.data.AllowTurnTheKeyInstantSolveWhenOnlyModuleLeft) return false;
 		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 		int timeRemaining = (int)BombCommander.Bomb.GetTimer().TimeRemaining;
 		if (timeRemaining < time) return false;
