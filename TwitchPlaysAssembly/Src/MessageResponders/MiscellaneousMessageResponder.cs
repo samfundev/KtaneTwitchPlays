@@ -159,7 +159,7 @@ public class MiscellaneousMessageResponder : MessageResponder
             }
             return;
         }
-        else if (text.RegexMatch("^reward (-?[0-9].)$"))
+        else if (text.RegexMatch("^reward (-?[0-9]+)$"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
             if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
