@@ -73,33 +73,33 @@ public class BombCommander : ICommandResponder
 		        IEnumerator rotateCamera;
 		        switch (_currentWall)
 		        {
-					case CurrentElevatorWall.Right:
-						rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 2, false);
-						_currentWall = CurrentElevatorWall.Back;
-						break;
-					case CurrentElevatorWall.Back:
-						rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 2, false);
-						_currentWall = CurrentElevatorWall.Left;
-						break;
-					case CurrentElevatorWall.Left:
-						rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 2, false);
-						_currentWall = CurrentElevatorWall.Right;
-						break;
-					default: yield break;
-				}
+			        case CurrentElevatorWall.Right:
+				        rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 1, false, false);
+				        _currentWall = CurrentElevatorWall.Back;
+				        break;
+			        case CurrentElevatorWall.Back:
+				        rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, false);
+				        _currentWall = CurrentElevatorWall.Left;
+				        break;
+			        case CurrentElevatorWall.Left:
+				        rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, false, false);
+				        _currentWall = CurrentElevatorWall.Right;
+				        break;
+			        default: yield break;
+		        }
 		        while (rotateCamera.MoveNext())
 			        yield return rotateCamera.Current;
-		        yield break;
-
+	        }
+	        else
+	        {
+		        IEnumerator holdCoroutine = HoldBomb(!_heldFrontFace);
+		        while (holdCoroutine.MoveNext())
+		        {
+			        yield return holdCoroutine.Current;
+		        }
 	        }
 
-            IEnumerator holdCoroutine = HoldBomb(!_heldFrontFace);
-            while (holdCoroutine.MoveNext())
-            {
-                yield return holdCoroutine.Current;
-            }
-
-            responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
+	        responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
         else if (message.EqualsAny("drop","let go","put down"))
         {
@@ -192,7 +192,27 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator ShowEdgework(string edge, bool _45Degrees)
     {
-	    if (FloatingHoldable == null) yield break;	//TODO, rotate main camera around instead.
+	    if (FloatingHoldable == null)
+	    {
+		    if (!_elevatorRoom) yield break;
+		    if (edge != "" || _45Degrees) yield break;
+		    IEnumerator showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
+		    while (showEdgework.MoveNext())
+			    yield return showEdgework.Current;
+		    yield return new WaitForSeconds(3);
+		    showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Left, CurrentElevatorWall.Back, 1, true, true);
+		    while (showEdgework.MoveNext())
+			    yield return showEdgework.Current;
+		    yield return new WaitForSeconds(3);
+		    showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Right, 1, true, true);
+		    while (showEdgework.MoveNext())
+			    yield return showEdgework.Current;
+		    yield return new WaitForSeconds(3);
+		    showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Right, _currentWall, 1, true, false);
+		    while (showEdgework.MoveNext())
+			    yield return showEdgework.Current;
+		    yield break;
+	    }
         BombMessageResponder.moduleCameras?.Hide();
 
         IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
@@ -493,37 +513,25 @@ public class BombCommander : ICommandResponder
 
         _heldFrontFace = frontFace;
     }
-
-	private IEnumerator DoElevatorCameraEdgework(CurrentElevatorWall currentWall, float duration)
-	{
-		if (!_elevatorRoom) yield break;
-		float initialTime = Time.time;
-		Vector3 currentWallRotation = ElevatorCameraRotations[(int)currentWall];
-		Vector3 currentWallEdgework = ElevatorEdgeworkCameraRotations[(int) currentWall];
-		Transform camera = Camera.main.transform;
-		while ((Time.time - initialTime) < duration)
-		{
-			float lerp = (Time.time - initialTime) / duration;
-			camera.localEulerAngles = Vector3.Lerp(currentWallRotation, currentWallEdgework, lerp);
-			yield return null;
-		}
-		camera.localEulerAngles = currentWallEdgework;
-	}
-
-	private IEnumerator DoElevatorCameraRotate(CurrentElevatorWall currentWall, CurrentElevatorWall newWall, float duration, bool edgework)
+	
+	private IEnumerator DoElevatorCameraRotate(CurrentElevatorWall currentWall, CurrentElevatorWall newWall, float duration, bool fromEdgework, bool toEdgework)
 	{
 		if (!_elevatorRoom) yield break;
 		float initialTime = Time.time;
 		Vector3 currentWallPosition = ElevatorCameraPositions[(int) currentWall];
-		Vector3 currentWallRotation = edgework ? ElevatorEdgeworkCameraRotations[(int) currentWall] : ElevatorCameraRotations[(int) currentWall];
-		Vector3 newWallPosition = ElevatorCameraPositions[(int)currentWall];
-		Vector3 newWallRotation = edgework ? ElevatorEdgeworkCameraRotations[(int)currentWall] : ElevatorCameraRotations[(int)currentWall];
+		Vector3 currentWallRotation = fromEdgework ? ElevatorEdgeworkCameraRotations[(int) currentWall] : ElevatorCameraRotations[(int) currentWall];
+		Vector3 newWallPosition = ElevatorCameraPositions[(int)newWall];
+		Vector3 newWallRotation = toEdgework ? ElevatorEdgeworkCameraRotations[(int)newWall] : ElevatorCameraRotations[(int)newWall];
 		Transform camera = Camera.main.transform;
 		while ((Time.time - initialTime) < duration)
 		{
 			float lerp = (Time.time - initialTime) / duration;
-			camera.localPosition = Vector3.Lerp(currentWallPosition, newWallPosition, lerp);
-			camera.localEulerAngles = Vector3.Lerp(currentWallRotation, newWallRotation, lerp);
+			camera.localPosition = new Vector3(Mathf.SmoothStep(currentWallPosition.x, newWallPosition.x, lerp),
+												Mathf.SmoothStep(currentWallPosition.y, newWallPosition.y, lerp),
+												Mathf.SmoothStep(currentWallPosition.z, newWallPosition.z, lerp));
+			camera.localEulerAngles = new Vector3(Mathf.SmoothStep(currentWallRotation.x, newWallRotation.x, lerp),
+										Mathf.SmoothStep(currentWallRotation.y, newWallRotation.y, lerp),
+										Mathf.SmoothStep(currentWallRotation.z, newWallRotation.z, lerp));
 			yield return null;
 		}
 		camera.localPosition = newWallPosition;
@@ -674,16 +682,16 @@ public class BombCommander : ICommandResponder
 
 	private Vector3[] ElevatorCameraRotations =
 	{
-		new Vector3(5, 270, 20),
-		new Vector3(355, 0, 0),
-		new Vector3(5, 90, 340),
+		new Vector3(5, -90, 20),
+		new Vector3(-5, 0, 0),
+		new Vector3(5, 90, -20),
 	};
 
 	private Vector3[] ElevatorEdgeworkCameraRotations =
 	{
-		new Vector3(20, 275, 20),
+		new Vector3(20, -85, 20),
 		new Vector3(10, 0, 0),
-		new Vector3(25, 85, 340),
+		new Vector3(25, 85, -20),
 	};
 
 	private Vector3[] ElevatorCameraPositions =

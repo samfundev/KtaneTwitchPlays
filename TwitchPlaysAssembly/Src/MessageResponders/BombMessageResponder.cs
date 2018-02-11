@@ -287,6 +287,7 @@ public class BombMessageResponder : MessageResponder
 			DebugHelper.LogException(ex, "Failed to Instantiate the module Camera system due to an Exception: ");
 			moduleCameras = null;
 		}
+		moduleCameras?.ChangeBomb(BombCommanders[0]);
 
 		for (int i = 0; i < 4; i++)
 		{
