@@ -21,6 +21,7 @@ public abstract class GameRoom
 
         //Supported vanilla gameplay room types.  (Also catches all unknown Mod gameplay rooms, as ModGameplayRoom inherits FacilityRoom)
         Facility.RoomType,
+		ElevatorGameRoom.RoomType,
 
         //Catch all for unknown room types in the vanilla game. (As of now, the only remaining GameplayRoom type in this catch-all is ElevatorRoom)
         DefaultGameRoom.RoomType
@@ -31,6 +32,7 @@ public abstract class GameRoom
         Factory.TrySetupFactory,
         PortalRoom.TryCreatePortalRoom,
         Facility.TryCreateFacility,
+		ElevatorGameRoom.TryCreateElevatorRoom,
         DefaultGameRoom.TryCreateRoom
     };
 

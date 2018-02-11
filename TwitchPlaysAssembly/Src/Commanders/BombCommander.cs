@@ -19,6 +19,17 @@ public class BombCommander : ICommandResponder
         _selectableManager = KTInputManager.Instance.SelectableManager;
         BombTimeStamp = DateTime.Now;
         bombStartingTimer = CurrentTimer;
+
+	    if (FloatingHoldable == null)
+	    {
+		    _elevatorRoom = SceneManager.Instance.GameplayState.Room is ElevatorRoom;
+		    if (_elevatorRoom)
+		    {
+			    _currentWall = CurrentElevatorWall.Back;
+			    Camera.main.transform.localPosition = ElevatorCameraPositions[(int) _currentWall];
+			    Camera.main.transform.localEulerAngles = ElevatorCameraRotations[(int) _currentWall];
+		    }
+	    }
     }
 	#endregion
 
@@ -56,6 +67,31 @@ public class BombCommander : ICommandResponder
         else if (message.EqualsAny("turn", "turn round", "turn around", "rotate", "flip", "spin"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
+
+	        if (_elevatorRoom)
+	        {
+		        IEnumerator rotateCamera;
+		        switch (_currentWall)
+		        {
+					case CurrentElevatorWall.Right:
+						rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 2, false);
+						_currentWall = CurrentElevatorWall.Back;
+						break;
+					case CurrentElevatorWall.Back:
+						rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 2, false);
+						_currentWall = CurrentElevatorWall.Left;
+						break;
+					case CurrentElevatorWall.Left:
+						rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 2, false);
+						_currentWall = CurrentElevatorWall.Right;
+						break;
+					default: yield break;
+				}
+		        while (rotateCamera.MoveNext())
+			        yield return rotateCamera.Current;
+		        yield break;
+
+	        }
 
             IEnumerator holdCoroutine = HoldBomb(!_heldFrontFace);
             while (holdCoroutine.MoveNext())
@@ -100,6 +136,8 @@ public class BombCommander : ICommandResponder
     #region Helper Methods
     public IEnumerator HoldBomb(bool frontFace = true)
     {
+	    if (FloatingHoldable == null) yield break;
+
         FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
         bool doForceRotate = false;
 
@@ -136,6 +174,7 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator LetGoBomb()
     {
+	    if (FloatingHoldable == null) yield break;
 	    if (FloatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
 
 	    IEnumerator turnBombCoroutine = HoldBomb(true);
@@ -153,6 +192,7 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator ShowEdgework(string edge, bool _45Degrees)
     {
+	    if (FloatingHoldable == null) yield break;	//TODO, rotate main camera around instead.
         BombMessageResponder.moduleCameras?.Hide();
 
         IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
@@ -333,21 +373,24 @@ public class BombCommander : ICommandResponder
 	
     public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
     {
-        IEnumerator holdCoroutine = HoldBomb(frontFace);
-        while (holdCoroutine.MoveNext())
-        {
-            yield return holdCoroutine.Current;
-        }
+	    if (FloatingHoldable != null)
+	    {
+		    IEnumerator holdCoroutine = HoldBomb(frontFace);
+		    while (holdCoroutine.MoveNext())
+		    {
+			    yield return holdCoroutine.Current;
+		    }
 
-        float focusTime = FloatingHoldable.FocusTime;
-        FloatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
-        selectable.HandleSelect(false);
+		    float focusTime = FloatingHoldable.FocusTime;
+		    FloatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+	    }
+	    selectable.HandleSelect(false);
         selectable.HandleInteract();
     }
 
     public IEnumerator Defocus(Selectable selectable, bool frontFace)
     {
-        FloatingHoldable.Defocus(false, false);
+        FloatingHoldable?.Defocus(false, false);
         selectable.HandleCancel();
         selectable.HandleDeselect();
         yield break;
@@ -355,6 +398,7 @@ public class BombCommander : ICommandResponder
 
     public void RotateByLocalQuaternion(Quaternion localQuaternion)
     {
+	    if (FloatingHoldable == null) return;
         Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
 
         float currentZSpin = _heldFrontFace ? 0.0f : 180.0f;
@@ -423,6 +467,7 @@ public class BombCommander : ICommandResponder
 
     private IEnumerator ForceHeldRotation(bool frontFace, float duration)
     {
+	    if (FloatingHoldable == null) yield break;
         Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
 
         float oldZSpin = _heldFrontFace ? 0.0f : 180.0f;
@@ -449,9 +494,46 @@ public class BombCommander : ICommandResponder
         _heldFrontFace = frontFace;
     }
 
+	private IEnumerator DoElevatorCameraEdgework(CurrentElevatorWall currentWall, float duration)
+	{
+		if (!_elevatorRoom) yield break;
+		float initialTime = Time.time;
+		Vector3 currentWallRotation = ElevatorCameraRotations[(int)currentWall];
+		Vector3 currentWallEdgework = ElevatorEdgeworkCameraRotations[(int) currentWall];
+		Transform camera = Camera.main.transform;
+		while ((Time.time - initialTime) < duration)
+		{
+			float lerp = (Time.time - initialTime) / duration;
+			camera.localEulerAngles = Vector3.Lerp(currentWallRotation, currentWallEdgework, lerp);
+			yield return null;
+		}
+		camera.localEulerAngles = currentWallEdgework;
+	}
+
+	private IEnumerator DoElevatorCameraRotate(CurrentElevatorWall currentWall, CurrentElevatorWall newWall, float duration, bool edgework)
+	{
+		if (!_elevatorRoom) yield break;
+		float initialTime = Time.time;
+		Vector3 currentWallPosition = ElevatorCameraPositions[(int) currentWall];
+		Vector3 currentWallRotation = edgework ? ElevatorEdgeworkCameraRotations[(int) currentWall] : ElevatorCameraRotations[(int) currentWall];
+		Vector3 newWallPosition = ElevatorCameraPositions[(int)currentWall];
+		Vector3 newWallRotation = edgework ? ElevatorEdgeworkCameraRotations[(int)currentWall] : ElevatorCameraRotations[(int)currentWall];
+		Transform camera = Camera.main.transform;
+		while ((Time.time - initialTime) < duration)
+		{
+			float lerp = (Time.time - initialTime) / duration;
+			camera.localPosition = Vector3.Lerp(currentWallPosition, newWallPosition, lerp);
+			camera.localEulerAngles = Vector3.Lerp(currentWallRotation, newWallRotation, lerp);
+			yield return null;
+		}
+		camera.localPosition = newWallPosition;
+		camera.localEulerAngles = newWallRotation;
+	}
+
     private IEnumerator DoFreeYRotate(float initialYSpin, float initialPitch, float targetYSpin, float targetPitch, float duration)
     {
-        if (!_heldFrontFace)
+	    if (FloatingHoldable == null) yield break;
+		if (!_heldFrontFace)
         {
             initialPitch *= -1;
             initialYSpin *= -1;
@@ -580,4 +662,34 @@ public class BombCommander : ICommandResponder
     public float bombStartingTimer;
 
     private bool _heldFrontFace = true;
+	private bool _elevatorRoom = false;
+	private CurrentElevatorWall _currentWall;
+
+	private enum CurrentElevatorWall
+	{
+		Right,
+		Back,
+		Left
+	}
+
+	private Vector3[] ElevatorCameraRotations =
+	{
+		new Vector3(5, 270, 20),
+		new Vector3(355, 0, 0),
+		new Vector3(5, 90, 340),
+	};
+
+	private Vector3[] ElevatorEdgeworkCameraRotations =
+	{
+		new Vector3(20, 275, 20),
+		new Vector3(10, 0, 0),
+		new Vector3(25, 85, 340),
+	};
+
+	private Vector3[] ElevatorCameraPositions =
+	{
+		new Vector3(0.5f, 0.75f, 1.25f),
+		new Vector3(0, 0.75f, 0.75f),
+		new Vector3(-0.5f, 0.75f, 1.25f),
+	};
 }

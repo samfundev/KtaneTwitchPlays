@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 public class PostGameMessageResponder : MessageResponder
 {
@@ -10,6 +11,8 @@ public class PostGameMessageResponder : MessageResponder
     #region Unity Lifecycle
     private void OnEnable()
     {
+	    Camera.main.transform.localPosition = Vector3.zero;
+	    Camera.main.transform.localEulerAngles = Vector3.zero;
         StartCoroutine(CheckForResultsPage());
 
         _leaderboardDisplay = Instantiate<TwitchLeaderboard>(twitchLeaderboardPrefab);

@@ -588,7 +588,40 @@ public class MiscellaneousMessageResponder : MessageResponder
 	    {
 		    IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 	    }
-    }
+
+	    Transform camera = Camera.main.transform;
+	    if (text.RegexMatch(out Match match, "movecamerax (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+		    camera.localPosition = new Vector3(camera.localPosition.x + float.Parse(match.Groups[1].Value), camera.localPosition.y, camera.localPosition.z);
+	    }
+	    if (text.RegexMatch(out  match, "movecameray (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+			camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y + float.Parse(match.Groups[1].Value), camera.localPosition.z);
+	    }
+	    if (text.RegexMatch(out  match, "movecameraz (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+			camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y, camera.localPosition.z + float.Parse(match.Groups[1].Value));
+	    }
+
+	    if (text.RegexMatch(out  match, "rotatecamerax (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+			camera.localEulerAngles = new Vector3(camera.localEulerAngles.x + float.Parse(match.Groups[1].Value), camera.localEulerAngles.y, camera.localEulerAngles.z);
+	    }
+	    if (text.RegexMatch(out match, "rotatecameray (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+			camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y + float.Parse(match.Groups[1].Value), camera.localEulerAngles.z);
+	    }
+	    if (text.RegexMatch(out match, "rotatecameraz (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+			camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y, camera.localEulerAngles.z + float.Parse(match.Groups[1].Value));
+	    }
+	}
 
 	private IEnumerator ReturnToSetup(string userNickName, string text)
 	{

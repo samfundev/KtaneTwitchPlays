@@ -2,18 +2,22 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MissionMessageResponder : MessageResponder
 {
     private BombBinderCommander _bombBinderCommander = null;
     private FreeplayCommander _freeplayCommander = null;
+	private GameObject _elevatorRoom = null;
 
     #region Unity Lifecycle
     private void OnEnable()
     {
-        // InputInterceptor.DisableInput();
+	    Camera.main.transform.localPosition = Vector3.zero;
+	    Camera.main.transform.localEulerAngles = Vector3.zero;
+		// InputInterceptor.DisableInput();
 
-        StartCoroutine(CheckForBombBinderAndFreeplayDevice());
+		StartCoroutine(CheckForBombBinderAndFreeplayDevice());
     }
 
     private void OnDisable()
@@ -53,6 +57,17 @@ public class MissionMessageResponder : MessageResponder
 
             yield return null;
         }
+
+	    try
+	    {
+		    _elevatorRoom = Resources.Load<GameObject>("PC/Prefabs/ElevatorRoom/ElevatorBombRoom");
+		    GameplayState.GameplayRoomPrefabOverride = null;
+	    }
+	    catch
+	    {
+			GameplayState.GameplayRoomPrefabOverride = null;
+		}
+
     }
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
@@ -88,6 +103,10 @@ public class MissionMessageResponder : MessageResponder
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
 				}
+				break;
+			case "elevator":
+				GameplayState.GameplayRoomPrefabOverride = GameplayState.GameplayRoomPrefabOverride == null ? _elevatorRoom : null;
+				IRCConnection.Instance.SendMessage("Elevator {0}", GameplayState.GameplayRoomPrefabOverride == null ? "off" : "on");
 				break;
 			default:
 				break;
