@@ -280,29 +280,39 @@ public abstract class HoldableHandler
 							}
 						}
 						break;
+					case Dictionary<string, bool> permissions:
+						foreach (KeyValuePair<string, bool> pair in permissions)
+						{
+							if (TwitchPlaySettings.data.ModPermissions.ContainsKey(pair.Key)) continue;
+							TwitchPlaySettings.data.ModPermissions.Add(pair.Key, pair.Value);
+							TwitchPlaySettings.WriteDataToFile();
+						}
+						break;
 					case object[] objects:
 						DebugHelper.Log("processing objects[]");
 						if (objects == null) break;
 						switch (objects.Length)
 						{
-							case 3 when objects[0] is string objstr && objects[1] is Action actionTrue:
-								DebugHelper.Log("objects[] is a request for permission to perform the next action");
-								switch (objstr)
+							case 3 when objects[0] is string objstr:
+								if (IsAskingPermission(objstr, userNickName, out bool permissionGranted))
 								{
-									case "streamer" when UserAccess.HasAccess(userNickName, AccessLevel.Streamer, true):
-									case "streamer-only" when UserAccess.HasAccess(userNickName, AccessLevel.Streamer):
-									case "superuser" when UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true):
-									case "superuser-only" when UserAccess.HasAccess(userNickName, AccessLevel.SuperUser):
-									case "admin" when UserAccess.HasAccess(userNickName, AccessLevel.Admin, true):
-									case "admin-only" when UserAccess.HasAccess(userNickName, AccessLevel.Admin):
-									case "mod" when UserAccess.HasAccess(userNickName, AccessLevel.Mod, true):
-									case "mod-only" when UserAccess.HasAccess(userNickName, AccessLevel.Mod):
-									case "defuser" when UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true):
-									case "defuser-only" when UserAccess.HasAccess(userNickName, AccessLevel.Defuser):
+									if (permissionGranted)
+									{
+										DebugHelper.Log("objects[] is a request for permission to perform the next action");
 										DebugHelper.Log("Permission was granted");
-										actionTrue.Invoke();
-										break;
-									default:
+										switch (objects[1])
+										{
+											case Action actionTrue:
+												actionTrue.Invoke();
+												break;
+											case IEnumerator iEnumerator when iEnumerator != null:
+												processIEnumerators.Push(iEnumerator);
+												yield return null;
+												continue;
+										}
+									}
+									else
+									{
 										DebugHelper.Log("Permission was denied");
 										switch (objects[2])
 										{
@@ -320,7 +330,7 @@ public abstract class HoldableHandler
 												yield return null;
 												continue;
 										}
-										break;
+									}
 								}
 								break;
 						}
@@ -363,6 +373,47 @@ public abstract class HoldableHandler
 		}
 
 		yield break;
+	}
+
+	private bool IsAskingPermission(string permission, string userNickName, out bool permissionGranted)
+	{
+		permissionGranted = false;
+		switch (permission)
+		{
+			case "streamer":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Streamer, true);
+				return true;
+			case "streamer-only":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Streamer);
+				return true;
+			case "superuser":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true);
+				return true;
+			case "superuser-only":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.SuperUser);
+				return true;
+			case "admin":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Admin, true);
+				return true;
+			case "admin-only":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Admin);
+				return true;
+			case "mod":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Mod, true);
+				return true;
+			case "mod-only":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Mod);
+				return true;
+			case "defuser":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true);
+				return true;
+			case "defuser-only":
+				permissionGranted = UserAccess.HasAccess(userNickName, AccessLevel.Defuser);
+				return true;
+
+			default:
+				return TwitchPlaySettings.data.ModPermissions.TryGetValue(permission, out permissionGranted);
+		}
 	}
 
 	private void SendToChat(string message, string userNickname, ref bool parseerror)

@@ -62,6 +62,8 @@ public class TwitchPlaySettingsData
 		{"welcome", "Welcome, this is a Twitch Plays version of Keep Talking and Nobody Explodes. For some basic info and how to get started, you may find this link useful: https://docs.google.com/document/d/1ESin9CKWtt4nT3oxDvYqCmbf3xyFLpjM1wcXL78v29A/edit?usp=sharing" }
 	};
 
+	public Dictionary<string, bool> ModPermissions = new Dictionary<string, bool>();
+
 	public string TwitchBotColorOnQuit = string.Empty;
 
     public bool AllowSnoozeOnly = false;
