@@ -119,7 +119,7 @@ public class BombCommander : ICommandResponder
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
         else if (Regex.IsMatch(message, "^(edgework( 45|-45)?)$") || 
-                 Regex.IsMatch(message, "^(edgework( 45|-45)? )?(top|top right|right top|right|right bottom|bottom right|bottom|bottom left|left bottom|left|left top|top left|)$"))
+                 Regex.IsMatch(message, "^(edgework( 45|-45)? )?(top|top right|right top|right|right bottom|bottom right|bottom|bottom left|left bottom|left|left top|top left|back|)$"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
             bool _45Degrees = Regex.IsMatch(message, "^(edgework(-45| 45)).*$");
@@ -221,30 +221,44 @@ public class BombCommander : ICommandResponder
 	    if (FloatingHoldable == null)
 	    {
 		    if (!_elevatorRoom) yield break;
-		    if (edge != "" || _45Degrees) yield break;
 
-		    IEnumerator dropAllHoldables = MiscellaneousMessageResponder.DropAllHoldables();
-		    while (dropAllHoldables.MoveNext())
-			    yield return dropAllHoldables.Current;
+		    IEnumerator showEdgework = MiscellaneousMessageResponder.DropAllHoldables();
+		    while (showEdgework.MoveNext())
+			    yield return showEdgework.Current;
 
-			IEnumerator showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
-		    while (showEdgework.MoveNext())
-			    yield return showEdgework.Current;
-		    yield return new WaitForSeconds(3);
-		    showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Left, CurrentElevatorWall.Back, 1, true, true);
-		    while (showEdgework.MoveNext())
-			    yield return showEdgework.Current;
-		    yield return new WaitForSeconds(3);
-		    showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Right, 1, true, true);
-		    while (showEdgework.MoveNext())
-			    yield return showEdgework.Current;
-		    yield return new WaitForSeconds(3);
-		    _currentWall = _currentWall == CurrentElevatorWall.Dropped ? CurrentElevatorWall.Back : _currentWall;
-		    showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Right, _currentWall, 1, true, false);
+		    CurrentElevatorWall currentWall = _currentWall == CurrentElevatorWall.Dropped ? CurrentElevatorWall.Back : _currentWall;
+		    if (edge == "" || edge == "left")
+		    {
+			    showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
+			    _currentWall = CurrentElevatorWall.Left;
+				while (showEdgework.MoveNext())
+				    yield return showEdgework.Current;
+			    yield return new WaitForSeconds(3);
+		    }
+		    if (edge == "" || edge == "back")
+		    {
+			    showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 1, edge == "", true);
+			    _currentWall = CurrentElevatorWall.Back;
+			    while (showEdgework.MoveNext())
+				    yield return showEdgework.Current;
+			    yield return new WaitForSeconds(3);
+		    }
+		    if (edge == "" || edge == "right")
+		    {
+			    showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, edge == "", true);
+			    _currentWall = CurrentElevatorWall.Right;
+			    while (showEdgework.MoveNext())
+				    yield return showEdgework.Current;
+			    yield return new WaitForSeconds(3);
+		    }
+		    showEdgework = DoElevatorCameraRotate(_currentWall, currentWall, 1, true, false);
+		    _currentWall = currentWall;
 		    while (showEdgework.MoveNext())
 			    yield return showEdgework.Current;
 		    yield break;
 	    }
+
+	    if (edge == "back") yield break;
         BombMessageResponder.moduleCameras?.Hide();
 
         IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
@@ -744,24 +758,24 @@ public class BombCommander : ICommandResponder
 
 	private Vector3[] ElevatorCameraRotations =
 	{
-		new Vector3(5, -90, 20),
-		new Vector3(-5, 0, 0),
-		new Vector3(5, 90, -20),
+		new Vector3(7, -89, 21),
+		new Vector3(-8, 0, 0),
+		new Vector3(5, 88, -21),
 		Vector3.zero
 	};
 
 	private Vector3[] ElevatorEdgeworkCameraRotations =
 	{
 		new Vector3(20, -85, 20),
-		new Vector3(10, 0, 0),
-		new Vector3(25, 85, -20),
+		new Vector3(0, 0, 0),
+		new Vector3(20, 85, -20),
 		Vector3.zero
 	};
 
 	private Vector3[] ElevatorCameraPositions =
 	{
-		new Vector3(0.5f, 0.75f, 1.25f),
-		new Vector3(0, 0.75f, 0.75f),
+		new Vector3(0.5f, 0.75f, 1.15f),
+		new Vector3(-0.15f, 0.75f, 0.75f),
 		new Vector3(-0.5f, 0.75f, 1.25f),
 		Vector3.zero
 	};
