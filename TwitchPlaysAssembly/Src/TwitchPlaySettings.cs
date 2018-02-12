@@ -69,6 +69,8 @@ public class TwitchPlaySettingsData
 
     public bool AllowSnoozeOnly = false;
 
+	public bool EnableDebuggingCommands = false;
+
     public string TPSharedFolder = Path.Combine(Application.persistentDataPath, "TwitchPlaysShared");
     public string TPSolveStrikeLog = "TPLog.txt";
 

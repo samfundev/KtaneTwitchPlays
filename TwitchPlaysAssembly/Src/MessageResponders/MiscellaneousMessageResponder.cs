@@ -594,45 +594,66 @@ public class MiscellaneousMessageResponder : MessageResponder
 
         }
 
-		//For obvious reasons, only the streamer may do this, as this command is that powerful.
+	    if (!TwitchPlaySettings.data.EnableDebuggingCommands) return;
+	    //For obvious reasons, only the streamer may do this, as this command is that powerful.
 	    if (UserAccess.HasAccess(userNickName, AccessLevel.Streamer) && text.RegexMatch(out Match sayasMatch, @"^(?:issue|say) ?commands?(?: ?as)? (\S+) (.+)"))
 	    {
 		    IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 	    }
 
 	    Transform camera = Camera.main.transform;
-	    if (text.RegexMatch(out Match match, "movecamerax (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    bool cameraChanged = false;
+	    if (text.RegexMatch(out Match match, "move ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    DebugHelper.Log(text);
 		    camera.localPosition = new Vector3(camera.localPosition.x + float.Parse(match.Groups[1].Value), camera.localPosition.y, camera.localPosition.z);
+		    cameraChanged = true;
 	    }
-	    if (text.RegexMatch(out  match, "movecameray (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    if (text.RegexMatch(out match, "move ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    DebugHelper.Log(text);
-			camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y + float.Parse(match.Groups[1].Value), camera.localPosition.z);
-	    }
-	    if (text.RegexMatch(out  match, "movecameraz (-?[0-9]+(?:\\.[0-9]+)*)"))
+		    camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y + float.Parse(match.Groups[1].Value), camera.localPosition.z);
+		    cameraChanged = true;
+		}
+	    if (text.RegexMatch(out match, "move ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    DebugHelper.Log(text);
-			camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y, camera.localPosition.z + float.Parse(match.Groups[1].Value));
+		    camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y, camera.localPosition.z + float.Parse(match.Groups[1].Value));
+		    cameraChanged = true;
+		}
+
+	    if (text.RegexMatch(out match, "rotate ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+		    camera.localEulerAngles = new Vector3(camera.localEulerAngles.x + float.Parse(match.Groups[1].Value), camera.localEulerAngles.y, camera.localEulerAngles.z);
+		    cameraChanged = true;
+		}
+	    if (text.RegexMatch(out match, "rotate ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+		    camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y + float.Parse(match.Groups[1].Value), camera.localEulerAngles.z);
+		    cameraChanged = true;
+		}
+	    if (text.RegexMatch(out match, "rotate ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    {
+		    DebugHelper.Log(text);
+		    camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y, camera.localEulerAngles.z + float.Parse(match.Groups[1].Value));
+		    cameraChanged = true;
+		}
+
+	    if (text.RegexMatch("reset ?camera"))
+	    {
+		    cameraChanged = true;
+		    camera.localPosition = Vector3.zero;
+		    camera.localEulerAngles = Vector3.zero;
 	    }
 
-	    if (text.RegexMatch(out  match, "rotatecamerax (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    if (cameraChanged)
 	    {
-		    DebugHelper.Log(text);
-			camera.localEulerAngles = new Vector3(camera.localEulerAngles.x + float.Parse(match.Groups[1].Value), camera.localEulerAngles.y, camera.localEulerAngles.z);
-	    }
-	    if (text.RegexMatch(out match, "rotatecameray (-?[0-9]+(?:\\.[0-9]+)*)"))
-	    {
-		    DebugHelper.Log(text);
-			camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y + float.Parse(match.Groups[1].Value), camera.localEulerAngles.z);
-	    }
-	    if (text.RegexMatch(out match, "rotatecameraz (-?[0-9]+(?:\\.[0-9]+)*)"))
-	    {
-		    DebugHelper.Log(text);
-			camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y, camera.localEulerAngles.z + float.Parse(match.Groups[1].Value));
-	    }
-	}
+		    DebugHelper.Log($"Camera Position = {Math.Round(camera.localPosition.x, 3)},{Math.Round(camera.localPosition.y, 3)},{Math.Round(camera.localPosition.z, 3)}");
+		    DebugHelper.Log($"Camera Euler Angles = {Math.Round(camera.localEulerAngles.x, 3)},{Math.Round(camera.localEulerAngles.y, 3)},{Math.Round(camera.localEulerAngles.z, 3)}");
+		}
+    }
 
 	private IEnumerator ReturnToSetup(string userNickName, string text)
 	{
