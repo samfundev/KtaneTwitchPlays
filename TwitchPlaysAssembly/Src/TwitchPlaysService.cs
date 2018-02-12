@@ -69,6 +69,8 @@ public class TwitchPlaysService : MonoBehaviour
 	    infoObject.transform.parent = gameObject.transform;
 	    _publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
 	    _publicProperties.TwitchPlaysService = this;
+		if (TwitchPlaySettings.data.SkipModManagerInstuctionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
+			ModManagerManualInstructionScreen.HasShownOnce = true;
 	}
 
 	private void OnDisable()
@@ -192,6 +194,7 @@ public class TwitchPlaysService : MonoBehaviour
 				DebugHelper.Log(solver != null
 					? $"Found a solver of type \"{solver.GetType().FullName}\" for solvable component \"{bombComponent.ModuleDisplayName}\" ({bombComponent.ModuleType}). This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
 					: $"No solver found for solvable component \"{bombComponent.ModuleDisplayName}\". This module is not supported by Twitch Plays.");
+				yield return null;
 			}
 			DebugHelper.Log("Finished creating solvers for each Solvable module");
 		}
@@ -215,6 +218,7 @@ public class TwitchPlaysService : MonoBehaviour
 				DebugHelper.Log(solver != null
 					? $"Found a solver of type \"{solver.GetType().FullName}\" for needy component \"{bombComponent.ModuleDisplayName}\" ({bombComponent.ModuleType}). This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
 					: $"No solver found for needy component \"{bombComponent.ModuleDisplayName}\". This module is not supported by Twitch Plays.");
+				yield return null;
 			}
 			DebugHelper.Log("Finished creating solvers for each Needy module");
 		}

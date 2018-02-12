@@ -9,6 +9,7 @@ public class TwitchPlaySettingsData
 {
     public int SettingsVersion = 0;
 
+	public bool SkipModManagerInstuctionScreen = false;
     public bool EnableRewardMultipleStrikes = true;
     public bool EnableMissionBinder = true;
     public bool EnableFreeplayBriefcase = true;
