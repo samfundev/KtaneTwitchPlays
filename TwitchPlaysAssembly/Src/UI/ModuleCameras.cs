@@ -288,10 +288,14 @@ public class ModuleCameras : MonoBehaviour
 	{
 		if (Input.GetKey(KeyCode.Escape))
 			EscapePressed = true;
+		bool currentInteraciveState = (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode);
+		currentInteraciveState |= IRCConnection.Instance.State != IRCConnectionState.Connected;
+		currentInteraciveState |= EscapePressed;
+		currentInteraciveState &= !(GameRoom.Instance is ElevatorGameRoom);
 
-	    if (LastInteractiveState != (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode) || EscapePressed || IRCConnection.Instance.State != IRCConnectionState.Connected)
+		if (LastInteractiveState != currentInteraciveState)
 	    {
-		    LastInteractiveState = !TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode || EscapePressed || IRCConnection.Instance.State != IRCConnectionState.Connected;
+		    LastInteractiveState = currentInteraciveState;
 		    foreach (ModuleCamera camera in cameras)
 		    {
 			    int layer = LastInteractiveState ? cameraLayer : camera.nonInteractiveCameraLayer;

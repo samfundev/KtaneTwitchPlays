@@ -64,6 +64,25 @@ public class BombMessageResponder : MessageResponder
 		_coroutineQueue.AddToQueue(BombCommanders[_currentBomb != -1 ? _currentBomb : 0].LetGoBomb(), _currentBomb);
 	}
 
+	private bool _bombStarted;
+	public void OnLightsChange(bool on)
+	{
+		if (_bombStarted || !on) return;
+		_bombStarted = true;
+
+		if (TwitchPlaySettings.data.BombLiveMessageDelay > 0)
+		{
+			System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
+		}
+
+		IRCConnection.Instance.SendMessage(BombCommanders.Count == 1 
+			? TwitchPlaySettings.data.BombLiveMessage 
+			: TwitchPlaySettings.data.MultiBombLiveMessage);
+
+		if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
+		OtherModes.setMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
+	}
+
     private void OnEnable()
     {
 	    Instance = this;
@@ -72,29 +91,8 @@ public class BombMessageResponder : MessageResponder
         Leaderboard.Instance.ClearSolo();
         LogUploader.Instance.Clear();
 
-		bool bombStarted = false;
-		parentService.GetComponent<KMGameInfo>().OnLightsChange += delegate (bool on)
-		{
-			if (bombStarted || !on) return;
-			bombStarted = true;
-
-			if (TwitchPlaySettings.data.BombLiveMessageDelay > 0)
-			{
-				System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
-			}
-
-			if (BombCommanders.Count == 1)
-			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombLiveMessage);
-			}
-			else
-			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.MultiBombLiveMessage);
-			}
-
-            if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
-			OtherModes.setMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
-		};
+		_bombStarted = false;
+	    parentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;
 
         StartCoroutine(CheckForBomb());
     }
@@ -205,8 +203,9 @@ public class BombMessageResponder : MessageResponder
         TwitchComponentHandle.ClearUnsupportedModules();
         StopAllCoroutines();
 	    Leaderboard.Instance.BombsAttempted++;
+	    parentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
 
-	    LogUploader.Instance.Post();
+		LogUploader.Instance.Post();
         parentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
 
 		moduleCameras?.gameObject.SetActive(false);
@@ -355,6 +354,7 @@ public class BombMessageResponder : MessageResponder
 
 		    if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
 		    {
+			    if (GameRoom.Instance is ElevatorGameRoom) return;	//There is no alarm clock in the elevator room.
 			    _coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze"));
 			    return;
 		    }
@@ -613,13 +613,26 @@ public class BombMessageResponder : MessageResponder
 	{
 		if (_hideBombs) yield break;
 		_hideBombs = true;
+		Dictionary<Bomb, Vector3> originalBombPositions = new Dictionary<Bomb, Vector3>();
+		foreach (BombCommander commander in BombCommanders)
+		{
+			//Store the original positions of the bombs.
+			originalBombPositions[commander.Bomb] = commander.Bomb.transform.localPosition;
+		}
 		while (_hideBombs)
 		{
 			foreach (BombCommander commander in BombCommanders)
 			{
+				//Required every frame for every bomb with floating holdables attached.
 				commander.Bomb.transform.localPosition = new Vector3(0, -1.25f, 0);
 			}
 			yield return null;
+		}
+		foreach (BombCommander commander in BombCommanders)
+		{
+			//Required for bombs with no floating holdables attached.
+			if (!originalBombPositions.TryGetValue(commander.Bomb, out Vector3 value)) continue;
+			commander.Bomb.transform.localPosition = value;	
 		}
 	}
 

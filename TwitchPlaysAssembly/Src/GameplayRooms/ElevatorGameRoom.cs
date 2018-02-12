@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Assets.Scripts.Pacing;
 using UnityEngine;
 using Random = System.Random;
@@ -69,23 +67,26 @@ public class ElevatorGameRoom : GameRoom
 	
 	public override IEnumerator ReportBombStatus()
 	{
-		Camera camera = Camera.main;
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
-		if (!SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled)
-			yield break;
+		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
+		TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
+		yield return new WaitUntil(() => timerComponent.IsActive);
+		BombMessageResponder.Instance.OnLightsChange(true);
+
 
 		_elevatorRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
-		while (bombHandles.TrueForAll(handle => !handle.bombCommander.Bomb.HasDetonated))
+		while (!bombHandle.bombCommander.Bomb.HasDetonated)
 		{
 			if (Input.GetKey(KeyCode.Escape))
 			{
-				camera.transform.localEulerAngles = Vector3.zero;
-				camera.transform.localPosition = Vector3.zero;
+				IEnumerator bombDrop = bombHandle.OnMessageReceived(bombHandle.nameText.text, "red", "bomb drop");
+				while (bombDrop.MoveNext())
+					yield return bombDrop.Current;
 			}
 
-			if (bombHandles.TrueForAll(handle => handle.bombCommander.Bomb.IsSolved()))
+			if (bombHandle.bombCommander.Bomb.IsSolved())
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(handle => handle.bombCommander.CurrentTimer < 60f && !handle.bombCommander.Bomb.IsSolved()));
+			ToggleEmergencyLights(SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled && 
+				bombHandle.bombCommander.CurrentTimer < 60f && !bombHandle.bombCommander.Bomb.IsSolved());
 			yield return null;
 		}
 	}
@@ -95,17 +96,11 @@ public class ElevatorGameRoom : GameRoom
 	{
 		if (EmergencyLightsState == on) return;
 		EmergencyLightsState = on;
-		MethodInfo method = on ? _turnOnEmergencyLightsMethod : _turnOffEmergencyLightsMethod;
-		method.Invoke(_elevatorRoom, null);
-	}
-
-	static ElevatorGameRoom()
-	{
-		_turnOffEmergencyLightsMethod = typeof(ElevatorRoom).GetMethod("TurnOffEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
-		_turnOnEmergencyLightsMethod = typeof(ElevatorRoom).GetMethod("TurnOnEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (EmergencyLightsState)
+			_elevatorRoom.EmergencyLight.Activate();
+		else
+			_elevatorRoom.EmergencyLight.Deactivate();
 	}
 
 	private ElevatorRoom _elevatorRoom;
-	private static readonly MethodInfo _turnOffEmergencyLightsMethod = null;
-	private static readonly MethodInfo _turnOnEmergencyLightsMethod = null;
 }

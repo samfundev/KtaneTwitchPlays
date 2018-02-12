@@ -2,7 +2,7 @@
 
 public class DefaultGameRoom : GameRoom
 {
-    //The only room that this one catches is the Elevator room, currently unsupported in Twitch Plays at this point.
+    //The one catch-all room that as of now, should never be reached unless the game developers add in a new room type in the future.
     public static Type RoomType()
     {
         return typeof(GameplayRoom);

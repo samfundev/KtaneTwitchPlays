@@ -58,6 +58,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 	}
 
+	public static IEnumerator DropAllHoldables()
+	{
+		foreach (KMHoldableCommander commander in HoldableCommanders)
+		{
+			IEnumerator drop = commander.RespondToCommand("The Bomb", "drop");
+			while (drop != null && drop.MoveNext())
+				yield return drop.Current;
+		}
+	}
+
 	string resolveMissionID(string targetID, out string failureMessage)
 	{
 	    failureMessage = null;
@@ -509,8 +519,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 		    if (textAfter.EqualsAny("help", "manual"))
 		    {
 			    commander.Handler.ShowHelp();
-			    break;
+			    return;
 		    }
+		    if (!IsAuthorizedDefuser(userNickName)) return;
 		    BombMessageResponder.Instance?.DropCurrentBomb();
 		    _coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter));
 	    }

@@ -61,10 +61,11 @@ public class MissionMessageResponder : MessageResponder
 	    try
 	    {
 		    _elevatorRoom = Resources.Load<GameObject>("PC/Prefabs/ElevatorRoom/ElevatorBombRoom");
-		    GameplayState.GameplayRoomPrefabOverride = null;
+		    DebugHelper.Log("Elevator room loaded successfully");
 	    }
-	    catch
+	    catch (Exception ex)
 	    {
+		    DebugHelper.LogException(ex, "Failed to load the Elevator room");
 			GameplayState.GameplayRoomPrefabOverride = null;
 		}
 
@@ -104,10 +105,26 @@ public class MissionMessageResponder : MessageResponder
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayDisabled, userNickName);
 				}
 				break;
+
 			case "elevator":
-				GameplayState.GameplayRoomPrefabOverride = GameplayState.GameplayRoomPrefabOverride == null ? _elevatorRoom : null;
-				IRCConnection.Instance.SendMessage("Elevator {0}", GameplayState.GameplayRoomPrefabOverride == null ? "off" : "on");
+				if (split.Length == 2)
+				{
+					switch (split[1])
+					{
+						case "on":
+							GameplayState.GameplayRoomPrefabOverride = _elevatorRoom;
+							break;
+						case "off":
+							GameplayState.GameplayRoomPrefabOverride = null;
+							break;
+						case "toggle":
+							GameplayState.GameplayRoomPrefabOverride = GameplayState.GameplayRoomPrefabOverride == null ? _elevatorRoom : null;
+							break;
+					}
+				}
+				IRCConnection.Instance.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (_elevatorRoom == null ? "not loaded" : "off") : "on");
 				break;
+			
 			default:
 				break;
 		}
