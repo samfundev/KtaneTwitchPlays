@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = System.Random;
 
 public abstract class GameRoom
@@ -137,8 +140,121 @@ public abstract class GameRoom
         }
     }
 
-    public virtual IEnumerator ReportBombStatus()
+	public virtual void OnDisable()
+	{
+		
+	}
+
+
+	public static Camera MainCamera;
+	public static Camera CustomCamera;
+	public static bool IsMainCamera = true;
+	public static Transform InitializeCameraMover()
+	{
+		if (MainCamera == null)
+		{
+			GameObject customMover = new GameObject("CustomCameraMover");
+			customMover.transform.SetParent(Camera.main.transform.parent.parent);
+			MainCamera = Camera.main;
+			CustomCamera = Object.Instantiate(MainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
+			for (int i = 0; i < CustomCamera.transform.childCount; i++)
+			{
+				Object.DestroyImmediate(CustomCamera.transform.GetChild(i));
+			}
+
+		}
+		return IsMainCamera ? MainCamera.transform : CustomCamera.transform;
+	}
+
+	public static void ToggleCamera(bool main)
+	{
+		InitializeCameraMover();
+		IsMainCamera = main;
+		CustomCamera.gameObject.SetActive(!main);
+		MainCamera.gameObject.SetActive(main);
+	}
+
+	public static void ResetCamera()
+	{
+		Transform t = InitializeCameraMover();
+		if (IsMainCamera) return;
+		t.localPosition = Vector3.zero;
+		t.localEulerAngles = Vector3.zero;
+	}
+
+	public static void SetCameraPostion(Vector3 movement)
+	{
+		if (IsMainCamera) return;
+		InitializeCameraMover().localPosition = movement;
+	}
+
+	public static void SetCameraRotation(Vector3 rotation)
+	{
+		if (IsMainCamera) return;
+		InitializeCameraMover().localEulerAngles = rotation;
+	}
+
+	public static void MoveCamera(Vector3 movement)
+	{
+		if (IsMainCamera) return;
+		Vector3 m = CurrentCameraPosition;
+		InitializeCameraMover().localPosition = new Vector3(movement.x + m.x, movement.y + m.y, movement.z + m.z);
+	}
+
+	public static void RotateCamera(Vector3 rotation)
+	{
+		if (IsMainCamera) return;
+		Vector3 r = CurrentCameraEulerAngles;
+		InitializeCameraMover().localEulerAngles = new Vector3(r.x + rotation.x, r.y + rotation.y, r.z + rotation.z);
+	}
+
+	public static Vector3 CurrentCameraPosition => InitializeCameraMover().localPosition;
+
+	public static Vector3 CurrentCameraEulerAngles => InitializeCameraMover().localEulerAngles;
+
+	public virtual IEnumerator ReportBombStatus()
     {
-        yield break;
+	    
+		yield break;
     }
+
+	public string[] ValidEdgeworkRegex =
+	{
+		"^edgework((?: 45|-45)?)((?: top| top right| right top| right| right bottom| bottom right| bottom| bottom left| left bottom| left| left top| top left| tr| rt| tl | lt| br| rb| bl| lb| t| r| b| l)?)$"
+	};
+
+	public virtual IEnumerator BombCommanderHoldBomb(Bomb bomb, bool frontFace = true)
+	{
+		yield return true;
+	}
+
+	public virtual IEnumerator BombCommanderDropBomb(Bomb bomb)
+	{
+		yield return true;
+	}
+
+	public virtual IEnumerator BombCommanderTurnBomb(Bomb bomb)
+	{
+		yield return true;
+	}
+
+	public virtual IEnumerator BombCommanderBombEdgework(Bomb bomb, Match edgeworkMatch)
+	{
+		yield return true;
+	}
+
+	public virtual IEnumerator BombCommanderFocus(Bomb bomb, Selectable selectable, float focusDistance, bool frontFace)
+	{
+		yield return true;
+	}
+
+	public virtual IEnumerator BombCommanderDefocus(Bomb bomb, Selectable selectable, bool frontFace)
+	{
+		yield return true;
+	}
+
+	public virtual bool BombCommanderRotateByLocalQuaternion(Bomb bomb, Quaternion localQuaternion)
+	{
+		return true;
+	}
 }

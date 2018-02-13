@@ -13,8 +13,7 @@ public class MissionMessageResponder : MessageResponder
     #region Unity Lifecycle
     private void OnEnable()
     {
-	    Camera.main.transform.localPosition = Vector3.zero;
-	    Camera.main.transform.localEulerAngles = Vector3.zero;
+	    GameRoom.ToggleCamera(true);
 		// InputInterceptor.DisableInput();
 
 		StartCoroutine(CheckForBombBinderAndFreeplayDevice());

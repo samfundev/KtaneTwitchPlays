@@ -19,17 +19,6 @@ public class BombCommander : ICommandResponder
         _selectableManager = KTInputManager.Instance.SelectableManager;
         BombTimeStamp = DateTime.Now;
         bombStartingTimer = CurrentTimer;
-
-	    if (FloatingHoldable == null)
-	    {
-		    _elevatorRoom = SceneManager.Instance.GameplayState.Room is ElevatorRoom;
-		    if (_elevatorRoom)
-		    {
-			    _currentWall = CurrentElevatorWall.Back;
-			    Camera.main.transform.localPosition = ElevatorCameraPositions[(int) _currentWall];
-			    Camera.main.transform.localEulerAngles = ElevatorCameraRotations[(int) _currentWall];
-		    }
-	    }
     }
 	#endregion
 
@@ -65,125 +54,103 @@ public class BombCommander : ICommandResponder
             responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
         }
         else if (message.EqualsAny("turn", "turn round", "turn around", "rotate", "flip", "spin"))
-        {
-            responseNotifier.ProcessResponse(CommandResponse.Start);
+		{
+			responseNotifier.ProcessResponse(CommandResponse.Start);
 
-	        if (_elevatorRoom)
-	        {
-		        IEnumerator dropAllHoldables = MiscellaneousMessageResponder.DropAllHoldables();
-		        while (dropAllHoldables.MoveNext())
-			        yield return dropAllHoldables.Current;
+			IEnumerator turnCoroutine = TurnBomb();
+			while (turnCoroutine.MoveNext())
+			{
+				yield return turnCoroutine.Current;
+			}
 
-				IEnumerator rotateCamera;
-		        switch (_currentWall)
-		        {
-			        case CurrentElevatorWall.Right:
-				        rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 1, false, false);
-				        _currentWall = CurrentElevatorWall.Back;
-				        break;
-			        case CurrentElevatorWall.Dropped:
-					case CurrentElevatorWall.Back:
-				        rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, false);
-				        _currentWall = CurrentElevatorWall.Left;
-				        break;
-			        case CurrentElevatorWall.Left:
-				        rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, false, false);
-				        _currentWall = CurrentElevatorWall.Right;
-				        break;
-			        default: yield break;
-		        }
-		        while (rotateCamera.MoveNext())
-			        yield return rotateCamera.Current;
-	        }
-	        else
-	        {
-		        IEnumerator holdCoroutine = HoldBomb(!_heldFrontFace);
-		        while (holdCoroutine.MoveNext())
-		        {
-			        yield return holdCoroutine.Current;
-		        }
-	        }
+			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
+		}
+		else if (message.EqualsAny("drop", "let go", "put down"))
+		{
+			responseNotifier.ProcessResponse(CommandResponse.Start);
 
-	        responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
-        }
-        else if (message.EqualsAny("drop","let go","put down"))
-        {
-            responseNotifier.ProcessResponse(CommandResponse.Start);
+			IEnumerator letGoCoroutine = LetGoBomb();
+			while (letGoCoroutine.MoveNext())
+			{
+				yield return letGoCoroutine.Current;
+			}
 
-            IEnumerator letGoCoroutine = LetGoBomb();
-            while (letGoCoroutine.MoveNext())
-            {
-                yield return letGoCoroutine.Current;
-            }
+			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
+		}
+		else if (message.RegexMatch(out Match edgeworkMatch, GameRoom.Instance.ValidEdgeworkRegex))
+		{
+			responseNotifier.ProcessResponse(CommandResponse.Start);
+			IEnumerator edgeworkCoroutine = ShowEdgework(edgeworkMatch);
+			while (edgeworkCoroutine.MoveNext())
+			{
+				yield return edgeworkCoroutine.Current;
+			}
 
-            responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
-        }
-        else if (Regex.IsMatch(message, "^(edgework( 45|-45)?)$") || 
-                 Regex.IsMatch(message, "^(edgework( 45|-45)? )?(top|top right|right top|right|right bottom|bottom right|bottom|bottom left|left bottom|left|left top|top left|back|)$"))
-        {
-            responseNotifier.ProcessResponse(CommandResponse.Start);
-            bool _45Degrees = Regex.IsMatch(message, "^(edgework(-45| 45)).*$");
-            IEnumerator edgeworkCoroutine = ShowEdgework(message.Replace("edgework", "").Replace(" 45", "").Replace("-45","").Trim(), _45Degrees);
-            while (edgeworkCoroutine.MoveNext())
-            {
-                yield return edgeworkCoroutine.Current;
-            }
-
-            responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
-        }
-        else
-        {
-            responseNotifier.ProcessResponse(CommandResponse.NoResponse);
-        }
-    }
+			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
+		}
+		else
+		{
+			responseNotifier.ProcessResponse(CommandResponse.NoResponse);
+		}
+	}
     #endregion
 
     #region Helper Methods
     public IEnumerator HoldBomb(bool frontFace = true)
     {
-	    if (_elevatorRoom && _currentWall == CurrentElevatorWall.Dropped)
+	    IEnumerator gameRoomHoldBomb = GameRoom.Instance?.BombCommanderHoldBomb(Bomb, frontFace);
+	    bool continueInvocation = true;
+	    if (gameRoomHoldBomb != null && gameRoomHoldBomb.MoveNext() && gameRoomHoldBomb.Current is bool continueInvoke)
 	    {
-		    IEnumerator dropAllHoldables = MiscellaneousMessageResponder.DropAllHoldables();
-		    while (dropAllHoldables.MoveNext())
-			    yield return dropAllHoldables.Current;
-
-		    IEnumerator holdBomb = DoElevatorCameraRotate(CurrentElevatorWall.Dropped, CurrentElevatorWall.Back, 1, false, false);
-		    while (holdBomb.MoveNext())
-			    yield return holdBomb.Current;
-			_currentWall = CurrentElevatorWall.Back;
+		    continueInvocation = continueInvoke;
+		    do
+		    {
+			    yield return gameRoomHoldBomb.Current;
+		    } while (gameRoomHoldBomb.MoveNext());
 	    }
-		else if (FloatingHoldable != null)
+
+	    if (!continueInvocation || FloatingHoldable == null) yield break;
+	    FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+	    bool doForceRotate = false;
+
+	    if (holdState != FloatingHoldable.HoldStateEnum.Held)
 	    {
-		    FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
-		    bool doForceRotate = false;
+		    SelectObject(Selectable);
+		    doForceRotate = true;
+		    BombMessageResponder.moduleCameras?.ChangeBomb(this);
+	    }
+	    else if (frontFace != _heldFrontFace)
+	    {
+		    doForceRotate = true;
+	    }
 
-		    if (holdState != FloatingHoldable.HoldStateEnum.Held)
+	    if (doForceRotate)
+	    {
+		    float holdTime = FloatingHoldable.PickupTime;
+		    IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
+		    while (forceRotationCoroutine.MoveNext())
 		    {
-			    SelectObject(Selectable);
-			    doForceRotate = true;
-			    BombMessageResponder.moduleCameras?.ChangeBomb(this);
-		    }
-		    else if (frontFace != _heldFrontFace)
-		    {
-			    doForceRotate = true;
-		    }
-
-		    if (doForceRotate)
-		    {
-			    float holdTime = FloatingHoldable.PickupTime;
-			    IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
-			    while (forceRotationCoroutine.MoveNext())
-			    {
-				    yield return forceRotationCoroutine.Current;
-			    }
+			    yield return forceRotationCoroutine.Current;
 		    }
 	    }
     }
 
     public IEnumerator TurnBomb()
     {
-        IEnumerator holdBombCoroutine = HoldBomb(!_heldFrontFace);
-        while (holdBombCoroutine.MoveNext())
+	    IEnumerator gameRoomTurnBomb = GameRoom.Instance?.BombCommanderTurnBomb(Bomb);
+	    bool continueInvocation = true;
+		if (gameRoomTurnBomb != null && gameRoomTurnBomb.MoveNext() && gameRoomTurnBomb.Current is bool continueInvoke)
+		{
+			continueInvocation = continueInvoke;
+			do
+		    {
+			    yield return gameRoomTurnBomb.Current;
+			} while (gameRoomTurnBomb.MoveNext());
+		}
+
+		if (!continueInvocation) yield break;
+		IEnumerator holdBombCoroutine = HoldBomb(!_heldFrontFace);
+		while (holdBombCoroutine.MoveNext())
         {
             yield return holdBombCoroutine.Current;
         }
@@ -191,75 +158,53 @@ public class BombCommander : ICommandResponder
 
     public IEnumerator LetGoBomb()
     {
-	    if (_elevatorRoom && _currentWall != CurrentElevatorWall.Dropped)
+	    IEnumerator gameRoomDropBomb = GameRoom.Instance?.BombCommanderDropBomb(Bomb);
+	    bool continueInvocation = true;
+	    if (gameRoomDropBomb != null && gameRoomDropBomb.MoveNext() && gameRoomDropBomb.Current is bool continueInvoke)
 	    {
-		    IEnumerator bombDrop = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Dropped, 1, false, false);
-		    while (bombDrop.MoveNext())
-			    yield return bombDrop.Current;
-		    _currentWall = CurrentElevatorWall.Dropped;
+		    continueInvocation = continueInvoke;
+		    do
+		    {
+			    yield return gameRoomDropBomb.Current;
+		    } while (gameRoomDropBomb.MoveNext());
 	    }
-		else if (FloatingHoldable != null)
+
+		if (!continueInvocation || FloatingHoldable == null) yield break;
+	    if (FloatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
+
+	    IEnumerator turnBombCoroutine = HoldBomb(true);
+	    while (turnBombCoroutine.MoveNext())
 	    {
-		    if (FloatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
+		    yield return turnBombCoroutine.Current;
+	    }
 
-		    IEnumerator turnBombCoroutine = HoldBomb(true);
-		    while (turnBombCoroutine.MoveNext())
-		    {
-			    yield return turnBombCoroutine.Current;
-		    }
-
-		    while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
-		    {
-			    DeselectObject(Selectable);
-			    yield return new WaitForSeconds(0.1f);
-		    }
+	    while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
+	    {
+		    DeselectObject(Selectable);
+		    yield return new WaitForSeconds(0.1f);
 	    }
     }
 
-    public IEnumerator ShowEdgework(string edge, bool _45Degrees)
+    public IEnumerator ShowEdgework(Match edgeworkMatch)
     {
-	    if (FloatingHoldable == null)
+	    IEnumerator gameRoomShowEdgework = GameRoom.Instance?.BombCommanderBombEdgework(Bomb, edgeworkMatch);
+	    bool continueInvocation = true;
+	    if (gameRoomShowEdgework != null && gameRoomShowEdgework.MoveNext() && gameRoomShowEdgework.Current is bool continueInvoke)
 	    {
-		    if (!_elevatorRoom) yield break;
-
-		    IEnumerator showEdgework = MiscellaneousMessageResponder.DropAllHoldables();
-		    while (showEdgework.MoveNext())
-			    yield return showEdgework.Current;
-
-		    CurrentElevatorWall currentWall = _currentWall == CurrentElevatorWall.Dropped ? CurrentElevatorWall.Back : _currentWall;
-		    if (edge == "" || edge == "left")
+		    continueInvocation = continueInvoke;
+		    do
 		    {
-			    showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
-			    _currentWall = CurrentElevatorWall.Left;
-				while (showEdgework.MoveNext())
-				    yield return showEdgework.Current;
-			    yield return new WaitForSeconds(3);
-		    }
-		    if (edge == "" || edge == "back")
-		    {
-			    showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 1, edge == "", true);
-			    _currentWall = CurrentElevatorWall.Back;
-			    while (showEdgework.MoveNext())
-				    yield return showEdgework.Current;
-			    yield return new WaitForSeconds(3);
-		    }
-		    if (edge == "" || edge == "right")
-		    {
-			    showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, edge == "", true);
-			    _currentWall = CurrentElevatorWall.Right;
-			    while (showEdgework.MoveNext())
-				    yield return showEdgework.Current;
-			    yield return new WaitForSeconds(3);
-		    }
-		    showEdgework = DoElevatorCameraRotate(_currentWall, currentWall, 1, true, false);
-		    _currentWall = currentWall;
-		    while (showEdgework.MoveNext())
-			    yield return showEdgework.Current;
-		    yield break;
+			    yield return gameRoomShowEdgework.Current;
+		    } while (gameRoomShowEdgework.MoveNext());
 	    }
 
-	    if (edge == "back") yield break;
+		if (!continueInvocation || FloatingHoldable == null || edgeworkMatch == null || !edgeworkMatch.Success) yield break;
         BombMessageResponder.moduleCameras?.Hide();
+
+	    string edge = edgeworkMatch.Groups[2].Value.ToLowerInvariant().Trim();
+	    if (string.IsNullOrEmpty(edge))
+		    edge = "all edges";
+		bool edgework45 = !string.IsNullOrEmpty(edgeworkMatch.Groups[1].Value.Trim());
 
         IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
         while (holdCoroutine.MoveNext())
@@ -267,9 +212,9 @@ public class BombCommander : ICommandResponder
             yield return holdCoroutine.Current;
         }
         IEnumerator returnToFace;
-        float offset = _45Degrees ? 0.0f : 45.0f;
+        float offset = edgework45 ? 0.0f : 45.0f;
 
-        if (edge == "" || edge == "right")
+        if (edge.EqualsAny("all edges", "right","r"))
         {
             IEnumerator firstEdge = DoFreeYRotate(0.0f, 0.0f, 90.0f, 90.0f, 0.3f);
             while (firstEdge.MoveNext())
@@ -279,7 +224,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if ((edge == "" && _45Degrees) || edge == "bottom right" || edge == "right bottom")
+        if (edge.EqualsAny("all edges", "bottom right","right bottom","br","rb"))
         {
             IEnumerator firstSecondEdge = edge == ""
                 ? DoFreeYRotate(90.0f, 90.0f, 45.0f, 90.0f, 0.3f)
@@ -291,7 +236,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(0.5f);
         }
 
-        if (edge == "" || edge == "bottom")
+        if (edge.EqualsAny("all edges", "bottom","b"))
         {
 
             IEnumerator secondEdge = edge == ""
@@ -304,7 +249,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if ((edge == "" && _45Degrees) || edge == "bottom left" || edge == "left bottom")
+        if (edge.EqualsAny("all edges", "left bottom", "bottom left", "lb", "bl"))
         {
             IEnumerator secondThirdEdge = edge == ""
                 ? DoFreeYRotate(0.0f, 90.0f, -45.0f, 90.0f, 0.3f)
@@ -316,7 +261,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(0.5f);
         }
 
-        if (edge == "" || edge == "left")
+        if (edge.EqualsAny("all edges", "left","l"))
         {
             IEnumerator thirdEdge = edge == ""
                 ? DoFreeYRotate(-45.0f + offset, 90.0f, -90.0f, 90.0f, 0.3f)
@@ -328,7 +273,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if ((edge == "" && _45Degrees) || edge == "top left" || edge == "left top")
+        if (edge.EqualsAny("all edges", "top left","left top","tl","lt"))
         {
             IEnumerator thirdFourthEdge = edge == ""
                 ? DoFreeYRotate(-90.0f, 90.0f, -135.0f, 90.0f, 0.3f)
@@ -340,7 +285,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(0.5f);
         }
 
-        if (edge == "" || edge == "top")
+        if (edge.EqualsAny("all edges", "top","t"))
         {
             IEnumerator fourthEdge = edge == ""
                 ? DoFreeYRotate(-135.0f + offset, 90.0f, -180.0f, 90.0f, 0.3f)
@@ -352,7 +297,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if ((edge == "" && _45Degrees) || edge == "top right" || edge == "right top")
+        if (edge.EqualsAny("all edges", "top right","right top","tr","rt"))
         {
             IEnumerator fourthFirstEdge = edge == ""
                 ? DoFreeYRotate(-180.0f, 90.0f, -225.0f, 90.0f, 0.3f)
@@ -367,32 +312,44 @@ public class BombCommander : ICommandResponder
         switch (edge)
         {
             case "right":
+			case "r":
                 returnToFace = DoFreeYRotate(90.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             case "right bottom":
             case "bottom right":
+			case "br":
+			case "rb":
                 returnToFace = DoFreeYRotate(45.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             case "bottom":
+			case "b":
                 returnToFace = DoFreeYRotate(0.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             case "left bottom":
             case "bottom left":
+			case "lb":
+			case "bl":
                 returnToFace = DoFreeYRotate(-45.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             case "left":
+			case "l":
                 returnToFace = DoFreeYRotate(-90.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             case "left top":
             case "top left":
+			case "lt":
+			case "tl":
                 returnToFace = DoFreeYRotate(-135.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             case "top":
+			case "t":
                 returnToFace = DoFreeYRotate(-180.0f, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
             default:
             case "top right":
             case "right top":
+			case "tr":
+			case "rt":
                 returnToFace = DoFreeYRotate(-225.0f + offset, 90.0f, 0.0f, 0.0f, 0.3f);
                 break;
         }
@@ -439,60 +396,54 @@ public class BombCommander : ICommandResponder
 	
     public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
     {
-	    if (FloatingHoldable != null)
+	    IEnumerator gameRoomFocus = GameRoom.Instance?.BombCommanderFocus(Bomb, selectable, focusDistance, frontFace);
+	    bool continueInvocation = true;
+	    if (gameRoomFocus != null && gameRoomFocus.MoveNext() && gameRoomFocus.Current is bool continueInvoke)
 	    {
-		    IEnumerator holdCoroutine = HoldBomb(frontFace);
-		    while (holdCoroutine.MoveNext())
+		    continueInvocation = continueInvoke;
+		    do
 		    {
-			    yield return holdCoroutine.Current;
-		    }
-
-		    float focusTime = FloatingHoldable.FocusTime;
-		    FloatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+			    yield return gameRoomFocus.Current;
+		    } while (gameRoomFocus.MoveNext());
 	    }
-		else if(_elevatorRoom)
+
+	    if (!continueInvocation || FloatingHoldable == null) yield break;
+	    IEnumerator holdCoroutine = HoldBomb(frontFace);
+	    while (holdCoroutine.MoveNext())
 	    {
-		    IEnumerator turnBomb = null;
-		    int rotation = (int) Math.Round(selectable.transform.localEulerAngles.y, 0);
-		    DebugHelper.Log($"selectable.name = {selectable.transform.name}");
-		    DebugHelper.Log($"selectable position = {Math.Round(selectable.transform.localPosition.x, 3)},{Math.Round(selectable.transform.localPosition.y, 3)},{Math.Round(selectable.transform.localPosition.z, 3)}");
-		    DebugHelper.Log($"selectable rotation = {Math.Round(selectable.transform.localEulerAngles.y, 3)}");
-
-			switch (rotation)
-			{
-				case 90 when _currentWall != CurrentElevatorWall.Left:
-					turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, false);
-					_currentWall = CurrentElevatorWall.Left;
-					break;
-				case 180 when _currentWall != CurrentElevatorWall.Back:
-					turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 1, false, false);
-					_currentWall = CurrentElevatorWall.Back;
-					break;
-				case 270 when _currentWall != CurrentElevatorWall.Right:
-					turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, false, false);
-					_currentWall = CurrentElevatorWall.Right;
-					break;
-			}
-		    while (turnBomb != null && turnBomb.MoveNext())
-			    yield return turnBomb.Current;
+		    yield return holdCoroutine.Current;
 	    }
 
-		
-		selectable.HandleSelect(false);
-        selectable.HandleInteract();
+	    float focusTime = FloatingHoldable.FocusTime;
+	    FloatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+
+	    selectable.HandleSelect(false);
+	    selectable.HandleInteract();
     }
 
     public IEnumerator Defocus(Selectable selectable, bool frontFace)
     {
-        FloatingHoldable?.Defocus(false, false);
+	    IEnumerator gameRoomDefocus = GameRoom.Instance?.BombCommanderDefocus(Bomb, selectable, frontFace);
+	    bool continueInvocation = true;
+	    if (gameRoomDefocus != null && gameRoomDefocus.MoveNext() && gameRoomDefocus.Current is bool continueInvoke)
+	    {
+		    continueInvocation = continueInvoke;
+		    do
+		    {
+			    yield return gameRoomDefocus.Current;
+		    } while (gameRoomDefocus.MoveNext());
+	    }
+
+	    if (!continueInvocation || FloatingHoldable == null) yield break;
+
+		FloatingHoldable.Defocus(false, false);
         selectable.HandleCancel();
         selectable.HandleDeselect();
-        yield break;
     }
 
     public void RotateByLocalQuaternion(Quaternion localQuaternion)
     {
-	    if (FloatingHoldable == null) return;
+	    if (!GameRoom.Instance.BombCommanderRotateByLocalQuaternion(Bomb, localQuaternion) || FloatingHoldable == null) return;
         Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
 
         float currentZSpin = _heldFrontFace ? 0.0f : 180.0f;
@@ -587,30 +538,6 @@ public class BombCommander : ICommandResponder
 
         _heldFrontFace = frontFace;
     }
-	
-	private IEnumerator DoElevatorCameraRotate(CurrentElevatorWall currentWall, CurrentElevatorWall newWall, float duration, bool fromEdgework, bool toEdgework)
-	{
-		if (!_elevatorRoom) yield break;
-		float initialTime = Time.time;
-		Vector3 currentWallPosition = ElevatorCameraPositions[(int) currentWall];
-		Vector3 currentWallRotation = fromEdgework ? ElevatorEdgeworkCameraRotations[(int) currentWall] : ElevatorCameraRotations[(int) currentWall];
-		Vector3 newWallPosition = ElevatorCameraPositions[(int)newWall];
-		Vector3 newWallRotation = toEdgework ? ElevatorEdgeworkCameraRotations[(int)newWall] : ElevatorCameraRotations[(int)newWall];
-		Transform camera = Camera.main.transform;
-		while ((Time.time - initialTime) < duration)
-		{
-			float lerp = (Time.time - initialTime) / duration;
-			camera.localPosition = new Vector3(Mathf.SmoothStep(currentWallPosition.x, newWallPosition.x, lerp),
-												Mathf.SmoothStep(currentWallPosition.y, newWallPosition.y, lerp),
-												Mathf.SmoothStep(currentWallPosition.z, newWallPosition.z, lerp));
-			camera.localEulerAngles = new Vector3(Mathf.SmoothStep(currentWallRotation.x, newWallRotation.x, lerp),
-										Mathf.SmoothStep(currentWallRotation.y, newWallRotation.y, lerp),
-										Mathf.SmoothStep(currentWallRotation.z, newWallRotation.z, lerp));
-			yield return null;
-		}
-		camera.localPosition = newWallPosition;
-		camera.localEulerAngles = newWallRotation;
-	}
 
     private IEnumerator DoFreeYRotate(float initialYSpin, float initialPitch, float targetYSpin, float targetPitch, float duration)
     {
@@ -744,39 +671,4 @@ public class BombCommander : ICommandResponder
     public float bombStartingTimer;
 
     private bool _heldFrontFace = true;
-	private bool _elevatorRoom = false;
-	private bool _elevatorDropped = true;
-	private CurrentElevatorWall _currentWall;
-
-	private enum CurrentElevatorWall
-	{
-		Left,
-		Back,
-		Right,
-		Dropped
-	}
-
-	private Vector3[] ElevatorCameraRotations =
-	{
-		new Vector3(7, -89, 21),
-		new Vector3(-8, 0, 0),
-		new Vector3(5, 88, -21),
-		Vector3.zero
-	};
-
-	private Vector3[] ElevatorEdgeworkCameraRotations =
-	{
-		new Vector3(20, -85, 20),
-		new Vector3(0, 0, 0),
-		new Vector3(20, 85, -20),
-		Vector3.zero
-	};
-
-	private Vector3[] ElevatorCameraPositions =
-	{
-		new Vector3(0.5f, 0.75f, 1.15f),
-		new Vector3(-0.15f, 0.75f, 0.75f),
-		new Vector3(-0.5f, 0.75f, 1.25f),
-		Vector3.zero
-	};
 }

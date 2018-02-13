@@ -168,10 +168,6 @@ public abstract class HoldableHandler
 					DebugHelper.LogException(ex, "Error Processing command due to an exception. Invocation will not continue.:");
 					break;
 				}
-				if (processCommand.Current != null)
-				{
-					DebugHelper.Log(processCommand.Current.GetType().FullName);
-				}
 
 				switch (processCommand.Current)
 				{
@@ -212,7 +208,6 @@ public abstract class HoldableHandler
 						break;
 
 					case string currentString when !string.IsNullOrEmpty(currentString):
-						DebugHelper.Log(currentString);
 						if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) &&
 						    CoroutineCanceller.ShouldCancel)
 						{
@@ -289,7 +284,6 @@ public abstract class HoldableHandler
 						}
 						break;
 					case object[] objects:
-						DebugHelper.Log("processing objects[]");
 						if (objects == null) break;
 						switch (objects.Length)
 						{
@@ -298,8 +292,6 @@ public abstract class HoldableHandler
 								{
 									if (permissionGranted)
 									{
-										DebugHelper.Log("objects[] is a request for permission to perform the next action");
-										DebugHelper.Log("Permission was granted");
 										switch (objects[1])
 										{
 											case Action actionTrue:
@@ -313,19 +305,15 @@ public abstract class HoldableHandler
 									}
 									else
 									{
-										DebugHelper.Log("Permission was denied");
 										switch (objects[2])
 										{
 											case Action actionFalse:
-												DebugHelper.Log("Invoking the permission denied action");
 												actionFalse.Invoke();
 												break;
 											case string objStr2 when !string.IsNullOrEmpty(objStr2):
-												DebugHelper.Log("Sending to chat the permission denied string");
 												SendToChat(objStr2, userNickName, ref parseError);
 												break;
 											case IEnumerator iEnumerator when iEnumerator != null:
-												DebugHelper.Log("Resuming execution through the permission denied Enumerator");
 												processIEnumerators.Push(iEnumerator);
 												yield return null;
 												continue;

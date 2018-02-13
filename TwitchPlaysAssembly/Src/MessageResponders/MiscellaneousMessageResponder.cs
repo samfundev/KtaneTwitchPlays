@@ -587,72 +587,76 @@ public class MiscellaneousMessageResponder : MessageResponder
 	            IRCConnection.Instance.SendMessage("Removing Solve based modules");
                 TwitchComponentHandle.RemoveSolveBasedModules();
             }
-            else if (text.Equals("!silencemode", StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals("silencemode", StringComparison.InvariantCultureIgnoreCase))
             {
 	            IRCConnection.Instance.ToggleSilenceMode();
             }
 
         }
 
-	    if (!TwitchPlaySettings.data.EnableDebuggingCommands) return;
+		if (!TwitchPlaySettings.data.EnableDebuggingCommands) return;
 	    //For obvious reasons, only the streamer may do this, as this command is that powerful.
 	    if (UserAccess.HasAccess(userNickName, AccessLevel.Streamer) && text.RegexMatch(out Match sayasMatch, @"^(?:issue|say) ?commands?(?: ?as)? (\S+) (.+)"))
 	    {
 		    IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 	    }
 
-	    Transform camera = Camera.main.transform;
+	    if (text.Equals("secondary camera"))
+	    {
+		    GameRoom.ToggleCamera(false);
+	    }
+	    if (text.Equals("main camera"))
+	    {
+		    GameRoom.ToggleCamera(true);
+	    }
+	    
 	    bool cameraChanged = false;
 	    if (text.RegexMatch(out Match match, "move ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
-		    DebugHelper.Log(text);
-		    camera.localPosition = new Vector3(camera.localPosition.x + float.Parse(match.Groups[1].Value), camera.localPosition.y, camera.localPosition.z);
+		    GameRoom.MoveCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
 		    cameraChanged = true;
 	    }
 	    if (text.RegexMatch(out match, "move ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
-		    DebugHelper.Log(text);
-		    camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y + float.Parse(match.Groups[1].Value), camera.localPosition.z);
+		    GameRoom.MoveCamera(new Vector3(0, float.Parse(match.Groups[1].Value), 0));
 		    cameraChanged = true;
 		}
 	    if (text.RegexMatch(out match, "move ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
-		    DebugHelper.Log(text);
-		    camera.localPosition = new Vector3(camera.localPosition.x, camera.localPosition.y, camera.localPosition.z + float.Parse(match.Groups[1].Value));
-		    cameraChanged = true;
+			GameRoom.MoveCamera(new Vector3(0, 0, float.Parse(match.Groups[1].Value)));
+			cameraChanged = true;
 		}
 
 	    if (text.RegexMatch(out match, "rotate ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
-		    DebugHelper.Log(text);
-		    camera.localEulerAngles = new Vector3(camera.localEulerAngles.x + float.Parse(match.Groups[1].Value), camera.localEulerAngles.y, camera.localEulerAngles.z);
+		    GameRoom.RotateCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
 		    cameraChanged = true;
 		}
 	    if (text.RegexMatch(out match, "rotate ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
-		    DebugHelper.Log(text);
-		    camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y + float.Parse(match.Groups[1].Value), camera.localEulerAngles.z);
-		    cameraChanged = true;
+		    GameRoom.RotateCamera(new Vector3(0, float.Parse(match.Groups[1].Value), 0));
+			cameraChanged = true;
 		}
 	    if (text.RegexMatch(out match, "rotate ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
-		    DebugHelper.Log(text);
-		    camera.localEulerAngles = new Vector3(camera.localEulerAngles.x, camera.localEulerAngles.y, camera.localEulerAngles.z + float.Parse(match.Groups[1].Value));
-		    cameraChanged = true;
+		    GameRoom.RotateCamera(new Vector3(0, 0, float.Parse(match.Groups[1].Value)));
+			cameraChanged = true;
 		}
 
 	    if (text.RegexMatch("reset ?camera"))
 	    {
 		    cameraChanged = true;
-		    camera.localPosition = Vector3.zero;
-		    camera.localEulerAngles = Vector3.zero;
+		    GameRoom.ResetCamera();
 	    }
 
 	    if (cameraChanged)
 	    {
+		    Transform camera = GameRoom.InitializeCameraMover();
+
 		    DebugHelper.Log($"Camera Position = {Math.Round(camera.localPosition.x, 3)},{Math.Round(camera.localPosition.y, 3)},{Math.Round(camera.localPosition.z, 3)}");
 		    DebugHelper.Log($"Camera Euler Angles = {Math.Round(camera.localEulerAngles.x, 3)},{Math.Round(camera.localEulerAngles.y, 3)},{Math.Round(camera.localEulerAngles.z, 3)}");
-		}
+		    IRCConnection.Instance.SendMessage($"Camera Position = {Math.Round(camera.localPosition.x, 3)},{Math.Round(camera.localPosition.y, 3)},{Math.Round(camera.localPosition.z, 3)}, Camera Euler Angles = {Math.Round(camera.localEulerAngles.x, 3)},{Math.Round(camera.localEulerAngles.y, 3)},{Math.Round(camera.localEulerAngles.z, 3)}");
+	    }
     }
 
 	private IEnumerator ReturnToSetup(string userNickName, string text)

@@ -223,6 +223,8 @@ public class BombMessageResponder : MessageResponder
 	    DestroyComponentHandles();
 
         MusicPlayer.StopAllMusic();
+
+	    GameRoom.Instance?.OnDisable();
     }
 
 	public void DestroyComponentHandles()
