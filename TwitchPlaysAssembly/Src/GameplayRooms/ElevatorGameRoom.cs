@@ -71,20 +71,10 @@ public class ElevatorGameRoom : GameRoom
 	public override IEnumerator ReportBombStatus()
 	{
 		ValidEdgeworkRegex = new[] { $"^edgework((?: right| left| back| r| l| b)?)$" };
-
-		DebugHelper.PrintParents(InitializeCameraMover(), true);
-		DebugHelper.PrintTree(InitializeCameraMover(), null,true);
-		Camera main = Camera.main;
-		DebugHelper.Log($"field of view = {main.fieldOfView}");
-		DebugHelper.Log($"near plane = {main.nearClipPlane}");
-		DebugHelper.Log($"far plane = {main.farClipPlane}");
-		DebugHelper.Log($"depth = {main.depth}");
-
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
 		TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
 		yield return new WaitUntil(() => timerComponent.IsActive);
 		BombMessageResponder.Instance.OnLightsChange(true);
-
 
 		_elevatorRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
 		while (!bombHandle.bombCommander.Bomb.HasDetonated)

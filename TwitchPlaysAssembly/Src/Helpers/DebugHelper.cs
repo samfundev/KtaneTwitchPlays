@@ -66,23 +66,24 @@ public static class DebugHelper
 		for (int i = 0; i < level; i++)
 			prefix += "    ";
 
-		_treeBuilder.Append($"{prefix}name = {t.name}\n");
-		_treeBuilder.Append($"{prefix} position = {Math.Round(t.localPosition.x, 7)},{Math.Round(t.localPosition.y, 7)},{Math.Round(t.localPosition.z, 7)}\n");
-		_treeBuilder.Append($"{prefix} rotation = {Math.Round(t.localEulerAngles.x, 7)},{Math.Round(t.localEulerAngles.y, 7)},{Math.Round(t.localEulerAngles.z, 7)}\n");
-		_treeBuilder.Append($"{prefix} scale = {Math.Round(t.localScale.x, 7)},{Math.Round(t.localScale.y, 7)},{Math.Round(t.localScale.z, 7)}\n");
-
-		if (printComponents)
-		{
-			foreach (Component component in t.GetComponents<Component>())
-			{
-				if (component is Transform) continue;
-				_treeBuilder.Append($"{prefix} Component: {component.GetType().FullName}\n");
-			}
-		}
-
+		_treeBuilder.Append($"{prefix}name = \"{t.name}\" - Active = {t.gameObject.activeInHierarchy}:{t.gameObject.activeSelf}\n");
 		bool moveDown = forbiddenTypes == null || forbiddenTypes.ToList().TrueForAll(x => t.GetComponent(x) == null);
 		if (moveDown)
 		{
+			_treeBuilder.Append($"{prefix} position = {Math.Round(t.localPosition.x, 7)},{Math.Round(t.localPosition.y, 7)},{Math.Round(t.localPosition.z, 7)}\n");
+			_treeBuilder.Append($"{prefix} rotation = {Math.Round(t.localEulerAngles.x, 7)},{Math.Round(t.localEulerAngles.y, 7)},{Math.Round(t.localEulerAngles.z, 7)}\n");
+			_treeBuilder.Append($"{prefix} scale = {Math.Round(t.localScale.x, 7)},{Math.Round(t.localScale.y, 7)},{Math.Round(t.localScale.z, 7)}\n");
+
+			if (printComponents)
+			{
+				foreach (Component component in t.GetComponents<Component>())
+				{
+					if (component is Transform) continue;
+					_treeBuilder.Append($"{prefix} Component: {component.GetType().FullName}\n");
+				}
+			}
+
+		
 			for (int i = 0; i < t.childCount; i++)
 			{
 				PrintTree(t.GetChild(i), forbiddenTypes, printComponents, false, level + 1);
