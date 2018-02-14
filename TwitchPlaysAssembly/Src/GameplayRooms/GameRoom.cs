@@ -159,7 +159,7 @@ public abstract class GameRoom
 		SecondaryCamera = Object.Instantiate(_mainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
 		for (int i = 0; i < SecondaryCamera.transform.childCount; i++)
 		{
-			Object.DestroyImmediate(SecondaryCamera.transform.GetChild(i));
+			Object.DestroyImmediate(SecondaryCamera.transform.GetChild(i).gameObject);
 		}
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 		SecondaryCamera.gameObject.SetActive(false);

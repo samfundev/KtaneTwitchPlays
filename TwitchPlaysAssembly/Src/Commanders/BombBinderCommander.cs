@@ -9,6 +9,7 @@ public class BombBinderCommander : ICommandResponder
     #region Constructors
     public BombBinderCommander(BombBinder bombBinder)
     {
+	    Instance = this;
         BombBinder = bombBinder;
         Selectable = BombBinder.GetComponent<Selectable>();
         FloatingHoldable = BombBinder.GetComponent<FloatingHoldable>();
@@ -38,7 +39,9 @@ public class BombBinderCommander : ICommandResponder
 
             if (message.EqualsAny("drop","let go","put down"))
             {
-                LetGoBombBinder();
+	            IEnumerator drop = LetGoBombBinder();
+	            while (drop.MoveNext())
+		            yield return drop.Current;
             }
             else if (message.Equals("select"))
             {
@@ -109,14 +112,16 @@ public class BombBinderCommander : ICommandResponder
         }
     }
 
-    public void LetGoBombBinder()
+    public IEnumerator LetGoBombBinder()
     {
-        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
-        if (holdState == FloatingHoldable.HoldStateEnum.Held)
-        {
-            DeselectObject(Selectable);
-        }
-    }
+		FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
+	    if (holdState != FloatingHoldable.HoldStateEnum.Held) yield break;
+	    while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
+	    {
+		    DeselectObject(Selectable);
+		    yield return new WaitForSeconds(0.1f);
+	    }
+	}
     
     private void InitialisePage()
     {
@@ -319,6 +324,7 @@ public class BombBinderCommander : ICommandResponder
     #endregion
 
     #region Readonly Fields
+	public static BombBinderCommander Instance;
     public readonly BombBinder BombBinder = null;
     public readonly Selectable Selectable = null;
     public readonly FloatingHoldable FloatingHoldable = null;
@@ -326,6 +332,7 @@ public class BombBinderCommander : ICommandResponder
     #endregion
 
     #region Private Static Fields
+
     #endregion
 
     #region Private Fields

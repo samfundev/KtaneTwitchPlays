@@ -60,12 +60,19 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	public static IEnumerator DropAllHoldables()
 	{
+		IEnumerator drop;
 		foreach (KMHoldableCommander commander in HoldableCommanders)
 		{
-			IEnumerator drop = commander.RespondToCommand("The Bomb", "drop");
+			drop = commander.RespondToCommand("The Bomb", "drop");
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
 		}
+		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand("The Bomb", "drop", null);
+		while (drop != null && drop.MoveNext())
+			yield return drop.Current;
+		drop = BombBinderCommander.Instance?.RespondToCommand("The Bomb", "drop", null);
+		while (drop != null && drop.MoveNext())
+			yield return drop.Current;
 	}
 
 	string resolveMissionID(string targetID, out string failureMessage)

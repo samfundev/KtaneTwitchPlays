@@ -152,10 +152,6 @@ public class ElevatorGameRoom : GameRoom
 				_currentWall = CurrentElevatorWall.Left;
 				break;
 			case CurrentElevatorWall.Left:
-				/*rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 0.75f, false, false);
-				while (rotateCamera.MoveNext())
-					yield return rotateCamera.Current;
-				rotateCamera = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Right, 0.75f, false, false);*/
 				rotateCamera = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, false, false);
 				_currentWall = CurrentElevatorWall.Right;
 				break;
@@ -186,17 +182,7 @@ public class ElevatorGameRoom : GameRoom
 		CurrentElevatorWall currentWall = _currentWall == CurrentElevatorWall.Dropped ? CurrentElevatorWall.Back : _currentWall;
 		if (edge.EqualsAny("all edges", "l","left"))
 		{
-			/*if (currentWall == CurrentElevatorWall.Right)
-			{
-				showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 0.75f, false, false);
-				while (showEdgework.MoveNext())
-					yield return showEdgework.Current;
-				showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Left, 0.75f, false, true);
-			}
-			else
-			{*/
-				showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
-			//}
+			showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
 			_currentWall = CurrentElevatorWall.Left;
 			while (showEdgework.MoveNext())
 				yield return showEdgework.Current;
@@ -212,33 +198,13 @@ public class ElevatorGameRoom : GameRoom
 		}
 		if (edge.EqualsAny("all edges", "r", "right"))
 		{
-			/*if (currentWall == CurrentElevatorWall.Left)
-			{
-				showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 0.75f, false, false);
-				while (showEdgework.MoveNext())
-					yield return showEdgework.Current;
-				showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Right, 0.75f, false, true);
-			}
-			else
-			{*/
-				showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, edge == "all edges", true);
-			//}
+			showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, edge == "all edges", true);
 			_currentWall = CurrentElevatorWall.Right;
 			while (showEdgework.MoveNext())
 				yield return showEdgework.Current;
 			yield return new WaitForSeconds(3);
 		}
-		/*if (_currentWall != CurrentElevatorWall.Back && currentWall != CurrentElevatorWall.Back && _currentWall != currentWall)
-		{
-			showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 0.75f, true, false);
-			while (showEdgework.MoveNext())
-				yield return showEdgework.Current;
-			showEdgework = DoElevatorCameraRotate(CurrentElevatorWall.Back, currentWall, 0.75f, false, false);
-		}
-		else
-		{*/
-			showEdgework = DoElevatorCameraRotate(_currentWall, currentWall, 1, true, false);
-		//}
+		showEdgework = DoElevatorCameraRotate(_currentWall, currentWall, 1, true, false);
 		_currentWall = currentWall;
 		while (showEdgework.MoveNext())
 			yield return showEdgework.Current;
@@ -255,13 +221,6 @@ public class ElevatorGameRoom : GameRoom
 
 		switch (rotation)
 		{
-			/*case 90 when _currentWall == CurrentElevatorWall.Right:
-				turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 0.75f, false, false);
-				while (turnBomb.MoveNext())
-					yield return turnBomb.Current;
-				turnBomb = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Left, 0.75f, false, false);
-				_currentWall = CurrentElevatorWall.Left;
-				break;*/
 			case 90 when _currentWall != CurrentElevatorWall.Left:
 				turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, false);
 				_currentWall = CurrentElevatorWall.Left;
@@ -270,13 +229,6 @@ public class ElevatorGameRoom : GameRoom
 				turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 1, false, false);
 				_currentWall = CurrentElevatorWall.Back;
 				break;
-			/*case 270 when _currentWall == CurrentElevatorWall.Left:
-				turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Back, 0.75f, false, false);
-				while (turnBomb.MoveNext())
-					yield return turnBomb.Current;
-				turnBomb = DoElevatorCameraRotate(CurrentElevatorWall.Back, CurrentElevatorWall.Right, 0.75f, false, false);
-				_currentWall = CurrentElevatorWall.Left;
-				break;*/
 			case 270 when _currentWall != CurrentElevatorWall.Right:
 				turnBomb = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Right, 1, false, false);
 				_currentWall = CurrentElevatorWall.Right;

@@ -15,6 +15,7 @@ public class FreeplayCommander : ICommandResponder
 
     public FreeplayCommander(FreeplayDevice freeplayDevice)
     {
+	    Instance = this;
         FreeplayDevice = freeplayDevice;
         Selectable = FreeplayDevice.GetComponent<Selectable>();
         SelectableChildren = Selectable.Children;
@@ -49,26 +50,24 @@ public class FreeplayCommander : ICommandResponder
     public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
 	{
         message = message.ToLowerInvariant();
-        FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 
-        if (holdState == FloatingHoldable.HoldStateEnum.Held)
-        {
-            if (message.EqualsAny("drop","let go","put down"))
-            {
-                LetGoFreeplayDevice();
-                yield break;
-            }
-        }
-        else
-        {
-            IEnumerator holdCoroutine = HoldFreeplayDevice();
-            while (holdCoroutine.MoveNext())
-            {
-                yield return holdCoroutine.Current;
-            }
-        }
+		if (message.EqualsAny("drop", "let go", "put down"))
+		{
+			IEnumerator drop = LetGoFreeplayDevice();
+			while (drop.MoveNext())
+				yield return drop.Current;
+			yield break;
+		}
+		else
+		{
+			IEnumerator holdCoroutine = HoldFreeplayDevice();
+			while (holdCoroutine.MoveNext())
+			{
+				yield return holdCoroutine.Current;
+			}
+		}
 
-        string changeHoursTo = string.Empty;
+		string changeHoursTo = string.Empty;
         string changeMinutesTo = string.Empty;
         string changeSecondsTo = string.Empty;
         string changeBombsTo = string.Empty;
@@ -464,12 +463,14 @@ public class FreeplayCommander : ICommandResponder
         }
     }
 
-    public void LetGoFreeplayDevice()
+    public IEnumerator LetGoFreeplayDevice()
     {
         FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
-        if (holdState == FloatingHoldable.HoldStateEnum.Held)
+	    if (holdState != FloatingHoldable.HoldStateEnum.Held) yield break;
+        while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
         {
             DeselectObject(Selectable);
+	        yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -509,6 +510,7 @@ public class FreeplayCommander : ICommandResponder
     #endregion
 
     #region Readonly Fields
+	public static FreeplayCommander Instance;
     public readonly FreeplayDevice FreeplayDevice = null;
     public readonly Selectable Selectable = null;
     public readonly Selectable[] SelectableChildren = null;
