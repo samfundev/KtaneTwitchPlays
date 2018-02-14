@@ -11,7 +11,6 @@ public class PostGameMessageResponder : MessageResponder
     #region Unity Lifecycle
     private void OnEnable()
     {
-	    GameRoom.ToggleCamera(true);
         StartCoroutine(CheckForResultsPage());
 
         _leaderboardDisplay = Instantiate<TwitchLeaderboard>(twitchLeaderboardPrefab);

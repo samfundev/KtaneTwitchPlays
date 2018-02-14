@@ -310,7 +310,7 @@ public class ElevatorGameRoom : GameRoom
 		Vector3 currentWallRotation = fromEdgework ? ElevatorEdgeworkCameraRotations[(int)currentWall] : ElevatorCameraRotations[(int)currentWall];
 		Vector3 newWallPosition = toEdgework ? ElevatorEdgeworkCameraPositions[(int)newWall] : ElevatorCameraPositions[(int)newWall];
 		Vector3 newWallRotation = toEdgework ? ElevatorEdgeworkCameraRotations[(int)newWall] : ElevatorCameraRotations[(int)newWall];
-		Transform camera = CustomCamera.transform;
+		Transform camera = SecondaryCamera.transform;
 		while ((Time.time - initialTime) < duration)
 		{
 			float lerp = (Time.time - initialTime) / duration;
@@ -342,7 +342,7 @@ public class ElevatorGameRoom : GameRoom
 		Vector3.zero,
 		new Vector3(0,90,0), 
 
-		Vector3.zero
+		new Vector3(26.39f, 0, 0)
 	};
 
 	private Vector3[] ElevatorEdgeworkCameraRotations =
@@ -350,7 +350,7 @@ public class ElevatorGameRoom : GameRoom
 		new Vector3(20,-90,0),
 		new Vector3(20,0,0),
 		new Vector3(20,90,0),
-		Vector3.zero
+		new Vector3(26.39f, 0, 0)
 	};
 
 	private Vector3[] ElevatorCameraPositions =

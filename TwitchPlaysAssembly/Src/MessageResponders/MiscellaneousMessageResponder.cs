@@ -611,37 +611,44 @@ public class MiscellaneousMessageResponder : MessageResponder
 	    }
 	    
 	    bool cameraChanged = false;
+	    bool cameraChangeAttempted = false;
 	    if (text.RegexMatch(out Match match, "move ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    GameRoom.MoveCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
-		    cameraChanged = true;
+		    cameraChanged = !GameRoom.IsMainCamera;
+		    cameraChangeAttempted = true;
 	    }
 	    if (text.RegexMatch(out match, "move ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    GameRoom.MoveCamera(new Vector3(0, float.Parse(match.Groups[1].Value), 0));
-		    cameraChanged = true;
-		}
+		    cameraChanged = !GameRoom.IsMainCamera;
+		    cameraChangeAttempted = true;
+	    }
 	    if (text.RegexMatch(out match, "move ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 			GameRoom.MoveCamera(new Vector3(0, 0, float.Parse(match.Groups[1].Value)));
-			cameraChanged = true;
-		}
+			cameraChanged = !GameRoom.IsMainCamera;
+		    cameraChangeAttempted = true;
+	    }
 
 	    if (text.RegexMatch(out match, "rotate ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    GameRoom.RotateCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
-		    cameraChanged = true;
-		}
+		    cameraChanged = !GameRoom.IsMainCamera;
+		    cameraChangeAttempted = true;
+	    }
 	    if (text.RegexMatch(out match, "rotate ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    GameRoom.RotateCamera(new Vector3(0, float.Parse(match.Groups[1].Value), 0));
-			cameraChanged = true;
-		}
+			cameraChanged = !GameRoom.IsMainCamera;
+		    cameraChangeAttempted = true;
+	    }
 	    if (text.RegexMatch(out match, "rotate ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    GameRoom.RotateCamera(new Vector3(0, 0, float.Parse(match.Groups[1].Value)));
-			cameraChanged = true;
-		}
+			cameraChanged = !GameRoom.IsMainCamera;
+		    cameraChangeAttempted = true;
+	    }
 
 	    if (text.RegexMatch("reset ?camera"))
 	    {
@@ -649,9 +656,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 		    GameRoom.ResetCamera();
 	    }
 
+	    if (cameraChangeAttempted && !cameraChanged)
+	    {
+		    IRCConnection.Instance.SendMessage("Please switch to the secondary camera using \"!secondary camera\" before attempting to move it.");
+	    }
 	    if (cameraChanged)
 	    {
-		    Transform camera = GameRoom.InitializeCameraMover();
+		    Transform camera = GameRoom.SecondaryCamera.transform;
 
 		    DebugHelper.Log($"Camera Position = {Math.Round(camera.localPosition.x, 3)},{Math.Round(camera.localPosition.y, 3)},{Math.Round(camera.localPosition.z, 3)}");
 		    DebugHelper.Log($"Camera Euler Angles = {Math.Round(camera.localEulerAngles.x, 3)},{Math.Round(camera.localEulerAngles.y, 3)},{Math.Round(camera.localEulerAngles.z, 3)}");

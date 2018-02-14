@@ -71,6 +71,7 @@ public class TwitchPlaysService : MonoBehaviour
 	    _publicProperties.TwitchPlaysService = this;
 		if (TwitchPlaySettings.data.SkipModManagerInstuctionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
 			ModManagerManualInstructionScreen.HasShownOnce = true;
+		GameRoom.InitializeSecondaryCamera();
 	}
 
 	private void OnDisable()
@@ -136,6 +137,8 @@ public class TwitchPlaysService : MonoBehaviour
 
     private MessageResponder GetActiveResponder(KMGameInfo.State state)
     {
+	    GameRoom.ResetCamera();
+	    GameRoom.ToggleCamera(true);
         switch (state)
         {
             case KMGameInfo.State.Gameplay:

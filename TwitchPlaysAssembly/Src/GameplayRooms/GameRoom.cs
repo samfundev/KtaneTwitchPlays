@@ -146,71 +146,67 @@ public abstract class GameRoom
 	}
 
 
-	public static Camera MainCamera;
-	public static Camera CustomCamera;
+	private static Camera _mainCamera;
+	public static Camera SecondaryCamera;
 	public static bool IsMainCamera = true;
-	public static Transform InitializeCameraMover()
+	public static void InitializeSecondaryCamera()
 	{
-		if (MainCamera == null)
-		{
-			GameObject customMover = new GameObject("CustomCameraMover");
-			customMover.transform.SetParent(Camera.main.transform.parent.parent);
-			MainCamera = Camera.main;
-			CustomCamera = Object.Instantiate(MainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
-			for (int i = 0; i < CustomCamera.transform.childCount; i++)
-			{
-				Object.DestroyImmediate(CustomCamera.transform.GetChild(i));
-			}
+		if (SecondaryCamera != null) return;
 
+		GameObject customMover = new GameObject("CustomCameraMover");
+		customMover.transform.SetParent(Camera.main.transform.parent.parent);
+		_mainCamera = Camera.main;
+		SecondaryCamera = Object.Instantiate(_mainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
+		for (int i = 0; i < SecondaryCamera.transform.childCount; i++)
+		{
+			Object.DestroyImmediate(SecondaryCamera.transform.GetChild(i));
 		}
-		return IsMainCamera ? MainCamera.transform : CustomCamera.transform;
+		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
+		SecondaryCamera.gameObject.SetActive(false);
 	}
 
 	public static void ToggleCamera(bool main)
 	{
-		InitializeCameraMover();
 		IsMainCamera = main;
-		CustomCamera.gameObject.SetActive(!main);
-		MainCamera.gameObject.SetActive(main);
+		SecondaryCamera.gameObject.SetActive(!main);
+		_mainCamera.gameObject.SetActive(main);
 	}
 
 	public static void ResetCamera()
 	{
-		Transform t = InitializeCameraMover();
-		if (IsMainCamera) return;
-		t.localPosition = Vector3.zero;
-		t.localEulerAngles = Vector3.zero;
+		SecondaryCamera.transform.localPosition = Vector3.zero;
+		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 	}
 
 	public static void SetCameraPostion(Vector3 movement)
 	{
 		if (IsMainCamera) return;
-		InitializeCameraMover().localPosition = movement;
+		SecondaryCamera.transform.localPosition = movement;
 	}
 
 	public static void SetCameraRotation(Vector3 rotation)
 	{
 		if (IsMainCamera) return;
-		InitializeCameraMover().localEulerAngles = rotation;
+		SecondaryCamera.transform.localEulerAngles = rotation;
 	}
 
 	public static void MoveCamera(Vector3 movement)
 	{
 		if (IsMainCamera) return;
 		Vector3 m = CurrentCameraPosition;
-		InitializeCameraMover().localPosition = new Vector3(movement.x + m.x, movement.y + m.y, movement.z + m.z);
+		SecondaryCamera.transform.localPosition = new Vector3(movement.x + m.x, movement.y + m.y, movement.z + m.z);
 	}
 
 	public static void RotateCamera(Vector3 rotation)
 	{
 		if (IsMainCamera) return;
 		Vector3 r = CurrentCameraEulerAngles;
-		InitializeCameraMover().localEulerAngles = new Vector3(r.x + rotation.x, r.y + rotation.y, r.z + rotation.z);
+		SecondaryCamera.transform.localEulerAngles = new Vector3(r.x + rotation.x, r.y + rotation.y, r.z + rotation.z);
 	}
 
-	public static Vector3 CurrentCameraPosition => InitializeCameraMover().localPosition;
+	public static Vector3 CurrentCameraPosition => SecondaryCamera.transform.localPosition;
 
-	public static Vector3 CurrentCameraEulerAngles => InitializeCameraMover().localEulerAngles;
+	public static Vector3 CurrentCameraEulerAngles => SecondaryCamera.transform.localEulerAngles;
 
 	public virtual IEnumerator ReportBombStatus()
     {
