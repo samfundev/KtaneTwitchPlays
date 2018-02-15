@@ -1,6 +1,4 @@
-﻿using System;
-
-public class TwitchPlaysProperties : PropertiesBehaviour
+﻿public class TwitchPlaysProperties : PropertiesBehaviour
 {
 	public TwitchPlaysProperties()
 	{
