@@ -6,11 +6,10 @@ This mod adds Twitch Chat direct control into Keep Talking and Nobody Explodes, 
 ## Links
 * **Main Page:** http://www.twitchplaysktane.me
 * **Manual:** http://www.twitchplaysktane.me/Manual/
-* **Steam Workshop Link:** http://steamcommunity.com/sharedfiles/filedetails/?id=894736519
-* **Non-Steam Release:** [Latest Release](https://github.com/ashbash1987/ktanemod-twitchplays/releases/download/v1.0.0/TwitchPlays-1.0.0.zip)
+* **Non-Steam Release:** [Latest Release](https://github.com/samfun123/KtaneTwitchPlays/wiki/Latest-Build)
 
 ## Wiki
-There is a [wiki](https://github.com/ashbash1987/ktanemod-twitchplays/wiki) for this project, which covers all of the steps of how to setup *TP:KTaNE* and goes through all of the commands available to Twitch Chat.
+There is a [wiki](https://github.com/samfun123/KtaneTwitchPlays/wiki) for this project, which covers all of the steps of how to setup *TP:KTaNE* and goes through all of the commands available to Twitch Chat.
 
 ## To-do List
 ### Phase 1
