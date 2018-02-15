@@ -1,11 +1,11 @@
-![Twitch Plays: Keep Talking and Nobody Explodes](http://twitchplaysktane.me/android-chrome-192x192.png)
+![Twitch Plays: Keep Talking and Nobody Explodes](https://github.com/samfun123/KtaneTwitchPlays/raw/gh-pages/android-chrome-192x192.png)
 
 # Twitch Plays: Keep Talking and Nobody Explodes
 This mod adds Twitch Chat direct control into Keep Talking and Nobody Explodes, very much inspired by the original [Twitch Plays Pokémon](http://tppdevs.com/) channel.
 
 ## Links
-* **Main Page:** http://www.twitchplaysktane.me
-* **Manual:** http://www.twitchplaysktane.me/Manual/
+<!-- * **Main Page:** http://www.twitchplaysktane.me 
+* **Manual:** http://www.twitchplaysktane.me/Manual/ -->
 * **Non-Steam Release:** [Latest Release](https://github.com/samfun123/KtaneTwitchPlays/wiki/Latest-Build)
 
 ## Wiki
