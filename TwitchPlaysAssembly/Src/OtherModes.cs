@@ -1,7 +1,39 @@
 ﻿public static class OtherModes
 {
-    public static bool timedModeOn = false;
+	public static bool timedModeOn
+	{
+		get
+		{
+			if (BombMessageResponder.BombActive)
+			{
+				return _timedModeCurrentBomb;
+			}
+			if (_timedModeCurrentBomb != _timedModeNextBomb)
+				IRCConnection.Instance.SendMessage(_timedModeNextBomb ? "Time Mode Enabled" : "Time Mode Disabled");
+			_timedModeCurrentBomb = _timedModeNextBomb;
+			return _timedModeCurrentBomb;
+		}
+		set
+		{
+			_timedModeNextBomb = value;
+			if (!BombMessageResponder.BombActive)
+			{
+				_timedModeCurrentBomb = value;
+				IRCConnection.Instance.SendMessage(value ? "Time Mode Enabled" : "Time Mode Disabled");
+			}
+			else
+			{
+				if (value != _timedModeCurrentBomb)
+					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will be {1} for next bomb.", value ? "enabled" : "disabled", value ? "disabled" : "enabled");
+				else
+					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will remain {0} for next bomb.", value ? "enabled" : "disabled");
+			}
+		}
+	}
     public static float timedMultiplier = 9;
+
+	private static bool _timedModeCurrentBomb = false;
+	private static bool _timedModeNextBomb = false;
 
     public static bool vsModeOn = false;
     public static int teamHealth = 0;
@@ -37,19 +69,18 @@
 
     public static void toggleTimedMode()
     {
-        if (BombMessageResponder.BombActive) return;
-        timedModeOn = !timedModeOn;
-    }
+	    timedModeOn = !_timedModeNextBomb;
+	}
 
     public static bool vsModeCheck()
     {
         return vsModeOn;
     }
 
-    public static bool timedModeCheck()
-    {
-        return timedModeOn;
-    }
+	public static void RefreshTimeMode()
+	{
+		if (BombMessageResponder.BombActive || timedModeOn) return;
+	}
 
     public static float getMultiplier()
     {

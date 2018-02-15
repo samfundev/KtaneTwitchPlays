@@ -187,11 +187,14 @@ public class MiscellaneousMessageResponder : MessageResponder
         }
         else if (text.Equals("timemode", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-            {
-                OtherModes.toggleTimedMode();
-	            IRCConnection.Instance.SendMessage(OtherModes.timedModeCheck() ? "Time Mode Enabled" : "Time Mode Disabled");
-            }
+	        if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone)
+	        {
+		        OtherModes.toggleTimedMode();
+	        }
+	        else
+	        {
+		        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TimeModeCommandDisabled, userNickName);
+	        }
         }
         else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
         {

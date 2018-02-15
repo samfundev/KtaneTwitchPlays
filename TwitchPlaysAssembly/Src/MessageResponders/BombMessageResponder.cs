@@ -225,7 +225,8 @@ public class BombMessageResponder : MessageResponder
         MusicPlayer.StopAllMusic();
 
 	    GameRoom.Instance?.OnDisable();
-    }
+	    OtherModes.RefreshTimeMode();
+	}
 
 	public void DestroyComponentHandles()
 	{

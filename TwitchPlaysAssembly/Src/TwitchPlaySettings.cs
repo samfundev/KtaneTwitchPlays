@@ -34,6 +34,7 @@ public class TwitchPlaySettingsData
     public bool EnforceSolveAllBeforeTurningKeys = true;
 	public bool LogUploaderShortUrls = false;
 
+	public bool EnableTimeModeForEveryone = false;
 	public int TimeModeStartingTime = 5;
 	public float TimeModeStartingMultiplier = 9.0f;
 	public float TimeModeMaxMultiplier = 10.0f;
@@ -136,6 +137,7 @@ public class TwitchPlaySettingsData
     public string FreePlayNeedyDisabled = "Sorry @{0}, Only authorized users may enable/disable Needy modules";
     public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
     public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
+	public string TimeModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Time Mode";
 	public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "Sorry @{0}, profile management is currently disabled.";
 	public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
@@ -275,6 +277,7 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref FreePlayNeedyDisabled, data.FreePlayNeedyDisabled, 1);
         valid &= ValidateString(ref FreePlayHardcoreDisabled, data.FreePlayHardcoreDisabled, 1);
         valid &= ValidateString(ref FreePlayModsOnlyDisabled, data.FreePlayModsOnlyDisabled, 1);
+	    valid &= ValidateString(ref TimeModeCommandDisabled, data.TimeModeCommandDisabled, 1);
         valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
 
         valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2, SettingsVersion < 1);

@@ -624,14 +624,11 @@ public abstract class ComponentSolver
                 tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
             }
 	        IRCConnection.Instance.SendMessage(tempMessage);
-        }
+	        BombCommander.StrikeCount = 0;
+	        BombMessageResponder.moduleCameras.UpdateStrikes();
+		}
 	    Leaderboard.Instance.AddScore(userNickName, strikePenalty);
 	    Leaderboard.Instance.AddStrike(userNickName, strikeCount);
-        if (OtherModes.timedModeOn)
-        {
-            BombCommander.StrikeCount = 0;
-            BombMessageResponder.moduleCameras.UpdateStrikes();
-        }
         StrikeMessage = string.Empty;
     }
     #endregion
