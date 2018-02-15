@@ -134,17 +134,14 @@ public class TwitchPlaysService : MonoBehaviour
 
     private MessageResponder GetActiveResponder(KMGameInfo.State state)
     {
-	    if (GameRoom.SecondaryCamera != null)
-	    {
-		    GameRoom.ResetCamera();
-		    GameRoom.ToggleCamera(true);
-	    }
 	    switch (state)
         {
             case KMGameInfo.State.Gameplay:
+	            DefaultCamera();
                 return bombMessageResponder;
 
             case KMGameInfo.State.Setup:
+	            DefaultCamera();
 	            _coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
 	            _coroutinesToStart.Enqueue(MultipleBombs.Refresh());
 	            _coroutinesToStart.Enqueue(CreateSolversForAllBombComponents());
@@ -152,6 +149,7 @@ public class TwitchPlaysService : MonoBehaviour
                 return missionMessageResponder;
 
             case KMGameInfo.State.PostGame:
+	            DefaultCamera();
                 return postGameMessageResponder;
 
             case KMGameInfo.State.Transitioning:
@@ -163,6 +161,15 @@ public class TwitchPlaysService : MonoBehaviour
                 return null;
         }
     }
+
+	private void DefaultCamera()
+	{
+		if (GameRoom.SecondaryCamera != null)
+		{
+			GameRoom.ResetCamera();
+			GameRoom.ToggleCamera(true);
+		}
+	}
 
 	private IEnumerator CreateSolversForAllBombComponents()
 	{

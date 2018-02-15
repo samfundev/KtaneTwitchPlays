@@ -360,7 +360,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					{
 						string distributionName = distributions.Keys.OrderByDescending(x => x.Length).FirstOrDefault(y => split[1].Contains(y));
 					    if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out int modules) ||
-							modules < 1 || modules > GameInfo.GetMaximumBombModules())
+							modules < 1 || modules > (TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules()))
 						{
 							IRCConnection.Instance.SendMessage(failureMessage);
 						}
@@ -391,7 +391,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 					if (int.TryParse(split[1], out int modules) && modules > 0)
 					{
-						int maxModules = GameInfo.GetMaximumBombModules();
+						int maxModules = (TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules());
 						if (modules > maxModules)
 						{
 							IRCConnection.Instance.SendMessage("Sorry, the maximum number of modules is {0}.", maxModules);
