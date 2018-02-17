@@ -599,10 +599,10 @@ public class BombMessageResponder : MessageResponder
 	        {
 		        _coroutineQueue.AddToQueue(BombHandles[_currentBomb].HideMainUIWindow(), componentHandle.bombID);
 		        _coroutineQueue.AddToQueue(BombHandles[componentHandle.bombID].ShowMainUIWindow(), componentHandle.bombID);
-		        _coroutineQueue.AddToQueue(BombCommanders[_currentBomb].LetGoBomb(),componentHandle.bombID);
+		        _coroutineQueue.AddToQueue(BombCommanders[_currentBomb].LetGoBomb(), componentHandle.bombID);
 		        _currentBomb = componentHandle.bombID;
 	        }
-	        _coroutineQueue.AddToQueue(onMessageReceived,componentHandle.bombID);
+	        _coroutineQueue.AddToQueue(onMessageReceived, componentHandle.bombID);
         }
 
 	    if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))

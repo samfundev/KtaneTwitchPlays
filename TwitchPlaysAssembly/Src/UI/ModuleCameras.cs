@@ -181,7 +181,6 @@ public class ModuleCameras : MonoBehaviour
 
     }
 
-
     #region Public Fields
     public Text timerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
 	public Text timerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
@@ -458,8 +457,6 @@ public class ModuleCameras : MonoBehaviour
             strikeLimitPrefab.color = Color.yellow;
             strikesPrefab.text = conf;
             strikeLimitPrefab.text = "";
-
-
         }
         //     if (OtherModes.vsModeOn)
         //     {
@@ -621,7 +618,6 @@ public class ModuleCameras : MonoBehaviour
         {
             item.priority = priority;
         }
-
 
         if (priority >= CameraPinned)
         {

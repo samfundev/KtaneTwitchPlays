@@ -46,7 +46,6 @@ public class ExtendedPasswordComponentSolver : ComponentSolver
         }
     }
 
-
     static ExtendedPasswordComponentSolver()
     {
         _componentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");

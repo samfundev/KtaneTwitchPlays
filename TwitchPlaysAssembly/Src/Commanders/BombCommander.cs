@@ -41,7 +41,7 @@ public class BombCommander : ICommandResponder
 	{
         message = message.ToLowerInvariant();
 
-        if(message.EqualsAny("hold","pick up"))
+        if(message.EqualsAny("hold", "pick up"))
         {
             responseNotifier.ProcessResponse(CommandResponse.Start);
 
@@ -214,7 +214,7 @@ public class BombCommander : ICommandResponder
         IEnumerator returnToFace;
         float offset = edgework45 ? 0.0f : 45.0f;
 
-        if (edge.EqualsAny("all edges", "right","r"))
+        if (edge.EqualsAny("all edges", "right", "r"))
         {
             IEnumerator firstEdge = DoFreeYRotate(0.0f, 0.0f, 90.0f, 90.0f, 0.3f);
             while (firstEdge.MoveNext())
@@ -224,7 +224,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if (edge.EqualsAny("all edges", "bottom right","right bottom","br","rb"))
+        if (edge.EqualsAny("all edges", "bottom right", "right bottom", "br", "rb"))
         {
             IEnumerator firstSecondEdge = edge == ""
                 ? DoFreeYRotate(90.0f, 90.0f, 45.0f, 90.0f, 0.3f)
@@ -236,7 +236,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(0.5f);
         }
 
-        if (edge.EqualsAny("all edges", "bottom","b"))
+        if (edge.EqualsAny("all edges", "bottom", "b"))
         {
 
             IEnumerator secondEdge = edge == ""
@@ -261,7 +261,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(0.5f);
         }
 
-        if (edge.EqualsAny("all edges", "left","l"))
+        if (edge.EqualsAny("all edges", "left", "l"))
         {
             IEnumerator thirdEdge = edge == ""
                 ? DoFreeYRotate(-45.0f + offset, 90.0f, -90.0f, 90.0f, 0.3f)
@@ -273,7 +273,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if (edge.EqualsAny("all edges", "top left","left top","tl","lt"))
+        if (edge.EqualsAny("all edges", "top left", "left top", "tl", "lt"))
         {
             IEnumerator thirdFourthEdge = edge == ""
                 ? DoFreeYRotate(-90.0f, 90.0f, -135.0f, 90.0f, 0.3f)
@@ -285,7 +285,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(0.5f);
         }
 
-        if (edge.EqualsAny("all edges", "top","t"))
+        if (edge.EqualsAny("all edges", "top", "t"))
         {
             IEnumerator fourthEdge = edge == ""
                 ? DoFreeYRotate(-135.0f + offset, 90.0f, -180.0f, 90.0f, 0.3f)
@@ -297,7 +297,7 @@ public class BombCommander : ICommandResponder
             yield return new WaitForSeconds(2.0f);
         }
 
-        if (edge.EqualsAny("all edges", "top right","right top","tr","rt"))
+        if (edge.EqualsAny("all edges", "top right", "right top", "tr", "rt"))
         {
             IEnumerator fourthFirstEdge = edge == ""
                 ? DoFreeYRotate(-180.0f, 90.0f, -225.0f, 90.0f, 0.3f)

@@ -179,7 +179,7 @@ public class IRCConnection : MonoBehaviour
 	private static void AddTextToHoldable(string text, params object[]args)
 	{
 		UnityEngine.Debug.LogFormat(text, args);
-		IRCConnectionManagerHoldable.IRCTextToDisplay.AddRange(string.Format(text,args).Wrap(60).Split(new[] { "\n" }, StringSplitOptions.None));
+		IRCConnectionManagerHoldable.IRCTextToDisplay.AddRange(string.Format(text, args).Wrap(60).Split(new[] { "\n" }, StringSplitOptions.None));
 	}
 	#endregion
 
@@ -487,7 +487,6 @@ public class IRCConnection : MonoBehaviour
             _messageQueue.Enqueue(new Message(userNickName, userColorCode, text));
         }
 
-
 	    if (!ColorUtility.TryParseHtmlString(userColorCode, out Color color)) return;
 	    lock (_userColors)
 	    {
@@ -710,7 +709,7 @@ public class IRCConnection : MonoBehaviour
 	        Instance._state = IRCConnectionState.Connected;
 	        BombMessageResponder.EnableDisableInput();
 			UserAccess.AddUser(Instance._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
-	        UserAccess.AddUser(Instance._settings.channelName.Replace("#",""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+	        UserAccess.AddUser(Instance._settings.channelName.Replace("#", ""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 	        UserAccess.WriteAccessList();
         }, false),
 

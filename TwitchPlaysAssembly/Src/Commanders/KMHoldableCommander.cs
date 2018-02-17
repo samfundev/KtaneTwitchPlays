@@ -61,7 +61,6 @@ public class KMHoldableCommander
 		}
 	}
 
-
 	public IEnumerator Hold(bool frontFace = true)
 	{
 		FloatingHoldable holdable = FloatingHoldable.GetComponent<FloatingHoldable>();
@@ -113,7 +112,6 @@ public class KMHoldableCommander
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
-
 
 	public void RotateByLocalQuaternion(Quaternion localQuaternion)
 	{

@@ -252,7 +252,7 @@ public class TwitchBombHandle : MonoBehaviour
 
     public void CauseExplosionByModuleCommand(string message, string reason)
     {
-        StartCoroutine(DelayBombExplosionCoroutine(message, reason,0.1f));
+        StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
     }
     
     

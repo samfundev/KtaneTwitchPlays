@@ -8,14 +8,14 @@ public class SafetySafeComponentSolver : ComponentSolver
 {
     private static Dictionary<string, int> DialPosNames = new Dictionary<string, int>()
     {
-        {"tl",0}, {"tm",1}, {"tc",1}, {"tr",2},
-        {"lt",0}, {"mt",1}, {"ct",1}, {"rt",2},
-        {"bl",3}, {"bm",4}, {"bc",4}, {"br",5},
-        {"lb",3}, {"mb",4}, {"cb",4}, {"rb",5},
-        {"topleft",0}, {"topmiddle",1}, {"topcenter",1}, {"topcentre",1}, {"topright",2},
-        {"lefttop",0}, {"middletop",1}, {"centertop",1}, {"centretop",1}, {"righttop",2},
-        {"bottomleft",3}, {"bottommiddle",4}, {"bottomcenter",4}, {"bottomcentre",4}, {"bottomright",5},
-        {"leftbottom",3}, {"middlebottom",4}, {"centerbottom",4}, {"centrebottom",4}, {"rightbottom",5},
+        {"tl", 0}, {"tm", 1}, {"tc", 1}, {"tr", 2},
+        {"lt", 0}, {"mt", 1}, {"ct", 1}, {"rt", 2},
+        {"bl", 3}, {"bm", 4}, {"bc", 4}, {"br", 5},
+        {"lb", 3}, {"mb", 4}, {"cb", 4}, {"rb", 5},
+        {"topleft", 0}, {"topmiddle", 1}, {"topcenter", 1}, {"topcentre", 1}, {"topright", 2},
+        {"lefttop", 0}, {"middletop", 1}, {"centertop", 1}, {"centretop", 1}, {"righttop", 2},
+        {"bottomleft", 3}, {"bottommiddle", 4}, {"bottomcenter", 4}, {"bottomcentre", 4}, {"bottomright", 5},
+        {"leftbottom", 3}, {"middlebottom", 4}, {"centerbottom", 4}, {"centrebottom", 4}, {"rightbottom", 5},
     };
 
     private static string[] DialNames =

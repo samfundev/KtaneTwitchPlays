@@ -81,7 +81,6 @@ public class IRCConnectionManagerHandler : HoldableHandler
 		}
 	}
 
-
 	public static IRCConnectionManagerHandler Instance;
 	private readonly KMSelectable _connectButton;
 	private readonly TPElevatorSwitch _elevatorSwitch;
@@ -187,6 +186,4 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 		StartCoroutine(RefreshIRCBackground());
 		TwitchPlaysDataRefreshed = false;
 	}
-
-
 }

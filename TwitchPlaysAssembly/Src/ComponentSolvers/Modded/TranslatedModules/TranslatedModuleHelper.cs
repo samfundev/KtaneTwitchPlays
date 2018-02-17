@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -11,44 +9,44 @@ public static class TranslatedModuleHelper
 	{
 		{"en", ""},
 		{"cu", null },
-		{"da","%20translated%20(Dansk)" },
-		{"de","%20translated%20(Deutsch)" },
-		{"et","%20translated%20(eesti)" },
-		{"es","%20translated%20(Espa%C3%B1ol)" },
-		{"eo","%20translated%20(Esperanto)" },
-		{"fr","%20translated%20(Fran%C3%A7ais)" },
-		{"ko","%20translated%20(%ED%95%9C%EA%B5%AD%EC%96%B4)" },
-		{"it","%20translated%20(Italiano)" },
-		{"nl","%20translated%20(Nederlands)" },
-		{"jp","%20translated%20(%E6%97%A5%E6%9C%AC%E8%AA%9E)" },
-		{"pl","%20translated%20(Polski)" },
-		{"pt-br","%20translated%20(Portugu%C3%AAs%20do%20Brasil)" },
-		{"ru","%20translated%20(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)" },
-		{"fi","%20translated%20(Suomi)" },
-		{"sv","%20translated%20(Svenska)" },
-		{"th","%20translated%20(%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%84%E0%B8%97%E0%B8%A2)" },
+		{"da", "%20translated%20(Dansk)" },
+		{"de", "%20translated%20(Deutsch)" },
+		{"et", "%20translated%20(eesti)" },
+		{"es", "%20translated%20(Espa%C3%B1ol)" },
+		{"eo", "%20translated%20(Esperanto)" },
+		{"fr", "%20translated%20(Fran%C3%A7ais)" },
+		{"ko", "%20translated%20(%ED%95%9C%EA%B5%AD%EC%96%B4)" },
+		{"it", "%20translated%20(Italiano)" },
+		{"nl", "%20translated%20(Nederlands)" },
+		{"jp", "%20translated%20(%E6%97%A5%E6%9C%AC%E8%AA%9E)" },
+		{"pl", "%20translated%20(Polski)" },
+		{"pt-br", "%20translated%20(Portugu%C3%AAs%20do%20Brasil)" },
+		{"ru", "%20translated%20(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)" },
+		{"fi", "%20translated%20(Suomi)" },
+		{"sv", "%20translated%20(Svenska)" },
+		{"th", "%20translated%20(%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%84%E0%B8%97%E0%B8%A2)" },
 	};
 
 	private static readonly Dictionary<string, string> DisplayNameAddons = new Dictionary<string, string>()
 	{
 		{"en", " (English)"},
 		{"cu", " (Custom)" },
-		{"da"," (Dansk)" },
-		{"de"," (Deutsch)" },
-		{"et"," (eesti)" },
-		{"es"," (Español)" },
-		{"eo"," (Esperanto)" },
-		{"fr"," (Français)" },
-		{"ko"," (한국어)" },
-		{"it"," (Italiano)" },
-		{"nl"," (Nederlands)" },
-		{"jp"," (日本語)" },
-		{"pl"," (Polski)" },
-		{"pt-br"," (Português do Brasil)" },
-		{"ru"," (Русский)" },
-		{"fi"," (Suomi)" },
-		{"sv"," (Svenska)" },
-		{"th"," (ไทย)" },
+		{"da", " (Dansk)" },
+		{"de", " (Deutsch)" },
+		{"et", " (eesti)" },
+		{"es", " (Español)" },
+		{"eo", " (Esperanto)" },
+		{"fr", " (Français)" },
+		{"ko", " (한국어)" },
+		{"it", " (Italiano)" },
+		{"nl", " (Nederlands)" },
+		{"jp", " (日本語)" },
+		{"pl", " (Polski)" },
+		{"pt-br", " (Português do Brasil)" },
+		{"ru", " (Русский)" },
+		{"fi", " (Suomi)" },
+		{"sv", " (Svenska)" },
+		{"th", " (ไทย)" },
 	};
 
 	public static string GetModuleDisplayNameAddon(BombComponent bombComponent)

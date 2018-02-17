@@ -46,7 +46,6 @@ public class FreeplayCommander : ICommandResponder
         } while (result);
     }
 
-
     public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
 	{
         message = message.ToLowerInvariant();
@@ -185,7 +184,6 @@ public class FreeplayCommander : ICommandResponder
                 }
             }
 
-
             Match modulesMatch = Regex.Match(message, "[0-9]+");
 
             while (modulesMatch.Success)
@@ -243,11 +241,9 @@ public class FreeplayCommander : ICommandResponder
             }
             else if (message.Contains("vanilla") || message.Contains("mods"))
             {
-	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled,userNickName);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName);
                 startBomb = false;
             }
-
-            
         }
         else
         {
@@ -341,7 +337,6 @@ public class FreeplayCommander : ICommandResponder
         int multiplier = MultipleBombs.Installed() ? (MultipleBombs.GetMaximumBombCount() * 2) - 1 : 1;
         float newMaxTime = 600f + ((maxModules - 1) * multiplier * 60);
         FreeplayDevice.MAX_SECONDS_TO_SOLVE = newMaxTime;
-
 
         DebugHelper.Log("Freeplay settings reading section");
         FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings;
@@ -495,7 +490,6 @@ public class FreeplayCommander : ICommandResponder
         while (Time.time - initialTime < duration)
         {
             Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-
 
             SelectableManager.SetZSpin(0.0f);
             SelectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);

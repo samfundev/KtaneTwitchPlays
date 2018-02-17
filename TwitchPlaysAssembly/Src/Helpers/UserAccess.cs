@@ -47,7 +47,7 @@ public static class UserAccess
         try
         {
             DebugHelper.Log("UserAccess: Writing User Access information data to file: {0}", path);
-            File.WriteAllText(path, JsonConvert.SerializeObject(AccessLevels,Formatting.Indented,new StringEnumConverter()));
+            File.WriteAllText(path, JsonConvert.SerializeObject(AccessLevels, Formatting.Indented, new StringEnumConverter()));
         }
         catch (Exception ex)
         {

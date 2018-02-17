@@ -2,7 +2,6 @@
 using System.Reflection;
 using UnityEngine;
 
-
 public class SimpleHoldableHandler : HoldableHandler
 {
 	public SimpleHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, Component commandComponent, MethodInfo handler, string helpMessage)

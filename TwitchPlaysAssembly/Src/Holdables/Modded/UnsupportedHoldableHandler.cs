@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 
-
 public class UnsupportedHoldableHandler : HoldableHandler
 {
 	public UnsupportedHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable)

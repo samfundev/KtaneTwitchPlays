@@ -220,7 +220,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad", helpText = "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", manualCode = "Keypads", moduleScore = 1 };
 		ModComponentSolverInformation["InvisibleWallsComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Maze", helpText = "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", manualCode = "Mazes", moduleScore = 2 };
 
-
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)", moduleScore = 1 };
 		ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code Translated", helpText = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]", moduleScore = 3 };
@@ -580,7 +579,6 @@ public static class ComponentSolverFactory
 			Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
             if (types.Length < 2)
                 continue;
-
 
 	        DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
             foreach (Type type in types)

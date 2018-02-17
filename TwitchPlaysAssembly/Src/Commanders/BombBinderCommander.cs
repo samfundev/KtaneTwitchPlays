@@ -21,7 +21,7 @@ public class BombBinderCommander : ICommandResponder
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
 	{
         message = message.ToLowerInvariant();
-        if (message.EqualsAny("hold","pick up"))
+        if (message.EqualsAny("hold", "pick up"))
         {
             IEnumerator holdCoroutine = HoldBombBinder();
             while (holdCoroutine.MoveNext())
@@ -37,7 +37,7 @@ public class BombBinderCommander : ICommandResponder
                 yield break;
             }
 
-            if (message.EqualsAny("drop","let go","put down"))
+            if (message.EqualsAny("drop", "let go", "put down"))
             {
 	            IEnumerator drop = LetGoBombBinder();
 	            while (drop.MoveNext())
@@ -74,12 +74,12 @@ public class BombBinderCommander : ICommandResponder
                 string[] sequence = message.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string subCommand in sequence)
                 {
-                    if (subCommand.EqualsAny("down","d"))
+                    if (subCommand.EqualsAny("down", "d"))
                     {
                         MoveDownOnPage();
                         yield return new WaitForSeconds(0.2f);
                     }
-                    else if (subCommand.EqualsAny("up","u"))
+                    else if (subCommand.EqualsAny("up", "u"))
                     {
                         MoveUpOnPage();
                         yield return new WaitForSeconds(0.2f);

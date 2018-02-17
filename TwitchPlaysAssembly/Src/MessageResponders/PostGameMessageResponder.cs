@@ -14,7 +14,6 @@ public class PostGameMessageResponder : MessageResponder
 
         _leaderboardDisplay = Instantiate<TwitchLeaderboard>(twitchLeaderboardPrefab);
 
-
 	    Leaderboard.Instance.SaveDataToFile();
     }
 

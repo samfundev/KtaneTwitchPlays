@@ -197,7 +197,6 @@ public class Leaderboard
         ResetSortFlag();
     }
 
-
     public IEnumerable<LeaderboardEntry> GetSortedEntries(int count)
     {
         CheckAndSort();

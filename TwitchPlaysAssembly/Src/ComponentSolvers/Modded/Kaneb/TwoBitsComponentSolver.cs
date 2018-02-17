@@ -109,7 +109,6 @@ public class TwoBitsComponentSolver : ComponentSolver
     private static MethodInfo _getCurrentQueryStringMethod = null;
     private static FieldInfo _stateField = null;
 
-
     private MonoBehaviour[] _buttons = null;
     private MonoBehaviour _query = null;
     private MonoBehaviour _submit = null;

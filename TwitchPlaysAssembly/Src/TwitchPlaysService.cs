@@ -181,7 +181,7 @@ public class TwitchPlaysService : MonoBehaviour
 		KMBombModule[] bombModules = mods.SelectMany(x => x.GetModObjects<KMBombModule>()).ToArray();
 		KMNeedyModule[] needyModules = mods.SelectMany(x => x.GetModObjects<KMNeedyModule>()).ToArray();
 		DebugHelper.Log($"Found {bombModules.Length} solvable modules and {needyModules.Length} needy modules in {mods.Length} mods");
-		DebugHelper.Log($"Solvable Modules: {string.Join(", ",bombModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
+		DebugHelper.Log($"Solvable Modules: {string.Join(", ", bombModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
 		DebugHelper.Log($"Needy Modules: {string.Join(", ", needyModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
 
 		bool newModules = false;

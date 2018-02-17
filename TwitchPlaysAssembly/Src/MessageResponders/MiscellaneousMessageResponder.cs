@@ -179,7 +179,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.RegexMatch("^reward (-?[0-9]+)$"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1],out moduleCountBonus))
+            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1], out moduleCountBonus))
             {
                 TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
             }
@@ -274,7 +274,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
 
-            bool stepdown = split[0].Equals("remove",StringComparison.InvariantCultureIgnoreCase) && split[1].Equals(userNickName, StringComparison.InvariantCultureIgnoreCase);
+            bool stepdown = split[0].Equals("remove", StringComparison.InvariantCultureIgnoreCase) && split[1].Equals(userNickName, StringComparison.InvariantCultureIgnoreCase);
             if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) && !stepdown)
             {
                 return;
@@ -525,7 +525,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 			case "holdables":
 				string[] holdables = HoldableCommanders.Where(x => !(x.Handler is UnsupportedHoldableHandler)).Select(x => $"!{x.ID}").ToArray();
-				IRCConnection.Instance.SendMessage($"The following holdables are present: {string.Join(", ",holdables)}");
+				IRCConnection.Instance.SendMessage($"The following holdables are present: {string.Join(", ", holdables)}");
 				break;
 		}
 

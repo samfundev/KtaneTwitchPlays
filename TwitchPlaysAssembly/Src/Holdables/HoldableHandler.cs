@@ -466,11 +466,8 @@ public abstract class HoldableHandler
 			IRCConnection.Instance.SendMessage(HelpMessage, HoldableCommander.ID);
 	}
 
-
 	private string _delegatedStrikeUserNickName = null;
 	private string _currentUserNickName = null;
-
-	
 
 	private bool DisableOnStrike;
 	protected bool Strike { get; private set; }

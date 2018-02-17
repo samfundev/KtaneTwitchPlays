@@ -47,7 +47,6 @@ public class ProbingComponentSolver : ComponentSolver
         yield return "strike";
     }
 
-
     IEnumerator EnsureWiresConnected(int red, int blue)
     {
         int x = (red + 1) % 6;

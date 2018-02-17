@@ -16,7 +16,7 @@ public class PostGameCommander : ICommandResponder
         Selectable button = null;
         message = message.ToLowerInvariant();
 
-        if (message.EqualsAny("!continue","!back"))
+        if (message.EqualsAny("!continue", "!back"))
         {
             button = ContinueButton;
         }

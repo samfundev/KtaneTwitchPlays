@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -47,7 +49,6 @@ public abstract class GameRoom
     {
         BombID = bombID;
     }
-
 
     public virtual bool IsCurrentBomb(int bombIndex)
     {
@@ -144,7 +145,6 @@ public abstract class GameRoom
 	{
 		
 	}
-
 
 	private static Camera _mainCamera;
 	public static Camera SecondaryCamera;

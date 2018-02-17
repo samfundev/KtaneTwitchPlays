@@ -111,7 +111,6 @@ public static class HoldableFactory
 			if (types.Length < 2)
 				continue;
 
-
 			DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
 			foreach (Type type in types)
 			{

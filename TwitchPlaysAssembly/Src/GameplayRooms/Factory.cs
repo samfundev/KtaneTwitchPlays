@@ -51,9 +51,8 @@ public class Factory : GameRoom
     {
         DebugHelper.Log("Found gameplay room of type Factory Room");
         _factory = roomObject;
-		_gameroom = _gameModeProperty.GetValue(_factory,new object[] {});
+		_gameroom = _gameModeProperty.GetValue(_factory, new object[] {});
 		if (_gameroom.GetType() == _factoryStaticModeType) return;
-
 
 		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
 		_finiteMode = _gameroom.GetType() == _factoryFiniteModeType;
@@ -150,7 +149,6 @@ public class Factory : GameRoom
 	private static Type _factoryBombType = null;
 	private static PropertyInfo _internalBombProperty = null;
 	private static PropertyInfo _bombEndedProperty = null;
-
 
     private static Type _factoryType = null;
 	private static Type _factoryModeType = null;

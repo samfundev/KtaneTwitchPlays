@@ -180,7 +180,7 @@ public class ElevatorGameRoom : GameRoom
 			yield return showEdgework.Current;
 
 		CurrentElevatorWall currentWall = _currentWall == CurrentElevatorWall.Dropped ? CurrentElevatorWall.Back : _currentWall;
-		if (edge.EqualsAny("all edges", "l","left"))
+		if (edge.EqualsAny("all edges", "l", "left"))
 		{
 			showEdgework = DoElevatorCameraRotate(_currentWall, CurrentElevatorWall.Left, 1, false, true);
 			_currentWall = CurrentElevatorWall.Left;
@@ -290,34 +290,34 @@ public class ElevatorGameRoom : GameRoom
 
 	private Vector3[] ElevatorCameraRotations =
 	{
-		new Vector3(0,-90,0),
+		new Vector3(0, -90, 0),
 		Vector3.zero,
-		new Vector3(0,90,0), 
+		new Vector3(0, 90, 0), 
 
 		new Vector3(26.39f, 0, 0)
 	};
 
 	private Vector3[] ElevatorEdgeworkCameraRotations =
 	{
-		new Vector3(20,-90,0),
-		new Vector3(20,0,0),
-		new Vector3(20,90,0),
+		new Vector3(20, -90, 0),
+		new Vector3(20, 0, 0),
+		new Vector3(20, 90, 0),
 		new Vector3(26.39f, 0, 0)
 	};
 
 	private Vector3[] ElevatorCameraPositions =
 	{
-		new Vector3(0.625f,0.125f,1.425f),
-		new Vector3(-0.125f,0.125f,0.8f),
-		new Vector3(-0.875f,0.125f,1.425f),
+		new Vector3(0.625f, 0.125f, 1.425f),
+		new Vector3(-0.125f, 0.125f, 0.8f),
+		new Vector3(-0.875f, 0.125f, 1.425f),
 		Vector3.zero
 	};
 
 	private Vector3[] ElevatorEdgeworkCameraPositions =
 	{
-		new Vector3(0.625f,0.125f,1.425f),
-		new Vector3(-0.125f,0.125f,0.8f),
-		new Vector3(-0.875f,0.125f,1.425f),
+		new Vector3(0.625f, 0.125f, 1.425f),
+		new Vector3(-0.125f, 0.125f, 0.8f),
+		new Vector3(-0.875f, 0.125f, 1.425f),
 		Vector3.zero
 	};
 
