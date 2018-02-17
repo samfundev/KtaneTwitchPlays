@@ -156,6 +156,7 @@ public abstract class GameRoom
 		GameObject customMover = new GameObject("CustomCameraMover");
 		customMover.transform.SetParent(Camera.main.transform.parent.parent);
 		_mainCamera = Camera.main;
+		_mainCamera.cullingMask |= 0x00002000;
 		SecondaryCamera = Object.Instantiate(_mainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
 		for (int i = 0; i < SecondaryCamera.transform.childCount; i++)
 		{
@@ -163,6 +164,7 @@ public abstract class GameRoom
 		}
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 		SecondaryCamera.gameObject.SetActive(false);
+		DebugHelper.Log($"Main Camera Culling mask = {_mainCamera.cullingMask:X8}\nSecondary Camera Culling mask = {SecondaryCamera.cullingMask:X8}");
 	}
 
 	public static void ToggleCamera(bool main)
