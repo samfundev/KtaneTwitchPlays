@@ -97,7 +97,7 @@ public class TwitchBombHandle : MonoBehaviour
                     if (!IsAuthorizedDefuser(userNickName)) return null;
                     edgeworkText.text = internalCommand;
                 }
-	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework,edgeworkText.text);
+	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkText.text);
             }
             return null;
         }
@@ -142,6 +142,8 @@ public class TwitchBombHandle : MonoBehaviour
 			{
                 return DelayBombExplosionCoroutine(notifier);
 			}
+
+			return null;
 		}
 		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove"))
 		{
@@ -214,9 +216,9 @@ public class TwitchBombHandle : MonoBehaviour
 						}
 						break;
 				}
-
-				return null;
 			}
+
+			return null;
 		}
 		else if (!IsAuthorizedDefuser(userNickName))
 		{

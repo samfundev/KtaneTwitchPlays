@@ -389,6 +389,10 @@ public class TwitchComponentHandle : MonoBehaviour
 						messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, playerName, HeaderText);
 						playerName = null;
 					}
+					else
+					{
+						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, HeaderText);
+					}
 				}
 				else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -398,8 +402,12 @@ public class TwitchComponentHandle : MonoBehaviour
 						playerName = null;
 						messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, targetModule, userNickName, HeaderText);
 					}
+					else
+					{
+						return null;
+					}
 				}
-				else if (internalCommand.StartsWith("assign", StringComparison.InvariantCultureIgnoreCase))
+				else if (internalCommand.StartsWith("assign ", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
@@ -412,6 +420,10 @@ public class TwitchComponentHandle : MonoBehaviour
 						ClaimedList.Add(playerName);
 						SetBannerColor(claimedBackgroundColour);
 						messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, playerName, userNickName, HeaderText);
+					}
+					else
+					{
+						return null;
 					}
 				}
 				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
@@ -450,14 +462,19 @@ public class TwitchComponentHandle : MonoBehaviour
 					{
 						messageOut = ClaimModule(userNickName, targetModule);
 					}
+					else
+					{
+						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, HeaderText);
+					}
 				}
 				else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
 						SetBannerColor(markedBackgroundColor);
-						return null;
 					}
+
+					return null;
 				}
 			}
 		}
