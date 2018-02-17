@@ -35,9 +35,9 @@ public class ThirdBaseComponentSolver : ComponentSolver
 	    if (index < 0)
 	    {
 	        yield return null;
-	        yield return buttonLabels.Any(label => label == " ") 
-                ? "sendtochaterror The module is not ready for input yet." 
-                : string.Format("sendtochaterror There isn't any label that contains \"{0}\".", inputCommand);
+			yield return buttonLabels.Any(label => label == " ")
+				? "sendtochaterror The module is not ready for input yet."
+				: "unsubmittablepenalty"; //string.Format("sendtochaterror There isn't any label that contains \"{0}\".", inputCommand);
 	        yield break;
 	    }
 	    yield return null;
