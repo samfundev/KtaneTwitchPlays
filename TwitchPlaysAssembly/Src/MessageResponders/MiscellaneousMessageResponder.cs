@@ -179,9 +179,8 @@ public class MiscellaneousMessageResponder : MessageResponder
         else if (text.RegexMatch("^reward (-?[0-9]+)$"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
-            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+            if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1],out moduleCountBonus))
             {
-                moduleCountBonus = Int32.Parse(split[1]);
                 TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
             }
         }
@@ -339,6 +338,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
+					break;
+				}
+
+				if (split.Length == 1)
+				{
+					string[] validDistributions = distributions.Keys.Select(x => x).ToArray();
+					IRCConnection.Instance.SendMessage($"Usage: !run <module_count> <distribution>. Valid distributions are {string.Join(", ", validDistributions)}");
 					break;
 				}
 
