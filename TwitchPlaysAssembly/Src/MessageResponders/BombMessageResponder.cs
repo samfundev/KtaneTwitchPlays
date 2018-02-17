@@ -495,7 +495,7 @@ public class BombMessageResponder : MessageResponder
 	    {
 			case AccessLevel.Streamer:
 			case AccessLevel.SuperUser:
-				if (text.RegexMatch(out match, @"^setmultiplier ([0-9]+(?:\.[0-9]+))$"))
+				if (text.RegexMatch(out match, @"^setmultiplier ([0-9]+(?:\.[0-9]+)*)$"))
 				{
 					OtherModes.setMultiplier(float.Parse(match.Groups[1].Value));
 					return;
