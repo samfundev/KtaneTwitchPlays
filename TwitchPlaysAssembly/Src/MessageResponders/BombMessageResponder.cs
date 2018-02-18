@@ -470,15 +470,19 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
-				string query = match.Groups[1].Value;
-				IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-					.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
-					.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code,
-						handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
-					)).ToList();
+				string[] queries = match.Groups[1].Value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
 
-				if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
-				else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+				foreach (string query in queries)
+				{
+					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
+						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code,
+							handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
+						)).ToList();
+
+					if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
+					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+				}
 
 				return;
 			}
