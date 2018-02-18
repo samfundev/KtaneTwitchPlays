@@ -54,6 +54,9 @@ public class TwitchComponentHandle : MonoBehaviour
 	[HideInInspector]
 	public bool Unsupported = false;
 
+	[HideInInspector]
+	public List<Tuple<string, DateTime>> ClaimQueue = new List<Tuple<string, DateTime>>();
+
 	public string Code { get; private set; } = null;
 
 	public ComponentSolver Solver { get; private set; } = null;
@@ -121,6 +124,8 @@ public class TwitchComponentHandle : MonoBehaviour
 					: $"To disarm this\nneedy, use\n!{Code} solve";
 				if (Solver.UnsupportedModule)
 					_unsupportedComponents.Add(this);
+
+				StartCoroutine(AutoAssignModule());
 			}
 		}
 		catch (Exception e)
@@ -294,11 +299,36 @@ public class TwitchComponentHandle : MonoBehaviour
 		ClaimedList.Remove(player);
 	}
 
+	public IEnumerator AutoAssignModule()
+	{
+		while (!Solved)
+		{
+			yield return new WaitForSeconds(0.1f);
+			if (playerName != null || ClaimQueue.Count == 0) continue;
+
+			for (int i = 0; i < ClaimQueue.Count; i++)
+			{
+				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code);
+				if (!claim.First) continue;
+				IRCConnection.Instance.SendMessage(claim.Second);
+				ClaimQueue.RemoveAt(i);
+				break;
+			}
+		}
+	}
+
 	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule)
 	{
-		if (playerName != null) return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, HeaderText));
+		if (playerName != null)
+		{
+			if(ClaimQueue.TrueForAll(x => !x.First.Equals(userNickName)) && !playerName.Equals(userNickName))
+				ClaimQueue.Add(new Tuple<string, DateTime>(userNickName, DateTime.Now));
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, HeaderText));
+		}
 		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
 		{
+			if (ClaimQueue.TrueForAll(x => !x.First.Equals(userNickName)))
+				ClaimQueue.Add(new Tuple<string, DateTime>(userNickName, DateTime.Now));
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
 		else
@@ -312,6 +342,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, string> UnclaimModule(string userNickName, string targetModule)
 	{
+		ClaimQueue.RemoveAll(x => x.First.Equals(userNickName));
 		if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
 			if (TakeInProgress != null)
@@ -440,6 +471,8 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 				{
+					if (ClaimQueue.TrueForAll(x => !x.First.Equals(userNickName)) && !playerName.Equals(userNickName))
+						ClaimQueue.Add(new Tuple<string, DateTime>(userNickName, DateTime.Now));
 					if (playerName != null && userNickName != playerName)
 					{
 						if (TakeInProgress == null)
