@@ -188,6 +188,11 @@ public class TwitchComponentHandle : MonoBehaviour
 		needyModule.WarnAtFiveSeconds = false;
 	}
 
+	public static bool UnsupportedModulesPresent()
+	{
+		return _unsupportedComponents.Any(x => x.Solver == null || !x.Solved);
+	}
+
 	public static bool SolveUnsupportedModules(bool bombStartup=false)
 	{
 		List<TwitchComponentHandle> componentsToRemove = bombStartup

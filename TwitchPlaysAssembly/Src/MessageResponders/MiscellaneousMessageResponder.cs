@@ -695,10 +695,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	private void EnableDisableInput()
     {
-        if (BombMessageResponder.EnableDisableInput() && TwitchComponentHandle.SolveUnsupportedModules())
-        {
-	        IRCConnection.Instance.SendMessage("Some modules were automatically solved to prevent problems with defusing this bomb.");
-        }
+	    if (!BombMessageResponder.EnableDisableInput()) return;
+
+	    if(TwitchComponentHandle.SolveUnsupportedModules(true))
+		    IRCConnection.Instance.SendMessage("Some modules were automatically solved to prevent problems with defusing this bomb.");
+
+	    if (TwitchComponentHandle.UnsupportedModulesPresent())
+		    IRCConnection.Instance.SendMessage("There are some remaining modules that can still be solved using !<id> solve.");
     }
 
 }
