@@ -145,11 +145,12 @@ public class TwitchBombHandle : MonoBehaviour
 
 			return null;
 		}
-		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove"))
+		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove", "set"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 			{
 				bool negitive = split[0].EqualsAny("subtract", "decrease", "remove");
+				bool direct = split[0].EqualsAny("set");
 				switch (split[1])
 				{
 					case "time":
@@ -179,25 +180,44 @@ public class TwitchBombHandle : MonoBehaviour
 						}
 
 						time = (float) Math.Round((decimal) time, 2, MidpointRounding.AwayFromZero);
-						if (Math.Abs(time) == 0) break;
+						if (!direct && Math.Abs(time) == 0) break;
 						if (negitive) time = -time;
 
-					    bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
-						IRCConnection.Instance.SendMessage("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from");
+						if (direct)
+							bombCommander.timerComponent.TimeRemaining = time;
+						else
+							bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
+
+						if (direct)
+							IRCConnection.Instance.SendMessage("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime());
+						else
+							IRCConnection.Instance.SendMessage("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from");
 						break;
 					case "strikes":
 					case "strike":
 					case "s":
-					    if (int.TryParse(split[2], out int strikes) && strikes != 0)
+					    if (int.TryParse(split[2], out int strikes) && (strikes != 0 || direct))
 						{
 							if (negitive) strikes = -strikes;
 
-						    if ((bombCommander.StrikeCount + strikes) < 0)
+							if (direct && strikes < 0)
+							{
+								strikes = 0;
+							}
+						    else if (!direct && (bombCommander.StrikeCount + strikes) < 0)
 						    {
 						        strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
 						    }
-						    bombCommander.StrikeCount += strikes;
-							IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) > 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
+
+							if (direct)
+								bombCommander.StrikeCount = strikes;
+							else
+								bombCommander.StrikeCount += strikes;
+
+							if (direct)
+								IRCConnection.Instance.SendMessage("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike");
+							else
+								IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
                             BombMessageResponder.moduleCameras.UpdateStrikes();
 						}
 						break;
@@ -205,12 +225,24 @@ public class TwitchBombHandle : MonoBehaviour
 					case "sl":
 					case "maxstrikes":
 					case "ms":
-					    if (int.TryParse(split[2], out int maxStrikes) && maxStrikes != 0)
+					    if (int.TryParse(split[2], out int maxStrikes) && (maxStrikes != 0 || direct))
 						{
 							if (negitive) maxStrikes = -maxStrikes;
 
-						    bombCommander.StrikeLimit += maxStrikes;
-							IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
+							if (direct && maxStrikes < 0)
+								maxStrikes = 0;
+							else if (!direct && (bombCommander.StrikeLimit + maxStrikes) < 0)
+								maxStrikes = -bombCommander.StrikeLimit;
+
+							if (direct)
+								bombCommander.StrikeLimit = maxStrikes;
+							else
+								bombCommander.StrikeLimit += maxStrikes;
+
+							if (direct)
+								IRCConnection.Instance.SendMessage("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike");
+							else
+								IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
 						    BombMessageResponder.moduleCameras.UpdateStrikes();
                             BombMessageResponder.moduleCameras.UpdateStrikeLimit();
 						}
