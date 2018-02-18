@@ -218,7 +218,7 @@ public abstract class GameRoom
 
 	public string[] ValidEdgeworkRegex =
 	{
-		"^edgework((?: 45|-45)?)((?: top| top right| right top| right| right bottom| bottom right| bottom| bottom left| left bottom| left| left top| top left| tr| rt| tl | lt| br| rb| bl| lb| t| r| b| l)?)$"
+		"^edgework((?: 45|-45)|(?: top right| right top| right bottom| bottom right| bottom left| left bottom| left top| top left| left| top| right| bottom| tr| rt| tl| lt| br| rb| bl| lb| t| r| b| l))?$"
 	};
 
 	public virtual IEnumerator BombCommanderHoldBomb(Bomb bomb, bool frontFace = true)
