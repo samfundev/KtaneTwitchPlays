@@ -358,6 +358,7 @@ public class BombMessageResponder : MessageResponder
 		    if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
 		    {
 			    if (GameRoom.Instance is ElevatorGameRoom) return;	//There is no alarm clock in the elevator room.
+			    DropCurrentBomb();
 			    _coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze"));
 			    return;
 		    }
