@@ -289,19 +289,41 @@ public class TwitchComponentHandle : MonoBehaviour
 		ClaimedList.Remove(player);
 	}
 
-	public string ClaimModule(string userNickName, string targetModule)
+	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule)
 	{
-		if (playerName != null) return string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, HeaderText);
+		if (playerName != null) return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, HeaderText));
 		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
 		{
-			return string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit);
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
 		else
 		{
 			ClaimedList.Add(userNickName);
 			SetBannerColor(claimedBackgroundColour);
 			playerName = userNickName;
-			return string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, playerName, HeaderText);
+			return new Tuple<bool, string>(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, playerName, HeaderText));
+		}
+	}
+
+	public Tuple<bool, string> UnclaimModule(string userNickName, string targetModule)
+	{
+		if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		{
+			if (TakeInProgress != null)
+			{
+				StopCoroutine(TakeInProgress);
+				TakeInProgress = null;
+			}
+			StartCoroutine(ReleaseModule(playerName, userNickName));
+			SetBannerColor(unclaimedBackgroundColor);
+			string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, playerName, HeaderText);
+			playerName = null;
+
+			return new Tuple<bool, string>(true, messageOut);
+		}
+		else
+		{
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, HeaderText));
 		}
 	}
 
@@ -373,26 +395,11 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
 				{
-					messageOut = ClaimModule(userNickName, targetModule);
+					messageOut = ClaimModule(userNickName, targetModule).Second;
 				}
 				else if (internalCommand.ToLowerInvariant().EqualsAny("release", "unclaim"))
 				{
-					if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-					{
-						if (TakeInProgress != null)
-						{
-							StopCoroutine(TakeInProgress);
-							TakeInProgress = null;
-						}
-						StartCoroutine(ReleaseModule(playerName, userNickName));
-						SetBannerColor(unclaimedBackgroundColor);
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, playerName, HeaderText);
-						playerName = null;
-					}
-					else
-					{
-						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, playerName, userNickName, HeaderText);
-					}
+					messageOut = UnclaimModule(userNickName, targetModule).Second;
 				}
 				else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -447,7 +454,7 @@ public class TwitchComponentHandle : MonoBehaviour
 					}
 					else
 					{
-					    messageOut = ClaimModule(userNickName, targetModule);
+					    messageOut = ClaimModule(userNickName, targetModule).Second;
 					}
 				}
 				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
@@ -460,7 +467,7 @@ public class TwitchComponentHandle : MonoBehaviour
 					}
 					else if (playerName == null)
 					{
-						messageOut = ClaimModule(userNickName, targetModule);
+						messageOut = ClaimModule(userNickName, targetModule).Second;
 					}
 					else
 					{

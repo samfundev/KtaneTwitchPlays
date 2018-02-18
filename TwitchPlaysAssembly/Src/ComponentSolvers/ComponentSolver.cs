@@ -698,25 +698,51 @@ public abstract class ComponentSolver
 
     #region Private Methods
     private IEnumerator RespondToCommandCommon(string inputCommand, string userNickName)
-    {
-        if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
-        {
-            cameraPriority = ModuleCameras.CameraNotInUse;
-			BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent);
-            _responded = true;
-        }
-        else
-        {
-            if (inputCommand.StartsWith("view", StringComparison.InvariantCultureIgnoreCase))
-            {
-                _responded = true;
-                bool pinAllowed = inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) &&
-                                  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed);
+	{
+		if (inputCommand.ToLowerInvariant().EqualsAny("claimview", "viewclaim", "cw", "wc"))
+		{
+			Tuple<bool, string> response = ComponentHandle.ClaimModule(userNickName, ComponentHandle.Code);
+			IRCConnection.Instance.SendMessage(response.Second);
 
-                cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
-            }
-            BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
-        }
+			if (response.First)
+			{
+				cameraPriority = ModuleCameras.CameraPrioritised;
+				BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
+			}
+
+			_responded = true;
+		}
+		else if (inputCommand.ToLowerInvariant().EqualsAny("unclaimview", "unviewclaim", "uncw", "unwc"))
+		{
+			Tuple<bool, string> response = ComponentHandle.UnclaimModule(userNickName, ComponentHandle.Code);
+			IRCConnection.Instance.SendMessage(response.Second);
+
+			if (response.First)
+			{
+				cameraPriority = ModuleCameras.CameraNotInUse;
+				BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent);
+			}
+
+			_responded = true;
+		}
+		else if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
+		{
+			cameraPriority = ModuleCameras.CameraNotInUse;
+			BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent);
+			_responded = true;
+		}
+		else
+		{
+			if (inputCommand.StartsWith("view", StringComparison.InvariantCultureIgnoreCase))
+			{
+				_responded = true;
+				bool pinAllowed = inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) &&
+								  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed);
+
+				cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
+			}
+			BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
+		}
 
         if (inputCommand.Equals("show", StringComparison.InvariantCultureIgnoreCase))
 		{
