@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using DarkTonic.MasterAudio;
 using UnityEngine;
 
 public class TPElevatorSwitch : MonoBehaviour
@@ -71,7 +70,7 @@ public class TPElevatorSwitch : MonoBehaviour
 				if (elevatorSwitch.On() && IRCConnection.Instance.State != IRCConnectionState.Connected)
 				{
 					elevatorSwitch.Switch.Toggle();
-					MasterAudio.PlaySound3DAtTransformAndForget("strike", elevatorSwitch.Switch.transform, 1f, null, 0f, null);
+					Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, elevatorSwitch.Switch.transform);
 					return;
 				}
 
@@ -103,8 +102,8 @@ public class TPElevatorSwitch : MonoBehaviour
 		if (on == IsON) yield break;
 		GameplayState.GameplayRoomPrefabOverride = on ? ElevatorRoomGameObject : null;
 		ReportState();
-		
-		MasterAudio.PlaySound3DAtTransformAndForget("press-in", transform, 1f, null, 0f, null);
+
+		Audio.PlaySound(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		float initialTime = Time.time;
 		float duration = 0.25f;
 		while ((Time.time - initialTime) < duration)
@@ -134,7 +133,7 @@ public class TPElevatorSwitch : MonoBehaviour
 			}
 			else
 			{
-				MasterAudio.PlaySound3DAtTransformAndForget("strike", transform, 1f, null, 0f, null);
+				Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, transform);
 			}
 		}
 

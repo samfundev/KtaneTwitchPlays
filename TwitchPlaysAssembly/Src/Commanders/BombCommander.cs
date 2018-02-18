@@ -595,7 +595,6 @@ public class BombCommander : ICommandResponder
         {
             Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", StrikeCount, StrikeLimit));
             CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeCount);
-            //MasterAudio.PlaySound3DAtTransformAndForget("strike", base.transform, 1f, null, 0f, null);
             float[] rates = { 1, 1.25f, 1.5f, 1.75f, 2 };
             timerComponent.SetRateModifier(rates[Math.Min(strikeCount, 4)]);
             Bomb.StrikeIndicator.StrikeCount = strikeCount;

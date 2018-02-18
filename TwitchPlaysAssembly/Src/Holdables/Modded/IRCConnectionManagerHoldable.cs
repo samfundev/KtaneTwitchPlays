@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DarkTonic.MasterAudio;
 using UnityEngine;
 
 public class IRCConnectionManagerHandler : HoldableHandler
@@ -73,7 +72,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 						_connectButton.OnInteract();
 						_connectButton.OnInteractEnded();
 					}),
-					new Action(() => MasterAudio.PlaySound3DAtTransformAndForget("strike", Holdable.transform, 1f, null, 0f, null))
+					new Action(() => Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, Holdable.transform))
 				};
 				if (allowed) yield break;
 				yield return "sendtochaterror only the streamer may use the IRC disconnect button.";
@@ -112,13 +111,13 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 		_newImageGameObject = Instantiate(_originalImageGameObject, transform);
 
 		ConnectButton.OnInteract += ConnectDisconnect;
-		ConnectButton.OnInteractEnded += () => MasterAudio.PlaySound3DAtTransformAndForget("press-release", transform, 1f, null, 0f, null);
+		ConnectButton.OnInteractEnded += () => Audio.PlaySound(KMSoundOverride.SoundEffect.ButtonRelease, transform);
 		StartCoroutine(RefreshIRCBackground());
 	}
 
 	private bool ConnectDisconnect()
 	{
-		MasterAudio.PlaySound3DAtTransformAndForget("press-in", transform, 1f, null, 0f, null);
+		Audio.PlaySound(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		if (IRCConnection.Instance == null) return false;
 
 		if (IRCConnection.Instance.State == IRCConnectionState.Disconnected)
