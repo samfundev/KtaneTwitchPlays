@@ -85,6 +85,14 @@ public class ModuleCameras : MonoBehaviour
 				    continue;
 			    }
 		    }
+
+		    Light[] lights = component.GetComponentsInChildren<Light>(true);
+		    if (lights == null) return;
+		    foreach (Light light in lights)
+		    {
+			    light.enabled = !light.enabled;
+			    light.enabled = !light.enabled;
+			}
 	    }
 	}
 
