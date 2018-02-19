@@ -420,14 +420,18 @@ public class BombMessageResponder : MessageResponder
 				{
 					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-					handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} claim", claim));
+					handle.AddToClaimQueue(userNickName);
 				}
 				return;
 			}
 
 		    if (text.RegexMatch("^(unclaim|release) ?all$"))
 		    {
-			    string[] moduleIDs = ComponentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
+			    foreach (TwitchComponentHandle handle in ComponentHandles)
+			    {
+				    handle.RemoveFromClaimQueue(userNickName);
+			    }
+				string[] moduleIDs = ComponentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
 				    .Select(x => x.Code).ToArray();
 			    text = string.Format("unclaim {0}", string.Join(" ", moduleIDs));
 		    }
