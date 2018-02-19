@@ -254,6 +254,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		else
 		{
 			playerName = userNickname;
+			CanClaimNow(userNickname, true, true);
 		}
 		if (TakeInProgress != null)
 		{
