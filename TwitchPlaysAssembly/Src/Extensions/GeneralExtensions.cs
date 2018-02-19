@@ -154,4 +154,9 @@ public static class GeneralExtensions
 		}
 		return false;
 	}
+
+	public static double TotalSeconds(this DateTime datetime)
+	{
+		return TimeSpan.FromTicks(datetime.Ticks).TotalSeconds;
+	}
 }

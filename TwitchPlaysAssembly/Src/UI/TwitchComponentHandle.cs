@@ -55,7 +55,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public bool Unsupported = false;
 
 	[HideInInspector]
-	public List<Tuple<string, DateTime>> ClaimQueue = new List<Tuple<string, DateTime>>();
+	public List<Tuple<string, double>> ClaimQueue = new List<Tuple<string, double>>();
 
 	public string Code { get; private set; } = null;
 
@@ -75,6 +75,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Private Fields
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
 	private TwitchComponentHandleData _data;
+	private bool claimCooldown = true;
 	#endregion
 
 	#region Private Statics
@@ -299,8 +300,60 @@ public class TwitchComponentHandle : MonoBehaviour
 		ClaimedList.Remove(player);
 	}
 
+	public IEnumerator EndClaimCooldown()
+	{
+		if (TwitchPlaySettings.data.InstantModuleClaimCooldown > 0)
+		{
+			yield return new WaitForSeconds(TwitchPlaySettings.data.InstantModuleClaimCooldown);
+		}
+		claimCooldown = false;
+	}
+
+	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force=false)
+	{
+		if (BombMessageResponder.Instance.LastClaimedModule == null)
+		{
+			BombMessageResponder.Instance.LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+		}
+
+		if (!BombMessageResponder.Instance.LastClaimedModule.TryGetValue(Solver.modInfo.moduleID, out Dictionary<string, double> value) || value == null)
+		{
+			value = new Dictionary<string, double>();
+			BombMessageResponder.Instance.LastClaimedModule[Solver.modInfo.moduleID] = value;
+		}
+		if (claimCooldown && !force && value.TryGetValue(userNickName, out double seconds) &&
+		    (DateTime.Now.TotalSeconds() - seconds) < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry)
+		{
+			return new Tuple<bool, double>(false, seconds + TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry);
+		}
+		if (updatePreviousClaim || force)
+		{
+			value[userNickName] = DateTime.Now.TotalSeconds();
+		}
+		return new Tuple<bool, double>(true, DateTime.Now.TotalSeconds());
+	}
+
+	public void AddToClaimQueue(string userNickname)
+	{
+		double seconds = CanClaimNow(userNickname, false).Second;
+		if (ClaimQueue.Any(x => x.First.Equals(userNickname))) return;
+		for (int i = 0; i < ClaimQueue.Count; i++)
+		{
+			if (ClaimQueue[i].Second < seconds) continue;
+			ClaimQueue.Insert(i, new Tuple<string, double>(userNickname, seconds));
+			return;
+		}
+		ClaimQueue.Add(new Tuple<string, double>(userNickname, seconds));
+	}
+
+	public void RemoveFromClaimQueue(string userNickname)
+	{
+		ClaimQueue.RemoveAll(x => x.First.Equals(userNickname));
+	}
+
 	public IEnumerator AutoAssignModule()
 	{
+		StartCoroutine(EndClaimCooldown());
 		while (!Solved)
 		{
 			yield return new WaitForSeconds(0.1f);
@@ -321,18 +374,24 @@ public class TwitchComponentHandle : MonoBehaviour
 	{
 		if (playerName != null)
 		{
-			if(ClaimQueue.TrueForAll(x => !x.First.Equals(userNickName)) && !playerName.Equals(userNickName))
-				ClaimQueue.Add(new Tuple<string, DateTime>(userNickName, DateTime.Now));
+			if(!playerName.Equals(userNickName))
+				AddToClaimQueue(userNickName);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, HeaderText));
 		}
 		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
 		{
-			if (ClaimQueue.TrueForAll(x => !x.First.Equals(userNickName)))
-				ClaimQueue.Add(new Tuple<string, DateTime>(userNickName, DateTime.Now));
+			AddToClaimQueue(userNickName);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
 		else
 		{
+			Tuple<bool, double> claim = CanClaimNow(userNickName, true);
+			if (!claim.First)
+			{
+				AddToClaimQueue(userNickName);
+				return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ClaimCooldown, Code, TwitchPlaySettings.data.InstantModuleClaimCooldown, userNickName, HeaderText));
+			}
+
 			ClaimedList.Add(userNickName);
 			SetBannerColor(claimedBackgroundColour);
 			playerName = userNickName;
@@ -342,7 +401,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, string> UnclaimModule(string userNickName, string targetModule)
 	{
-		ClaimQueue.RemoveAll(x => x.First.Equals(userNickName));
+		RemoveFromClaimQueue(userNickName);
 		if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
 			if (TakeInProgress != null)
@@ -461,6 +520,8 @@ public class TwitchComponentHandle : MonoBehaviour
 						string newplayerName = internalCommand.Remove(0, 7).Trim();
 						playerName = newplayerName;
 						ClaimedList.Add(playerName);
+						RemoveFromClaimQueue(userNickName);
+						CanClaimNow(userNickName, true, true);
 						SetBannerColor(claimedBackgroundColour);
 						messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, playerName, userNickName, HeaderText);
 					}
@@ -471,10 +532,9 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 				{
-					if (ClaimQueue.TrueForAll(x => !x.First.Equals(userNickName)) && !playerName.Equals(userNickName))
-						ClaimQueue.Add(new Tuple<string, DateTime>(userNickName, DateTime.Now));
 					if (playerName != null && userNickName != playerName)
 					{
+						AddToClaimQueue(userNickName);
 						if (TakeInProgress == null)
 						{
 							messageOut = string.Format(TwitchPlaySettings.data.TakeModule, playerName, userNickName, targetModule, HeaderText);
@@ -488,7 +548,9 @@ public class TwitchComponentHandle : MonoBehaviour
 					}
                     else if (playerName != null)
 					{
-					    messageOut = string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, targetModule, HeaderText);
+						if (!playerName.Equals(userNickName))
+							AddToClaimQueue(userNickName);
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, targetModule, HeaderText);
 					}
 					else
 					{

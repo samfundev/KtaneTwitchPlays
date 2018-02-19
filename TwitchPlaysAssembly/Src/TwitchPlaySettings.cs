@@ -51,6 +51,9 @@ public class TwitchPlaySettingsData
 	public string IRCManagerBackgroundImage = Path.Combine(Application.persistentDataPath, "TwitchPlaysIRCManagerBackground.png");
 	public Color IRCManagerTextColor = new Color(1.00f, 0.44f, 0.00f);
 
+	public int InstantModuleClaimCooldown = 20;
+	public int InstantModuleClaimCooldownExpiry = 3600;
+
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();
 
@@ -126,6 +129,7 @@ public class TwitchPlaySettingsData
     public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
     public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
     public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
+	public string ClaimCooldown = "Sorry @{2}, Module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
 
     public string OwnedModule = "({0} - \"{1}\")";
     public string OwnedModuleList = "@{0}, your claimed modules are {1}";
@@ -266,6 +270,7 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
         valid &= ValidateString(ref ModulePlayer, data.ModulePlayer, 3);
         valid &= ValidateString(ref AlreadyClaimed, data.AlreadyClaimed, 4);
+	    valid &= ValidateString(ref ClaimCooldown, data.ClaimCooldown, 4);
 
         valid &= ValidateString(ref OwnedModule, data.OwnedModule, 2);
         valid &= ValidateString(ref OwnedModuleList, data.OwnedModuleList, 2);
@@ -303,6 +308,9 @@ public class TwitchPlaySettingsData
         valid &= ValidateString(ref UnsupportedNeedyWarning, data.UnsupportedNeedyWarning, 0, SettingsVersion < 2);
 
 	    valid &= ValidateFloat(ref AwardDropMultiplierOnStrike, data.AwardDropMultiplierOnStrike, 0, 1.0f);
+
+	    valid &= ValidateInt(ref InstantModuleClaimCooldown, data.InstantModuleClaimCooldown, 0);
+	    valid &= ValidateInt(ref InstantModuleClaimCooldownExpiry, data.InstantModuleClaimCooldownExpiry, 0);
 
         return valid;
     }

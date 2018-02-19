@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
@@ -31,7 +32,9 @@ public class BombMessageResponder : MessageResponder
 
 	public static BombMessageResponder Instance = null;
 
-    static BombMessageResponder()
+	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+
+	static BombMessageResponder()
     {
         BombActive = false;
     }
@@ -95,6 +98,16 @@ public class BombMessageResponder : MessageResponder
 	    parentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;
 
         StartCoroutine(CheckForBomb());
+	    try
+	    {
+		    string path = Path.Combine(Application.persistentDataPath, "TwitchPlaysLastClaimed.json");
+			LastClaimedModule = SettingsConverter.Deserialize<Dictionary<string, Dictionary<string, double>>>(File.ReadAllText(path));
+		}
+	    catch (Exception ex)
+	    {
+			DebugHelper.LogException(ex, "Couln't Read TwitchPlaysLastClaimed.json:");
+			LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+	    }
     }
 
 	public string GetBombResult(bool lastBomb=true)
@@ -226,6 +239,16 @@ public class BombMessageResponder : MessageResponder
 
 	    GameRoom.Instance?.OnDisable();
 	    OtherModes.RefreshTimeMode();
+
+	    try
+	    {
+		    string path = Path.Combine(Application.persistentDataPath, "TwitchPlaysLastClaimed.json");
+		    File.WriteAllText(path,SettingsConverter.Serialize(LastClaimedModule));
+		}
+	    catch (Exception ex)
+	    {
+		    DebugHelper.LogException(ex, "Couln't Write TwitchPlaysLastClaimed.json:");
+		}
 	}
 
 	public void DestroyComponentHandles()
