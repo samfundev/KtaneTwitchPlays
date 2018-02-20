@@ -657,6 +657,10 @@ public class IRCConnection : MonoBehaviour
 			text = text.Substring(actionStart.Length);
 			text = text.Remove(text.Length - actionEnd.Length);
 		}
+		while (text.RegexMatch(out Match match, "(<size=[0-9]+>|<\\/size>)"))
+			text = text.Replace(match.Groups[1].Value, "");
+		if (text.Trim().Length == 0) return;
+
 		string nickname = messageIsAction ? $"* {userNickName} " : $"{userNickName}: ";
 		string messageText = nickname.Replace(" ", "-") + text;
 		messageText = messageText.Wrap(64).Substring(nickname.Length);
