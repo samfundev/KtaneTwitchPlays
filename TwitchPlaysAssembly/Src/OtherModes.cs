@@ -9,7 +9,7 @@
 				return _timedModeCurrentBomb;
 			}
 			if (_timedModeCurrentBomb != _timedModeNextBomb)
-				IRCConnection.Instance.SendMessage(_timedModeNextBomb ? "Time Mode Enabled" : "Time Mode Disabled");
+				IRCConnection.Instance.SendMessage("Time mode is now {0}", _timedModeNextBomb ? "Enabled" : "Disabled");
 			_timedModeCurrentBomb = _timedModeNextBomb;
 			return _timedModeCurrentBomb;
 		}
@@ -24,7 +24,7 @@
 			else
 			{
 				if (value != _timedModeCurrentBomb)
-					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will be {1} for next bomb.", value ? "enabled" : "disabled", value ? "disabled" : "enabled");
+					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will be {1} for next bomb.", _timedModeCurrentBomb ? "enabled" : "disabled", value ? "enabled" : "disabled");
 				else
 					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will remain {0} for next bomb.", value ? "enabled" : "disabled");
 			}
