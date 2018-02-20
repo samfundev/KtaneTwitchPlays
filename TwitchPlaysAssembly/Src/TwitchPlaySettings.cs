@@ -160,6 +160,9 @@ public class TwitchPlaySettingsData
     public string BombTimeRemaining = "panicBasket [{0}] out of [{1}].";
     public string BombTimeStamp = "The Date/Time this bomb started is {0:F}";
     public string BombDetonateCommand = "panicBasket This bomb's gonna blow!";
+	public string BombStatusTimeMode = "Time remaining: {0} Multiplier: {1:0.0} Solves: {2}/{3} Reward: {4}";
+	public string BombStatusVsMode = "Time on clock: {0} Good HP: {1} Evil HP: {2} Reward: {3}";
+	public string BombStatus = "Time remaining: {0}, Strikes: {1}/{2} Solves: {3}/{4} Reward: {5}";
 
     public string NotesSpaceFree = "(Free Space)";
     public string Notes = "Notes {0}: {1}";

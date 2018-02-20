@@ -145,6 +145,25 @@ public class TwitchBombHandle : MonoBehaviour
 
 			return null;
 		}
+		else if (internalCommandLower.Equals("status"))
+		{
+			int currentReward = TwitchPlaySettings.GetRewardBonus();
+			if (OtherModes.timedModeOn)
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime,
+					OtherModes.getMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
+			}
+			else if (OtherModes.vsModeOn)
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
+					OtherModes.teamHealth, OtherModes.bossHealth, currentReward);
+			}
+			else
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, 
+					bombCommander.StrikeCount, bombCommander.StrikeLimit, bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
+			}
+		}
 		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove", "set"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
