@@ -6,6 +6,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
@@ -413,7 +414,8 @@ public class IRCConnection : MonoBehaviour
 		}
     }
 
-    public new void SendMessage(string message)
+	[StringFormatMethod("message")]
+	public new void SendMessage(string message)
     {
         if (_silenceMode || _state == IRCConnectionState.Disconnected) return;
         foreach (string line in message.Wrap(MaxMessageLength).Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
@@ -427,6 +429,7 @@ public class IRCConnection : MonoBehaviour
         }
     }
 
+	[StringFormatMethod("message")]
     public void SendMessage(string message, params object[] args)
     {
         SendMessage(string.Format(message, args));
