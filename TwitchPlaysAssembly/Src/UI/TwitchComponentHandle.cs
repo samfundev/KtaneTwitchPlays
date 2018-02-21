@@ -497,6 +497,33 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					messageOut = UnclaimModule(userNickName, targetModule).Second;
 				}
+				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cw", "wc", 
+					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cwp", "wpc"))
+				{
+					Tuple<bool, string> response = ClaimModule(userNickName, Code);
+					if (response.First)
+					{
+						IRCConnection.Instance.SendMessage(response.Second);
+						internalCommand = text.Contains("p") ? "view pin" : "view";
+					}
+					else
+					{
+						messageOut = response.Second;
+					}
+				}
+				else if (internalCommand.ToLowerInvariant().EqualsAny("unclaim unview", "unview unclaim", "unclaimview", "unviewclaim", "uncw", "unwc"))
+				{
+					Tuple<bool, string> response = UnclaimModule(userNickName, Code);
+					if (response.First)
+					{
+						IRCConnection.Instance.SendMessage(response.Second);
+						internalCommand = "unview";
+					}
+					else
+					{
+						messageOut = response.Second;
+					}
+				}
 				else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
