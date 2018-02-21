@@ -312,6 +312,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force=false)
 	{
+		if (string.IsNullOrEmpty(userNickName)) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
+
 		if (BombMessageResponder.Instance.LastClaimedModule == null)
 		{
 			BombMessageResponder.Instance.LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
