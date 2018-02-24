@@ -610,9 +610,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 
         }
 
-		if (!TwitchPlaySettings.data.EnableDebuggingCommands) return;
-	    //For obvious reasons, only the streamer may do this, as this command is that powerful.
-	    if (UserAccess.HasAccess(userNickName, AccessLevel.Streamer) && text.RegexMatch(out Match sayasMatch, @"^(?:issue|say) ?commands?(?: ?as)? (\S+) (.+)"))
+		//As of now, ALL Debugging commands are streamer only.
+		if (!TwitchPlaySettings.data.EnableDebuggingCommands || !UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
+	    if (text.RegexMatch(out Match sayasMatch, @"^(?:issue|say) ?commands?(?: ?as)? (\S+) (.+)"))
 	    {
 		    IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 	    }
