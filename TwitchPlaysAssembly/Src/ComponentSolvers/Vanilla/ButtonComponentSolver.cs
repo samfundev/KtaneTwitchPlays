@@ -25,7 +25,8 @@ public class ButtonComponentSolver : ComponentSolver
             moduleID = buttonInfo.moduleID,
             moduleScore = VanillaRuleModifier.IsSeedVanilla()
                 ? buttonInfo.moduleScore
-                : squarebuttonInfo.moduleScore
+                : squarebuttonInfo.moduleScore,
+			affectedByVanillaRuleModifier = true
         };
     }
 

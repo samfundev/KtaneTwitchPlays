@@ -37,8 +37,13 @@ public class UrlHelper : MonoBehaviour
 
     public string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
 
-	public string ManualFor(string module, string type = "html")
+	public string ManualFor(string module, string type = "html", bool useVanillaRuleModifier = false)
     {
+	    if (useVanillaRuleModifier && VanillaRuleModifier.GetRuleSeed() != 1)
+	    {
+		    return $"{Repository}manual/{Escape(module)}.html?VanillaRuleSeed={VanillaRuleModifier.GetRuleSeed()}";
+	    }
+
         return string.Format(Repository + "{0}/{1}.{2}", type.ToUpper(), Escape(module), type);
     }
 

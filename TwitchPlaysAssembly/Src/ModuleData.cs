@@ -27,6 +27,8 @@ public class ModuleInformation
     public string[] validCommands;
     public bool DoesTheRightThing;
 
+	public bool affectedByVanillaRuleModifier;
+
     public bool builtIntoTwitchPlays;
 
     public bool CameraPinningAlwaysAllowed;
@@ -35,7 +37,8 @@ public class ModuleInformation
 
 	public bool ShouldSerializeunclaimedColor() { return unclaimedColor != new Color(); }
 	public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
-    public bool ShouldSerializevalidCommands() {return !builtIntoTwitchPlays;}
+	public bool ShouldSerializeAffectedByVanillaRuleModifier() { return !builtIntoTwitchPlays; }
+	public bool ShouldSerializevalidCommands() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializeDoesTheRightThing() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializehelpTextOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializemanualCodeOverride() { return !builtIntoTwitchPlays; }
