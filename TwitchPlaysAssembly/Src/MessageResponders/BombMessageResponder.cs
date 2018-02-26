@@ -618,7 +618,7 @@ public class BombMessageResponder : MessageResponder
 				    return;
 			    }
 
-			    if (text.Equals("bot unclaim all"))
+			    if (text.RegexMatch("^bot ?unclaim( ?all)?$"))
 			    {
 					userNickName = IRCConnection.Instance.UserNickName;
 					foreach (TwitchComponentHandle handle in ComponentHandles)
