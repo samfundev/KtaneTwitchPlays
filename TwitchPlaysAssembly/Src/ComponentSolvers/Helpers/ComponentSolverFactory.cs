@@ -567,26 +567,30 @@ public static class ComponentSolverFactory
     private static readonly List<string> FullNamesLogged = new List<string>();
     private static void LogAllComponentTypes(MonoBehaviour bombComponent)
     {
-        //If and when there is a potential conflict between multiple assemblies, this will help to find these conflicts so that
-        //ReflectionHelper.FindType(fullName, assemblyName) can be used instead.
+	    try
+	    {
+		    Component[] allComponents = bombComponent?.GetComponentsInChildren<Component>(true) ?? new Component[0];
+		    foreach (Component component in allComponents)
+		    {
+			    string fullName = component.GetType().FullName;
+			    if (string.IsNullOrEmpty(fullName) || FullNamesLogged.Contains(fullName)) continue;
+			    FullNamesLogged.Add(fullName);
 
-        Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
-        foreach (Component component in allComponents)
-        {
-            string fullName = component.GetType().FullName;
-	        if (FullNamesLogged.Contains(fullName)) continue;
-	        FullNamesLogged.Add(fullName);
+			    Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
+			    if (types.Length < 2)
+				    continue;
 
-			Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
-            if (types.Length < 2)
-                continue;
-
-	        DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
-            foreach (Type type in types)
-            {
-	            DebugLog("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
-            }
-        }
+			    DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
+			    foreach (Type type in types)
+			    {
+				    DebugLog("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
+			    }
+		    }
+	    }
+	    catch (Exception ex)
+	    {
+		    DebugHelper.LogException(ex, "Could not log the component types due to an exception:");
+	    }
     }
 
 	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom)
