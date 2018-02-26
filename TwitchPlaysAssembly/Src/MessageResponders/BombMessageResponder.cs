@@ -435,13 +435,23 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
+		    if (text.RegexMatch("^claim ?all$"))
+		    {
+			    foreach (var handle in ComponentHandles)
+			    {
+					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+				    handle.AddToClaimQueue(userNickName);
+				}
+			    return;
+		    }
+
 		    if (text.RegexMatch("^(unclaim|release) ?all$"))
 		    {
 			    foreach (TwitchComponentHandle handle in ComponentHandles)
 			    {
 				    handle.RemoveFromClaimQueue(userNickName);
 			    }
-				string[] moduleIDs = ComponentHandles.Where(x => x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
+				string[] moduleIDs = ComponentHandles.Where(x => !x.Solved && x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
 				    .Select(x => x.Code).ToArray();
 			    text = string.Format("unclaim {0}", string.Join(" ", moduleIDs));
 		    }
@@ -524,6 +534,39 @@ public class BombMessageResponder : MessageResponder
 
 				return;
 			}
+
+		    if (text.RegexMatch(out match, "^(?:findclaim|searchclaim|claimsearch|claimfind) (.+)"))
+		    {
+			    if (!IsAuthorizedDefuser(userNickName)) return;
+
+			    string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+			    foreach (string query in queries)
+			    {
+				    IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					    .OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
+						    .Select(handle => string.Format("{0}", handle.Code)).ToList();
+
+				    if (modules.Any())
+				    {
+					    foreach (var claim in modules)
+					    {
+						    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+						    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+						    handle.AddToClaimQueue(userNickName);
+					    }
+					}
+				    else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+			    }
+			    return;
+		    }
+
+			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.zenModeOn)
+		    {
+			    if (!IsAuthorizedDefuser(userNickName)) return;
+				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
+			    return;
+			}
 		}
 
 		if (text.RegexMatch(out match, "^notes([1-4])$"))
@@ -571,6 +614,24 @@ public class BombMessageResponder : MessageResponder
 					    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
 					    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 					    handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} assign {1}", assign, match.Groups[1].Value));
+				    }
+				    return;
+			    }
+
+			    if (text.Equals("bot unclaim all"))
+			    {
+					userNickName = IRCConnection.Instance.UserNickName;
+					foreach (TwitchComponentHandle handle in ComponentHandles)
+				    {
+					    handle.RemoveFromClaimQueue(userNickName);
+				    }
+				    string[] moduleIDs = ComponentHandles.Where(x => !x.Solved && x.PlayerName != null && x.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase))
+					    .Select(x => x.Code).ToArray();
+				    foreach (var claim in moduleIDs)
+				    {
+					    TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+					    if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+					    handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} unclaim", claim));
 				    }
 				    return;
 			    }

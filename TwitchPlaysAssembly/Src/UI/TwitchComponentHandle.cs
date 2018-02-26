@@ -339,7 +339,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public void AddToClaimQueue(string userNickname)
 	{
 		double seconds = CanClaimNow(userNickname, false).Second;
-		if (ClaimQueue.Any(x => x.First.Equals(userNickname))) return;
+		if (ClaimQueue.Any(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase))) return;
 		for (int i = 0; i < ClaimQueue.Count; i++)
 		{
 			if (ClaimQueue[i].Second < seconds) continue;
@@ -351,7 +351,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void RemoveFromClaimQueue(string userNickname)
 	{
-		ClaimQueue.RemoveAll(x => x.First.Equals(userNickname));
+		ClaimQueue.RemoveAll(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
 	}
 
 	public IEnumerator AutoAssignModule()
@@ -381,7 +381,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				AddToClaimQueue(userNickName);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, playerName, HeaderText));
 		}
-		if (ClaimedList.Count(nick => nick.Equals(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
+		if (ClaimedList.Count(nick => nick.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
 		{
 			AddToClaimQueue(userNickName);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
@@ -405,7 +405,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public Tuple<bool, string> UnclaimModule(string userNickName, string targetModule)
 	{
 		RemoveFromClaimQueue(userNickName);
-		if (playerName == userNickName || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+		if (playerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
 			if (TakeInProgress != null)
 			{
@@ -469,8 +469,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 			else
 			{
-				//messageOut = string.Format("{0}: {1}", headerText.text, TwitchPlaysService.urlHelper.ManualFor(manualText, manualType));
-				messageOut = string.Format("{0} : {1} : {2}", HeaderText, Solver.modInfo.helpText, UrlHelper.Instance.ManualFor(manualText, manualType));
+				messageOut = string.Format("{0} : {1} : {2}", HeaderText, Solver.modInfo.helpText, UrlHelper.Instance.ManualFor(manualText, manualType, Solver.modInfo.affectedByVanillaRuleModifier));
 			}
 		}
 		else if (!Solved)
