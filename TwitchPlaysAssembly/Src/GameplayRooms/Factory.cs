@@ -131,7 +131,13 @@ public class Factory : GameRoom
 	        IRCConnection.Instance.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRewardBonus(reward);
 
-	        yield return new WaitUntil(() => currentBomb != GetBomb);
+	        bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
+	        while (bombHold.MoveNext())
+	        {
+		        yield return bombHold.Current;
+	        }
+
+			yield return new WaitUntil(() => currentBomb != GetBomb);
 	        foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
 	        {
 				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
