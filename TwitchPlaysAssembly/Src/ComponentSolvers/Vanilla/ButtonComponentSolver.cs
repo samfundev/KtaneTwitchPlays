@@ -144,7 +144,8 @@ public class ButtonComponentSolver : ComponentSolver
             sortedTimes.Add(time);
         }
         sortedTimes.Sort();
-        sortedTimes.Reverse();
+		if(!OtherModes.zenModeOn)
+			sortedTimes.Reverse();
         if (sortedTimes.Count == 0) yield break;
 
         yield return "release";
@@ -154,12 +155,12 @@ public class ButtonComponentSolver : ComponentSolver
         int timeTarget = sortedTimes[0];
         sortedTimes.RemoveAt(0);
 
-        int waitTime = (int)(timerComponent.TimeRemaining + 0.25f);
+        int waitTime = (int)(timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
         waitTime -= timeTarget;
-        if (waitTime >= 30)
+        if (Math.Abs(waitTime) >= 30)
         {
             yield return "elevator music";
-            if (waitTime >= 120)
+            if (Math.Abs(waitTime) >= 120)
             {
                 yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModifier.GetRuleSeed());
                 yield return string.Format("sendtochat Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", Code);
@@ -181,13 +182,13 @@ public class ButtonComponentSolver : ComponentSolver
                 yield break;
             }
 
-            timeRemaining = (int)(timerComponent.TimeRemaining + 0.25f);
+            timeRemaining = (int)(timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
 
-            if (timeRemaining < timeTarget)
+            if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
             {
                 if (sortedTimes.Count == 0)
                 {
-                    yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are greater than the time remaining.", _held ? "released" : "tapped");
+                    yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are {1} than the time remaining.", _held ? "released" : "tapped", OtherModes.zenModeOn ? "less" : "greater");
                     yield break;
                 }
                 timeTarget = sortedTimes[0];
@@ -195,11 +196,11 @@ public class ButtonComponentSolver : ComponentSolver
 
                 waitTime = (int)timeRemaining;
                 waitTime -= timeTarget;
-                if (waitTime >= 30)
+                if (Math.Abs(waitTime) >= 30)
                 {
                     yield return "elevator music";
                     
-                    if (waitTime >= 120 && !longwait)
+                    if (Math.Abs(waitTime) >= 120 && !longwait)
                     {
                         yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModifier.GetRuleSeed());
                         yield return string.Format("sendtochat Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", Code);
@@ -209,7 +210,7 @@ public class ButtonComponentSolver : ComponentSolver
 
                 continue;
             }
-            if (Math.Abs(timeRemaining - timeTarget) < 0.1f)
+            if (Math.Abs(timeRemaining - timeTarget) < 0.01f)
             {
                 if (!_held)
                 {

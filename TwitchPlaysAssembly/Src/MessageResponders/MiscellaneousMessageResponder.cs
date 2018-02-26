@@ -195,6 +195,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 		        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TimeModeCommandDisabled, userNickName);
 	        }
         }
+		else if (text.Equals("zenmode", StringComparison.InvariantCultureIgnoreCase))
+        {
+	        if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+	        {
+		        OtherModes.toggleZenMode();
+	        }
+        }
         else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
         {
             Leaderboard.LeaderboardEntry entry = null;

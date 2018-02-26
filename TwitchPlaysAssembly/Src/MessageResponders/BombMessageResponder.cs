@@ -324,6 +324,16 @@ public class BombMessageResponder : MessageResponder
 		{
 			TwitchComponentHandle.SolveUnsupportedModules(true);
 		}
+
+		while (OtherModes.zenModeOn)
+		{
+			foreach (BombCommander bomb in BombCommanders)
+			{
+				if (bomb.timerComponent == null || bomb.timerComponent.GetRate() < 0) continue;
+				bomb.timerComponent.SetRateModifier(-bomb.timerComponent.GetRate());
+			}
+			yield return null;
+		}
 	}
 
 	public void SetBomb(Bomb bomb, int id)

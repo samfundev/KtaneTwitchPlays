@@ -25,10 +25,13 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		if (!TwitchPlaySettings.data.AllowTurnTheKeyInstantSolveWhenOnlyModuleLeft) return false;
 		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 		int timeRemaining = (int)BombCommander.Bomb.GetTimer().TimeRemaining;
-		if (timeRemaining < time) return false;
+		if ((!OtherModes.zenModeOn && timeRemaining < time) || (OtherModes.zenModeOn && timeRemaining > time)) return false;
 		IEnumerable<BombComponent> components = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved && x.bombComponent != BombComponent).Select(x => x.bombComponent).ToArray();
 		if (components.Any(x => x.GetComponent(_componentType) == null)) return false;
-		return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time)) && IsTargetTurnTimeCorrect(turnTime);
+		if(!OtherModes.zenModeOn)
+			return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time)) && IsTargetTurnTimeCorrect(turnTime);
+		else
+			return !components.Any(x => ((int)_targetTimeField.GetValue(x.GetComponent(_componentType)) < time)) && IsTargetTurnTimeCorrect(turnTime);
 	}
 
     private bool OnKeyTurn(int turnTime = -1)
@@ -62,10 +65,17 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 		((KMSelectable)_lock).OnInteract = () => OnKeyTurn();
 		int expectedTime = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
-		while (!BombComponent.IsSolved)
+	    if (OtherModes.zenModeOn)
+	    {
+		    expectedTime = (int) (BombCommander.timerComponent.TimeRemaining + (BombCommander.timerComponent.TimeRemaining - expectedTime));
+			_targetTimeField.SetValue(BombComponent.GetComponent(_componentType), expectedTime);
+		    TextMesh display = (TextMesh)_displayField.GetValue(BombComponent.GetComponent(_componentType));
+		    display.text = string.Format("{0:00}:{1:00}", expectedTime / 60, expectedTime % 60);
+	    }
+	    while (!BombComponent.IsSolved)
         {
             int time = Mathf.FloorToInt(BombCommander.CurrentTimer);
-            if (time < expectedTime &&
+            if (((!OtherModes.zenModeOn && time < expectedTime) || (OtherModes.zenModeOn && time > expectedTime)) &&
                 !(bool)_solvedField.GetValue(BombComponent.GetComponent(_componentType)) &&
                 !TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate)
             {
@@ -100,10 +110,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
         TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
-        int waitingTime = (int) (timerComponent.TimeRemaining + 0.25f);
+        int waitingTime = (int) (timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
         waitingTime -= timeTarget;
 
-        if (waitingTime >= 30 && !CanTurnEarlyWithoutStrike(timeTarget))
+        if (Math.Abs(waitingTime) >= 30 && !CanTurnEarlyWithoutStrike(timeTarget))
         {
             yield return "elevator music";
         }
@@ -118,9 +128,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
                 break;
             }
 
-            timeRemaining = (int) (timerComponent.TimeRemaining + 0.25f);
+            timeRemaining = (int) (timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
 
-            if (timeRemaining < timeTarget)
+            if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
             {
                 yield return "sendtochaterror The bomb timer has already gone past the time specified.";
                 yield break;
@@ -143,7 +153,8 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         _activatedField = _componentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
         _solvedField = _componentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
         _targetTimeField = _componentType.GetField("mTargetSecond", BindingFlags.NonPublic | BindingFlags.Instance);
-        _stopAllCorotinesMethod = _componentType.GetMethod("StopAllCoroutines", BindingFlags.Public | BindingFlags.Instance);
+	    _displayField = _componentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
+		_stopAllCorotinesMethod = _componentType.GetMethod("StopAllCoroutines", BindingFlags.Public | BindingFlags.Instance);
         _onKeyTurnMethod = _componentType.GetMethod("OnKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
@@ -152,6 +163,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
     private static FieldInfo _activatedField = null;
     private static FieldInfo _solvedField = null;
     private static FieldInfo _targetTimeField = null;
+	public static FieldInfo _displayField = null;
     private static MethodInfo _stopAllCorotinesMethod = null;
     private static MethodInfo _onKeyTurnMethod = null;
 

@@ -1,5 +1,39 @@
 ﻿public static class OtherModes
 {
+	public static bool zenModeOn
+	{
+		get
+		{
+			if (BombMessageResponder.BombActive)
+			{
+				return _zenModeCurrentBomb;
+			}
+			if (_zenModeCurrentBomb != _zenModeNextBomb)
+				IRCConnection.Instance.SendMessage("Zen mode is now {0}", _zenModeNextBomb ? "Enabled" : "Disabled");
+			_zenModeCurrentBomb = _zenModeNextBomb;
+			return _zenModeCurrentBomb;
+		}
+		set
+		{
+			_zenModeNextBomb = value;
+			if (!BombMessageResponder.BombActive)
+			{
+				_zenModeCurrentBomb = value;
+				IRCConnection.Instance.SendMessage(value ? "Zen Mode Enabled" : "Zen Mode Disabled");
+			}
+			else
+			{
+				if (value != _zenModeCurrentBomb)
+					IRCConnection.Instance.SendMessage("Zen mode is currently {0}, it will be {1} for next bomb.", _zenModeCurrentBomb ? "enabled" : "disabled", value ? "enabled" : "disabled");
+				else
+					IRCConnection.Instance.SendMessage("Zen mode is currently {0}, it will remain {0} for next bomb.", value ? "enabled" : "disabled");
+			}
+		}
+	}
+	private static bool _zenModeCurrentBomb;
+	private static bool _zenModeNextBomb;
+
+
 	public static bool timedModeOn
 	{
 		get
@@ -66,6 +100,11 @@
         teamHealth = teamHealth - damage;
         return teamHealth;
     }
+
+	public static void toggleZenMode()
+	{
+		zenModeOn = !_zenModeNextBomb;
+	}
 
     public static void toggleTimedMode()
     {
