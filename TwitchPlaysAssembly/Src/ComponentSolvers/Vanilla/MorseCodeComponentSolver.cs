@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class MorseCodeComponentSolver : ComponentSolver
@@ -15,22 +17,15 @@ public class MorseCodeComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
-
-        if (commandParts.Length != 2 || !commandParts[0].EqualsAny("transmit", "trans", "xmit", "tx", "submit") || commandParts[1].Length != 3)
-        {
-            yield break;
-        }
-
-        if (!int.TryParse(commandParts[1], out int targetFrequency) || !Frequencies.Contains(targetFrequency))
-        {
-            yield break;
-        }
+	    if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)$") || !int.TryParse(match.Groups[1].Value, out int targetFrequency))
+	    {
+		    yield break;
+	    }
 
         int initialFrequency = CurrentFrequency;
         KeypadButton buttonToShift = targetFrequency < initialFrequency ? _downButton : _upButton;
 
-        while (CurrentFrequency != targetFrequency && (CurrentFrequency == initialFrequency || Mathf.Sign(CurrentFrequency - initialFrequency) != Mathf.Sign(CurrentFrequency - targetFrequency)))
+        while (CurrentFrequency != targetFrequency && (CurrentFrequency == initialFrequency || Math.Sign(CurrentFrequency - initialFrequency) != Math.Sign(CurrentFrequency - targetFrequency)))
         {
             yield return "change frequency";
 
@@ -56,40 +51,9 @@ public class MorseCodeComponentSolver : ComponentSolver
         }
     }    
 
-    private int CurrentFrequency
-    {
-        get
-        {
-			return ((MorseCodeComponent) BombComponent).CurrentFrequency;
-        }
-    }
+    private int CurrentFrequency => ((MorseCodeComponent) BombComponent).CurrentFrequency;
 
-    private static readonly int[] Frequencies = new int[]
-    {
-        502,
-        505,
-        512,
-        515,
-        522,
-        525,
-        532,
-        535,
-        542,
-        545,
-        552,
-        555,
-        562,
-        565,
-        572,
-        575,
-        582,
-        585,
-        592,
-        595,
-        600
-    };
-
-    private KeypadButton _upButton = null;
+	private KeypadButton _upButton = null;
     private KeypadButton _downButton = null;
     private KeypadButton _transmitButton = null;
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class TranslatedMorseCodeComponentSolver : ComponentSolver
@@ -32,32 +33,17 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
-
-        if (commandParts.Length != 2)
-        {
-            yield break;
-        }
-
-        if (!commandParts[0].EqualsAny("transmit", "trans", "xmit", "tx", "submit"))
-        {
-            yield break;
-        }
-
-        if (!int.TryParse(commandParts[1].Substring(commandParts[1].Length - 3), out int targetFrequency))
-        {
-            yield break;
-        }
-
-        if (!Frequencies.Contains(targetFrequency))
-        {
-            yield break;
-        }
+	    if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)$") 
+				|| !int.TryParse(match.Groups[1].Value, out int targetFrequency)
+				|| !Frequencies.Contains(targetFrequency))
+	    {
+		    yield break;
+	    }
 
         int initialFrequency = CurrentFrequency;
         MonoBehaviour buttonToShift = targetFrequency < initialFrequency ? _downButton : _upButton;
 
-        while (CurrentFrequency != targetFrequency && (CurrentFrequency == initialFrequency || Mathf.Sign(CurrentFrequency - initialFrequency) != Mathf.Sign(CurrentFrequency - targetFrequency)))
+        while (CurrentFrequency != targetFrequency && (CurrentFrequency == initialFrequency || Math.Sign(CurrentFrequency - initialFrequency) != Math.Sign(CurrentFrequency - targetFrequency)))
         {
             yield return "change frequency";
 
@@ -77,15 +63,9 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         }
     }    
 
-    private int CurrentFrequency
-    {
-        get
-        {
-            return Frequencies[(int)_currentFrqIndexField.GetValue(_component)];
-        }
-    }
+    private int CurrentFrequency => Frequencies[(int)_currentFrqIndexField.GetValue(_component)];
 
-    static TranslatedMorseCodeComponentSolver()
+	static TranslatedMorseCodeComponentSolver()
     {
         _morseCodeComponentType = ReflectionHelper.FindType("MorseCodeTranslatedModule");
         _upButtonField = _morseCodeComponentType.GetField("ButtonRight", BindingFlags.Public | BindingFlags.Instance);
