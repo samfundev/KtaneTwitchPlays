@@ -529,12 +529,12 @@ public static class ComponentSolverFactory
 			info.validCommands = regexList;
 		}
 
-		if (AffectedByVanillaRuleModifier(bombComponent, commandComponentType, out FieldInfo affected))
+		FieldInfo affected = AffectedByVanillaRuleModifier(commandComponentType);
+		if (affected != null)
 		{
 			Type type = commandComponentType;
 			info.SetVanillaRuleAPIDelegate(x =>
 			{
-				if (affected == null) return false;
 				try
 				{
 					return (bool) affected.GetValue(affected.IsStatic ? null : x.GetComponent(type));
@@ -566,7 +566,7 @@ public static class ComponentSolverFactory
 						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, commandComponent);
 					};
 				case ModCommandType.Coroutine:
-				    FindCancelBool(bombComponent, commandComponentType, out FieldInfo cancelfield);
+					FieldInfo cancelfield = FindCancelBool(commandComponentType);
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
@@ -682,22 +682,16 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	private static bool FindCancelBool(MonoBehaviour bombComponent, Type commandComponentType, out FieldInfo CancelField)
+	private static FieldInfo FindCancelBool(Type commandComponentType)
 	{
-		CancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-		return CancelField?.GetValue(CancelField.IsStatic ? null : bombComponent.GetComponent(commandComponentType)) is bool;
+		FieldInfo cancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
 	}
 
-	private static bool AffectedByVanillaRuleModifier(MonoBehaviour bombComponent, Type commandComponentType, out FieldInfo result)
+	private static FieldInfo AffectedByVanillaRuleModifier(Type commandComponentType)
 	{
-		result = commandComponentType.GetField("UsesVanillaRuleModifierAPI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-		if (result == null)
-		{
-			return false;
-		}
-		if (result.FieldType == typeof(bool)) return true;
-		result = null;
-		return false;
+		FieldInfo result = commandComponentType.GetField("UsesVanillaRuleModifierAPI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return result?.FieldType == typeof(bool) ? result : null;
 	}
 
 	private static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)
