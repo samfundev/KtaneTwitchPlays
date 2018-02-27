@@ -6,7 +6,7 @@ using System.Linq;
 
 public class ModuleInformation
 {
-    public string moduleDisplayName = string.Empty;
+	public string moduleDisplayName = string.Empty;
     public string moduleID;
 
     public int moduleScore = 5;
@@ -27,8 +27,6 @@ public class ModuleInformation
     public string[] validCommands;
     public bool DoesTheRightThing;
 
-	public bool affectedByVanillaRuleModifier;
-
     public bool builtIntoTwitchPlays;
 
     public bool CameraPinningAlwaysAllowed;
@@ -37,13 +35,30 @@ public class ModuleInformation
 
 	public bool ShouldSerializeunclaimedColor() { return unclaimedColor != new Color(); }
 	public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
-	public bool ShouldSerializeAffectedByVanillaRuleModifier() { return !builtIntoTwitchPlays; }
 	public bool ShouldSerializevalidCommands() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializeDoesTheRightThing() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializehelpTextOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializemanualCodeOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializestatusLightOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializevalidCommandsOverride() { return !builtIntoTwitchPlays; }
+
+	public delegate bool UsesVanillaRuleModifierAPIDelegate(BombComponent component);
+	private UsesVanillaRuleModifierAPIDelegate _affectedByVanillaRuleModifier;
+
+	public bool UsesVanillaRuleAPI(BombComponent component)
+	{
+		return _affectedByVanillaRuleModifier?.Invoke(component) ?? false;
+	}
+
+	public void SetVanillaRuleAPIDelegate(UsesVanillaRuleModifierAPIDelegate vanillaRuleAPI)
+	{
+		_affectedByVanillaRuleModifier = vanillaRuleAPI;
+	}
+
+	public ModuleInformation(UsesVanillaRuleModifierAPIDelegate vanillaRuleAPI = null)
+	{
+		_affectedByVanillaRuleModifier = vanillaRuleAPI;
+	}
 }
 
 public static class ModuleData

@@ -685,13 +685,13 @@ public abstract class ComponentSolver
             if (TryCancelField == null || TryCancelComponentSolverType == null ||
                 !(TryCancelField.GetValue(TryCancelComponentSolverType) is bool))
                 return false;
-            return (bool)TryCancelField.GetValue(BombComponent.GetComponent(TryCancelComponentSolverType));
+            return (bool)TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(TryCancelComponentSolverType));
         }
         set
         {
             if (TryCancelField != null && TryCancelComponentSolverType != null &&
                 (TryCancelField.GetValue(BombComponent.GetComponent(TryCancelComponentSolverType)) is bool))
-                TryCancelField.SetValue(BombComponent.GetComponent(TryCancelComponentSolverType), value);
+                TryCancelField.SetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(TryCancelComponentSolverType), value);
         }
     }
     #endregion

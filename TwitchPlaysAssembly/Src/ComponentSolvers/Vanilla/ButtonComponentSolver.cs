@@ -13,7 +13,7 @@ public class ButtonComponentSolver : ComponentSolver
 
         bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
         _button = bombComponent.button;
-        modInfo = new ModuleInformation
+        modInfo = new ModuleInformation(x => true)
         {
             builtIntoTwitchPlays = buttonInfo.builtIntoTwitchPlays,
             CameraPinningAlwaysAllowed = buttonInfo.CameraPinningAlwaysAllowed,
@@ -25,8 +25,7 @@ public class ButtonComponentSolver : ComponentSolver
             moduleID = buttonInfo.moduleID,
             moduleScore = VanillaRuleModifier.IsSeedVanilla()
                 ? buttonInfo.moduleScore
-                : squarebuttonInfo.moduleScore,
-			affectedByVanillaRuleModifier = true
+                : squarebuttonInfo.moduleScore
         };
     }
 
