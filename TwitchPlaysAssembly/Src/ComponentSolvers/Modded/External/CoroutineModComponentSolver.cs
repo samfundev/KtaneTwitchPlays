@@ -66,59 +66,22 @@ public class CoroutineModComponentSolver : ComponentSolver
         {
             yield return "modcoroutine";
         }
-
-        while (true)
+	    bool result = true;
+		while (result)
         {
-            try
-            {
-                if (!responseCoroutine.MoveNext())
-                    yield break;
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
-                yield break;
-            }
-
-            object currentObject = responseCoroutine.Current;
-            if (currentObject is KMSelectable)
-            {
-                KMSelectable selectable = (KMSelectable) currentObject;
-                if (HeldSelectables.Contains(selectable))
-                {
-                    DoInteractionEnd(selectable);
-                    HeldSelectables.Remove(selectable);
-                }
-                else
-                {
-                    DoInteractionStart(selectable);
-                    HeldSelectables.Add(selectable);
-                }
-            }
-            if (currentObject is KMSelectable[] selectables)
-            {
-	            foreach (KMSelectable selectable in selectables)
-                {
-                    DoInteractionClick(selectable);
-					yield return new WaitForSeconds(0.1f);
-                }
-            }
-            if (currentObject is string str)
-            {
-	            if (str.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase))
-                {
-	                CoroutineCanceller.ResetCancel();
-                    TryCancel = false;
-                }
-            }
-            yield return currentObject;
-
-            if (CoroutineCanceller.ShouldCancel)
-                TryCancel = true;
+	        try
+	        {
+		        result = responseCoroutine.MoveNext();
+	        }
+	        catch (Exception ex)
+	        {
+		        DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
+		        result = false;
+	        }
+	        if(result)
+				yield return responseCoroutine.Current;
         } 
     }
 
-    private readonly MethodInfo ProcessMethod = null;
-    private readonly Component CommandComponent = null;
-    private readonly HashSet<KMSelectable> HeldSelectables = new HashSet<KMSelectable>();
+    
 }

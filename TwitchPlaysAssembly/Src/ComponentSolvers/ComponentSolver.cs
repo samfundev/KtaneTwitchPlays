@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -23,6 +24,7 @@ public abstract class ComponentSolver
     #region Interface Implementation
     public IEnumerator RespondToCommand(string userNickName, string message)
     {
+	    TryCancel = false;
 		_responded = false;
         _processingTwitchCommand = true;
         if (Solved)
@@ -226,8 +228,36 @@ public abstract class ComponentSolver
 		            }
 					hideCamera = true;
 	            }
+				else if (currentString.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase))
+	            {
+		            CoroutineCanceller.ResetCancel();
+		            TryCancel = false;
+		            break;
+	            }
+			}
+			else if (currentValue is KMSelectable selectable1)
+            {
+	            if (HeldSelectables.Contains(selectable1))
+	            {
+		            DoInteractionEnd(selectable1);
+		            HeldSelectables.Remove(selectable1);
+	            }
+	            else
+	            {
+		            DoInteractionStart(selectable1);
+		            HeldSelectables.Add(selectable1);
+	            }
             }
-            else if (currentValue is Quaternion localQuaternion)
+			else if (currentValue is KMSelectable[] selectables)
+            {
+	            foreach (KMSelectable selectable in selectables)
+	            {
+					if(selectable != null)
+						DoInteractionClick(selectable);
+		            yield return new WaitForSeconds(0.1f);
+	            }
+            }
+			else if (currentValue is Quaternion localQuaternion)
             {
 				BombCommander.RotateByLocalQuaternion(localQuaternion);
 	            if (BombComponent.GetComponent<KMBombModule>()?.ModuleType.Equals("spwizPerspectivePegs") ?? false)
@@ -269,7 +299,10 @@ public abstract class ComponentSolver
 
 			}
 			yield return currentValue;
-        }
+
+	        if (CoroutineCanceller.ShouldCancel)
+		        TryCancel = true;
+		}
 
 		if (!_responded && !exceptionThrown)
 		{
@@ -734,10 +767,11 @@ public abstract class ComponentSolver
     protected readonly BombCommander BombCommander = null;
     protected readonly BombComponent BombComponent = null;
     protected readonly Selectable Selectable = null;
-    #endregion
+	protected readonly HashSet<KMSelectable> HeldSelectables = new HashSet<KMSelectable>();
+	#endregion
 
-    #region Private Fields
-    private string _delegatedStrikeUserNickName = null;
+	#region Private Fields
+	private string _delegatedStrikeUserNickName = null;
     private string _delegatedSolveUserNickName = null;
     private string _currentUserNickName = null;
 
@@ -753,4 +787,7 @@ public abstract class ComponentSolver
 	private bool _responded = false;
 
 	public TwitchComponentHandle ComponentHandle = null;
+	protected MethodInfo ProcessMethod = null;
+	protected Component CommandComponent = null;
+	
 }

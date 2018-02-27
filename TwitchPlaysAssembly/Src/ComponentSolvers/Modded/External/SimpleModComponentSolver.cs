@@ -58,26 +58,10 @@ public class SimpleModComponentSolver : ComponentSolver
             yield return "modsequence";
         }
 
-        for(int selectableIndex = 0; selectableIndex < selectableSequence.Length; ++selectableIndex)
+        foreach (KMSelectable selectable in selectableSequence)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
-            KMSelectable selectable = selectableSequence[selectableIndex];
-            if (selectable == null)
-            {
-                yield return new WaitForSeconds(0.1f);
-                continue;
-            }
-
-            DoInteractionClick(selectable);
-			yield return new WaitForSeconds(0.1f);
+	        yield return "trycancel";
+	        yield return new[] {selectable};
         }
     }
-
-    private readonly MethodInfo ProcessMethod = null;
-    private readonly Component CommandComponent = null;
 }
