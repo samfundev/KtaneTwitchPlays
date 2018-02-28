@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class ForgetMeNotComponentSolver : ComponentSolver
@@ -14,30 +16,21 @@ public class ForgetMeNotComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
+        if (!inputCommand.RegexMatch(out Match match, "^press ([0-9 ]+)$"))
         {
             yield break;
         }
-        inputCommand = inputCommand.Substring(6);
 
-        foreach (char buttonString in inputCommand)
+	    yield return null;
+        foreach (char buttonString in match.Groups[1].Value)
         {
             int val = buttonString - '0';
-            if(val >= 0 && val <= 9)
-            {
-                MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(val);
+	        if (val < 0 || val > 9) continue;
+	        MonoBehaviour button = (MonoBehaviour)_buttons.GetValue(val);
 
-                yield return buttonString;
-
-                if (CoroutineCanceller.ShouldCancel)
-                {
-	                CoroutineCanceller.ResetCancel();
-                    yield break;
-                }
-
-                yield return DoInteractionClick(button);
-            }
-        }
+	        yield return $"trycancel The entry of Forget me not sequence was cancelled.";
+			yield return DoInteractionClick(button);
+		}
     }
 
     static ForgetMeNotComponentSolver()

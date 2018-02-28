@@ -34,11 +34,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
 
         for (int turnCount = 0; turnCount < totalTurnCount; ++turnCount)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
+	        yield return "trycancel";
             yield return DoInteractionClick(_pointingKnob);
         }
     }

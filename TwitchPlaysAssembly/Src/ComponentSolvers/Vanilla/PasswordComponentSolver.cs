@@ -55,14 +55,8 @@ public class PasswordComponentSolver : ComponentSolver
 
         for (int hitCount = 0; hitCount < 6; ++hitCount)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
             yield return DoInteractionClick(downButton);
-            yield return new WaitForSeconds(1.0f);
+	        yield return "trywaitcancel 1.0";
         }
     }
 
@@ -71,12 +65,6 @@ public class PasswordComponentSolver : ComponentSolver
         char[] characters = word.ToCharArray();
         for (int characterIndex = 0; characterIndex < characters.Length; ++characterIndex)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
             CharSpinner spinner = _spinners[characterIndex];
             IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(spinner, characters[characterIndex]);
             while (subcoroutine.MoveNext())
@@ -101,6 +89,7 @@ public class PasswordComponentSolver : ComponentSolver
         for (int hitCount = 0; hitCount < 6 && char.ToLowerInvariant(spinner.GetCurrentChar()) != char.ToLowerInvariant(desiredCharacter); ++hitCount)
         {
             yield return DoInteractionClick(downButton);
+	        yield return "trycancel";
         }
     }
 

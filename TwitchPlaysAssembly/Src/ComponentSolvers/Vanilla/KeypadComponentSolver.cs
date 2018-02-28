@@ -34,13 +34,7 @@ public class KeypadComponentSolver : ComponentSolver
 		            continue;
 
                 yield return buttonIndexString.Value;
-
-                if (CoroutineCanceller.ShouldCancel)
-                {
-	                CoroutineCanceller.ResetCancel();
-                    yield break;
-                }
-				
+	            yield return "trycancel";
                 yield return DoInteractionClick(_buttons[buttonIndex]);
             }
         }

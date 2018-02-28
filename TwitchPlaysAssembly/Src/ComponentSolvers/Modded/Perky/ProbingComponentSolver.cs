@@ -27,9 +27,11 @@ public class ProbingComponentSolver : ComponentSolver
             for (var i = 1; i < 6; i++)
             {
                 yield return ConnectWires(i, 0);
-                yield return new WaitForSeconds(2.0f);
+                yield return new WaitForSecondsWithCancel(2.0f, false);
+	            if (CoroutineCanceller.ShouldCancel) break;
             }
             yield return ConnectWires(4, 4);  //Leave the blue wire disconnected.
+	        yield return "trycancel The probing cycle was cancelled";
             yield break;
         }
 

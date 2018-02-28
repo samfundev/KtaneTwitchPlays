@@ -78,12 +78,6 @@ public class TranslatedButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f && _held)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
             timeRemaining = timerComponent.TimeRemaining;
 
             if (BombCommander.CurrentTimerFormatted.Contains(secondString))
@@ -92,7 +86,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
                 _held = false;
             }
 
-            yield return null;
+            yield return "trycancel";
         }
     }
 

@@ -53,7 +53,6 @@ public class SafetySafeComponentSolver : ComponentSolver
                     {
                         yield return cycle.Current;
                     }
-	                if (CoroutineCanceller.ShouldCancel) break;
                 }
             }
             else if (DialPosNames.TryGetValue(split[1], out pos))
@@ -64,8 +63,6 @@ public class SafetySafeComponentSolver : ComponentSolver
                     yield return cycle.Current;
                 }
             }
-            if (CoroutineCanceller.ShouldCancel)
-	            CoroutineCanceller.ResetCancel();
         }
         else if (DialPosNames.TryGetValue(split[0], out pos))
         {
@@ -101,11 +98,7 @@ public class SafetySafeComponentSolver : ComponentSolver
                 {
                     yield return set.Current;
                 }
-	            if (CoroutineCanceller.ShouldCancel)
-		            break;
             }
-	        if (CoroutineCanceller.ShouldCancel)
-		        CoroutineCanceller.ResetCancel();
         }
     }
 
@@ -114,18 +107,12 @@ public class SafetySafeComponentSolver : ComponentSolver
         yield return "cycle " + pos;
         for (var j = 0; j < 12; j++)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-                yield break;
-            }
             yield return DoInteractionClick(_buttons[pos]);
-            yield return new WaitForSecondsWithCancel(0.3f, false);
+	        yield return "trywaitcancel 0.3 Cycling of the safety safe was cancelled";
         }
-        if (wait && !CoroutineCanceller.ShouldCancel)
-        {
-            yield return new WaitForSecondsWithCancel(0.5f, false);
-        }
-    }
+		if(wait)
+			yield return "trywaitcancel 0.5 Cycling of the safety safe was cancelled";
+	}
 
     private IEnumerator SetDial(int pos, int value)
     {
@@ -134,11 +121,7 @@ public class SafetySafeComponentSolver : ComponentSolver
         for (int i = 0; i < value; i++)
         {
             yield return DoInteractionClick(_buttons[pos]);
-            if (CoroutineCanceller.ShouldCancel)
-            {
-                yield return "sendtochat Setting the " + DialNames[pos] + " dial on safety safe was interrupted due to a request to cancel.";
-                yield break;
-            }
+            yield return "trycancel Setting the " + DialNames[pos] + " dial on safety safe was interrupted due to a request to cancel.";
         }
     }
 

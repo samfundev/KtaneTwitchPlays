@@ -55,13 +55,9 @@ public class MurderComponentSolver : ComponentSolver
 		        yield return null;
 		        foreach (var item in CycleThroughCategory(i))
 		        {
-			        if (CoroutineCanceller.ShouldCancel)
-			        {
-				        CoroutineCanceller.ResetCancel();
-				        yield break;
-			        }
-			        yield return DoInteractionClick((MonoBehaviour) item, 2.0f);
-		        }
+			        DoInteractionClick((MonoBehaviour) item);
+			        yield return "trywaitcancel 2.0 The murder cycle command was cancelled";
+				}
 	        }
 	        yield break;
 	    }

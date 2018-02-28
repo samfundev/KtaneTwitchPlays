@@ -99,13 +99,6 @@ public class ButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f && _held)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
-                yield break;
-            }
-
             timeRemaining = timerComponent.TimeRemaining;
 
             if (BombCommander.CurrentTimerFormatted.Contains(secondString))
@@ -114,8 +107,8 @@ public class ButtonComponentSolver : ComponentSolver
                 _held = false;
             }
 
-            yield return null;
-        }
+			yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+		}
     }
 
     private IEnumerator ReleaseCoroutineModded(string second)
@@ -171,16 +164,6 @@ public class ButtonComponentSolver : ComponentSolver
         
         while (timeRemaining > 0.0f)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                if (timeTarget < 10)
-                    yield return string.Format("sendtochat The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModifier.GetRuleSeed());
-                else
-                    yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
-                yield break;
-            }
-
             timeRemaining = (int)(timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
 
             if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
@@ -221,8 +204,11 @@ public class ButtonComponentSolver : ComponentSolver
                 yield break;
             }
 
-            yield return null;
-        }
+			if (timeTarget < 10)
+				yield return string.Format("trycancel The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModifier.GetRuleSeed());
+			else
+				yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+		}
     }
 
     private PressableButton _button = null;

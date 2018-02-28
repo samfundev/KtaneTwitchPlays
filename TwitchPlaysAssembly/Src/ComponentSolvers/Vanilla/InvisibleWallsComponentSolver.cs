@@ -34,13 +34,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
             if (button != null)
             {
                 yield return move.Value;
-
-                if (CoroutineCanceller.ShouldCancel)
-                {
-	                CoroutineCanceller.ResetCancel();
-                    yield break;
-                }
-
+	            yield return "trycancel";
                 yield return DoInteractionClick(button);
             }            
         }

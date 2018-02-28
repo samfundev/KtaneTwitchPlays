@@ -122,6 +122,7 @@ public abstract class ComponentSolver
         bool needQuaternionReset = false;
 	    bool hideCamera = false;
 		bool exceptionThrown = false;
+	    Match match;
 		
         while ((previousStrikeCount == StrikeCount || DisableOnStrike) && !Solved)
         {
@@ -172,12 +173,26 @@ public abstract class ComponentSolver
                     parseError = true;
                     break;
                 }
-                else if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) &&
+                else if (currentString.RegexMatch(out match, "^trycancel((?: .+)?)$") &&
                          CoroutineCanceller.ShouldCancel)
                 {
 	                CoroutineCanceller.ResetCancel();
+					if(!string.IsNullOrEmpty(match.Groups[1].Value))
+						IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
+
                     break;
                 }
+				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: .+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
+	            {
+		            yield return new WaitForSecondsWithCancel(waitCancelTime, false);
+		            if (CoroutineCanceller.ShouldCancel)
+		            {
+			            CoroutineCanceller.ResetCancel();
+			            if (!string.IsNullOrEmpty(match.Groups[2].Value))
+				            IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[2].Value.Trim()}");
+						break;
+		            }
+	            }
                 else if (currentString.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(11).Trim() != string.Empty)
                 {

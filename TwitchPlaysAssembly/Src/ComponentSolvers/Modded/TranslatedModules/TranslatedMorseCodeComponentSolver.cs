@@ -46,13 +46,7 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         while (CurrentFrequency != targetFrequency && (CurrentFrequency == initialFrequency || Math.Sign(CurrentFrequency - initialFrequency) != Math.Sign(CurrentFrequency - targetFrequency)))
         {
             yield return "change frequency";
-
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
+	        yield return "trycancel";
             yield return DoInteractionClick(buttonToShift);
         }
 

@@ -35,11 +35,7 @@ public class VennWireComponentSolver : ComponentSolver
 
                 yield return wireIndexString.Value;
 
-                if (CoroutineCanceller.ShouldCancel)
-                {
-	                CoroutineCanceller.ResetCancel();
-                    yield break;
-                }
+	            yield return "trycancel";
                 VennSnippableWire wire = _wires[wireIndex];
                 yield return DoInteractionClick(wire, string.Format("cutting wire {0}", wireIndexString.Value));
             }

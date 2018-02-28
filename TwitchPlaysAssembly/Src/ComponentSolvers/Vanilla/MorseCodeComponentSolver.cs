@@ -29,11 +29,7 @@ public class MorseCodeComponentSolver : ComponentSolver
         {
             yield return "change frequency";
 
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
+	        yield return "trycancel";
             int lastFrequency = CurrentFrequency;
             yield return DoInteractionClick(buttonToShift);
             if (lastFrequency == CurrentFrequency)

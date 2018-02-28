@@ -54,6 +54,17 @@ public class CurriculumComponentSolver : ComponentSolver
 			_buttons[5].OnInteract();
 			yield return new WaitForSeconds(0.1f);
 		}
+		else if (commands.Length == 1 && commands[0] == "reset")
+		{
+			yield return null;
+			for (int buttonPosition = 0; buttonPosition < 5; buttonPosition++)
+			{
+				KMSelectable button = _buttons[buttonPosition];
+				if (buttonOffset[buttonPosition] <= 0) continue;
+				for (int i = 0; i < 6 - buttonOffset[buttonPosition]; i++) button.OnInteract();
+				buttonOffset[buttonPosition] = 0;
+			}
+		}
 		else if (commands.Length == 1 && commands[0] == "cycle")
 		{
 			for (int buttonPosition = 0; buttonPosition < 5; buttonPosition++)
@@ -61,15 +72,15 @@ public class CurriculumComponentSolver : ComponentSolver
 				yield return null;
 
 				KMSelectable button = _buttons[buttonPosition];
+				yield return "trycancel";
 				if (buttonOffset[buttonPosition] > 0)
 				{
 					for (int i = 0; i < 6 - buttonOffset[buttonPosition]; i++) button.OnInteract();
-					buttonOffset[buttonPosition] = 0;
 				}
-
+				
 				for (int i2 = 0; i2 < 2; i2++)
 				{
-					yield return new WaitForSeconds(1.5f);
+					yield return new WaitForSecondsWithCancel(1.5f, false);
 					for (int i = 0; i < 3; i++)
 					{
 						button.OnInteract();
@@ -80,7 +91,6 @@ public class CurriculumComponentSolver : ComponentSolver
 				if (buttonOffset[buttonPosition] > 0)
 				{
 					for (int i = 0; i < buttonOffset[buttonPosition]; i++) button.OnInteract();
-					buttonOffset[buttonPosition] = 0;
 				}
 			}
 

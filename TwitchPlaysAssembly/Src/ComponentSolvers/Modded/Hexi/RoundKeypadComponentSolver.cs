@@ -37,11 +37,7 @@ public class RoundKeypadComponentSolver : ComponentSolver
         yield return inputCommand;
         foreach (MonoBehaviour button in buttons)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
+	        yield return "trycancel";
             yield return DoInteractionClick(button);
         }
     }

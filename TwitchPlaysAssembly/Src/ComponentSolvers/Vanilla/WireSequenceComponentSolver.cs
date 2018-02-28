@@ -33,12 +33,12 @@ public class WireSequenceComponentSolver : ComponentSolver
 		    }
 		    for (int i = 0; i < page; i++)
 		    {
-			    yield return new WaitForSeconds(3.0f);
+			    yield return new WaitForSecondsWithCancel(3.0f, false);
 			    IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i, i + 1);
 			    while (changePage.MoveNext())
 				    yield return changePage.Current;
 		    }
-		    yield return null;
+		    yield return "trycancel The cycle command of Wire Sequences was cancelled";
 			yield break;
 	    }
 
@@ -89,11 +89,7 @@ public class WireSequenceComponentSolver : ComponentSolver
             yield return "wire sequence";
 	        foreach (KeyValuePair<MonoBehaviour, string> button in buttons)
 	        {
-		        if (CoroutineCanceller.ShouldCancel)
-		        {
-			        CoroutineCanceller.ResetCancel();
-			        yield break;
-		        }
+		        yield return "trycancel";
 		        yield return DoInteractionClick(button.Key, button.Value);
 
 	        }

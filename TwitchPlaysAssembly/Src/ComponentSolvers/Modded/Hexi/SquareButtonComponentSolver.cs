@@ -94,13 +94,6 @@ public class SquareButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-				yield return string.Format("sendtochat The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
-				yield break;
-            }
-
             timeRemaining = (int)(timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
 
             if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
@@ -132,8 +125,8 @@ public class SquareButtonComponentSolver : ComponentSolver
                 yield break;
             }
 
-            yield return null;
-        }
+			yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+		}
     }
 
     static SquareButtonComponentSolver()

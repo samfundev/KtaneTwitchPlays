@@ -67,11 +67,7 @@ public class PlumbingComponentSolver : ComponentSolver
         }
         foreach (MonoBehaviour button in pipes)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
+	        yield return "trycancel";
             yield return DoInteractionClick(button);
         }
     }

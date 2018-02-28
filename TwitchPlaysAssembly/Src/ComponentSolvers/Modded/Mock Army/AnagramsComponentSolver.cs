@@ -14,6 +14,23 @@ public class AnagramsComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		object[] anagramWords =
+		{
+			"stream", "master", "tamers", "looped", "poodle", "pooled",
+			"cellar", "caller", "recall", "seated", "sedate", "teased",
+			"rescue", "secure", "recuse", "rashes", "shears", "shares",
+			"barely", "barley", "bleary", "duster", "rusted", "rudest"
+		};
+
+		object[] wordscrambleWords =
+		{
+			"archer", "attack", "banana", "blasts", "bursts", "button",
+			"cannon", "casing", "charge", "damage", "defuse", "device",
+			"disarm", "flames", "kaboom", "kevlar", "keypad", "letter",
+			"module", "mortar", "napalm", "ottawa", "person", "robots",
+			"rocket", "sapper", "semtex", "weapon", "widget", "wiring",
+		};
+
 	    List<KMSelectable> buttons = new List<KMSelectable>();
 	    List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
         if (inputCommand.StartsWith("submit ", System.StringComparison.InvariantCultureIgnoreCase))
@@ -22,9 +39,16 @@ public class AnagramsComponentSolver : ComponentSolver
 	        foreach (char c in inputCommand)
 	        {
 	            int index = buttonLabels.IndexOf(c.ToString());
-	            if (index < 0)
-	                yield break;
-                buttons.Add(_buttons[index]);
+		        if (index < 0)
+		        {
+			        if (inputCommand.EqualsAny(anagramWords) || inputCommand.EqualsAny(wordscrambleWords))
+			        {
+				        yield return null;
+				        yield return "unsubmittablepenalty";
+			        }
+			        yield break;
+		        }
+		        buttons.Add(_buttons[index]);
 	        }
 
 			if (buttons.Count != 6) yield break;

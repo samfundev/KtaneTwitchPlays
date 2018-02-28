@@ -33,7 +33,7 @@ public class SwitchesComponentSolver : ComponentSolver
 	    foreach (int? switchIndex in switchIndices)
 	    {
 	        _OnToggleMethod.Invoke(_component, new object[] { switchIndex - 1 });
-	        yield return new WaitForSeconds(0.1f);
+		    yield return "trywaitcancel 0.1";
 	    }
 	}
 

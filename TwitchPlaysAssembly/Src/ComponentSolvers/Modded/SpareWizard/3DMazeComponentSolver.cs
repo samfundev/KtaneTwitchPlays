@@ -61,6 +61,7 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 		foreach (KMSelectable move in moves)
 		{
 			yield return DoInteractionClick(move, moveDelay);
+			yield return "trycancel";
 		}
 	}
 

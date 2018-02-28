@@ -121,13 +121,6 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-                CoroutineCanceller.ResetCancel();
-                yield return "sendtochaterror The key turn was aborted due to a request to cancel";
-                break;
-            }
-
             timeRemaining = (int) (timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
 
             if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
@@ -142,8 +135,8 @@ public class TurnTheKeyComponentSolver : ComponentSolver
                 break;
             }
 
-            yield return null;
-        }
+			yield return "trycancel The key turn was aborted due to a request to cancel";
+		}
 	}
 
 	static TurnTheKeyComponentSolver()

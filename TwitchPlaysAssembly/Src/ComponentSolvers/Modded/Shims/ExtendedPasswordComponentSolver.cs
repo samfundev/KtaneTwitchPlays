@@ -29,6 +29,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolver
 				while (spinnerCoroutine.MoveNext())
 			    {
 				    yield return spinnerCoroutine.Current;
+				    yield return "trycancel";
 			    }
 		    }
 		    yield break;
@@ -38,6 +39,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolver
         while (command.MoveNext())
         {
 			yield return command.Current;
+	        yield return "trycancel";
         }
         if (inputCommand.Trim().Length == 6)
         {

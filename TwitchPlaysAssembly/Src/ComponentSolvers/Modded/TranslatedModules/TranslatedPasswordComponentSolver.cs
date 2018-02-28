@@ -72,14 +72,8 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
         for (int hitCount = 0; hitCount < 6; ++hitCount)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
             yield return DoInteractionClick(downButton);
-            yield return new WaitForSeconds(1.0f);
+	        yield return "trywaitcancel 1.0";
         }
     }
 
@@ -88,12 +82,6 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
         char[] characters = word.ToCharArray();
         for (int characterIndex = 0; characterIndex < characters.Length; ++characterIndex)
         {
-            if (CoroutineCanceller.ShouldCancel)
-            {
-	            CoroutineCanceller.ResetCancel();
-                yield break;
-            }
-
             IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(characterIndex, characters[characterIndex].ToString());
             while (subcoroutine.MoveNext())
             {
@@ -117,6 +105,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
         for (int hitCount = 0; hitCount < 6 && !_display[index].text.Equals(desiredCharacter, StringComparison.InvariantCultureIgnoreCase); ++hitCount)
         {
             yield return DoInteractionClick(downButton);
+	        yield return "trycancel";
         }
     }
 
