@@ -152,7 +152,7 @@ public static class ComponentSolverFactory
 		//Asimir
 		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Murder", moduleScore = 10, helpText = "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse." };
 		ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Sea Shells", helpText = "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.", moduleScore = 7 };
-		ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Shift", helpText = "Submit your anwser with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
+		ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Shift", helpText = "Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.", moduleScore = 8 };
 		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 5, moduleDisplayName = "Third Base", helpText = "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive." };
 
 		//AT_Bash / Bashly
@@ -160,7 +160,7 @@ public static class ComponentSolverFactory
 
 		//Hexicube
 		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Forget Me Not", helpText = "Enter forget me not sequence with !{0} press 5 3 1 8 2 0... The Sequence length depends on how many modules were on the bomb.", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
-		ModComponentSolverInformation["KeypadV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Round Keypad", helpText = "Solve the module with !{0} press 2 4 6 7 8. Button 1 is the top most botton, and are numbered in clockwise order.", moduleScore = 6 };
+		ModComponentSolverInformation["KeypadV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Round Keypad", helpText = "Solve the module with !{0} press 2 4 6 7 8. Button 1 is the top most button, and are numbered in clockwise order.", moduleScore = 6 };
 		ModComponentSolverInformation["ButtonV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Square Button", helpText = "Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", moduleScore = 6 };
 		ModComponentSolverInformation["SimonV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon States", helpText = "Enter the response with !{0} press B Y R G.", moduleScore = 8 };
 		ModComponentSolverInformation["PasswordV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Safety Safe", helpText = "Listen to the dials with !{0} cycle. Listen to a single dial with !{0} cycle BR. Make a correction to a single dial with !{0} BM 3. Enter the solution with !{0} 6 0 6 8 2 5. Submit the answer with !{0} submit. Dial positions are TL, TM, TR, BL, BM, BR.", moduleScore = 15 };
@@ -183,7 +183,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TwoBits"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Two Bits", helpText = "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.", moduleScore = 8 };
 
 		//SpareWizard
-		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "3D Maze", helpText = "Move around the maze using !{0} move left forward right. Walk slowly around the maze using !{0} walk left forawrd right. Shorten forms of the directions are also acceptable. You can use \"uturn\" or \"u\" to turn around.", moduleScore = 20 };
+		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "3D Maze", helpText = "Move around the maze using !{0} move left forward right. Walk slowly around the maze using !{0} walk left forward right. Shorten forms of the directions are also acceptable. You can use \"uturn\" or \"u\" to turn around.", moduleScore = 20 };
 
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", statusLightLeft = true, helpText = "Submit your answer with !{0} submit poodle", moduleScore = 1 };
@@ -191,13 +191,13 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", helpText = "Submit your answer with !{0} submit poodle", moduleScore = 1 };
 
 		//Misc
-		ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alphabet", helpText = "Submit your anwser with !{0} press A B C D.", moduleScore = 1 };
+		ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alphabet", helpText = "Submit your answer with !{0} press A B C D.", moduleScore = 1 };
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9 };
 		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Color Morse", helpText = "Submit some morse code using !{0} transmit ....- --...", moduleScore = 5 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)" };
         	ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
-		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Pad", helpText = "Submit your anwser with !{0} submit 4236.", moduleScore = 5 };
+		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Pad", helpText = "Submit your answer with !{0} submit 4236.", moduleScore = 5 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", helpText = "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.", moduleScore = 6 };
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", helpText = "Flip switches using !{0} flip 1 5 3 2.", moduleScore = 3 };
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Curriculum", helpText = "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.", moduleScore = 12 };
