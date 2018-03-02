@@ -33,9 +33,12 @@ public class MonsplodeCardsComponentSolver : ComponentSolver
 		}
 		else
 		{
-			yield return null;
 			IEnumerator command = (IEnumerator)_ProcessCommandMethod.Invoke(_component, new object[] { inputCommand });
-			yield return command;
+			if (command == null) yield break;
+			while (command.MoveNext())
+			{
+				yield return command.Current;
+			}
 		}
 	}
 
