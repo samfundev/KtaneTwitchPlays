@@ -12,7 +12,6 @@ public class WebDesignComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		text = (TextMesh)_text.GetValue(_component);
-		btns = (KMSelectable[])_btn.GetValue(_component);
 	}
 
 	private readonly List<string> _screens = new List<string>();
@@ -90,19 +89,14 @@ public class WebDesignComponentSolver : ComponentSolver
 		_componentType = ReflectionHelper.FindType("webdesign");
 		_ProcessCommandMethod = _componentType.GetMethod("ProcessTwitchCommand", BindingFlags.NonPublic | BindingFlags.Instance );
 		_text = _componentType.GetField("text", BindingFlags.Public | BindingFlags.Instance);
-		_btn = _componentType.GetField("btn", BindingFlags.Public | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
 	private static MethodInfo _ProcessCommandMethod = null;
-	private static FieldInfo _btn = null;
-	private KMSelectable[] btns = null;
 	private static FieldInfo _text = null;
 	private TextMesh text = null;
 	private bool active;
 	private string oldScreen = null;
-	private string newScreen = null;
-	private string screenHolder = null;
 
 	private object _component = null;
 	private int wantedWidth = 18;
