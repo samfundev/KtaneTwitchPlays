@@ -212,7 +212,18 @@ public abstract class GameRoom
 
 	public virtual IEnumerator ReportBombStatus()
     {
-	    
+		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+	    foreach (TwitchBombHandle handle in bombHandles)
+	    {
+		    if (OtherModes.timedModeOn)
+		    {
+			    handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
+		    }
+		    else if (OtherModes.zenModeOn)
+		    {
+			    handle.bombCommander.timerComponent.TimeRemaining = 1;
+		    }
+	    }
 		yield break;
     }
 

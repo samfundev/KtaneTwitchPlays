@@ -43,6 +43,7 @@ public class TwitchPlaySettingsData
 	public float TimeModeMultiplierStrikePenalty = 1.5f;
 	public float TimeModeTimerStrikePenalty = 0.25f;
 	public int TimeModeMinimumTimeLost = 15;
+	public int TimeModeMinimumTimeGained = 20;
 	public float AwardDropMultiplierOnStrike = 0.80f;
 
 	public int MinTimeLeftForClaims = 60;
@@ -59,7 +60,8 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, string> BombCustomMessages = new Dictionary<string, string>
 	{
-		{"ttks", "Turn the Keys is a module on this bomb. It dictates some modules be delayed until others are finished. Until Turn the Keys is finished, you should avoid doing the following modules:\nMaze, Memory, Complicated Wires, Wire Sequence, Simon Says, Cryptography, Semaphore, Combination Lock, Astrology, Switches, Plubming"}
+		{"ttks", "Turn the Keys is a module on this bomb. It dictates some modules be delayed until others are finished. Until Turn the Keys is finished, you should avoid doing the following modules:\nMaze, Memory, Complicated Wires, Wire Sequence, Simon Says, Cryptography, Semaphore, Combination Lock, Astrology, Switches, Plubming"},
+		{"infozen", "Zen Mode is a peaceful mode. The clock counts up instead of down. Strikes can't blow up the bomb (though they still count). Points are reduced by 75%, and if you don't like the modules, you can !newbomb to get new ones." }
 	};
 
 	public Dictionary<string, string> GeneralCustomMessages = new Dictionary<string, string>
@@ -165,7 +167,8 @@ public class TwitchPlaySettingsData
 	public string BombStatus = "Time remaining: {0}, Strikes: {1}/{2} Solves: {3}/{4} Reward: {5}";
 
     public string NotesSpaceFree = "(Free Space)";
-    public string Notes = "Notes {0}: {1}";
+	public string ZenModeFreeSpace = "Zen mode in effect. Type !newbomb to get a new bomb worth of modules. Type !bomb endzenmode to detonate the bomb, and return to setup room.";
+	public string Notes = "Notes {0}: {1}";
     public string NotesTaken = "Notes Taken for Note Slot {0}: {1}";
     public string NotesAppended = "Notes appended to Note Slot {0}: {1}";
     public string NoteSlotCleared = "Note Slot {0} Cleared.";
@@ -212,6 +215,17 @@ public class TwitchPlaySettingsData
 		{
 			DebugHelper.Log($"TwitchPlaySettings.ValidateFloat( {input}, {def}, {min}, {max}, {forceUpdate} ) - {(forceUpdate ? "Updated because of version breaking changes" : (input < min ? "Updated because value was less than minimum" : "Updated because value was greater than maximum"))}");
 			input = def;
+			return false;
+		}
+		return true;
+	}
+
+	private bool ValidateDictionaryEntry(string key, ref Dictionary<string, string> input, Dictionary<string, string> def, bool forceUpdate=false)
+	{
+		if (!input.ContainsKey(key) || forceUpdate)
+		{
+			DebugHelper.Log($@"TwitchPlaySettings.ValidateDictionaryEntry( {key}, {def[key]}, {(forceUpdate ? "Updated because of version breaking changes" : "Updated because key doesn't exist")}");
+			input[key] = def[key];
 			return false;
 		}
 		return true;
@@ -314,6 +328,8 @@ public class TwitchPlaySettingsData
 
 	    valid &= ValidateInt(ref InstantModuleClaimCooldown, data.InstantModuleClaimCooldown, 0);
 	    valid &= ValidateInt(ref InstantModuleClaimCooldownExpiry, data.InstantModuleClaimCooldownExpiry, 0);
+
+	    valid &= ValidateDictionaryEntry("infozen", ref BombCustomMessages, data.BombCustomMessages);
 
         return valid;
     }

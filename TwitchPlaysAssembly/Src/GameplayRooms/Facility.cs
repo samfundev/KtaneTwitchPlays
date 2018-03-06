@@ -31,7 +31,11 @@ public class Facility : GameRoom
 
     public override IEnumerator ReportBombStatus()
     {
-	    List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+	    IEnumerator baseIEnumerator = base.ReportBombStatus();
+	    while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
+
+		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+
         if (!SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled)
             yield break;
 

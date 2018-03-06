@@ -70,6 +70,8 @@ public class ElevatorGameRoom : GameRoom
 
 	public override IEnumerator ReportBombStatus()
 	{
+		IEnumerator baseIEnumerator = base.ReportBombStatus();
+		while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
 		ValidEdgeworkRegex = new[] { $"^edgework((?: right| left| back| r| l| b)?)$" };
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
 		TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;

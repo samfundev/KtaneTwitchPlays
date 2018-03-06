@@ -1,33 +1,44 @@
 ﻿public static class OtherModes
 {
+	private static bool GetMode(string modeName, ref bool currentBomb, ref bool nextBomb)
+	{
+		if (BombMessageResponder.BombActive)
+		{
+			return currentBomb;
+		}
+		if(currentBomb != nextBomb)
+			IRCConnection.Instance.SendMessage($"{modeName} is now {(nextBomb ? "Enabled" : "Disabled")}");
+		currentBomb = nextBomb;
+		return currentBomb;
+	}
+
+	private static void SetMode(string modeName, ref bool currentBomb, out bool nextBomb, bool value)
+	{
+		nextBomb = value;
+		if (!BombMessageResponder.BombActive)
+		{
+			if(currentBomb != value)
+				IRCConnection.Instance.SendMessage(value ? $"{modeName} Enabled" : $"{modeName} Disabled");
+			currentBomb = value;
+		}
+		else
+		{
+			if (value != currentBomb)
+				IRCConnection.Instance.SendMessage($"{modeName} is currently {{0}}, it will be {{1}} for next bomb.", currentBomb ? "enabled" : "disabled", value ? "enabled" : "disabled");
+			else
+				IRCConnection.Instance.SendMessage($"{modeName} is currently {{0}}, it will remain {{0}} for next bomb.", value ? "enabled" : "disabled");
+		}
+	}
+
 	public static bool zenModeOn
 	{
-		get
-		{
-			if (BombMessageResponder.BombActive)
-			{
-				return _zenModeCurrentBomb;
-			}
-			if (_zenModeCurrentBomb != _zenModeNextBomb)
-				IRCConnection.Instance.SendMessage("Zen mode is now {0}", _zenModeNextBomb ? "Enabled" : "Disabled");
-			_zenModeCurrentBomb = _zenModeNextBomb;
-			return _zenModeCurrentBomb;
-		}
+		get => GetMode("Zen mode", ref _zenModeCurrentBomb, ref _zenModeNextBomb);
 		set
 		{
-			_zenModeNextBomb = value;
-			if (!BombMessageResponder.BombActive)
-			{
-				_zenModeCurrentBomb = value;
-				IRCConnection.Instance.SendMessage(value ? "Zen Mode Enabled" : "Zen Mode Disabled");
-			}
-			else
-			{
-				if (value != _zenModeCurrentBomb)
-					IRCConnection.Instance.SendMessage("Zen mode is currently {0}, it will be {1} for next bomb.", _zenModeCurrentBomb ? "enabled" : "disabled", value ? "enabled" : "disabled");
-				else
-					IRCConnection.Instance.SendMessage("Zen mode is currently {0}, it will remain {0} for next bomb.", value ? "enabled" : "disabled");
-			}
+			SetMode("Zen mode", ref _zenModeCurrentBomb, out _zenModeNextBomb, value);
+			if (!value) return;
+			timedModeOn = false;
+			vsModeOn = false;
 		}
 	}
 	private static bool _zenModeCurrentBomb;
@@ -36,46 +47,38 @@
 
 	public static bool timedModeOn
 	{
-		get
-		{
-			if (BombMessageResponder.BombActive)
-			{
-				return _timedModeCurrentBomb;
-			}
-			if (_timedModeCurrentBomb != _timedModeNextBomb)
-				IRCConnection.Instance.SendMessage("Time mode is now {0}", _timedModeNextBomb ? "Enabled" : "Disabled");
-			_timedModeCurrentBomb = _timedModeNextBomb;
-			return _timedModeCurrentBomb;
-		}
+		get => GetMode("Time mode", ref _timedModeCurrentBomb, ref _timedModeNextBomb);
 		set
 		{
-			_timedModeNextBomb = value;
-			if (!BombMessageResponder.BombActive)
-			{
-				_timedModeCurrentBomb = value;
-				IRCConnection.Instance.SendMessage(value ? "Time Mode Enabled" : "Time Mode Disabled");
-			}
-			else
-			{
-				if (value != _timedModeCurrentBomb)
-					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will be {1} for next bomb.", _timedModeCurrentBomb ? "enabled" : "disabled", value ? "enabled" : "disabled");
-				else
-					IRCConnection.Instance.SendMessage("Time mode is currently {0}, it will remain {0} for next bomb.", value ? "enabled" : "disabled");
-			}
+			SetMode("Time mode", ref _timedModeCurrentBomb, out _timedModeNextBomb, value);
+			if (!value) return;
+			vsModeOn = false;
+			zenModeOn = false;
 		}
 	}
-    public static float timedMultiplier = 9;
-
 	private static bool _timedModeCurrentBomb = false;
 	private static bool _timedModeNextBomb = false;
 
-    public static bool vsModeOn = false;
+	public static bool vsModeOn
+	{
+		get => GetMode("VS mode", ref _vsModeCurrentBomb, ref _vsModeNextBomb);
+		set
+		{
+			SetMode("VS mode", ref _vsModeCurrentBomb, out _vsModeNextBomb, value);
+			if (!value) return;
+			vsModeOn = false;
+			zenModeOn = false;
+		}
+	}
+	private static bool _vsModeCurrentBomb = false;
+	private static bool _vsModeNextBomb = false;
+
+	public static float timedMultiplier = 9;
     public static int teamHealth = 0;
     public static int bossHealth = 0;
 
     public static void toggleVsMode()
     {
-        if (BombMessageResponder.BombActive) return;
         vsModeOn = !vsModeOn;
     }
 
@@ -116,9 +119,13 @@
         return vsModeOn;
     }
 
-	public static void RefreshTimeMode()
+	public static void RefreshModes()
 	{
-		if (BombMessageResponder.BombActive || timedModeOn) return;
+		bool result = BombMessageResponder.BombActive;
+		result |= timedModeOn;
+		result |= zenModeOn;
+		result |= vsModeOn;
+		if (result) return;
 	}
 
     public static float getMultiplier()

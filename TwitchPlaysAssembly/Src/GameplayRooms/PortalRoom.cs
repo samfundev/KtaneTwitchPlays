@@ -42,7 +42,10 @@ public class PortalRoom : GameRoom
 
     public override IEnumerator ReportBombStatus()
     {
-	    List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+	    IEnumerator baseIEnumerator = base.ReportBombStatus();
+	    while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
+
+		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
 		yield return new WaitUntil(() => SceneManager.Instance.GameplayState.RoundStarted);
         yield return new WaitForSeconds(0.1f);
         _roomLight = (GameObject) _roomLightField.GetValue(_room);

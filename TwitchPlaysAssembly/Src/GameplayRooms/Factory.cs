@@ -43,6 +43,7 @@ public class Factory : GameRoom
             return false;
         }
 
+		
 	    room = new Factory(factoryObject[0]);
         return true;
     }
@@ -84,22 +85,23 @@ public class Factory : GameRoom
 	}
 
     public override IEnumerator ReportBombStatus()
-    {   
-	    TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
-		if (_gameroom.GetType() == _factoryStaticModeType)
-		{
-			IEnumerator reportBombStatus = base.ReportBombStatus();
-			while (reportBombStatus.MoveNext())
-			{
-				yield return reportBombStatus.Current;
-			}
-			yield break;
-		}
+    {
+	    IEnumerator baseIEnumerator;
+	    if (_gameroom.GetType() == _factoryStaticModeType)
+	    {
+		    baseIEnumerator = base.ReportBombStatus();
+			while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
+		    yield break;
+	    }
+
+		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
+		
 	    bombHandle.nameText.text = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
 
 		yield return new WaitUntil(() => GetBomb != null || bombHandle.bombCommander.Bomb.HasDetonated);
 	    if (bombHandle.bombCommander.Bomb.HasDetonated && !_zenMode) yield break;
 
+	    float currentBombTimer = bombHandle.bombCommander.timerComponent.TimeRemaining + 5;
 	    int currentBombID = 1;
 	    while (GetBomb != null)
         {
@@ -109,6 +111,11 @@ public class Factory : GameRoom
 			yield return new WaitForSeconds(3.0f);
 	        bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
 	        IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
+	        if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f)
+	        {
+		        baseIEnumerator = base.ReportBombStatus();
+		        while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
+			}
 	        if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 	        {
 		        bombHandle.bombCommander.FillEdgework();
@@ -125,7 +132,12 @@ public class Factory : GameRoom
             }
 
 	        Bomb bomb1 = (Bomb)_internalBombProperty.GetValue(currentBomb, null);
-	        yield return new WaitUntil(() => bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive);
+	        yield return new WaitUntil(() =>
+	        {
+		        bool result = bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive;
+		        if (!result) currentBombTimer = bomb1.GetTimer().TimeRemaining;
+				return result;
+	        });
 	        if (!BombMessageResponder.BombActive) yield break;
 
 	        IRCConnection.Instance.SendMessage(BombMessageResponder.Instance.GetBombResult(false));

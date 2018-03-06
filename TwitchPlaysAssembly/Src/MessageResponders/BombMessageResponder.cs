@@ -238,7 +238,7 @@ public class BombMessageResponder : MessageResponder
         MusicPlayer.StopAllMusic();
 
 	    GameRoom.Instance?.OnDisable();
-	    OtherModes.RefreshTimeMode();
+	    OtherModes.RefreshModes();
 
 	    try
 	    {

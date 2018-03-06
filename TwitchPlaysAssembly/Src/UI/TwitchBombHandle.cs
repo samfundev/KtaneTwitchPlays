@@ -136,9 +136,9 @@ public class TwitchBombHandle : MonoBehaviour
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
-		else if (internalCommandLower.EqualsAny("explode", "detonate"))
+		else if (internalCommandLower.EqualsAny("explode", "detonate", "endzenmode"))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || (OtherModes.zenModeOn && internalCommandLower.Equals("endzenmode")))
 			{
                 return DelayBombExplosionCoroutine(notifier);
 			}
