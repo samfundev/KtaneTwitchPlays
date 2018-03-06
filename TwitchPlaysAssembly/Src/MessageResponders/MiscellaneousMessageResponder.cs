@@ -75,7 +75,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
-	string resolveMissionID(string targetID, out string failureMessage)
+	string ResolveMissionID(string targetID, out string failureMessage)
 	{
 	    failureMessage = null;
 	    ModManager modManager = ModManager.Instance;
@@ -188,7 +188,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         {
 	        if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone)
 	        {
-		        OtherModes.toggleTimedMode();
+		        OtherModes.ToggleTimedMode();
 	        }
 	        else
 	        {
@@ -199,7 +199,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         {
 	        if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 	        {
-		        OtherModes.toggleZenMode();
+		        OtherModes.ToggleZenMode();
 	        }
         }
         else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
@@ -361,12 +361,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 				    string failureMessage = null;
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
-						missionID = resolveMissionID(textAfter, out failureMessage);
+						missionID = ResolveMissionID(textAfter, out failureMessage);
 					}
 
 					if (missionID == null && TwitchPlaySettings.data.CustomMissions.ContainsKey(textAfter))
 					{
-						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter], out failureMessage);
+						missionID = ResolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter], out failureMessage);
 					}
 
 					if (missionID == null)
@@ -451,7 +451,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;
-						if (OtherModes.timedModeOn)
+						if (OtherModes.TimedModeOn)
 						{
 							mission.GeneratorSetting = new KMGeneratorSetting()
 							{
