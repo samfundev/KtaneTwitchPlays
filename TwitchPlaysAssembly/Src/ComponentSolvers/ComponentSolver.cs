@@ -596,6 +596,7 @@ public abstract class ComponentSolver
 
     private void AwardSolve(string userNickName, int ComponentValue)
     {
+	    if (OtherModes.zenModeOn) ComponentValue = (int)Math.Ceiling(ComponentValue * 0.20f);
 	    if (userNickName == null)
 	    {
 		    TwitchPlaySettings.AddRewardBonus(ComponentValue);
@@ -621,9 +622,17 @@ public abstract class ComponentSolver
         {
             float multiplier = OtherModes.getMultiplier();
             float time = multiplier * ComponentValue;
-            BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
-	        IRCConnection.Instance.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
-            if (multiplier < TwitchPlaySettings.data.TimeModeMaxMultiplier)
+	        if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
+	        {
+		        BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
+		        IRCConnection.Instance.SendMessage("Bomb time increased by the minimum {0} seconds!", TwitchPlaySettings.data.TimeModeMinimumTimeGained);
+	        }
+	        else
+	        {
+		        BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
+		        IRCConnection.Instance.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
+	        }
+	        if (multiplier < TwitchPlaySettings.data.TimeModeMaxMultiplier)
             {
                 multiplier = multiplier + TwitchPlaySettings.data.TimeModeSolveBonus;
                 OtherModes.setMultiplier(multiplier);
@@ -635,6 +644,7 @@ public abstract class ComponentSolver
     {
 	    string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+	    if (OtherModes.zenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
 	    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
         if (strikeCount <= 0) return;
 
@@ -675,6 +685,11 @@ public abstract class ComponentSolver
 	        BombCommander.StrikeCount = 0;
 	        BombMessageResponder.moduleCameras.UpdateStrikes();
 		}
+	    if (OtherModes.zenModeOn)
+	    {
+		    BombCommander.StrikeLimit += strikeCount;
+		}
+
 	    Leaderboard.Instance.AddScore(userNickName, strikePenalty);
 	    Leaderboard.Instance.AddStrike(userNickName, strikeCount);
         StrikeMessage = string.Empty;
