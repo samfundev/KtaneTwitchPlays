@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class HoldableHandler
 {
-	public HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable)
+	protected HoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable)
 	{
 		HoldableCommander = commander;
 		Holdable = holdable;
@@ -57,10 +57,10 @@ public abstract class HoldableHandler
 		TwitchPlaySettings.SetRewardBonus(currentReward);
 		if(currentReward != originalReward)
 			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
-		if (OtherModes.timedModeOn)
+		if (OtherModes.TimedModeOn)
 		{
-			bool multiDropped = OtherModes.dropMultiplier();
-			float multiplier = OtherModes.getMultiplier();
+			bool multiDropped = OtherModes.DropMultiplier();
+			float multiplier = OtherModes.GetMultiplier();
 			string tempMessage;
 			if (multiDropped)
 			{

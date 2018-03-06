@@ -215,11 +215,11 @@ public abstract class GameRoom
 		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
 	    foreach (TwitchBombHandle handle in bombHandles)
 	    {
-		    if (OtherModes.timedModeOn)
+		    if (OtherModes.TimedModeOn)
 		    {
 			    handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
 		    }
-		    else if (OtherModes.zenModeOn)
+		    else if (OtherModes.ZenModeOn)
 		    {
 			    handle.bombCommander.timerComponent.TimeRemaining = 1;
 		    }

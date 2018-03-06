@@ -75,7 +75,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
-	string resolveMissionID(string targetID, out string failureMessage)
+	string ResolveMissionID(string targetID, out string failureMessage)
 	{
 	    failureMessage = null;
 	    ModManager modManager = ModManager.Instance;
@@ -188,7 +188,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         {
 	        if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone)
 	        {
-		        OtherModes.toggleTimedMode();
+		        OtherModes.ToggleTimedMode();
 	        }
 	        else
 	        {
@@ -199,7 +199,7 @@ public class MiscellaneousMessageResponder : MessageResponder
         {
 	        if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 	        {
-		        OtherModes.toggleZenMode();
+		        OtherModes.ToggleZenMode();
 	        }
         }
         else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
@@ -361,12 +361,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 				    string failureMessage = null;
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
-						missionID = resolveMissionID(textAfter, out failureMessage);
+						missionID = ResolveMissionID(textAfter, out failureMessage);
 					}
 
 					if (missionID == null && TwitchPlaySettings.data.CustomMissions.ContainsKey(textAfter))
 					{
-						missionID = resolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter], out failureMessage);
+						missionID = ResolveMissionID(TwitchPlaySettings.data.CustomMissions[textAfter], out failureMessage);
 					}
 
 					if (missionID == null)
@@ -425,33 +425,32 @@ public class MiscellaneousMessageResponder : MessageResponder
 						int moddedModules = Mathf.FloorToInt(modules * distribution.modded);
 
 						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
-						List<KMComponentPool> pools = new List<KMComponentPool>();
-
-						pools.Add(new KMComponentPool()
-						{
-							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-							AllowedSources = KMComponentPool.ComponentSource.Base,
-							Count = vanillaModules
-						});
-
-						pools.Add(new KMComponentPool()
-						{
-							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-							AllowedSources = KMComponentPool.ComponentSource.Mods,
-							Count = moddedModules
-						});
-
 						int bothModules = modules - moddedModules - vanillaModules;
-						pools.Add(new KMComponentPool()
+						List<KMComponentPool> pools = new List<KMComponentPool>
 						{
-							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-							AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
-							Count = bothModules
-						});
+							new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Base,
+								Count = vanillaModules
+							},
+							new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Mods,
+								Count = moddedModules
+							},
+							new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
+								Count = bothModules
+							}
+						};
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;
-						if (OtherModes.timedModeOn)
+						if (OtherModes.TimedModeOn)
 						{
 							mission.GeneratorSetting = new KMGeneratorSetting()
 							{

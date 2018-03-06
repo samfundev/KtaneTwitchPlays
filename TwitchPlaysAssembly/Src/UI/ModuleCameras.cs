@@ -455,9 +455,9 @@ public class ModuleCameras : MonoBehaviour
 
     public void UpdateConfidence()
     {
-        if (OtherModes.timedModeOn)
+        if (OtherModes.TimedModeOn)
         {
-            float timedMultiplier = OtherModes.getMultiplier();
+            float timedMultiplier = OtherModes.GetMultiplier();
             confidencePrefab.color = Color.yellow;
             string conf = "x" + String.Format("{0:0.0}", timedMultiplier);
             string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
@@ -467,7 +467,7 @@ public class ModuleCameras : MonoBehaviour
             strikesPrefab.text = conf;
             strikeLimitPrefab.text = "";
         }
-		else if (OtherModes.zenModeOn)
+		else if (OtherModes.ZenModeOn)
         {
 	        confidencePrefab.color = Color.yellow;
 	        string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
@@ -479,10 +479,10 @@ public class ModuleCameras : MonoBehaviour
 	        strikeLimitPrefab.text = "";
         }
 
-        else if (OtherModes.vsModeOn)
+        else if (OtherModes.VsModeOn)
         {
-			int bossHealth = OtherModes.getBossHealth();
-			int teamHealth = OtherModes.getTeamHealth();
+			int bossHealth = OtherModes.GetBossHealth();
+			int teamHealth = OtherModes.GetTeamHealth();
 			strikesPrefab.color = Color.cyan;
 	        strikeLimitPrefab.color = Color.cyan;
 	        confidencePrefab.color = Color.red;

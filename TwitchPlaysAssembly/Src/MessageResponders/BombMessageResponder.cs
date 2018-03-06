@@ -83,7 +83,7 @@ public class BombMessageResponder : MessageResponder
 			: TwitchPlaySettings.data.MultiBombLiveMessage);
 
 		if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
-		OtherModes.setMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
+		OtherModes.SetMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
 	}
 
     private void OnEnable()
@@ -316,7 +316,7 @@ public class BombMessageResponder : MessageResponder
 
 		for (int i = 0; i < 4; i++)
 		{
-			_notesDictionary[i] =  (OtherModes.zenModeOn && i == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
+			_notesDictionary[i] =  (OtherModes.ZenModeOn && i == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
 			moduleCameras?.SetNotes(i, _notesDictionary[i]);
 		}
 
@@ -325,7 +325,7 @@ public class BombMessageResponder : MessageResponder
 			TwitchComponentHandle.SolveUnsupportedModules(true);
 		}
 
-		while (OtherModes.zenModeOn)
+		while (OtherModes.ZenModeOn)
 		{
 			foreach (BombCommander bomb in BombCommanders)
 			{
@@ -382,7 +382,7 @@ public class BombMessageResponder : MessageResponder
 		    {
 			    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index--);
 
-			    _notesDictionary[index] = (OtherModes.zenModeOn && index == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace :  TwitchPlaySettings.data.NotesSpaceFree;
+			    _notesDictionary[index] = (OtherModes.ZenModeOn && index == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace :  TwitchPlaySettings.data.NotesSpaceFree;
 			    moduleCameras?.SetNotes(index, _notesDictionary[index]);
 			    return;
 		    }
@@ -560,7 +560,7 @@ public class BombMessageResponder : MessageResponder
 			    return;
 		    }
 
-			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.zenModeOn)
+			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.ZenModeOn)
 		    {
 			    if (!IsAuthorizedDefuser(userNickName)) return;
 				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
@@ -582,7 +582,7 @@ public class BombMessageResponder : MessageResponder
 			case AccessLevel.SuperUser:
 				if (text.RegexMatch(out match, @"^setmultiplier ([0-9]+(?:\.[0-9]+)*)$"))
 				{
-					OtherModes.setMultiplier(float.Parse(match.Groups[1].Value));
+					OtherModes.SetMultiplier(float.Parse(match.Groups[1].Value));
 					return;
 				}
 

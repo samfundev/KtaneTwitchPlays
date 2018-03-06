@@ -138,7 +138,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		else if (internalCommandLower.EqualsAny("explode", "detonate", "endzenmode"))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || (OtherModes.zenModeOn && internalCommandLower.Equals("endzenmode")))
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || (OtherModes.ZenModeOn && internalCommandLower.Equals("endzenmode")))
 			{
                 return DelayBombExplosionCoroutine(notifier);
 			}
@@ -148,12 +148,12 @@ public class TwitchBombHandle : MonoBehaviour
 		else if (internalCommandLower.Equals("status"))
 		{
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
-			if (OtherModes.timedModeOn)
+			if (OtherModes.TimedModeOn)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime,
-					OtherModes.getMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
+					OtherModes.GetMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
 			}
-			else if (OtherModes.vsModeOn)
+			else if (OtherModes.VsModeOn)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
 					OtherModes.teamHealth, OtherModes.bossHealth, currentReward);

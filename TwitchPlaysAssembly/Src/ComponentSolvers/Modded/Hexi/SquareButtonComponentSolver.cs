@@ -75,7 +75,7 @@ public class SquareButtonComponentSolver : ComponentSolver
             sortedTimes.Add(time);
         }
         sortedTimes.Sort();
-	    if (!OtherModes.zenModeOn)
+	    if (!OtherModes.ZenModeOn)
 			sortedTimes.Reverse();
         if(sortedTimes.Count == 0) yield break;
 
@@ -86,7 +86,7 @@ public class SquareButtonComponentSolver : ComponentSolver
         int timeTarget = sortedTimes[0];
         sortedTimes.RemoveAt(0);
 
-        int waitTime = (int)(timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
+        int waitTime = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
         waitTime -= timeTarget;
         if (Math.Abs(waitTime) >= 30)
             yield return "elevator music";
@@ -94,13 +94,13 @@ public class SquareButtonComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
-            timeRemaining = (int)(timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
+            timeRemaining = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
 
-            if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
+            if ((!OtherModes.ZenModeOn && timeRemaining < timeTarget) || (OtherModes.ZenModeOn && timeRemaining > timeTarget))
             {
                 if (sortedTimes.Count == 0)
                 {
-					yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are {1} than the time remaining.", _held ? "released" : "tapped", OtherModes.zenModeOn ? "less" : "greater");
+					yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are {1} than the time remaining.", _held ? "released" : "tapped", OtherModes.ZenModeOn ? "less" : "greater");
                     yield break;
                 }
                 timeTarget = sortedTimes[0];

@@ -25,10 +25,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		if (!TwitchPlaySettings.data.AllowTurnTheKeyInstantSolveWhenOnlyModuleLeft) return false;
 		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 		int timeRemaining = (int)BombCommander.Bomb.GetTimer().TimeRemaining;
-		if ((!OtherModes.zenModeOn && timeRemaining < time) || (OtherModes.zenModeOn && timeRemaining > time)) return false;
+		if ((!OtherModes.ZenModeOn && timeRemaining < time) || (OtherModes.ZenModeOn && timeRemaining > time)) return false;
 		IEnumerable<BombComponent> components = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved && x.bombComponent != BombComponent).Select(x => x.bombComponent).ToArray();
 		if (components.Any(x => x.GetComponent(_componentType) == null)) return false;
-		if(!OtherModes.zenModeOn)
+		if(!OtherModes.ZenModeOn)
 			return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time)) && IsTargetTurnTimeCorrect(turnTime);
 		else
 			return !components.Any(x => ((int)_targetTimeField.GetValue(x.GetComponent(_componentType)) < time)) && IsTargetTurnTimeCorrect(turnTime);
@@ -65,7 +65,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 		((KMSelectable)_lock).OnInteract = () => OnKeyTurn();
 		int expectedTime = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
-	    if (OtherModes.zenModeOn)
+	    if (OtherModes.ZenModeOn)
 	    {
 		    expectedTime = (int) (BombCommander.timerComponent.TimeRemaining + (BombCommander.timerComponent.TimeRemaining - expectedTime));
 			_targetTimeField.SetValue(BombComponent.GetComponent(_componentType), expectedTime);
@@ -75,7 +75,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	    while (!BombComponent.IsSolved)
         {
             int time = Mathf.FloorToInt(BombCommander.CurrentTimer);
-            if (((!OtherModes.zenModeOn && time < expectedTime) || (OtherModes.zenModeOn && time > expectedTime)) &&
+            if (((!OtherModes.ZenModeOn && time < expectedTime) || (OtherModes.ZenModeOn && time > expectedTime)) &&
                 !(bool)_solvedField.GetValue(BombComponent.GetComponent(_componentType)) &&
                 !TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate)
             {
@@ -110,7 +110,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
         TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 
-        int waitingTime = (int) (timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
+        int waitingTime = (int) (timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
         waitingTime -= timeTarget;
 
         if (Math.Abs(waitingTime) >= 30 && !CanTurnEarlyWithoutStrike(timeTarget))
@@ -121,9 +121,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         float timeRemaining = float.PositiveInfinity;
         while (timeRemaining > 0.0f)
         {
-            timeRemaining = (int) (timerComponent.TimeRemaining + (OtherModes.zenModeOn ? -0.25f : 0.25f));
+            timeRemaining = (int) (timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
 
-            if ((!OtherModes.zenModeOn && timeRemaining < timeTarget) || (OtherModes.zenModeOn && timeRemaining > timeTarget))
+            if ((!OtherModes.ZenModeOn && timeRemaining < timeTarget) || (OtherModes.ZenModeOn && timeRemaining > timeTarget))
             {
                 yield return "sendtochaterror The bomb timer has already gone past the time specified.";
                 yield break;
