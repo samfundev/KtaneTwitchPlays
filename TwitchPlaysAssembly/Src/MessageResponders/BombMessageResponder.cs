@@ -20,7 +20,7 @@ public class BombMessageResponder : MessageResponder
 	public List<TwitchBombHandle> BombHandles = new List<TwitchBombHandle>();
     public List<TwitchComponentHandle> ComponentHandles = new List<TwitchComponentHandle>();
     private int _currentBomb = -1;
-    private string[] _notes = new string[4];
+	private Dictionary<int, string> _notesDictionary = new Dictionary<int, string>();
 
 #pragma warning disable 169
 	private AlarmClock alarmClock;
@@ -316,8 +316,8 @@ public class BombMessageResponder : MessageResponder
 
 		for (int i = 0; i < 4; i++)
 		{
-			_notes[i] = TwitchPlaySettings.data.NotesSpaceFree;
-			moduleCameras?.SetNotes(i, TwitchPlaySettings.data.NotesSpaceFree);
+			_notesDictionary[i] =  (OtherModes.zenModeOn && i == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
+			moduleCameras?.SetNotes(i, _notesDictionary[i]);
 		}
 
 		if (EnableDisableInput())
@@ -348,43 +348,42 @@ public class BombMessageResponder : MessageResponder
     protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
 	    Match match;
+	    int index;
 		if (!text.StartsWith("!") || text.Equals("!")) return;
 		text = text.Substring(1);
 
 	    if (IsAuthorizedDefuser(userNickName))
 	    {
-			if (text.RegexMatch(out match, "^notes([1-4]) (.+)$"))
+			if (text.RegexMatch(out match, "^notes(-?[0-9]+) (.+)$") && int.TryParse(match.Groups[1].Value, out index))
 			{
-				int index = int.Parse(match.Groups[1].Value);
 				string notes = match.Groups[2].Value;
 
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesTaken, index--, notes);
 
-				_notes[index] = notes;
+				_notesDictionary[index] = notes;
 				moduleCameras?.SetNotes(index, notes);
 				return;
 			}
 
-		    if (text.RegexMatch(out match, "^notes([1-4])append (.+)", "^appendnotes([1-4]) (.+)"))
+		    if (text.RegexMatch(out match, "^notes(-?[0-9]+)append (.+)", "^appendnotes(-?[0-9]+) (.+)") && int.TryParse(match.Groups[1].Value, out index))
 		    {
-			    int index = int.Parse(match.Groups[1].Value);
 			    string notes = match.Groups[2].Value;
 
 			    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesAppended, index--, notes);
-
-			    _notes[index] += " " + notes;
+			    if (!_notesDictionary.ContainsKey(index))
+				    _notesDictionary[index] = TwitchPlaySettings.data.NotesSpaceFree;
+				
+			    _notesDictionary[index] += " " + notes;
 			    moduleCameras?.AppendNotes(index, notes);
 			    return;
 		    }
 
-		    if (text.RegexMatch(out match, "^clearnotes([1-4])$", "^notes([1-4])clear$"))
+		    if (text.RegexMatch(out match, "^clearnotes(-?[0-9]+)$", "^notes(-?[0-9]+)clear$") && int.TryParse(match.Groups[1].Value, out index))
 		    {
-			    int index = int.Parse(match.Groups[1].Value);
-
 			    IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index--);
 
-			    _notes[index] = TwitchPlaySettings.data.NotesSpaceFree;
-			    moduleCameras?.SetNotes(index, TwitchPlaySettings.data.NotesSpaceFree);
+			    _notesDictionary[index] = (OtherModes.zenModeOn && index == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace :  TwitchPlaySettings.data.NotesSpaceFree;
+			    moduleCameras?.SetNotes(index, _notesDictionary[index]);
 			    return;
 		    }
 
@@ -569,10 +568,11 @@ public class BombMessageResponder : MessageResponder
 			}
 		}
 
-		if (text.RegexMatch(out match, "^notes([1-4])$"))
+		if (text.RegexMatch(out match, "^notes(-?[0-9]+)$") && int.TryParse(match.Groups[1].Value, out index))
 		{
-			int index = int.Parse(match.Groups[1].Value);
-	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notes[index-1]);
+			if (!_notesDictionary.ContainsKey(index-1))
+				_notesDictionary[index-1] = TwitchPlaySettings.data.NotesSpaceFree;
+	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notesDictionary[index-1]);
             return;
         }
 
