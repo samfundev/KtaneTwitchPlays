@@ -425,29 +425,28 @@ public class MiscellaneousMessageResponder : MessageResponder
 						int moddedModules = Mathf.FloorToInt(modules * distribution.modded);
 
 						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
-						List<KMComponentPool> pools = new List<KMComponentPool>();
-
-						pools.Add(new KMComponentPool()
-						{
-							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-							AllowedSources = KMComponentPool.ComponentSource.Base,
-							Count = vanillaModules
-						});
-
-						pools.Add(new KMComponentPool()
-						{
-							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-							AllowedSources = KMComponentPool.ComponentSource.Mods,
-							Count = moddedModules
-						});
-
 						int bothModules = modules - moddedModules - vanillaModules;
-						pools.Add(new KMComponentPool()
+						List<KMComponentPool> pools = new List<KMComponentPool>
 						{
-							SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-							AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
-							Count = bothModules
-						});
+							new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Base,
+								Count = vanillaModules
+							},
+							new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Mods,
+								Count = moddedModules
+							},
+							new KMComponentPool()
+							{
+								SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
+								AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
+								Count = bothModules
+							}
+						};
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.displayName;
