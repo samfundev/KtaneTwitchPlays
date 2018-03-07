@@ -10,7 +10,7 @@ public abstract class ComponentSolver
     public delegate IEnumerator RegexResponse(Match match);
 
     #region Constructors
-    public ComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
+	protected ComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
 	{
         BombCommander = bombCommander;
         BombComponent = bombComponent;
