@@ -393,6 +393,7 @@ public class ModuleCameras : MonoBehaviour
 
 	public void AppendNotes(int noteIndex, string noteText)
 	{
+		if (noteIndex < 0 || noteIndex > 3) return;
 		notesTexts[noteIndex].text += " " + noteText;
 	}
 
