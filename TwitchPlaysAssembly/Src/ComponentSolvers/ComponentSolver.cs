@@ -122,9 +122,8 @@ public abstract class ComponentSolver
         bool needQuaternionReset = false;
 	    bool hideCamera = false;
 		bool exceptionThrown = false;
-	    Match match;
-		
-        while ((previousStrikeCount == StrikeCount || DisableOnStrike) && !Solved)
+
+	    while ((previousStrikeCount == StrikeCount || DisableOnStrike) && !Solved)
         {
 			try
 			{
@@ -173,7 +172,7 @@ public abstract class ComponentSolver
                     parseError = true;
                     break;
                 }
-                else if (currentString.RegexMatch(out match, "^trycancel((?: .+)?)$") &&
+                else if (currentString.RegexMatch(out Match match, "^trycancel((?: .+)?)$") &&
                          CoroutineCanceller.ShouldCancel)
                 {
 	                CoroutineCanceller.ResetCancel();
