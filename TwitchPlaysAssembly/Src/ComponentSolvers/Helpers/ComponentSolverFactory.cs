@@ -89,10 +89,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["monsplodeCards"] = (bombCommander, bombComponent) => new MonsplodeCardsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["webDesign"] = (bombCommander, bombComponent) => new WebDesignComponentSolver(bombCommander, bombComponent);
 
-		//Royal Flu$h Modules
-		ModComponentSolverCreators["iPhone"] = (bombCommander, bombComponent) => new iPhoneComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["skyrim"] = (bombCommander, bombComponent) => new SkyrimComponentSolver(bombCommander, bombComponent);
-
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent);
