@@ -754,6 +754,10 @@ public class BombMessageResponder : MessageResponder
 
     public bool CreateComponentHandlesForBomb(Bomb bomb)
     {
+	    string[] keyModules =
+	    {
+			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced"
+		};
         bool foundComponents = false;
 
 	    List<BombComponent> bombComponents = bomb.BombComponents.Shuffle().ToList();
@@ -763,6 +767,8 @@ public class BombMessageResponder : MessageResponder
         foreach (BombComponent bombComponent in bombComponents)
         {
             ComponentTypeEnum componentType = bombComponent.ComponentType;
+	        bool keyModule = false;
+	        string moduleName = "";
 
             switch (componentType)
             {
@@ -777,8 +783,16 @@ public class BombMessageResponder : MessageResponder
 				case ComponentTypeEnum.NeedyKnob:
 				case ComponentTypeEnum.NeedyVentGas:
 				case ComponentTypeEnum.NeedyMod:
+					moduleName = bombComponent.GetModuleDisplayName();
+					keyModule = true;
 					foundComponents = true;
 					break;
+
+				case ComponentTypeEnum.Mod:
+					KMBombModule module = bombComponent.GetComponent<KMBombModule>();
+					moduleName = module.ModuleDisplayName;
+					keyModule = keyModules.Contains(module.ModuleType);
+					goto default;
 
                 default:
 	                bombCommander.bombSolvableModules++;
@@ -797,7 +811,10 @@ public class BombMessageResponder : MessageResponder
             handle.basePosition = handle.transform.localPosition;
 
             ComponentHandles.Add(handle);
-		}
+
+	        if (keyModule)
+		        IRCConnection.Instance.SendMessage($"Module {handle.Code} is a {moduleName}");
+        }
 
         return foundComponents;
     }
