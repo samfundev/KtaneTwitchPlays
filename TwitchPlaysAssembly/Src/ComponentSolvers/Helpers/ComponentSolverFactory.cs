@@ -20,6 +20,7 @@ public static class ComponentSolverFactory
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
     private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
+	private static readonly Dictionary<string, ModuleInformation> DefaultModComponentSolverInformation;
 
 	static ComponentSolverFactory()
 	{
@@ -27,6 +28,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
         ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
 		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
+		DefaultModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
 		//AT_Bash Modules
 		ModComponentSolverCreators["MotionSense"] = (bombCommander, bombComponent) => new MotionSenseComponentSolver(bombCommander, bombComponent);
@@ -315,8 +317,69 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["YahtzeeModule"] = new ModuleInformation { moduleScore = 9, helpText = "Roll the dice with !{0} roll. Keep some dice with !{0} keep white,purple,blue,yellow,black. Roll the remaining dice until a 3 appears with !{0} roll until 3.", DoesTheRightThing = true };
 		ModComponentSolverInformation["ZooModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = false };
 
-		foreach (string key in ModComponentSolverInformation.Keys)
-			ModComponentSolverInformation[key].moduleID = key;
+		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
+		{
+			ModComponentSolverInformation[kvp.Key].moduleID = kvp.Key;
+			AddDefaultModuleInformation(kvp.Value);
+		}
+	}
+
+	private static void AddDefaultModuleInformation(ModuleInformation info)
+	{
+		if (string.IsNullOrEmpty(info?.moduleID)) return;
+		if (!DefaultModComponentSolverInformation.ContainsKey(info.moduleID))
+		{
+			DefaultModComponentSolverInformation[info.moduleID] = new ModuleInformation
+			{
+				builtIntoTwitchPlays = info.builtIntoTwitchPlays,
+				CameraPinningAlwaysAllowed = info.CameraPinningAlwaysAllowed,
+				DoesTheRightThing = info.DoesTheRightThing,
+				helpText = info.helpText,
+				helpTextOverride = false,
+				manualCode = info.manualCode,
+				manualCodeOverride = false,
+				moduleDisplayName = info.moduleDisplayName,
+				moduleID = info.moduleID,
+				moduleScore = info.moduleScore,
+				moduleScoreIsDynamic = info.moduleScoreIsDynamic,
+				statusLightDown = info.statusLightDown,
+				statusLightLeft = info.statusLightLeft,
+				statusLightOverride = false,
+				strikePenalty = info.strikePenalty,
+				unclaimedColor = info.unclaimedColor,
+				validCommands = info.validCommands,
+				validCommandsOverride = false
+			};
+		}
+	}
+
+	private static void AddDefaultModuleInformation(string moduleType, string moduleDisplayName, string helpText, string manualCode, bool statusLeft, bool statusBottom, string[] regexList)
+	{
+		if (string.IsNullOrEmpty(moduleType)) return;
+		AddDefaultModuleInformation(GetModuleInfo(moduleType));
+		ModuleInformation info = DefaultModComponentSolverInformation[moduleType];
+		info.moduleDisplayName = moduleDisplayName;
+		info.helpText = helpText;
+		info.manualCode = manualCode;
+		info.statusLightLeft = statusLeft;
+		info.statusLightDown = statusBottom;
+		info.validCommands = regexList;
+	}
+
+	public static void ResetModuleInformationToDefault(string moduleType)
+	{
+		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType)) return;
+		if (ModComponentSolverInformation.ContainsKey(moduleType)) ModComponentSolverInformation.Remove(moduleType);
+		GetModuleInfo(moduleType);
+		AddModuleInformation(DefaultModComponentSolverInformation[moduleType]);
+	}
+
+	public static void ResetAllModulesToDefault()
+	{
+		foreach (string key in ModComponentSolverInformation.Select(x => x.Key).ToArray())
+		{
+			ResetModuleInformationToDefault(key);
+		}
 	}
 
 	public static ModuleInformation GetModuleInfo(string moduleType)
@@ -486,7 +549,7 @@ public static class ComponentSolverFactory
 	    MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
 
 	    ModuleInformation info = GetModuleInfo(moduleType);
-		if (!info.helpTextOverride && FindHelpMessage(bombComponent, commandComponentType, out string help))
+		if (FindHelpMessage(bombComponent, commandComponentType, out string help) && !info.helpTextOverride)
 		{
 			if (help != null)
 				ModuleData.DataHasChanged |= !help.Equals(info.helpText);
@@ -495,7 +558,7 @@ public static class ComponentSolverFactory
 			info.helpText = help;
 		}
 
-		if (!info.manualCodeOverride && FindManualCode(bombComponent, commandComponentType, out string manual))
+		if (FindManualCode(bombComponent, commandComponentType, out string manual) && !info.manualCodeOverride)
 		{
 			if (manual != null)
 				ModuleData.DataHasChanged |= !manual.Equals(info.manualCode);
@@ -504,7 +567,7 @@ public static class ComponentSolverFactory
 			info.manualCode = manual;
 		}
 
-		if (!info.statusLightOverride && FindStatusLightPosition(bombComponent, out bool statusLeft, out bool statusBottom))
+		if (FindStatusLightPosition(bombComponent, out bool statusLeft, out bool statusBottom) && !info.statusLightOverride)
 		{
 			ModuleData.DataHasChanged |= info.statusLightLeft != statusLeft;
 			ModuleData.DataHasChanged |= info.statusLightDown != statusBottom;
@@ -512,7 +575,7 @@ public static class ComponentSolverFactory
 			info.statusLightDown = statusBottom;
 		}
 
-		if (!info.validCommandsOverride && FindRegexList(bombComponent, commandComponentType, out string[] regexList))
+		if (FindRegexList(bombComponent, commandComponentType, out string[] regexList) && !info.validCommandsOverride)
 		{
 			if (info.validCommands != null && regexList == null)
 				ModuleData.DataHasChanged = true;
@@ -539,6 +602,8 @@ public static class ComponentSolverFactory
 		info.moduleDisplayName = displayName;
 		ModuleData.DataHasChanged &= !SilentMode;
 		ModuleData.WriteDataToFile();
+
+		AddDefaultModuleInformation(moduleType, displayName, help, manual, statusLeft, statusBottom, regexList);
 
 		if (method != null)
 		{
