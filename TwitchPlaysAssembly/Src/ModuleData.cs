@@ -41,24 +41,6 @@ public class ModuleInformation
     public bool ShouldSerializemanualCodeOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializestatusLightOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializevalidCommandsOverride() { return !builtIntoTwitchPlays; }
-
-	public delegate bool UsesVanillaRuleModifierAPIDelegate(BombComponent component);
-	private UsesVanillaRuleModifierAPIDelegate _affectedByVanillaRuleModifier;
-
-	public bool UsesVanillaRuleAPI(BombComponent component)
-	{
-		return _affectedByVanillaRuleModifier?.Invoke(component) ?? false;
-	}
-
-	public void SetVanillaRuleAPIDelegate(UsesVanillaRuleModifierAPIDelegate vanillaRuleAPI)
-	{
-		_affectedByVanillaRuleModifier = vanillaRuleAPI;
-	}
-
-	public ModuleInformation(UsesVanillaRuleModifierAPIDelegate vanillaRuleAPI = null)
-	{
-		_affectedByVanillaRuleModifier = vanillaRuleAPI;
-	}
 }
 
 public static class ModuleData

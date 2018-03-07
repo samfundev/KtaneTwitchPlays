@@ -13,7 +13,7 @@ public class ButtonComponentSolver : ComponentSolver
 
         bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
         _button = bombComponent.button;
-        modInfo = new ModuleInformation(x => true)
+        modInfo = new ModuleInformation
         {
             builtIntoTwitchPlays = buttonInfo.builtIntoTwitchPlays,
             CameraPinningAlwaysAllowed = buttonInfo.CameraPinningAlwaysAllowed,

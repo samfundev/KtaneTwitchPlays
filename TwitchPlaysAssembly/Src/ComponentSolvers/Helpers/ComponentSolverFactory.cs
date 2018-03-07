@@ -207,20 +207,20 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod", helpText = "Refill that beer with !{0} refill."};
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
-		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Simple Wires", helpText = "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted", moduleScore = 1 };
-		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]", moduleScore = 1 };
-		ModComponentSolverInformation["WireSequenceComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Wire Sequence", helpText = "!{0} cut 7 [cut wire 7] | !{0} down, !{0} d [next stage] | !{0} up, !{0} u [previous stage] | !{0} cut 7 8 9 d [cut multiple wires and continue] | Use the numbers shown on the module", manualCode = "Wire Sequence", moduleScore = 4 };
-		ModComponentSolverInformation["WhosOnFirstComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", manualCode = "Who%E2%80%99s on First", moduleScore = 4 };
-		ModComponentSolverInformation["VennWireComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires", helpText = "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted", moduleScore = 3 };
-		ModComponentSolverInformation["SimonComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Says", helpText = "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages", moduleScore = 3 };
-		ModComponentSolverInformation["PasswordComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Password", helpText = "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]", manualCode = "Password", moduleScore = 2 };
+		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simple Wires", helpText = "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted", moduleScore = 1 };
+		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]", moduleScore = 1 };
+		ModComponentSolverInformation["WireSequenceComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wire Sequence", helpText = "!{0} cut 7 [cut wire 7] | !{0} down, !{0} d [next stage] | !{0} up, !{0} u [previous stage] | !{0} cut 7 8 9 d [cut multiple wires and continue] | Use the numbers shown on the module", manualCode = "Wire Sequence", moduleScore = 4 };
+		ModComponentSolverInformation["WhosOnFirstComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", manualCode = "Who%E2%80%99s on First", moduleScore = 4 };
+		ModComponentSolverInformation["VennWireComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires", helpText = "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted", moduleScore = 3 };
+		ModComponentSolverInformation["SimonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Says", helpText = "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages", moduleScore = 3 };
+		ModComponentSolverInformation["PasswordComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password", helpText = "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]", manualCode = "Password", moduleScore = 2 };
 		ModComponentSolverInformation["NeedyVentComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
-		ModComponentSolverInformation["NeedyKnobComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Knob", helpText = "!{0} rotate 3, !{0} turn 3 [rotate the knob 3 quarter-turns]", manualCode = "Knob" };
+		ModComponentSolverInformation["NeedyKnobComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Knob", helpText = "!{0} rotate 3, !{0} turn 3 [rotate the knob 3 quarter-turns]", manualCode = "Knob" };
 		ModComponentSolverInformation["NeedyDischargeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Capacitor", helpText = "!{0} hold 7 [hold the lever for 7 seconds]", manualCode = "Capacitor Discharge" };
-		ModComponentSolverInformation["MorseCodeComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code", helpText = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]", moduleScore = 3 };
-		ModComponentSolverInformation["MemoryComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Memory", helpText = "!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]", moduleScore = 4 };
-		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation(x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad", helpText = "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", manualCode = "Keypad", moduleScore = 1 };
-		ModComponentSolverInformation["InvisibleWallsComponentSolver"] = new ModuleInformation (x => true) { builtIntoTwitchPlays = true, moduleDisplayName = "Maze", helpText = "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", manualCode = "Maze", moduleScore = 2 };
+		ModComponentSolverInformation["MorseCodeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code", helpText = "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]", moduleScore = 3 };
+		ModComponentSolverInformation["MemoryComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Memory", helpText = "!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]", moduleScore = 4 };
+		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad", helpText = "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", manualCode = "Keypad", moduleScore = 1 };
+		ModComponentSolverInformation["InvisibleWallsComponentSolver"] = new ModuleInformation  { builtIntoTwitchPlays = true, moduleDisplayName = "Maze", helpText = "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", manualCode = "Maze", moduleScore = 2 };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", helpText = "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)", moduleScore = 1 };
@@ -531,23 +531,6 @@ public static class ComponentSolverFactory
 			info.validCommands = regexList;
 		}
 
-		FieldInfo affected = AffectedByVanillaRuleModifier(commandComponentType);
-		if (affected != null)
-		{
-			Type type = commandComponentType;
-			info.SetVanillaRuleAPIDelegate(x =>
-			{
-				try
-				{
-					return (bool) affected.GetValue(affected.IsStatic ? null : x.GetComponent(type));
-				}
-				catch
-				{
-					return false;
-				}
-			});
-		}
-
 		if (displayName != null)
 			ModuleData.DataHasChanged |= !displayName.Equals(info.moduleDisplayName);
 		else
@@ -688,12 +671,6 @@ public static class ComponentSolverFactory
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
-	}
-
-	private static FieldInfo AffectedByVanillaRuleModifier(Type commandComponentType)
-	{
-		FieldInfo result = commandComponentType.GetField("UsesVanillaRuleModifierAPI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-		return result?.FieldType == typeof(bool) ? result : null;
 	}
 
 	private static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)

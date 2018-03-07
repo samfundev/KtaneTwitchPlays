@@ -61,6 +61,13 @@ public class VanillaRuleModifier
         return Properties != null;
     }
 
+	public static int GetModuleRuleSeed(string moduleType)
+	{
+		object value = 1;
+		var result = (Properties != null && Properties.TryGetValue($"RuleSeedModifier_{moduleType}", out value));
+		return result ? (int)value : 1;
+	}
+
     private const string RuleSeed = "RuleSeed";
     private const string SeedIsVanilla = "IsSeedVanilla";
     private const string SeedIsModded = "IsSeedModded";

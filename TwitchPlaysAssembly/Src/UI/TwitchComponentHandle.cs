@@ -469,7 +469,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 			else
 			{
-				messageOut = string.Format("{0} : {1} : {2}", HeaderText, Solver.modInfo.helpText, UrlHelper.Instance.ManualFor(manualText, manualType, Solver.modInfo.UsesVanillaRuleAPI(bombComponent)));
+				messageOut = string.Format("{0} : {1} : {2}", HeaderText, Solver.modInfo.helpText, UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(Solver.modInfo.moduleID) != 1));
 			}
 		}
 		else if (!Solved)
