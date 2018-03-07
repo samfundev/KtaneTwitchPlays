@@ -18,8 +18,8 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		Selectable[] selectables = bombComponent.GetComponentsInChildren<Selectable>();
 		HashSet<Selectable> selectableHashSet = new HashSet<Selectable>(selectables) {selectable};
 
-		selectable.OnInteract += () => { ComponentHandle?.canvasGroupUnsupported?.gameObject.SetActive(false); return true; };
-		selectable.OnDeselect += (x) => { ComponentHandle?.canvasGroupUnsupported?.gameObject.SetActive(x == null || !selectableHashSet.Contains(x)); };
+		selectable.OnInteract += () => { ComponentHandle?.CanvasGroupUnsupported?.gameObject.SetActive(false); return true; };
+		selectable.OnDeselect += (x) => { ComponentHandle?.CanvasGroupUnsupported?.gameObject.SetActive(x == null || !selectableHashSet.Contains(x)); };
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

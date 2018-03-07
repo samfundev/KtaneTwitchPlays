@@ -190,17 +190,17 @@ public class ModuleCameras : MonoBehaviour
     }
 
     #region Public Fields
-    public Text timerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
-	public Text timerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
-	public Text strikesPrefab { get => _data.strikesPrefab; set => _data.strikesPrefab = value; }
-	public Text strikeLimitPrefab { get => _data.strikeLimitPrefab; set => _data.strikeLimitPrefab = value; }
-	public Text solvesPrefab { get => _data.solvesPrefab; set => _data.solvesPrefab = value; }
-	public Text totalModulesPrefab { get => _data.totalModulesPrefab; set => _data.totalModulesPrefab = value; }
-	public Text confidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
-	public Camera cameraPrefab { get => _data.cameraPrefab; set => _data.cameraPrefab = value; }
-	public RectTransform bombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
-	public int firstBackupCamera { get => _data.firstBackupCamera; set => _data.firstBackupCamera = value; }
-	public Text[] notesTexts { get => _data.notesTexts; set => _data.notesTexts = value; }
+    public Text TimerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
+	public Text TimerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
+	public Text StrikesPrefab { get => _data.strikesPrefab; set => _data.strikesPrefab = value; }
+	public Text StrikeLimitPrefab { get => _data.strikeLimitPrefab; set => _data.strikeLimitPrefab = value; }
+	public Text SolvesPrefab { get => _data.solvesPrefab; set => _data.solvesPrefab = value; }
+	public Text TotalModulesPrefab { get => _data.totalModulesPrefab; set => _data.totalModulesPrefab = value; }
+	public Text ConfidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
+	public Camera CameraPrefab { get => _data.cameraPrefab; set => _data.cameraPrefab = value; }
+	public RectTransform BombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
+	public int FirstBackupCamera { get => _data.firstBackupCamera; set => _data.firstBackupCamera = value; }
+	public Text[] NotesTexts { get => _data.notesTexts; set => _data.notesTexts = value; }
 	#endregion
 
 	#region Private Fields
@@ -273,7 +273,7 @@ public class ModuleCameras : MonoBehaviour
 
 	private void InstantiateCamera(int layer)
 	{
-		Camera instantiatedCamera = Instantiate<Camera>(cameraPrefab);
+		Camera instantiatedCamera = Instantiate<Camera>(CameraPrefab);
 		instantiatedCamera.rect = cameraLocations[layer];
 		instantiatedCamera.aspect = 1f;
 		cameras.Add(new ModuleCamera(instantiatedCamera, this) { nonInteractiveCameraLayer = 8 + layer });
@@ -324,8 +324,8 @@ public class ModuleCameras : MonoBehaviour
 
 	    if (currentBomb == null) return;
 	    string formattedTime = currentBomb.GetFullFormattedTime;
-	    timerPrefab.text = formattedTime;
-	    timerShadowPrefab.text = Regex.Replace(formattedTime, @"\d", "8");
+	    TimerPrefab.text = formattedTime;
+	    TimerShadowPrefab.text = Regex.Replace(formattedTime, @"\d", "8");
 	    UpdateConfidence();
     }
     #endregion
@@ -333,7 +333,7 @@ public class ModuleCameras : MonoBehaviour
     #region Public Methods
     public void AttachToModule(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
-        if ( handle != null && (handle.claimed) && (priority == CameraClaimed) )
+        if ( handle != null && (handle.Claimed) && (priority == CameraClaimed) )
         {
             priority = CameraClaimed;
         }
@@ -388,13 +388,13 @@ public class ModuleCameras : MonoBehaviour
 	public void SetNotes(int noteIndex, string noteText)
 	{
 		if (noteIndex < 0 || noteIndex > 3) return;
-		notesTexts[noteIndex].text = noteText;
+		NotesTexts[noteIndex].text = noteText;
 	}
 
 	public void AppendNotes(int noteIndex, string noteText)
 	{
 		if (noteIndex < 0 || noteIndex > 3) return;
-		notesTexts[noteIndex].text += " " + noteText;
+		NotesTexts[noteIndex].text += " " + noteText;
 	}
 
     public void DetachFromModule(MonoBehaviour component, bool delay = false)
@@ -414,12 +414,12 @@ public class ModuleCameras : MonoBehaviour
 
     public void HideHUD()
     {
-        bombStatus.localScale = Vector3.zero;
+        BombStatus.localScale = Vector3.zero;
     }
 
     public void ShowHUD()
     {
-        bombStatus.localScale = HUDScale;
+        BombStatus.localScale = HUDScale;
     }
 
     public void UpdateStrikes(bool delay = false)
@@ -433,7 +433,7 @@ public class ModuleCameras : MonoBehaviour
 	    currentTotalStrikes = currentBomb.StrikeLimit;
 	    string totalStrikesText = currentTotalStrikes.ToString();
 	    Debug.Log(LogPrefix + "Updating strike limit to " + totalStrikesText);
-	    strikeLimitPrefab.text = "/" + totalStrikesText;
+	    StrikeLimitPrefab.text = "/" + totalStrikesText;
     }
 
     public void UpdateSolves()
@@ -442,7 +442,7 @@ public class ModuleCameras : MonoBehaviour
 	    currentSolves = currentBomb.bombSolvedModules;
 	    string solves = currentSolves.ToString().PadLeft(currentBomb.bombSolvableModules.ToString().Length, Char.Parse("0"));
 	    Debug.Log(LogPrefix + "Updating solves to " + solves);
-	    solvesPrefab.text = solves;
+	    SolvesPrefab.text = solves;
     }
 
     public void UpdateTotalModules()
@@ -451,7 +451,7 @@ public class ModuleCameras : MonoBehaviour
 	    currentTotalModules = currentBomb.bombSolvableModules;
 	    string total = currentTotalModules.ToString();
 	    Debug.Log(LogPrefix + "Updating total modules to " + total);
-	    totalModulesPrefab.text = "/" + total;
+	    TotalModulesPrefab.text = "/" + total;
     }
 
     public void UpdateConfidence()
@@ -459,55 +459,55 @@ public class ModuleCameras : MonoBehaviour
         if (OtherModes.TimedModeOn)
         {
             float timedMultiplier = OtherModes.GetMultiplier();
-            confidencePrefab.color = Color.yellow;
+            ConfidencePrefab.color = Color.yellow;
             string conf = "x" + String.Format("{0:0.0}", timedMultiplier);
             string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
-            confidencePrefab.text = pts;
-            strikesPrefab.color = Color.yellow;
-            strikeLimitPrefab.color = Color.yellow;
-            strikesPrefab.text = conf;
-            strikeLimitPrefab.text = "";
+            ConfidencePrefab.text = pts;
+            StrikesPrefab.color = Color.yellow;
+            StrikeLimitPrefab.color = Color.yellow;
+            StrikesPrefab.text = conf;
+            StrikeLimitPrefab.text = "";
         }
 		else if (OtherModes.ZenModeOn)
         {
-	        confidencePrefab.color = Color.yellow;
+	        ConfidencePrefab.color = Color.yellow;
 	        string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
-	        confidencePrefab.text = pts;
-	        strikesPrefab.color = Color.red;
-	        strikeLimitPrefab.color = Color.red;
+	        ConfidencePrefab.text = pts;
+	        StrikesPrefab.color = Color.red;
+	        StrikeLimitPrefab.color = Color.red;
 			if(currentBomb != null)
-				strikesPrefab.text = currentBomb.StrikeCount.ToString();
-	        strikeLimitPrefab.text = "";
+				StrikesPrefab.text = currentBomb.StrikeCount.ToString();
+	        StrikeLimitPrefab.text = "";
         }
 
         else if (OtherModes.VsModeOn)
         {
 			int bossHealth = OtherModes.GetBossHealth();
 			int teamHealth = OtherModes.GetTeamHealth();
-			strikesPrefab.color = Color.cyan;
-	        strikeLimitPrefab.color = Color.cyan;
-	        confidencePrefab.color = Color.red;
-	        strikeLimitPrefab.text = "";
-	        strikesPrefab.text = $"{teamHealth} HP";
-	        confidencePrefab.text = $"{bossHealth} HP";
+			StrikesPrefab.color = Color.cyan;
+	        StrikeLimitPrefab.color = Color.cyan;
+	        ConfidencePrefab.color = Color.red;
+	        StrikeLimitPrefab.text = "";
+	        StrikesPrefab.text = $"{teamHealth} HP";
+	        ConfidencePrefab.text = $"{bossHealth} HP";
         }
         else
         {
-            confidencePrefab.color = Color.yellow;
+            ConfidencePrefab.color = Color.yellow;
             string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
-            confidencePrefab.text = pts;
+            ConfidencePrefab.text = pts;
         }
     }
 
 	public void EnableWallOfCameras()
 	{
 		DebugHelper.Log("Enabling Wall of Cameras");
-		if (firstBackupCamera == 6)
+		if (FirstBackupCamera == 6)
 		{
 			DebugHelper.Log("Wall of Cameras Already enabled");
 			return;
 		}
-		firstBackupCamera = 6;
+		FirstBackupCamera = 6;
 		for (int i = 6; i < cameraLocations.Length; i++)
 		{
 			InstantiateCamera(i);
@@ -519,12 +519,12 @@ public class ModuleCameras : MonoBehaviour
 	public void DisableWallOfCameras()
 	{
 		DebugHelper.Log("Disabling Wall of Cameras");
-		if (firstBackupCamera == 3)
+		if (FirstBackupCamera == 3)
 		{
 			DebugHelper.Log("Wall of Cameras already disabled");
 			return;
 		}
-		firstBackupCamera = 3;
+		FirstBackupCamera = 3;
 		while (cameras.Count > 6)
 		{
 			ModuleCamera camera = cameras[6];
@@ -574,7 +574,7 @@ public class ModuleCameras : MonoBehaviour
 	    currentTotalStrikes = currentBomb.StrikeLimit;
 	    string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, Char.Parse("0"));
 	    Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
-	    strikesPrefab.text = strikesText;
+	    StrikesPrefab.text = strikesText;
     }
 
     private void AddModuleToStack(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)

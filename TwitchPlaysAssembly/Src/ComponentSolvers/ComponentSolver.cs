@@ -161,7 +161,7 @@ public abstract class ComponentSolver
 
 					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.idTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.IDTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(14).Trim() != string.Empty)
@@ -469,7 +469,7 @@ public abstract class ComponentSolver
 			    return false;
 
 		    if (UnsupportedModule)
-			    ComponentHandle?.idTextUnsupported?.gameObject.SetActive(false);
+			    ComponentHandle?.IDTextUnsupported?.gameObject.SetActive(false);
 
 		    string solverNickname = null;
 			if (!_silentlySolve)

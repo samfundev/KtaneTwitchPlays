@@ -409,7 +409,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
 			{
-				List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.idTextMultiDecker.text, handle.HeaderText)).ToList();
+				List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.IDTextMultiDecker.text, handle.HeaderText)).ToList();
 				if (claimed.Count > 0)
 				{
 					string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
@@ -471,7 +471,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
-				IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
+				IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
 					.Select(handle => string.Format("{0} ({1})", handle.HeaderText, handle.Code)).ToList();
 
 				if (unclaimed.Any()) IRCConnection.Instance.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
@@ -484,7 +484,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
 					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
@@ -495,7 +495,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
 					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
@@ -506,7 +506,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
-				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
 					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
