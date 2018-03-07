@@ -18,15 +18,17 @@ public static class ComponentSolverFactory
 
 	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
-    private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
+	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
 	private static readonly Dictionary<string, ModuleInformation> DefaultModComponentSolverInformation;
+
+
 
 	static ComponentSolverFactory()
 	{
 		DebugHelper.Log();
 		ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
-        ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
+		ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
 		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 		DefaultModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
@@ -87,6 +89,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["monsplodeCards"] = (bombCommander, bombComponent) => new MonsplodeCardsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["webDesign"] = (bombCommander, bombComponent) => new WebDesignComponentSolver(bombCommander, bombComponent);
 
+		//Royal Flu$h Modules
+		ModComponentSolverCreators["iPhone"] = (bombCommander, bombComponent) => new iPhoneComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["skyrim"] = (bombCommander, bombComponent) => new SkyrimComponentSolver(bombCommander, bombComponent);
+
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent);
@@ -94,9 +100,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent);
 
-        //Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
-	    ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
-        
+		//Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
+		ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
+
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
 		/*
@@ -199,14 +205,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", helpText = "Submit a chord using !{0} submit A B C# D", moduleScore = 9 };
 		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Color Morse", helpText = "Submit some morse code using !{0} transmit ....- --...", moduleScore = 5 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4, helpText = "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)" };
-        	ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
+		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Lettered Keys", moduleScore = 3, helpText = "!{0} press b" };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", helpText = "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.", moduleScore = 10 };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Pad", helpText = "Submit your answer with !{0} submit 4236.", moduleScore = 8 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", helpText = "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.", moduleScore = 6 };
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", helpText = "Flip switches using !{0} flip 1 5 3 2.", moduleScore = 3 };
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Curriculum", helpText = "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.", moduleScore = 12 };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework", helpText = "Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position." };
-		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation {builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod", helpText = "Refill that beer with !{0} refill."};
+		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod", helpText = "Refill that beer with !{0} refill." };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simple Wires", helpText = "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted", moduleScore = 1 };
@@ -231,9 +237,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First Translated", helpText = "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"", moduleScore = 4 };
 		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
-        	//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
-	    	ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, helpText = "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]", DoesTheRightThing = true };
-        
+		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
+		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, helpText = "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]", DoesTheRightThing = true };
+
 		//Modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)", DoesTheRightThing = false };
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12, helpText = "Set the Letters with !{0} set W D J S. (warning, this will unset ALL letters not specified.) Submit your answer with !{0} submit." };
@@ -249,8 +255,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the items with !{0} items. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24.", DoesTheRightThing = true };
 		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", DoesTheRightThing = false };
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
-	    ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", moduleScore = 8, helpText = "Submit a color using !{0} submit 123 123 123.", DoesTheRightThing = true };
-        ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blackK. (note what letter is capitalized in each color.)" };
+		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", moduleScore = 8, helpText = "Submit a color using !{0} submit 123 123 123.", DoesTheRightThing = true };
+		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blackK. (note what letter is capitalized in each color.)" };
 		ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 7, helpText = "Press the desired squares with !{0} red, !{0} green, !{0} blue, !{0} yellow, !{0} magenta, !{0} row, or !{0} col." };
 		ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
@@ -310,7 +316,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, helpText = "Press O with !{0} press O. Press I with !{0} press I. Unscrew the bulb with !{0} unscrew. Screw in the bulb with !{0} screw.", DoesTheRightThing = false };
 		ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit a time with !{0} set 12:34 am. Command must include a 12-hour time followed by AM/PM.", DoesTheRightThing = true };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9 };
-		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject." };
+		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject. Make the text bigger with !{0} clarify" };
 		ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 6, helpText = "Cut the correct wires with !{0} cut A2 B4 D3." };
 		ModComponentSolverInformation["WordSearchModule"] = new ModuleInformation { moduleScore = 6, helpText = "Select the word starting at column B row 3, and ending at column C row 4, with !{0} select B3 C4.", DoesTheRightThing = false };
 		ModComponentSolverInformation["XRayModule"] = new ModuleInformation { moduleScore = 12 };
@@ -421,7 +427,7 @@ public static class ComponentSolverFactory
 
 			i.statusLightLeft = info.statusLightLeft;
 			i.statusLightDown = info.statusLightDown;
-			
+
 			i.moduleScore = info.moduleScore;
 			i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
 			i.strikePenalty = info.strikePenalty;
@@ -492,46 +498,46 @@ public static class ComponentSolverFactory
 
 			case ComponentTypeEnum.Mod:
 				KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
-                try
-                {
+				try
+				{
 					return CreateModComponentSolver(bombCommander, bombComponent, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
-                }
-                catch
-                {
-	                DebugLog("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
-	                DebugLog("Using Fallback Compoment solver instead.");
-	                LogAllComponentTypes(solvableModule);
+				}
+				catch
+				{
+					DebugLog("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
+					DebugLog("Using Fallback Compoment solver instead.");
+					LogAllComponentTypes(solvableModule);
 
 					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
-                }
+				}
 
 			case ComponentTypeEnum.NeedyMod:
 				KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
-                try
-                {
-				    return CreateModComponentSolver(bombCommander, bombComponent, needyModule.ModuleType, needyModule.ModuleDisplayName);
-                }
-                catch
-                {
-	                DebugLog("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
-	                DebugLog("Using Fallback Compoment solver instead.");
+				try
+				{
+					return CreateModComponentSolver(bombCommander, bombComponent, needyModule.ModuleType, needyModule.ModuleDisplayName);
+				}
+				catch
+				{
+					DebugLog("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
+					DebugLog("Using Fallback Compoment solver instead.");
 					LogAllComponentTypes(needyModule);
 
 					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
-                }
+				}
 
 			default:
-                LogAllComponentTypes(bombComponent);
-			    throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays'.", bombComponent.GetModuleDisplayName()));
+				LogAllComponentTypes(bombComponent);
+				throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays'.", bombComponent.GetModuleDisplayName()));
 		}
 	}
 
 	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
 	{
-        bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
+		bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
 		if (ModComponentSolverCreators.ContainsKey(moduleType))
 		{
-            ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent);
+			ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent);
 			return solver;
 		}
 
@@ -546,7 +552,7 @@ public static class ComponentSolverFactory
 
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)
 	{
-	    MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
+		MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
 
 	    ModuleInformation info = GetModuleInfo(moduleType);
 		if (FindHelpMessage(bombComponent, commandComponentType, out string help) && !info.helpTextOverride)
@@ -625,7 +631,7 @@ public static class ComponentSolverFactory
 				case ModCommandType.Unsupported:
 					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
 					return (_bombCommander, _bombComponent) => new UnsupportedModComponentSolver(_bombCommander, _bombComponent);
-					
+
 				default:
 					break;
 			}
@@ -634,39 +640,39 @@ public static class ComponentSolverFactory
 		return null;
 	}
 
-    private static readonly List<string> FullNamesLogged = new List<string>();
-    private static void LogAllComponentTypes(MonoBehaviour bombComponent)
-    {
-	    try
-	    {
-		    Component[] allComponents = bombComponent?.GetComponentsInChildren<Component>(true) ?? new Component[0];
-		    foreach (Component component in allComponents)
-		    {
-			    string fullName = component.GetType().FullName;
-			    if (string.IsNullOrEmpty(fullName) || FullNamesLogged.Contains(fullName)) continue;
-			    FullNamesLogged.Add(fullName);
+	private static readonly List<string> FullNamesLogged = new List<string>();
+	private static void LogAllComponentTypes(MonoBehaviour bombComponent)
+	{
+		try
+		{
+			Component[] allComponents = bombComponent?.GetComponentsInChildren<Component>(true) ?? new Component[0];
+			foreach (Component component in allComponents)
+			{
+				string fullName = component.GetType().FullName;
+				if (string.IsNullOrEmpty(fullName) || FullNamesLogged.Contains(fullName)) continue;
+				FullNamesLogged.Add(fullName);
 
-			    Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
-			    if (types.Length < 2)
-				    continue;
+				Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
+				if (types.Length < 2)
+					continue;
 
-			    DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
-			    foreach (Type type in types)
-			    {
-				    DebugLog("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
-			    }
-		    }
-	    }
-	    catch (Exception ex)
-	    {
-		    DebugHelper.LogException(ex, "Could not log the component types due to an exception:");
-	    }
-    }
+				DebugLog("Found {0} types with fullName = \"{1}\"", types.Length, fullName);
+				foreach (Type type in types)
+				{
+					DebugLog("\ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "Could not log the component types due to an exception:");
+		}
+	}
 
 	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom)
 	{
 		string statusLightStatus = "Attempting to find the modules StatusLightParent...";
-		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component) bombComponent.GetComponentInChildren<KMStatusLightParent>();
+		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component)bombComponent.GetComponentInChildren<KMStatusLightParent>();
 		if (component == null)
 		{
 			DebugLog($"{statusLightStatus} Not found.");

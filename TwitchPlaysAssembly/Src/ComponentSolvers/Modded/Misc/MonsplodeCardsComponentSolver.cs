@@ -9,9 +9,21 @@ public class MonsplodeCardsComponentSolver : ComponentSolver
 	base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
+		
+		var help = (string)_Names[4].GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-		Names[0] = (TextMesh)_Names[0].GetValue(_component);
-		Names[1] = (TextMesh)_Names[1].GetValue(_component);
+		//var id = ComponentHandle.idTextMultiDecker.text;
+		if (!modInfo.helpTextOverride) modInfo.helpText = help + "\nIf you're having trouble viewing the names or version of the cards, use !{0} clarify left or right to view them in chat. Use !{0} clarifycycle to view each card while cycling. Do note, rarity is not copied.";
+		for (int i = 0; i < 4; i++)
+		{
+			Names[i] = (TextMesh)_Names[i].GetValue(_component);
+		}
+	}
+
+	void Update()
+	{
+		currentDeck = (int)(_componentType.GetField("currentDeck", BindingFlags.Public | BindingFlags.Instance)).GetValue(_component);
+		deckSize = (int)(_componentType.GetField("deckSize", BindingFlags.Public | BindingFlags.Instance)).GetValue(_component);
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -19,17 +31,46 @@ public class MonsplodeCardsComponentSolver : ComponentSolver
 		if (inputCommand.ToLowerInvariant().Equals("clarify left"))
 		{
 			yield return null;
-			yield return $"sendtochat {string.Format("Owned: {0}", Names[0].text)}";
+			yield return $"sendtochat {string.Format("Owned: {0} [{1}]", Names[0].text, Names[1].text)}";
 		}
 		else if (inputCommand.ToLowerInvariant().Equals("clarify right"))
 		{
 			yield return null;
-			yield return $"sendtochat {string.Format("Offered: {0}", Names[1].text)}";
+			yield return $"sendtochat {string.Format("Offered: {0} [{1}]", Names[2].text, Names[3].text)}";
 		}
 		else if (inputCommand.ToLowerInvariant().Equals("clarify"))
 		{
 			yield return null;
-			yield return $"sendtochat {string.Format("Currently viewing owned: {0} offered: {1}", Names[0].text, Names[1].text)}";
+			yield return $"sendtochat {string.Format("Currently viewing owned: {0} [{1}], offered: {2} [{3}]", Names[0].text, Names[1].text, Names[2].text, Names[3].text)}";
+		}
+		else if (inputCommand.ToLowerInvariant().EqualsAny("clarifycycle", "cycleclarify"))
+		{
+			yield return null;
+			Update();
+			cardRight = _CardPress[0].MakeGenericMethod();
+			cardLeft = _CardPress[1].MakeGenericMethod();
+			int deck = currentDeck;
+			while (currentDeck != 0)
+			{
+				cardLeft.Invoke(_component, null);
+				Update();
+				yield return new WaitForSeconds(0.1f);
+			}
+			yield return $"sendtochat {string.Format("Offered: {0} [{1}]", Names[2].text.Replace('\n', ' '), Names[3].text.Replace('\n', ' '))}";
+			for (int i = 0; i < deckSize; i++)
+			{
+				yield return $"sendtochat {string.Format("Currently viewing owned: {0} [{1}]", Names[0].text.Replace('\n', ' '), Names[1].text.Replace('\n', ' '))}";
+				yield return new WaitForSecondsWithCancel(5f);
+				cardRight.Invoke(_component, null);
+				Update();
+			}
+			while (currentDeck != deck)
+			{
+				cardLeft.Invoke(_component, null);
+				Update();
+				yield return new WaitForSeconds(0.1f);
+			}
+			yield break;
 		}
 		else
 		{
@@ -46,14 +87,21 @@ public class MonsplodeCardsComponentSolver : ComponentSolver
 	{
 		_componentType = ReflectionHelper.FindType("MonsplodeCardModule");
 		_ProcessCommandMethod = _componentType.GetMethod("ProcessTwitchCommand", BindingFlags.NonPublic | BindingFlags.Instance);
+		_CardPress[0] = _componentType.GetMethod("NextCardPress", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		_CardPress[1] = _componentType.GetMethod("PrevCardPress", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 		_Names[0] = _componentType.GetField("deckTM", BindingFlags.Public | BindingFlags.Instance);
-		_Names[1] = _componentType.GetField("offerTM", BindingFlags.Public | BindingFlags.Instance);
+		_Names[2] = _componentType.GetField("offerTM", BindingFlags.Public | BindingFlags.Instance);
+		_Names[1] = _componentType.GetField("deckVersion", BindingFlags.Public | BindingFlags.Instance);
+		_Names[3] = _componentType.GetField("offerVersion", BindingFlags.Public | BindingFlags.Instance);
+		_Names[4] = _componentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
-	private static MethodInfo _ProcessCommandMethod = null;
-	private TextMesh[] Names = new TextMesh[2];
+	private static MethodInfo _ProcessCommandMethod = null, cardRight = null, cardLeft = null;
+	private static MethodInfo[] _CardPress = new MethodInfo[2];
+	private TextMesh[] Names = new TextMesh[4];
+	public int currentDeck, deckSize;
 
 	private object _component = null;
-	private static FieldInfo[] _Names = new FieldInfo[2];
+	private static FieldInfo[] _Names = new FieldInfo[5];
 }
