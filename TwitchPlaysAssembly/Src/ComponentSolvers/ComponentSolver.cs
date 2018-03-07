@@ -172,7 +172,7 @@ public abstract class ComponentSolver
                     parseError = true;
                     break;
                 }
-                else if (currentString.RegexMatch(out Match match, "^trycancel((?: .+)?)$") &&
+                else if (currentString.RegexMatch(out Match match, "^trycancel((?: (?:.|\\n)+)?)$") &&
                          CoroutineCanceller.ShouldCancel)
                 {
 	                CoroutineCanceller.ResetCancel();
@@ -181,7 +181,7 @@ public abstract class ComponentSolver
 
                     break;
                 }
-				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: .+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
+				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
 	            {
 		            yield return new WaitForSecondsWithCancel(waitCancelTime, false);
 		            if (CoroutineCanceller.ShouldCancel)
@@ -191,6 +191,10 @@ public abstract class ComponentSolver
 				            IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[2].Value.Trim()}");
 						break;
 		            }
+	            }
+				else if (currentString.RegexMatch(out match, "^senddelayedmessage ([0-9]+(?:\\.[0-9])?) ((?:.|\\n)+)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
+	            {
+		            ComponentHandle.StartCoroutine(SendDelayedMessage(messageDelayTime, match.Groups[2].Value));
 	            }
                 else if (currentString.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && 
                     currentString.Substring(11).Trim() != string.Empty)
@@ -242,11 +246,16 @@ public abstract class ComponentSolver
 		            }
 					hideCamera = true;
 	            }
-				else if (currentString.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase))
+				else if (currentString.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase) && CoroutineCanceller.ShouldCancel)
 	            {
 		            CoroutineCanceller.ResetCancel();
 		            TryCancel = false;
 		            break;
+	            }
+	            else
+	            {
+					if(TwitchPlaySettings.data.EnableDebuggingCommands)
+						DebugHelper.Log($"Unprocessed string: {currentString}");
 	            }
 			}
 			else if (currentValue is KMSelectable selectable1)
@@ -375,6 +384,12 @@ public abstract class ComponentSolver
     #endregion
 
     #region Protected Helper Methods
+	protected IEnumerator SendDelayedMessage(float delay, string message)
+	{
+		yield return new WaitForSeconds(delay);
+		IRCConnection.Instance.SendMessage(message);
+	}
+
     protected void DoInteractionStart(MonoBehaviour interactable)
     {
 		interactable.GetComponent<Selectable>().HandleInteract();
