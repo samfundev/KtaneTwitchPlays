@@ -820,11 +820,16 @@ public abstract class ComponentSolver
 			}
 			BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
 
-			if (inputCommand.Equals("zoom", StringComparison.InvariantCultureIgnoreCase))
+			if (inputCommand.RegexMatch(out Match match, "^zoom(?: ([0-9]+(?:\\.[0-9])?))?$"))
 			{
+				if (match.Groups.Count == 1 || !float.TryParse(match.Groups[1].Value, out float delay))
+					delay = 2;
+				delay = Math.Max(2, delay);
 				_zoom = true;
 				yield return null;
-				yield return new WaitForSeconds(2);
+				if (delay >= 15)
+					yield return "elevator music";
+				yield return $"trywaitcancel {delay} Your request to hold up the bomb for {delay} seconds has been cut short.";
 			}
 
 			if (inputCommand.StartsWith("zoom ", StringComparison.InvariantCultureIgnoreCase))
