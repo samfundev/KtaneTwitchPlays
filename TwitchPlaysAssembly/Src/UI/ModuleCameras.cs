@@ -105,14 +105,53 @@ public class ModuleCameras : MonoBehaviour
         public ModuleItem module = null;
 
         private ModuleCameras parent = null;
+	    private Rect zoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
+	    private Rect originalCameraRect;
 
-        public ModuleCamera(Camera instantiatedCamera, ModuleCameras parentInstance)
+		public ModuleCamera(Camera instantiatedCamera, ModuleCameras parentInstance)
         {
             cameraInstance = instantiatedCamera;
             parent = parentInstance;
+	        originalCameraRect = cameraInstance.rect;
         }
 
-        public void Refresh()
+	    public IEnumerator ZoomCamera(float duration=1.0f)
+	    {
+		    cameraInstance.depth = 100;
+		    yield return null;
+			float initialTime = Time.time;
+		    while ((Time.time - initialTime) < duration)
+		    {
+			    float lerp = (Time.time - initialTime) / duration;
+			    cameraInstance.rect = new Rect(Mathf.Lerp(originalCameraRect.x, zoomCameraLocation.x, lerp),
+				    Mathf.Lerp(originalCameraRect.y, zoomCameraLocation.y, lerp),
+				    Mathf.Lerp(originalCameraRect.width, zoomCameraLocation.width, lerp),
+				    Mathf.Lerp(originalCameraRect.height, zoomCameraLocation.height, lerp));
+
+			    yield return null;
+		    }
+		    cameraInstance.rect = zoomCameraLocation;
+	    }
+
+	    public IEnumerator UnZoomCamera(float duration = 1.0f)
+	    {
+		    yield return null;
+			float initialTime = Time.time;
+		    while ((Time.time - initialTime) < duration)
+		    {
+			    float lerp = (Time.time - initialTime) / duration;
+			    cameraInstance.rect = new Rect(Mathf.Lerp(zoomCameraLocation.x, originalCameraRect.x, lerp),
+				    Mathf.Lerp(zoomCameraLocation.y, originalCameraRect.y, lerp),
+				    Mathf.Lerp(zoomCameraLocation.width, originalCameraRect.width, lerp),
+				    Mathf.Lerp(zoomCameraLocation.height, originalCameraRect.height, lerp));
+
+			    yield return null;
+		    }
+		    cameraInstance.rect = originalCameraRect;
+		    cameraInstance.depth = 99;
+	    }
+
+		public void Refresh()
         {
             Deactivate();
 
@@ -245,11 +284,12 @@ public class ModuleCameras : MonoBehaviour
 		new Rect(0.5000000f, 0.091f, 0.1666667f, 0.28f),
 		new Rect(0.6666667f, 0.091f, 0.1666667f, 0.28f)
 	};
-    //private float currentSuccess;
-    #endregion
 
-    #region Public Constants
-    public const int CameraNotInUse = 0;
+	//private float currentSuccess;
+	#endregion
+
+	#region Public Constants
+	public const int CameraNotInUse = 0;
     public const int CameraInUse = 1;
     public const int CameraClaimed = 2;
     public const int CameraPrioritised = 3;
@@ -276,6 +316,7 @@ public class ModuleCameras : MonoBehaviour
 		Camera instantiatedCamera = Instantiate<Camera>(CameraPrefab);
 		instantiatedCamera.rect = cameraLocations[layer];
 		instantiatedCamera.aspect = 1f;
+		instantiatedCamera.depth = 99;
 		cameras.Add(new ModuleCamera(instantiatedCamera, this) { nonInteractiveCameraLayer = 8 + layer });
 	}
 
@@ -331,6 +372,28 @@ public class ModuleCameras : MonoBehaviour
     #endregion
 
     #region Public Methods
+	public IEnumerator ZoomCamera(BombComponent component, float delay)
+	{
+		int existingCamera = CurrentModulesContains(component);
+		if (existingCamera > -1)
+		{
+			ModuleCamera cam = cameras[existingCamera];
+			return cam.ZoomCamera(delay);
+		}
+		return null;
+	}
+
+	public IEnumerator UnzoomCamera(BombComponent component, float delay)
+	{
+		int existingCamera = CurrentModulesContains(component);
+		if (existingCamera > -1)
+		{
+			ModuleCamera cam = cameras[existingCamera];
+			return cam.UnZoomCamera(delay);
+		}
+		return null;
+	}
+
     public void AttachToModule(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
     {
         if ( handle != null && (handle.Claimed) && (priority == CameraClaimed) )
@@ -348,7 +411,7 @@ public class ModuleCameras : MonoBehaviour
             }
             cam.index = ++index;
             cam.module.index = cam.index;
-            return;
+	        return;
         }
         ModuleCamera camera = AvailableCamera(priority);
         try
@@ -366,6 +429,7 @@ public class ModuleCameras : MonoBehaviour
 
             // Refresh the camera
             camera.Refresh();
+	        
         }
         catch (Exception e)
         {

@@ -26,6 +26,7 @@ public abstract class ComponentSolver
     {
 	    TryCancel = false;
 		_responded = false;
+	    _zoom = false;
         _processingTwitchCommand = true;
         if (Solved)
         {
@@ -54,7 +55,10 @@ public abstract class ComponentSolver
                 yield break;
             }
 
-            try
+	        if (_zoom)
+		        message = message.Substring(4).Trim();
+
+			try
 			{
 				subcoroutine = RespondToCommandInternal(message);
 			}
@@ -116,6 +120,22 @@ public abstract class ComponentSolver
         }
 
         yield return new WaitForSeconds(0.5f);
+
+	    IEnumerator unzoom = null;
+	    if (_zoom)
+	    {
+		    IEnumerator zoom = BombMessageResponder.moduleCameras?.ZoomCamera(BombComponent, 1);
+		    unzoom = BombMessageResponder.moduleCameras?.UnzoomCamera(BombComponent, 1);
+		    if (zoom == null || unzoom == null)
+		    {
+			    _zoom = false;
+		    }
+		    else
+		    {
+			    while (zoom.MoveNext())
+				    yield return zoom.Current;
+		    }
+	    }
 
         int previousStrikeCount = StrikeCount;
         bool parseError = false;
@@ -365,6 +385,12 @@ public abstract class ComponentSolver
         {
             yield return new WaitForSeconds(0.5f);
         }
+
+	    if (_zoom)
+	    {
+		    while (unzoom?.MoveNext() ?? false)
+			    yield return unzoom.Current;
+	    }
 
         IEnumerator defocusCoroutine = BombCommander.Defocus(Selectable, FrontFace);
         while (defocusCoroutine.MoveNext())
@@ -775,7 +801,7 @@ public abstract class ComponentSolver
 
     #region Private Methods
     private IEnumerator RespondToCommandCommon(string inputCommand, string userNickName)
-	{
+    {
 		if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
 		{
 			cameraPriority = ModuleCameras.CameraNotInUse;
@@ -793,6 +819,18 @@ public abstract class ComponentSolver
 				cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
 			}
 			BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
+
+			if (inputCommand.Equals("zoom", StringComparison.InvariantCultureIgnoreCase))
+			{
+				_zoom = true;
+				yield return null;
+				yield return new WaitForSeconds(2);
+			}
+
+			if (inputCommand.StartsWith("zoom ", StringComparison.InvariantCultureIgnoreCase))
+			{
+				_zoom = true;
+			}
 		}
 
         if (inputCommand.Equals("show", StringComparison.InvariantCultureIgnoreCase))
@@ -829,6 +867,7 @@ public abstract class ComponentSolver
     private bool _readyToTurn = false;
     private bool _processingTwitchCommand = false;
 	private bool _responded = false;
+	private bool _zoom = false;
 
 	public TwitchComponentHandle ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
