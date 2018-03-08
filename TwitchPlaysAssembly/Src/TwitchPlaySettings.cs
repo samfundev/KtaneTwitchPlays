@@ -9,7 +9,7 @@ public class TwitchPlaySettingsData
 {
     public int SettingsVersion = 0;
 
-	public bool SkipModManagerInstuctionScreen = false;
+	public bool SkipModManagerInstructionScreen = false;
     public bool EnableRewardMultipleStrikes = true;
     public bool EnableMissionBinder = true;
     public bool EnableFreeplayBriefcase = true;
@@ -22,6 +22,7 @@ public class TwitchPlaySettingsData
     public bool EnableTwitchPlaysMode = true;
     public bool EnableInteractiveMode = false;
 	public bool EnableAutomaticEdgework = false;
+    public bool ShowHours = false;
     public int BombLiveMessageDelay = 0;
     public int ClaimCooldownTime = 30;
     public int ModuleClaimLimit = 2;

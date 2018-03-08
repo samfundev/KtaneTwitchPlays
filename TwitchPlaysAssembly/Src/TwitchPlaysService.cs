@@ -67,7 +67,7 @@ public class TwitchPlaysService : MonoBehaviour
 	    infoObject.transform.parent = gameObject.transform;
 	    _publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
 	    _publicProperties.TwitchPlaysService = this;
-		if (TwitchPlaySettings.data.SkipModManagerInstuctionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
+		if (TwitchPlaySettings.data.SkipModManagerInstructionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
 			ModManagerManualInstructionScreen.HasShownOnce = true;
 	}
 
