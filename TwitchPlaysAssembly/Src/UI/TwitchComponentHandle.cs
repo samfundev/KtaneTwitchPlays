@@ -258,6 +258,8 @@ public class TwitchComponentHandle : MonoBehaviour
 			StopCoroutine(TakeInProgress);
 			TakeInProgress = null;
 		}
+		if (PlayerName == null) return;
+		bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName].Add(this);
 	}
 
 	public static void ResetId()

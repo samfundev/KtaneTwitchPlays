@@ -554,6 +554,27 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 
+			if (text.RegexMatch(out match, "^(?:findsolved|solvedfind|searchsolved|solvedsearch) (.+)"))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
+				foreach (string query in queries)
+				{
+					IEnumerable<BombCommander> commanders = BombCommanders.Where(handle => handle.SolvedModules.Keys.ToArray().Any(x => x.ContainsIgnoreCase(query))).ToList();
+					IEnumerable<TwitchComponentHandle> modules = commanders.SelectMany(x => x.SolvedModules.Where(y => y.Key.ContainsIgnoreCase(query)))
+						.OrderByDescending(x => x.Key.EqualsIgnoreCase(query)).SelectMany(x => x.Value).ToList();
+					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null)
+						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
+					if (commanders.Any())
+					{
+						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
+						else IRCConnection.Instance.SendMessage("None of the specified modules have been solved.");
+					}
+					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", query);
+				}
+			}
+
 			if (text.RegexMatch(out match, "^(?:findclaim|searchclaim|claimsearch|claimfind) (.+)"))
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
@@ -811,15 +832,18 @@ public class BombMessageResponder : MessageResponder
 
 				case ComponentTypeEnum.Mod:
 					KMBombModule module = bombComponent.GetComponent<KMBombModule>();
-					moduleName = module.ModuleDisplayName;
 					keyModule = keyModules.Contains(module.ModuleType);
 					goto default;
 
                 default:
+	                moduleName = bombComponent.GetModuleDisplayName();
 	                bombCommander.bombSolvableModules++;
 					foundComponents = true;
                     break;
             }
+
+	        if (!bombCommander.SolvedModules.ContainsKey(moduleName))
+		        bombCommander.SolvedModules[moduleName] = new List<TwitchComponentHandle>();
 
             TwitchComponentHandle handle = Instantiate<TwitchComponentHandle>(twitchComponentHandlePrefab, bombComponent.transform, false);
             handle.bombCommander = bombCommander;
