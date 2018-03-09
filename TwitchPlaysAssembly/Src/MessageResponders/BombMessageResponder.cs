@@ -798,7 +798,7 @@ public class BombMessageResponder : MessageResponder
     {
 	    string[] keyModules =
 	    {
-			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced"
+			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced", "theSwan"
 		};
         bool foundComponents = false;
 
