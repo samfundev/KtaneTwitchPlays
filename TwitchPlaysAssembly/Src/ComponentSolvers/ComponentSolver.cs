@@ -660,8 +660,7 @@ public abstract class ComponentSolver
 	    }
 	    if (OtherModes.TimedModeOn)
         {
-            float multiplier = OtherModes.GetMultiplier();
-            float time = multiplier * ComponentValue;
+            float time = OtherModes.GetAdjustedMultiplier() * ComponentValue;
 	        if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
 	        {
 		        BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
@@ -672,11 +671,7 @@ public abstract class ComponentSolver
 		        BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
 		        IRCConnection.Instance.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
 	        }
-	        if (multiplier < TwitchPlaySettings.data.TimeModeMaxMultiplier)
-            {
-                multiplier = multiplier + TwitchPlaySettings.data.TimeModeSolveBonus;
-                OtherModes.SetMultiplier(multiplier);
-            }
+            OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
         }
     }
 

@@ -151,7 +151,7 @@ public class TwitchBombHandle : MonoBehaviour
 			if (OtherModes.TimedModeOn)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime,
-					OtherModes.GetMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
+					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
 			}
 			else if (OtherModes.VsModeOn)
 			{
