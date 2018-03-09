@@ -538,15 +538,13 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
-				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
 				foreach (string query in queries)
 				{
-					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText,
-							handle.Code, "Claimed by " + handle.PlayerName)).ToList();
-					IEnumerable<string> playerModules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) &&
-						handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).Take(3).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText,
-							handle.Code, "Claimed by " + handle.PlayerName)).ToList();
+					IEnumerable<TwitchComponentHandle> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ToList();
+					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query))
+						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
 					if (modules.Any())
 					{
 						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
