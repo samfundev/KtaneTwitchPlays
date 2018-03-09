@@ -79,14 +79,18 @@ public class BombCommander : ICommandResponder
 		}
 		else if (message.RegexMatch(out Match edgeworkMatch, GameRoom.Instance.ValidEdgeworkRegex))
 		{
-			responseNotifier.ProcessResponse(CommandResponse.Start);
-			IEnumerator edgeworkCoroutine = ShowEdgework(edgeworkMatch);
-			while (edgeworkCoroutine.MoveNext())
+			if (!TwitchPlaySettings.data.EnableEdgeworkCommand) responseNotifier.ProcessResponse(CommandResponse.NoResponse);
+			else
 			{
-				yield return edgeworkCoroutine.Current;
-			}
+				responseNotifier.ProcessResponse(CommandResponse.Start);
+				IEnumerator edgeworkCoroutine = ShowEdgework(edgeworkMatch);
+				while (edgeworkCoroutine.MoveNext())
+				{
+					yield return edgeworkCoroutine.Current;
+				}
 
-			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
+				responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
+			}
 		}
 		else
 		{

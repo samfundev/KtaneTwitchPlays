@@ -22,6 +22,7 @@ public class TwitchPlaySettingsData
     public bool EnableTwitchPlaysMode = true;
     public bool EnableInteractiveMode = false;
 	public bool EnableAutomaticEdgework = false;
+	public bool EnableEdgeworkCommand = true;
     public bool ShowHours = false;
     public int BombLiveMessageDelay = 0;
     public int ClaimCooldownTime = 30;
