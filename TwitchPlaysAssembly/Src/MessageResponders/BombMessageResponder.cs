@@ -534,7 +534,7 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.RegexMatch(out match, "^(?:findplayer|playerfind) (.+)"))
+			if (text.RegexMatch(out match, "^(?:findplayer|playerfind|searchplayer|playersearch) (.+)"))
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
@@ -543,10 +543,10 @@ public class BombMessageResponder : MessageResponder
 				{
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
 						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText,
-							handle.Code, "Claimed by" + handle.PlayerName)).ToList();
+							handle.Code, "Claimed by " + handle.PlayerName)).ToList();
 					IEnumerable<string> playerModules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) &&
-						handle.PlayerName != null).Take(3).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText,
-							handle.Code, "Claimed by" + handle.PlayerName)).ToList();
+						handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).Take(3).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText,
+							handle.Code, "Claimed by " + handle.PlayerName)).ToList();
 					if (modules.Any())
 					{
 						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
