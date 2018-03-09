@@ -522,7 +522,7 @@ public class ModuleCameras : MonoBehaviour
     {
         if (OtherModes.TimedModeOn)
         {
-            float timedMultiplier = OtherModes.GetMultiplier();
+            float timedMultiplier = OtherModes.GetAdjustedMultiplier();
             ConfidencePrefab.color = Color.yellow;
             string conf = "x" + String.Format("{0:0.0}", timedMultiplier);
             string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());

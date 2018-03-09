@@ -1,4 +1,6 @@
-﻿public static class OtherModes
+﻿using System;
+
+public static class OtherModes
 {
 	private static bool GetMode(string modeName, ref bool currentBomb, ref bool nextBomb)
 	{
@@ -127,6 +129,11 @@
     {
         return timedMultiplier;
     }
+
+	public static float GetAdjustedMultiplier()
+	{
+		return Math.Min(timedMultiplier, TwitchPlaySettings.data.TimeModeMaxMultiplier);
+	}
 
     public static bool DropMultiplier()
     {
