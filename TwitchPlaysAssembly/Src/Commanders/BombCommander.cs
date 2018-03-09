@@ -73,18 +73,20 @@ public class BombCommander : ICommandResponder
 		}
 		else if (message.RegexMatch(out Match edgeworkMatch, GameRoom.Instance.ValidEdgeworkRegex))
 		{
-			if (!TwitchPlaySettings.data.EnableEdgeworkCommand) responseNotifier.ProcessResponse(CommandResponse.NoResponse);
+			responseNotifier.ProcessResponse(CommandResponse.Start);
+			if (!TwitchPlaySettings.data.EnableEdgeworkCommand)
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text);
+			}
 			else
 			{
-				responseNotifier.ProcessResponse(CommandResponse.Start);
 				IEnumerator edgeworkCoroutine = ShowEdgework(edgeworkMatch);
 				while (edgeworkCoroutine.MoveNext())
 				{
 					yield return edgeworkCoroutine.Current;
 				}
-
-				responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 			}
+			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else
 		{
