@@ -11,14 +11,7 @@ public class BombCommander : ICommandResponder
     #region Constructors
     public BombCommander(Bomb bomb)
     {
-        Bomb = bomb;
-        timerComponent = Bomb.GetTimer();
-        widgetManager = Bomb.WidgetManager;
-        Selectable = Bomb.GetComponent<Selectable>();
-        FloatingHoldable = Bomb.GetComponent<FloatingHoldable>();
-        _selectableManager = KTInputManager.Instance.SelectableManager;
-        BombTimeStamp = DateTime.Now;
-        bombStartingTimer = CurrentTimer;
+	    ReuseBombCommander(bomb);
     }
 	#endregion
 
@@ -35,6 +28,7 @@ public class BombCommander : ICommandResponder
 		bombStartingTimer = CurrentTimer;
 		bombSolvableModules = 0;
 		bombSolvedModules = 0;
+		SolvedModules = new Dictionary<string, List<TwitchComponentHandle>>();
 	}
     
     public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
@@ -79,18 +73,20 @@ public class BombCommander : ICommandResponder
 		}
 		else if (message.RegexMatch(out Match edgeworkMatch, GameRoom.Instance.ValidEdgeworkRegex))
 		{
-			if (!TwitchPlaySettings.data.EnableEdgeworkCommand) responseNotifier.ProcessResponse(CommandResponse.NoResponse);
+			responseNotifier.ProcessResponse(CommandResponse.Start);
+			if (!TwitchPlaySettings.data.EnableEdgeworkCommand)
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text);
+			}
 			else
 			{
-				responseNotifier.ProcessResponse(CommandResponse.Start);
 				IEnumerator edgeworkCoroutine = ShowEdgework(edgeworkMatch);
 				while (edgeworkCoroutine.MoveNext())
 				{
 					yield return edgeworkCoroutine.Current;
 				}
-
-				responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 			}
+			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else
 		{
@@ -666,6 +662,7 @@ public class BombCommander : ICommandResponder
     public Selectable Selectable = null;
     public FloatingHoldable FloatingHoldable = null;
     public DateTime BombTimeStamp;
+	public Dictionary<string, List<TwitchComponentHandle>> SolvedModules;
 
     private SelectableManager _selectableManager = null;
 
