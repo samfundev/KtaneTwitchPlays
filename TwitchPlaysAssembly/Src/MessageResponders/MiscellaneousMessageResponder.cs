@@ -75,6 +75,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
+	int GetMaximumModules(int maxAllowed=int.MaxValue)
+	{
+		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(),maxAllowed);
+	}
+
 	string ResolveMissionID(string targetID, out string failureMessage)
 	{
 	    failureMessage = null;
@@ -96,8 +101,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 		GeneratorSetting generatorSetting = mission.GeneratorSetting;
 	    List<ComponentPool> componentPools = generatorSetting.ComponentPools;
+		int moduleCount = 0;
 	    foreach (ComponentPool componentPool in componentPools)
 	    {
+		    moduleCount += componentPool.Count;
 	        List<string> modTypes = componentPool.ModTypes;
 	        if (modTypes == null || modTypes.Count == 0) continue;
 		    foreach (string mod in modTypes.Where(x => !availableMods.Contains(x)))
@@ -110,27 +117,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 	        failureMessage = $"Mission \"{targetID}\" was found, however, the following mods are not installed / loaded: {string.Join(", ", missingMods.OrderBy(x => x).ToArray())}";
             return null;
 	    }
+		if (moduleCount > GetMaximumModules())
+		{
+			failureMessage = TPElevatorSwitch.IsON 
+				? $"Mission \"{targetID}\" was found, however, this mission has too many modules to use in the elevator."
+				: $"Mission \"{targetID}\" was found, however, a bomb case with at least {moduleCount} is not installed / enabled";
+			return null;
+		}
         
 	    return mission.name;
 	}
-
-	class Distribution
-	{
-		public string displayName;
-		public float vanilla;
-		public float modded;
-	}
-
-	Dictionary<string, Distribution> distributions = new Dictionary<string, Distribution>()
-	{
-		{ "vanilla", new Distribution { vanilla = 1f, modded = 0f, displayName = "Vanilla" } },
-		{ "mods", new Distribution { vanilla = 0f, modded = 1f, displayName = "Modded" } },
-		{ "mixed", new Distribution { vanilla = 0.5f, modded = 0.5f, displayName = "Mixed" } },
-		{ "mixedlight", new Distribution { vanilla = 0.67f, modded = 0.33f, displayName = "Mixed Light" } },
-		{ "mixedheavy", new Distribution { vanilla = 0.33f, modded = 0.67f, displayName = "Mixed Heavy" } },
-		{ "light", new Distribution { vanilla = 0.8f, modded = 0.2f, displayName = "Light" } },
-		{ "heavy", new Distribution { vanilla = 0.2f, modded = 0.8f, displayName = "Heavy" } },
-	};
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
     {
@@ -350,8 +346,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 1)
 				{
-					string[] validDistributions = distributions.Keys.Select(x => x).ToArray();
-					IRCConnection.Instance.SendMessage($"Usage: !run <module_count> <distribution>. Valid distributions are {string.Join(", ", validDistributions)}");
+					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
+					IRCConnection.Instance.SendMessage(validDistributions.Any() 
+						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}" 
+						: "Sorry, !run <module_count> <distribution> has been disabled.");
 					break;
 				}
 
@@ -371,9 +369,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 					if (missionID == null)
 					{
-						string distributionName = distributions.Keys.OrderByDescending(x => x.Length).FirstOrDefault(y => split[1].Contains(y));
+						string distributionName = TwitchPlaySettings.data.ModDistributions.Keys.FirstOrDefault(y => int.TryParse(split[1].Replace(y,""),out _));
 					    if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out int modules) ||
-							modules < 1 || modules > (TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules()))
+							modules < TwitchPlaySettings.data.ModDistributions[distributionName].MinModules || 
+							modules > GetMaximumModules(TwitchPlaySettings.data.ModDistributions[distributionName].MaxModules) ||
+							!(TwitchPlaySettings.data.ModDistributions[distributionName].Enabled && !UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 						{
 							IRCConnection.Instance.SendMessage(failureMessage);
 						}
@@ -395,7 +395,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 3)
 				{
-				    if (distributions.ContainsKey(split[1]))
+				    if (TwitchPlaySettings.data.ModDistributions.ContainsKey(split[1]))
 					{
 						string temp = split[1];
 						split[1] = split[2];
@@ -404,25 +404,39 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 					if (int.TryParse(split[1], out int modules) && modules > 0)
 					{
-						int maxModules = (TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules());
-						if (modules > maxModules)
-						{
-							IRCConnection.Instance.SendMessage("Sorry, the maximum number of modules is {0}.", maxModules);
-							break;
-						}
-
-						if (!distributions.ContainsKey(split[2]))
+						if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(split[2], out ModuleDistributions distribution))
 						{
 							IRCConnection.Instance.SendMessage("Sorry, there is no distribution called \"{0}\".", split[2]);
 							break;
 						}
 
+						if (!distribution.Enabled && !UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+						{
+							IRCConnection.Instance.SendMessage("Sorry, distribution \"{0}\" is disabled", distribution.DisplayName);
+							break;
+						}
+
+						if (modules < distribution.MinModules)
+						{
+							IRCConnection.Instance.SendMessage("Sorry, the minimum number of modules for \"{0}\" is {1}.", distribution.DisplayName , distribution.MinModules);
+							break;
+						}
+						
+						int maxModules = GetMaximumModules(distribution.MaxModules);
+						if (modules > maxModules)
+						{
+							if (modules > distribution.MaxModules)
+								IRCConnection.Instance.SendMessage("Sorry, the maximum number of modules for {0} is {1}.", distribution.DisplayName, distribution.MaxModules);
+							else
+								IRCConnection.Instance.SendMessage("Sorry, the maximum number of modules is \"{0}\".", maxModules);
+							break;
+						}
+
 						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
 						if (CurrentState != KMGameInfo.State.Setup) break;
-
-						Distribution distribution = distributions[split[2]];
-						int vanillaModules = Mathf.FloorToInt(modules * distribution.vanilla);
-						int moddedModules = Mathf.FloorToInt(modules * distribution.modded);
+						
+						int vanillaModules = Mathf.FloorToInt(modules * distribution.Vanilla);
+						int moddedModules = Mathf.FloorToInt(modules * distribution.Modded);
 
 						KMMission mission = ScriptableObject.CreateInstance<KMMission>();
 						int bothModules = modules - moddedModules - vanillaModules;
@@ -449,7 +463,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						};
 
 						mission.PacingEventsEnabled = true;
-						mission.DisplayName = modules + " " + distribution.displayName;
+						mission.DisplayName = modules + " " + distribution.DisplayName;
 						if (OtherModes.TimedModeOn)
 						{
 							mission.GeneratorSetting = new KMGeneratorSetting()
@@ -710,4 +724,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 		    IRCConnection.Instance.SendMessage("There are some remaining modules that can still be solved using !<id> solve.");
     }
 
+}
+
+public class ModuleDistributions
+{
+	public string DisplayName;
+	public float Vanilla;
+	public float Modded;
+	public int MinModules;
+	public int MaxModules;
+	public bool Enabled = true;
+	public bool Hidden = false;
 }

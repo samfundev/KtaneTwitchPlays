@@ -63,7 +63,9 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, string> BombCustomMessages = new Dictionary<string, string>
 	{
-		{"ttks", "Turn the Keys is a module on this bomb. It dictates some modules be delayed until others are finished. Until Turn the Keys is finished, you should avoid doing the following modules:\nMaze, Memory, Complicated Wires, Wire Sequence, Simon Says, Cryptography, Semaphore, Combination Lock, Astrology, Switches, Plubming"},
+		{"ttks", "Turn the Keys is a module on this bomb. It dictates some modules be delayed until others are finished. Until Turn the Keys is finished, you should avoid doing the following modules:\nLeft Key: Maze, Memory, Complicated Wires, Wire Sequence, Cryptography\nRight Key: Simon Says, Semaphore, Combination Lock, Astrology, Switches, Plubming"},
+		{"ttksleft", "These modules need to be solved: Password, Who's on First, Keypad, Crazy Talk, Listening, Orientation Cube.\nAvoid solving these modules: Maze, Memory, Complicated Wires, Wire Sequences, Cryptography.\nLeft Key is turned from Low to High." },
+		{"ttksright", "These modules need to be solved: Morse Code, Wires, The Button, Two Bits, Colour Flash, Round Keypad.\nAvoid solving these modules: Simon Says, Semaphore, Combination Lock, Astrology, Switches, Plumbing.\nRight Key is turned from High to Low." },
 		{"infozen", "Zen Mode is a peaceful mode. The clock counts up instead of down. Strikes can't blow up the bomb (though they still count). Points are reduced by 75%, and if you don't like the modules, you can !newbomb to get new ones." }
 	};
 
@@ -73,6 +75,17 @@ public class TwitchPlaySettingsData
 	};
 
 	public Dictionary<string, bool> ModPermissions = new Dictionary<string, bool>();
+
+	public Dictionary<string, ModuleDistributions> ModDistributions = new Dictionary<string, ModuleDistributions>()
+	{
+		{ "vanilla", new ModuleDistributions { Vanilla = 1f, Modded = 0f, DisplayName = "Vanilla", MinModules = 1, MaxModules = 101 } },
+		{ "mods", new ModuleDistributions { Vanilla = 0f, Modded = 1f, DisplayName = "Modded", MinModules = 1, MaxModules = 101 } },
+		{ "mixed", new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Mixed", MinModules = 1, MaxModules = 101 } },
+		{ "mixedlight", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101 } },
+		{ "mixedheavy", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101 } },
+		{ "light", new ModuleDistributions { Vanilla = 0.8f, Modded = 0.2f, DisplayName = "Light", MinModules = 1, MaxModules = 101 } },
+		{ "heavy", new ModuleDistributions { Vanilla = 0.2f, Modded = 0.8f, DisplayName = "Heavy", MinModules = 1, MaxModules = 101 } },
+	};
 
 	public string TwitchBotColorOnQuit = string.Empty;
 
@@ -234,6 +247,42 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
+	private bool ValidateModDistribution(ref Dictionary<string, ModuleDistributions> distributions)
+	{
+		bool result = true;
+		List<string> invalidKeys = new List<string>();
+
+		foreach (string key in distributions.Keys)
+		{
+			ModuleDistributions distribution = distributions[key];
+			result &= ValidateFloat(ref distribution.Vanilla, 0.5f, 0f, 1f);
+			result &= ValidateFloat(ref distribution.Modded, 1f - distribution.Vanilla, 0f, 1f);
+			if (distribution.MinModules > distribution.MaxModules)
+			{
+				result = false;
+				int temp = distribution.MinModules;
+				distribution.MinModules = distribution.MaxModules;
+				distribution.MaxModules = temp;
+			}
+			result &= ValidateInt(ref distribution.MinModules, 1, 1);
+			result &= ValidateInt(ref distribution.MaxModules, Math.Max(distribution.MinModules, 101), distribution.MinModules);
+
+			if (!key.ToLowerInvariant().Equals(key) || key.Contains(" "))
+				invalidKeys.Add(key);
+		}
+		if (invalidKeys.Any())
+		{
+			result = false;
+			foreach (string key in invalidKeys)
+			{
+				distributions[key.ToLowerInvariant().Replace(" ","")] = distributions[key];
+				distributions.Remove(key);
+			}
+		}
+
+		return result;
+	}
+
     public bool ValidateStrings()
     {
         TwitchPlaySettingsData data = new TwitchPlaySettingsData();
@@ -333,6 +382,8 @@ public class TwitchPlaySettingsData
 	    valid &= ValidateInt(ref InstantModuleClaimCooldownExpiry, data.InstantModuleClaimCooldownExpiry, 0);
 
 	    valid &= ValidateDictionaryEntry("infozen", ref BombCustomMessages, data.BombCustomMessages);
+
+	    valid &= ValidateModDistribution(ref ModDistributions);
 
         return valid;
     }
