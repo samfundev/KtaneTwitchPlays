@@ -42,22 +42,20 @@ public class ThreeDMazeComponentSolver : ComponentSolver
 	
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string[] commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		List<string> commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-		if (commands.Length <= 1 || !commands[0].EqualsAny("move", "m", "walk", "w")) yield break;
+		if (commands.Count == 0) yield break;
 
-		List<KMSelectable> moves = commands.Where((_, i) => i > 0).SelectMany(ShortenDirection).ToList();
+		bool moving = !commands[0].EqualsAny("walk", "w");
+		if (commands[0].EqualsAny("move", "m", "walk", "w")) commands.RemoveAt(0);
+
+		List<KMSelectable> moves = commands.SelectMany(ShortenDirection).ToList();
 		if (moves.Any(m => m == null)) yield break;
 		yield return null;
 
-		bool moving = commands[0].EqualsAny("move", "m");
-		if (moves.Count > (moving ? 64 : 16))
-		{
-			yield return "elevator music";
-		}
+		if (moves.Count > (moving ? 64 : 16)) yield return "elevator music";
 
 		float moveDelay = moving ? 0.1f : 0.4f;
-				
 		foreach (KMSelectable move in moves)
 		{
 			yield return DoInteractionClick(move, moveDelay);
