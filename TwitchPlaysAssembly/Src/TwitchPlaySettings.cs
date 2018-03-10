@@ -76,6 +76,17 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, bool> ModPermissions = new Dictionary<string, bool>();
 
+	public Dictionary<string, ModuleDistributions> ModDistributions = new Dictionary<string, ModuleDistributions>()
+	{
+		{ "vanilla", new ModuleDistributions { Vanilla = 1f, Modded = 0f, DisplayName = "Vanilla", MinModules = 1, MaxModules = 101 } },
+		{ "mods", new ModuleDistributions { Vanilla = 0f, Modded = 1f, DisplayName = "Modded", MinModules = 1, MaxModules = 101 } },
+		{ "mixed", new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Mixed", MinModules = 1, MaxModules = 101 } },
+		{ "mixedlight", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101 } },
+		{ "mixedheavy", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101 } },
+		{ "light", new ModuleDistributions { Vanilla = 0.8f, Modded = 0.2f, DisplayName = "Light", MinModules = 1, MaxModules = 101 } },
+		{ "heavy", new ModuleDistributions { Vanilla = 0.2f, Modded = 0.8f, DisplayName = "Heavy", MinModules = 1, MaxModules = 101 } },
+	};
+
 	public string TwitchBotColorOnQuit = string.Empty;
 
     public bool AllowSnoozeOnly = false;
@@ -236,6 +247,42 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
+	private bool ValidateModDistribution(ref Dictionary<string, ModuleDistributions> distributions)
+	{
+		bool result = true;
+		List<string> invalidKeys = new List<string>();
+
+		foreach (string key in distributions.Keys)
+		{
+			ModuleDistributions distribution = distributions[key];
+			result &= ValidateFloat(ref distribution.Vanilla, 0.5f, 0f, 1f);
+			result &= ValidateFloat(ref distribution.Modded, 1f - distribution.Vanilla, 0f, 1f);
+			if (distribution.MinModules > distribution.MaxModules)
+			{
+				result = false;
+				int temp = distribution.MinModules;
+				distribution.MinModules = distribution.MaxModules;
+				distribution.MaxModules = temp;
+			}
+			result &= ValidateInt(ref distribution.MinModules, 1, 1);
+			result &= ValidateInt(ref distribution.MaxModules, Math.Max(distribution.MinModules, 101), distribution.MinModules);
+
+			if (!key.ToLowerInvariant().Equals(key) || key.Contains(" "))
+				invalidKeys.Add(key);
+		}
+		if (invalidKeys.Any())
+		{
+			result = false;
+			foreach (string key in invalidKeys)
+			{
+				distributions[key.ToLowerInvariant().Replace(" ","")] = distributions[key];
+				distributions.Remove(key);
+			}
+		}
+
+		return result;
+	}
+
     public bool ValidateStrings()
     {
         TwitchPlaySettingsData data = new TwitchPlaySettingsData();
@@ -335,6 +382,8 @@ public class TwitchPlaySettingsData
 	    valid &= ValidateInt(ref InstantModuleClaimCooldownExpiry, data.InstantModuleClaimCooldownExpiry, 0);
 
 	    valid &= ValidateDictionaryEntry("infozen", ref BombCustomMessages, data.BombCustomMessages);
+
+	    valid &= ValidateModDistribution(ref ModDistributions);
 
         return valid;
     }
