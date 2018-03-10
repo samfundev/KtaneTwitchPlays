@@ -14,7 +14,16 @@ public class IceCreamConfirm : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		KMModSettings modSettings = bombComponent.GetComponent<KMModSettings>();
-		settings = JsonConvert.DeserializeObject<Settings>(modSettings.Settings);
+		try
+		{
+			settings = JsonConvert.DeserializeObject<Settings>(modSettings.Settings);
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "Could not deserialize ice cream settings:");
+			TwitchPlaySettings.data.ShowHours = false;
+			TwitchPlaySettings.WriteDataToFile();
+		}
 	}
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
