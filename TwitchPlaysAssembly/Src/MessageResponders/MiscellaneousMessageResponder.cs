@@ -75,6 +75,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
+	int GetMaximumModules(int maxAllowed=int.MaxValue)
+	{
+		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(),maxAllowed);
+	}
+
 	string ResolveMissionID(string targetID, out string failureMessage)
 	{
 	    failureMessage = null;
@@ -96,8 +101,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 		GeneratorSetting generatorSetting = mission.GeneratorSetting;
 	    List<ComponentPool> componentPools = generatorSetting.ComponentPools;
+		int moduleCount = 0;
 	    foreach (ComponentPool componentPool in componentPools)
 	    {
+		    moduleCount += componentPool.Count;
 	        List<string> modTypes = componentPool.ModTypes;
 	        if (modTypes == null || modTypes.Count == 0) continue;
 		    foreach (string mod in modTypes.Where(x => !availableMods.Contains(x)))
@@ -110,6 +117,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 	        failureMessage = $"Mission \"{targetID}\" was found, however, the following mods are not installed / loaded: {string.Join(", ", missingMods.OrderBy(x => x).ToArray())}";
             return null;
 	    }
+		if (moduleCount > GetMaximumModules())
+		{
+			failureMessage = TPElevatorSwitch.IsON 
+				? $"Mission \"{targetID}\" was found, however, this mission has too many modules to use in the elevator."
+				: $"Mission \"{targetID}\" was found, however, a bomb case with at least {moduleCount} is not installed / enabled";
+			return null;
+		}
         
 	    return mission.name;
 	}
