@@ -29,21 +29,13 @@ public class IceCreamConfirm : ComponentSolver
 	{
 		if (inputCommand.ToLowerInvariant().Equals("hours"))
 		{
-			string hours;
 			yield return null;
 			if (!TwitchPlaySettings.data.ShowHours)
 			{
 				yield return $"sendtochat Sorry, hours are currently unavailable. Enjoy your ice cream!";
 				yield break;
 			}
-			if (settings.openingTimeEnabled)
-			{
-				hours = "We are open every other hour today.";
-			}
-			else
-			{
-				hours = "We're open all day today!";
-			}
+			string hours = settings.openingTimeEnabled ? "We are open every other hour today." : "We're open all day today!";
 			yield return $"sendtochat {hours}";
 		}
 		else
