@@ -259,7 +259,16 @@ public class TwitchComponentHandle : MonoBehaviour
 			TakeInProgress = null;
 		}
 		if (PlayerName == null) return;
-		bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName].Add(this);
+		try
+		{
+			if (!bombCommander.SolvedModules.ContainsKey(Solver.modInfo.moduleDisplayName))
+				bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName] = new List<TwitchComponentHandle>();
+			bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName].Add(this);
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "Could not add entry to solved modules list due to an exception:");
+		}
 	}
 
 	public static void ResetId()
