@@ -575,6 +575,51 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 
+			if (text.RegexMatch(out match, "^(?:claimanyview|viewclaimany) (.+)"))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
+					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+
+				if (unclaimed.Any())
+				{
+					text = unclaimed[0];
+					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + unclaimed[0].Split(' ')[0] + " view"));
+				}
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+			}
+
+			if (text.RegexMatch(out match, "^(?:claimvanview|viewclaimvan) (.+)"))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+
+				if (unclaimed.Any())
+				{
+					text = unclaimed[0];
+					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + unclaimed[0].Split(' ')[0] + " view"));
+				}
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+			}
+
+			if (text.RegexMatch(out match, "^(?:claimmodview|viewclaimmod) (.+)"))
+			{
+				if (!IsAuthorizedDefuser(userNickName)) return;
+
+				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+
+				if (unclaimed.Any())
+				{
+					text = unclaimed[0];
+					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + unclaimed[0].Split(' ')[0] + " view"));
+				}
+				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+			}
+
 			if (text.RegexMatch(out match, "^(?:findclaim|searchclaim|claimsearch|claimfind) (.+)"))
 			{
 				if (!IsAuthorizedDefuser(userNickName)) return;
