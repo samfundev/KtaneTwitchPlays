@@ -247,6 +247,14 @@ public abstract class HoldableHandler
 							BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, HoldableCommander.ID);
 							Strike = true;
 						}
+						else if (currentString.ToLowerInvariant().Equals("show front"))
+						{
+							processIEnumerators.Push(HoldableCommander.Hold(true));
+						}
+						else if (currentString.ToLowerInvariant().Equals("show back"))
+						{
+							processIEnumerators.Push(HoldableCommander.Hold(false));
+						}
 						else
 						{
 							SendToChat(currentString, userNickName, ref parseError);
