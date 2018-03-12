@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
@@ -113,103 +114,89 @@ public class ButtonComponentSolver : ComponentSolver
 
     private IEnumerator ReleaseCoroutineModded(string second)
     {
-        bool longwait = false;
-        string[] list = second.Split(' ');
-        List<int> sortedTimes = new List<int>();
-        foreach (string value in list)
-        {
-            if (!int.TryParse(value, out int time))
-            {
-                int pos = value.LastIndexOf(':');
-                if (pos == -1) continue;
-                int hour = 0;
-                if (!int.TryParse(value.Substring(0, pos), out int min))
-                {
-                    int pos2 = value.IndexOf(":");
-                    if ((pos2 == -1) || (pos == pos2)) continue;
-                    if (!int.TryParse(value.Substring(0, pos2), out hour)) continue;
-                    if (!int.TryParse(value.Substring(pos2 + 1, pos - pos2 - 1), out min)) continue;
-                }
-                if (!int.TryParse(value.Substring(pos + 1), out int sec)) continue;
-                time = (hour * 3600) + (min * 60) + sec;
-            }
-            sortedTimes.Add(time);
-        }
-        sortedTimes.Sort();
-		if(!OtherModes.ZenModeOn)
-			sortedTimes.Reverse();
-        if (sortedTimes.Count == 0) yield break;
+		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		int target = Mathf.FloorToInt(timerComponent.TimeRemaining);
+		bool waitingMusic = true;
 
-        yield return "release";
+		string[] times = second.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+		List<int> result = new List<int>();
 
-        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
-
-        int timeTarget = sortedTimes[0];
-        sortedTimes.RemoveAt(0);
-
-        int waitTime = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
-        waitTime -= timeTarget;
-        if (Math.Abs(waitTime) >= 30)
-        {
-            yield return "elevator music";
-            if (Math.Abs(waitTime) >= 120)
-            {
-                yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModifier.GetRuleSeed());
-                yield return string.Format("sendtochat Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", Code);
-                longwait = true;
-            }
-        }
-
-        float timeRemaining = float.PositiveInfinity;
-        
-        while (timeRemaining > 0.0f)
-        {
-            timeRemaining = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
-
-            if ((!OtherModes.ZenModeOn && timeRemaining < timeTarget) || (OtherModes.ZenModeOn && timeRemaining > timeTarget))
-            {
-                if (sortedTimes.Count == 0)
-                {
-                    yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are {1} than the time remaining.", _held ? "released" : "tapped", OtherModes.ZenModeOn ? "less" : "greater");
-                    yield break;
-                }
-                timeTarget = sortedTimes[0];
-                sortedTimes.RemoveAt(0);
-
-                waitTime = (int)timeRemaining;
-                waitTime -= timeTarget;
-                if (Math.Abs(waitTime) >= 30)
-                {
-                    yield return "elevator music";
-                    
-                    if (Math.Abs(waitTime) >= 120 && !longwait)
-                    {
-                        yield return string.Format("sendtochat !!!WARNING!!! - you might want to do a !cancel right about now, as you will be waiting for {0} minutes and {1} seconds for button release. Seed #{2} applies to this button.", waitTime / 60, waitTime % 60, VanillaRuleModifier.GetRuleSeed());
-                        yield return string.Format("sendtochat Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.", Code);
-                    }
-                    longwait = true;
-                }
-
-                continue;
-            }
-            if (Math.Abs(timeRemaining - timeTarget) < 0.01f)
-            {
-                if (!_held)
-                {
-                    DoInteractionStart(_button);
-                    yield return new WaitForSeconds(0.1f);
-                }
-                DoInteractionEnd(_button);
-                _held = false;
-                yield break;
-            }
-
-			if (timeTarget < 10)
-				yield return string.Format("trycancel The button was not {0} due to a request to cancel. Remember that the rule set that applies is seed #{1}", _held ? "released" : "tapped", VanillaRuleModifier.GetRuleSeed());
-			else
-				yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+		foreach (string time in times)
+		{
+			string[] split = time.Split(':');
+			int minutesInt = 0, hoursInt = 0, daysInt = 0;
+			switch (split.Length)
+			{
+				case 1 when int.TryParse(split[0], out int secondsInt):
+				case 2 when int.TryParse(split[0], out minutesInt) && int.TryParse(split[1], out secondsInt):
+				case 3 when int.TryParse(split[0], out hoursInt) && int.TryParse(split[1], out minutesInt) && int.TryParse(split[2], out secondsInt):
+				case 4 when int.TryParse(split[0], out daysInt) && int.TryParse(split[1], out hoursInt) && int.TryParse(split[2], out minutesInt) && int.TryParse(split[3], out secondsInt):
+					result.Add((daysInt * 86400) + (hoursInt * 3600) + (minutesInt * 60) + secondsInt);
+					break;
+				default:
+					yield break;
+			}
 		}
-    }
+		yield return null;
+
+		bool minutes = times.Any(x => x.Contains(":"));
+		minutes |= result.Any(x => x >= 60);
+
+		if (!minutes)
+		{
+			target %= 60;
+			result = result.Select(x => x % 60).Distinct().ToList();
+		}
+
+		for (int i = result.Count - 1; i >= 0; i--)
+		{
+			int r = result[i];
+			if (!minutes && !OtherModes.ZenModeOn)
+			{
+				waitingMusic &= ((target + (r > target ? 60 : 0)) - r) > 30;
+			}
+			else if (!minutes)
+			{
+				waitingMusic &= ((r + (r < target ? 60 : 0)) - target) > 30;
+			}
+			else if (!OtherModes.ZenModeOn)
+			{
+				if (r > target) { result.RemoveAt(i); continue; }
+				waitingMusic &= (target - r) > 30;
+			}
+			else
+			{
+				if (r < target) { result.RemoveAt(i); continue; }
+				waitingMusic &= (r - target) > 30;
+			}
+		}
+
+		if (!result.Any())
+		{
+			yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are {1} than the time remaining.", _held ? "released" : "tapped", OtherModes.ZenModeOn ? "less" : "greater");
+			yield break;
+		}
+
+		if (waitingMusic)
+			yield return "waiting music";
+
+		while (result.All(x => x != target))
+		{
+			yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+			target = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
+			if (!minutes) target %= 60;
+		}
+
+		if (!_held)
+		{
+			yield return DoInteractionClick(_button);
+		}
+		else
+		{
+			DoInteractionEnd(_button);
+		}
+		_held = false;
+	}
 
     private PressableButton _button = null;
     private bool _held = false;
