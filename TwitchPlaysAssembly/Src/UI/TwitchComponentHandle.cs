@@ -653,7 +653,8 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 			else
 			{
-				return RespondToCommandCoroutine(userNickName, internalCommand);
+				// Twitch allows newlines in messages, even though they show up in the chat window as spaces, so pretend they’re spaces
+				return RespondToCommandCoroutine(userNickName, internalCommand.Replace("\n", " ").Replace("\r", ""));
 			}
 		}
 		else
