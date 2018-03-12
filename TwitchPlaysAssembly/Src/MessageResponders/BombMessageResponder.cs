@@ -580,13 +580,9 @@ public class BombMessageResponder : MessageResponder
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
 				List<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
-					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
 
-				if (unclaimed.Any())
-				{
-					text = unclaimed[0];
-					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + unclaimed[0].Split(' ')[0] + " view"));
-				}
+				if (unclaimed.Any()) text = unclaimed[0];
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
 			}
 
@@ -595,13 +591,9 @@ public class BombMessageResponder : MessageResponder
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
 				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
-					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
 
-				if (unclaimed.Any())
-				{
-					text = unclaimed[0];
-					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + unclaimed[0].Split(' ')[0] + " view"));
-				}
+				if (unclaimed.Any()) text = unclaimed[0];
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
 			}
 
@@ -610,13 +602,9 @@ public class BombMessageResponder : MessageResponder
 				if (!IsAuthorizedDefuser(userNickName)) return;
 
 				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
-					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
 
-				if (unclaimed.Any())
-				{
-					text = unclaimed[0];
-					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + unclaimed[0].Split(' ')[0] + " view"));
-				}
+				if (unclaimed.Any()) text = unclaimed[0];
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
 			}
 
