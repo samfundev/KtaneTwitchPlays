@@ -692,13 +692,17 @@ public abstract class ComponentSolver
 	    if (currentReward != originalReward)
 		    IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 		if (OtherModes.TimedModeOn)
-        {
+		{
+			float originalMultiplier = OtherModes.GetAdjustedMultiplier();
             bool multiDropped = OtherModes.DropMultiplier();
-            float multiplier = OtherModes.GetMultiplier();
+            float multiplier = OtherModes.GetAdjustedMultiplier();
             string tempMessage;
             if (multiDropped)
             {
-                tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
+	            if (Mathf.Abs(originalMultiplier - multiplier) >= 0.1)
+		            tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
+	            else
+		            tempMessage = "Time";
             }
             else
             {
