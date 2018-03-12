@@ -480,8 +480,8 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("claimany", StringComparison.InvariantCultureIgnoreCase))
 			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
-					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					.Shuffle().Take(1).Select(handle => string.Format("{0} claim", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
@@ -498,8 +498,8 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("claimmod", StringComparison.InvariantCultureIgnoreCase))
 			{
-				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
-					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					.Shuffle().Select(handle => string.Format("{0} claim", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules of that type.");
@@ -563,8 +563,8 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.RegexMatch(out match, "^(?:claimanyview|viewclaimany) (.+)"))
 			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(1)
-					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					.Shuffle().Take(1).Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
@@ -581,7 +581,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.RegexMatch(out match, "^(?:claimmodview|viewclaimmod) (.+)"))
 			{
-				List<string> unclaimed = ComponentHandles.Where(handle => handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
+				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
 					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
 
 				if (unclaimed.Any()) text = unclaimed[0];
