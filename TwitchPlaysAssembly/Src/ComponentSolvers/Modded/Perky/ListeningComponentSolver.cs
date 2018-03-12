@@ -49,7 +49,7 @@ public class ListeningComponentSolver : ComponentSolver
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-	    if (inputCommand.EqualsAny("play", "press play"))
+	    if (inputCommand.ToLowerInvariant().EqualsAny("play", "press play"))
 	    {
 		    yield return null;
 		    yield return DoInteractionClick(_play);
