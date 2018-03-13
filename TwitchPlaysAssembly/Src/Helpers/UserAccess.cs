@@ -15,16 +15,40 @@ public enum AccessLevel
     Admin = 0x4000,
     Mod = 0x2000,
     
-    Defuser = 0x0002,
+    Defuser = 0x0004,
+	Banned = 0x0002,
     NoPoints = 0x0001,
     User = 0x0000
 }
 
+public class BanData
+{
+	public string BannedBy;
+	public string BannedReason;
+	public Double BanExpiry;
+}
+
 public static class UserAccess
 { 
-    private static Dictionary<string, AccessLevel> AccessLevels = new Dictionary<string, AccessLevel>();
+	private class UserAccessData
+	{
+		public bool StickyBans = false;
+		public AccessLevel MinimumAccessLevelForBanCommand = AccessLevel.Mod;
+		public AccessLevel MinimumAccessLevelForTimeoutCommand = AccessLevel.Mod;
+		public AccessLevel MinimumAccessLevelForUnbanCommand = AccessLevel.Mod;
+		public Dictionary<string, AccessLevel> UserAccessLevel = new Dictionary<string, AccessLevel>();
 
-    static UserAccess()
+		public Dictionary<string, BanData> Bans = new Dictionary<string, BanData>();
+		
+		public static UserAccessData Instance
+		{
+			get => _instance ?? (_instance = new UserAccessData());
+			set => _instance = value;
+		}
+		private static UserAccessData _instance;
+	}
+
+	static UserAccess()
     {
         /*
          * Enter here the list of special user roles, giving them bitwise enum flags to determine the level of access each user has.
@@ -35,8 +59,8 @@ public static class UserAccess
          */
 
         //Twitch Usernames can't actually begin with an underscore, so these are safe to include as examples
-        AccessLevels["_UserNickName1".ToLowerInvariant()] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
-        AccessLevels["_UserNickName2".ToLowerInvariant()] = AccessLevel.Mod;
+	    UserAccessData.Instance.UserAccessLevel["_UserNickName1".ToLowerInvariant()] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
+	    UserAccessData.Instance.UserAccessLevel["_UserNickName2".ToLowerInvariant()] = AccessLevel.Mod;
 
         LoadAccessList();
     }
@@ -47,7 +71,7 @@ public static class UserAccess
         try
         {
             DebugHelper.Log("UserAccess: Writing User Access information data to file: {0}", path);
-            File.WriteAllText(path, JsonConvert.SerializeObject(AccessLevels, Formatting.Indented, new StringEnumConverter()));
+            File.WriteAllText(path, JsonConvert.SerializeObject(UserAccessData.Instance, Formatting.Indented, new StringEnumConverter()));
         }
         catch (Exception ex)
         {
@@ -58,28 +82,55 @@ public static class UserAccess
     public static void LoadAccessList()
     {
         string path = Path.Combine(Application.persistentDataPath, usersSavePath);
-        try
-        {
-            DebugHelper.Log("UserAccess: Loading User Access information data from file: {0}", path);
-            AccessLevels = JsonConvert.DeserializeObject<Dictionary<string, AccessLevel>>(File.ReadAllText(path), new StringEnumConverter());
-        }
-        catch (FileNotFoundException)
-        {
-            DebugHelper.LogWarning("UserAccess: File {0} was not found.", path);
-            WriteAccessList();
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogException(ex);
-        }
+		//Try to read old format first.
+		try
+		{
+			DebugHelper.Log("UserAccess: Loading User Access information data from file: {0}", path);
+			UserAccessData.Instance.UserAccessLevel = JsonConvert.DeserializeObject<Dictionary<string, AccessLevel>>(File.ReadAllText(path), new StringEnumConverter());
+			UserAccessData.Instance.UserAccessLevel = UserAccessData.Instance.UserAccessLevel.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
+			WriteAccessList();
+			return;
+		}
+		catch (FileNotFoundException)
+		{
+			DebugHelper.LogWarning("UserAccess: File {0} was not found.", path);
+			WriteAccessList();
+			return;
+		}
+		catch (Exception ex)
+		{
+			
+			try
+			{
+				UserAccessData.Instance = JsonConvert.DeserializeObject<UserAccessData>(File.ReadAllText(path), new StringEnumConverter());
+			}
+			catch (FileNotFoundException)
+			{
+				DebugHelper.LogWarning("UserAccess: File {0} was not found.", path);
+				WriteAccessList();
+			}
+			catch (Exception ex2)
+			{
+				DebugHelper.Log("Failed to load AccessLevels.Json in both the Old AND new format, Here are the stack traces.");
+				DebugHelper.LogException(ex, "Old AccessLevels.Json format exception:");
+				DebugHelper.LogException(ex2, "New AccessLevels.Json format exception:");
+			}
+		}
 
-		AccessLevels = AccessLevels.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
-    }
+	    UserAccessData.Instance.UserAccessLevel = UserAccessData.Instance.UserAccessLevel.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
+		UserAccessData.Instance.Bans = UserAccessData.Instance.Bans.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
+
+	    foreach (string username in UserAccessData.Instance.UserAccessLevel.Keys.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
+	    {
+		    IsBanned(username, out _, out _, out _);
+	    }
+
+	}
     public static string usersSavePath = "AccessLevels.json";
 
-    public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
+	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
     {
-        if (!AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
+        if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
         {
             return accessLevel == AccessLevel.User;
         }
@@ -102,7 +153,7 @@ public static class UserAccess
 
 	public static AccessLevel HighestAccessLevel(string userNickName)
 	{
-		if (!AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
+		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
 		{
 			return AccessLevel.User;
 		}
@@ -114,18 +165,111 @@ public static class UserAccess
 		return AccessLevel.User;
 	}
 
+	public static void TimeoutUser(string userNickName, string moderator, string reason, int timeout)
+	{
+		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true)) return;
+		if (timeout <= 0)
+		{
+			IRCConnection.Instance.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.");
+			return;
+		}
+		AddUser(userNickName, AccessLevel.Banned);
+		if (!UserAccessData.Instance.Bans.TryGetValue(userNickName.ToLowerInvariant(), out BanData ban))
+			ban = new BanData();
+		ban.BannedBy = moderator;
+		ban.BannedReason = reason;
+		ban.BanExpiry = DateTime.Now.TotalSeconds() + timeout;
+		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
+
+		WriteAccessList();
+		IRCConnection.Instance.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $"For the following reason: {reason}")}");
+	}
+
+	public static void BanUser(string userNickName, string moderator, string reason)
+	{
+		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true)) return;
+		AddUser(userNickName, AccessLevel.Banned);
+		if (!UserAccessData.Instance.Bans.TryGetValue(userNickName.ToLowerInvariant(), out BanData ban))
+			ban = new BanData();
+		ban.BannedBy = moderator;
+		ban.BannedReason = reason;
+		ban.BanExpiry = double.PositiveInfinity;
+		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
+		WriteAccessList();
+		IRCConnection.Instance.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $"For the following reason: {reason}")}");
+	}
+
+	private static void UnbanUser(string userNickName)
+	{
+		RemoveUser(userNickName, AccessLevel.Banned);
+		if (UserAccessData.Instance.Bans.ContainsKey(userNickName.ToLowerInvariant()))
+			UserAccessData.Instance.Bans.Remove(userNickName.ToLowerInvariant());
+		WriteAccessList();
+	}
+
+	public static void UnbanUser(string userNickName, string moderator)
+	{
+		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true) && 
+			!userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant())) return;
+		UnbanUser(userNickName);
+		IRCConnection.Instance.SendMessage($"User {userNickName} was unbanned from Twitch plays.");
+	}
+
+	public static bool IsBanned(string usernickname, out string moderator, out string reason, out double expiry)
+	{
+		bool banned = HasAccess(usernickname, AccessLevel.Banned);
+		if (!UserAccessData.Instance.Bans.TryGetValue(usernickname.ToLowerInvariant(), out BanData ban))
+			ban = new BanData();
+		moderator = ban.BannedBy;
+		reason = ban.BannedReason;
+		expiry = ban.BanExpiry;
+		bool unban = banned && expiry < DateTime.Now.TotalSeconds();
+		if (!string.IsNullOrEmpty(moderator) && !UserAccessData.Instance.StickyBans)
+		{
+			if (double.IsInfinity(expiry) && !HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand))
+			{
+				unban = true;
+				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays because {moderator} no longer has the power to issue permanent bans.");
+			}
+			if (!double.IsInfinity(expiry) && !HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
+			{
+				unban = true;
+				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {moderator} no longer has the power to issue time outs.");
+			}
+		}
+		else if (!UserAccessData.Instance.StickyBans)
+		{
+			IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays, as there is no one to hold accoutable for the ban.");
+			unban = true;
+		}
+		else
+		{
+			moderator = IRCConnection.Instance.ChannelName;
+		}
+
+		if (unban)
+		{
+			UnbanUser(usernickname);
+			return false;
+		}
+		return banned && !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand) &&
+		       !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand) && 
+			   !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForBanCommand) &&
+			   !usernickname.ToLowerInvariant().Equals(moderator.ToLowerInvariant());
+	}
+
     public static void AddUser(string userNickName, AccessLevel level)
     {
-        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
+	    UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
         userAccessLevel |= level;
-        AccessLevels[userNickName.ToLowerInvariant()] = userAccessLevel;
+	    UserAccessData.Instance.UserAccessLevel[userNickName.ToLowerInvariant()] = userAccessLevel;
     }
 
     public static void RemoveUser(string userNickName, AccessLevel level)
     {
-        AccessLevels.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
-        userAccessLevel &= ~level;
-        AccessLevels[userNickName.ToLowerInvariant()] = userAccessLevel;
-    }
+		UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
+	    userAccessLevel &= ~level;
+		UserAccessData.Instance.UserAccessLevel[userNickName.ToLowerInvariant()] = userAccessLevel;
+	}
 
 }

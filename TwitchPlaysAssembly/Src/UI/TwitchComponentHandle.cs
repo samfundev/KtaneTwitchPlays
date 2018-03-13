@@ -667,11 +667,7 @@ public class TwitchComponentHandle : MonoBehaviour
     #region Private Methods
     private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
     {
-        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
-        if (!result && sendMessage)
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
-
-        return result;
+	    return MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
     }
 
     private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)

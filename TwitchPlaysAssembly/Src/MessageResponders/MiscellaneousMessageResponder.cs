@@ -129,7 +129,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 	}
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
-    {
+	{
+		Match match;
+
 		if (!text.StartsWith("!") || text.Equals("!")) return;
         text = text.Substring(1);
 
@@ -273,6 +275,26 @@ public class MiscellaneousMessageResponder : MessageResponder
 	        IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
             return;
         }
+		else if (text.RegexMatch(out match,@"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
+        {
+			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, match.Groups[3].Value, banTimeout);
+		}
+        else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+)") && int.TryParse(match.Groups[2].Value, out banTimeout))
+        {
+	        UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, null, banTimeout);
+        }
+		else if (text.RegexMatch(out match, @"^ban (\S+) (.+)"))
+        {
+	        UserAccess.BanUser(match.Groups[1].Value, userNickName, match.Groups[2].Value);
+		}
+		else if (text.RegexMatch(out match, @"^ban (\S+)"))
+        {
+	        UserAccess.BanUser(match.Groups[1].Value, userNickName, null);
+		}
+		else if (text.RegexMatch(out match, @"^unban (\S+)$"))
+        {
+	        UserAccess.UnbanUser(match.Groups[1].Value, userNickName);
+		}
         else if (text.RegexMatch(@"^(?:add|remove) \S+ .+"))
         {
             if (!IsAuthorizedDefuser(userNickName)) return;
@@ -648,7 +670,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	    
 	    bool cameraChanged = false;
 	    bool cameraChangeAttempted = false;
-	    if (text.RegexMatch(out Match match, "move ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
+	    if (text.RegexMatch(out match, "move ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
 	    {
 		    GameRoom.MoveCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
 		    cameraChanged = !GameRoom.IsMainCamera;
