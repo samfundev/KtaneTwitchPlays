@@ -233,7 +233,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas Translated", helpText = "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]" };
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
-		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, helpText = "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]", DoesTheRightThing = true };
+		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, helpText = "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]", helpTextOverride = true, DoesTheRightThing = true };
 
 		//Modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)", DoesTheRightThing = false };
