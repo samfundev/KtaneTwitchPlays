@@ -648,12 +648,18 @@ public class BombCommander : ICommandResponder
 		if (removedSolveBasedModules) return;
 		removedSolveBasedModules = true;
 
-		foreach (KMBombModule module in Bomb.GetComponentsInChildren<KMBombModule>())
+		foreach (KMBombModule module in Bomb.GetComponentsInChildren<KMBombModule>().Where(x => solveBased.Contains(x.ModuleType)))
 		{
-			if (solveBased.Contains(module.ModuleType))
+			TwitchComponentHandle handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
+				.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == module);
+			if (handle != null)
 			{
-				module.HandlePass();
+				handle.Unsupported = true;
+				if (handle.Solver != null)
+					handle.Solver.UnsupportedModule = true;
 			}
+			else
+				ComponentSolver.HandleForcedSolve(module);
 		}
 	}
 	#endregion

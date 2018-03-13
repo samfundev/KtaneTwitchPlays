@@ -210,12 +210,11 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 				DeactivateNeedyModule(handle);
 			}
-			else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
-			{
-				handle.bombComponent.GetComponent<KMBombModule>().HandlePass();
-			}
+			handle.SolveSilently();
 		}
-		RemoveSolveBasedModules();
+
+		if(componentsToRemove.Count > 1)	//Forget me not become unsolvable if MORE than one module is solved at once.
+			RemoveSolveBasedModules();
 
 		_unsupportedComponents.Clear();
 		return true;

@@ -576,6 +576,7 @@ public static class ComponentSolverFactory
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)
 	{
 		MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
+		MethodInfo forcedSolved = FindSolveMethod(commandComponentType);
 
 		ModuleInformation info = GetModuleInfo(moduleType);
 		if (FindHelpMessage(bombComponent, commandComponentType, out string help) && !info.helpTextOverride)
@@ -642,14 +643,14 @@ public static class ComponentSolverFactory
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, commandComponent);
+						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent);
 					};
 				case ModCommandType.Coroutine:
 					FieldInfo cancelfield = FindCancelBool(commandComponentType);
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, commandComponent, cancelfield);
+						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, cancelfield);
 					};
 				case ModCommandType.Unsupported:
 					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
@@ -765,6 +766,13 @@ public static class ComponentSolverFactory
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
+	}
+
+	private static MethodInfo FindSolveMethod(Type commandComponentType)
+	{
+		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+			.FirstOrDefault(x => x.ReturnType == typeof(void) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
+		return solveHandler;
 	}
 
 	private static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)
