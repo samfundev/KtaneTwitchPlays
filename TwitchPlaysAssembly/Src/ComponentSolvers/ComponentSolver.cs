@@ -924,7 +924,8 @@ public abstract class ComponentSolver
 			yield return "show";
             yield return null;
         }
-		else if (inputCommand.Equals("solve") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !UnsupportedModule)
+		else if (inputCommand.Equals("solve") && ((UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !UnsupportedModule) ||
+				(UnsupportedModule && GetType() != typeof(UnsupportedModComponentSolver))))
         {
 	        SolveModule($"A module ({modInfo.moduleDisplayName}) is being automatically solved.", false);
         }
