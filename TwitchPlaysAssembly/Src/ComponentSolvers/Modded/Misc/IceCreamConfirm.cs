@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 using Newtonsoft.Json;
 
@@ -55,7 +52,9 @@ public class IceCreamConfirm : ComponentSolver
 	}
 	class Settings
 	{
+#pragma warning disable 649
 		public bool openingTimeEnabled;
+#pragma warning restore 649
 	}
 
 	private static Type _componentType = null;

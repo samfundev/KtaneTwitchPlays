@@ -10,15 +10,15 @@ using Formatting = Newtonsoft.Json.Formatting;
 [Flags()]
 public enum AccessLevel
 {
-    Streamer = 0x10000,
-    SuperUser = 0x8000,
-    Admin = 0x4000,
-    Mod = 0x2000,
-    
-    Defuser = 0x0004,
+	Streamer = 0x10000,
+	SuperUser = 0x8000,
+	Admin = 0x4000,
+	Mod = 0x2000,
+	
+	Defuser = 0x0004,
 	Banned = 0x0002,
-    NoPoints = 0x0001,
-    User = 0x0000
+	NoPoints = 0x0001,
+	User = 0x0000
 }
 
 public class BanData
@@ -49,39 +49,39 @@ public static class UserAccess
 	}
 
 	static UserAccess()
-    {
-        /*
-         * Enter here the list of special user roles, giving them bitwise enum flags to determine the level of access each user has.
-         * 
-         * The access level enum can be extended further per your requirements.
-         * 
-         * Use the helper method below to determine if the user has access for a particular access level or not.
-         */
+	{
+		/*
+		 * Enter here the list of special user roles, giving them bitwise enum flags to determine the level of access each user has.
+		 * 
+		 * The access level enum can be extended further per your requirements.
+		 * 
+		 * Use the helper method below to determine if the user has access for a particular access level or not.
+		 */
 
-        //Twitch Usernames can't actually begin with an underscore, so these are safe to include as examples
-	    UserAccessData.Instance.UserAccessLevel["_UserNickName1".ToLowerInvariant()] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
-	    UserAccessData.Instance.UserAccessLevel["_UserNickName2".ToLowerInvariant()] = AccessLevel.Mod;
+		//Twitch Usernames can't actually begin with an underscore, so these are safe to include as examples
+		UserAccessData.Instance.UserAccessLevel["_UserNickName1".ToLowerInvariant()] = AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod;
+		UserAccessData.Instance.UserAccessLevel["_UserNickName2".ToLowerInvariant()] = AccessLevel.Mod;
 
-        LoadAccessList();
-    }
+		LoadAccessList();
+	}
 
-    public static void WriteAccessList()
-    {
-        string path = Path.Combine(Application.persistentDataPath, usersSavePath);
-        try
-        {
-            DebugHelper.Log("UserAccess: Writing User Access information data to file: {0}", path);
-            File.WriteAllText(path, JsonConvert.SerializeObject(UserAccessData.Instance, Formatting.Indented, new StringEnumConverter()));
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogException(ex);
-        }
-    }
+	public static void WriteAccessList()
+	{
+		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
+		try
+		{
+			DebugHelper.Log("UserAccess: Writing User Access information data to file: {0}", path);
+			File.WriteAllText(path, JsonConvert.SerializeObject(UserAccessData.Instance, Formatting.Indented, new StringEnumConverter()));
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex);
+		}
+	}
 
-    public static void LoadAccessList()
-    {
-        string path = Path.Combine(Application.persistentDataPath, usersSavePath);
+	public static void LoadAccessList()
+	{
+		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		//Try to read old format first.
 		try
 		{
@@ -117,39 +117,39 @@ public static class UserAccess
 			}
 		}
 
-	    UserAccessData.Instance.UserAccessLevel = UserAccessData.Instance.UserAccessLevel.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
+		UserAccessData.Instance.UserAccessLevel = UserAccessData.Instance.UserAccessLevel.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 		UserAccessData.Instance.Bans = UserAccessData.Instance.Bans.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 
-	    foreach (string username in UserAccessData.Instance.UserAccessLevel.Keys.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
-	    {
-		    IsBanned(username, out _, out _, out _);
-	    }
+		foreach (string username in UserAccessData.Instance.UserAccessLevel.Keys.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
+		{
+			IsBanned(username, out _, out _, out _);
+		}
 
 	}
-    public static string usersSavePath = "AccessLevels.json";
+	public static string usersSavePath = "AccessLevels.json";
 
 	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
-    {
-        if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
-        {
-            return accessLevel == AccessLevel.User;
-        }
-        if (userAccessLevel == accessLevel)
-        {
-            return true;
-        }
+	{
+		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
+		{
+			return accessLevel == AccessLevel.User;
+		}
+		if (userAccessLevel == accessLevel)
+		{
+			return true;
+		}
 
-        do
-        {
-            if ((accessLevel & userAccessLevel) == accessLevel)
-            {
-                return true;
-            }
-            userAccessLevel = (AccessLevel) ((int) userAccessLevel >> 1);
-        } while (userAccessLevel != AccessLevel.User && orHigher);
+		do
+		{
+			if ((accessLevel & userAccessLevel) == accessLevel)
+			{
+				return true;
+			}
+			userAccessLevel = (AccessLevel) ((int) userAccessLevel >> 1);
+		} while (userAccessLevel != AccessLevel.User && orHigher);
 
-        return false;
-    }
+		return false;
+	}
 
 	public static AccessLevel HighestAccessLevel(string userNickName)
 	{
@@ -253,23 +253,28 @@ public static class UserAccess
 			return false;
 		}
 		return banned && !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand) &&
-		       !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand) && 
+			   !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand) && 
 			   !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForBanCommand) &&
 			   !usernickname.ToLowerInvariant().Equals(moderator.ToLowerInvariant());
 	}
 
-    public static void AddUser(string userNickName, AccessLevel level)
-    {
-	    UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
-        userAccessLevel |= level;
-	    UserAccessData.Instance.UserAccessLevel[userNickName.ToLowerInvariant()] = userAccessLevel;
-    }
-
-    public static void RemoveUser(string userNickName, AccessLevel level)
-    {
+	public static void AddUser(string userNickName, AccessLevel level)
+	{
 		UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
-	    userAccessLevel &= ~level;
+		userAccessLevel |= level;
 		UserAccessData.Instance.UserAccessLevel[userNickName.ToLowerInvariant()] = userAccessLevel;
+	}
+
+	public static void RemoveUser(string userNickName, AccessLevel level)
+	{
+		UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel);
+		userAccessLevel &= ~level;
+		UserAccessData.Instance.UserAccessLevel[userNickName.ToLowerInvariant()] = userAccessLevel;
+	}
+
+	public static Dictionary<string, AccessLevel> GetUsers()
+	{
+		return UserAccessData.Instance.UserAccessLevel;
 	}
 
 }
