@@ -314,11 +314,7 @@ public class TwitchBombHandle : MonoBehaviour
     {
         if (userNickName.EqualsAny(nameText.text,"Bomb Factory"))
             return true;
-        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
-        if (!result)
-	        IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
-
-        return result;
+	    return MessageResponder.IsAuthorizedDefuser(userNickName);
     }
 
     private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)

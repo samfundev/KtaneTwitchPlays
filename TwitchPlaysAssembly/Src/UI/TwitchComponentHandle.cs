@@ -210,12 +210,11 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 				DeactivateNeedyModule(handle);
 			}
-			else if (handle.bombComponent.GetComponent<KMBombModule>() != null)
-			{
-				handle.bombComponent.GetComponent<KMBombModule>().HandlePass();
-			}
+			handle.SolveSilently();
 		}
-		RemoveSolveBasedModules();
+
+		if(componentsToRemove.Count > 1)	//Forget me not become unsolvable if MORE than one module is solved at once.
+			RemoveSolveBasedModules();
 
 		_unsupportedComponents.Clear();
 		return true;
@@ -667,11 +666,7 @@ public class TwitchComponentHandle : MonoBehaviour
     #region Private Methods
     private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
     {
-        bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
-        if (!result && sendMessage)
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
-
-        return result;
+	    return MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
     }
 
     private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)

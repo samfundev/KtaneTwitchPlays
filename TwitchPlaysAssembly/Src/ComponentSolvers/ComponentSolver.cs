@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -463,14 +464,9 @@ public abstract class ComponentSolver
 	protected void SolveModule(string reason = "A module is being automatically solved.", bool removeSolveBasedModules = true)
 	{
 		IRCConnection.Instance.SendMessage("{0}{1}", reason, removeSolveBasedModules ? " Some other modules may also be solved to prevent problems." : "");
-
-		_currentUserNickName = null;
-		_delegatedSolveUserNickName = null;
-		_silentlySolve = true;
-
+		SolveSilently();
 		if(removeSolveBasedModules)
 			TwitchComponentHandle.RemoveSolveBasedModules();
-		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
 	}
 	#endregion
 
@@ -629,9 +625,95 @@ public abstract class ComponentSolver
 		_delegatedSolveUserNickName = null;
 		_currentUserNickName = null;
 		_silentlySolve = true;
+		if (ComponentHandle != null)
+			HandleForcedSolve(ComponentHandle);
+		else
+			HandleForcedSolve(BombComponent);
+	}
 
-		// TwitchComponentHandle.RemoveSolveBasedModules();
-		CommonReflectedTypeInfo.HandlePassMethod.Invoke(BombComponent, null);
+	public static void HandleForcedSolve(TwitchComponentHandle handle)
+	{
+		try
+		{
+			if (handle?.Solver?.ForcedSolveMethod != null)
+			{
+				handle.Solver._delegatedSolveUserNickName = null;
+				handle.Solver._currentUserNickName = null;
+				handle.Solver._silentlySolve = true;
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.Solver.BombComponent, null);
+				try
+				{
+					handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
+				}
+				catch (Exception ex)
+				{
+					DebugHelper.LogException(ex, "An exception occured while using the Forced Solve handler:");
+					foreach (MonoBehaviour behavior in handle.bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
+					{
+						behavior.StopAllCoroutines();
+					}
+				}
+			}
+			else if (handle?.Solver != null)
+			{
+				handle.Solver._delegatedSolveUserNickName = null;
+				handle.Solver._currentUserNickName = null;
+				handle.Solver._silentlySolve = true;
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.bombComponent, null);
+				foreach (MonoBehaviour behavior in handle.bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
+				{
+					behavior.StopAllCoroutines();
+				}
+			}
+			else if (handle != null)
+			{
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.bombComponent, null);
+				foreach (MonoBehaviour behavior in handle.bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
+				{
+					behavior.StopAllCoroutines();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "An exception occured while silently soving a module:");
+		}
+	}
+
+	public static void HandleForcedSolve(MonoBehaviour bombComponent)
+	{
+		try
+		{
+			TwitchComponentHandle handle = null;
+			KMBombModule module = bombComponent.GetComponent<KMBombModule>();
+			KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
+			if (module != null)
+			{
+				handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
+					.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == module);
+			}
+			else if (needyModule != null)
+			{
+				handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
+					.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == needyModule);
+			}
+			if (handle != null)
+			{
+				HandleForcedSolve(handle);
+			}
+			else
+			{
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
+				foreach (MonoBehaviour behaviour in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
+				{
+					behaviour.StopAllCoroutines();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "An exception occured while silently soving a module:");
+		}
 	}
 
     private void AwardSolve(string userNickName, int ComponentValue)
@@ -875,6 +957,7 @@ public abstract class ComponentSolver
 
 	public TwitchComponentHandle ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
+	protected MethodInfo ForcedSolveMethod = null;
 	protected Component CommandComponent = null;
 	
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class UnsupportedModComponentSolver : ComponentSolver
 {
@@ -27,9 +28,15 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		if (!inputCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase)) yield break;
 		yield return null;
 		yield return null;
-
-		bombModule?.HandlePass();
-		needyModule?.HandlePass();
+		if (bombModule != null)
+		{
+			bombModule.HandlePass();
+			SolveSilently();
+		}
+		else if (needyModule != null)
+		{
+			needyModule.HandlePass();
+		}
 	}
 
 	private KMBombModule bombModule = null;
