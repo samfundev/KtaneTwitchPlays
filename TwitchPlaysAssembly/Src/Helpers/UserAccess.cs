@@ -157,6 +157,8 @@ public static class UserAccess
 		{
 			return AccessLevel.User;
 		}
+		if (IsBanned(userNickName, out _, out _, out _))
+			return AccessLevel.Banned;
 		for (AccessLevel level = (AccessLevel)0x40000000; level > 0; level = (AccessLevel)((int)level >> 1))
 		{
 			if ((userAccessLevel & level) == level)
