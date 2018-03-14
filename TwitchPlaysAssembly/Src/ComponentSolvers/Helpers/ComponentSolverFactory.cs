@@ -243,7 +243,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 8, helpText = "Scan the safe spots with !{0} scan A2 B3 E5. Mark the spots as water with !{0} miss A1 A3 B4. Mark the spots as ships with !{0} hit E3 E4. Fill in the rows with !{0} row 3 4. Fill in columns with !{0} col B D" };
 		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true, moduleDisplayName = "Big Circle" };
-		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit the correct answer with !{0} press 2." };
+		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise Operators", validCommands = new[] { "^submit [0-1]{8}$" } };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6, helpText = "Hit the correct spots with !{0} press bl mm tm tl. (Locations are tl, tm, ml, mm, mr, bl, bm, br)" };
 		ModComponentSolverInformation["BlindMaze"] = new ModuleInformation { moduleScore = 6 };
@@ -263,7 +263,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 8, helpText = "Press the top button with !{0} press top (also t, 1, etc.)." };
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
-		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 16, helpText = "Cycle the options with !{0} cycle. Submit your answer with !{0} submit <3,2>. Partial answers are acceptable. To do chinese numbers, its !{0} submit chinese 12.", DoesTheRightThing = false };
+		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true };
 		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, helpText = "Combine two elements with !{0} combine water fire.", DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 8, helpText = "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.) Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
@@ -273,12 +273,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Filibuster"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press the top button with !{0} press top (also t, 1, etc.). Submit with !{0} press submit." };
 		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10 };
-		ModComponentSolverInformation["FollowTheLeaderModule"] = new ModuleInformation { moduleScore = 10, helpText = "Cut the wires in the order specified with !{0} cut 12 10 8 7 6 5 3 1. (note that order was the Lit CLR rule.)" };
-		ModComponentSolverInformation["FriendshipModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit the desired friendship element with !{0} submit Fairness Conscientiousness Kindness Authenticity.", DoesTheRightThing = false };
+		ModComponentSolverInformation["FollowTheLeaderModule"] = new ModuleInformation { moduleScore = 10 };
+		ModComponentSolverInformation["FriendshipModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["GridlockModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move towards the exit with !{0} move 12 10 6 6 6 2, or with !{0} move N NW S S S NE. (clockface or cardinal)", DoesTheRightThing = false };
+		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
-		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move left/right with !{0} left and !{0} right. Sell with !{0} sell.", DoesTheRightThing = false };
 		ModComponentSolverInformation["identityParade"] = new ModuleInformation { moduleScore = 6 };
@@ -286,30 +286,30 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 15, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa", DoesTheRightThing = true };
 		ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b." };
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
-		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit your answer with !{0} B R W M G Y. (note, this module WILL try to input any answer you put into it.)", DoesTheRightThing = false };
+		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right." };
 		ModComponentSolverInformation["Logic"] = new ModuleInformation { moduleScore = 12, helpText = "Logic is answered with !{0} submit F T." };
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10, helpText = "Type '!{0} Brake fluid change, Headlight bulb, Wash' to perform repairs in that order. Abbreviations are allowed, but note that ambiugous ones like “Windscreen” may trigger either “Windscreen replacement” or “Windscreen chip”." };
-		ModComponentSolverInformation["Mastermind Simple"] = new ModuleInformation { moduleScore = 12, manualCode = "Mastermind", helpText = "Query the currently set colors with !{0} query. Query specific colors with !{0} query r b g y m. Submit the currently set colors with !{0} submit.  Submit specific colors with !{0} submit r b g y m. [Valid colors are R, G, B, M, Y, W]", DoesTheRightThing = true };
-		ModComponentSolverInformation["Mastermind Cruel"] = new ModuleInformation { moduleScore = 15, helpText = "Query the currently set colors with !{ 0 } query.Query specific colors with !{ 0 } query r b g y m.Submit the currently set colors with !{ 0 } submit.Submit specific colors with !{ 0 } submit r b g y m. [Valid colors are R, G, B, M, Y, W]", DoesTheRightThing = true };
+		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10 };
+		ModComponentSolverInformation["Mastermind Simple"] = new ModuleInformation { moduleScore = 12, manualCode = "Mastermind", DoesTheRightThing = true };
+		ModComponentSolverInformation["Mastermind Cruel"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["modernCypher"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
-		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, helpText = "View all cards with !{0} cycle. Select the card to trade with !{0} left or !{0} right. Trade selected card with !{0} trade. Keep your cards with !{0} keep.", DoesTheRightThing = true };
+		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
 		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false, moduleDisplayName = "Morse-A-Maze" };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20, helpText = "Move with !{0} forward back. Turn with !{0} left right u-turn. The first letter only can be used instead. Submit with !{0} submit." };
 		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9, helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", DoesTheRightThing = false };
-		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, helpText = "Move the numbers around with !{0} press 1 3 2 1 3 4 6 8.", DoesTheRightThing = false };
+		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["neutralization"] = new ModuleInformation { moduleScore = 12, helpText = "Select a base with !{0} base NaOH. Turn the filter on/off with !{0} filter. Set drop count with !{0} conc set 48. Submit with !{0} titrate." };
 		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { moduleScore = 10, helpText = "Switch colors with !{0} toggle. Clear the grid with !{0} clear. Fill the squares at A2, D5 and the entire column C with !{0} fill A2 C D5. Mark a dot at the squares A5, E4 and the entire row 2 with !{0} dot A5 E4 2. Submit your answer with !{0} submit." };
 		ModComponentSolverInformation["OnlyConnectModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press a button by position with !{0} press tm or !{0} press 2. Round 1 also accepts symbol names (e.g. reeds, eye, flax, lion, water, viper)." };
-		ModComponentSolverInformation["spwizPerspectivePegs"] = new ModuleInformation { moduleScore = 5, helpText = "Look for the peg with specific color using !{0} rotate pegs. Read off the color sequence with !{0} rotate br. Look at the peg lines with !{0} rotate. Look at a specific line with !{0} look bl. Press the pegs with !{0} press bl t br. | Positions in clockwise order are T, TR, BR, BL, TL.", DoesTheRightThing = true };
-		ModComponentSolverInformation["PerplexingWiresModule"] = new ModuleInformation { moduleScore = 9, helpText = "Cut the wires with !{0} cut 2 3 1. The wires are numbered according to their connection on the bottom." };
+		ModComponentSolverInformation["spwizPerspectivePegs"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
+		ModComponentSolverInformation["PerplexingWiresModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["poetry"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["PointOfOrderModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
@@ -320,10 +320,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["RockPaperScissorsLizardSpockModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press scissors lizard.", manualCode = "Rock-Paper-Scissors-Lizard-Spock" };
 		ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleScore = 15, helpText = "View the colors on all sides with !{0} rotate. Reset the cube to starting state with !{0} reset. Solve the Cube with !{0} r' d u f' r' d' u b' u' f", manualCode = "Rubik%E2%80%99s Cube", DoesTheRightThing = true };
 		ModComponentSolverInformation["screw"] = new ModuleInformation { moduleScore = 9, helpText = "Screw with !{0} screw tr or !{0} screw 3. Options are TL, TM, TR, BL, BM, BR. Press a button with !{0} press b or !{0} press 2." };
-		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6, helpText = "Use “!{0} press a1 a2” to press any number of buttons in that order, using a–c for columns and 1–3 for rows, or “!{0} press tm br” (top middle, bottom right)." };
+		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["Semaphore"] = new ModuleInformation { moduleScore = 7, helpText = "Move to the next flag with !{0} move right or !{0} press right. Move to previous flag with !{0} move left or !{0} press left. Submit with !{0} press ok.", DoesTheRightThing = false };
-		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 15, helpText = "Keep the slots with !{0} keep. Pull the slots with !{0} pull.", DoesTheRightThing = false };
-		ModComponentSolverInformation["SimonScreamsModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press the correct colors for each round with !{0} press B O Y.", DoesTheRightThing = false };
+		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
+		ModComponentSolverInformation["SimonScreamsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["Sink"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit the correct response with !{0} submit 1 2 3.", DoesTheRightThing = true };
 		ModComponentSolverInformation["sonic"] = new ModuleInformation { moduleScore = 9 };
@@ -334,7 +334,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["spwizTetris"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
 		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press a button with !{0} tl. Buttons are tl, tm, tr, ml, mm, mr, bl, bm, br.", manualCode = "Tic-Tac-Toe" };
-		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, helpText = "Press O with !{0} press O. Press I with !{0} press I. Unscrew the bulb with !{0} unscrew. Screw in the bulb with !{0} screw.", DoesTheRightThing = false };
+		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 9, helpText = "Submit a time with !{0} set 12:34 am. Command must include a 12-hour time followed by AM/PM.", DoesTheRightThing = true };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5 };
@@ -342,10 +342,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["wastemanagement"] = new ModuleInformation { moduleScore = 15 };
 		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject." };
 		ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 6, helpText = "Cut the correct wires with !{0} cut A2 B4 D3." };
-		ModComponentSolverInformation["WordSearchModule"] = new ModuleInformation { moduleScore = 6, helpText = "Select the word starting at column B row 3, and ending at column C row 4, with !{0} select B3 C4.", DoesTheRightThing = false };
+		ModComponentSolverInformation["WordSearchModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["XRayModule"] = new ModuleInformation { moduleScore = 12 };
-		ModComponentSolverInformation["YahtzeeModule"] = new ModuleInformation { moduleScore = 9, helpText = "Roll the dice with !{0} roll. Keep some dice with !{0} keep white,purple,blue,yellow,black. Roll the remaining dice until a 3 appears with !{0} roll until 3.", DoesTheRightThing = true };
-		ModComponentSolverInformation["ZooModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = false };
+		ModComponentSolverInformation["YahtzeeModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["ZooModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
 		{
