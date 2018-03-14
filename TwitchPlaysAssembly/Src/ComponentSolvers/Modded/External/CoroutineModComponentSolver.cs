@@ -7,14 +7,15 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelfield) :
+    public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelfield, FieldInfo zenmodefield) :
         base(bombCommander, bombComponent)
 	{
         ProcessMethod = processMethod;
 		ForcedSolveMethod = forcedSolveMethod;
         CommandComponent = commandComponent;
         TryCancelField = cancelfield;
-        TryCancelComponentSolverType = commandComponent.GetType();
+		ZenModeField = zenmodefield;
+		ZenMode = OtherModes.ZenModeOn;
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 

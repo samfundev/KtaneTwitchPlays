@@ -860,24 +860,38 @@ public abstract class ComponentSolver
     }
 
     protected FieldInfo TryCancelField { get; set; }
-    protected Type TryCancelComponentSolverType { get; set; }
 
     protected bool TryCancel
     {
         get
         {
-            if (TryCancelField == null || TryCancelComponentSolverType == null ||
-                !(TryCancelField.GetValue(TryCancelComponentSolverType) is bool))
+            if (!(TryCancelField?.GetValue(CommandComponent.GetType()) is bool))
                 return false;
-            return (bool)TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(TryCancelComponentSolverType));
+            return (bool)TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
         }
         set
         {
-            if (TryCancelField != null && TryCancelComponentSolverType != null &&
-                (TryCancelField.GetValue(BombComponent.GetComponent(TryCancelComponentSolverType)) is bool))
-                TryCancelField.SetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(TryCancelComponentSolverType), value);
+            if (TryCancelField?.GetValue(BombComponent.GetComponent(CommandComponent.GetType())) is bool)
+                TryCancelField.SetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
         }
     }
+
+	protected FieldInfo ZenModeField { get; set; }
+
+	protected bool ZenMode
+	{
+		get
+		{
+			if (!(ZenModeField?.GetValue(CommandComponent.GetType()) is bool))
+				return false;
+			return (bool)ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+		}
+		set
+		{
+			if (ZenModeField?.GetValue(BombComponent.GetComponent(CommandComponent.GetType())) is bool)
+				ZenModeField.SetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
+		}
+	}
     #endregion
 
     #region Private Methods

@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent) :
+    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo zenmodefield) :
         base(bombCommander, bombComponent)
 	{
         ProcessMethod = processMethod;
 		ForcedSolveMethod = forcedSolveMethod;
         CommandComponent = commandComponent;
+		ZenModeField = zenmodefield;
+		ZenMode = OtherModes.ZenModeOn;
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
     }
 
