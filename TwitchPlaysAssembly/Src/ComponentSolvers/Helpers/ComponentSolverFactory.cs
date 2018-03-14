@@ -284,6 +284,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["poker"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["sonic"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6 };
+		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 
 		//Other modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)", DoesTheRightThing = false };

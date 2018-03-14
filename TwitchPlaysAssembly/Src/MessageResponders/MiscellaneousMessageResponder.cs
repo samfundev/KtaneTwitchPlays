@@ -402,7 +402,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 1)
 				{
-					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
+					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden && !x.Key.Equals("lightmixed") && !x.Key.Equals("heavymixed")).Select(x => x.Key).ToArray();
 					IRCConnection.Instance.SendMessage(validDistributions.Any() 
 						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}" 
 						: "Sorry, !run <module_count> <distribution> has been disabled.");
