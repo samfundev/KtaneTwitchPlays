@@ -198,7 +198,7 @@ public static class UserAccess
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 
 		WriteAccessList();
-		IRCConnection.Instance.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $"For the following reason: {reason}")}");
+		IRCConnection.Instance.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
 	}
 
 	public static void BanUser(string userNickName, string moderator, string reason)
@@ -226,7 +226,7 @@ public static class UserAccess
 		ban.BanExpiry = double.PositiveInfinity;
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 		WriteAccessList();
-		IRCConnection.Instance.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $"For the following reason: {reason}")}");
+		IRCConnection.Instance.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
 	}
 
 	private static void UnbanUser(string userNickName, bool rewrite=true)
