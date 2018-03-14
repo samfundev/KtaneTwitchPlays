@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class SwitchesComponentSolver : ComponentSolver
 {
@@ -11,30 +10,30 @@ public class SwitchesComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 	
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-	    if (commands.Length <= 1 || !commands[0].EqualsAny("flip", "switch", "press", "toggle")) yield break;
+		if (commands.Length <= 1 || !commands[0].EqualsAny("flip", "switch", "press", "toggle")) yield break;
 
-	    IEnumerable<int?> switches = commands.Where((_, i) => i > 0).Select(n => n.TryParseInt());
-	    IEnumerable<int?> switchIndices = switches as int?[] ?? switches.ToArray();
-	    if (!switchIndices.All(n => n != null && n > 0 && n < 6)) yield break;
+		IEnumerable<int?> switches = commands.Where((_, i) => i > 0).Select(n => n.TryParseInt());
+		IEnumerable<int?> switchIndices = switches as int?[] ?? switches.ToArray();
+		if (!switchIndices.All(n => n != null && n > 0 && n < 6)) yield break;
 
-	    yield return null;
-	    if (switchIndices.Count() > 20)
-	    {
-	        yield return "elevator music";
-	    }
+		yield return null;
+		if (switchIndices.Count() > 20)
+		{
+			yield return "elevator music";
+		}
 
-	    foreach (int? switchIndex in switchIndices)
-	    {
-	        _OnToggleMethod.Invoke(_component, new object[] { switchIndex - 1 });
-		    yield return "trywaitcancel 0.1";
-	    }
+		foreach (int? switchIndex in switchIndices)
+		{
+			_OnToggleMethod.Invoke(_component, new object[] { switchIndex - 1 });
+			yield return "trywaitcancel 0.1";
+		}
 	}
 
 	static SwitchesComponentSolver()
