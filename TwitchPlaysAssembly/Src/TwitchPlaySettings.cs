@@ -194,6 +194,8 @@ public class TwitchPlaySettingsData
 	public string NoteSlotCleared = "Note Slot {0} Cleared.";
 
 	public string GiveBonusPoints = "{0} awarded {1} points by {2}";
+	public string GiveBonusSolves = "{0} awarded {1} solves by {2}";
+	public string GiveBonusStrikes = "{0} awarded {1} strikes by {2}";
 
 	public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
 
@@ -375,6 +377,8 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref NoteSlotCleared, data.NoteSlotCleared, 1);
 
 		valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
+		valid &= ValidateString(ref GiveBonusSolves, data.GiveBonusSolves, 3);
+		valid &= ValidateString(ref GiveBonusStrikes, data.GiveBonusStrikes, 3);
 
 		valid &= ValidateString(ref UnsubmittableAnswerPenalty, data.UnsubmittableAnswerPenalty, 5);
 

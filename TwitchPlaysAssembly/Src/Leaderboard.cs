@@ -158,18 +158,21 @@ public class Leaderboard
         return entry;
     }
 
-    public void AddSolve(string userName)
+    public void AddSolve(string userName, int numSolve)
     {
-        LeaderboardEntry entry = GetEntry(userName, SafeGetColor(userName));
+		AddSolve(userName, SafeGetColor(userName), numSolve);
+	}
+	public void AddSolve(string userName, Color userColor, int numSolve)
+	{
+		LeaderboardEntry entry = GetEntry(userName, userColor);
 
-        entry.AddSolve();
-        entry.LastAction = DateTime.Now;
-        ResetSortFlag();
+		entry.AddSolve(numSolve);
+		entry.LastAction = DateTime.Now;
+		ResetSortFlag();
 
-        string name = userName.ToLowerInvariant();
-        CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out int value) ? value + 1 : 1;
-    }
-
+		string name = userName.ToLowerInvariant();
+		CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out int value) ? value + numSolve : numSolve;
+	}
     public void AddStrike(string userName, int numStrikes)
     {
 	    AddStrike(userName, SafeGetColor(userName), numStrikes);

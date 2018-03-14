@@ -175,6 +175,38 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
+		else if (text.RegexMatch(@"^bonussolve (\S+) (-?[0-9]+)$"))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+			string playerrewarded = split[1];
+			if (!int.TryParse(split[2], out int solverewarded))
+			{
+				return;
+			}
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.GiveBonusSolves, split[1], split[2], userNickName);
+				Color usedColor = new Color(.31f, .31f, .31f);
+				Leaderboard.Instance.AddSolve(playerrewarded, usedColor, solverewarded);
+			}
+			return;
+		}
+		else if (text.RegexMatch(@"^bonusstrike (\S+) (-?[0-9]+)$"))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+			string playerrewarded = split[1];
+			if (!int.TryParse(split[2], out int strikerewarded))
+			{
+				return;
+			}
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.GiveBonusStrikes, split[1], split[2], userNickName);
+				Color usedColor = new Color(.31f, .31f, .31f);
+				Leaderboard.Instance.AddStrike(playerrewarded, usedColor, strikerewarded);
+			}
+			return;
+		}
 		else if (text.RegexMatch("^reward (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
