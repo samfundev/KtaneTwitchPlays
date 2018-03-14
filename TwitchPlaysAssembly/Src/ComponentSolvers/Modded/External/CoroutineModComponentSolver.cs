@@ -76,7 +76,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 	        }
 	        catch (Exception ex)
 	        {
-		        DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invokation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
+		        DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
 		        result = false;
 	        }
 	        if(result)
