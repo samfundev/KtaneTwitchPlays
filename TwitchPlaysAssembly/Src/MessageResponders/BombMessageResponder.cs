@@ -78,8 +78,8 @@ public class BombMessageResponder : MessageResponder
 			System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
 		}
 
-		IRCConnection.Instance.SendMessage(BombCommanders.Count == 1 
-			? TwitchPlaySettings.data.BombLiveMessage 
+		IRCConnection.Instance.SendMessage(BombCommanders.Count == 1
+			? TwitchPlaySettings.data.BombLiveMessage
 			: TwitchPlaySettings.data.MultiBombLiveMessage);
 
 		if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
@@ -110,7 +110,7 @@ public class BombMessageResponder : MessageResponder
 		}
 	}
 
-	public string GetBombResult(bool lastBomb=true)
+	public string GetBombResult(bool lastBomb = true)
 	{
 		bool HasDetonated = false;
 		bool HasBeenSolved = true;
@@ -178,11 +178,11 @@ public class BombMessageResponder : MessageResponder
 						//Still record solo information, should the defuser be the only one to actually defuse a 11 * bomb-count bomb, but display normal leaderboards instead if
 						//solo play is disabled.
 						TimeSpan elapsedTimeSpan = TimeSpan.FromSeconds(elapsedTime);
-						string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, Leaderboard.Instance.SoloSolver.UserName, (int)elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
+						string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, Leaderboard.Instance.SoloSolver.UserName, (int) elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
 						if (elapsedTime < previousRecord)
 						{
 							TimeSpan previousTimeSpan = TimeSpan.FromSeconds(previousRecord);
-							soloMessage += string.Format(TwitchPlaySettings.data.BombSoloDefusalNewRecordMessage, (int)previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
+							soloMessage += string.Format(TwitchPlaySettings.data.BombSoloDefusalNewRecordMessage, (int) previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
 						}
 						soloMessage += TwitchPlaySettings.data.BombSoloDefusalFooter;
 						parentService.StartCoroutine(SendDelayedMessage(1.0f, soloMessage));
@@ -243,7 +243,7 @@ public class BombMessageResponder : MessageResponder
 		try
 		{
 			string path = Path.Combine(Application.persistentDataPath, "TwitchPlaysLastClaimed.json");
-			File.WriteAllText(path,SettingsConverter.Serialize(LastClaimedModule));
+			File.WriteAllText(path, SettingsConverter.Serialize(LastClaimedModule));
 		}
 		catch (Exception ex)
 		{
@@ -270,7 +270,7 @@ public class BombMessageResponder : MessageResponder
 	{
 		TwitchComponentHandle.ResetId();
 
-		
+
 		yield return new WaitUntil(() => (SceneManager.Instance.GameplayState.Bombs != null && SceneManager.Instance.GameplayState.Bombs.Count > 0));
 		List<Bomb> bombs = SceneManager.Instance.GameplayState.Bombs;
 
@@ -316,7 +316,7 @@ public class BombMessageResponder : MessageResponder
 
 		for (int i = 0; i < 4; i++)
 		{
-			_notesDictionary[i] =  (OtherModes.ZenModeOn && i == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
+			_notesDictionary[i] = (OtherModes.ZenModeOn && i == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
 			moduleCameras?.SetNotes(i, _notesDictionary[i]);
 		}
 
@@ -338,7 +338,7 @@ public class BombMessageResponder : MessageResponder
 
 	public void SetBomb(Bomb bomb, int id)
 	{
-		if(BombCommanders.Count == 0)
+		if (BombCommanders.Count == 0)
 			_currentBomb = id == -1 ? -1 : 0;
 		BombCommanders.Add(new BombCommander(bomb));
 		CreateBombHandleForBomb(bomb, id);
@@ -478,33 +478,6 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.Equals("claimany", StringComparison.InvariantCultureIgnoreCase))
-			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-					.Shuffle().Take(1).Select(handle => string.Format("{0} claim", handle.Code)).ToList();
-
-				if (unclaimed.Any()) text = unclaimed[0];
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
-			}
-
-			if (text.Equals("claimvan", StringComparison.InvariantCultureIgnoreCase))
-			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
-					.Select(handle => string.Format("{0} claim", handle.Code)).ToList();
-
-				if (unclaimed.Any()) text = unclaimed[0];
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules of that type.");
-			}
-
-			if (text.Equals("claimmod", StringComparison.InvariantCultureIgnoreCase))
-			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-					.Shuffle().Select(handle => string.Format("{0} claim", handle.Code)).ToList();
-
-				if (unclaimed.Any()) text = unclaimed[0];
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules of that type.");
-			}
-
 			if (text.RegexMatch(out match, "^(?:find|search) (.+)"))
 			{
 				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -561,31 +534,22 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 
-			if (text.RegexMatch(out match, "^(?:claimanyview|viewclaimany) (.+)"))
+			if (text.RegexMatch(out match, "^(claim(?:any|van|mod)(?:view)?|viewclaim(?:any|van|mod))"))
 			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-					.Shuffle().Take(1).Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
+				var vanilla = match.Groups[1].Value.Contains("van");
+				var modded = match.Groups[1].Value.Contains("mod");
+				var view = match.Groups[1].Value.Contains("view");
+				var avoid = new[] { "Souvenir", "Forget Me Not", "Turn The Key", "Turn The Keys", "The Swan" };
 
-				if (unclaimed.Any()) text = unclaimed[0];
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
-			}
+				var unclaimed = ComponentHandles
+					.Where(handle => (vanilla ? !handle.IsMod : modded ? handle.IsMod : true) && !handle.Claimed && !handle.Solved && !avoid.Contains(handle.HeaderText) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					.Shuffle()
+					.FirstOrDefault();
 
-			if (text.RegexMatch(out match, "^(?:claimvanview|viewclaimvan) (.+)"))
-			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
-					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
-
-				if (unclaimed.Any()) text = unclaimed[0];
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
-			}
-
-			if (text.RegexMatch(out match, "^(?:claimmodview|viewclaimmod) (.+)"))
-			{
-				List<string> unclaimed = ComponentHandles.Where(handle => !handle.HeaderText.Contains("Souvenir") && !handle.HeaderText.Contains("Forget Me Not") && !handle.HeaderText.Contains("Turn The Key") && !handle.HeaderText.Contains("Turn The Keys") && handle.IsMod && !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle()
-					.Select(handle => string.Format("{0} claimview", handle.Code)).ToList();
-
-				if (unclaimed.Any()) text = unclaimed[0];
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+				if (unclaimed != null)
+					text = unclaimed.Code + (view ? " claimview" : " claim");
+				else
+					IRCConnection.Instance.SendMessage(string.Format("There are no more unclaimed{0} modules.", vanilla ? " vanilla" : modded ? " modded" : null));
 			}
 
 			if (text.RegexMatch(out match, "^(?:findclaim|searchclaim|claimsearch|claimfind) (.+)"))
@@ -642,14 +606,13 @@ public class BombMessageResponder : MessageResponder
 				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
 				return;
 			}
-
 		}
 
 		if (text.RegexMatch(out match, "^notes(-?[0-9]+)$") && int.TryParse(match.Groups[1].Value, out index))
 		{
-			if (!_notesDictionary.ContainsKey(index-1))
-				_notesDictionary[index-1] = TwitchPlaySettings.data.NotesSpaceFree;
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notesDictionary[index-1]);
+			if (!_notesDictionary.ContainsKey(index - 1))
+				_notesDictionary[index - 1] = TwitchPlaySettings.data.NotesSpaceFree;
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notesDictionary[index - 1]);
 			return;
 		}
 
@@ -815,7 +778,7 @@ public class BombMessageResponder : MessageResponder
 		{
 			//Required for bombs with no floating holdables attached.
 			if (!originalBombPositions.TryGetValue(commander.Bomb, out Vector3 value)) continue;
-			commander.Bomb.transform.localPosition = value;	
+			commander.Bomb.transform.localPosition = value;
 		}
 	}
 
@@ -823,7 +786,7 @@ public class BombMessageResponder : MessageResponder
 	{
 		TwitchBombHandle _bombHandle = Instantiate<TwitchBombHandle>(twitchBombHandlePrefab);
 		_bombHandle.bombID = id;
-		_bombHandle.bombCommander = BombCommanders[BombCommanders.Count-1];
+		_bombHandle.bombCommander = BombCommanders[BombCommanders.Count - 1];
 		_bombHandle.coroutineQueue = _coroutineQueue;
 		BombHandles.Add(_bombHandle);
 		BombCommanders[BombCommanders.Count - 1].twitchBombHandle = _bombHandle;
@@ -853,7 +816,7 @@ public class BombMessageResponder : MessageResponder
 					continue;
 
 				case ComponentTypeEnum.Timer:
-					BombCommanders[BombCommanders.Count - 1].timerComponent = (TimerComponent)bombComponent;
+					BombCommanders[BombCommanders.Count - 1].timerComponent = (TimerComponent) bombComponent;
 					continue;
 
 				case ComponentTypeEnum.NeedyCapacitor:
