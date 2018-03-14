@@ -122,7 +122,7 @@ public static class UserAccess
 
 		foreach (string username in UserAccessData.Instance.UserAccessLevel.Keys.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
 		{
-			IsBanned(username, out _, out _, out _);
+			IsBanned(username);
 		}
 
 	}
@@ -157,7 +157,7 @@ public static class UserAccess
 		{
 			return AccessLevel.User;
 		}
-		if (IsBanned(userNickName, out _, out _, out _))
+		if(IsBanned(userNickName) != null)
 			return AccessLevel.Banned;
 		for (AccessLevel level = (AccessLevel)0x40000000; level > 0; level = (AccessLevel)((int)level >> 1))
 		{
@@ -169,10 +169,24 @@ public static class UserAccess
 
 	public static void TimeoutUser(string userNickName, string moderator, string reason, int timeout)
 	{
-		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true)) return;
+		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.");
+			return;
+		}
 		if (timeout <= 0)
 		{
 			IRCConnection.Instance.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.");
+			return;
+		}
+		if (HasAccess(userNickName, AccessLevel.Streamer))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout the streamer.");
+			return;
+		}
+		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout yourself.");
 			return;
 		}
 		AddUser(userNickName, AccessLevel.Banned);
@@ -189,7 +203,21 @@ public static class UserAccess
 
 	public static void BanUser(string userNickName, string moderator, string reason)
 	{
-		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true)) return;
+		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.");
+			return;
+		}
+		if (HasAccess(userNickName, AccessLevel.Streamer))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban the streamer.");
+			return;
+		}
+		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban yourself.");
+			return;
+		}
 		AddUser(userNickName, AccessLevel.Banned);
 		if (!UserAccessData.Instance.Bans.TryGetValue(userNickName.ToLowerInvariant(), out BanData ban))
 			ban = new BanData();
@@ -201,44 +229,48 @@ public static class UserAccess
 		IRCConnection.Instance.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $"For the following reason: {reason}")}");
 	}
 
-	private static void UnbanUser(string userNickName)
+	private static void UnbanUser(string userNickName, bool rewrite=true)
 	{
 		RemoveUser(userNickName, AccessLevel.Banned);
 		if (UserAccessData.Instance.Bans.ContainsKey(userNickName.ToLowerInvariant()))
 			UserAccessData.Instance.Bans.Remove(userNickName.ToLowerInvariant());
-		WriteAccessList();
+		if(rewrite)
+			WriteAccessList();
 	}
 
 	public static void UnbanUser(string userNickName, string moderator)
 	{
-		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true) && 
-			!userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant())) return;
+		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true))
+		{
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.");
+			return;
+		}
 		UnbanUser(userNickName);
 		IRCConnection.Instance.SendMessage($"User {userNickName} was unbanned from Twitch plays.");
 	}
 
-	public static bool IsBanned(string usernickname, out string moderator, out string reason, out double expiry)
+	public static BanData IsBanned(string usernickname)
 	{
-		bool banned = HasAccess(usernickname, AccessLevel.Banned);
-		if (!UserAccessData.Instance.Bans.TryGetValue(usernickname.ToLowerInvariant(), out BanData ban))
-			ban = new BanData();
-		moderator = ban.BannedBy;
-		reason = ban.BannedReason;
-		expiry = ban.BanExpiry;
-		if (!banned) return false;
-
-		bool unban = expiry < DateTime.Now.TotalSeconds();
-		if (!string.IsNullOrEmpty(moderator) && !UserAccessData.Instance.StickyBans)
+		if (!UserAccessData.Instance.Bans.TryGetValue(usernickname.ToLowerInvariant(), out BanData ban) || !HasAccess(usernickname, AccessLevel.Banned))
 		{
-			if (double.IsInfinity(expiry) && !HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand))
+			bool rewrite = ban != null;
+			rewrite |= HasAccess(usernickname, AccessLevel.Banned);
+			UnbanUser(usernickname, rewrite);
+			return null;
+		}
+
+		bool unban = ban.BanExpiry < DateTime.Now.TotalSeconds();
+		if (!string.IsNullOrEmpty(ban.BannedBy) && !UserAccessData.Instance.StickyBans)
+		{
+			if (double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForBanCommand))
 			{
 				unban = true;
-				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays because {moderator} no longer has the power to issue permanent bans.");
+				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
 			}
-			if (!double.IsInfinity(expiry) && !HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
+			if (!double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
 			{
 				unban = true;
-				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {moderator} no longer has the power to issue time outs.");
+				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
 			}
 		}
 		else if (!UserAccessData.Instance.StickyBans && !unban)
@@ -248,18 +280,14 @@ public static class UserAccess
 		}
 		else
 		{
-			moderator = IRCConnection.Instance.ChannelName;
+			ban.BannedBy = IRCConnection.Instance.ChannelName;
 		}
 
-		if (unban)
-		{
-			UnbanUser(usernickname);
-			return false;
-		}
-		return !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand) &&
-			   !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand) && 
-			   !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForBanCommand) &&
-			   !usernickname.ToLowerInvariant().Equals(moderator.ToLowerInvariant());
+		if (!unban && !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand) 
+			&& !usernickname.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant())) return ban;
+
+		UnbanUser(usernickname);
+		return null;
 	}
 
 	public static void AddUser(string userNickName, AccessLevel level)
