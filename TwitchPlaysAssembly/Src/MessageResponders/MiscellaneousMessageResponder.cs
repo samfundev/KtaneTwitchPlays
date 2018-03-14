@@ -371,9 +371,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					case AccessLevel.User:
 					case AccessLevel.NoPoints:
 					case AccessLevel.Banned:
-						break;
 					case AccessLevel.Defuser:
-						accessLevel = "Defuser";
 						break;
 					case AccessLevel.Mod:
 						accessLevel = "Moderator";
@@ -390,14 +388,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				if (accessLevel != null && (user != "_UserNickName1" || user != "_UserNickName2")) finalmessage += user + ", " + userAccessLevel + "; ";
 			}
-
-			if (finalmessage.Length > 500)
-			{
-				IRCConnection.Instance.SendMessage("Sorry, there are too many moderators to post to chat.");
-			} else
-			{
-				IRCConnection.Instance.SendMessage(finalmessage);
-			}
+			IRCConnection.Instance.SendMessage(finalmessage);
 		}
 		
 		switch (split[0])
