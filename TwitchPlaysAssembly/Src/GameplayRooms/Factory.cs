@@ -124,6 +124,8 @@ public class Factory : GameRoom
 	        {
 		        bombHandle.edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 	        }
+			if(OtherModes.ZenModeOn)
+				bombHandle.bombCommander.StrikeLimit += bombHandle.bombCommander.StrikeCount;
 	        
 			IEnumerator bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
             while (bombHold.MoveNext())
