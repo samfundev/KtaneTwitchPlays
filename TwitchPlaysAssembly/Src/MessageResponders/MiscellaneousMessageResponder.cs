@@ -20,6 +20,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo GameInfo;
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
+	private bool RankCommand = true;
 
 	private void Start()
 	{
@@ -200,60 +201,104 @@ public class MiscellaneousMessageResponder : MessageResponder
 				OtherModes.ToggleZenMode();
 			}
 		}
+		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = !RankCommand;
+				} else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("enablerankcommand", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = true;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("disablerankcommand", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = false;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+				}
+			}
+		}
 		else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
 		{
-			Leaderboard.LeaderboardEntry entry = null;
-			if (split.Length > 1)
+			if (TwitchPlaySettings.data.EnableRankCommand && RankCommand)
 			{
-				int desiredRank;
-				switch (split.Length)
+				Leaderboard.LeaderboardEntry entry = null;
+				if (split.Length > 1)
 				{
-					case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank):
-						Leaderboard.Instance.GetSoloRank(desiredRank, out entry);
-						break;
-					case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && !int.TryParse(split[2], out _):
-						Leaderboard.Instance.GetRank(split[2], out entry);
-						if (entry != null) break;
-						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[2]);
+					int desiredRank;
+					switch (split.Length)
+					{
+						case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && int.TryParse(split[2], out desiredRank):
+							Leaderboard.Instance.GetSoloRank(desiredRank, out entry);
+							break;
+						case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && !int.TryParse(split[2], out _):
+							Leaderboard.Instance.GetRank(split[2], out entry);
+							if (entry != null) break;
+							IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[2]);
+							return;
+						case 2 when int.TryParse(split[1], out desiredRank):
+							Leaderboard.Instance.GetRank(desiredRank, out entry);
+							break;
+						case 2 when !int.TryParse(split[1], out _):
+							Leaderboard.Instance.GetRank(split[1], out entry);
+							if (entry != null) break;
+							IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]);
+							return;
+						default:
+							return;
+					}
+					if (entry == null)
+					{
+						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankTooLow);
 						return;
-					case 2 when int.TryParse(split[1], out desiredRank):
-						Leaderboard.Instance.GetRank(desiredRank, out entry);
-						break;
-					case 2 when !int.TryParse(split[1], out _):
-						Leaderboard.Instance.GetRank(split[1], out entry);
-						if (entry != null) break;
-						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]);
-						return;
-					default:
-						return;
+					}
 				}
 				if (entry == null)
 				{
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankTooLow);
-					return;
+					Leaderboard.Instance.GetRank(userNickName, out entry);
 				}
-			}
-			if (entry == null)
-			{
-				Leaderboard.Instance.GetRank(userNickName, out entry);
-			}
-			if (entry != null)
-			{
-				string txtSolver = "";
-				string txtSolo = ".";
-				if (entry.TotalSoloClears > 0)
+				if (entry != null)
 				{
-					TimeSpan recordTimeSpan = TimeSpan.FromSeconds(entry.RecordSoloTime);
-					txtSolver = TwitchPlaySettings.data.SolverAndSolo;
-					txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int)recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
+					string txtSolver = "";
+					string txtSolo = ".";
+					if (entry.TotalSoloClears > 0)
+					{
+						TimeSpan recordTimeSpan = TimeSpan.FromSeconds(entry.RecordSoloTime);
+						txtSolver = TwitchPlaySettings.data.SolverAndSolo;
+						txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int)recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
+					}
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore);
 				}
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore);
+				else
+				{
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, userNickName);
+				}
+				return;
 			}
-			else
-			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, userNickName);
-			}
-			return;
 		}
 		else if (text.Equals("log", StringComparison.InvariantCultureIgnoreCase) || text.Equals("analysis", StringComparison.InvariantCultureIgnoreCase))
 		{

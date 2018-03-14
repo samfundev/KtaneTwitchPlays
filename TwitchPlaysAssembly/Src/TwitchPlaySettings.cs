@@ -17,6 +17,7 @@ public class TwitchPlaySettingsData
 	public bool EnableFreeplayHardcore = true;
 	public bool EnableFreeplayModsOnly = true;
 	public bool EnableRunCommand = true;
+	public bool EnableRankCommand = true;
 	public bool EnableSoloPlayMode = true;
 	public bool EnableRetryButton = true;
 	public bool EnableTwitchPlaysMode = true;
