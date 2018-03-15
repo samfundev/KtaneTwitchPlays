@@ -389,11 +389,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 						bandata.TryGetValue(person, out BanData value);
 						if (value.BanExpiry == double.PositiveInfinity)
 						{
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}, Reason: {2}. This ban is permanant.", person, value.BannedBy, value.BannedReason);
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
 						} else
 						{
 							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}, Reason: {2}, Ban duration left: {3}.", person, value.BannedBy, value.BannedReason, durationleft);
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
 						}
 						found = true;
 					}
