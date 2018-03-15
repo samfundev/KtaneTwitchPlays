@@ -3,74 +3,74 @@ using UnityEngine;
 
 public class PostGameCommander : ICommandResponder
 {
-    #region Constructors
-    public PostGameCommander(ResultPage resultsPage)
-    {
-        ResultsPage = resultsPage;
-    }
-    #endregion
-
-    #region Interface Implementation
-    public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	#region Constructors
+	public PostGameCommander(ResultPage resultsPage)
 	{
-        Selectable button = null;
-        message = message.ToLowerInvariant();
+		ResultsPage = resultsPage;
+	}
+	#endregion
 
-        if (message.EqualsAny("!continue", "!back"))
-        {
-            button = ContinueButton;
-        }
-        else if (message.Equals("!retry"))
-        {
-            if (!TwitchPlaySettings.data.EnableRetryButton)
-            {
-	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RetryInactive);
-            }
-            button = TwitchPlaySettings.data.EnableRetryButton ? RetryButton : ContinueButton;
-        }
+	#region Interface Implementation
+	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	{
+		Selectable button = null;
+		message = message.ToLowerInvariant();
 
-        if (button == null)
-        {
-            yield break;
-        }
+		if (message.EqualsAny("!continue", "!back"))
+		{
+			button = ContinueButton;
+		}
+		else if (message.Equals("!retry"))
+		{
+			if (!TwitchPlaySettings.data.EnableRetryButton)
+			{
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RetryInactive);
+			}
+			button = TwitchPlaySettings.data.EnableRetryButton ? RetryButton : ContinueButton;
+		}
 
-        // Press the button twice, in case the first is too early and skips the message instead
-        for (int i = 0; i < 2; i++)
-        {
-            DoInteractionStart(button);
-            yield return new WaitForSeconds(0.1f);
-            DoInteractionEnd(button);
-        }
-    }
-    #endregion
+		if (button == null)
+		{
+			yield break;
+		}
 
-    #region Public Fields
-    public Selectable ContinueButton
-    {
-        get { return ResultsPage.ContinueButton; }
-    }
+		// Press the button twice, in case the first is too early and skips the message instead
+		for (int i = 0; i < 2; i++)
+		{
+			DoInteractionStart(button);
+			yield return new WaitForSeconds(0.1f);
+			DoInteractionEnd(button);
+		}
+	}
+	#endregion
 
-    public Selectable RetryButton
-    {
-        get { return ResultsPage.RetryButton; }
-    }
-    #endregion
+	#region Public Fields
+	public Selectable ContinueButton
+	{
+		get { return ResultsPage.ContinueButton; }
+	}
 
-    #region Private Methods
-    private void DoInteractionStart(Selectable selectable)
-    {
-        selectable.HandleInteract();
-    }
+	public Selectable RetryButton
+	{
+		get { return ResultsPage.RetryButton; }
+	}
+	#endregion
 
-    private void DoInteractionEnd(Selectable selectable)
-    {
-        selectable.OnInteractEnded();
-        selectable.SetHighlight(false);
-    }
-    #endregion
+	#region Private Methods
+	private void DoInteractionStart(Selectable selectable)
+	{
+		selectable.HandleInteract();
+	}
 
-    #region Private Readonly Fields
-    private readonly ResultPage ResultsPage = null;
-    #endregion
+	private void DoInteractionEnd(Selectable selectable)
+	{
+		selectable.OnInteractEnded();
+		selectable.SetHighlight(false);
+	}
+	#endregion
+
+	#region Private Readonly Fields
+	private readonly ResultPage ResultsPage = null;
+	#endregion
 }
 
