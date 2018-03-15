@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
+using TwitchPlaysAssembly.Helpers;
 using UnityEngine;
 
 [RequireComponent(typeof(KMGameCommands))]
@@ -231,6 +232,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
 				OtherModes.ToggleZenMode();
+			}
+		}
+		else if (text.Equals("zenmodeon", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				OtherModes.ZenModeOn = true;
 			}
 		}
 		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
@@ -511,11 +519,25 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 1)
 				{
-					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
+					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden && !x.Key.Equals("lightmixed") && !x.Key.Equals("heavymixed") && !x.Key.Equals("zen")).Select(x => x.Key).ToArray();
 					IRCConnection.Instance.SendMessage(validDistributions.Any() 
 						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}" 
 						: "Sorry, !run <module_count> <distribution> has been disabled.");
 					break;
+				}
+
+				if (split.Length == 2 && split[1].Equals("zen", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (!TwitchPlaySettings.data.ModDistributions.TryGetValue("zen", out ModuleDistributions zenModeDistribution))
+					{
+						zenModeDistribution = new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Zen Mode", MinModules = 1, MaxModules = GetMaximumModules(18) };
+						TwitchPlaySettings.data.ModDistributions["zen"] = zenModeDistribution;
+					}
+					zenModeDistribution.MinModules = 1;
+					zenModeDistribution.MaxModules = GetMaximumModules(18);
+					
+					Array.Resize(ref split, 3);
+					split[2] = "zen";
 				}
 
 				if (split.Length == 2)
@@ -567,8 +589,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 						split[2] = temp;
 					}
 
-					if (int.TryParse(split[1], out int modules) && modules > 0)
+					if (int.TryParse(split[1], out int modules) && modules > 0 || split[1].Equals("zen", StringComparison.InvariantCultureIgnoreCase))
 					{
+						bool zen = split[1].Equals("zen", StringComparison.InvariantCultureIgnoreCase);
+						if (zen) modules = GetMaximumModules(18);
+
 						if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(split[2], out ModuleDistributions distribution))
 						{
 							IRCConnection.Instance.SendMessage("Sorry, there is no distribution called \"{0}\".", split[2]);
@@ -581,13 +606,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 							break;
 						}
 
-						if (modules < distribution.MinModules)
+						if (modules < distribution.MinModules && !zen)
 						{
 							IRCConnection.Instance.SendMessage("Sorry, the minimum number of modules for \"{0}\" is {1}.", distribution.DisplayName , distribution.MinModules);
 							break;
 						}
 						
-						int maxModules = GetMaximumModules(distribution.MaxModules);
+						int maxModules = GetMaximumModules(zen ? GetMaximumModules(18) : distribution.MaxModules);
 						if (modules > maxModules)
 						{
 							if (modules > distribution.MaxModules)
@@ -626,6 +651,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 								Count = bothModules
 							}
 						};
+						if (zen && FactoryRoomAPI.Installed())
+						{
+							KMComponentPool factoryPool = new KMComponentPool
+							{
+								Count = 8,
+								ModTypes = new List<string>(new[] {"Factory Mode"})
+							};
+
+							pools.Add(factoryPool);
+						}
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.DisplayName;
