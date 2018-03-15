@@ -153,6 +153,8 @@ public static class UserAccess
 
 	public static AccessLevel HighestAccessLevel(string userNickName)
 	{
+		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName)) return AccessLevel.Streamer;
+
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
 		{
 			return AccessLevel.User;
