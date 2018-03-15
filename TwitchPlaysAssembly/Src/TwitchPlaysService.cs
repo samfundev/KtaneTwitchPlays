@@ -147,6 +147,7 @@ public class TwitchPlaysService : MonoBehaviour
 	            DefaultCamera();
 	            _coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
 	            _coroutinesToStart.Enqueue(MultipleBombs.Refresh());
+	            _coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
 	            _coroutinesToStart.Enqueue(CreateSolversForAllBombComponents());
 
                 return missionMessageResponder;
