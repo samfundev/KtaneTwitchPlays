@@ -18,7 +18,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		if (bombCommander != null)
 		{
 			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-			if (language != null) modInfo.manualCode = $"Passwords{language}";
+			if (language != null) modInfo.manualCode = $"Password{language}";
 			modInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
 			bombComponent.StartCoroutine(SetHeaderText());
 		}
