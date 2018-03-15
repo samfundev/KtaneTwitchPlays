@@ -83,7 +83,7 @@ public class BombMessageResponder : MessageResponder
 			: TwitchPlaySettings.data.MultiBombLiveMessage);
 
 		if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
-		OtherModes.SetMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
+		GameRoom.Instance.InitializeGameModes(GameRoom.Instance.InitializeOnLightsOn);
 	}
 
 	private void OnEnable()
@@ -325,14 +325,23 @@ public class BombMessageResponder : MessageResponder
 			TwitchComponentHandle.SolveUnsupportedModules(true);
 		}
 
-		while (OtherModes.ZenModeOn)
+		if (OtherModes.ZenModeOn)
 		{
 			foreach (BombCommander bomb in BombCommanders)
 			{
-				if (bomb.timerComponent == null || bomb.timerComponent.GetRate() < 0) continue;
-				bomb.timerComponent.SetRateModifier(-bomb.timerComponent.GetRate());
+				if (bomb.CurrentTimer < (bomb.NumberModules * 4))
+					bomb.CurrentTimer = bomb.NumberModules * 4;
 			}
-			yield return null;
+
+			while (OtherModes.ZenModeOn)
+			{
+				foreach (BombCommander bomb in BombCommanders)
+				{
+					if (bomb.timerComponent == null || bomb.timerComponent.GetRate() < 0) continue;
+					bomb.timerComponent.SetRateModifier(-bomb.timerComponent.GetRate());
+				}
+				yield return null;
+			}
 		}
 	}
 
@@ -343,6 +352,11 @@ public class BombMessageResponder : MessageResponder
 		BombCommanders.Add(new BombCommander(bomb));
 		CreateBombHandleForBomb(bomb, id);
 		CreateComponentHandlesForBomb(bomb);
+	}
+
+	public void OnMessageReceived(string userNickName, string text)
+	{
+		OnMessageReceived(userNickName, null, text);
 	}
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
@@ -603,7 +617,12 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.ZenModeOn)
 			{
-				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
+				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
+				{
+					if (handle.bombCommander.CurrentTimer < (handle.bombCommander.NumberModules * 4) && OtherModes.ZenModeOn)
+						handle.bombCommander.CurrentTimer = (handle.bombCommander.NumberModules * 4);
+					if (!handle.Solved) handle.SolveSilently();
+				}
 				return;
 			}
 		}
@@ -628,7 +647,12 @@ public class BombMessageResponder : MessageResponder
 
 				if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase))
 				{
-					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID))) if (!handle.Solved) handle.SolveSilently();
+					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
+					{
+						if (handle.bombCommander.CurrentTimer < (handle.bombCommander.NumberModules * 4) && OtherModes.ZenModeOn)
+							handle.bombCommander.CurrentTimer = (handle.bombCommander.NumberModules * 4);
+						if (!handle.Solved) handle.SolveSilently();
+					}
 					return;
 				}
 				goto case AccessLevel.Admin;
