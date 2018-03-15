@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -13,42 +14,75 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         _rightKey = (MonoBehaviour)_rightKeyField.GetValue(bombComponent.GetComponent(_componentType));
         modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 
-        ((KMSelectable) _leftKey).OnInteract = () => HandleKey(LeftBeforeA, LeftAfterA, _leftKeyTurnedField, _rightKeyTurnedField, _beforeLeftKeyField, _onLeftKeyTurnMethod);
-        ((KMSelectable) _rightKey).OnInteract = () => HandleKey(RightBeforeA, RightAfterA, _rightKeyTurnedField, _leftKeyTurnedField, _beforeRightKeyField, _onRightKeyTurnMethod);
-    }
+        ((KMSelectable) _leftKey).OnInteract = () => HandleKey(LeftBeforeA, LeftAfterA, _leftKeyTurnedField, _rightKeyTurnedField, _beforeLeftKeyField, _onLeftKeyTurnMethod, _leftKeyAnimatorField);
+        ((KMSelectable) _rightKey).OnInteract = () => HandleKey(RightBeforeA, RightAfterA, _rightKeyTurnedField, _leftKeyTurnedField, _beforeRightKeyField, _onRightKeyTurnMethod, _rightKeyAnimatorField);
+	}
 
-    private bool HandleKey(string[] modulesBefore, string[] modulesAfter, FieldInfo keyTurned, FieldInfo otherKeyTurned, FieldInfo beforeKeyField, MethodInfo onKeyTurn)
+    private bool HandleKey(string[] modulesBefore, string[] modulesAfter, FieldInfo keyTurned, FieldInfo otherKeyTurned, FieldInfo beforeKeyField, MethodInfo onKeyTurn, FieldInfo animatorField)
     {
         if (!GetValue(_activatedField) || GetValue(keyTurned)) return false;
         KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
         KMBombModule bombModule = BombComponent.GetComponent<KMBombModule>();
+	    KMAudio bombAudio = BombComponent.GetComponent<KMAudio>();
+	    Animator keyAnimator = (Animator) animatorField.GetValue(BombComponent.GetComponent(_componentType));
 
         if (TwitchPlaySettings.data.EnforceSolveAllBeforeTurningKeys &&
             modulesAfter.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
         {
-            bombModule.HandleStrike();
+	        keyAnimator.SetTrigger("WrongTurn");
+	        bombAudio.PlaySoundAtTransform("WrongKeyTurnFK", BombComponent.transform);
+			bombModule.HandleStrike();
             return false;
         }
 
         beforeKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : modulesBefore);
         onKeyTurn.Invoke(BombComponent.GetComponent(_componentType), null);
-        if (GetValue(keyTurned))
-        {
-            //Check to see if any forbidden modules for this key were solved.
-            if (TwitchPlaySettings.data.DisableTurnTheKeysSoftLock && bombInfo.GetSolvedModuleNames().Any(modulesBefore.Contains))
-                bombModule.HandleStrike();  //If so, Award a strike for it.
+	    if (GetValue(keyTurned))
+	    {
+		    //Check to see if any forbidden modules for this key were solved.
+		    if (TwitchPlaySettings.data.DisableTurnTheKeysSoftLock && bombInfo.GetSolvedModuleNames().Any(modulesBefore.Contains))
+			    bombModule.HandleStrike(); //If so, Award a strike for it.
 
-            if (GetValue(otherKeyTurned))
-            {
-                int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
-                TwitchPlaySettings.AddRewardBonus(2 * modules);
-	            IRCConnection.Instance.SendMessage("Reward increased by {0} for defusing module !{1} ({2}).", modules * 2, Code, bombModule.ModuleDisplayName);
-            }
-        }
+		    if (GetValue(otherKeyTurned))
+		    {
+			    int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
+			    TwitchPlaySettings.AddRewardBonus(2 * modules);
+			    IRCConnection.Instance.SendMessage("Reward increased by {0} for defusing module !{1} ({2}).", modules * 2, Code, bombModule.ModuleDisplayName);
+		    }
+	    }
+	    else
+	    {
+			keyAnimator.SetTrigger("WrongTurn");
+		    bombAudio.PlaySoundAtTransform("WrongKeyTurnFK", BombComponent.transform);
+		}
         return false;
     }
 
-    private bool GetValue(FieldInfo field)
+	private IEnumerator ForceTurnKeys()
+	{
+		Component self = BombComponent.GetComponent(_componentType);
+		Animator leftKeyAnimator = (Animator)_leftKeyAnimatorField.GetValue(self);
+		Animator rightKeyAnimator = (Animator) _rightKeyAnimatorField.GetValue(self);
+
+		_leftKeyTurnedField.SetValue(self, true);
+		_rightKeyTurnedField.SetValue(self, true);
+		rightKeyAnimator.SetBool("IsUnlocked", true);
+		BombComponent.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", BombComponent.transform);
+		yield return new WaitForSeconds(0.1f);
+		leftKeyAnimator.SetBool("IsUnlocked", true);
+		BombComponent.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", BombComponent.transform);
+		yield return new WaitForSeconds(0.1f);
+		BombComponent.GetComponent<KMBombModule>().HandlePass();
+	}
+
+	protected override bool HandleForcedSolve()
+	{
+		base.HandleForcedSolve();
+		CoroutineQueue.AddForcedSolve(ForceTurnKeys());
+		return true;
+	}
+
+	private bool GetValue(FieldInfo field)
     {
         return (bool) field.GetValue(BombComponent.GetComponent(_componentType));
     }
@@ -85,13 +119,14 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         _beforeLeftKeyField = _componentType.GetField("LeftBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
         _beforeRightKeyField = _componentType.GetField("RightBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
         _afterLeftKeyField = _componentType.GetField("LeftAfterA", BindingFlags.NonPublic | BindingFlags.Static);
-        if(_afterLeftKeyField != null)
-            _afterLeftKeyField.SetValue(null, LeftAfterA);
-        _leftKeyTurnedField = _componentType.GetField("bLeftKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
+		_afterLeftKeyField?.SetValue(null, LeftAfterA);
+	    _leftKeyTurnedField = _componentType.GetField("bLeftKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
         _rightKeyTurnedField = _componentType.GetField("bRightKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
         _onLeftKeyTurnMethod = _componentType.GetMethod("OnLeftKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
         _onRightKeyTurnMethod = _componentType.GetMethod("OnRightKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
-    }
+	    _rightKeyAnimatorField = _componentType.GetField("RightKeyAnim", BindingFlags.Public | BindingFlags.Instance);
+		_leftKeyAnimatorField = _componentType.GetField("LeftKeyAnim", BindingFlags.Public | BindingFlags.Instance);
+	}
 
     private static Type _componentType = null;
     private static FieldInfo _leftKeyField = null;
@@ -102,6 +137,9 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
     private static FieldInfo _afterLeftKeyField = null;
     private static FieldInfo _leftKeyTurnedField = null;
     private static FieldInfo _rightKeyTurnedField = null;
+	private static FieldInfo _rightKeyAnimatorField = null;
+	private static FieldInfo _leftKeyAnimatorField = null;
+
     private static MethodInfo _onLeftKeyTurnMethod = null;
     private static MethodInfo _onRightKeyTurnMethod = null;
 
