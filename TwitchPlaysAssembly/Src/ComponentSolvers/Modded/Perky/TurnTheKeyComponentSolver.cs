@@ -20,6 +20,13 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		return turnTime < 0 || turnTime == (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 	}
 
+	protected override bool HandleForcedSolve()
+	{
+		base.HandleForcedSolve();
+		CoroutineQueue.AddForcedSolve(DelayKeyTurn(true, false, true));
+		return true;
+	}
+
 	private bool CanTurnEarlyWithoutStrike(int turnTime)
 	{
 		if (!TwitchPlaySettings.data.AllowTurnTheKeyInstantSolveWhenOnlyModuleLeft) return false;
@@ -37,27 +44,42 @@ public class TurnTheKeyComponentSolver : ComponentSolver
     private bool OnKeyTurn(int turnTime = -1)
     {
 	    bool result = CanTurnEarlyWithoutStrike(turnTime);
-	    if (!result)
-	    {
-		    _onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-		    if (!TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate || (bool) _solvedField.GetValue(BombComponent.GetComponent(_componentType))) return false;
-	    }
 	    BombCommander.twitchBombHandle.StartCoroutine(DelayKeyTurn(!result));
 	    return false;
     }
 
-	private IEnumerator DelayKeyTurn(bool restoreBombTimer)
+	private IEnumerator DelayKeyTurn(bool restoreBombTimer, bool causeStrikeIfWrongTime = true, bool bypassSettings = false)
 	{
-		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
-		float currentBombTime = BombCommander.CurrentTimer;
-		BombCommander.timerComponent.TimeRemaining = time + 0.5f + Time.deltaTime;
+		Animator keyAnimator = (Animator) _keyAnimatorField.GetValue(BombComponent.GetComponent(_componentType));
+		KMAudio keyAudio = (KMAudio) _keyAudioField.GetValue(BombComponent.GetComponent(_componentType));
+		int time = (int) _targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
+
+		if (!restoreBombTimer)
+		{
+			BombCommander.timerComponent.TimeRemaining = time + 0.5f + Time.deltaTime;
+			yield return null;
+		}
+		else if (causeStrikeIfWrongTime && time != (int) Mathf.Floor(BombCommander.timerComponent.TimeRemaining))
+		{
+			BombComponent.GetComponent<KMBombModule>().HandleStrike();
+			keyAnimator.SetTrigger("WrongTurn");
+			keyAudio.PlaySoundAtTransform("WrongKeyTurnFK", BombComponent.transform);
+			yield return null;
+			if (!(TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate || bypassSettings) || (bool) _solvedField.GetValue(BombComponent.GetComponent(_componentType)))
+			{
+				yield break;
+			}
+		}
+
+		BombComponent.GetComponent<KMBombModule>().HandlePass();
+		_keyUnlockedField.SetValue(BombComponent.GetComponent(_componentType), true);
+		_solvedField.SetValue(BombComponent.GetComponent(_componentType), true);
+		keyAnimator.SetBool("IsUnlocked", true);
+		keyAudio.PlaySoundAtTransform("TurnTheKeyFX", BombComponent.transform);
 		yield return null;
-		_onKeyTurnMethod.Invoke(BombComponent.GetComponent(_componentType), null);
-		if (restoreBombTimer)
-			BombCommander.timerComponent.TimeRemaining = currentBombTime;
 	}
 
-    private IEnumerator ReWriteTurnTheKey()
+	private IEnumerator ReWriteTurnTheKey()
     {
         yield return new WaitUntil(() => (bool) _activatedField.GetValue(BombComponent.GetComponent(_componentType)));
         yield return new WaitForSeconds(0.1f);
@@ -65,14 +87,15 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 		((KMSelectable)_lock).OnInteract = () => OnKeyTurn();
 		int expectedTime = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
-	    if (OtherModes.ZenModeOn)
+	    if (Math.Abs(expectedTime - BombCommander.CurrentTimer) < 30)
 	    {
-		    expectedTime = (int) (BombCommander.timerComponent.TimeRemaining + (BombCommander.timerComponent.TimeRemaining - expectedTime));
-			_targetTimeField.SetValue(BombComponent.GetComponent(_componentType), expectedTime);
-		    TextMesh display = (TextMesh)_displayField.GetValue(BombComponent.GetComponent(_componentType));
-		    display.text = string.Format("{0:00}:{1:00}", expectedTime / 60, expectedTime % 60);
+		    yield return new WaitForSeconds(0.1f);
+		    AttemptedForcedSolve = true;
+		    HandleForcedSolve();
+		    yield break;
 	    }
-	    while (!BombComponent.IsSolved)
+	    
+		while (!BombComponent.IsSolved)
         {
             int time = Mathf.FloorToInt(BombCommander.CurrentTimer);
             if (((!OtherModes.ZenModeOn && time < expectedTime) || (OtherModes.ZenModeOn && time > expectedTime)) &&
@@ -146,9 +169,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         _activatedField = _componentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
         _solvedField = _componentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
         _targetTimeField = _componentType.GetField("mTargetSecond", BindingFlags.NonPublic | BindingFlags.Instance);
-	    _displayField = _componentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
 		_stopAllCorotinesMethod = _componentType.GetMethod("StopAllCoroutines", BindingFlags.Public | BindingFlags.Instance);
-        _onKeyTurnMethod = _componentType.GetMethod("OnKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
+	    _keyAnimatorField = _componentType.GetField("KeyAnimator", BindingFlags.Public | BindingFlags.Instance);
+	    _keyUnlockedField = _componentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
+	    _keyAudioField = _componentType.GetField("mAudio", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
     private static Type _componentType = null;
@@ -156,9 +180,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
     private static FieldInfo _activatedField = null;
     private static FieldInfo _solvedField = null;
     private static FieldInfo _targetTimeField = null;
-	public static FieldInfo _displayField = null;
-    private static MethodInfo _stopAllCorotinesMethod = null;
-    private static MethodInfo _onKeyTurnMethod = null;
+	private static FieldInfo _keyAnimatorField = null;
+	private static FieldInfo _keyUnlockedField = null;
+	private static FieldInfo _keyAudioField = null;
+	private static MethodInfo _stopAllCorotinesMethod = null;
 
     private MonoBehaviour _lock = null;
 }
