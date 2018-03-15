@@ -312,8 +312,6 @@ public class TwitchBombHandle : MonoBehaviour
     #region Private Methods
     private bool IsAuthorizedDefuser(string userNickName)
     {
-        if (userNickName.EqualsAny(nameText.text,"Bomb Factory"))
-            return true;
 	    return MessageResponder.IsAuthorizedDefuser(userNickName);
     }
 
