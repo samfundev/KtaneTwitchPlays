@@ -628,6 +628,13 @@ public abstract class ComponentSolver
 		return false;
 	}
 
+	protected void PrepareSilentSolve()
+	{
+		_delegatedSolveUserNickName = null;
+		_currentUserNickName = null;
+		_silentlySolve = true;
+	}
+
 	public void SolveSilently()
 	{
 		_delegatedSolveUserNickName = null;
@@ -639,16 +646,30 @@ public abstract class ComponentSolver
 			HandleForcedSolve(BombComponent);
 	}
 
+	protected virtual bool HandleForcedSolve()
+	{
+		_delegatedSolveUserNickName = null;
+		_currentUserNickName = null;
+		_silentlySolve = true;
+		_responded = true;
+		return false;
+	}
+
 	public static void HandleForcedSolve(TwitchComponentHandle handle)
 	{
 		try
 		{
-			if (handle?.Solver?.ForcedSolveMethod != null)
+			if (!(handle?.Solver?.AttemptedForcedSolve ?? false) && (handle?.Solver?.HandleForcedSolve() ?? false))
 			{
+				handle.Solver.AttemptedForcedSolve = true;
+				return;
+			}
+			if (!(handle?.Solver?.AttemptedForcedSolve ?? false) && handle?.Solver?.ForcedSolveMethod != null)
+			{
+				handle.Solver.AttemptedForcedSolve = true;
 				handle.Solver._delegatedSolveUserNickName = null;
 				handle.Solver._currentUserNickName = null;
 				handle.Solver._silentlySolve = true;
-				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.Solver.BombComponent, null);
 				try
 				{
 					handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
@@ -656,6 +677,7 @@ public abstract class ComponentSolver
 				catch (Exception ex)
 				{
 					DebugHelper.LogException(ex, "An exception occured while using the Forced Solve handler:");
+					CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.Solver.BombComponent, null);
 					foreach (MonoBehaviour behavior in handle.bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 					{
 						behavior.StopAllCoroutines();
@@ -975,6 +997,7 @@ public abstract class ComponentSolver
 	private bool _processingTwitchCommand = false;
 	private bool _responded = false;
 	private bool _zoom = false;
+	public bool AttemptedForcedSolve = false;
 
 	public TwitchComponentHandle ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
