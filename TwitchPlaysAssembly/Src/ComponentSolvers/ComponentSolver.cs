@@ -305,6 +305,8 @@ public abstract class ComponentSolver
 					if (selectable != null)
 						DoInteractionClick(selectable);
 					yield return new WaitForSeconds(0.1f);
+					if ((previousStrikeCount != StrikeCount && !DisableOnStrike) || Solved)
+						break;
 				}
 			}
 			else if (currentValue is Quaternion localQuaternion)
