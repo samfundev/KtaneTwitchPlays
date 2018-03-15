@@ -86,13 +86,14 @@ public class Factory : GameRoom
 
     public override IEnumerator ReportBombStatus()
     {
-	    IEnumerator baseIEnumerator;
 	    if (_gameroom.GetType() == _factoryStaticModeType)
 	    {
-		    baseIEnumerator = base.ReportBombStatus();
+		    IEnumerator baseIEnumerator = base.ReportBombStatus();
 			while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
 		    yield break;
 	    }
+	    InitializeOnLightsOn = false;
+	    
 
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
 		
@@ -108,15 +109,25 @@ public class Factory : GameRoom
 	        int reward = TwitchPlaySettings.GetRewardBonus();
 			UnityEngine.Object currentBomb = GetBomb;
 
-			yield return new WaitForSeconds(3.0f);
-	        bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
-	        IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
-	        if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f)
+			TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
+	        yield return new WaitUntil(() => timerComponent.IsActive);
+	        
+	        if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f || OtherModes.ZenModeOn)
 	        {
-		        baseIEnumerator = base.ReportBombStatus();
-		        while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
+		        yield return null;
+				InitializeGameModes(true);
 			}
-	        if (TwitchPlaySettings.data.EnableAutomaticEdgework)
+
+			bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
+	        IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
+	        if (OtherModes.ZenModeOn)
+	        {
+		        BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!enablecamerawall");
+		        BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
+		        BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
+	        }
+
+			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 	        {
 		        bombHandle.bombCommander.FillEdgework();
 	        }
@@ -145,24 +156,33 @@ public class Factory : GameRoom
 	        IRCConnection.Instance.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRewardBonus(reward);
 
-	        bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
-	        while (bombHold.MoveNext())
-	        {
-		        yield return bombHold.Current;
-	        }
-
-			yield return new WaitUntil(() => currentBomb != GetBomb);
 	        foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
 	        {
-				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
+		        //If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
 		        BombMessageResponder.moduleCameras.DetachFromModule(handle.bombComponent);
 	        }
+
+			while (currentBomb == GetBomb)
+	        {
+				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
+		        while (bombHold.MoveNext()) yield return bombHold.Current;
+		        yield return new WaitForSeconds(0.1f);
+		        bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
+		        while (bombHold.MoveNext()) yield return bombHold.Current;
+		        yield return new WaitForSeconds(0.1f);
+			}
 
 			bombHandle.StartCoroutine(DestroyBomb(currentBomb));
 
 	        if (GetBomb == null) continue;
 	        Bomb bomb = (Bomb)_internalBombProperty.GetValue(GetBomb, null);
 	        InitializeBomb(bomb);
+
+	        if (OtherModes.ZenModeOn)
+	        {
+				if (bombHandle.bombCommander.CurrentTimer < (bombHandle.bombCommander.NumberModules * 4))
+					bombHandle.bombCommander.CurrentTimer = bombHandle.bombCommander.NumberModules * 4;
+			}
         }
     }
 
