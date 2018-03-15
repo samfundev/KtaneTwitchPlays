@@ -29,7 +29,7 @@ public class TwitchPlaySettingsData
 	public int BombLiveMessageDelay = 0;
 	public int ClaimCooldownTime = 30;
 	public int ModuleClaimLimit = 2;
-	public int DynamicScorePercentage = 50;
+	public float DynamicScorePercentage = 0.5f;
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);

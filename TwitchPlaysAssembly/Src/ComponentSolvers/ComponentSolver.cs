@@ -501,7 +501,7 @@ public abstract class ComponentSolver
 				switch (modInfo.moduleScore)
 				{
 					case 0:
-						moduleScore = (int) ((BombCommander.bombSolvableModules) * (TwitchPlaySettings.data.DynamicScorePercentage / 100.0f));
+						moduleScore = (int) (BombCommander.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 					default:
 						moduleScore = 5;
