@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Assets.Scripts.Missions;
+using TwitchPlaysAssembly.Helpers;
 using UnityEngine;
 
 public class TwitchPlaysService : MonoBehaviour
@@ -75,6 +76,7 @@ public class TwitchPlaysService : MonoBehaviour
 	{
 		_coroutineQueue.StopQueue();
 		_coroutineQueue.CancelFutureSubcoroutines();
+		_coroutineQueue.StopForcedSolve();
 		StopAllCoroutines();
 	}
 
@@ -118,7 +120,8 @@ public class TwitchPlaysService : MonoBehaviour
 	    _coroutinesToStart.Enqueue(MiscellaneousMessageResponder.FindHoldables());
         _coroutineQueue.StopQueue();
         _coroutineQueue.CancelFutureSubcoroutines();
-        StopAllCoroutines();
+	    _coroutineQueue.StopForcedSolve();
+		StopAllCoroutines();
 	    while (_coroutinesToStart.Count > 0)
 		    StartCoroutine(_coroutinesToStart.Dequeue());
 

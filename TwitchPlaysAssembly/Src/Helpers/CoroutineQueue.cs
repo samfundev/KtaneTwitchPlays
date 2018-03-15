@@ -7,6 +7,7 @@ public class CoroutineQueue : MonoBehaviour
     private void Awake()
     {
         _coroutineQueue = new Queue<IEnumerator>();
+	    _forceSolveQueue = new Queue<IEnumerator>();
         _bombIDProcessed = new Queue<int>();
     }  
 
@@ -17,7 +18,17 @@ public class CoroutineQueue : MonoBehaviour
             _processing = true;
             _activeCoroutine = StartCoroutine(ProcessQueueCoroutine());
         }
+	    if (!_processingForcedSolve && _forceSolveQueue.Count > 0)
+	    {
+		    _processingForcedSolve = true;
+		    _activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
+	    }
     }
+
+	public static void AddForcedSolve(IEnumerator subcoroutine)
+	{
+		_forceSolveQueue.Enqueue(subcoroutine);
+	}
 
     public void AddToQueue(IEnumerator subcoroutine)
     {
@@ -49,6 +60,17 @@ public class CoroutineQueue : MonoBehaviour
         CoroutineCanceller.ResetCancel();
     }
 
+	public void StopForcedSolve()
+	{
+		if (_activeForceSolveCoroutine != null)
+		{
+			StopCoroutine(_activeForceSolveCoroutine);
+			_activeForceSolveCoroutine = null;
+		}
+		_processingForcedSolve = false;
+		_forceSolveQueue.Clear();
+	}
+
     private IEnumerator ProcessQueueCoroutine()
     {
         CoroutineCanceller.ResetCancel();
@@ -69,6 +91,25 @@ public class CoroutineQueue : MonoBehaviour
 
         CoroutineCanceller.ResetCancel();
     }
+
+	private IEnumerator ProcessForcedSolveCoroutine()
+	{
+		while (_forceSolveQueue.Count > 0)
+		{
+			IEnumerator coroutine = _forceSolveQueue.Dequeue();
+			while (coroutine.MoveNext())
+			{
+				yield return coroutine.Current;
+			}
+		}
+
+		_processingForcedSolve = false;
+		_activeForceSolveCoroutine = null;
+	}
+
+	private static Queue<IEnumerator> _forceSolveQueue = null;
+	private bool _processingForcedSolve = false;
+	private Coroutine _activeForceSolveCoroutine = null;
 
     private Queue<IEnumerator> _coroutineQueue = null;
     private bool _processing = false;
