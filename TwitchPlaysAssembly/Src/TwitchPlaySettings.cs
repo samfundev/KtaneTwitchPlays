@@ -38,6 +38,7 @@ public class TwitchPlaySettingsData
 	public bool DisableTurnTheKeysSoftLock = false;
 	public bool EnforceSolveAllBeforeTurningKeys = true;
 	public bool LogUploaderShortUrls = false;
+	public bool SuperStreamerIgnoreClaimLimit = false;
 
 	public bool EnableTimeModeForEveryone = false;
 	public int TimeModeStartingTime = 5;

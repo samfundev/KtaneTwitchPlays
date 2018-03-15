@@ -388,7 +388,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				AddToClaimQueue(userNickName);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, PlayerName, HeaderText));
 		}
-		if (ClaimedList.Count(nick => nick.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved)
+		if (ClaimedList.Count(nick => nick.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
 			AddToClaimQueue(userNickName);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
