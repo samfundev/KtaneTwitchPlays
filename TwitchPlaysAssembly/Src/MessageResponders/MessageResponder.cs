@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 public abstract class MessageResponder : MonoBehaviour
@@ -19,6 +20,8 @@ public abstract class MessageResponder : MonoBehaviour
 
 	public static bool IsAuthorizedDefuser(string userNickName, bool silent=false)
 	{
+	    if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName))
+		    return true;
 		BanData ban = UserAccess.IsBanned(userNickName);
 		if (ban != null)
 		{
@@ -31,6 +34,7 @@ public abstract class MessageResponder : MonoBehaviour
 			else
 			{
 				int secondsRemaining = (int)(ban.BanExpiry - DateTime.Now.TotalSeconds());
+
 				int daysRemaining = secondsRemaining / 86400; secondsRemaining %= 86400;
 				int hoursRemaining = secondsRemaining / 3600; secondsRemaining %= 3600;
 				int minutesRemaining = secondsRemaining / 60; secondsRemaining %= 60;
