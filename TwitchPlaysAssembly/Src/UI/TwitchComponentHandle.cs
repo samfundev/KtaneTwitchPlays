@@ -364,7 +364,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public IEnumerator AutoAssignModule()
 	{
 		StartCoroutine(EndClaimCooldown());
-		while (!Solved)
+		while (!Solved && !Solver.AttemptedForcedSolve)
 		{
 			yield return new WaitForSeconds(0.1f);
 			if (PlayerName != null || ClaimQueue.Count == 0) continue;
@@ -382,6 +382,11 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule)
 	{
+		if (Solver.AttemptedForcedSolve)
+		{
+			return new Tuple<bool, string>(false, string.Format("Sorry, @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, PlayerName, HeaderText));
+		}
+
 		if (PlayerName != null)
 		{
 			if(!PlayerName.Equals(userNickName))
