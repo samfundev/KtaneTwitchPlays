@@ -210,20 +210,31 @@ public abstract class GameRoom
 
 	public static Vector3 CurrentCameraEulerAngles => SecondaryCamera.transform.localEulerAngles;
 
+	public bool InitializeOnLightsOn = true;
+	public void InitializeGameModes(bool lightsOn)
+	{
+		if (!lightsOn) return;
+		if (OtherModes.TimedModeOn)
+		{
+			OtherModes.SetMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
+		}
+
+		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+		foreach (TwitchBombHandle handle in bombHandles)
+		{
+			if (OtherModes.TimedModeOn)
+			{
+				handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
+			}
+			else if (OtherModes.ZenModeOn)
+			{
+				handle.bombCommander.timerComponent.TimeRemaining = 1;
+			}
+		}
+	}
+
 	public virtual IEnumerator ReportBombStatus()
     {
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
-	    foreach (TwitchBombHandle handle in bombHandles)
-	    {
-		    if (OtherModes.TimedModeOn)
-		    {
-			    handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
-		    }
-		    else if (OtherModes.ZenModeOn)
-		    {
-			    handle.bombCommander.timerComponent.TimeRemaining = 1;
-		    }
-	    }
 		yield break;
     }
 
