@@ -309,4 +309,9 @@ public static class UserAccess
 		return UserAccessData.Instance.UserAccessLevel;
 	}
 
+	public static Dictionary<string, BanData> GetBans()
+	{
+		return UserAccessData.Instance.Bans;
+	}
+
 }

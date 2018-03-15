@@ -83,10 +83,10 @@ public class TwitchPlaySettingsData
 		{ "vanilla", new ModuleDistributions { Vanilla = 1f, Modded = 0f, DisplayName = "Vanilla", MinModules = 1, MaxModules = 101 } },
 		{ "mods", new ModuleDistributions { Vanilla = 0f, Modded = 1f, DisplayName = "Modded", MinModules = 1, MaxModules = 101 } },
 		{ "mixed", new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Mixed", MinModules = 1, MaxModules = 101 } },
-		{ "lightmixed", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101 } },
+		{ "lightmixed", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101, Hidden = true } },
 		{ "mixedlight", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101 } },
 		{ "mixedheavy", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101 } },
-		{ "heavymixed", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101 } },
+		{ "heavymixed", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101, Hidden = true } },
 		{ "light", new ModuleDistributions { Vanilla = 0.8f, Modded = 0.2f, DisplayName = "Light", MinModules = 1, MaxModules = 101 } },
 		{ "heavy", new ModuleDistributions { Vanilla = 0.2f, Modded = 0.8f, DisplayName = "Heavy", MinModules = 1, MaxModules = 101 } },
 	};

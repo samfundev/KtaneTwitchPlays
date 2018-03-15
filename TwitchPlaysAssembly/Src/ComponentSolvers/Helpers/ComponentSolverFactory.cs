@@ -234,7 +234,7 @@ public static class ComponentSolverFactory
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, helpText = "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]", helpTextOverride = true, DoesTheRightThing = true };
-
+		
 		//Timwi (includes Perky/Konqi/Eluminate modules maintained by Timwi)
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 8 };

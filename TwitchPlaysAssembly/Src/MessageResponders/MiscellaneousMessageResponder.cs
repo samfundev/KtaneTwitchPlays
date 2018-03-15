@@ -372,6 +372,38 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			UserAccess.UnbanUser(match.Groups[1].Value, userNickName);
 		}
+		else if (text.RegexMatch(@"^(isbanned|banstats) (\S+)"))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				bool found = false;
+				string trimmed = text.Split(' ')[1];
+				List<string> target = trimmed.Split(';').ToList();
+				Dictionary<string, BanData> bandata = UserAccess.GetBans();
+				foreach (string person in target)
+				{
+					if (bandata.Keys.Contains(person))
+					{
+						bandata.TryGetValue(person, out BanData value);
+						if (value.BanExpiry == double.PositiveInfinity)
+						{
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}, Reason: {2}. This ban is permanant.", person, value.BannedBy, value.BannedReason);
+						} else
+						{
+							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}, Reason: {2}, Ban duration left: {3}.", person, value.BannedBy, value.BannedReason, durationleft);
+						}
+						found = true;
+					}
+				}
+				if (!found)
+				{
+					IRCConnection.Instance.SendMessage("The specified user was not found.");
+				}
+			}
+		}
 		else if (text.RegexMatch(@"^(?:add|remove) \S+ .+"))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
@@ -479,7 +511,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 1)
 				{
-					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden && !x.Key.Equals("lightmixed") && !x.Key.Equals("heavymixed")).Select(x => x.Key).ToArray();
+					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
 					IRCConnection.Instance.SendMessage(validDistributions.Any() 
 						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}" 
 						: "Sorry, !run <module_count> <distribution> has been disabled.");
