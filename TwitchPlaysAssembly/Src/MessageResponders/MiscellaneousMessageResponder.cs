@@ -519,7 +519,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 				if (split.Length == 1)
 				{
-					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden && !x.Key.Equals("lightmixed") && !x.Key.Equals("heavymixed") && !x.Key.Equals("zen")).Select(x => x.Key).ToArray();
+					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
 					IRCConnection.Instance.SendMessage(validDistributions.Any() 
 						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}" 
 						: "Sorry, !run <module_count> <distribution> has been disabled.");
@@ -530,11 +530,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 				{
 					if (!TwitchPlaySettings.data.ModDistributions.TryGetValue("zen", out ModuleDistributions zenModeDistribution))
 					{
-						zenModeDistribution = new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Zen Mode", MinModules = 1, MaxModules = GetMaximumModules(18) };
+						zenModeDistribution = new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Zen Mode", MinModules = 1, MaxModules = GetMaximumModules(18), Hidden = true };
 						TwitchPlaySettings.data.ModDistributions["zen"] = zenModeDistribution;
 					}
 					zenModeDistribution.MinModules = 1;
 					zenModeDistribution.MaxModules = GetMaximumModules(18);
+					zenModeDistribution.Hidden = true;
 					
 					Array.Resize(ref split, 3);
 					split[2] = "zen";
