@@ -159,7 +159,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Murder", moduleScore = 10 };
 		ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Sea Shells", moduleScore = 7 };
 		ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Shift", moduleScore = 8 };
-		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true, moduleScore = 6, moduleDisplayName = "Third Base" };
+		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base", moduleScore = 6  };
 
 		//AT_Bash / Bashly
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
@@ -192,7 +192,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "3D Maze", moduleScore = 16 };
 
 		//Mock Army
-		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", statusLightLeft = true, moduleScore = 3 };
+		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 3 };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 3 };
 
@@ -403,6 +403,13 @@ public static class ComponentSolverFactory
 		info.validCommands = regexList;
 	}
 
+	private static ModuleInformation GetDefaultInformation(string moduleType)
+	{
+		if(!DefaultModComponentSolverInformation.ContainsKey(moduleType))
+			AddDefaultModuleInformation(new ModuleInformation() {moduleID = moduleType});
+		return DefaultModComponentSolverInformation[moduleType];
+	}
+
 	public static void ResetModuleInformationToDefault(string moduleType)
 	{
 		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType)) return;
@@ -419,30 +426,73 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ModuleInformation GetModuleInfo(string moduleType)
+	public static ModuleInformation GetModuleInfo(string moduleType, bool writeData=true)
 	{
 		if (!ModComponentSolverInformation.ContainsKey(moduleType))
 		{
 			ModComponentSolverInformation[moduleType] = new ModuleInformation();
 		}
-		ModComponentSolverInformation[moduleType].moduleID = moduleType;
+		ModuleInformation info = ModComponentSolverInformation[moduleType];
+		ModuleInformation defInfo = GetDefaultInformation(moduleType);
+		info.moduleID = moduleType;
+		defInfo.moduleID = moduleType;
+		
+		if(!info.helpTextOverride)
+		{
+			ModuleData.DataHasChanged |= info.helpText.TryEquals(defInfo.helpText);
+			info.helpText = defInfo.helpText;
+		}
+
+		if (!info.manualCodeOverride)
+		{
+			ModuleData.DataHasChanged |= info.manualCode.TryEquals(defInfo.manualCode);
+			info.manualCode = defInfo.manualCode;
+		}
+
+		if (!info.statusLightOverride)
+		{
+			ModuleData.DataHasChanged |= info.statusLightDown == defInfo.statusLightDown;
+			ModuleData.DataHasChanged |= info.statusLightLeft == defInfo.statusLightLeft;
+			info.statusLightDown = defInfo.statusLightDown;
+			info.statusLightLeft = defInfo.statusLightLeft;
+		}
+
+		if (ModuleData.DataHasChanged && writeData && !info.builtIntoTwitchPlays)
+		{
+			ModuleData.WriteDataToFile();
+		}
+
 		return ModComponentSolverInformation[moduleType];
 	}
 
-	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode=null)
+	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode=null, bool statusLightLeft = false, bool statusLightBottom = false)
 	{
-		ModuleInformation info = GetModuleInfo(moduleType);
+		ModuleInformation info = GetModuleInfo(moduleType, false);
+		ModuleInformation defInfo = GetDefaultInformation(moduleType);
 
-		if (!info.helpTextOverride || string.IsNullOrEmpty(info.helpText))
+		if (!info.helpTextOverride)
 		{
 			ModuleData.DataHasChanged |= !info.helpText.TryEquals(helpText);
 			info.helpText = helpText;
 		}
-		if (!info.manualCodeOverride || string.IsNullOrEmpty(info.manualCode))
+		if (!info.manualCodeOverride)
 		{
 			ModuleData.DataHasChanged |= !info.manualCode.TryEquals(manualCode);
 			info.manualCode = manualCode;
 		}
+		if (!info.statusLightOverride)
+		{
+			ModuleData.DataHasChanged |= info.statusLightLeft == statusLightLeft;
+			ModuleData.DataHasChanged |= info.statusLightDown == statusLightBottom;
+			info.statusLightLeft = statusLightLeft;
+			info.statusLightDown = statusLightBottom;
+		}
+
+		defInfo.helpText = helpText;
+		defInfo.manualCode = manualCode;
+		defInfo.statusLightLeft = statusLightLeft;
+		defInfo.statusLightDown = statusLightBottom;
+
 		if (ModuleData.DataHasChanged)
 			ModuleData.WriteDataToFile();
 
@@ -490,7 +540,7 @@ public static class ComponentSolverFactory
 
 			if (!i.builtIntoTwitchPlays)
 			{
-				i.statusLightOverride = info.statusLightOverride;
+			i.statusLightOverride = info.statusLightOverride;
 				i.validCommandsOverride = info.validCommandsOverride;
 				i.DoesTheRightThing = info.DoesTheRightThing;
 				i.validCommands = info.validCommands;

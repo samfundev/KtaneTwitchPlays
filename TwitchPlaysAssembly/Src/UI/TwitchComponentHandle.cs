@@ -73,6 +73,9 @@ public class TwitchComponentHandle : MonoBehaviour
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
 	private TwitchComponentHandleData _data;
 	private bool claimCooldown = true;
+	private bool statusLightLeft = false;
+	private bool statusLightDown = false;
+	private Vector3 originalIDPosition = Vector3.zero;
 	#endregion
 
 	#region Private Statics
@@ -86,6 +89,16 @@ public class TwitchComponentHandle : MonoBehaviour
 	#endregion
 
 	#region Unity Lifecycle
+	private void Update()
+	{
+		if (Solver.modInfo.statusLightLeft == statusLightLeft && Solver.modInfo.statusLightDown == statusLightDown || originalIDPosition == Vector3.zero) return;
+
+		Vector3 pos = originalIDPosition;
+		CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.modInfo.statusLightDown ? -pos.z : pos.z);
+		statusLightLeft = Solver.modInfo.statusLightLeft;
+		statusLightDown = Solver.modInfo.statusLightDown;
+	}
+
 	private void Awake()
 	{
 		_data = GetComponent<TwitchComponentHandleData>();
@@ -110,7 +123,10 @@ public class TwitchComponentHandle : MonoBehaviour
 				Solver.Code = Code;
 				Solver.ComponentHandle = this;
 				Vector3 pos = CanvasGroupMultiDecker.transform.localPosition;
+				originalIDPosition = pos;
 				CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.modInfo.statusLightDown ? -pos.z : pos.z);
+				statusLightLeft = Solver.modInfo.statusLightLeft;
+				statusLightDown = Solver.modInfo.statusLightDown;
 				RectTransform rectTransform = ClaimedUserMultiDecker.rectTransform;
 				rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(Solver.modInfo.statusLightLeft ? 1 : 0, Solver.modInfo.statusLightDown ? 0 : 1);
 				rectTransform.pivot = new Vector2(Solver.modInfo.statusLightLeft ? 0 : 1, Solver.modInfo.statusLightDown ? 0 : 1);
