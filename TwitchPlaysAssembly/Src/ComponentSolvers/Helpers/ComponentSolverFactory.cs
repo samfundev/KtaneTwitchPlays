@@ -537,10 +537,10 @@ public static class ComponentSolverFactory
 
 			i.helpTextOverride = info.helpTextOverride;
 			i.manualCodeOverride = info.manualCodeOverride;
+			i.statusLightOverride = info.statusLightOverride;
 
 			if (!i.builtIntoTwitchPlays)
 			{
-			i.statusLightOverride = info.statusLightOverride;
 				i.validCommandsOverride = info.validCommandsOverride;
 				i.DoesTheRightThing = info.DoesTheRightThing;
 				i.validCommands = info.validCommands;
