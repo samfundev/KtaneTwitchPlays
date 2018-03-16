@@ -92,6 +92,8 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 			{
 				Animator keyAnimator = (Animator)_keyAnimatorField.GetValue(BombComponent.GetComponent(_componentType));
 				KMAudio keyAudio = (KMAudio)_keyAudioField.GetValue(BombComponent.GetComponent(_componentType));
+				AttemptedForcedSolve = true;
+				PrepareSilentSolve();
 				BombComponent.GetComponent<KMBombModule>().HandlePass();
 				_keyUnlockedField.SetValue(BombComponent.GetComponent(_componentType), true);
 				_solvedField.SetValue(BombComponent.GetComponent(_componentType), true);
