@@ -11,7 +11,7 @@ public class CryptographyComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
         _buttons = (KMSelectable[])_keysField.GetValue(bombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

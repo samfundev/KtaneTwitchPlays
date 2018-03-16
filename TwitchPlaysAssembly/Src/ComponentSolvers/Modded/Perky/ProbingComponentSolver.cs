@@ -9,7 +9,7 @@ public class ProbingComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
         _wires = (MonoBehaviour[])_wiresField.GetValue(bombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

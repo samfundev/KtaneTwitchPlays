@@ -9,7 +9,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 	    _button = (KMSelectable) _buttonField.GetValue(bombComponent.GetComponent(_componentType));
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)");
 	    Selectable selectable = bombComponent.GetComponent<Selectable>();
 	    selectable.OnCancel += () => { _selectedField.SetValue(bombComponent.GetComponent(_componentType), false); return true; };
 

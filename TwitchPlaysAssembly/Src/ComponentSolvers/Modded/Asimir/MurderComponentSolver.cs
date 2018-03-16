@@ -14,7 +14,7 @@ public class MurderComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 	    _display = (TextMesh[]) _displayField.GetValue(_component);
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.");
     }
 
     IEnumerable CycleThroughCategory(int index, string search = null)

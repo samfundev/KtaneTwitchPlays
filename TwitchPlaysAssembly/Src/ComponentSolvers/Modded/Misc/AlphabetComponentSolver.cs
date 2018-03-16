@@ -10,7 +10,7 @@ public class AlphabetComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} press A B C D.");
     }
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

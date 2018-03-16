@@ -14,7 +14,7 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
         _upButton = (MonoBehaviour)_upButtonField.GetValue(_component);
         _downButton = (MonoBehaviour)_downButtonField.GetValue(_component);
         _transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(_component);
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]");
 		
 		if (bombCommander != null)
 		{

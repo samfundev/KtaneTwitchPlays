@@ -11,7 +11,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
         _lock = (MonoBehaviour)_lockField.GetValue(BombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the key at specified time with !{0} turn 8:29");
 	    bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
 		bombComponent.GetComponent<KMBombModule>().OnActivate = OnActivate;
 	}

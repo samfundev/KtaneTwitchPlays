@@ -12,7 +12,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 	{
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
 		
 		if (bombCommander != null)
 		{

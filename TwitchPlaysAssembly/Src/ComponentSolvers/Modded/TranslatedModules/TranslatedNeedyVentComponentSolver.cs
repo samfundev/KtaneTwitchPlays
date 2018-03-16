@@ -10,7 +10,7 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 	{
         _yesButton = (MonoBehaviour)_yesButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
         _noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 	    
 		if (bombCommander != null)
 		{

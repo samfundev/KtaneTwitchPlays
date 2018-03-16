@@ -12,7 +12,7 @@ public class NeedyQuizComponentSolver : ComponentSolver
         _noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_componentSolverType));
         _display = (TextMesh) _displayField.GetValue(bombComponent.GetComponent(_componentSolverType));
 
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the question with !{0} Y or !{0} N.", "Answering%20Questions");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

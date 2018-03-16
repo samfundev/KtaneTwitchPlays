@@ -8,7 +8,7 @@ public class KeypadComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.buttons;
-        modInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver");
+        modInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver", "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", "Keypad");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

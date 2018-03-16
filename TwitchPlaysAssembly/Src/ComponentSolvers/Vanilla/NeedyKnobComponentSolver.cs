@@ -6,7 +6,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
 		_pointingKnob = bombComponent.PointingKnob;
-        modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver");
+        modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver", "!{0} rotate 3, !{0} turn 3 [rotate the knob 3 quarter-turns]", "Knob");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

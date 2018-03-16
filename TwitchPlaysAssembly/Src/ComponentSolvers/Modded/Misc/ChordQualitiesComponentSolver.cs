@@ -14,7 +14,7 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 		_selectButton = (KMSelectable) _selectButtonField.GetValue(_component);
 		_submitButton = (KMSelectable) _submitButtonField.GetValue(_component);
 		currentPosition = (int) _positionField.GetValue(_component);
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a chord using !{0} submit A B C# D");
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

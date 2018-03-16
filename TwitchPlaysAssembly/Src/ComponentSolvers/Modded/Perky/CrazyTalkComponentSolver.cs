@@ -9,7 +9,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
         _toggle = (MonoBehaviour)_toggleField.GetValue(bombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Toggle the switch down and up with !{0} toggle 4 5. The order is down, then up.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

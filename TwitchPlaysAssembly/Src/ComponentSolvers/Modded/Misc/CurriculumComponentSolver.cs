@@ -8,7 +8,7 @@ public class CurriculumComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.");
     }
 
 	int[] buttonOffset = new int[6] { 0, 0, 0, 0, 0, 0 };

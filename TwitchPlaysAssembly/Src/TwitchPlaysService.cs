@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Prototype.GasVent;
+using Assets.Scripts.Components.VennWire;
 using Assets.Scripts.Missions;
 using TwitchPlaysAssembly.Helpers;
 using UnityEngine;

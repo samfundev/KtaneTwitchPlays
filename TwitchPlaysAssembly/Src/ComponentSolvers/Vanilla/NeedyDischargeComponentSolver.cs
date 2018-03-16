@@ -7,7 +7,7 @@ public class NeedyDischargeComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
 		_dischargeButton = bombComponent.DischargeButton;
-        modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver");
+        modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver", "!{0} hold 7 [hold the lever for 7 seconds]", "Capacitor Discharge");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

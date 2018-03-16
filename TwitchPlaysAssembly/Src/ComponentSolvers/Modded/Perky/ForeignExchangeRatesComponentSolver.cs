@@ -10,7 +10,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
         _buttons = (MonoBehaviour[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

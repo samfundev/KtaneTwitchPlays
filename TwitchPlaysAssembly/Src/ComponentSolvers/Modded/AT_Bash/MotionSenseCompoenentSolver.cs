@@ -10,7 +10,7 @@ public class MotionSenseComponentSolver : ComponentSolver
 	{
         _component = bombComponent.GetComponent(_componentType);
         _needy = (KMNeedyModule) _needyField.GetValue(_component);
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
 		_needy.OnNeedyActivation += () =>
 		{
 			IRCConnection.Instance.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");

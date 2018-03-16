@@ -159,4 +159,20 @@ public static class GeneralExtensions
 	{
 		return TimeSpan.FromTicks(datetime.Ticks).TotalSeconds;
 	}
+
+	public static bool TryEquals(this string str, string value)
+	{
+		if (!string.IsNullOrEmpty(str) && !string.IsNullOrEmpty(value)) return str.Equals(value);
+		if (str == null && value == null) return true;
+		if (str == string.Empty && value == string.Empty) return true;
+		return false;
+	}
+
+	public static bool TryEquals(this string str, string value, StringComparison comparisonType)
+	{
+		if (!string.IsNullOrEmpty(str) && !string.IsNullOrEmpty(value)) return str.Equals(value, comparisonType);
+		if (str == null && value == null) return true;
+		if (str == string.Empty && value == string.Empty) return true;
+		return false;
+	}
 }

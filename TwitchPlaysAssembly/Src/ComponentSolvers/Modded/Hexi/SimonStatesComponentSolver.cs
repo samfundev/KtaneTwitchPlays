@@ -13,7 +13,7 @@ public class SimonStatesComponentSolver : ComponentSolver
 	{
         c = bombComponent.GetComponent(_componentType);
         _buttons = new MonoBehaviour[4];
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Enter the response with !{0} press B Y R G.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

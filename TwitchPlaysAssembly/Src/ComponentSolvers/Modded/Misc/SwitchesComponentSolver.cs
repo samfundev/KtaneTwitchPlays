@@ -10,7 +10,7 @@ public class SwitchesComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip switches using !{0} flip 1 5 3 2.");
 	}
 	
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

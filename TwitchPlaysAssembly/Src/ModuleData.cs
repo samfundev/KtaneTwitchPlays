@@ -37,8 +37,6 @@ public class ModuleInformation
 	public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
 	public bool ShouldSerializevalidCommands() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializeDoesTheRightThing() { return !builtIntoTwitchPlays; }
-    public bool ShouldSerializehelpTextOverride() { return !builtIntoTwitchPlays; }
-    public bool ShouldSerializemanualCodeOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializestatusLightOverride() { return !builtIntoTwitchPlays; }
     public bool ShouldSerializevalidCommandsOverride() { return !builtIntoTwitchPlays; }
 }

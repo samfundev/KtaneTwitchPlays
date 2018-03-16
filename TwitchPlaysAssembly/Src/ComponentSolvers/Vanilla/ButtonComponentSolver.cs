@@ -9,26 +9,13 @@ public class ButtonComponentSolver : ComponentSolver
     public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent) :
         base(bombCommander, bombComponent)
 	{
-        ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver");
-        ModuleInformation squarebuttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonV2");
+        ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver", "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]");
+        ModuleInformation buttonInfoModified = ComponentSolverFactory.GetModuleInfo("ButtonComponentModifiedSolver", "Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.");
 
         bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
         _button = bombComponent.button;
-        modInfo = new ModuleInformation
-        {
-            builtIntoTwitchPlays = buttonInfo.builtIntoTwitchPlays,
-            CameraPinningAlwaysAllowed = buttonInfo.CameraPinningAlwaysAllowed,
-            helpText = VanillaRuleModifier.IsSeedVanilla()
-                ? buttonInfo.helpText
-                : squarebuttonInfo.helpText,
-            manualCode = buttonInfo.manualCode,
-            moduleDisplayName = buttonInfo.moduleDisplayName,
-            moduleID = buttonInfo.moduleID,
-            moduleScore = VanillaRuleModifier.IsSeedVanilla()
-                ? buttonInfo.moduleScore
-                : squarebuttonInfo.moduleScore
-        };
-    }
+		modInfo = VanillaRuleModifier.IsSeedVanilla() ? buttonInfo : buttonInfoModified;
+	}
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {

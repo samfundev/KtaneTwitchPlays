@@ -10,7 +10,7 @@ public class RoundKeypadComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
         _buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press 2 4 6 7 8. Button 1 is the top most button, and are numbered in clockwise order.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

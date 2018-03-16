@@ -9,7 +9,7 @@ public class SimonComponentSolver : ComponentSolver
         base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.buttons;
-        modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver");
+        modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver", "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

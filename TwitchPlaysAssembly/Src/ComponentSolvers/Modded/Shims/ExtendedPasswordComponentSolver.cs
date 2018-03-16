@@ -10,7 +10,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]");
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

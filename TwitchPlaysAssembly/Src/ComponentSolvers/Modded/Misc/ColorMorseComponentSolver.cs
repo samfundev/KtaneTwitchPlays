@@ -10,7 +10,7 @@ public class ColorMorseComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit some morse code using !{0} transmit ....- --...");
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

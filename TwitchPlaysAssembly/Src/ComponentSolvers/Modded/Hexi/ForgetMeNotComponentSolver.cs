@@ -10,7 +10,7 @@ public class ForgetMeNotComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = (Array)_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Enter forget me not sequence with !{0} press 5 3 1 8 2 0... The Sequence length depends on how many modules were on the bomb.");
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

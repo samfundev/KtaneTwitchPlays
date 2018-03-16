@@ -6,7 +6,7 @@ public class NeedyBeerComponentSolver : ComponentSolver
 	public NeedyBeerComponentSolver(BombCommander bombCommander, BombComponent bombComponent) 
 		: base(bombCommander, bombComponent)
 	{
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Refill that beer with !{0} refill.");
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

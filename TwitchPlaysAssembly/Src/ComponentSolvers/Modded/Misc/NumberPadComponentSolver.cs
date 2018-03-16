@@ -34,7 +34,7 @@ public class NumberPadComponentSolver : ComponentSolver
             throw new NotSupportedException("Component had null KMSelectables.");
         }
 
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} submit 4236.");
 	}
 
 	int? ButtonToIndex(string button)

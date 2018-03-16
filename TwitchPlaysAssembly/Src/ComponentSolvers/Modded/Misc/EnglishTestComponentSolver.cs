@@ -11,7 +11,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 	    _englishTestCompoent = bombComponent.GetComponent(_componentType);
 	    selectButton = findChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
 	    submitButton = findChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)");
     }
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

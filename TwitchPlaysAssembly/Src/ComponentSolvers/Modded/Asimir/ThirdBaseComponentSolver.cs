@@ -13,7 +13,7 @@ public class ThirdBaseComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 	    _phrase = (string[]) _phraseField.GetValue(_component);
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)

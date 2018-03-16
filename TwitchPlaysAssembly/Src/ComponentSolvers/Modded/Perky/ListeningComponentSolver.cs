@@ -44,7 +44,7 @@ public class ListeningComponentSolver : ComponentSolver
             throw new NotSupportedException("Component had null KMSelectables.");
         }
 
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Listen to the sound with !{0} press play. Enter the response with !{0} press $ & * * #.");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
