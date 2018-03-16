@@ -129,10 +129,10 @@ public static class ComponentSolverFactory
 		 * strikePenalty - The number of points the module will take away from the defuser on a strike.
 		 * moduleScoreIsDynamic - Only used in limited cases. If true, moduleScore will define the scoring rules that apply.
 		 * 
-		 * helpTextOverride - Specifies whether the help text should not be overwritten by what is present in the module.
+		 * helpTextOverride - If true, the help text will not be overwritten by the help text in the module.
 		 * helpText - Instructions on how to interact with the module in twitch plays.
 		 * 
-		 * manualCodeOverride - Specifies whether the manual code should not be overwritten by what is present in the module.
+		 * manualCodeOverride - If true, the manual code will not be overwritten by the manual code in the module.
 		 * manualCode - If defined, is used instead of moduleDisplayName to look up the html/pdf manual.
 		 * 
 		 * statusLightOverride - Specifies an override of the ID# position / rotation. (This must be set if you wish to have the ID be anywhere other than
