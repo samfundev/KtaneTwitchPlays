@@ -325,23 +325,14 @@ public class BombMessageResponder : MessageResponder
 			TwitchComponentHandle.SolveUnsupportedModules(true);
 		}
 
-		if (OtherModes.ZenModeOn)
+		while (OtherModes.ZenModeOn)
 		{
 			foreach (BombCommander bomb in BombCommanders)
 			{
-				if (bomb.CurrentTimer < (bomb.NumberModules * 4))
-					bomb.CurrentTimer = bomb.NumberModules * 4;
+				if (bomb.timerComponent == null || bomb.timerComponent.GetRate() < 0) continue;
+				bomb.timerComponent.SetRateModifier(-bomb.timerComponent.GetRate());
 			}
-
-			while (OtherModes.ZenModeOn)
-			{
-				foreach (BombCommander bomb in BombCommanders)
-				{
-					if (bomb.timerComponent == null || bomb.timerComponent.GetRate() < 0) continue;
-					bomb.timerComponent.SetRateModifier(-bomb.timerComponent.GetRate());
-				}
-				yield return null;
-			}
+			yield return null;
 		}
 	}
 
@@ -619,8 +610,6 @@ public class BombMessageResponder : MessageResponder
 			{
 				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 				{
-					if (handle.bombCommander.CurrentTimer < (handle.bombCommander.NumberModules * 4) && OtherModes.ZenModeOn)
-						handle.bombCommander.CurrentTimer = (handle.bombCommander.NumberModules * 4);
 					if (!handle.Solved) handle.SolveSilently();
 				}
 				return;
@@ -649,8 +638,6 @@ public class BombMessageResponder : MessageResponder
 				{
 					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 					{
-						if (handle.bombCommander.CurrentTimer < (handle.bombCommander.NumberModules * 4) && OtherModes.ZenModeOn)
-							handle.bombCommander.CurrentTimer = (handle.bombCommander.NumberModules * 4);
 						if (!handle.Solved) handle.SolveSilently();
 					}
 					return;

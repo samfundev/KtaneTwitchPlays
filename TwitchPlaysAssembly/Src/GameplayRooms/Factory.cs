@@ -112,7 +112,7 @@ public class Factory : GameRoom
 			TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
 	        yield return new WaitUntil(() => timerComponent.IsActive);
 	        
-	        if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f || OtherModes.ZenModeOn)
+	        if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f)
 	        {
 		        yield return null;
 				InitializeGameModes(true);
@@ -177,12 +177,6 @@ public class Factory : GameRoom
 	        if (GetBomb == null) continue;
 	        Bomb bomb = (Bomb)_internalBombProperty.GetValue(GetBomb, null);
 	        InitializeBomb(bomb);
-
-	        if (OtherModes.ZenModeOn)
-	        {
-				if (bombHandle.bombCommander.CurrentTimer < (bombHandle.bombCommander.NumberModules * 4))
-					bombHandle.bombCommander.CurrentTimer = bombHandle.bombCommander.NumberModules * 4;
-			}
         }
     }
 
