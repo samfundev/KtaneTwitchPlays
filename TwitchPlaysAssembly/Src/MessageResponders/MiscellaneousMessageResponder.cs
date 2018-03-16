@@ -475,7 +475,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.Equals("tpmods", StringComparison.InvariantCultureIgnoreCase) || text.Equals("moderators", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (!TwitchPlaySettings.data.EnableModeratorsCommand) return;
+			if (!TwitchPlaySettings.data.EnableModeratorsCommand)
+			{
+				IRCConnection.Instance.SendMessage("The moderators command has been disabled.");
+				return;
+			}
 			Dictionary<string, AccessLevel> moderators = new Dictionary<string, AccessLevel>(UserAccess.GetUsers());
 			string finalmessage = "Current moderators: ";
 
