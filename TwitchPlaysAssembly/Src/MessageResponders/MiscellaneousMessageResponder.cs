@@ -503,7 +503,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						accessLevel = "Streamer";
 						break;
 				}
-				if (accessLevel != null && (user != "_UserNickName1" || user != "_UserNickName2")) finalmessage += user + ", " + userAccessLevel + "; ";
+				if (accessLevel != null && user != "_usernickname1" && user != "_usernickname2" && user != "") finalmessage += user + ", " + userAccessLevel + "; ";
 			}
 			IRCConnection.Instance.SendMessage(finalmessage);
 		}
