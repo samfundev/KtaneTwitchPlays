@@ -704,6 +704,11 @@ public static class ComponentSolverFactory
 			}
 			info.validCommands = regexList;
 		}
+		else
+		{
+			if(!info.validCommandsOverride)
+				info.validCommands = null;
+		}
 
 		if (displayName != null)
 			ModuleData.DataHasChanged |= !displayName.Equals(info.moduleDisplayName);
