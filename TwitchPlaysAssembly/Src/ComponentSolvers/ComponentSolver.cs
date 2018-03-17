@@ -252,9 +252,14 @@ public abstract class ComponentSolver
 					BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
 					break;
 				}
-				else if (currentString.ToLowerInvariant().EqualsAny("elevator music", "hold music", "waiting music"))
+				else if (currentString.RegexMatch(out match, "^(end |toggle )?(?:elevator|hold|waiting) music$"))
 				{
-					if (_musicPlayer == null)
+					if (match.Groups.Count > 1 && _musicPlayer != null)
+					{
+						_musicPlayer.StopMusic();
+						_musicPlayer = null;
+					}
+					else if (!currentString.StartsWith("end ", StringComparison.InvariantCultureIgnoreCase) && _musicPlayer == null)
 					{
 						_musicPlayer = MusicPlayer.StartRandomMusic();
 					}
