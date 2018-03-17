@@ -75,7 +75,6 @@ public abstract class ComponentSolver
 				try
 				{
 					moved = subcoroutine.MoveNext();
-
 					if (moved && modInfo.DoesTheRightThing) _responded = true;
 				}
 				catch (Exception e)
@@ -83,12 +82,31 @@ public abstract class ComponentSolver
 					HandleModuleException(e);
 					yield break;
 				}
+
+				//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here.
+				switch (subcoroutine.Current)
+				{
+					case string currentString:
+						if (SendToTwitchChat(currentString, userNickName) && !currentString.StartsWith("strikemessage", StringComparison.InvariantCultureIgnoreCase))
+						{
+							_responded = true;
+						}
+						break;
+				}
 			}
 
-			if (subcoroutine == null || !moved || Solved || beforeStrikeCount != StrikeCount)
+			if (subcoroutine == null || !moved || Solved || beforeStrikeCount != StrikeCount || _responded)
 			{
 				if (Solved || beforeStrikeCount != StrikeCount)
 				{
+					IRCConnection.Instance.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", ComponentHandle.Code, ComponentHandle.HeaderText);
+					if (modInfo != null)
+					{
+						modInfo.DoesTheRightThing = false;
+						ModuleData.DataHasChanged = true;
+						ModuleData.WriteDataToFile();
+					}
+
 					IEnumerator focusDefocus = BombCommander.Focus(Selectable, FocusDistance, FrontFace);
 					while (focusDefocus.MoveNext())
 					{
@@ -103,7 +121,7 @@ public abstract class ComponentSolver
 					}
 					yield return new WaitForSeconds(0.5f);
 				}
-				else
+				else if (!_responded)
 				{
 					ComponentHandle.CommandInvalid(userNickName);
 				}
@@ -208,30 +226,10 @@ public abstract class ComponentSolver
 						break;
 					}
 				}
-				else if (currentString.RegexMatch(out match, "^senddelayedmessage ([0-9]+(?:\\.[0-9])?) ((?:.|\\n)+)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
-				{
-					ComponentHandle.StartCoroutine(SendDelayedMessage(messageDelayTime, match.Groups[2].Value));
-				}
 				// Commands that allow messages to be sent to the chat.
-				else if ((match = Regex.Match(currentString, @"^(sendtochat|sendtochaterror|strikemessage) +(\S.*)$", RegexOptions.IgnoreCase)).Success)
+				else if (SendToTwitchChat(message, userNickName))
 				{
-					// Within the messages, allow variables:
-					// {0} = user’s nickname
-					// {1} = Code (module number)
-					var chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
-
-					switch (match.Groups[1].Value)
-					{
-						case "sendtochat":
-							IRCConnection.Instance.SendMessage(chatMsg);
-							break;
-						case "sendtochaterror":
-							ComponentHandle.CommandError(userNickName, chatMsg);
-							break;
-						case "strikemessage":
-							StrikeMessage = chatMsg;
-							break;
-					}
+					//handled
 				}
 				else if (currentString.StartsWith("add strike", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -424,6 +422,37 @@ public abstract class ComponentSolver
 	#endregion
 
 	#region Protected Helper Methods
+	protected bool SendToTwitchChat(string message, string userNickName)
+	{
+		// Within the messages, allow variables:
+		// {0} = user’s nickname
+		// {1} = Code (module number)
+		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9])?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
+		{
+			ComponentHandle.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(match.Groups[3].Value, userNickName, ComponentHandle.Code)));
+			return true;
+		}
+
+		if (!message.RegexMatch(out  match, @"^(sendtochat|sendtochaterror|strikemessage) +(\S(?:\S|\s)*)$")) return false;
+		
+		var chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
+
+		switch (match.Groups[1].Value)
+		{
+			case "sendtochat":
+				IRCConnection.Instance.SendMessage(chatMsg);
+				return true;
+			case "sendtochaterror":
+				ComponentHandle.CommandError(userNickName, chatMsg);
+				return true;
+			case "strikemessage":
+				StrikeMessage = chatMsg;
+				return true;
+			default:
+				return false;
+		}
+	}
+
 	protected IEnumerator SendDelayedMessage(float delay, string message)
 	{
 		yield return new WaitForSeconds(delay);
