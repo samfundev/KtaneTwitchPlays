@@ -662,19 +662,13 @@ public static class ComponentSolverFactory
 		ModuleInformation info = GetModuleInfo(moduleType);
 		if (FindHelpMessage(bombComponent, commandComponentType, out string help) && !info.helpTextOverride)
 		{
-			if (help != null)
-				ModuleData.DataHasChanged |= !help.Equals(info.helpText);
-			else
-				ModuleData.DataHasChanged |= info.helpText != null;
+			ModuleData.DataHasChanged |= !help.TryEquals(info.helpText);
 			info.helpText = help;
 		}
 
 		if (FindManualCode(bombComponent, commandComponentType, out string manual) && !info.manualCodeOverride)
 		{
-			if (manual != null)
-				ModuleData.DataHasChanged |= !manual.Equals(info.manualCode);
-			else
-				ModuleData.DataHasChanged |= info.manualCode != null;
+			ModuleData.DataHasChanged |= !manual.TryEquals(info.manualCode);
 			info.manualCode = manual;
 		}
 
@@ -699,7 +693,7 @@ public static class ComponentSolverFactory
 				else
 				{
 					for (int i = 0; i < regexList.Length; i++)
-						ModuleData.DataHasChanged |= !info.validCommands[i].Equals(regexList[i]);
+						ModuleData.DataHasChanged |= !info.validCommands[i].TryEquals(regexList[i]);
 				}
 			}
 			info.validCommands = regexList;
