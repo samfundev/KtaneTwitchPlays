@@ -542,7 +542,7 @@ public static class ComponentSolverFactory
 			if (!i.builtIntoTwitchPlays)
 			{
 				i.validCommandsOverride = info.validCommandsOverride;
-				i.DoesTheRightThing = info.DoesTheRightThing;
+				i.DoesTheRightThing |= info.DoesTheRightThing;
 				i.validCommands = info.validCommands;
 			}
 
