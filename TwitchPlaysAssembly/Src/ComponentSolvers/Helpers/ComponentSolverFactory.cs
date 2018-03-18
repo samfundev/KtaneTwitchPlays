@@ -75,13 +75,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 
 		//Misc Modules
-		ModComponentSolverCreators["alphabet"] = (bombCommander, bombComponent) => new AlphabetComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent) => new ChordQualitiesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["ColorMorseModule"] = (bombCommander, bombComponent) => new ColorMorseComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetteredKeysComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["NumberPad"] = (bombCommander, bombComponent) => new NumberPadComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent) => new ResistorsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent) => new SwitchesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent) => new CurriculumComponentSolver(bombCommander, bombComponent);
@@ -237,7 +235,7 @@ public static class ComponentSolverFactory
 		
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo modules maintained by Timwi)
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12 };
-		ModComponentSolverInformation["alphabet"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alphabet", moduleScore = 2 };
+		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet", moduleScore = 2, DoesTheRightThing = true };
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6 };
@@ -255,7 +253,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20 };
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Pad", moduleScore = 8 };
+		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad", moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["OnlyConnectModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["PerplexingWiresModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["PointOfOrderModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
@@ -283,7 +281,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7 };
-		ModComponentSolverInformation["poker"] = new ModuleInformation { moduleScore = 8 };
+		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["sonic"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
@@ -326,7 +324,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Mastermind Simple"] = new ModuleInformation { moduleScore = 12, manualCode = "Mastermind", DoesTheRightThing = true };
 		ModComponentSolverInformation["Mastermind Cruel"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
-		ModComponentSolverInformation["modernCypher"] = new ModuleInformation { moduleScore = 7 };
+		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
 		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
