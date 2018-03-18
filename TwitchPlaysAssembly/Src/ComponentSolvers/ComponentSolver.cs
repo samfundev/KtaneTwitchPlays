@@ -75,27 +75,30 @@ public abstract class ComponentSolver
 				try
 				{
 					moved = subcoroutine.MoveNext();
-					if (moved && modInfo.DoesTheRightThing) _responded = true;
+					if (moved && modInfo.DoesTheRightThing)
+					{
+						//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here, as the solver will yield break if
+						//it is one of these API commands returned.
+						switch (subcoroutine.Current)
+						{
+							case string currentString:
+								if (SendToTwitchChat(currentString, userNickName) && !currentString.StartsWith("strikemessage", StringComparison.InvariantCultureIgnoreCase))
+								{
+									yield break;
+								}
+								break;
+						}
+						_responded = true;
+					}
 				}
 				catch (Exception e)
 				{
 					HandleModuleException(e);
 					yield break;
 				}
-
-				//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here.
-				switch (subcoroutine.Current)
-				{
-					case string currentString:
-						if (SendToTwitchChat(currentString, userNickName) && !currentString.StartsWith("strikemessage", StringComparison.InvariantCultureIgnoreCase))
-						{
-							_responded = true;
-						}
-						break;
-				}
 			}
 
-			if (subcoroutine == null || !moved || Solved || beforeStrikeCount != StrikeCount || _responded)
+			if (subcoroutine == null || !moved || Solved || beforeStrikeCount != StrikeCount)
 			{
 				if (Solved || beforeStrikeCount != StrikeCount)
 				{
@@ -227,7 +230,7 @@ public abstract class ComponentSolver
 					}
 				}
 				// Commands that allow messages to be sent to the chat.
-				else if (SendToTwitchChat(message, userNickName))
+				else if (SendToTwitchChat(currentString, userNickName))
 				{
 					//handled
 				}
