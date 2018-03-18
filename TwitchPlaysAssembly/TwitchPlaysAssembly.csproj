@@ -88,7 +88,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\CurriculumComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EdgeworkComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EnglishTestComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\IceCreamConfirm.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\LetteredKeysComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\MicrocontrollerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NeedyBeerComponentSolver.cs" />
@@ -106,6 +105,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyAdvancedComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ExtendedPasswordComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Shims\IceCreamConfirm.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\SpareWizard\3DMazeComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedButtonComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedModuleHelper.cs" />

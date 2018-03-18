@@ -87,7 +87,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent) => new CurriculumComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent) => new EdgeworkComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
@@ -98,6 +97,7 @@ public static class ComponentSolverFactory
 
 		//Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 		ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
