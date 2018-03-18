@@ -396,8 +396,8 @@ public static class ComponentSolverFactory
 		AddDefaultModuleInformation(GetModuleInfo(moduleType));
 		ModuleInformation info = DefaultModComponentSolverInformation[moduleType];
 		info.moduleDisplayName = moduleDisplayName;
-		info.helpText = helpText;
-		info.manualCode = manualCode;
+		if(!string.IsNullOrEmpty(helpText)) info.helpText = helpText;
+		if(!string.IsNullOrEmpty(manualCode)) info.manualCode = manualCode;
 		info.statusLightLeft = statusLeft;
 		info.statusLightDown = statusBottom;
 		info.validCommands = regexList;
