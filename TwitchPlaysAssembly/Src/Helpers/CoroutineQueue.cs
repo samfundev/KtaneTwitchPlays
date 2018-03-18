@@ -80,10 +80,19 @@ public class CoroutineQueue : MonoBehaviour
             IEnumerator coroutine = _coroutineQueue.Dequeue();
             if (_bombIDProcessed.Count > 0)
                 CurrentBombID = _bombIDProcessed.Dequeue();
-            while (coroutine.MoveNext())
-            {
-                yield return coroutine.Current;
-            }
+	        bool result = true;
+	        while (result)
+	        {
+				try
+				{
+					result = coroutine.MoveNext();
+				}
+				catch
+				{
+					result = false;
+				}
+		        if (result) yield return coroutine.Current;
+	        }
         }
 
         _processing = false;
@@ -97,10 +106,31 @@ public class CoroutineQueue : MonoBehaviour
 		while (_forceSolveQueue.Count > 0)
 		{
 			IEnumerator coroutine = _forceSolveQueue.Dequeue();
-			while (coroutine.MoveNext())
+			bool result = true;
+			while (result)
 			{
-				yield return coroutine.Current;
-			}
+				try
+				{
+					result = coroutine.MoveNext();
+				}
+				catch
+				{
+					result = false;
+				}
+				if (!result) continue;
+
+				switch (coroutine.Current)
+				{
+					case bool boolean when boolean:
+						_forceSolveQueue.Enqueue(coroutine);
+						yield return null;
+						result = false;
+						break;
+					default:
+						yield return coroutine.Current;
+						break;
+				}
+			} 
 		}
 
 		_processingForcedSolve = false;
