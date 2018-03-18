@@ -82,7 +82,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\SimonStatesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\SquareButtonComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Kaneb\TwoBitsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\AlphabetComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ChordQualitiesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ColorMorseComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\CurriculumComponentSolver.cs" />
@@ -91,7 +90,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\LetteredKeysComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\MicrocontrollerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NeedyBeerComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\NumberPadComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ResistorsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\SwitchesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Mock Army\AnagramsComponentSolver.cs" />
