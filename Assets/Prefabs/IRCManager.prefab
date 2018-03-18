@@ -998,41 +998,16 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1909560465520334}
-  m_Text: 'dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk
-
-    dfsakljljkdsfjlk;dsjaflk;jfdskl;jklfd;sajkl;dsfajl;kjlkdsjk'
+  m_Text: "If you can read this text, then it means you have not built\r\nTwitch Plays
+    properly. Take a screenshot to refer to these\r\ninstructions.\r\n\r\n1. Close
+    Unity.\r\n2. You will have to restore TwitchPlaysAssembly.dll.meta.\r\n2a. If
+    using git desktop, right click on the deleted .meta file\r\n    and click on Discard
+    changes.\r\n2b. If using git commandline, Enter the following.\r\n   git co --
+    Assets/Plugins/Managed/TwitchPlaysAssembly.dll.meta\r\n3. Go to https://goo.gl/1cBFJV
+    and follow the instructions there.\r\n4. Run Keep Talking and Nobody Explodes.
+    \ Hopefully you won't\r\n   see these instructions anymore, and if you are in
+    the default\r\n   setup room, you should no longer see the switch on the top of\r\n
+    \  this IRC Connection manager holdable."
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
