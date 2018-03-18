@@ -32,3 +32,4 @@ sysinfo.txt
 /Assets/Editor/Resources/WorkshopItem.asset
 /Assets/Editor/Resources/WorkshopItem.asset.meta
 /Assets/Plugins/Managed/TwitchPlaysAssembly.*
+!/Assets/Plugins/Managed/TwitchPlaysAssembly.dll.meta
