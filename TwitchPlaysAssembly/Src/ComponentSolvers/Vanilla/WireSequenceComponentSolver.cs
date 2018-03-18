@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class WireSequenceComponentSolver : ComponentSolver
@@ -114,7 +115,38 @@ public class WireSequenceComponentSolver : ComponentSolver
         _currentPageField = _wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
-    private static Type _wireSequenceComponentType = null;
+	private IEnumerator SolveWireSequences()
+	{
+		yield return null;
+		if (BombComponent.IsSolved) yield break;
+		if (((WireSequenceComponent) BombComponent).IsChangingPage)
+		{
+			yield return new WaitForSeconds(0.1f);
+			CoroutineQueue.AddForcedSolve(SolveWireSequences());
+			yield break;
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			if (!CanInteractWithWire(i * 3)) continue;
+			for (int j = 0; j < 3; j++)
+			{
+				var wire = _wireSequence[(i*3)+j];
+				if (wire.NoWire || !RuleManager.Instance.WireSequenceRuleSet.ShouldBeSnipped(wire.Color, wire.Number, wire.To) || wire.IsSnipped) continue;
+				yield return DoInteractionClick(wire.Wire);
+			}
+			DoInteractionClick(_downButton);
+			CoroutineQueue.AddForcedSolve(SolveWireSequences());
+			yield break;
+		}
+	}
+
+	protected override bool HandleForcedSolve()
+	{
+		CoroutineQueue.AddForcedSolve(SolveWireSequences());
+		return true;
+	}
+
+	private static Type _wireSequenceComponentType = null;
     private static FieldInfo _wireSequenceField = null;
     private static FieldInfo _currentPageField = null;
 
