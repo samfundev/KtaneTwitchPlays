@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -9,7 +9,9 @@ public class IceCreamConfirm : ComponentSolver
 	base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		string help = (string)_HelpMessageField.GetValue(_component);
+
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), help + " Check the opening hours with !{0} hours.");
 		KMModSettings modSettings = bombComponent.GetComponent<KMModSettings>();
 		try
 		{
@@ -26,14 +28,9 @@ public class IceCreamConfirm : ComponentSolver
 	{
 		if (inputCommand.ToLowerInvariant().Equals("hours"))
 		{
-			yield return null;
-			if (!TwitchPlaySettings.data.ShowHours)
-			{
-				yield return $"sendtochat Sorry, hours are currently unavailable. Enjoy your ice cream!";
-				yield break;
-			}
-			string hours = settings.openingTimeEnabled ? "We are open every other hour today." : "We're open all day today!";
-			yield return $"sendtochat {hours}";
+			yield return !TwitchPlaySettings.data.ShowHours
+				? "sendtochat Sorry, hours are currently unavailable. Enjoy your ice cream!"
+				: $"sendtochat {(settings.openingTimeEnabled ? "We are open every other hour today." : "We're open all day today!")}";
 		}
 		else
 		{
@@ -49,6 +46,8 @@ public class IceCreamConfirm : ComponentSolver
 	{
 		_componentType = ReflectionHelper.FindType("IceCreamModule");
 		_ProcessCommandMethod = _componentType.GetMethod("ProcessTwitchCommand", BindingFlags.Public | BindingFlags.Instance);
+		_HelpMessageField = _componentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.Instance);
+
 	}
 	class Settings
 	{
@@ -59,6 +58,7 @@ public class IceCreamConfirm : ComponentSolver
 
 	private static Type _componentType = null;
 	private static MethodInfo _ProcessCommandMethod = null;
+	private static FieldInfo _HelpMessageField = null;
 
 	private object _component = null;
 	private Settings settings;
