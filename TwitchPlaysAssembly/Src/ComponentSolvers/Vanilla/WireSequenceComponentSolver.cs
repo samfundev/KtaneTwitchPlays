@@ -119,14 +119,13 @@ public class WireSequenceComponentSolver : ComponentSolver
 	{
 		yield return null;
 		if (BombComponent.IsSolved) yield break;
-		if (((WireSequenceComponent) BombComponent).IsChangingPage)
-		{
-			yield return new WaitForSeconds(0.1f);
-			CoroutineQueue.AddForcedSolve(SolveWireSequences());
-			yield break;
-		}
 		for (int i = 0; i < 4; i++)
 		{
+			while (((WireSequenceComponent)BombComponent).IsChangingPage)
+			{
+				yield return true;
+			}
+
 			if (!CanInteractWithWire(i * 3)) continue;
 			for (int j = 0; j < 3; j++)
 			{
@@ -135,8 +134,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 				yield return DoInteractionClick(wire.Wire);
 			}
 			DoInteractionClick(_downButton);
-			CoroutineQueue.AddForcedSolve(SolveWireSequences());
-			yield break;
+			
 		}
 	}
 
