@@ -65,6 +65,7 @@ public class SimpleModComponentSolver : ComponentSolver
 		}
 
 		yield return "modsequence";
+		yield return "trycancelsequence";
 		yield return selectableSequence;
 	}
 }

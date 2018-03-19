@@ -164,6 +164,7 @@ public abstract class ComponentSolver
 		bool needQuaternionReset = false;
 		bool hideCamera = false;
 		bool exceptionThrown = false;
+		bool trycancelsequence = false;
 
 		while ((previousStrikeCount == StrikeCount || DisableOnStrike) && !Solved)
 		{
@@ -219,6 +220,12 @@ public abstract class ComponentSolver
 					}
 					break;
 				}
+				else if (currentString.RegexMatch(out match, "^trycancelsequence((?: (?:.|\\n)+)?)$"))
+				{
+					trycancelsequence = true;
+					yield return currentValue;
+					continue;
+				}
 				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
 				{
 					yield return new WaitForSecondsWithCancel(waitCancelTime, false);
@@ -242,6 +249,13 @@ public abstract class ComponentSolver
 				else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 				{
 					DisableOnStrike = true;
+				}
+				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (previousStrikeCount == StrikeCount)
+						DisableOnStrike = false;
+					else
+						break;
 				}
 				else if (currentString.StartsWith("autosolve", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -309,11 +323,14 @@ public abstract class ComponentSolver
 			{
 				foreach (KMSelectable selectable in selectables)
 				{
-					if (selectable != null)
-						DoInteractionClick(selectable);
-					yield return new WaitForSeconds(0.1f);
-					if ((previousStrikeCount != StrikeCount && !DisableOnStrike) || Solved)
+					yield return DoInteractionClick(selectable);
+					if ((previousStrikeCount != StrikeCount && !DisableOnStrike) || Solved || (trycancelsequence && CoroutineCanceller.ShouldCancel))
 						break;
+				}
+				if (trycancelsequence && CoroutineCanceller.ShouldCancel)
+				{
+					CoroutineCanceller.ResetCancel();
+					break;
 				}
 			}
 			else if (currentValue is Quaternion localQuaternion)
@@ -355,12 +372,13 @@ public abstract class ComponentSolver
 						break;
 					}
 				}
-
 			}
 			yield return currentValue;
 
 			if (CoroutineCanceller.ShouldCancel)
 				TryCancel = true;
+
+			trycancelsequence = false;
 		}
 
 		if (!_responded && !exceptionThrown)
@@ -495,8 +513,11 @@ public abstract class ComponentSolver
 			StrikeMessage = strikeMessage;
 		}
 
-		DoInteractionStart(interactable);
-		DoInteractionEnd(interactable);
+		if (interactable != null)
+		{
+			DoInteractionStart(interactable);
+			DoInteractionEnd(interactable);
+		}
 		return new WaitForSeconds(delay);
 	}
 
@@ -641,6 +662,8 @@ public abstract class ComponentSolver
 	{
 		//string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 		StrikeCount++;
+		BombMessageResponder.moduleCameras?.UpdateStrikes(true);
+
 		if (DisableOnStrike) return false;
 
 		if (_delegatedStrikeUserNickName != null)
@@ -660,8 +683,6 @@ public abstract class ComponentSolver
 		{
 			AwardStrikes(IRCConnection.Instance.ChannelName, 1);
 		}
-
-		BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 
 		return false;
 	}
