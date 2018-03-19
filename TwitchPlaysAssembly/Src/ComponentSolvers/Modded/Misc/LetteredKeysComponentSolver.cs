@@ -8,7 +8,7 @@ public class LetteredKeysComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b");
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Lettered%20Keys");
     }
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
