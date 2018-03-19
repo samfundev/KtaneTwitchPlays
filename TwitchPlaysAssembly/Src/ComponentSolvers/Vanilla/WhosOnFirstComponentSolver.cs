@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections;
+using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class WhosOnFirstComponentSolver : ComponentSolver
@@ -39,5 +40,28 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		yield return "unsubmittablepenalty";
 	}
 
-    private KeypadButton[] _buttons = null;
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!BombComponent.IsActive)
+			yield return true;
+		while (!BombComponent.IsSolved)
+		{
+			while (!((WhosOnFirstComponent) BombComponent).ButtonsEmerged || ((WhosOnFirstComponent)BombComponent).CurrentDisplayWordIndex < 0)
+				yield return true;
+			var displayText = ((WhosOnFirstComponent) BombComponent).DisplayText.text;
+			var buttonText = _buttons.Select(x => x.GetText()).ToList();
+
+			var precedenceList = RuleManager.Instance.WhosOnFirstRuleSet.precedenceMap[buttonText[RuleManager.Instance.WhosOnFirstRuleSet.displayWordToButtonIndexMap[displayText]]];
+			int index = int.MaxValue;
+			for (int i = 0; i < 6; i++)
+			{
+				if (precedenceList.IndexOf(buttonText[i]) < index)
+					index = precedenceList.IndexOf(buttonText[i]);
+			}
+			yield return DoInteractionClick(_buttons[buttonText.IndexOf(precedenceList[index])]);
+		}
+	}
+
+	private KeypadButton[] _buttons = null;
 }
