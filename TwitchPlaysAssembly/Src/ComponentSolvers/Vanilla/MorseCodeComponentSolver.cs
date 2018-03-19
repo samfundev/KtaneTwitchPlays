@@ -47,6 +47,13 @@ public class MorseCodeComponentSolver : ComponentSolver
 
 	private int CurrentFrequency => ((MorseCodeComponent) BombComponent).CurrentFrequency;
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		while (!BombComponent.IsActive) yield return true;
+		IEnumerator solve = RespondToCommandInternal($"tx {((MorseCodeComponent) BombComponent).ChosenFrequency}");
+		while (solve.MoveNext()) yield return solve.Current;
+	}
+
 	private KeypadButton _upButton = null;
 	private KeypadButton _downButton = null;
 	private KeypadButton _transmitButton = null;
