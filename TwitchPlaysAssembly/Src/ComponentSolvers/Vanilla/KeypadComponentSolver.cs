@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Rules;
 
 public class KeypadComponentSolver : ComponentSolver
 {
@@ -40,5 +41,14 @@ public class KeypadComponentSolver : ComponentSolver
         }
     }
 
-    private KeypadButton[] _buttons = null;
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!BombComponent.IsSolved)
+		{
+			yield return DoInteractionClick(_buttons[RuleManager.Instance.KeypadRuleSet.GetNextSolutionIndex(((KeypadComponent) BombComponent).pListIndex, _buttons)]);
+		}
+	}
+
+	private KeypadButton[] _buttons = null;
 }
