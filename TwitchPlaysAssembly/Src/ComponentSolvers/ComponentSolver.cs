@@ -209,13 +209,14 @@ public abstract class ComponentSolver
 					parseError = true;
 					break;
 				}
-				else if (currentString.RegexMatch(out Match match, "^trycancel((?: (?:.|\\n)+)?)$") &&
-						 CoroutineCanceller.ShouldCancel)
+				else if (currentString.RegexMatch(out Match match, "^trycancel((?: (?:.|\\n)+)?)$"))
 				{
-					CoroutineCanceller.ResetCancel();
-					if (!string.IsNullOrEmpty(match.Groups[1].Value))
-						IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
-
+					if (CoroutineCanceller.ShouldCancel)
+					{
+						CoroutineCanceller.ResetCancel();
+						if (!string.IsNullOrEmpty(match.Groups[1].Value))
+							IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
+					}
 					break;
 				}
 				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
