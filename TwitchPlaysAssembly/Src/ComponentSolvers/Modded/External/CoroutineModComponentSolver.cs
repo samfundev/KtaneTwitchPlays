@@ -69,19 +69,28 @@ public class CoroutineModComponentSolver : ComponentSolver
             yield return "modcoroutine";
         }
 	    bool result = true;
+	    string exception = null;
 		while (result)
         {
 	        try
 	        {
 		        result = responseCoroutine.MoveNext();
 	        }
+	        catch (FormatException ex)
+	        {
+				DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
+		        result = false;
+		        exception = ex.Message;
+	        }
 	        catch (Exception ex)
 	        {
 		        DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
-		        result = false;
+		        throw;
 	        }
 	        if(result)
 				yield return responseCoroutine.Current;
+			else if (exception != null)
+		        yield return $"sendtochaterror {exception}";
         } 
     }
 
