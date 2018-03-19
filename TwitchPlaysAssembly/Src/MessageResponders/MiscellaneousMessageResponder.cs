@@ -839,6 +839,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 		if (!TwitchPlaySettings.data.EnableDebuggingCommands || !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 		if (text.RegexMatch(out Match sayasMatch, @"^(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)"))
 		{
+			//Do not allow issuing commands as someone with higher access levels than yourself.
+			if (UserAccess.HighestAccessLevel(userNickName) < UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value)) return;
 			IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 		}
 		if (!UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
