@@ -37,9 +37,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["MotionSense"] = (bombCommander, bombComponent) => new MotionSenseComponentSolver(bombCommander, bombComponent);
 
 		//Hexi Modules
-		ModComponentSolverCreators["MemoryV2"] = (bombCommander, bombComponent) => new ForgetMeNotComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["KeypadV2"] = (bombCommander, bombComponent) => new RoundKeypadComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["ButtonV2"] = (bombCommander, bombComponent) => new SquareButtonComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["SimonV2"] = (bombCommander, bombComponent) => new SimonStatesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["PasswordV2"] = (bombCommander, bombComponent) => new SafetySafeComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new PlumbingComponentSolver(bombCommander, bombComponent);
@@ -163,9 +161,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
 
 		//Hexicube
-		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Forget Me Not", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["KeypadV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Round Keypad", moduleScore = 6 };
-		ModComponentSolverInformation["ButtonV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Square Button", moduleScore = 8 };
 		ModComponentSolverInformation["SimonV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon States", moduleScore = 8 };
 		ModComponentSolverInformation["PasswordV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Safety Safe", moduleScore = 15 };
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Plumbing", moduleScore = 18 };
@@ -240,6 +236,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 11 };
+		ModComponentSolverInformation["ButtonV2"] = new ModuleInformation { moduleDisplayName = "Square Button", moduleScore = 8, DoesTheRightThing = true, manualCode = "Square Button" };
 		ModComponentSolverInformation["CaesarCipherModule"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
@@ -251,6 +248,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { moduleDisplayName = "Forget Me Not", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true, manualCode = "Forget Me Not", DoesTheRightThing = true };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20 };
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad", moduleScore = 8, DoesTheRightThing = true };
