@@ -72,7 +72,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\External\CoroutineModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\SimpleModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\UnsupportedModComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Hexi\ForgetMeNotComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\MorsematicsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\NeedyQuizComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\NeedyRotaryPhoneComponentSolver.cs" />
@@ -80,7 +79,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\RoundKeypadComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\SafetySafeComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Hexi\SimonStatesComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Hexi\SquareButtonComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Kaneb\TwoBitsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ChordQualitiesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ColorMorseComponentSolver.cs" />

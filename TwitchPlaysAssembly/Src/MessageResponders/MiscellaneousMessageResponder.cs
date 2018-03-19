@@ -835,13 +835,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 		}
 
-		//As of now, ALL Debugging commands are streamer only.
-		if (!TwitchPlaySettings.data.EnableDebuggingCommands || !UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
+		//As of now, Debugging commands are streamer only, apart from issue command as person, which is superuser and above.
+		if (!TwitchPlaySettings.data.EnableDebuggingCommands || !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 		if (text.RegexMatch(out Match sayasMatch, @"^(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)"))
 		{
 			IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 		}
-
+		if (!UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
 		if (text.Equals("secondary camera"))
 		{
 			GameRoom.ToggleCamera(false);
