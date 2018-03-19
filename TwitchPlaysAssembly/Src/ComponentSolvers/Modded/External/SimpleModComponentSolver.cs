@@ -27,6 +27,7 @@ public class SimpleModComponentSolver : ComponentSolver
 
 		KMSelectable[] selectableSequence = null;
 
+		string exception = null;
 		try
 		{
 			bool regexValid = modInfo.validCommands == null;
@@ -42,13 +43,24 @@ public class SimpleModComponentSolver : ComponentSolver
 			if (!regexValid)
 				yield break;
 
-			selectableSequence = (KMSelectable[]) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
+			selectableSequence = (KMSelectable[]) ProcessMethod.Invoke(CommandComponent, new object[] {inputCommand});
 			if (selectableSequence == null || selectableSequence.Length == 0)
 				yield break;
+		}
+		catch (FormatException ex)
+		{
+			DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
+			exception = ex.Message;
 		}
 		catch (Exception ex)
 		{
 			DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
+			throw;
+		}
+
+		if (exception != null)
+		{
+			yield return $"sendtochaterror {exception}";
 			yield break;
 		}
 
