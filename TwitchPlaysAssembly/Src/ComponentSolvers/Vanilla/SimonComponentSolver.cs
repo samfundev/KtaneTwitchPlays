@@ -40,8 +40,19 @@ public class SimonComponentSolver : ComponentSolver
             }
         }
     }
-	
-    private static readonly Dictionary<string, int> buttonIndex = new Dictionary<string, int>
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!BombComponent.IsActive) yield return true;
+		while (!BombComponent.IsSolved)
+		{
+			int index = ((SimonComponent) BombComponent).GetNextIndexToPress();
+			yield return DoInteractionClick(_buttons[index]);
+		}
+	}
+
+	private static readonly Dictionary<string, int> buttonIndex = new Dictionary<string, int>
     {
         {"r", 0}, {"b", 1}, {"g", 2}, {"y", 3}
     };
