@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using Assets.Scripts.Rules;
 
 public class MemoryComponentSolver : ComponentSolver
 {
@@ -46,5 +48,17 @@ public class MemoryComponentSolver : ComponentSolver
         }
     }
 
-    private KeypadButton[] _buttons = null;
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		MemoryComponent mc = ((MemoryComponent) BombComponent);
+		while (!BombComponent.IsActive) yield return true;
+		while (!BombComponent.IsSolved)
+		{
+			while (!mc.IsInputValid) yield return true;
+			List<Rule> ruleList = RuleManager.Instance.MemoryRuleSet.RulesDictionary[mc.CurrentStage];
+			yield return DoInteractionClick(_buttons[RuleManager.Instance.MemoryRuleSet.ExecuteRuleList(mc, ruleList)]);
+		}
+	}
+
+	private KeypadButton[] _buttons = null;
 }
