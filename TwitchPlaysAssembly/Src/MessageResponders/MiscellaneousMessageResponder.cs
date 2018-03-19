@@ -176,7 +176,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
-		else if (text.RegexMatch(@"^bonussolve (\S+) (-?[0-9]+)$"))
+		else if (text.RegexMatch(@"^bonussolves? (\S+) (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 			string playerrewarded = split[1];
@@ -192,7 +192,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
-		else if (text.RegexMatch(@"^bonusstrike (\S+) (-?[0-9]+)$"))
+		else if (text.RegexMatch(@"^bonusstrikes? (\S+) (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 			string playerrewarded = split[1];
