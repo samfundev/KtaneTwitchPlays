@@ -58,8 +58,9 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
         return false;
     }
 
-	private IEnumerator ForceTurnKeys()
+	protected override IEnumerator ForcedSolveIEnumerator()
 	{
+		yield return null;
 		Component self = BombComponent.GetComponent(_componentType);
 		Animator leftKeyAnimator = (Animator)_leftKeyAnimatorField.GetValue(self);
 		Animator rightKeyAnimator = (Animator) _rightKeyAnimatorField.GetValue(self);
@@ -73,13 +74,6 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		BombComponent.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", BombComponent.transform);
 		yield return new WaitForSeconds(0.1f);
 		BombComponent.GetComponent<KMBombModule>().HandlePass();
-	}
-
-	protected override bool HandleForcedSolve()
-	{
-		base.HandleForcedSolve();
-		CoroutineQueue.AddForcedSolve(ForceTurnKeys());
-		return true;
 	}
 
 	private bool GetValue(FieldInfo field)

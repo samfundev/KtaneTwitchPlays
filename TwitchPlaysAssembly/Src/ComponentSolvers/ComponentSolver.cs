@@ -683,13 +683,22 @@ public abstract class ComponentSolver
 			HandleForcedSolve(BombComponent);
 	}
 
-	protected virtual bool HandleForcedSolve()
+	protected virtual IEnumerator ForcedSolveIEnumerator()
+	{
+		yield break;
+	}
+
+	protected bool HandleForcedSolve()
 	{
 		_delegatedSolveUserNickName = null;
 		_currentUserNickName = null;
 		_silentlySolve = true;
 		_responded = true;
-		return false;
+		IEnumerator forcedSolve = ForcedSolveIEnumerator();
+		if (!forcedSolve.MoveNext()) return false;
+
+		CoroutineQueue.AddForcedSolve(ForcedSolveIEnumerator());
+		return true;
 	}
 
 	public static void HandleForcedSolve(TwitchComponentHandle handle)
@@ -1007,6 +1016,7 @@ public abstract class ComponentSolver
 				(UnsupportedModule && GetType() != typeof(UnsupportedModComponentSolver))))
 		{
 	        SolveModule($"A module ({modInfo.moduleDisplayName}) is being automatically solved.", false);
+			_responded = true;
 		}
 	}
 	#endregion

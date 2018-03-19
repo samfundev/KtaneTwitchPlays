@@ -115,10 +115,15 @@ public class WireSequenceComponentSolver : ComponentSolver
         _currentPageField = _wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
-	private IEnumerator SolveWireSequences()
+	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
 		if (BombComponent.IsSolved) yield break;
+
+		while (!BombComponent.IsActive)
+			yield return true;
+		yield return null;
+		
 		for (int i = 0; i < 4; i++)
 		{
 			while (((WireSequenceComponent)BombComponent).IsChangingPage)
@@ -136,12 +141,6 @@ public class WireSequenceComponentSolver : ComponentSolver
 			DoInteractionClick(_downButton);
 			
 		}
-	}
-
-	protected override bool HandleForcedSolve()
-	{
-		CoroutineQueue.AddForcedSolve(SolveWireSequences());
-		return true;
 	}
 
 	private static Type _wireSequenceComponentType = null;

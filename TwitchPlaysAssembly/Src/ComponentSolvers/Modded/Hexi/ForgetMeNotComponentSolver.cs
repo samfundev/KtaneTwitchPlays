@@ -13,16 +13,11 @@ public class ForgetMeNotComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), (string)_twitchPlaysHelpField.GetValue(BombComponent.GetComponent(_componentType)));
 	}
 
-	protected override bool HandleForcedSolve()
+	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		CoroutineQueue.AddForcedSolve(HandleForcedSolveIEnumerator());
-		return true;
-	}
-
-	public IEnumerator HandleForcedSolveIEnumerator()
-	{
-		TextMesh displayMesh = (TextMesh)_stageMeshField.GetValue(BombComponent.GetComponent(_componentType));
-		int[] solution = (int[])_solutionField.GetValue(BombComponent.GetComponent(_componentType));
+		yield return null;
+		TextMesh displayMesh = (TextMesh) _stageMeshField.GetValue(BombComponent.GetComponent(_componentType));
+		int[] solution = (int[]) _solutionField.GetValue(BombComponent.GetComponent(_componentType));
 		while (!displayMesh.text.Equals("--"))
 			yield return true;
 

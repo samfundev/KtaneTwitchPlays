@@ -21,11 +21,11 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		return turnTime < 0 || turnTime == (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 	}
 
-	protected override bool HandleForcedSolve()
+	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		base.HandleForcedSolve();
-		CoroutineQueue.AddForcedSolve(DelayKeyTurn(true, false, true));
-		return true;
+		yield return null;
+		IEnumerator solve = DelayKeyTurn(true, false, true);
+		while (solve.MoveNext()) yield return solve.Current;
 	}
 
 	private bool CanTurnEarlyWithoutStrike(int turnTime)
