@@ -93,6 +93,13 @@ public class PasswordComponentSolver : ComponentSolver
         }
     }
 
-    private List<CharSpinner> _spinners = null;
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		while (!BombComponent.IsActive) yield return true;
+		IEnumerator solve = RespondToCommandInternal(((PasswordComponent)BombComponent).CorrectWord);
+		while (solve.MoveNext()) yield return solve.Current;
+	}
+
+	private List<CharSpinner> _spinners = null;
     private KeypadButton _submitButton = null;
 }
