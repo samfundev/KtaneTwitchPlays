@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Rules;
 
 public class VennWireComponentSolver : ComponentSolver
 {
@@ -42,5 +43,17 @@ public class VennWireComponentSolver : ComponentSolver
         }
     }
 
-    private VennSnippableWire[] _wires = null;
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		VennWireComponent vwc = ((VennWireComponent) BombComponent);
+		VennWireRuleSet ruleSet = RuleManager.Instance.VennWireRuleSet;
+		foreach (VennSnippableWire wire in _wires)
+		{
+			if (ruleSet.ShouldWireBeSnipped(vwc, wire.WireIndex, false) && !wire.Snipped)
+				yield return DoInteractionClick(wire);
+		}
+	}
+
+	private VennSnippableWire[] _wires = null;
 }
