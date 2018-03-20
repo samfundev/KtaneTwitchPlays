@@ -217,8 +217,8 @@ public abstract class ComponentSolver
 						CoroutineCanceller.ResetCancel();
 						if (!string.IsNullOrEmpty(match.Groups[1].Value))
 							IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
-					}
 						break;
+					}						
 				}
 				else if (currentString.RegexMatch(out match, "^trycancelsequence((?: (?:.|\\n)+)?)$"))
 				{
