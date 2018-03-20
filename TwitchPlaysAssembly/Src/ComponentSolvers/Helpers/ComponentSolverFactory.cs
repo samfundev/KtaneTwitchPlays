@@ -810,7 +810,7 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	private static bool FindManualCode(MonoBehaviour bombComponent, Type commandComponentType, out string manualCode)
+	internal static bool FindManualCode(MonoBehaviour bombComponent, Type commandComponentType, out string manualCode)
 	{
 		FieldInfo candidateString = commandComponentType.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateString == null)
@@ -827,7 +827,7 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	private static bool FindHelpMessage(MonoBehaviour bombComponent, Type commandComponentType, out string helpText)
+	internal static bool FindHelpMessage(MonoBehaviour bombComponent, Type commandComponentType, out string helpText)
 	{
 		FieldInfo candidateString = commandComponentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateString == null)
@@ -844,26 +844,26 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	private static FieldInfo FindCancelBool(Type commandComponentType)
+	internal static FieldInfo FindCancelBool(Type commandComponentType)
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
 	}
 
-	private static FieldInfo FindZenModeBool(Type commandComponentType)
+	internal static FieldInfo FindZenModeBool(Type commandComponentType)
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
 	}
 
-	private static MethodInfo FindSolveMethod(Type commandComponentType)
+	internal static MethodInfo FindSolveMethod(Type commandComponentType)
 	{
 		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 			.FirstOrDefault(x => x.ReturnType == typeof(void) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 		return solveHandler;
 	}
 
-	private static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)
+	internal static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)
 	{
 		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
 		foreach (Component component in allComponents)
