@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Rules;
 
 public class WireSetComponentSolver : ComponentSolver
 {
@@ -24,6 +25,12 @@ public class WireSetComponentSolver : ComponentSolver
 		yield return null;
 		yield return DoInteractionClick(_wires[wireIndex - 1]);
     }
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		yield return DoInteractionClick(_wires[RuleManager.Instance.WireRuleSet.GetSolutionIndex((WireSetComponent) BombComponent)]);
+	}
 
 	private List<SnippableWire> _wires;
 }
