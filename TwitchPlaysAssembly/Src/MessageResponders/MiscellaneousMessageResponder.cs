@@ -388,7 +388,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			UserAccess.UnbanUser(match.Groups[1].Value, userNickName);
 		}
-		else if (text.RegexMatch(@"^(isbanned|banstats) (\S+)"))
+		else if (text.RegexMatch(@"^(isbanned|banstats|bandata) (\S+)"))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 
