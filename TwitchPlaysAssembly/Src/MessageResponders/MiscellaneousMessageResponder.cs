@@ -241,6 +241,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 				OtherModes.ZenModeOn = true;
 			}
 		}
+		else if (text.Equals("zenmodeoff", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				OtherModes.ZenModeOn = false;
+			}
+		}
 		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
@@ -248,7 +255,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 				if (TwitchPlaySettings.data.EnableRankCommand)
 				{
 					RankCommand = !RankCommand;
-				} else
+				}
+				else
 				{
 					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
 				}
@@ -360,7 +368,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
 			return;
 		}
-		else if (text.RegexMatch(out match,@"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
+		else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
 		{
 			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, match.Groups[3].Value, banTimeout);
 		}
@@ -398,7 +406,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (value.BanExpiry == double.PositiveInfinity)
 						{
 							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
-						} else
+						}
+						else
 						{
 							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
 							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
@@ -423,7 +432,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 
 			AccessLevel level = AccessLevel.User;
-			foreach(string lvl in split.Skip(2))
+			foreach (string lvl in split.Skip(2))
 			{
 				switch (lvl)
 				{
@@ -444,7 +453,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						level |= (stepdown || UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) ? AccessLevel.SuperUser : AccessLevel.User;
 						break;
 
-				
+
 					case "defuser":
 						level |= AccessLevel.Defuser;
 						break;
