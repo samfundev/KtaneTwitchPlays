@@ -166,7 +166,7 @@ public abstract class ComponentSolver
 		bool exceptionThrown = false;
 		bool trycancelsequence = false;
 
-		while ((previousStrikeCount == StrikeCount || DisableOnStrike) && !Solved)
+		while ((previousStrikeCount == StrikeCount && !Solved) || DisableOnStrike)
 		{
 			try
 			{
@@ -253,9 +253,14 @@ public abstract class ComponentSolver
 				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (previousStrikeCount == StrikeCount)
+					{
 						DisableOnStrike = false;
+						if (Solved) OnPass(null);
+					}
 					else
+					{
 						break;
+					}
 				}
 				else if (currentString.StartsWith("autosolve", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -411,8 +416,10 @@ public abstract class ComponentSolver
 
 		if (DisableOnStrike)
 		{
-			AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
 			DisableOnStrike = false;
+			BombMessageResponder.moduleCameras?.UpdateStrikes(true);
+			if (Solved) OnPass(null);
+			AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
 		}
 
 		if (!parseError)
@@ -550,6 +557,7 @@ public abstract class ComponentSolver
 	private bool _silentlySolve;
 	private bool OnPass(object _ignore)
 	{
+		if (DisableOnStrike) return false;
 		//string componentType = ComponentHandle.componentType.ToString();
 		//string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 		if (modInfo != null)
@@ -662,7 +670,6 @@ public abstract class ComponentSolver
 	{
 		//string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 		StrikeCount++;
-		BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 
 		if (DisableOnStrike) return false;
 
@@ -683,6 +690,8 @@ public abstract class ComponentSolver
 		{
 			AwardStrikes(IRCConnection.Instance.ChannelName, 1);
 		}
+
+		BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 
 		return false;
 	}
