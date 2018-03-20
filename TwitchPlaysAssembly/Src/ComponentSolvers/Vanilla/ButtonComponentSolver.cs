@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
@@ -185,6 +186,45 @@ public class ButtonComponentSolver : ComponentSolver
 		_held = false;
 	}
 
-    private PressableButton _button = null;
+	protected static Rule ForcedSolveRule()
+	{
+		var rule = new Rule();
+		rule.Queries.Add(new Query { Property = ButtonForceSolveQuery, Args = new Dictionary<string, object>() });
+		rule.SolutionArgs = new Dictionary<string, object>();
+		rule.Solution = ButtonForceSolveSolution;
+		return rule;
+	}
+
+	protected static QueryableButtonProperty ButtonForceSolveQuery = new QueryableButtonProperty
+	{
+		Name = "forcesolve",
+		Text = $"If the user with AccessLevel.Admin or higher has issued !# solve on this Big Button instance on Twitch Plays",
+		QueryFunc = ((BombComponent comp, Dictionary<string, object> args) => true)
+	};
+
+	protected static Solution ButtonForceSolveSolution = new Solution
+	{
+		Text = "Force solve The Button.",
+		SolutionMethod = (BombComponent comp, Dictionary<string, object> args) => 0
+	};
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		var ruleset = RuleManager.Instance.ButtonRuleSet;
+		ruleset.HoldRuleList.Insert(0, ForcedSolveRule());
+		ruleset.RuleList.Insert(0, ForcedSolveRule());
+		if (!_held)
+			yield return DoInteractionClick(_button);
+		else
+		{
+			DoInteractionEnd(_button);
+			_held = false;
+		}
+		ruleset.HoldRuleList.RemoveAt(0);
+		ruleset.RuleList.RemoveAt(0);
+	}
+
+	private PressableButton _button = null;
     private bool _held = false;
 }
