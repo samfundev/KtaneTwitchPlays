@@ -644,13 +644,13 @@ public class BombMessageResponder : MessageResponder
 				}
 				goto case AccessLevel.Admin;
 			case AccessLevel.Admin:
-				if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase))
+				if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
 					moduleCameras.EnableWallOfCameras();
 					StartCoroutine(HideBombs());
 				}
 
-				if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase))
+				if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
 					moduleCameras.DisableWallOfCameras();
 					_hideBombs = false;
