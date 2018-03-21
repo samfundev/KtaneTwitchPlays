@@ -1,100 +1,62 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
+using System.Linq;
+using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
-public class PlumbingComponentSolver : ComponentSolver
+public class PlumbingComponentSolver : ComponentSolverShim
 {
     public PlumbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
         base(bombCommander, bombComponent)
 	{
-        _check = (MonoBehaviour)_checkField.GetValue(bombComponent.GetComponent(_componentType));
-
-        _pipes = new MonoBehaviour[6][];
-        for (var i = 0; i < 6; i++)
-        {
-            _pipes[i] = new MonoBehaviour[6];
-            for (var j = 0; j < 6; j++)
-            {
-                _pipes[i][j] = (MonoBehaviour) _pipesField[i][j].GetValue(bombComponent.GetComponent(_componentType));
-            }
-        }
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Rotate the pipes with !{0} rotate A1 A1 B2 B3 C2 C3 C3. Check your work for leaks Kappa with !{0} submit. (Pipes rotate clockwise. Top left is A1, Bottom right is F6)");
     }
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
+	    string[] sequence = inputCommand.ToUpperInvariant().Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
+	    List<string> pipes = new List<string>();
+	    bool elevator = false;
+
 		inputCommand = inputCommand.ToLowerInvariant();
 
         if (inputCommand.EqualsAny("submit", "check"))
         {
-            yield return "Checking for leaks Kappa";
-            yield return DoInteractionClick(_check);
-            yield break;
+	        inputCommand = "submit";
         }
-
-        if (!inputCommand.StartsWith("rotate "))
+		else if (inputCommand.Equals("spinme"))
         {
-            yield break;
+	        elevator = true;
         }
-        inputCommand = inputCommand.Substring(6);
-
-        string[] sequence = inputCommand.ToLowerInvariant().Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        List<MonoBehaviour> pipes = new List<MonoBehaviour>();
-        bool elevator = false;
-
-        foreach (string buttonString in sequence)
+		else if (inputCommand.StartsWith("rotate "))
         {
-            var letters = "abcdef";
-            var numbers = "123456";
-            if (buttonString.Length != 2 || letters.IndexOf(buttonString[0]) < 0 ||
-                numbers.IndexOf(buttonString[1]) < 0) continue;
+			foreach (string buttonString in sequence)
+			{
+				var letters = "ABCDEF";
+				var numbers = "123456";
+				if (buttonString.Length != 2 || letters.IndexOf(buttonString[0]) < 0 ||
+				    numbers.IndexOf(buttonString[1]) < 0)
+				{
+					yield return $"sendtochaterror Bad pipe position: '{buttonString}'";
+					yield break;
+				}
 
-            var row = numbers.IndexOf(buttonString[1]);
-            var col = letters.IndexOf(buttonString[0]);
+				var row = numbers.IndexOf(buttonString[1]);
+				var col = letters.IndexOf(buttonString[0]);
+				var button = letters[row].ToString() + numbers[col];
 
-            MonoBehaviour button = _pipes[row][col];
-            pipes.Add(button);
-            elevator |= pipes.FindAll(x => x == button).Count >= 4;
+				pipes.Add(button);
+				elevator |= pipes.FindAll(x => x.Equals(button)).Count >= 4;
+			}
+	        inputCommand = $"rotate {pipes.Join()}";
         }
 
-        if (pipes.Count > 0)
-        {
-            yield return inputCommand;
-            if (elevator)
-                yield return "elevator music";
-        }
-        foreach (MonoBehaviour button in pipes)
-        {
-	        yield return "trycancel";
-            yield return DoInteractionClick(button);
-        }
+	    if (elevator)
+	    {
+		    yield return null;
+		    yield return "elevator music";
+	    }
+
+	    IEnumerator process = base.RespondToCommandInternal(inputCommand);
+	    while (process.MoveNext()) yield return process.Current;
     }
-
-    static PlumbingComponentSolver()
-    {
-        _componentType = ReflectionHelper.FindType("AdvancedMaze");
-        _checkField = _componentType.GetField("ButtonCheck", BindingFlags.Public | BindingFlags.Instance);
-        _pipesField = new FieldInfo[6][];
-        var letters = "ABCDEF";
-        var numbers = "123456";
-        for (var i = 0; i < 6; i++)
-        {
-            _pipesField[i] = new FieldInfo[6];
-            var letter = letters.Substring(i, 1);
-            for (var j = 0; j < 6; j++)
-            {
-                var number = numbers.Substring(j, 1);
-                _pipesField[i][j] = _componentType.GetField("Button" + letter + number, BindingFlags.Public | BindingFlags.Instance);
-            }
-        }
-    }
-
-    private static Type _componentType = null;
-    private static FieldInfo _checkField = null;
-    private static FieldInfo[][] _pipesField = null;
-
-    private MonoBehaviour _check = null;
-    private MonoBehaviour[][] _pipes = null;
 }

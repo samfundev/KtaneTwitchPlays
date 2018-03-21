@@ -1,62 +1,45 @@
-﻿using System;
-using System.Collections;
-using System.Reflection;
+﻿using System.Collections;
 using System.Text.RegularExpressions;
-using UnityEngine;
+using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
-public class MorsematicsComponentSolver : ComponentSolver
+public class MorsematicsComponentSolver : ComponentSolverShim
 {
-    public MorsematicsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	public MorsematicsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
-        _component = bombComponent.GetComponent(_componentType);
-        _transmit = (KMSelectable)_transmitField.GetValue(_component);
-        _switch = (KMSelectable)_switchField.GetValue(_component);
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the lights off with !{0} lights off. Turn the lights on with !{0} lights on. Tranmit the answer with !{0} transmit -..-");
-    }
+	}
 
     protected override IEnumerator RespondToCommandInternal(string inputCommand)
     {
-        if ((_lightsOn && inputCommand.Equals("lights off", StringComparison.InvariantCultureIgnoreCase)) || 
-            (!_lightsOn && inputCommand.Equals("lights on", StringComparison.InvariantCultureIgnoreCase)))
-        {
-            yield return inputCommand;
-            _lightsOn = !_lightsOn;
-            yield return DoInteractionClick(_switch);
-            yield break;
-        }
-        var letter = Regex.Match(inputCommand, "^((transmit|xmit|trans|tx) )([.-]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        if (letter.Success)
-        {
-            yield return inputCommand;
-            yield return "strike";
-            yield return "solve";
-            foreach (var tx in letter.Groups[3].ToString())
-            {
-                DoInteractionStart(_transmit);
-                yield return tx == '.'
-                    ? new WaitForSeconds(0.08f)
-                    : new WaitForSeconds(0.32f);
-                DoInteractionEnd(_transmit);
-                yield return new WaitForSeconds(0.08f);
-            }
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
+	    inputCommand = inputCommand.ToLowerInvariant();
+	    if (inputCommand.RegexMatch(out Match match, "^(transmit|xmit|trans|tx|submit).*$"))
+	    {
+		    inputCommand = inputCommand.Replace(match.Groups[1].Value, "transmit");
+	    }
+		else if (inputCommand.RegexMatch(out match, "^lights (on|off)$"))
+	    {
+			bool lightsOn = match.Groups[1].Value.Equals("on");
+		    if (_lightsOn == lightsOn)
+		    {
+			    yield return $"sendtochaterror The lights are already {(lightsOn ? "on" : "off")}.";
+			    yield break;
+		    }
+			_lightsOn |= match.Groups[1].Value.Equals("on");
+		    _lightsOn &= !match.Groups[1].Value.Equals("off");
+		    inputCommand = "toggle";
+		    yield return null;
+	    }
+		else if (inputCommand.Equals("toggle"))
+	    {
+		    _lightsOn = !_lightsOn;
+		    yield return null;
+		}
+	    IEnumerator processTwitchCommand = base.RespondToCommandInternal(inputCommand);
+		while (processTwitchCommand.MoveNext())
+	    {
+		    yield return processTwitchCommand.Current;
+	    }
+	}
 
-    static MorsematicsComponentSolver()
-    {
-        _componentType = ReflectionHelper.FindType("AdvancedMorse");
-        _transmitField = _componentType.GetField("ButtonTransmit", BindingFlags.Public | BindingFlags.Instance);
-        _switchField = _componentType.GetField("ButtonSwitch", BindingFlags.Public | BindingFlags.Instance);
-    }
-
-    private Component _component = null;
-    private static Type _componentType = null;
-    private static FieldInfo _switchField = null;
-    private static FieldInfo _transmitField = null;
-	
-    private bool _lightsOn = true;
-    private KMSelectable _switch = null;
-    private KMSelectable _transmit = null;
+	private bool _lightsOn = true;
 }
