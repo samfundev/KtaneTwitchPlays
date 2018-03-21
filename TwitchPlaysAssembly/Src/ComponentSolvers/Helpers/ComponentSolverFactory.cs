@@ -37,14 +37,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["MotionSense"] = (bombCommander, bombComponent) => new MotionSenseComponentSolver(bombCommander, bombComponent);
 
 		//Hexi Modules
-		ModComponentSolverCreators["MemoryV2"] = (bombCommander, bombComponent) => new ForgetMeNotComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["KeypadV2"] = (bombCommander, bombComponent) => new RoundKeypadComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["ButtonV2"] = (bombCommander, bombComponent) => new SquareButtonComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["SimonV2"] = (bombCommander, bombComponent) => new SimonStatesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["PasswordV2"] = (bombCommander, bombComponent) => new SafetySafeComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new PlumbingComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["MorseV2"] = (bombCommander, bombComponent) => new MorsematicsComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["NeedyVentV2"] = (bombCommander, bombComponent) => new NeedyQuizComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["NeedyKnobV2"] = (bombCommander, bombComponent) => new NeedyRotaryPhoneComponentSolver(bombCommander, bombComponent);
 
 		//Perky Modules (Silly Slots is maintained by Timwi, and as such its handler lives there.)
@@ -163,14 +159,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
 
 		//Hexicube
-		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Forget Me Not", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
-		ModComponentSolverInformation["KeypadV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Round Keypad", moduleScore = 6 };
-		ModComponentSolverInformation["ButtonV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Square Button", moduleScore = 8 };
+		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Forget Me Not", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
+		ModComponentSolverInformation["KeypadV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Round Keypad", moduleScore = 6 };
+		ModComponentSolverInformation["ButtonV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Square Button", moduleScore = 8 };
 		ModComponentSolverInformation["SimonV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon States", moduleScore = 8 };
 		ModComponentSolverInformation["PasswordV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Safety Safe", moduleScore = 15 };
-		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Plumbing", moduleScore = 18 };
-		ModComponentSolverInformation["MorseV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morsematics", moduleScore = 12 };
-		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Answering Questions"};
+		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", moduleScore = 18 };
+		ModComponentSolverInformation["MorseV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Morsematics", moduleScore = 12 };
+		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Answering Questions"};
 		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Rotary Phone"};
 
 		//Perky
