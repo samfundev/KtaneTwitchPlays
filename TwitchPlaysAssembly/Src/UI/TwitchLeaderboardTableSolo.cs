@@ -3,59 +3,59 @@ using UnityEngine;
 
 public class TwitchLeaderboardTableSolo : MonoBehaviour
 {
-    [Header("Prefabs")]
-    public TwitchLeaderboardSoloRow[] specialRows = null;
-    public TwitchLeaderboardSoloRow normalRow = null;
+	[Header("Prefabs")]
+	public TwitchLeaderboardSoloRow[] specialRows = null;
+	public TwitchLeaderboardSoloRow normalRow = null;
 
-    [Header("Hierachy Management")]
-    public RectTransform tableTransform = null;
+	[Header("Hierachy Management")]
+	public RectTransform tableTransform = null;
 
-    [Header("Values")]
-    public int maximumRowCount = 20;
+	[Header("Values")]
+	public int maximumRowCount = 20;
 
-    private List<TwitchLeaderboardSoloRow> _instancedRows = new List<TwitchLeaderboardSoloRow>();
-    public Leaderboard.LeaderboardEntry solver = null;
-    public int bombCount = 0;
+	private List<TwitchLeaderboardSoloRow> _instancedRows = new List<TwitchLeaderboardSoloRow>();
+	public Leaderboard.LeaderboardEntry solver = null;
+	public int bombCount = 0;
 
-    private void Start()
-    {
-        if (Leaderboard.Instance == null)
-        {
-            return;
-        }
+	private void Start()
+	{
+		if (Leaderboard.Instance == null)
+		{
+			return;
+		}
 
-        float delay = 0.6f;
-        int index = 0;
+		float delay = 0.6f;
+		int index = 0;
 
-        solver = Leaderboard.Instance.SoloSolver;
+		solver = Leaderboard.Instance.SoloSolver;
 
-        IEnumerable<Leaderboard.LeaderboardEntry> entries = (solver == null) ?
-	        Leaderboard.Instance.GetSortedSoloEntries(maximumRowCount) :
-	        Leaderboard.Instance.GetSortedSoloEntriesIncluding(solver.UserName, maximumRowCount);
+		IEnumerable<Leaderboard.LeaderboardEntry> entries = (solver == null) ?
+			Leaderboard.Instance.GetSortedSoloEntries(maximumRowCount) :
+			Leaderboard.Instance.GetSortedSoloEntriesIncluding(solver.UserName, maximumRowCount);
 
-        foreach (Leaderboard.LeaderboardEntry entry in entries)
-        {
-            TwitchLeaderboardSoloRow row = Instantiate<TwitchLeaderboardSoloRow>(index < specialRows.Length ? specialRows[index] : normalRow);
+		foreach (Leaderboard.LeaderboardEntry entry in entries)
+		{
+			TwitchLeaderboardSoloRow row = Instantiate<TwitchLeaderboardSoloRow>(index < specialRows.Length ? specialRows[index] : normalRow);
 
-            row.position = entry.SoloRank;
-            row.leaderboardEntry = entry;
-            row.delay = delay;
-            row.transform.SetParent(tableTransform, false);
+			row.position = entry.SoloRank;
+			row.leaderboardEntry = entry;
+			row.delay = delay;
+			row.transform.SetParent(tableTransform, false);
 
-            _instancedRows.Add(row);
+			_instancedRows.Add(row);
 
-            delay += 0.1f;
-            index++;
-        }
-    }
+			delay += 0.1f;
+			index++;
+		}
+	}
 
-    private void OnDisable()
-    {
-        foreach(TwitchLeaderboardSoloRow row in _instancedRows)
-        {
-            DestroyObject(row);
-        }
+	private void OnDisable()
+	{
+		foreach(TwitchLeaderboardSoloRow row in _instancedRows)
+		{
+			DestroyObject(row);
+		}
 
-        _instancedRows.Clear();
-    }
+		_instancedRows.Clear();
+	}
 }
