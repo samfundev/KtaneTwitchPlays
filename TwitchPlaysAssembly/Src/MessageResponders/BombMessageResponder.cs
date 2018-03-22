@@ -449,7 +449,7 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.RegexMatch("^claim ?all ?view$"))
+			if (text.RegexMatch("^(claim ?all ?view|view ?claim ?all)$"))
 			{
 				text = string.Empty;
 				foreach (var handle in ComponentHandles)
