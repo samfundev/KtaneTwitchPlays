@@ -626,6 +626,10 @@ public class TwitchComponentHandle : MonoBehaviour
 					{
 						messageOut = ClaimModule(userNickName, targetModule).Second;
 					}
+					else if (PlayerName == userNickName)
+					{
+						messageOut = string.Format(TwitchPlaySettings.data.NoTakes, userNickName, targetModule, HeaderText);
+					}
 					else
 					{
 						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, userNickName, HeaderText);
