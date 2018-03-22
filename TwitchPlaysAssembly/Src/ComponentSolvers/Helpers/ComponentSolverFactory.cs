@@ -273,11 +273,13 @@ public static class ComponentSolverFactory
 		//Royal_Flu$h
 		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["identityParade"] = new ModuleInformation { moduleScore = 6 };
+		ModComponentSolverInformation["iPhone"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
 		ModComponentSolverInformation["jukebox"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8 };
+		ModComponentSolverInformation["skyrim"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 8 };
 		ModComponentSolverInformation["sonic"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
@@ -331,8 +333,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["neutralization"] = new ModuleInformation { moduleScore = 12, helpText = "Select a base with !{0} base NaOH. Turn the filter on/off with !{0} filter. Set drop count with !{0} conc set 48. Submit with !{0} titrate." };
 		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { moduleScore = 10, helpText = "Switch colors with !{0} toggle. Clear the grid with !{0} clear. Fill the squares at A2, D5 and the entire column C with !{0} fill A2 C D5. Mark a dot at the squares A5, E4 and the entire row 2 with !{0} dot A5 E4 2. Submit your answer with !{0} submit." };
-		ModComponentSolverInformation["spwizPerspectivePegs"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
+		ModComponentSolverInformation["spwizPerspectivePegs"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
+		ModComponentSolverInformation["pieModule"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["poetry"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["radiator"] = new ModuleInformation { moduleScore = 6 };

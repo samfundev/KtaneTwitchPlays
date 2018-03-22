@@ -449,6 +449,17 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
+			if (text.RegexMatch("^claim ?all ?view$"))
+			{
+				text = string.Empty;
+				foreach (var handle in ComponentHandles)
+				{
+					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + handle.Code + " claimview"));
+				}
+				return;
+			}
+
 			if (text.RegexMatch("^(unclaim|release) ?all$"))
 			{
 				foreach (TwitchComponentHandle handle in ComponentHandles)
@@ -564,17 +575,14 @@ public class BombMessageResponder : MessageResponder
 				foreach (string query in queries)
 				{
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(1)
 							.Select(handle => string.Format("{0}", handle.Code)).ToList();
 
 					if (modules.Any())
 					{
-						foreach (var claim in modules)
-						{
-							TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-							if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-							handle.AddToClaimQueue(userNickName);
-						}
+						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(modules));
+						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+						handle.AddToClaimQueue(userNickName);
 					}
 					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
 				}
@@ -588,18 +596,15 @@ public class BombMessageResponder : MessageResponder
 				foreach (string query in queries)
 				{
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(1)
 							.Select(handle => string.Format("{0}", handle.Code)).ToList();
 
 					if (modules.Any())
 					{
-						foreach (var claim in modules)
-						{
-							TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-							if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-							handle.AddToClaimQueue(userNickName);
-							IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + claim + " view"));
-						}
+						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(modules));
+						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+						handle.AddToClaimQueue(userNickName);
+						IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + modules + " view"));
 					}
 					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
 				}
