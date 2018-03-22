@@ -145,7 +145,7 @@ public class TwitchBombHandle : MonoBehaviour
 
 			return null;
 		}
-		else if (internalCommandLower.Equals("status"))
+		else if (internalCommandLower.Equals("status") || internalCommandLower.Equals("info"))
 		{
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
 			if (OtherModes.TimedModeOn)
