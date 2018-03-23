@@ -113,7 +113,8 @@ public class TwitchPlaysService : MonoBehaviour
         if (_activeMessageResponder != null)
         {
             _activeMessageResponder.gameObject.SetActive(true);
-        }        
+        }
+	    TwitchComponentHandle.ClaimedList.Clear();
     }
 
     private IEnumerator StopEveryCoroutine()
