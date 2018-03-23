@@ -574,10 +574,18 @@ public class BombMessageResponder : MessageResponder
 
 				foreach (string query in queries)
 				{
-					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(1)
-							.Select(handle => string.Format("{0}", handle.Code)).ToList();
-
+					IEnumerable<string> modules;
+					if (TwitchPlaySettings.data.FindClaimGivesOnlyOne)
+					{
+						modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
+							.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(1)
+								.Select(handle => string.Format("{0}", handle.Code)).ToList();
+					} else
+					{
+						modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
+							.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
+								.Select(handle => string.Format("{0}", handle.Code)).ToList();
+					}
 					if (modules.Any())
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(modules));
@@ -595,10 +603,18 @@ public class BombMessageResponder : MessageResponder
 
 				foreach (string query in queries)
 				{
-					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(1)
-							.Select(handle => string.Format("{0}", handle.Code)).ToList();
-
+					IEnumerable<string> modules;
+					if (TwitchPlaySettings.data.FindClaimGivesOnlyOne)
+					{
+						modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
+							.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(1)
+								.Select(handle => string.Format("{0}", handle.Code)).ToList();
+					} else
+					{
+						modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
+							.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
+								.Select(handle => string.Format("{0}", handle.Code)).ToList();
+					}
 					if (modules.Any())
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(modules));
