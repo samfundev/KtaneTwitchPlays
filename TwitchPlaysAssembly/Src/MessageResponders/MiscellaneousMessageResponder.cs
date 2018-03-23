@@ -368,6 +368,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
 			return;
 		}
+		else if (text.RegexMatch(out match, @"^read ?settings? (\S+)$"))
+		{
+			if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)) return;
+			IRCConnection.Instance.SendMessage("{0}", TwitchPlaySettings.GetSetting(match.Groups[1].Value));
+		}
 		else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
 		{
 			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, match.Groups[3].Value, banTimeout);

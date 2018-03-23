@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -543,6 +544,92 @@ public static class TwitchPlaySettings
 	public static int GetRewardBonus()
 	{
 		return ClearReward;
+	}
+
+	public static string GetSetting(string setting)
+	{
+		DebugHelper.Log($"Attempting to read settings {setting}");
+		var split = setting.Split('.');
+		Type tpdata = typeof(TwitchPlaySettingsData);
+		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
+		
+		DebugHelper.Log($"Found {settingFields.Count} settings");
+		if (!settingFields.Any())
+		{
+			return $"Setting {setting} not found.";
+		}
+
+		var settingField = settingFields[0];
+		if (settingFields.Count > 1)
+		{
+			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
+			if(settingField == null)
+				return $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}";
+		}
+		
+		var settingValue = settingField.GetValue(data);
+		DebugHelper.Log($"Found exactly one. Settings name is {settingField.Name}, Settings type is {settingValue.GetType().Name}");
+		switch (settingValue)
+		{
+			case int settingInt:
+				return $"Setting {settingField.Name}: {settingInt}";
+			case float settingFloat:
+				return $"Setting {settingField.Name}: {settingFloat}";
+			case bool settingBool:
+				return $"Setting {settingField.Name}: {settingBool}";
+			case Color settingColor:
+				return $"Setting {settingField.Name}: Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}, {(int)(settingColor.a * 255)})";
+			case string settingString:
+				return $"Setting {settingField.Name}: {settingString}";
+			case List<string> settingListString:
+				switch (split.Length)
+				{
+					case 2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count:
+						return $"Settings {settingField.Name}[{listIndex}]: {settingListString[listIndex]}";
+					case 2 when int.TryParse(split[1], out int listIndex):
+						return $"Settings {settingField.Name}[{listIndex}]: Index out of range";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingListString.Count}";
+				}
+			case Dictionary<string, string> settingsDictionaryStringString:
+				switch (split.Length)
+				{
+					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString):
+						return $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n","\\n")}";
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
+					case 2:
+						return $@"Setting {settingField.Name}: The second item cannot be empty or null";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}";
+				}
+			case Dictionary<string, bool> settingsDictionaryStringBool:
+				switch (split.Length)
+				{
+					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDsbBool):
+						return $"Setting {settingField.Name}[{split[1]}]: {settingsDsbBool}";
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
+					case 2:
+						return $@"Setting {settingField.Name}: The second item cannot be empty or null";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringBool.Count}";
+				}
+			case Dictionary<string, ModuleDistributions> settingsDictionaryStringModuleDistributions:
+				switch (split.Length)
+				{
+					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringModuleDistributions.TryGetValue(split[1], out ModuleDistributions settingsDsmModuleDistributions):
+						return $@"Setting {settingField.Name}[{split[1]}]: new ModuleDistributions {{ Vanilla = {settingsDsmModuleDistributions.Vanilla}f, Modded = {settingsDsmModuleDistributions.Modded}f, DisplayName = ""{settingsDsmModuleDistributions.DisplayName}"", MinModules = {settingsDsmModuleDistributions.MinModules}, MaxModules = {settingsDsmModuleDistributions.MaxModules}, Hidden = {settingsDsmModuleDistributions.Hidden}, Enabled = {settingsDsmModuleDistributions.Enabled} }}";
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
+					case 2:
+						return $@"Setting {settingField.Name}: The second item cannot be empty or null";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringModuleDistributions.Count}";
+				}
+			default:
+				return $"Setting {setting} was found, but I don't know how to parse its type.";
+		}
 	}
 
 	public static string usersSavePath = "TwitchPlaySettings.json";
