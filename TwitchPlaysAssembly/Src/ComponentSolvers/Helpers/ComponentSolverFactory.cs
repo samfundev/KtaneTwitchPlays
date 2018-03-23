@@ -292,7 +292,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise Operators", validCommands = new[] { "^submit [0-1]{8}$" } };
 		ModComponentSolverInformation["BlindMaze"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["booleanVennModule"] = new ModuleInformation { moduleScore = 12, helpText = "Select parts of the diagram with !{0} a bc abc. Options are A, AB, ABC, AC, B, BC, C, O (none)." };
-		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 10, helpText = "Press the button by name with !{0} press \"this\". Press the button in column 2 row 3 with !{0} press 2 3. Press the right submit button with !{0} submit right." };
+		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["burglarAlarm"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["buttonSequencesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the items with !{0} items. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24.", DoesTheRightThing = true };
@@ -303,7 +303,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 8, helpText = "Press the top button with !{0} press top (also t, 1, etc.)." };
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
-		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, helpText = "Combine two elements with !{0} combine water fire.", DoesTheRightThing = true };
+		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["fastMath"] = new ModuleInformation { moduleScore = 12, helpText = "Start the timer with !{0} go. Submit an answer with !{0} submit 12." };
 		ModComponentSolverInformation["FaultyBackgrounds"] = new ModuleInformation { moduleScore = 7 };
@@ -343,7 +343,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["screw"] = new ModuleInformation { moduleScore = 9, helpText = "Screw with !{0} screw tr or !{0} screw 3. Options are TL, TM, TR, BL, BM, BR. Press a button with !{0} press b or !{0} press 2." };
 		ModComponentSolverInformation["Semaphore"] = new ModuleInformation { moduleScore = 7, helpText = "Move to the next flag with !{0} move right or !{0} press right. Move to previous flag with !{0} move left or !{0} press left. Submit with !{0} press ok.", DoesTheRightThing = false };
 		ModComponentSolverInformation["Sink"] = new ModuleInformation { moduleScore = 3 };
-		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, helpText = "Submit the correct response with !{0} submit 1 2 3.", DoesTheRightThing = true };
+		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["symbolicPasswordModule"] = new ModuleInformation { moduleScore = 9, helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!" };
 		ModComponentSolverInformation["spwizTetris"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
