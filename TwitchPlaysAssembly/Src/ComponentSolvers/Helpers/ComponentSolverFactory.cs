@@ -228,6 +228,7 @@ public static class ComponentSolverFactory
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo modules maintained by Timwi)
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12 };
@@ -315,7 +316,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
-		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 15, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa", DoesTheRightThing = true };
 		ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b." };
 		ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right." };

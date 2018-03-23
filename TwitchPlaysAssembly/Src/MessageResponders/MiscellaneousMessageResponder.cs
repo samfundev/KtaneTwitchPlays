@@ -417,7 +417,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				if (!found)
 				{
-					IRCConnection.Instance.SendMessage("The specified user was not found.");
+					IRCConnection.Instance.SendMessage("The specified user has no ban data.");
 				}
 			}
 		}
@@ -520,7 +520,22 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			IRCConnection.Instance.SendMessage(finalmessage);
 		}
-		
+		else if (text.RegexMatch(@"^(getaccess|accessstats|accessdata) (\S+)"))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				string trimmed = text.Split(' ')[1];
+				List<string> target = trimmed.Split(';').ToList();
+				foreach (string person in target)
+				{
+					AccessLevel level = UserAccess.HighestAccessLevel(person);
+					string stringLevel = UserAccess.LevelToString(level);
+					IRCConnection.Instance.SendMessage("User {0}, Access Level: {1}", person, stringLevel);
+				}
+			}
+		}
 		switch (split[0])
 		{
 			case "run":

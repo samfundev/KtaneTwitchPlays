@@ -316,4 +316,28 @@ public static class UserAccess
 		return UserAccessData.Instance.Bans;
 	}
 
+	public static string LevelToString(AccessLevel level)
+	{
+		switch (level)
+		{
+			case AccessLevel.Banned:
+				return "Banned";
+			case AccessLevel.User:
+				return "User";
+			case AccessLevel.NoPoints:
+				return "No Points";
+			case AccessLevel.Defuser:
+				return "Defuser";
+			case AccessLevel.Mod:
+				return "Moderator";
+			case AccessLevel.Admin:
+				return "Admin";
+			case AccessLevel.SuperUser:
+				return "Super User";
+			case AccessLevel.Streamer:
+				return "Streamer";
+			default:
+				return null;
+		}
+	}
 }
