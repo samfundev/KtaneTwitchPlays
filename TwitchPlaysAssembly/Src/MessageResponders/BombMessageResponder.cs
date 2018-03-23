@@ -439,25 +439,17 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.RegexMatch("^claim ?all$"))
+			if (text.RegexMatch("^(?:claim ?|view ?|all ?){2,3}$"))
 			{
-				foreach (var handle in ComponentHandles)
+				if (text.Contains("claim") && text.Contains("all"))
 				{
-					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-					handle.AddToClaimQueue(userNickName);
+					foreach (var handle in ComponentHandles)
+					{
+						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+						handle.AddToClaimQueue(userNickName, text.Contains("view"));
+					}
+					return;
 				}
-				return;
-			}
-
-			if (text.RegexMatch("^(claim ?all ?view|view ?claim ?all)$"))
-			{
-				text = string.Empty;
-				foreach (var handle in ComponentHandles)
-				{
-					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-					IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, ("!" + handle.Code + " claimview"));
-				}
-				return;
 			}
 
 			if (text.RegexMatch("^(unclaim|release) ?all$"))
