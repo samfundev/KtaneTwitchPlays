@@ -52,7 +52,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public bool Unsupported = false;
 
 	[HideInInspector]
-	public List<Tuple<string, double>> ClaimQueue = new List<Tuple<string, double>>();
+	public List<Tuple<string, double, bool, bool>> ClaimQueue = new List<Tuple<string, double, bool, bool>>();
 
 	public string Code { get; private set; } = null;
 
@@ -359,17 +359,17 @@ public class TwitchComponentHandle : MonoBehaviour
 		return new Tuple<bool, double>(true, DateTime.Now.TotalSeconds());
 	}
 
-	public void AddToClaimQueue(string userNickname)
+	public void AddToClaimQueue(string userNickname, bool viewRequested=false, bool viewPinRequested=false)
 	{
 		double seconds = CanClaimNow(userNickname, false).Second;
 		if (ClaimQueue.Any(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase))) return;
 		for (int i = 0; i < ClaimQueue.Count; i++)
 		{
 			if (ClaimQueue[i].Second < seconds) continue;
-			ClaimQueue.Insert(i, new Tuple<string, double>(userNickname, seconds));
+			ClaimQueue.Insert(i, new Tuple<string, double, bool, bool>(userNickname, seconds, viewRequested, viewPinRequested));
 			return;
 		}
-		ClaimQueue.Add(new Tuple<string, double>(userNickname, seconds));
+		ClaimQueue.Add(new Tuple<string, double, bool, bool>(userNickname, seconds, viewRequested, viewPinRequested));
 	}
 
 	public void RemoveFromClaimQueue(string userNickname)
@@ -387,16 +387,17 @@ public class TwitchComponentHandle : MonoBehaviour
 
 			for (int i = 0; i < ClaimQueue.Count; i++)
 			{
-				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code);
+				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
 				if (!claim.First) continue;
 				IRCConnection.Instance.SendMessage(claim.Second);
+				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}");
 				ClaimQueue.RemoveAt(i);
 				break;
 			}
 		}
 	}
 
-	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule)
+	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule, bool viewRequested=false, bool viewPinRequested=false)
 	{
 		if (Solver.AttemptedForcedSolve)
 		{
@@ -406,12 +407,12 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (PlayerName != null)
 		{
 			if(!PlayerName.Equals(userNickName))
-				AddToClaimQueue(userNickName);
+				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, PlayerName, HeaderText));
 		}
 		if (ClaimedList.Count(nick => nick.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
-			AddToClaimQueue(userNickName);
+			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
 		else
@@ -419,7 +420,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			Tuple<bool, double> claim = CanClaimNow(userNickName, true);
 			if (!claim.First)
 			{
-				AddToClaimQueue(userNickName);
+				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 				return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ClaimCooldown, Code, TwitchPlaySettings.data.InstantModuleClaimCooldown, userNickName, HeaderText));
 			}
 
@@ -529,7 +530,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cw", "wc", 
 					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cwp", "wpc"))
 				{
-					Tuple<bool, string> response = ClaimModule(userNickName, Code);
+					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, text.Contains("p"));
 					if (response.First)
 					{
 						IRCConnection.Instance.SendMessage(response.Second);
