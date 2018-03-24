@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class TwitchPlaySettingsData
@@ -546,6 +547,177 @@ public static class TwitchPlaySettings
 		return ClearReward;
 	}
 
+	public static Tuple<bool, string> ResetSettingToDefault(string setting)
+	{
+		var split = setting.Split('.');
+		Type tpdata = typeof(TwitchPlaySettingsData);
+		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
+
+		DebugHelper.Log($"Found {settingFields.Count} settings");
+		if (!settingFields.Any())
+		{
+			return new Tuple<bool, string>(false, $"Setting {setting} not found.");
+		}
+
+		var settingField = settingFields[0];
+		if (settingFields.Count > 1)
+		{
+			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
+			if (settingField == null)
+				return new Tuple<bool, string>(false, $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}");
+		}
+		var originalValue = settingField.GetValue(data);
+		DebugHelper.Log($"Found exactly one. Settings name is {settingField.Name}, Settings type is {originalValue.GetType().Name}");
+		TwitchPlaySettingsData defaultData = new TwitchPlaySettingsData();
+		var defaultValue = settingField.GetValue(defaultData);
+		settingField.SetValue(data, defaultValue);
+		return new Tuple<bool, string>(true, $"Setting {settingField.Name} reset to default value.");
+	}
+
+	public static Tuple<bool, string> ChangeSetting(string setting, string settingValue)
+	{
+		var split = setting.Split('.');
+		Type tpdata = typeof(TwitchPlaySettingsData);
+		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
+
+		DebugHelper.Log($"Found {settingFields.Count} settings");
+		if (!settingFields.Any())
+		{
+			return new Tuple<bool, string>(false, $"Setting {setting} not found.");
+		}
+
+		var settingField = settingFields[0];
+		if (settingFields.Count > 1)
+		{
+			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
+			if (settingField == null)
+				return new Tuple<bool, string>(false, $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}");
+		}
+		var originalValue = settingField.GetValue(data);
+		DebugHelper.Log($"Found exactly one. Settings name is {settingField.Name}, Settings type is {originalValue.GetType().Name}");
+		switch (originalValue)
+		{
+			case int settingInt:
+				if (!int.TryParse(settingValue, out int newSettingInt))
+					return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
+				settingField.SetValue(data, newSettingInt);
+				if (!data.ValidateStrings())
+				{
+					settingField.SetValue(data, originalValue);
+					return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed to {settingValue}");
+				}
+				return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from {settingInt} to {settingValue}");
+			case float settingFloat:
+				if (!float.TryParse(settingValue, out float newSettingFloat))
+					return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
+				settingField.SetValue(data, newSettingFloat);
+				if (!data.ValidateStrings())
+				{
+					settingField.SetValue(data, originalValue);
+					return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed to {settingValue}");
+				}
+				return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from {settingFloat} to {settingValue}");
+			case bool settingBool:
+				if (!bool.TryParse(settingValue, out bool newSettingBool))
+					return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
+				settingField.SetValue(data, newSettingBool);
+				return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from {settingBool} to {settingValue}");
+			case Color settingColor:
+				IEnumerable<int?> parts = settingValue.Split(',').Select(str => str.Trim().TryParseInt());
+				if (parts.Any(x => x == null)) return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
+
+				float[] values = parts.Select(i => (int)i / 255f).ToArray();
+				switch (values.Count())
+				{
+					case 3:
+						settingField.SetValue(data, new Color(values[0], values[1], values[2]));
+						return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}) to Color({settingValue})");
+					case 4:
+						settingField.SetValue(data, new Color(values[0], values[1], values[2], values[3]));
+						return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}, {(int)(settingColor.a * 255)}) to Color({settingValue})");
+					default:
+						return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
+				}
+			case string settingString:
+				settingField.SetValue(data, settingValue.Replace("\\n","\n"));
+				if (!data.ValidateStrings())
+				{
+					settingField.SetValue(data, originalValue);
+					return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed to {settingValue}");
+				}
+				return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from {settingString} to {settingValue}");
+			case List<string> settingListString:
+				
+				switch (split.Length)
+				{
+					case 2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count:
+						//return $"Settings {settingField.Name}[{listIndex}]: {settingListString[listIndex]}";
+						string origListValue = settingListString[listIndex];
+						settingListString[listIndex] = settingValue;
+						return new Tuple<bool, string>(true, $"Setting {settingField.Name}[{listIndex}] changed from {origListValue} to {settingValue}.");
+					default:
+						settingListString.Add(settingValue);
+						return new Tuple<bool, string>(true, $"Setting {settingField.Name}.Add({settingField}) completed successfully.");
+				}
+			case Dictionary<string, string> settingsDictionaryStringString:
+				switch (split.Length)
+				{
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						bool settingDssResult = settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString);
+						settingsDictionaryStringString[split[1]] = settingValue.Replace("\\n","\n");
+						return settingDssResult 
+							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {settingsDssString} to {settingValue}") 
+							: new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] set to {settingValue}");
+					case 2:
+						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
+					default:
+						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
+				}
+			case Dictionary<string, bool> settingsDictionaryStringBool:
+				switch (split.Length)
+				{
+					case 2 when !string.IsNullOrEmpty(split[1]) && bool.TryParse(settingValue, out bool settingValueBool):
+						bool settingDssResult = settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDssBool);
+						settingsDictionaryStringBool[split[1]] = settingValueBool;
+						return settingDssResult
+							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {settingsDssBool} to {settingValue}")
+							: new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] set to {settingValue}");
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						return new Tuple<bool, string>(false, $"Could not parse {settingValue} as bool");
+					case 2:
+						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
+					default:
+						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
+				}
+			case Dictionary<string, ModuleDistributions> settingsDictionaryStringModuleDistributions:
+				switch (split.Length)
+				{
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						bool settingDssResult = settingsDictionaryStringModuleDistributions.TryGetValue(split[1], out ModuleDistributions settingsDssModuleDistribution);
+						ModuleDistributions newModDist;
+						try
+						{
+							newModDist = JsonConvert.DeserializeObject<ModuleDistributions>(settingValue);
+						}
+						catch
+						{
+							return new Tuple<bool, string>(false, $"Could not parse {settingValue} as ModuleDistributions");
+						}
+
+						settingsDictionaryStringModuleDistributions[split[1]] = newModDist;
+						return settingDssResult
+							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {JsonConvert.SerializeObject(settingsDssModuleDistribution, Formatting.None)} to {settingValue}")
+							: new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] set to {settingValue}");
+					case 2:
+						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
+					default:
+						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
+				}
+			default:
+				return  new Tuple<bool, string>(false, $"Setting {setting} was found, but I don't know how change its value to {settingValue}");
+		}
+	}
+
 	public static string GetSetting(string setting)
 	{
 		DebugHelper.Log($"Attempting to read settings {setting}");
@@ -580,7 +752,7 @@ public static class TwitchPlaySettings
 			case Color settingColor:
 				return $"Setting {settingField.Name}: Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}, {(int)(settingColor.a * 255)})";
 			case string settingString:
-				return $"Setting {settingField.Name}: {settingString}";
+				return $"Setting {settingField.Name}: {settingString.Replace("\n","\\n")}";
 			case List<string> settingListString:
 				switch (split.Length)
 				{
@@ -619,7 +791,8 @@ public static class TwitchPlaySettings
 				switch (split.Length)
 				{
 					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringModuleDistributions.TryGetValue(split[1], out ModuleDistributions settingsDsmModuleDistributions):
-						return $@"Setting {settingField.Name}[{split[1]}]: new ModuleDistributions {{ Vanilla = {settingsDsmModuleDistributions.Vanilla}f, Modded = {settingsDsmModuleDistributions.Modded}f, DisplayName = ""{settingsDsmModuleDistributions.DisplayName}"", MinModules = {settingsDsmModuleDistributions.MinModules}, MaxModules = {settingsDsmModuleDistributions.MaxModules}, Hidden = {settingsDsmModuleDistributions.Hidden}, Enabled = {settingsDsmModuleDistributions.Enabled} }}";
+						string moddistjson = JsonConvert.SerializeObject(settingsDsmModuleDistributions, Formatting.None);
+						return $@"Setting {settingField.Name}[{split[1]}]: {moddistjson}";
 					case 2 when !string.IsNullOrEmpty(split[1]):
 						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
 					case 2:

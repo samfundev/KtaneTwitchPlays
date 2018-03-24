@@ -368,10 +368,25 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
 			return;
 		}
-		else if (text.RegexMatch(out match, @"^read ?settings? (\S+)$"))
+		else if (text.RegexMatch(out match, @"^(?:read|write|change) ?settings? (\S+)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)) return;
 			IRCConnection.Instance.SendMessage("{0}", TwitchPlaySettings.GetSetting(match.Groups[1].Value));
+		}
+		else if (text.RegexMatch(out match, @"^(?:write|change) ?settings? (\S+) (.+)$"))
+		{
+			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
+			var result = TwitchPlaySettings.ChangeSetting(match.Groups[1].Value, match.Groups[2].Value);
+			IRCConnection.Instance.SendMessage("{0}", result.Second);
+			if (result.First) TwitchPlaySettings.WriteDataToFile();
+		}
+		else if (text.RegexMatch(out match, @"^(?:erase|remove|reset) ?settings? (\S+)$"))
+		{
+			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
+
+			var result = TwitchPlaySettings.ResetSettingToDefault(match.Groups[1].Value);
+			IRCConnection.Instance.SendMessage("{0}", result.Second);
+			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
 		else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
 		{
@@ -408,7 +423,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					if (bandata.Keys.Contains(person))
 					{
 						bandata.TryGetValue(person, out BanData value);
-						if (value.BanExpiry == double.PositiveInfinity)
+						if (double.IsPositiveInfinity(value.BanExpiry))
 						{
 							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
 						}
