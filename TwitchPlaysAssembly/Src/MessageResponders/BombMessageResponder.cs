@@ -408,7 +408,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.RegexMatch(out match, "^claims (.+)"))
 			{
-				OnMessageReceived(match.Groups[1].Value, userColorCode, "claims");
+				OnMessageReceived(match.Groups[1].Value, userColorCode, "!claims");
 				return;
 			}
 
