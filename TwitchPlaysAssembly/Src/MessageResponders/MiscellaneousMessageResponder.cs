@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
+using Newtonsoft.Json;
 using TwitchPlaysAssembly.Helpers;
 using UnityEngine;
 
@@ -379,6 +380,277 @@ public class MiscellaneousMessageResponder : MessageResponder
 			var result = TwitchPlaySettings.ChangeSetting(match.Groups[1].Value, match.Groups[2].Value);
 			IRCConnection.Instance.SendMessage("{0}", result.Second);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
+		}
+		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manaul(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+)$"))
+		{
+			Match match1 = match;
+			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
+			switch (modules.Count)
+			{
+				case 0:
+					modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleID.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
+					if (modules.Count == 1) goto case 1;
+					if (modules.Count > 1)
+					{
+						var onemoduleID = modules.Where(x => x.moduleID.Equals(match1.Groups[2].Value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+						if (onemoduleID.Count == 1)
+						{
+							modules = onemoduleID;
+							goto case 1;
+						}
+						goto default;
+					}
+
+					IRCConnection.Instance.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"");
+					break;
+				case 1:
+					var moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
+					switch (match.Groups[1].Value)
+					{
+						case "help":
+						case "helpmessage":
+						case "help message":
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" help message: {modules[0].helpText}");
+							break;
+						case "manual":
+						case "manualcode":
+						case "manual code":
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code: {(string.IsNullOrEmpty(modules[0].manualCode) ? modules[0].moduleDisplayName : modules[0].manualCode)}");
+							break;
+						case "score":
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score: {modules[0].moduleScore}");
+							break;
+						case "statuslight":
+							if(modules[0].statusLightDown && modules[0].statusLightLeft)
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Left");
+							else if (modules[0].statusLightDown)
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Right");
+							else if (modules[0].statusLightLeft)
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Top Left");
+							else
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Top Right");
+							break;
+						case "module pin allowed":
+						case "camera pin allowed":
+						case "module pinallowed":
+						case "camera pinallowed":
+						case "modulepin allowed":
+						case "camerapin allowed":
+						case "modulepinallowed":
+						case "camerapinallowed":
+						case "pinallowed":
+						case "pin allowed":
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Module pinning always allowed: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}");
+							break;
+						case "strike":
+						case "strikepenalty":
+						case "strike penalty":
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Strike Penalty: {modules[0].strikePenalty}");
+							break;
+						case "color":
+						case "colour":
+							var moduleColor = JsonConvert.SerializeObject(TwitchPlaySettings.data.UnclaimedColor, Formatting.None, new ColorConverter());
+							if (modules[0].unclaimedColor != new Color())
+								moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}");
+							break;
+					}
+					
+					break;
+				default:
+					var onemodule = modules.Where(x => x.moduleDisplayName.Equals(match1.Groups[2].Value)).ToList();
+					if (onemodule.Count == 1)
+					{
+						modules = onemodule;
+						goto case 1;
+					}
+
+					IRCConnection.Instance.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"(\"{x.moduleID}\":\"{x.moduleDisplayName}\")").Join(", ")}");
+					break;
+			}
+		}
+		else if (text.RegexMatch(out match, @"^(?:write|change) ?module ?(help(?: ?message)?|manaul(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
+		{
+			if (!UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)) return;
+			var search = match.Groups[2].Value.ToLowerInvariant().Trim();
+			var changeTo = match.Groups[3].Value.Trim();
+			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(search)).ToList();
+			switch (modules.Count)
+			{
+				case 0:
+					modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleID.ToLowerInvariant().Contains(search)).ToList();
+					if (modules.Count == 1) goto case 1;
+					if (modules.Count > 1)
+					{
+						var onemoduleID = modules.Where(x => x.moduleID.Equals(search, StringComparison.InvariantCultureIgnoreCase)).ToList();
+						if (onemoduleID.Count == 1)
+						{
+							modules = onemoduleID;
+							goto case 1;
+						}
+						goto default;
+					}
+
+					IRCConnection.Instance.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"");
+					break;
+				case 1:
+					var moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
+					var module = modules[0];
+					var defaultModule = ComponentSolverFactory.GetDefaultInformation(module.moduleID);
+					switch (match.Groups[1].Value)
+					{
+						case "help":
+						case "helpmessage":
+						case "help message":
+							if (string.IsNullOrEmpty(changeTo))
+							{
+								module.helpTextOverride = false;
+								module.helpText = defaultModule.helpText;
+							}
+							else
+							{
+								module.helpText = changeTo;
+								module.helpTextOverride = true;
+							}
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" help message changed to: {module.helpText}");
+							break;
+						case "manual":
+						case "manualcode":
+						case "manual code":
+							if (string.IsNullOrEmpty(changeTo))
+							{
+								module.manualCodeOverride = false;
+								module.manualCode = defaultModule.manualCode;
+							}
+							else
+							{
+								module.manualCode = changeTo;
+								module.manualCodeOverride = true;
+							}
+
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code changed to: {(string.IsNullOrEmpty(module.manualCode) ? module.moduleDisplayName : module.manualCode)}");
+							break;
+						case "score":
+							module.moduleScore = !int.TryParse(changeTo, out int moduleScore) ? defaultModule.moduleScore : moduleScore;
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score changed to: {module.moduleScore}");
+							break;
+						case "statuslight":
+							switch (changeTo.ToLowerInvariant())
+							{
+								case "bl":
+								case "bottomleft":
+								case "bottom left":
+									module.statusLightOverride = true;
+									module.statusLightDown = true;
+									module.statusLightLeft = true;
+									break;
+								case "br":
+								case "bottomright":
+								case "bottom right":
+									module.statusLightOverride = true;
+									module.statusLightDown = true;
+									module.statusLightLeft = false;
+									break;
+								case "tr":
+								case "topright":
+								case "top right":
+									module.statusLightOverride = true;
+									module.statusLightDown = false;
+									module.statusLightLeft = false;
+									break;
+								case "tl":
+								case "topleft":
+								case "top left":
+									module.statusLightOverride = true;
+									module.statusLightDown = false;
+									module.statusLightLeft = true;
+									break;
+								default:
+									module.statusLightOverride = false;
+									module.statusLightDown = defaultModule.statusLightDown;
+									module.statusLightLeft = defaultModule.statusLightLeft;
+									break;
+							}
+							if (module.statusLightDown && module.statusLightLeft)
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Bottom Left");
+							else if (module.statusLightDown)
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Bottom Right");
+							else if (module.statusLightLeft)
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Top Left");
+							else
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Top Right");
+							break;
+						case "module pin allowed":
+						case "camera pin allowed":
+						case "module pinallowed":
+						case "camera pinallowed":
+						case "modulepin allowed":
+						case "camerapin allowed":
+						case "modulepinallowed":
+						case "camerapinallowed":
+						case "pinallowed":
+						case "pin allowed":
+							switch (changeTo.ToLowerInvariant())
+							{
+								case "true":
+								case "yes":
+									module.CameraPinningAlwaysAllowed = true;
+									break;
+								case "no":
+								case "false":
+									module.CameraPinningAlwaysAllowed = false;
+									break;
+								default:
+									module.CameraPinningAlwaysAllowed = defaultModule.CameraPinningAlwaysAllowed;
+									break;
+							}
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Module pinning always allowed changed to: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}");
+							break;
+						case "strike":
+						case "strikepenalty":
+						case "strike penalty":
+							module.strikePenalty = !int.TryParse(changeTo, out int strikePenalty) ? defaultModule.strikePenalty : -strikePenalty;
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Strike Penalty changed to: {modules[0].strikePenalty}");
+							break;
+						case "color":
+						case "colour":
+							string moduleColor;
+							try
+							{
+								var newModuleColor = SettingsConverter.Deserialize<Color>(changeTo);
+								moduleColor = newModuleColor == new Color() 
+									? JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter()) 
+									: changeTo;
+								module.unclaimedColor = newModuleColor == new Color()
+									? defaultModule.unclaimedColor
+									: newModuleColor;
+							}
+							catch
+							{
+								moduleColor = JsonConvert.SerializeObject(TwitchPlaySettings.data.UnclaimedColor, Formatting.None, new ColorConverter());
+								if (defaultModule.unclaimedColor != new Color())
+									moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
+								module.unclaimedColor = defaultModule.unclaimedColor;
+							}
+							
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color changed to: {moduleColor}");
+							break;
+					}
+					ModuleData.DataHasChanged = true;
+					ModuleData.WriteDataToFile();
+
+					break;
+				default:
+					var onemodule = modules.Where(x => x.moduleDisplayName.Equals(search)).ToList();
+					if (onemodule.Count == 1)
+					{
+						modules = onemodule;
+						goto case 1;
+					}
+
+					IRCConnection.Instance.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"(\"{x.moduleID}\":\"{x.moduleDisplayName}\")").Join(", ")}");
+					break;
+			}
 		}
 		else if (text.RegexMatch(out match, @"^(?:erase|remove|reset) ?settings? (\S+)$"))
 		{

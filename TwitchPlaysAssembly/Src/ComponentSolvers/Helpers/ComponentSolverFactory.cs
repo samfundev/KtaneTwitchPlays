@@ -402,7 +402,7 @@ public static class ComponentSolverFactory
 		info.validCommands = regexList;
 	}
 
-	private static ModuleInformation GetDefaultInformation(string moduleType)
+	public static ModuleInformation GetDefaultInformation(string moduleType)
 	{
 		if(!DefaultModComponentSolverInformation.ContainsKey(moduleType))
 			AddDefaultModuleInformation(new ModuleInformation() {moduleID = moduleType});
