@@ -91,12 +91,26 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Unity Lifecycle
 	private void Update()
 	{
-		if (Solver.modInfo.statusLightLeft == statusLightLeft && Solver.modInfo.statusLightDown == statusLightDown || originalIDPosition == Vector3.zero) return;
+		if (originalIDPosition == Vector3.zero) return;
+		if ((Solver.modInfo.statusLightLeft != statusLightLeft || Solver.modInfo.statusLightDown != statusLightDown))
+		{
+			Vector3 pos = originalIDPosition;
+			CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.modInfo.statusLightDown ? -pos.z : pos.z);
+			statusLightLeft = Solver.modInfo.statusLightLeft;
+			statusLightDown = Solver.modInfo.statusLightDown;
+		}
 
-		Vector3 pos = originalIDPosition;
-		CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.modInfo.statusLightDown ? -pos.z : pos.z);
-		statusLightLeft = Solver.modInfo.statusLightLeft;
-		statusLightDown = Solver.modInfo.statusLightDown;
+		if (Solver.modInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != Solver.modInfo.unclaimedColor)
+		{
+			unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;
+			if (!Claimed) SetBannerColor(unclaimedBackgroundColor);
+		}
+
+		if (!Solver.modInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != TwitchPlaySettings.data.UnclaimedColor)
+		{
+			unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
+			if (!Claimed) SetBannerColor(unclaimedBackgroundColor);
+		}
 	}
 
 	private void Awake()
