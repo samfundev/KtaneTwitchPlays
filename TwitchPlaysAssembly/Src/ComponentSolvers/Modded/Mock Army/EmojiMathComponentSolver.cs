@@ -10,7 +10,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 	{
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer using !{0} submit -47.");
-    }
+	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
@@ -30,7 +30,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 				}
 				else
 				{
-				    if (int.TryParse(c.ToString(), out int num))
+					if (int.TryParse(c.ToString(), out int num))
 					{
 						buttonIndexes.Add(num);
 					}

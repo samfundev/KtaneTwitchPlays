@@ -9,7 +9,7 @@ public class CurriculumComponentSolver : ComponentSolver
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.");
-    }
+	}
 
 	int[] buttonOffset = new int[6] { 0, 0, 0, 0, 0, 0 };
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -18,7 +18,7 @@ public class CurriculumComponentSolver : ComponentSolver
 
 		if (commands.Length.InRange(2, 3) && commands[0].EqualsAny("click", "press"))
 		{
-		    if (int.TryParse(commands[1], out int buttonPosition))
+			if (int.TryParse(commands[1], out int buttonPosition))
 			{
 				if (!buttonPosition.InRange(1, 5)) yield break;
 

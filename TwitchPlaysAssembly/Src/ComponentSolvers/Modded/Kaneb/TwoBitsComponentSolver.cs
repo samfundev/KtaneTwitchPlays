@@ -6,111 +6,111 @@ using UnityEngine;
 
 public class TwoBitsComponentSolver : ComponentSolver
 {
-    private Component c;
+	private Component c;
 
-    protected enum State
-    {
-        Inactive,
-        Idle,
-        Working,
-        ShowingResult,
-        ShowingError,
-        SubmittingResult,
-        IncorrectSubmission,
-        Complete
-    }
-
-    private const string ButtonLabels = "bcdegkptvz";
-
-    public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	protected enum State
 	{
-        c = bombComponent.GetComponent(_componentSolverType);
+		Inactive,
+		Idle,
+		Working,
+		ShowingResult,
+		ShowingError,
+		SubmittingResult,
+		IncorrectSubmission,
+		Complete
+	}
 
-        _submit = (MonoBehaviour)_submitButtonField.GetValue(c);
-        _query = (MonoBehaviour)_queryButtonField.GetValue(c);
-        _buttons = (MonoBehaviour[])_buttonsField.GetValue(c);
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.");
-    }
+	private const string ButtonLabels = "bcdegkptvz";
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
-    {
-        var split = inputCommand.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+	public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
+	{
+		c = bombComponent.GetComponent(_componentSolverType);
 
-        if (split.Length < 2 || split[0] != "press")
-            yield break;
+		_submit = (MonoBehaviour)_submitButtonField.GetValue(c);
+		_query = (MonoBehaviour)_queryButtonField.GetValue(c);
+		_buttons = (MonoBehaviour[])_buttonsField.GetValue(c);
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.");
+	}
 
-        foreach (string x in split.Skip(1))
-        {
-            switch (x)
-            {
-                case "query":
-                case "submit":
-                    break;
-                default:
-                    foreach (char y in x)
-                        if (!ButtonLabels.Contains(y))
-                            yield break;
-                    break;
-            }
-        }
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	{
+		var split = inputCommand.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
 
-        yield return "Two Bits Solve Attempt";
-        foreach (string x in split.Skip(1))
-        {
-            switch (x)
-            {
-                case "query":
-                    yield return DoInteractionClick(_query);
-                    break;
-                case "submit":
-                    yield return DoInteractionClick(_submit);
-                    break;
-                default:
-                    foreach (char y in x)
-                    {
-                        yield return DoInteractionClick(_buttons[ButtonLabels.IndexOf(y)]);
-                        _state = (State)_stateField.GetValue(c);
-                        if (_state == State.ShowingError || _state == State.Inactive)
-                            yield break;
-                    }
-                    break;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
+		if (split.Length < 2 || split[0] != "press")
+			yield break;
 
-        _state = (State)_stateField.GetValue(c);
-        if (_state == State.SubmittingResult)
-        {
-            string correctresponse = ((string)_calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
-            string currentQuery = ((string) _getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
-            yield return correctresponse.Equals(currentQuery) ? "solve" : "strike";
-        }
-    }
+		foreach (string x in split.Skip(1))
+		{
+			switch (x)
+			{
+				case "query":
+				case "submit":
+					break;
+				default:
+					foreach (char y in x)
+						if (!ButtonLabels.Contains(y))
+							yield break;
+					break;
+			}
+		}
 
-    static TwoBitsComponentSolver()
-    {
-        _componentSolverType = ReflectionHelper.FindType("TwoBitsModule");
-        _submitButtonField = _componentSolverType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
-        _queryButtonField = _componentSolverType.GetField("QueryButton", BindingFlags.Public | BindingFlags.Instance);
-        _buttonsField = _componentSolverType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-        _stateField = _componentSolverType.GetField("currentState", BindingFlags.NonPublic | BindingFlags.Instance);
-        _calculateCorrectSubmissionMethod = _componentSolverType.GetMethod("CalculateCorrectSubmission",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        _getCurrentQueryStringMethod = _componentSolverType.GetMethod("GetCurrentQueryString",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-    }
+		yield return "Two Bits Solve Attempt";
+		foreach (string x in split.Skip(1))
+		{
+			switch (x)
+			{
+				case "query":
+					yield return DoInteractionClick(_query);
+					break;
+				case "submit":
+					yield return DoInteractionClick(_submit);
+					break;
+				default:
+					foreach (char y in x)
+					{
+						yield return DoInteractionClick(_buttons[ButtonLabels.IndexOf(y)]);
+						_state = (State)_stateField.GetValue(c);
+						if (_state == State.ShowingError || _state == State.Inactive)
+							yield break;
+					}
+					break;
+			}
+			yield return new WaitForSeconds(0.1f);
+		}
 
-    private static Type _componentSolverType = null;
-    private static FieldInfo _submitButtonField = null;
-    private static FieldInfo _queryButtonField = null;
-    private static FieldInfo _buttonsField = null;
-    private static MethodInfo _calculateCorrectSubmissionMethod = null;
-    private static MethodInfo _getCurrentQueryStringMethod = null;
-    private static FieldInfo _stateField = null;
+		_state = (State)_stateField.GetValue(c);
+		if (_state == State.SubmittingResult)
+		{
+			string correctresponse = ((string)_calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
+			string currentQuery = ((string) _getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
+			yield return correctresponse.Equals(currentQuery) ? "solve" : "strike";
+		}
+	}
 
-    private MonoBehaviour[] _buttons = null;
-    private MonoBehaviour _query = null;
-    private MonoBehaviour _submit = null;
-    private State _state;
+	static TwoBitsComponentSolver()
+	{
+		_componentSolverType = ReflectionHelper.FindType("TwoBitsModule");
+		_submitButtonField = _componentSolverType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
+		_queryButtonField = _componentSolverType.GetField("QueryButton", BindingFlags.Public | BindingFlags.Instance);
+		_buttonsField = _componentSolverType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
+		_stateField = _componentSolverType.GetField("currentState", BindingFlags.NonPublic | BindingFlags.Instance);
+		_calculateCorrectSubmissionMethod = _componentSolverType.GetMethod("CalculateCorrectSubmission",
+			BindingFlags.NonPublic | BindingFlags.Instance);
+		_getCurrentQueryStringMethod = _componentSolverType.GetMethod("GetCurrentQueryString",
+			BindingFlags.NonPublic | BindingFlags.Instance);
+	}
+
+	private static Type _componentSolverType = null;
+	private static FieldInfo _submitButtonField = null;
+	private static FieldInfo _queryButtonField = null;
+	private static FieldInfo _buttonsField = null;
+	private static MethodInfo _calculateCorrectSubmissionMethod = null;
+	private static MethodInfo _getCurrentQueryStringMethod = null;
+	private static FieldInfo _stateField = null;
+
+	private MonoBehaviour[] _buttons = null;
+	private MonoBehaviour _query = null;
+	private MonoBehaviour _submit = null;
+	private State _state;
 }

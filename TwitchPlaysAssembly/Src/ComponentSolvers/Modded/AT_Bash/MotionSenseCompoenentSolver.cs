@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class MotionSenseComponentSolver : ComponentSolver
 {
-    public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
-        _component = bombComponent.GetComponent(_componentType);
-        _needy = (KMNeedyModule) _needyField.GetValue(_component);
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
+		_component = bombComponent.GetComponent(_componentType);
+		_needy = (KMNeedyModule) _needyField.GetValue(_component);
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
 		_needy.OnNeedyActivation += () =>
 		{
 			IRCConnection.Instance.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");
@@ -22,26 +22,26 @@ public class MotionSenseComponentSolver : ComponentSolver
 		};
 	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
-    {
-        if (!inputCommand.Equals("status", StringComparison.InvariantCultureIgnoreCase))
-            yield break;
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	{
+		if (!inputCommand.Equals("status", StringComparison.InvariantCultureIgnoreCase))
+			yield break;
 
-        bool active = (bool)_activeField.GetValue(_component);
-	    IRCConnection.Instance.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
-    }
+		bool active = (bool)_activeField.GetValue(_component);
+		IRCConnection.Instance.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
+	}
 
-    static MotionSenseComponentSolver()
-    {
-        _componentType = ReflectionHelper.FindType("MotionSenseModule");
-        _activeField = _componentType.GetField("_active", BindingFlags.NonPublic | BindingFlags.Instance);
-        _needyField = _componentType.GetField("NeedyModule", BindingFlags.Public | BindingFlags.Instance);
-    }
+	static MotionSenseComponentSolver()
+	{
+		_componentType = ReflectionHelper.FindType("MotionSenseModule");
+		_activeField = _componentType.GetField("_active", BindingFlags.NonPublic | BindingFlags.Instance);
+		_needyField = _componentType.GetField("NeedyModule", BindingFlags.Public | BindingFlags.Instance);
+	}
 
-    private static Type _componentType = null;
-    private static Component _component;
-    private static FieldInfo _activeField = null;
-    private static FieldInfo _needyField = null;
+	private static Type _componentType = null;
+	private static Component _component;
+	private static FieldInfo _activeField = null;
+	private static FieldInfo _needyField = null;
 
-    private KMNeedyModule _needy = null;
+	private KMNeedyModule _needy = null;
 }

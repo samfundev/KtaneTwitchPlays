@@ -6,17 +6,17 @@ using UnityEngine;
 
 public class WhosOnFirstComponentSolver : ComponentSolver
 {
-    public WhosOnFirstComponentSolver(BombCommander bombCommander, WhosOnFirstComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	public WhosOnFirstComponentSolver(BombCommander bombCommander, WhosOnFirstComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.Buttons;
-        modInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
-    }
+		modInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
+	}
 
 	static string[] phrases = new[] { "ready", "first", "no", "blank", "nothing", "yes", "what", "uhhh", "left", "right", "middle", "okay", "wait", "press", "you", "you are", "your", "you're", "ur", "u", "uh huh", "uh uh", "what?", "done", "next", "hold", "sure", "like" };
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
-    {
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	{
 		string word = inputCommand.ToLowerInvariant();
 		if (!phrases.Contains(word))
 		{
@@ -25,16 +25,16 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 			yield break;
 		}
 
-        foreach (KeypadButton button in _buttons)
-        {
-            if (inputCommand.Equals(button.GetText(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                yield return null;
+		foreach (KeypadButton button in _buttons)
+		{
+			if (inputCommand.Equals(button.GetText(), StringComparison.InvariantCultureIgnoreCase))
+			{
+				yield return null;
 				button.Interact();
 				yield return new WaitForSeconds(0.1f);
-                yield break;
-            }
-        }
+				yield break;
+			}
+		}
 
 		yield return null;
 		yield return "unsubmittablepenalty";

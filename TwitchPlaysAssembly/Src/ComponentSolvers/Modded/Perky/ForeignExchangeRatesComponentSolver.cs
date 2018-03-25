@@ -6,22 +6,22 @@ using UnityEngine;
 
 public class ForeignExchangeRatesComponentSolver : ComponentSolver
 {
-    public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
-        _buttons = (MonoBehaviour[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
-    }
+		_buttons = (MonoBehaviour[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
+	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
-    {
-        MonoBehaviour button = null;
-        var split = inputCommand.Trim().ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-        if (split.Length != 2 || split[0] != "press")
-            yield break;
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	{
+		MonoBehaviour button = null;
+		var split = inputCommand.Trim().ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+		if (split.Length != 2 || split[0] != "press")
+			yield break;
 
-        if (_buttons.Length < 9)
-            yield break;
+		if (_buttons.Length < 9)
+			yield break;
 
 		var cmds = split.Skip(1).Select(cmd =>
 		{
@@ -51,24 +51,24 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 			else yield break;
 		}
 
-        if (button == null)
-        {
-            yield return "autosolve due to the buttons not being set to expected values";
-            yield break;
-        }
+		if (button == null)
+		{
+			yield return "autosolve due to the buttons not being set to expected values";
+			yield break;
+		}
 
-        yield return "Foreign Exchange Rates Solve Attempt";
-        yield return DoInteractionClick(button);
-    }
+		yield return "Foreign Exchange Rates Solve Attempt";
+		yield return DoInteractionClick(button);
+	}
 
-    static ForeignExchangeRatesComponentSolver()
-    {
-        _componentType = ReflectionHelper.FindType("ForeignExchangeRates");
-        _buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-    }
+	static ForeignExchangeRatesComponentSolver()
+	{
+		_componentType = ReflectionHelper.FindType("ForeignExchangeRates");
+		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+	}
 
-    private static Type _componentType = null;
-    private static FieldInfo _buttonsField = null;
+	private static Type _componentType = null;
+	private static FieldInfo _buttonsField = null;
 
-    private MonoBehaviour[] _buttons = null;
+	private MonoBehaviour[] _buttons = null;
 }

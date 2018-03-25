@@ -6,16 +6,16 @@ using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-    public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo zenmodefield) :
-        base(bombCommander, bombComponent)
+	public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo zenmodefield) :
+		base(bombCommander, bombComponent)
 	{
 		ProcessMethod = processMethod;
 		ForcedSolveMethod = forcedSolveMethod;
-        CommandComponent = commandComponent;
+		CommandComponent = commandComponent;
 		ZenModeField = zenmodefield;
 		ZenMode = OtherModes.ZenModeOn;
-        modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-    }
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{

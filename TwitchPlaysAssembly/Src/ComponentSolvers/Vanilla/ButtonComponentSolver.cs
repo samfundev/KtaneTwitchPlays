@@ -7,101 +7,101 @@ using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
 {
-    public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
-        ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver", "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]");
-        ModuleInformation buttonInfoModified = ComponentSolverFactory.GetModuleInfo("ButtonComponentModifiedSolver", "Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.");
+		ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver", "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]");
+		ModuleInformation buttonInfoModified = ComponentSolverFactory.GetModuleInfo("ButtonComponentModifiedSolver", "Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.");
 
-        bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
-        _button = bombComponent.button;
+		bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
+		_button = bombComponent.button;
 		modInfo = VanillaRuleModifier.IsSeedVanilla() ? buttonInfo : buttonInfoModified;
 	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
-    {
-        bool isModdedSeed = VanillaRuleModifier.IsSeedModded();
-        inputCommand = inputCommand.ToLowerInvariant();
-        if (!_held && inputCommand.EqualsAny("tap", "click"))
-        {
-            yield return "tap";
-            yield return DoInteractionClick(_button);
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	{
+		bool isModdedSeed = VanillaRuleModifier.IsSeedModded();
+		inputCommand = inputCommand.ToLowerInvariant();
+		if (!_held && inputCommand.EqualsAny("tap", "click"))
+		{
+			yield return "tap";
+			yield return DoInteractionClick(_button);
 
-        }
-        if (!_held && (inputCommand.StartsWith("tap ") ||
-                       inputCommand.StartsWith("click ")))
-        {
-            if (!isModdedSeed)
-                yield break;
-            yield return "tap2";
+		}
+		if (!_held && (inputCommand.StartsWith("tap ") ||
+					   inputCommand.StartsWith("click ")))
+		{
+			if (!isModdedSeed)
+				yield break;
+			yield return "tap2";
 
-            IEnumerator releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
-            while (releaseCoroutine.MoveNext())
-            {
-                yield return releaseCoroutine.Current;
-            }
-        }
-        else if (!_held && inputCommand.Equals("hold"))
-        {
-            yield return "hold";
+			IEnumerator releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
+			while (releaseCoroutine.MoveNext())
+			{
+				yield return releaseCoroutine.Current;
+			}
+		}
+		else if (!_held && inputCommand.Equals("hold"))
+		{
+			yield return "hold";
 
-            _held = true;
-            DoInteractionStart(_button);
-            yield return new WaitForSeconds(2.0f);
-        }
-        else if (_held)
-        {
-            string[] commandParts = inputCommand.Split(' ');
-            if (commandParts.Length == 2 && commandParts[0].Equals("release"))
-            {
-                IEnumerator releaseCoroutine;
+			_held = true;
+			DoInteractionStart(_button);
+			yield return new WaitForSeconds(2.0f);
+		}
+		else if (_held)
+		{
+			string[] commandParts = inputCommand.Split(' ');
+			if (commandParts.Length == 2 && commandParts[0].Equals("release"))
+			{
+				IEnumerator releaseCoroutine;
 
-                if (!isModdedSeed)
-                {
-                    if (!int.TryParse(commandParts[1], out int second))
-                    {
-                        yield break;
-                    }
-                    if (second >= 0 && second <= 9)
-                        releaseCoroutine = ReleaseCoroutineVanilla(second);
-                    else
-                        yield break;
-                }
-                else
-                {
-                    releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
-                }
+				if (!isModdedSeed)
+				{
+					if (!int.TryParse(commandParts[1], out int second))
+					{
+						yield break;
+					}
+					if (second >= 0 && second <= 9)
+						releaseCoroutine = ReleaseCoroutineVanilla(second);
+					else
+						yield break;
+				}
+				else
+				{
+					releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
+				}
 
-                while (releaseCoroutine.MoveNext())
-                {
-                    yield return releaseCoroutine.Current;
-                }
-            }
-        }
-    }
+				while (releaseCoroutine.MoveNext())
+				{
+					yield return releaseCoroutine.Current;
+				}
+			}
+		}
+	}
 
-    private IEnumerator ReleaseCoroutineVanilla(int second)
-    {
-        yield return "release";
-        TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
-        string secondString = second.ToString();
-        float timeRemaining = float.PositiveInfinity;
-        while (timeRemaining > 0.0f && _held)
-        {
-            timeRemaining = timerComponent.TimeRemaining;
+	private IEnumerator ReleaseCoroutineVanilla(int second)
+	{
+		yield return "release";
+		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		string secondString = second.ToString();
+		float timeRemaining = float.PositiveInfinity;
+		while (timeRemaining > 0.0f && _held)
+		{
+			timeRemaining = timerComponent.TimeRemaining;
 
-            if (BombCommander.CurrentTimerFormatted.Contains(secondString))
-            {
-                DoInteractionEnd(_button);
-                _held = false;
-            }
+			if (BombCommander.CurrentTimerFormatted.Contains(secondString))
+			{
+				DoInteractionEnd(_button);
+				_held = false;
+			}
 
 			yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
 		}
-    }
+	}
 
-    private IEnumerator ReleaseCoroutineModded(string second)
-    {
+	private IEnumerator ReleaseCoroutineModded(string second)
+	{
 		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 		int target = Mathf.FloorToInt(timerComponent.TimeRemaining);
 		bool waitingMusic = true;
@@ -226,5 +226,5 @@ public class ButtonComponentSolver : ComponentSolver
 	}
 
 	private PressableButton _button = null;
-    private bool _held = false;
+	private bool _held = false;
 }

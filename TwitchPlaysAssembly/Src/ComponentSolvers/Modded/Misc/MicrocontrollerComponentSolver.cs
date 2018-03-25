@@ -11,7 +11,7 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 		object _component = bombComponent.GetComponent(_componentType);
 		_buttonOK = (KMSelectable) _buttonOKField.GetValue(_component);
 		_buttonUp = (KMSelectable) _buttonUpField.GetValue(_component);
-	    modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.");
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.");
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)

@@ -6,42 +6,42 @@ using Assets.Scripts.Rules;
 
 public class VennWireComponentSolver : ComponentSolver
 {
-    public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent) :
-        base(bombCommander, bombComponent)
+	public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent) :
+		base(bombCommander, bombComponent)
 	{
-        _wires = bombComponent.ActiveWires;
-        modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver", "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted");
-    }
+		_wires = bombComponent.ActiveWires;
+		modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver", "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted");
+	}
 
-    protected override IEnumerator RespondToCommandInternal(string inputCommand)
-    {
-        if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))
-        {
-            yield break;
-        }
-        inputCommand = inputCommand.Substring(4);
+	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	{
+		if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))
+		{
+			yield break;
+		}
+		inputCommand = inputCommand.Substring(4);
 
-        foreach (Match wireIndexString in Regex.Matches(inputCommand, @"[1-6]"))
-        {
-            if (!int.TryParse(wireIndexString.Value, out int wireIndex))
-            {
-                continue;
-            }
-            wireIndex--;
+		foreach (Match wireIndexString in Regex.Matches(inputCommand, @"[1-6]"))
+		{
+			if (!int.TryParse(wireIndexString.Value, out int wireIndex))
+			{
+				continue;
+			}
+			wireIndex--;
 
-            if (wireIndex >= 0 && wireIndex < _wires.Length)
-            {
-                if (_wires[wireIndex].Snipped)
-                    continue;
+			if (wireIndex >= 0 && wireIndex < _wires.Length)
+			{
+				if (_wires[wireIndex].Snipped)
+					continue;
 
-                yield return wireIndexString.Value;
+				yield return wireIndexString.Value;
 
-	            yield return "trycancel";
-                VennSnippableWire wire = _wires[wireIndex];
-                yield return DoInteractionClick(wire, string.Format("cutting wire {0}", wireIndexString.Value));
-            }
-        }
-    }
+				yield return "trycancel";
+				VennSnippableWire wire = _wires[wireIndex];
+				yield return DoInteractionClick(wire, string.Format("cutting wire {0}", wireIndexString.Value));
+			}
+		}
+	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
