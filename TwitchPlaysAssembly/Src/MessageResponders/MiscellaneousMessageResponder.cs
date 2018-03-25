@@ -217,36 +217,48 @@ public class MiscellaneousMessageResponder : MessageResponder
 				TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
 			}
 		}
-		else if (text.Equals("timemode", StringComparison.InvariantCultureIgnoreCase))
+		else if (text.RegexMatch(out match, $"^timemode ?((?:on|off)?)$"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone)
 			{
-				OtherModes.ToggleTimedMode();
+				switch (match.Groups[1].Value.ToLowerInvariant())
+				{
+					case "on":
+						OtherModes.TimedModeOn = true;
+						break;
+					case "off":
+						OtherModes.TimedModeOn = false;
+						break;
+					default:
+						OtherModes.ToggleTimedMode();
+						break;
+				}
 			}
 			else
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.TimeModeCommandDisabled, userNickName);
 			}
 		}
-		else if (text.Equals("zenmode", StringComparison.InvariantCultureIgnoreCase))
+		else if (text.RegexMatch(out match, $"^zenmode ?((?:on|off)?)$"))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableZenModeForEveryone)
 			{
-				OtherModes.ToggleZenMode();
+				switch (match.Groups[1].Value.ToLowerInvariant())
+				{
+					case "on":
+						OtherModes.ZenModeOn = true;
+						break;
+					case "off":
+						OtherModes.ZenModeOn = false;
+						break;
+					default:
+						OtherModes.ToggleZenMode();
+						break;
+				}
 			}
-		}
-		else if (text.Equals("zenmodeon", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			else
 			{
-				OtherModes.ZenModeOn = true;
-			}
-		}
-		else if (text.Equals("zenmodeoff", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				OtherModes.ZenModeOn = false;
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.ZenModeCommandDisabled, userNickName);
 			}
 		}
 		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))

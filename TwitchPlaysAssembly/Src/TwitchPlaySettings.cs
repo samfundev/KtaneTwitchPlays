@@ -54,6 +54,8 @@ public class TwitchPlaySettingsData
 	public int TimeModeMinimumTimeGained = 20;
 	public float AwardDropMultiplierOnStrike = 0.80f;
 
+	public bool EnableZenModeForEveryone = false;
+
 	public int MinTimeLeftForClaims = 60;
 	public int MinUnsolvedModulesLeftForClaims = 3;
 
@@ -168,6 +170,7 @@ public class TwitchPlaySettingsData
 	public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
 	public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
 	public string TimeModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Time Mode";
+	public string ZenModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Zen Mode";
 	public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "Sorry @{0}, profile management is currently disabled.";
 	public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
@@ -363,6 +366,7 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref FreePlayHardcoreDisabled, data.FreePlayHardcoreDisabled, 1);
 		valid &= ValidateString(ref FreePlayModsOnlyDisabled, data.FreePlayModsOnlyDisabled, 1);
 		valid &= ValidateString(ref TimeModeCommandDisabled, data.TimeModeCommandDisabled, 1);
+		valid &= ValidateString(ref ZenModeCommandDisabled, data.ZenModeCommandDisabled, 1);
 		valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
 
 		valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2, SettingsVersion < 1);
