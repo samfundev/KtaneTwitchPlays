@@ -3,47 +3,47 @@
 public static class CoroutineCanceller
 {
 	public static void SetCancel()
-    {
-        ShouldCancel = true;
-    }
+	{
+		ShouldCancel = true;
+	}
 
-    public static void ResetCancel()
-    {
-        ShouldCancel = false;
-    }
+	public static void ResetCancel()
+	{
+		ShouldCancel = false;
+	}
 
-    public static bool ShouldCancel
-    {
-        get;
-        private set;
-    }
+	public static bool ShouldCancel
+	{
+		get;
+		private set;
+	}
 }
 
 public class WaitForSecondsWithCancel : CustomYieldInstruction
 {
-    public WaitForSecondsWithCancel(float seconds, bool resetCancel=true)
-    {
-        _seconds = seconds;
-        _startingTime = Time.time;
-        _resetCancel = resetCancel;
-    }
+	public WaitForSecondsWithCancel(float seconds, bool resetCancel=true)
+	{
+		_seconds = seconds;
+		_startingTime = Time.time;
+		_resetCancel = resetCancel;
+	}
 
-    public override bool keepWaiting
-    {
-        get
-        {
-	        if (!CoroutineCanceller.ShouldCancel)
+	public override bool keepWaiting
+	{
+		get
+		{
+			if (!CoroutineCanceller.ShouldCancel)
 				return (Time.time - _startingTime) < _seconds;
 
-	        if(_resetCancel)
-		        CoroutineCanceller.ResetCancel();
+			if(_resetCancel)
+				CoroutineCanceller.ResetCancel();
 
-	        return false;
-        }
-    }
+			return false;
+		}
+	}
 
-    private readonly float _seconds = 0.0f;
-    private readonly float _startingTime = 0.0f;
-    private readonly bool _resetCancel = true;
+	private readonly float _seconds = 0.0f;
+	private readonly float _startingTime = 0.0f;
+	private readonly bool _resetCancel = true;
 }
 
