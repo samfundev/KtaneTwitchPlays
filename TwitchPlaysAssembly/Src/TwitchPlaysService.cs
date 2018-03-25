@@ -46,6 +46,8 @@ public class TwitchPlaysService : MonoBehaviour
 	    bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchComponentHandle>(true);
 	    bombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
 
+		BombMessageResponder.Instance = bombMessageResponder;
+
 		GameRoom.InitializeSecondaryCamera();
 		_gameInfo = GetComponent<KMGameInfo>();
         _gameInfo.OnStateChange += OnStateChange;
