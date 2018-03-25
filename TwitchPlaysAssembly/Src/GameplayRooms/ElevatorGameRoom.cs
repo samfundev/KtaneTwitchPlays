@@ -47,19 +47,19 @@ public class ElevatorGameRoom : GameRoom
 			"The Elevator of Doom",
 			"The Elevator to Hell",
 			"The Elevator to Heaven",
-			"Bomblebee",
+			"Bomblebee ",
 			"Big Bomb",
 			"Big Bomb Man",
-			"Explodicus",
+			"Explodicus ",
 			"Little Boy",
 			"Fat Man",
-			"Bombadillo",
+			"Bombadillo ",
 			"The Dud",
-			"Molotov",
+			"Molotov ",
 			"Sergeant Cluster",
 			"La Bomba",
-			"Bombchu",
-			"Bomboleo"
+			"Bombchu ",
+			"Bomboleo "
 		};
 		if (!(rand.NextDouble() < specialNameProbability)) return;
 		foreach (TwitchBombHandle handle in bombHandles)
