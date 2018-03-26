@@ -541,8 +541,8 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					messageOut = UnclaimModule(userNickName, targetModule).Second;
 				}
-				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cw", "wc", 
-					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cwp", "wpc"))
+				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cv", "vc", 
+					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cvp", "vpc"))
 				{
 					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, text.Contains("p"));
 					if (response.First)
@@ -555,7 +555,7 @@ public class TwitchComponentHandle : MonoBehaviour
 						messageOut = response.Second;
 					}
 				}
-				else if (internalCommand.ToLowerInvariant().EqualsAny("unclaim unview", "unview unclaim", "unclaimview", "unviewclaim", "uncw", "unwc"))
+				else if (internalCommand.ToLowerInvariant().EqualsAny("unclaim unview", "unview unclaim", "unclaimview", "unviewclaim", "uncv", "unvc"))
 				{
 					Tuple<bool, string> response = UnclaimModule(userNickName, Code);
 					if (response.First)
