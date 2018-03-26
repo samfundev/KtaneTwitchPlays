@@ -4,35 +4,35 @@ using System.Collections;
 
 public class MissionMessageResponder : MessageResponder
 {
-    private BombBinderCommander _bombBinderCommander = null;
-    private FreeplayCommander _freeplayCommander = null;
+	private BombBinderCommander _bombBinderCommander = null;
+	private FreeplayCommander _freeplayCommander = null;
 
-    #region Unity Lifecycle
-    private void OnEnable()
-    {
+	#region Unity Lifecycle
+	private void OnEnable()
+	{
 		// InputInterceptor.DisableInput();
 
 		StartCoroutine(CheckForBombBinderAndFreeplayDevice());
-    }
+	}
 
-    private void OnDisable()
-    {
-        StopAllCoroutines();
+	private void OnDisable()
+	{
+		StopAllCoroutines();
 
-        _bombBinderCommander = BombBinderCommander.Instance = null;
-        _freeplayCommander = FreeplayCommander.Instance = null;
-    }
-    #endregion
+		_bombBinderCommander = BombBinderCommander.Instance = null;
+		_freeplayCommander = FreeplayCommander.Instance = null;
+	}
+	#endregion
 
-    #region Protected/Private Methods
-    private IEnumerator CheckForBombBinderAndFreeplayDevice()
-    {
-        yield return null;
+	#region Protected/Private Methods
+	private IEnumerator CheckForBombBinderAndFreeplayDevice()
+	{
+		yield return null;
 
-	    SetupRoom setupRoom = (SetupRoom)SceneManager.Instance.CurrentRoom;
-	    _bombBinderCommander = new BombBinderCommander(setupRoom.BombBinder);
-	    _freeplayCommander = new FreeplayCommander(setupRoom.FreeplayDevice);
-    }
+		SetupRoom setupRoom = (SetupRoom)SceneManager.Instance.CurrentRoom;
+		_bombBinderCommander = new BombBinderCommander(setupRoom.BombBinder);
+		_freeplayCommander = new FreeplayCommander(setupRoom.FreeplayDevice);
+	}
 
 	
 
@@ -75,5 +75,5 @@ public class MissionMessageResponder : MessageResponder
 				break;
 		}
 	}
-    #endregion
+	#endregion
 }

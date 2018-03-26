@@ -76,44 +76,44 @@ public static class OtherModes
 	private static bool _vsModeNextBomb = false;
 
 	public static float timedMultiplier = 9;
-    public static int teamHealth = 0;
-    public static int bossHealth = 0;
+	public static int teamHealth = 0;
+	public static int bossHealth = 0;
 
-    public static void ToggleVsMode()
-    {
-        VsModeOn = !VsModeOn;
-    }
+	public static void ToggleVsMode()
+	{
+		VsModeOn = !VsModeOn;
+	}
 
-    public static int GetTeamHealth()
-    {
-        return teamHealth;
-    }
+	public static int GetTeamHealth()
+	{
+		return teamHealth;
+	}
 
-    public static int GetBossHealth()
-    {
-        return bossHealth;
-    }
+	public static int GetBossHealth()
+	{
+		return bossHealth;
+	}
 
-    public static int SubtractBossHealth(int damage)
-    {
-        bossHealth = bossHealth - damage;
-        return bossHealth;
-    }
+	public static int SubtractBossHealth(int damage)
+	{
+		bossHealth = bossHealth - damage;
+		return bossHealth;
+	}
 
-    public static int SubtractTeamHealth(int damage)
-    {
-        teamHealth = teamHealth - damage;
-        return teamHealth;
-    }
+	public static int SubtractTeamHealth(int damage)
+	{
+		teamHealth = teamHealth - damage;
+		return teamHealth;
+	}
 
 	public static void ToggleZenMode()
 	{
 		ZenModeOn = !_zenModeNextBomb;
 	}
 
-    public static void ToggleTimedMode()
-    {
-	    TimedModeOn = !_timedModeNextBomb;
+	public static void ToggleTimedMode()
+	{
+		TimedModeOn = !_timedModeNextBomb;
 	}
 
 	public static void RefreshModes()
@@ -125,32 +125,32 @@ public static class OtherModes
 		if (result) return;
 	}
 
-    public static float GetMultiplier()
-    {
-        return timedMultiplier;
-    }
+	public static float GetMultiplier()
+	{
+		return timedMultiplier;
+	}
 
 	public static float GetAdjustedMultiplier()
 	{
 		return Math.Min(timedMultiplier, TwitchPlaySettings.data.TimeModeMaxMultiplier);
 	}
 
-    public static bool DropMultiplier()
-    {
-        if (timedMultiplier > (TwitchPlaySettings.data.TimeModeMinMultiplier + TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty))
-        {
-            timedMultiplier = timedMultiplier - TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty;
-            return true;
-        }
-        else
-        {
-            timedMultiplier = TwitchPlaySettings.data.TimeModeMinMultiplier;
-            return false;
-        }
-    }
+	public static bool DropMultiplier()
+	{
+		if (timedMultiplier > (TwitchPlaySettings.data.TimeModeMinMultiplier + TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty))
+		{
+			timedMultiplier = timedMultiplier - TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty;
+			return true;
+		}
+		else
+		{
+			timedMultiplier = TwitchPlaySettings.data.TimeModeMinMultiplier;
+			return false;
+		}
+	}
 
-    public static void SetMultiplier(float newMultiplier)
-    {
-        timedMultiplier = newMultiplier;
-    }
+	public static void SetMultiplier(float newMultiplier)
+	{
+		timedMultiplier = newMultiplier;
+	}
 }

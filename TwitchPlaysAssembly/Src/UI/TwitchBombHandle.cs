@@ -8,108 +8,108 @@ using System.Collections.Generic;
 
 public class TwitchBombHandle : MonoBehaviour
 {
-    #region Public Fields
-    public TwitchMessage messagePrefab = null;
+	#region Public Fields
+	public TwitchMessage messagePrefab = null;
 
-    public CanvasGroup canvasGroup = null;
-    public CanvasGroup highlightGroup = null;
-    public Text idText = null;
-    public Text nameText = null;
-    public ScrollRect messageScroll = null;
-    public GameObject messageScrollContents = null;
-    public RectTransform mainWindowTransform = null;
-    public RectTransform highlightTransform = null;
+	public CanvasGroup canvasGroup = null;
+	public CanvasGroup highlightGroup = null;
+	public Text idText = null;
+	public Text nameText = null;
+	public ScrollRect messageScroll = null;
+	public GameObject messageScrollContents = null;
+	public RectTransform mainWindowTransform = null;
+	public RectTransform highlightTransform = null;
 
-    public Text edgeworkIDText = null;
-    public Text edgeworkText = null;
-    public RectTransform edgeworkWindowTransform = null;
-    public RectTransform edgeworkHighlightTransform = null;
+	public Text edgeworkIDText = null;
+	public Text edgeworkText = null;
+	public RectTransform edgeworkWindowTransform = null;
+	public RectTransform edgeworkHighlightTransform = null;
 
-    [HideInInspector]
-    public BombCommander bombCommander = null;
+	[HideInInspector]
+	public BombCommander bombCommander = null;
 
-    [HideInInspector]
-    public CoroutineQueue coroutineQueue = null;
+	[HideInInspector]
+	public CoroutineQueue coroutineQueue = null;
 
-    [HideInInspector]
-    public int bombID = -1;
-    #endregion
+	[HideInInspector]
+	public int bombID = -1;
+	#endregion
 
-    #region Private Fields
-    private string _code = null;
-    private string _edgeworkCode = null;
-    #endregion
+	#region Private Fields
+	private string _code = null;
+	private string _edgeworkCode = null;
+	#endregion
 
-    #region Unity Lifecycle
-    private void Awake()
-    {
-        _code = "bomb";
-        _edgeworkCode = "edgework";
-    }
+	#region Unity Lifecycle
+	private void Awake()
+	{
+		_code = "bomb";
+		_edgeworkCode = "edgework";
+	}
 
-    private void Start()
-    {
-        if (bombID > -1)
-        {
-            _code = "bomb" + (bombID + 1);
-            _edgeworkCode = "edgework" + (bombID + 1);
-        }
+	private void Start()
+	{
+		if (bombID > -1)
+		{
+			_code = "bomb" + (bombID + 1);
+			_edgeworkCode = "edgework" + (bombID + 1);
+		}
 
-        idText.text = string.Format("!{0}", _code);
-        edgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
-        edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
+		idText.text = string.Format("!{0}", _code);
+		edgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
+		edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
-        canvasGroup.alpha = 1.0f;
-        highlightGroup.alpha = 0.0f;
-        if (bombID > 0)
-        {
-            edgeworkWindowTransform.localScale = Vector3.zero;
-            edgeworkHighlightTransform.localScale = Vector3.zero;
-            mainWindowTransform.localScale = Vector3.zero;
-            highlightTransform.localScale = Vector3.zero;
-        }
-    }
+		canvasGroup.alpha = 1.0f;
+		highlightGroup.alpha = 0.0f;
+		if (bombID > 0)
+		{
+			edgeworkWindowTransform.localScale = Vector3.zero;
+			edgeworkHighlightTransform.localScale = Vector3.zero;
+			mainWindowTransform.localScale = Vector3.zero;
+			highlightTransform.localScale = Vector3.zero;
+		}
+	}
 
-    private void LateUpdate()
-    {
-        messageScroll.verticalNormalizedPosition = 0.0f;
-    }
+	private void LateUpdate()
+	{
+		messageScroll.verticalNormalizedPosition = 0.0f;
+	}
 
-    private void OnDestroy()
-    {
-        StopAllCoroutines();
-    }
-    #endregion
+	private void OnDestroy()
+	{
+		StopAllCoroutines();
+	}
+	#endregion
 
-    #region Message Interface    
-    public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
-    {
-        string internalCommand;
-        Match match = Regex.Match(text, string.Format("^{0} (.+)", _code), RegexOptions.IgnoreCase);
-        if (!match.Success)
-        {
-            match = Regex.Match(text, string.Format("^{0}(?> (.+))?", _edgeworkCode), RegexOptions.IgnoreCase);
-            if (match.Success)
-            {
-                internalCommand = match.Groups[1].Value;
-                if (!string.IsNullOrEmpty(internalCommand))
-                {
-                    if (!IsAuthorizedDefuser(userNickName)) return null;
-                    edgeworkText.text = internalCommand;
-                }
-	            IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkText.text);
-            }
-            return null;
-        }
+	#region Message Interface    
+	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
+	{
+		string internalCommand;
+		Match match = Regex.Match(text, string.Format("^{0} (.+)", _code), RegexOptions.IgnoreCase);
+		if (!match.Success)
+		{
+			match = Regex.Match(text, string.Format("^{0}(?> (.+))?", _edgeworkCode), RegexOptions.IgnoreCase);
+			if (match.Success)
+			{
+				internalCommand = match.Groups[1].Value;
+				if (!string.IsNullOrEmpty(internalCommand))
+				{
+					if (!IsAuthorizedDefuser(userNickName)) return null;
+					edgeworkText.text = internalCommand;
+				}
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkText.text);
+			}
+			return null;
+		}
 
-        internalCommand = match.Groups[1].Value;
+		internalCommand = match.Groups[1].Value;
 
-        TwitchMessage message = Instantiate<TwitchMessage>(messagePrefab, messageScrollContents.transform, false);
-	    message.SetMessage(string.IsNullOrEmpty(userColor) 
+		TwitchMessage message = Instantiate<TwitchMessage>(messagePrefab, messageScrollContents.transform, false);
+		message.SetMessage(string.IsNullOrEmpty(userColor) 
 			? string.Format("<b>{0}</b>: {1}", userNickName, internalCommand) 
 			: string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, userColor));
 
-	    string internalCommandLower = internalCommand.ToLowerInvariant();
+		string internalCommandLower = internalCommand.ToLowerInvariant();
 		string[] split = internalCommandLower.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		//Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
@@ -140,7 +140,7 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || (OtherModes.ZenModeOn && internalCommandLower.Equals("endzenmode")))
 			{
-                return DelayBombExplosionCoroutine(notifier);
+				return DelayBombExplosionCoroutine(notifier);
 			}
 
 			return null;
@@ -189,10 +189,10 @@ public class TwitchBombHandle : MonoBehaviour
 							bool valid = false;
 							foreach (string unit in timeLengths.Keys)
 							{
-							    if (!part.EndsWith(unit) || !float.TryParse(part.Substring(0, part.Length - unit.Length), out float length)) continue;
-							    time += length * timeLengths[unit];
-							    valid = true;
-							    break;
+								if (!part.EndsWith(unit) || !float.TryParse(part.Substring(0, part.Length - unit.Length), out float length)) continue;
+								time += length * timeLengths[unit];
+								valid = true;
+								break;
 							}
 
 							if (!valid) return null;
@@ -215,7 +215,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "strikes":
 					case "strike":
 					case "s":
-					    if (int.TryParse(split[2], out int strikes) && (strikes != 0 || direct))
+						if (int.TryParse(split[2], out int strikes) && (strikes != 0 || direct))
 						{
 							if (negitive) strikes = -strikes;
 
@@ -223,10 +223,10 @@ public class TwitchBombHandle : MonoBehaviour
 							{
 								strikes = 0;
 							}
-						    else if (!direct && (bombCommander.StrikeCount + strikes) < 0)
-						    {
-						        strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
-						    }
+							else if (!direct && (bombCommander.StrikeCount + strikes) < 0)
+							{
+								strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
+							}
 
 							if (direct)
 								bombCommander.StrikeCount = strikes;
@@ -237,14 +237,14 @@ public class TwitchBombHandle : MonoBehaviour
 								IRCConnection.Instance.SendMessage("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike");
 							else
 								IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
-                            BombMessageResponder.moduleCameras.UpdateStrikes();
+							BombMessageResponder.moduleCameras.UpdateStrikes();
 						}
 						break;
 					case "strikelimit":
 					case "sl":
 					case "maxstrikes":
 					case "ms":
-					    if (int.TryParse(split[2], out int maxStrikes) && (maxStrikes != 0 || direct))
+						if (int.TryParse(split[2], out int maxStrikes) && (maxStrikes != 0 || direct))
 						{
 							if (negitive) maxStrikes = -maxStrikes;
 
@@ -262,8 +262,8 @@ public class TwitchBombHandle : MonoBehaviour
 								IRCConnection.Instance.SendMessage("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike");
 							else
 								IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
-						    BombMessageResponder.moduleCameras.UpdateStrikes();
-                            BombMessageResponder.moduleCameras.UpdateStrikeLimit();
+							BombMessageResponder.moduleCameras.UpdateStrikes();
+							BombMessageResponder.moduleCameras.UpdateStrikeLimit();
 						}
 						break;
 				}
@@ -280,90 +280,90 @@ public class TwitchBombHandle : MonoBehaviour
 			return RespondToCommandCoroutine(userNickName, internalCommand, message);
 		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public IEnumerator HideMainUIWindow()
-    {
-        edgeworkWindowTransform.localScale = Vector3.zero;
-        edgeworkHighlightTransform.localScale = Vector3.zero;
-        mainWindowTransform.localScale = Vector3.zero;
-        highlightTransform.localScale = Vector3.zero;
-        yield return null;
-    }
+	public IEnumerator HideMainUIWindow()
+	{
+		edgeworkWindowTransform.localScale = Vector3.zero;
+		edgeworkHighlightTransform.localScale = Vector3.zero;
+		mainWindowTransform.localScale = Vector3.zero;
+		highlightTransform.localScale = Vector3.zero;
+		yield return null;
+	}
 
-    public IEnumerator ShowMainUIWindow()
-    {
-        edgeworkWindowTransform.localScale = Vector3.one;
-        edgeworkHighlightTransform.localScale = Vector3.one;
-        mainWindowTransform.localScale = Vector3.one;
-        highlightTransform.localScale = Vector3.one;
-        yield return null;
-    }
+	public IEnumerator ShowMainUIWindow()
+	{
+		edgeworkWindowTransform.localScale = Vector3.one;
+		edgeworkHighlightTransform.localScale = Vector3.one;
+		mainWindowTransform.localScale = Vector3.one;
+		highlightTransform.localScale = Vector3.one;
+		yield return null;
+	}
 
-    public void CauseExplosionByModuleCommand(string message, string reason)
-    {
-        StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
-    }
-    
-    
-    #endregion
+	public void CauseExplosionByModuleCommand(string message, string reason)
+	{
+		StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
+	}
+	
+	
+	#endregion
 
-    #region Private Methods
-    private bool IsAuthorizedDefuser(string userNickName)
-    {
-	    return MessageResponder.IsAuthorizedDefuser(userNickName);
-    }
+	#region Private Methods
+	private bool IsAuthorizedDefuser(string userNickName)
+	{
+		return MessageResponder.IsAuthorizedDefuser(userNickName);
+	}
 
-    private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
-    {
-        notifier.ProcessResponse(CommandResponse.Start);
-        yield return DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
-        notifier.ProcessResponse(CommandResponse.EndNotComplete);
-    }
+	private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
+	{
+		notifier.ProcessResponse(CommandResponse.Start);
+		yield return DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
+		notifier.ProcessResponse(CommandResponse.EndNotComplete);
+	}
 
-    private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
-    {
-        bombCommander.StrikeCount = bombCommander.StrikeLimit - 1;
-        if (!string.IsNullOrEmpty(message))
-	        IRCConnection.Instance.SendMessage(message);
-        yield return new WaitForSeconds(delay);
-        bombCommander.CauseStrikesToExplosion(reason);
-    }
+	private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
+	{
+		bombCommander.StrikeCount = bombCommander.StrikeLimit - 1;
+		if (!string.IsNullOrEmpty(message))
+			IRCConnection.Instance.SendMessage(message);
+		yield return new WaitForSeconds(delay);
+		bombCommander.CauseStrikesToExplosion(reason);
+	}
 
-    private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)
-    {
-        float time = Time.time;
-        while (Time.time - time < fadeDuration)
-        {
-            float lerp = (Time.time - time) / fadeDuration;
-            highlightGroup.alpha = Mathf.Lerp(0.0f, 1.0f, lerp);
-            yield return null;
-        }
-        highlightGroup.alpha = 1.0f;
+	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)
+	{
+		float time = Time.time;
+		while (Time.time - time < fadeDuration)
+		{
+			float lerp = (Time.time - time) / fadeDuration;
+			highlightGroup.alpha = Mathf.Lerp(0.0f, 1.0f, lerp);
+			yield return null;
+		}
+		highlightGroup.alpha = 1.0f;
 
-        IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message);
-        while (commandResponseCoroutine.MoveNext())
-        {
-	        if (commandResponseCoroutine.Current is string chatmessage)
-            {
-                if(chatmessage.StartsWith("sendtochat "))
-                {
-	                IRCConnection.Instance.SendMessage(chatmessage.Substring(11));
-                }
-            }
+		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message);
+		while (commandResponseCoroutine.MoveNext())
+		{
+			if (commandResponseCoroutine.Current is string chatmessage)
+			{
+				if(chatmessage.StartsWith("sendtochat "))
+				{
+					IRCConnection.Instance.SendMessage(chatmessage.Substring(11));
+				}
+			}
 
-            yield return commandResponseCoroutine.Current;
-        }
+			yield return commandResponseCoroutine.Current;
+		}
 
-        time = Time.time;
-        while (Time.time - time < fadeDuration)
-        {
-            float lerp = (Time.time - time) / fadeDuration;
-            highlightGroup.alpha = Mathf.Lerp(1.0f, 0.0f, lerp);
-            yield return null;
-        }
-        highlightGroup.alpha = 0.0f;
-    }
-    #endregion    
+		time = Time.time;
+		while (Time.time - time < fadeDuration)
+		{
+			float lerp = (Time.time - time) / fadeDuration;
+			highlightGroup.alpha = Mathf.Lerp(1.0f, 0.0f, lerp);
+			yield return null;
+		}
+		highlightGroup.alpha = 0.0f;
+	}
+	#endregion    
 }

@@ -11,24 +11,24 @@ using UnityEngine;
 
 public class TwitchPlaysService : MonoBehaviour
 {
-    public class ModSettingsJSON
-    {
-	    public string authToken = "";
-	    public string userName = "";
-        public string channelName = "";
-        public string serverName = "irc.twitch.tv";
-        public int serverPort = 6667;
-    }
+	public class ModSettingsJSON
+	{
+		public string authToken = "";
+		public string userName = "";
+		public string channelName = "";
+		public string serverName = "irc.twitch.tv";
+		public int serverPort = 6667;
+	}
 
-    public BombMessageResponder bombMessageResponder = null;
-    public PostGameMessageResponder postGameMessageResponder = null;
-    public MissionMessageResponder missionMessageResponder = null;
-    public MiscellaneousMessageResponder miscellaneousMessageResponder = null;
+	public BombMessageResponder bombMessageResponder = null;
+	public PostGameMessageResponder postGameMessageResponder = null;
+	public MissionMessageResponder missionMessageResponder = null;
+	public MiscellaneousMessageResponder miscellaneousMessageResponder = null;
 
-    private KMGameInfo _gameInfo = null;
-    private CoroutineQueue _coroutineQueue = null;
+	private KMGameInfo _gameInfo = null;
+	private CoroutineQueue _coroutineQueue = null;
 
-    private MessageResponder _activeMessageResponder = null;
+	private MessageResponder _activeMessageResponder = null;
 
 	private HashSet<Mod> CheckedMods = null;
 	private TwitchPlaysProperties _publicProperties;
@@ -37,41 +37,41 @@ public class TwitchPlaysService : MonoBehaviour
 	private void Start()
 	{
 		transform.Find("Prefabs").gameObject.SetActive(false);
-	    bombMessageResponder = GetComponentInChildren<BombMessageResponder>(true);
-	    postGameMessageResponder = GetComponentInChildren<PostGameMessageResponder>(true);
-	    missionMessageResponder = GetComponentInChildren<MissionMessageResponder>(true);
-	    miscellaneousMessageResponder = GetComponentInChildren<MiscellaneousMessageResponder>(true);
+		bombMessageResponder = GetComponentInChildren<BombMessageResponder>(true);
+		postGameMessageResponder = GetComponentInChildren<PostGameMessageResponder>(true);
+		missionMessageResponder = GetComponentInChildren<MissionMessageResponder>(true);
+		miscellaneousMessageResponder = GetComponentInChildren<MiscellaneousMessageResponder>(true);
 
-	    bombMessageResponder.twitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
-	    bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchComponentHandle>(true);
-	    bombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
+		bombMessageResponder.twitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
+		bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchComponentHandle>(true);
+		bombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
 
 		BombMessageResponder.Instance = bombMessageResponder;
 
 		GameRoom.InitializeSecondaryCamera();
 		_gameInfo = GetComponent<KMGameInfo>();
-        _gameInfo.OnStateChange += OnStateChange;
+		_gameInfo.OnStateChange += OnStateChange;
 
-        _coroutineQueue = GetComponent<CoroutineQueue>();
+		_coroutineQueue = GetComponent<CoroutineQueue>();
 
 		Leaderboard.Instance.LoadDataFromFile();
 
-        ModuleData.LoadDataFromFile();
-        ModuleData.WriteDataToFile();
+		ModuleData.LoadDataFromFile();
+		ModuleData.WriteDataToFile();
 
-        TwitchPlaySettings.LoadDataFromFile();
+		TwitchPlaySettings.LoadDataFromFile();
 
-        SetupResponder(bombMessageResponder);
-        SetupResponder(postGameMessageResponder);
-        SetupResponder(missionMessageResponder);
-        SetupResponder(miscellaneousMessageResponder);
+		SetupResponder(bombMessageResponder);
+		SetupResponder(postGameMessageResponder);
+		SetupResponder(missionMessageResponder);
+		SetupResponder(miscellaneousMessageResponder);
 
-        bombMessageResponder.parentService = this;
+		bombMessageResponder.parentService = this;
 
-	    GameObject infoObject = new GameObject("TwitchPlays_Info");
-	    infoObject.transform.parent = gameObject.transform;
-	    _publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
-	    _publicProperties.TwitchPlaysService = this;
+		GameObject infoObject = new GameObject("TwitchPlays_Info");
+		infoObject.transform.parent = gameObject.transform;
+		_publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
+		_publicProperties.TwitchPlaysService = this;
 		if (TwitchPlaySettings.data.SkipModManagerInstructionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
 			ModManagerManualInstructionScreen.HasShownOnce = true;
 	}
@@ -91,85 +91,85 @@ public class TwitchPlaysService : MonoBehaviour
 	
 
 	private void Update()
-    {
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            InputInterceptor.EnableInput();
-        }
-    }
+	{
+		if (Input.GetKey(KeyCode.Escape))
+		{
+			InputInterceptor.EnableInput();
+		}
+	}
 
-    private void OnStateChange(KMGameInfo.State state)
-    {
-	    if (!transform.gameObject.activeInHierarchy)
-		    return;
+	private void OnStateChange(KMGameInfo.State state)
+	{
+		if (!transform.gameObject.activeInHierarchy)
+			return;
 
-        StartCoroutine(StopEveryCoroutine());
+		StartCoroutine(StopEveryCoroutine());
 
-        if (_activeMessageResponder != null)
-        {
-            _activeMessageResponder.gameObject.SetActive(false);
-        }
+		if (_activeMessageResponder != null)
+		{
+			_activeMessageResponder.gameObject.SetActive(false);
+		}
 
-        _activeMessageResponder = GetActiveResponder(state);
+		_activeMessageResponder = GetActiveResponder(state);
 
-        if (_activeMessageResponder != null)
-        {
-            _activeMessageResponder.gameObject.SetActive(true);
-        }
-	    TwitchComponentHandle.ClaimedList.Clear();
-    }
+		if (_activeMessageResponder != null)
+		{
+			_activeMessageResponder.gameObject.SetActive(true);
+		}
+		TwitchComponentHandle.ClaimedList.Clear();
+	}
 
-    private IEnumerator StopEveryCoroutine()
-    {
-        yield return new WaitForSeconds(2.0f);
-	    _coroutinesToStart.Enqueue(MiscellaneousMessageResponder.FindHoldables());
-        _coroutineQueue.StopQueue();
-        _coroutineQueue.CancelFutureSubcoroutines();
-	    _coroutineQueue.StopForcedSolve();
+	private IEnumerator StopEveryCoroutine()
+	{
+		yield return new WaitForSeconds(2.0f);
+		_coroutinesToStart.Enqueue(MiscellaneousMessageResponder.FindHoldables());
+		_coroutineQueue.StopQueue();
+		_coroutineQueue.CancelFutureSubcoroutines();
+		_coroutineQueue.StopForcedSolve();
 		StopAllCoroutines();
-	    while (_coroutinesToStart.Count > 0)
-		    StartCoroutine(_coroutinesToStart.Dequeue());
+		while (_coroutinesToStart.Count > 0)
+			StartCoroutine(_coroutinesToStart.Dequeue());
 
-    }
+	}
 
-    private void SetupResponder(MessageResponder responder)
-    {
-        if (responder != null)
-        {
-            responder.SetupResponder(_coroutineQueue);
-        }
-    }
+	private void SetupResponder(MessageResponder responder)
+	{
+		if (responder != null)
+		{
+			responder.SetupResponder(_coroutineQueue);
+		}
+	}
 
-    private MessageResponder GetActiveResponder(KMGameInfo.State state)
-    {
-	    switch (state)
-        {
-            case KMGameInfo.State.Gameplay:
-	            DefaultCamera();
-                return bombMessageResponder;
+	private MessageResponder GetActiveResponder(KMGameInfo.State state)
+	{
+		switch (state)
+		{
+			case KMGameInfo.State.Gameplay:
+				DefaultCamera();
+				return bombMessageResponder;
 
-            case KMGameInfo.State.Setup:
-	            DefaultCamera();
-	            _coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
-	            _coroutinesToStart.Enqueue(MultipleBombs.Refresh());
-	            _coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
-	            _coroutinesToStart.Enqueue(CreateSolversForAllBombComponents());
+			case KMGameInfo.State.Setup:
+				DefaultCamera();
+				_coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
+				_coroutinesToStart.Enqueue(MultipleBombs.Refresh());
+				_coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
+				_coroutinesToStart.Enqueue(CreateSolversForAllBombComponents());
 
-                return missionMessageResponder;
+				return missionMessageResponder;
 
-            case KMGameInfo.State.PostGame:
-	            DefaultCamera();
-                return postGameMessageResponder;
+			case KMGameInfo.State.PostGame:
+				DefaultCamera();
+				return postGameMessageResponder;
 
-            case KMGameInfo.State.Transitioning:
-                ModuleData.LoadDataFromFile();
-                TwitchPlaySettings.LoadDataFromFile();
-                return null;
+			case KMGameInfo.State.Transitioning:
+				ModuleData.LoadDataFromFile();
+				TwitchPlaySettings.LoadDataFromFile();
+				return null;
 
-            default:
-                return null;
-        }
-    }
+			default:
+				return null;
+		}
+	}
 
 	private void DefaultCamera()
 	{

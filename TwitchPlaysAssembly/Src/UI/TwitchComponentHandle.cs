@@ -171,35 +171,35 @@ public class TwitchComponentHandle : MonoBehaviour
 				DebugHelper.Log("An unimplemented module was added to a bomb, solving module.");
 			}
 
-		    if (bombComponent != null)
-		    {
-		        if (bombComponent.GetComponent<KMBombModule>() != null)
-		        {
-		            KMBombModule module = bombComponent.GetComponent<KMBombModule>();
-		            module.OnPass += delegate
-		            {
-		                bombCommander.bombSolvedModules++;
+			if (bombComponent != null)
+			{
+				if (bombComponent.GetComponent<KMBombModule>() != null)
+				{
+					KMBombModule module = bombComponent.GetComponent<KMBombModule>();
+					module.OnPass += delegate
+					{
+						bombCommander.bombSolvedModules++;
 						BombMessageResponder.moduleCameras?.UpdateSolves();
-		                OnPass(null);
+						OnPass(null);
 						BombMessageResponder.moduleCameras?.DetachFromModule(bombComponent);
-		                return false;
-		            };
+						return false;
+					};
 
-		            module.OnStrike += delegate
-		            {
+					module.OnStrike += delegate
+					{
 						BombMessageResponder.moduleCameras?.UpdateStrikes();
-		                return false;
-		            };
-		        }
-		        else if (bombComponent.GetComponent<KMNeedyModule>() != null)
-		        {
-		            bombComponent.GetComponent<KMNeedyModule>().OnStrike += delegate
-		            {
+						return false;
+					};
+				}
+				else if (bombComponent.GetComponent<KMNeedyModule>() != null)
+				{
+					bombComponent.GetComponent<KMNeedyModule>().OnStrike += delegate
+					{
 						BombMessageResponder.moduleCameras?.UpdateStrikes();
-		                return false;
-		            };
-		        }
-		    }
+						return false;
+					};
+				}
+			}
 
 		}
 		
@@ -305,13 +305,13 @@ public class TwitchComponentHandle : MonoBehaviour
 		_nextID = 0;
 	}
 
-    private void OnDestroy()
-    {
-        StopAllCoroutines();
-    }
-    #endregion
+	private void OnDestroy()
+	{
+		StopAllCoroutines();
+	}
+	#endregion
 
-    public IEnumerator TakeModule(string userNickName, string targetModule)
+	public IEnumerator TakeModule(string userNickName, string targetModule)
 	{
 		if (TakeModuleSound != null)
 		{
@@ -362,7 +362,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			BombMessageResponder.Instance.LastClaimedModule[Solver.modInfo.moduleID] = value;
 		}
 		if (claimCooldown && !force && value.TryGetValue(userNickName, out double seconds) &&
-		    (DateTime.Now.TotalSeconds() - seconds) < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry)
+			(DateTime.Now.TotalSeconds() - seconds) < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry)
 		{
 			return new Tuple<bool, double>(false, seconds + TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry);
 		}
@@ -618,7 +618,7 @@ public class TwitchComponentHandle : MonoBehaviour
 							messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, HeaderText);
 						}
 					}
-                    else if (PlayerName != null)
+					else if (PlayerName != null)
 					{
 						if (!PlayerName.Equals(userNickName))
 							AddToClaimQueue(userNickName);
@@ -626,7 +626,7 @@ public class TwitchComponentHandle : MonoBehaviour
 					}
 					else
 					{
-					    messageOut = ClaimModule(userNickName, targetModule).Second;
+						messageOut = ClaimModule(userNickName, targetModule).Second;
 					}
 				}
 				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
@@ -701,17 +701,17 @@ public class TwitchComponentHandle : MonoBehaviour
 			return null;
 		}
 	}
-    #endregion
+	#endregion
 
-    #region Private Methods
-    private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
-    {
-	    return MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
-    }
+	#region Private Methods
+	private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
+	{
+		return MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
+	}
 
-    private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)
-    {
-	    yield return new WaitForSeconds(0.1f);
+	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)
+	{
+		yield return new WaitForSeconds(0.1f);
 		if (Solver != null)
 		{
 			IEnumerator commandResponseCoroutine = Solver.RespondToCommand(userNickName, internalCommand);
@@ -720,7 +720,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				yield return commandResponseCoroutine.Current;
 			}
 		}
-	    yield return new WaitForSeconds(0.1f);
+		yield return new WaitForSeconds(0.1f);
 	}
 
 	private void SetBannerColor(Color color)

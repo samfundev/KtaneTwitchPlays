@@ -3,12 +3,12 @@ using Assets.Scripts.Records;
 
 public static class CommonReflectedTypeInfo
 {
-    static CommonReflectedTypeInfo()
-    {
+	static CommonReflectedTypeInfo()
+	{
 		HandlePassMethod = typeof(BombComponent).GetMethod("HandlePass", BindingFlags.NonPublic | BindingFlags.Instance);
-        GameRecordCurrentStrikeIndexField = typeof(GameRecord).GetField("currentStrikeIndex", BindingFlags.NonPublic | BindingFlags.Instance);
-	    UpdateTimerDisplayMethod = typeof(TimerComponent).GetMethod("UpdateDisplay", BindingFlags.NonPublic | BindingFlags.Instance);
-    }
+		GameRecordCurrentStrikeIndexField = typeof(GameRecord).GetField("currentStrikeIndex", BindingFlags.NonPublic | BindingFlags.Instance);
+		UpdateTimerDisplayMethod = typeof(TimerComponent).GetMethod("UpdateDisplay", BindingFlags.NonPublic | BindingFlags.Instance);
+	}
 
 	#region Bomb Component
 	public static MethodInfo HandlePassMethod
@@ -16,7 +16,7 @@ public static class CommonReflectedTypeInfo
 		get;
 		private set;
 	}
-    #endregion
+	#endregion
 
 	public static MethodInfo UpdateTimerDisplayMethod
 	{
@@ -24,9 +24,9 @@ public static class CommonReflectedTypeInfo
 		private set;
 	}
    
-    public static FieldInfo GameRecordCurrentStrikeIndexField
-    {
-        get;
-        private set;
-    }
+	public static FieldInfo GameRecordCurrentStrikeIndexField
+	{
+		get;
+		private set;
+	}
 }

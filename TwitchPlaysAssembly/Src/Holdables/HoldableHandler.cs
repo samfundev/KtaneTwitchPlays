@@ -209,7 +209,7 @@ public abstract class HoldableHandler
 
 					case string currentString when !string.IsNullOrEmpty(currentString):
 						if (currentString.Equals("trycancel", StringComparison.InvariantCultureIgnoreCase) &&
-						    CoroutineCanceller.ShouldCancel)
+							CoroutineCanceller.ShouldCancel)
 						{
 							CoroutineCanceller.ResetCancel();
 							cancelled = true;
@@ -228,7 +228,7 @@ public abstract class HoldableHandler
 							cancelled = true;
 						}
 						else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) &&
-						         currentString.Substring(14).Trim() != string.Empty)
+								 currentString.Substring(14).Trim() != string.Empty)
 						{
 							StrikeMessage = currentString.Substring(14);
 						}
