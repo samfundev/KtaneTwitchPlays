@@ -89,6 +89,56 @@ public static class OtherModes
 		return teamHealth;
 	}
 
+	public static bool GetZenModeCurrent()
+	{
+		return _zenModeCurrentBomb;
+	}
+
+	public static bool GetZenModeNext()
+	{
+		if (BombMessageResponder.BombActive && _zenModeCurrentBomb != _zenModeNextBomb)
+		{
+			return true;
+		} else
+		{
+			return false;
+		}
+	}
+
+	public static bool GetTimeModeCurrent()
+	{
+		return _timedModeCurrentBomb;
+	}
+
+	public static bool GetTimeModeNext()
+	{
+		if (BombMessageResponder.BombActive && _timedModeCurrentBomb != _timedModeNextBomb)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public static bool GetVSModeCurrent()
+	{
+		return _vsModeCurrentBomb;
+	}
+
+	public static bool GetVSModeNext()
+	{
+		if (BombMessageResponder.BombActive && _vsModeCurrentBomb != _vsModeNextBomb)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	public static int GetBossHealth()
 	{
 		return bossHealth;

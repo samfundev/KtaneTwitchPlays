@@ -261,6 +261,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.ZenModeCommandDisabled, userNickName);
 			}
 		}
+		else if (text.Equals("modes", StringComparison.InvariantCultureIgnoreCase))
+		{
+			string zenmodetext = !OtherModes.GetZenModeCurrent() ? "Enabled" : "Disabled";
+			string timemodetext = !OtherModes.GetTimeModeCurrent() ? "Enabled" : "Disabled";
+			string vsmodetext = !OtherModes.GetVSModeCurrent() ? "Enabled" : "Disabled";
+			IRCConnection.Instance.SendMessage("Zen Mode is currently {0}{1}", OtherModes.GetZenModeCurrent() ? "Enabled" : "Disabled", OtherModes.GetZenModeNext() ? ", it will be " + zenmodetext + " for the next bomb." : ".");
+			IRCConnection.Instance.SendMessage("Time Mode is currently {0}{1}", OtherModes.GetTimeModeCurrent() ? "Enabled" : "Disabled", OtherModes.GetTimeModeNext() ? ", it will be " + timemodetext + " for the next bomb." : ".");
+			IRCConnection.Instance.SendMessage("VS mode is currently {0}{1}", OtherModes.GetVSModeCurrent() ? "Enabled" : "Disabled", OtherModes.GetVSModeNext() ? ", it will be " + vsmodetext + " for the next bomb." : ".");
+		}
 		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
