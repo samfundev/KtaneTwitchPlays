@@ -835,7 +835,7 @@ public abstract class ComponentSolver
 			string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
 			string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
-			Leaderboard.Instance?.AddSolve(userNickName, 1);
+			Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 			{
 				Leaderboard.Instance?.AddScore(userNickName, ComponentValue);

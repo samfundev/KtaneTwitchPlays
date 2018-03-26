@@ -158,11 +158,11 @@ public class Leaderboard
 		return entry;
 	}
 
-	public void AddSolve(string userName, int numSolve)
+	public void AddSolve(string userName, int numSolve = 1)
 	{
 		AddSolve(userName, SafeGetColor(userName), numSolve);
 	}
-	public void AddSolve(string userName, Color userColor, int numSolve)
+	public void AddSolve(string userName, Color userColor, int numSolve = 1)
 	{
 		LeaderboardEntry entry = GetEntry(userName, userColor);
 
@@ -173,12 +173,12 @@ public class Leaderboard
 		string name = userName.ToLowerInvariant();
 		CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out int value) ? value + numSolve : numSolve;
 	}
-	public void AddStrike(string userName, int numStrikes)
+	public void AddStrike(string userName, int numStrikes = 1)
 	{
 		AddStrike(userName, SafeGetColor(userName), numStrikes);
 	}
 
-	public void AddStrike(string userName, Color userColor, int numStrikes)
+	public void AddStrike(string userName, Color userColor, int numStrikes = 1)
 	{
 		LeaderboardEntry entry = GetEntry(userName, userColor);
 
