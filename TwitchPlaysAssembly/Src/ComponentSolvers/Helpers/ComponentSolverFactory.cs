@@ -311,7 +311,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["FaultyBackgrounds"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["FestivePianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["Filibuster"] = new ModuleInformation { moduleScore = 5, helpText = "" };
-		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12, helpText = "Press the top button with !{0} press top (also t, 1, etc.). Submit with !{0} press submit." };
+		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
