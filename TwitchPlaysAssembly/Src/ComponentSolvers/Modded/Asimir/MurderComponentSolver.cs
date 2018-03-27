@@ -56,10 +56,10 @@ public class MurderComponentSolver : ComponentSolver
 				var j = 0.0;
 				foreach (var item in CycleThroughCategory(i))
 				{
-					if (i == 2) j = 0.5;
+					if (i == 2) j = 0.8;
 					else j = 1.5;
 					DoInteractionClick((MonoBehaviour) item);
-					yield return "trywaitcancel " + j.ToString() + "The murder cycle command was cancelled";
+					yield return "trywaitcancel " + j.ToString() + " The murder cycle command was cancelled";
 				}
 			}
 			yield break;
