@@ -402,7 +402,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("{0}", result.Second);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
-		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manaul(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+)$"))
+		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+)$"))
 		{
 			Match match1 = match;
 			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
@@ -490,7 +490,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					break;
 			}
 		}
-		else if (text.RegexMatch(out match, @"^(?:write|change) ?module ?(help(?: ?message)?|manaul(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
+		else if (text.RegexMatch(out match, @"^(?:write|change) ?module ?(help(?: ?message)?|manual(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)) return;
 			var search = match.Groups[2].Value.ToLowerInvariant().Trim();
