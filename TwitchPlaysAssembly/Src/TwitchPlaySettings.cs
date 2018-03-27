@@ -154,7 +154,7 @@ public class TwitchPlaySettingsData
 	public string ModuleAbandoned = "{1} has released Module {0} ({2}).";
 	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
 	public string NoTakes = "Sorry {0}, there are no takeover attempts on Module {1} ({2})";
-	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules.";
+	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules. The claim has been queued.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
 	public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
 	public string ClaimCooldown = "Sorry @{2}, Module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
