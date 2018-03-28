@@ -3,10 +3,19 @@
 	public TwitchPlaysProperties()
 	{
 		AddProperty("TimeMode", new Property(() => OtherModes.TimedModeOn, x => { OtherModes.TimedModeOn = (bool)x; }));
-		AddProperty("TimeModeTimeLimit", new Property(() => TwitchPlaySettings.data.TimeModeStartingTime, null));
+		AddProperty("TimeModeTimeLimit", new Property(() => TwitchPlaySettings.data.TimeModeStartingTime, SetTimeModeTimeLimit));
 		AddProperty("ircConnectionSendMessage", new Property(null, x => IRCConnection.Instance.SendMessage((string)x)));
 		AddProperty("Reward", new Property(() => TwitchPlaySettings.GetRewardBonus(), x => TwitchPlaySettings.SetRewardBonus((int) x)));
 		AddProperty("CauseFakeStrike", new Property(null, CauseFakeStrike));
+	}
+
+	private static void SetTimeModeTimeLimit(object timeLimit)
+	{
+		if (timeLimit is int intTimeLimit)
+		{
+			TwitchPlaySettings.data.TimeModeStartingTime = intTimeLimit;
+			TwitchPlaySettings.WriteDataToFile();
+		}
 	}
 
 	private static void CauseFakeStrike(object kmBombModule)
