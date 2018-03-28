@@ -161,7 +161,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", UnityEngine.Random.Range(1, 100), UrlHelper.Instance.CommandReference);
 			return;
 		}
-		else if (text.RegexMatch(@"^bonusscore (\S+) (-?[0-9]+)$"))
+		else if (text.RegexMatch(@"^bonus(?:score|points) (\S+) (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 			string playerrewarded = split[1];
