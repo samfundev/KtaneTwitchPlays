@@ -120,7 +120,7 @@ public class Factory : GameRoom
 
 			bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
 			IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
-			if (OtherModes.ZenModeOn)
+			if (OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected)
 			{
 				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!enablecamerawall");
 				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
