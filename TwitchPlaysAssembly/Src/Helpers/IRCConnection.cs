@@ -231,6 +231,7 @@ public class IRCConnection : MonoBehaviour
 				}
 			}
 			while (_state == IRCConnectionState.Connected) yield return new WaitForSeconds(0.1f);
+			if(BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
 			switch (_state)
 			{
 				case IRCConnectionState.DoNotRetry:
@@ -393,6 +394,7 @@ public class IRCConnection : MonoBehaviour
 
 	public void Disconnect()
 	{
+		if (BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
 		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (_state)
 		{
