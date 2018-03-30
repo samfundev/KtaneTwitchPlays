@@ -439,7 +439,7 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.RegexMatch("^(?:claim ?|view ?|all ?){2,3}$"))
+			if (text.RegexMatch("^(?:claim ?|view ?| ?all ?){2,3}$"))
 			{
 				if (text.Contains("claim") && text.Contains("all"))
 				{
