@@ -390,12 +390,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
 			return;
 		}
-		else if (text.RegexMatch(out match, @"^(?:read|write|change) ?settings? (\S+)$"))
+		else if (text.RegexMatch(out match, @"^(?:read|write|change|set) ?settings? (\S+)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)) return;
 			IRCConnection.Instance.SendMessage("{0}", TwitchPlaySettings.GetSetting(match.Groups[1].Value));
 		}
-		else if (text.RegexMatch(out match, @"^(?:write|change) ?settings? (\S+) (.+)$"))
+		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?settings? (\S+) (.+)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 			var result = TwitchPlaySettings.ChangeSetting(match.Groups[1].Value, match.Groups[2].Value);
@@ -490,7 +490,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					break;
 			}
 		}
-		else if (text.RegexMatch(out match, @"^(?:write|change) ?module ?(help(?: ?message)?|manual(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
+		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?module ?(help(?: ?message)?|manual(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)) return;
 			var search = match.Groups[2].Value.ToLowerInvariant().Trim();
