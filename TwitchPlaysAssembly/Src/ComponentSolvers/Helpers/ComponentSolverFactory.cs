@@ -93,6 +93,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreatorShims["spwizAdventureGame"] = (bombCommander, bombComponent) => new AdventureGameShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
+		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -230,7 +231,8 @@ public static class ComponentSolverFactory
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		
+		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
+
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo modules maintained by Timwi)
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet", moduleScore = 2, DoesTheRightThing = true };
@@ -314,7 +316,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 4 };
-		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 15 };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };

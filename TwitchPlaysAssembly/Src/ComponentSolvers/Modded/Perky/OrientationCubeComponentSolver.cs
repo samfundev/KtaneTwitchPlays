@@ -15,6 +15,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 		_right = (MonoBehaviour)_rightField.GetValue(bombComponent.GetComponent(_componentType));
 		_ccw = (MonoBehaviour)_ccwField.GetValue(bombComponent.GetComponent(_componentType));
 		_cw = (MonoBehaviour)_cwField.GetValue(bombComponent.GetComponent(_componentType));
+		//virtualAngleEmulator = (float)_virtualField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Move the cube with !{0} press cw l set. The buttons are l, r, cw, ccw, set.");
 	}
 
@@ -36,24 +37,29 @@ public class OrientationCubeComponentSolver : ComponentSolver
 		{
 			switch (cmd)
 			{
-				case "left": case "l": buttons.Add(_left); break;
+				case "left": case "l": buttons.Add(_left); interaction.Add("Left rotation"); break;
 
-				case "right": case "r": buttons.Add(_right); break;
+				case "right": case "r": buttons.Add(_right); interaction.Add("Right rotation"); break;
 
 				case "counterclockwise": case "counter-clockwise": case "ccw":
-				case "anticlockwise": case "anti-clockwise": case "acw": buttons.Add(_ccw); break;
+				case "anticlockwise": case "anti-clockwise": case "acw": buttons.Add(_ccw); interaction.Add("Counterclockwise rotation"); break;
 
-				case "clockwise": case "cw": buttons.Add(_cw); break;
+				case "clockwise": case "cw": buttons.Add(_cw); interaction.Add("Clockwise rotation"); break;
 
-				case "set": case "submit":buttons.Add(_submit); break;
+				case "set": case "submit":buttons.Add(_submit); interaction.Add("submit"); break;
 
 				default: yield break;
 			}   //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
 		}
 
 		yield return "Orientation Cube Solve Attempt";
+		var debugStart = "[Orientation Cube TP#" + ComponentHandle.IDTextMultiDecker.text + "]";
+		Debug.LogFormat("{0} Inputted commands: {1}", debugStart, String.Join(", ", interaction.ToArray()));
+
 		foreach (MonoBehaviour button in buttons)
+		{
 			yield return DoInteractionClick(button);
+		}
 	}
 
 	static OrientationCubeComponentSolver()
@@ -64,6 +70,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 		_rightField = _componentType.GetField("YawRightButton", BindingFlags.Public | BindingFlags.Instance);
 		_ccwField = _componentType.GetField("RollLeftButton", BindingFlags.Public | BindingFlags.Instance);
 		_cwField = _componentType.GetField("RollRightButton", BindingFlags.Public | BindingFlags.Instance);
+		//_virtualField = _componentType.GetField("virtualViewAngle", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
@@ -72,10 +79,18 @@ public class OrientationCubeComponentSolver : ComponentSolver
 	private static FieldInfo _rightField = null;
 	private static FieldInfo _ccwField = null;
 	private static FieldInfo _cwField = null;
+	//private static FieldInfo _virtualField = null;
+
+	private List<string> interaction = new List<string>();
+	/*private string[] sides = new string[] { "l", "r", "f", "b", "t", "o" };
+	private Quaternion emulatedView;
+	private bool first = true;
+	private float originalAngle;*/
 
 	private MonoBehaviour _submit = null;
 	private MonoBehaviour _left = null;
 	private MonoBehaviour _right = null;
 	private MonoBehaviour _ccw = null;
 	private MonoBehaviour _cw = null;
+	//private float virtualAngleEmulator;
 }
