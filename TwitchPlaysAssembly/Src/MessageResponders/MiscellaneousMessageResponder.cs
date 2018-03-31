@@ -898,6 +898,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 					if (missionID == null)
 					{
+						if (int.TryParse(split[1], out _))
+						{
+							string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
+							IRCConnection.Instance.SendMessage(validDistributions.Any()
+								? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}"
+								: "Sorry, !run <module_count> <distribution> has been disabled.");
+							break;
+						}
+
 						string distributionName = TwitchPlaySettings.data.ModDistributions.Keys.FirstOrDefault(y => int.TryParse(split[1].Replace(y,""),out _));
 						if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out int modules) ||
 							modules < TwitchPlaySettings.data.ModDistributions[distributionName].MinModules || 
