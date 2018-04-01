@@ -802,35 +802,23 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.Instance.SendMessage("The moderators command has been disabled.");
 				return;
 			}
-			Dictionary<string, AccessLevel> moderators = new Dictionary<string, AccessLevel>(UserAccess.GetUsers());
+			KeyValuePair<string, AccessLevel>[] moderators = UserAccess.GetUsers().Where(x => !string.IsNullOrEmpty(x.Key) && x.Key != "_usernickname1" && x.Key != "_usernickname2").ToArray();
 			string finalmessage = "Current moderators: ";
 
-			foreach (string user in moderators.Keys)
-			{
-				AccessLevel userAccessLevel = UserAccess.HighestAccessLevel(user);
-				string accessLevel = null;
-				switch (userAccessLevel)
-				{
-					case AccessLevel.User:
-					case AccessLevel.NoPoints:
-					case AccessLevel.Banned:
-					case AccessLevel.Defuser:
-						break;
-					case AccessLevel.Mod:
-						accessLevel = "Moderator";
-						break;
-					case AccessLevel.Admin:
-						accessLevel = "Admin";
-						break;
-					case AccessLevel.SuperUser:
-						accessLevel = "Super User";
-						break;
-					case AccessLevel.Streamer:
-						accessLevel = "Streamer";
-						break;
-				}
-				if (accessLevel != null && user != "_usernickname1" && user != "_usernickname2" && user != "" && user != null) finalmessage += user + ", " + userAccessLevel + "; ";
-			}
+			string[] streamers = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Streamer).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
+			string[] superusers = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.SuperUser).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
+			string[] administrators = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Admin).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
+			string[] mods = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Mod).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
+
+			if (streamers.Any())
+				finalmessage += $"Streamers: {streamers.Join(", ")}{(superusers.Any() || administrators.Any() || mods.Any() ? " - " : "")}";
+			if (superusers.Any())
+				finalmessage += $"Super Users: {superusers.Join(", ")}{(administrators.Any() || mods.Any() ? " - " : "")}";
+			if (administrators.Any())
+				finalmessage += $"Administrators: {superusers.Join(", ")}{(mods.Any() ? " - " : "")}";
+			if (mods.Any())
+				finalmessage += $"Moderators: {mods.Join(", ")}";
+
 			IRCConnection.Instance.SendMessage(finalmessage);
 		}
 		else if (text.RegexMatch(@"^(getaccess|accessstats|accessdata) (\S+)"))
