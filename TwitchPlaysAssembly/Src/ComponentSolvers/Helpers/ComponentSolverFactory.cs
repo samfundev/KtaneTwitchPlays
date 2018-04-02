@@ -39,8 +39,6 @@ public static class ComponentSolverFactory
 		//Hexi Modules
 		ModComponentSolverCreators["SimonV2"] = (bombCommander, bombComponent) => new SimonStatesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["PasswordV2"] = (bombCommander, bombComponent) => new SafetySafeComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new PlumbingComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["MorseV2"] = (bombCommander, bombComponent) => new MorsematicsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["NeedyKnobV2"] = (bombCommander, bombComponent) => new NeedyRotaryPhoneComponentSolver(bombCommander, bombComponent);
 
 		//Perky Modules (Silly Slots is maintained by Timwi, and as such its handler lives there.)
