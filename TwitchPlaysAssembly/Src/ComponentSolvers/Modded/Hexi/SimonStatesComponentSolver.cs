@@ -72,6 +72,21 @@ public class SimonStatesComponentSolver : ComponentSolver
 		}
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+
+		while (_puzzleDisplayField.GetValue(c) == null) yield return true;
+		RespondToCommandInternal("").MoveNext();
+
+		int[] answer = (int[]) _answerField.GetValue(c);
+		while (_puzzleDisplayField.GetValue(c) != null)
+		{
+			int i = (int)_subProgressField.GetValue(c);
+			yield return DoInteractionClick(_buttons[answer[i]]);
+		}
+	}
+
 	static SimonStatesComponentSolver()
 	{
 		_componentType = ReflectionHelper.FindType("AdvancedSimon");
@@ -79,10 +94,14 @@ public class SimonStatesComponentSolver : ComponentSolver
 		_buttonsY = _componentType.GetField("ButtonYellow", BindingFlags.NonPublic | BindingFlags.Instance);
 		_buttonsG = _componentType.GetField("ButtonGreen", BindingFlags.NonPublic | BindingFlags.Instance);
 		_buttonsB = _componentType.GetField("ButtonBlue", BindingFlags.NonPublic | BindingFlags.Instance);
+		_answerField = _componentType.GetField("Answer", BindingFlags.NonPublic | BindingFlags.Instance);
+		_subProgressField = _componentType.GetField("SubProgress", BindingFlags.NonPublic | BindingFlags.Instance);
+		_puzzleDisplayField = _componentType.GetField("PuzzleDisplay", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsR = null, _buttonsY = null, _buttonsG = null, _buttonsB = null;
+	private static FieldInfo _answerField = null, _subProgressField = null, _puzzleDisplayField = null;
 
 	private MonoBehaviour[] _buttons = null;
 }

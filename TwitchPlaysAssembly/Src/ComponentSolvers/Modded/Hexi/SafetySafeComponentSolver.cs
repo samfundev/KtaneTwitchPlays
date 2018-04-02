@@ -29,6 +29,8 @@ public class SafetySafeComponentSolver : ComponentSolver
 	{
 		_buttons = (MonoBehaviour[])_buttonsField.GetValue(bombComponent.GetComponent(_componentType));
 		_lever = (MonoBehaviour)_leverField.GetValue(bombComponent.GetComponent(_componentType));
+		_dialPos = (int[]) _dialPosField.GetValue(bombComponent.GetComponent(_componentType));
+		_answerPos = (int[]) _answerPosFileld.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Listen to the dials with !{0} cycle. Listen to a single dial with !{0} cycle BR. Make a correction to a single dial with !{0} BM 3. Enter the solution with !{0} 6 0 6 8 2 5. Submit the answer with !{0} submit. Dial positions are TL, TM, TR, BL, BM, BR.");
 	}
 
@@ -125,16 +127,33 @@ public class SafetySafeComponentSolver : ComponentSolver
 		}
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		for(int i = 0; i < 6; i++)
+		{
+			while (_dialPos[i] != _answerPos[i])
+			{
+				yield return DoInteractionClick(_buttons[i]);
+			}
+		}
+		yield return DoInteractionClick(_lever);
+	}
+
 	static SafetySafeComponentSolver()
 	{
 		_componentType = ReflectionHelper.FindType("AdvancedPassword");
 		_buttonsField = _componentType.GetField("Dials", BindingFlags.NonPublic | BindingFlags.Instance);
 		_leverField = _componentType.GetField("Lever", BindingFlags.Public | BindingFlags.Instance);
+		_dialPosField = _componentType.GetField("DialPos", BindingFlags.NonPublic | BindingFlags.Instance);
+		_answerPosFileld = _componentType.GetField("AnswerPos", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsField, _leverField = null;
+	private static FieldInfo _dialPosField, _answerPosFileld = null;
 
 	private MonoBehaviour[] _buttons = null;
 	private MonoBehaviour _lever = null;
+	private int[] _dialPos, _answerPos = null;
 }
