@@ -148,12 +148,12 @@ public class TwitchBombHandle : MonoBehaviour
 		else if (internalCommandLower.Equals("status") || internalCommandLower.Equals("info"))
 		{
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
-			if (OtherModes.TimedModeOn)
+			if (OtherModes.TimeModeOn)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime,
 					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
 			}
-			else if (OtherModes.VsModeOn)
+			else if (OtherModes.VSModeOn)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
 					OtherModes.teamHealth, OtherModes.bossHealth, currentReward);

@@ -214,7 +214,7 @@ public abstract class GameRoom
 	public void InitializeGameModes(bool lightsOn)
 	{
 		if (!lightsOn) return;
-		if (OtherModes.TimedModeOn)
+		if (OtherModes.TimeModeOn)
 		{
 			OtherModes.SetMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
 		}
@@ -222,7 +222,7 @@ public abstract class GameRoom
 		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
 		foreach (TwitchBombHandle handle in bombHandles)
 		{
-			if (OtherModes.TimedModeOn)
+			if (OtherModes.TimeModeOn)
 			{
 				handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
 			}

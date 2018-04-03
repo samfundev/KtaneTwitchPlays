@@ -224,15 +224,17 @@ public class MiscellaneousMessageResponder : MessageResponder
 				switch (match.Groups[1].Value.ToLowerInvariant())
 				{
 					case "on":
-						OtherModes.TimedModeOn = true;
+						OtherModes.TimeModeOn = true;
 						break;
 					case "off":
-						OtherModes.TimedModeOn = false;
+						OtherModes.TimeModeOn = false;
 						break;
 					default:
-						OtherModes.ToggleTimedMode();
+						OtherModes.Toggle(TwitchPlaysMode.Time);
 						break;
 				}
+
+				IRCConnection.Instance.SendMessage("{0} mode will be enabled next round.", OtherModes.GetName(OtherModes.nextMode));
 			}
 			else
 			{
@@ -252,9 +254,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 						OtherModes.ZenModeOn = false;
 						break;
 					default:
-						OtherModes.ToggleZenMode();
+						OtherModes.Toggle(TwitchPlaysMode.Zen);
 						break;
 				}
+
+				IRCConnection.Instance.SendMessage("{0} mode will be enabled next round.", OtherModes.GetName(OtherModes.nextMode));
 			}
 			else
 			{
@@ -263,12 +267,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.Equals("modes", StringComparison.InvariantCultureIgnoreCase))
 		{
-			string zenmodetext = !OtherModes.GetZenModeCurrent() ? "Enabled" : "Disabled";
-			string timemodetext = !OtherModes.GetTimeModeCurrent() ? "Enabled" : "Disabled";
-			string vsmodetext = !OtherModes.GetVSModeCurrent() ? "Enabled" : "Disabled";
-			IRCConnection.Instance.SendMessage("Zen Mode is currently {0}{1}", OtherModes.GetZenModeCurrent() ? "Enabled" : "Disabled", OtherModes.GetZenModeNext() ? ", it will be " + zenmodetext + " for the next bomb." : ".");
-			IRCConnection.Instance.SendMessage("Time Mode is currently {0}{1}", OtherModes.GetTimeModeCurrent() ? "Enabled" : "Disabled", OtherModes.GetTimeModeNext() ? ", it will be " + timemodetext + " for the next bomb." : ".");
-			IRCConnection.Instance.SendMessage("VS mode is currently {0}{1}", OtherModes.GetVSModeCurrent() ? "Enabled" : "Disabled", OtherModes.GetVSModeNext() ? ", it will be " + vsmodetext + " for the next bomb." : ".");
+			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
 		}
 		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
 		{
@@ -1003,7 +1002,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 						mission.PacingEventsEnabled = true;
 						mission.DisplayName = modules + " " + distribution.DisplayName;
-						if (OtherModes.TimedModeOn)
+						if (OtherModes.TimeModeOn)
 						{
 							mission.GeneratorSetting = new KMGeneratorSetting()
 							{

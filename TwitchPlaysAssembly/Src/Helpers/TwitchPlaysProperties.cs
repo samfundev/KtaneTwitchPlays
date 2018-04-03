@@ -2,7 +2,7 @@
 {
 	public TwitchPlaysProperties()
 	{
-		AddProperty("TimeMode", new Property(() => OtherModes.TimedModeOn, x => { OtherModes.TimedModeOn = (bool)x; }));
+		AddProperty("TimeMode", new Property(() => OtherModes.TimeModeOn, x => { OtherModes.TimeModeOn = (bool)x; }));
 		AddProperty("ZenMode", new Property(() => OtherModes.ZenModeOn, x => OtherModes.ZenModeOn = (bool) x));
 		AddProperty("TimeModeTimeLimit", new Property(() => TwitchPlaySettings.data.TimeModeStartingTime, SetTimeModeTimeLimit));
 		AddProperty("ircConnectionSendMessage", new Property(null, x => IRCConnection.Instance.SendMessage((string)x)));

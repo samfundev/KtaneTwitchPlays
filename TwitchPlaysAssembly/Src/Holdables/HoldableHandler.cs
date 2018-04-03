@@ -57,7 +57,7 @@ public abstract class HoldableHandler
 		TwitchPlaySettings.SetRewardBonus(currentReward);
 		if(currentReward != originalReward)
 			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
-		if (OtherModes.TimedModeOn)
+		if (OtherModes.TimeModeOn)
 		{
 			bool multiDropped = OtherModes.DropMultiplier();
 			float multiplier = OtherModes.GetMultiplier();

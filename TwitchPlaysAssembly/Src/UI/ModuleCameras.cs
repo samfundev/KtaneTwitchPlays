@@ -520,7 +520,7 @@ public class ModuleCameras : MonoBehaviour
 
 	public void UpdateConfidence()
 	{
-		if (OtherModes.TimedModeOn)
+		if (OtherModes.TimeModeOn)
 		{
 			float timedMultiplier = OtherModes.GetAdjustedMultiplier();
 			ConfidencePrefab.color = Color.yellow;
@@ -544,7 +544,7 @@ public class ModuleCameras : MonoBehaviour
 			StrikeLimitPrefab.text = "";
 		}
 
-		else if (OtherModes.VsModeOn)
+		else if (OtherModes.VSModeOn)
 		{
 			int bossHealth = OtherModes.GetBossHealth();
 			int teamHealth = OtherModes.GetTeamHealth();

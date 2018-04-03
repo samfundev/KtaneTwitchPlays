@@ -847,7 +847,7 @@ public abstract class ComponentSolver
 			TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
 		}
-		if (OtherModes.TimedModeOn)
+		if (OtherModes.TimeModeOn)
 		{
 			float time = OtherModes.GetAdjustedMultiplier() * ComponentValue;
 			if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
@@ -880,7 +880,7 @@ public abstract class ComponentSolver
 		TwitchPlaySettings.SetRewardBonus(currentReward);
 		if (currentReward != originalReward)
 			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
-		if (OtherModes.TimedModeOn)
+		if (OtherModes.TimeModeOn)
 		{
 			float originalMultiplier = OtherModes.GetAdjustedMultiplier();
 			bool multiDropped = OtherModes.DropMultiplier();

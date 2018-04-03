@@ -1,142 +1,51 @@
 ﻿using System;
 
+public enum TwitchPlaysMode
+{
+	Normal,
+	Time,
+	VS,
+	Zen
+}
+
 public static class OtherModes
 {
-	private static bool GetMode(string modeName, ref bool currentBomb, ref bool nextBomb)
-	{
-		if (BombMessageResponder.BombActive)
-		{
-			return currentBomb;
-		}
-		if(currentBomb != nextBomb)
-			IRCConnection.Instance.SendMessage($"{modeName} is now {(nextBomb ? "Enabled" : "Disabled")}");
-		currentBomb = nextBomb;
-		return currentBomb;
-	}
+	public static TwitchPlaysMode currentMode = TwitchPlaysMode.Normal;
+	public static TwitchPlaysMode nextMode = TwitchPlaysMode.Normal;
 
-	private static void SetMode(string modeName, ref bool currentBomb, out bool nextBomb, bool value)
+	public static string GetName(TwitchPlaysMode mode) { return Enum.GetName(typeof(TwitchPlaysMode), mode); }
+
+	public static bool InMode(TwitchPlaysMode mode) { return currentMode == mode; }
+
+	public static bool Set(TwitchPlaysMode mode, bool state = true)
 	{
-		nextBomb = value;
+		if (state == false) mode = TwitchPlaysMode.Normal;
+
+		nextMode = mode;
 		if (!BombMessageResponder.BombActive)
 		{
-			if(currentBomb != value)
-				IRCConnection.Instance.SendMessage(value ? $"{modeName} Enabled" : $"{modeName} Disabled");
-			currentBomb = value;
+			currentMode = mode;
+			return true;
 		}
-		else
-		{
-			if (value != currentBomb)
-				IRCConnection.Instance.SendMessage($"{modeName} is currently {{0}}, it will be {{1}} for next bomb.", currentBomb ? "enabled" : "disabled", value ? "enabled" : "disabled");
-			else
-				IRCConnection.Instance.SendMessage($"{modeName} is currently {{0}}, it will remain {{0}} for next bomb.", value ? "enabled" : "disabled");
-		}
+		return false;
 	}
 
-	public static bool ZenModeOn
+	public static void Toggle(TwitchPlaysMode mode)
 	{
-		get => GetMode("Zen mode", ref _zenModeCurrentBomb, ref _zenModeNextBomb);
-		set
-		{
-			SetMode("Zen mode", ref _zenModeCurrentBomb, out _zenModeNextBomb, value);
-			if (!value) return;
-			TimedModeOn = false;
-			VsModeOn = false;
-		}
+		Set(mode, nextMode != mode);
 	}
-	private static bool _zenModeCurrentBomb;
-	private static bool _zenModeNextBomb;
 
-
-	public static bool TimedModeOn
-	{
-		get => GetMode("Time mode", ref _timedModeCurrentBomb, ref _timedModeNextBomb);
-		set
-		{
-			SetMode("Time mode", ref _timedModeCurrentBomb, out _timedModeNextBomb, value);
-			if (!value) return;
-			VsModeOn = false;
-			ZenModeOn = false;
-		}
-	}
-	private static bool _timedModeCurrentBomb = false;
-	private static bool _timedModeNextBomb = false;
-
-	public static bool VsModeOn
-	{
-		get => GetMode("VS mode", ref _vsModeCurrentBomb, ref _vsModeNextBomb);
-		set
-		{
-			SetMode("VS mode", ref _vsModeCurrentBomb, out _vsModeNextBomb, value);
-			if (!value) return;
-			VsModeOn = false;
-			ZenModeOn = false;
-		}
-	}
-	private static bool _vsModeCurrentBomb = false;
-	private static bool _vsModeNextBomb = false;
+	public static bool TimeModeOn { get { return InMode(TwitchPlaysMode.Time); } set { Set(TwitchPlaysMode.Time, value); } }
+	public static bool VSModeOn { get { return InMode(TwitchPlaysMode.VS); } set { Set(TwitchPlaysMode.VS, value); } }
+	public static bool ZenModeOn { get { return InMode(TwitchPlaysMode.Zen); } set { Set(TwitchPlaysMode.Zen, value); } }
 
 	public static float timedMultiplier = 9;
 	public static int teamHealth = 0;
 	public static int bossHealth = 0;
 
-	public static void ToggleVsMode()
-	{
-		VsModeOn = !VsModeOn;
-	}
-
 	public static int GetTeamHealth()
 	{
 		return teamHealth;
-	}
-
-	public static bool GetZenModeCurrent()
-	{
-		return _zenModeCurrentBomb;
-	}
-
-	public static bool GetZenModeNext()
-	{
-		if (BombMessageResponder.BombActive && _zenModeCurrentBomb != _zenModeNextBomb)
-		{
-			return true;
-		} else
-		{
-			return false;
-		}
-	}
-
-	public static bool GetTimeModeCurrent()
-	{
-		return _timedModeCurrentBomb;
-	}
-
-	public static bool GetTimeModeNext()
-	{
-		if (BombMessageResponder.BombActive && _timedModeCurrentBomb != _timedModeNextBomb)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public static bool GetVSModeCurrent()
-	{
-		return _vsModeCurrentBomb;
-	}
-
-	public static bool GetVSModeNext()
-	{
-		if (BombMessageResponder.BombActive && _vsModeCurrentBomb != _vsModeNextBomb)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	}
 
 	public static int GetBossHealth()
@@ -155,24 +64,13 @@ public static class OtherModes
 		teamHealth = teamHealth - damage;
 		return teamHealth;
 	}
-
-	public static void ToggleZenMode()
-	{
-		ZenModeOn = !_zenModeNextBomb;
-	}
-
-	public static void ToggleTimedMode()
-	{
-		TimedModeOn = !_timedModeNextBomb;
-	}
-
 	public static void RefreshModes()
 	{
-		bool result = BombMessageResponder.BombActive;
-		result |= TimedModeOn;
-		result |= ZenModeOn;
-		result |= VsModeOn;
-		if (result) return;
+		if (!BombMessageResponder.BombActive && currentMode != nextMode)
+		{
+			currentMode = nextMode;
+			IRCConnection.Instance.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
+		}
 	}
 
 	public static float GetMultiplier()
