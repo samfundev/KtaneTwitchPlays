@@ -60,9 +60,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent) => new ShapeShiftComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent) => new ThirdBaseComponentSolver(bombCommander, bombComponent);
 
-		//Spare Wizard Modules
-		ModComponentSolverCreators["spwiz3DMaze"] = (bombCommander, bombComponent) => new ThreeDMazeComponentSolver(bombCommander, bombComponent);
-
 		//Mock Army Modules
 		ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent) => new EmojiMathComponentSolver(bombCommander, bombComponent);
@@ -88,7 +85,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent);
 
 		//Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
-		ModComponentSolverCreatorShims["spwizAdventureGame"] = (bombCommander, bombComponent) => new AdventureGameShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
@@ -181,9 +177,6 @@ public static class ComponentSolverFactory
 
 		//Kaneb
 		ModComponentSolverInformation["TwoBits"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Two Bits", moduleScore = 8 };
-
-		//SpareWizard
-		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "3D Maze", moduleScore = 16 };
 
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 3 };
@@ -287,8 +280,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 
 		//Other modded Modules not built into Twitch Plays
-		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Use weapons/Items with !{0} use potion. (spell out the item name completely. not case sensitive)", DoesTheRightThing = false };
-		ModComponentSolverInformation["spwizAstrology"] = new ModuleInformation { moduleScore = 10, helpText = "Press good on 3 with !{0} press good on 3. Press bad on 2 with !{0} press bad on 2. No Omen is !{0} press no", DoesTheRightThing = true };
+		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 16 };
+		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["spwizAstrology"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise Operators", validCommands = new[] { "^submit [0-1]{8}$" } };
