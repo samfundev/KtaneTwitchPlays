@@ -47,15 +47,20 @@ public class SimpleModComponentSolver : ComponentSolver
 			if (selectableSequence == null || selectableSequence.Length == 0)
 				yield break;
 		}
-		catch (FormatException ex)
-		{
-			DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
-			exception = ex.Message;
-		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod.DeclaringType.FullName, ProcessMethod.Name));
-			throw;
+			DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
+			loop:
+			switch (ex)
+			{
+				case FormatException fex:
+					exception = fex.Message;
+					break;
+				default:
+					if (ex.InnerException == null) throw;
+					ex = ex.InnerException;
+					goto loop;
+			}
 		}
 
 		if (exception != null)
