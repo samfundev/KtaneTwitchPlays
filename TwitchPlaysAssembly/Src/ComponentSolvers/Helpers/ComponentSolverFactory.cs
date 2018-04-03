@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Components.VennWire;
 using Assets.Scripts.Missions;
-using Newtonsoft.Json;
 using UnityEngine;
 
 public static class ComponentSolverFactory
@@ -88,6 +87,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
+		ModComponentSolverCreatorShims["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
