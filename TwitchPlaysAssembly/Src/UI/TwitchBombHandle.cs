@@ -182,6 +182,8 @@ public class TwitchBombHandle : MonoBehaviour
 							{ "m", 60 },
 							{ "h", 3600 },
 							{ "d", 86400 },
+							{ "w", 604800 },
+							{ "y", 31536000 },
 						};
 
 						foreach (string part in split.Skip(2))
