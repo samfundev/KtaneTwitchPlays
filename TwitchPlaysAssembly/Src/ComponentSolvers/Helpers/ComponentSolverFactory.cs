@@ -262,6 +262,7 @@ public static class ComponentSolverFactory
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["europeanTravel"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["identityParade"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["iPhone"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
 		ModComponentSolverInformation["jukebox"] = new ModuleInformation { moduleScore = 3 };
