@@ -150,17 +150,17 @@ public class TwitchBombHandle : MonoBehaviour
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
 			if (OtherModes.TimeModeOn)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime,
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
 					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
 			}
 			else if (OtherModes.VSModeOn)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
-					OtherModes.teamHealth, OtherModes.bossHealth, currentReward);
+					bombCommander.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward);
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, 
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
 					bombCommander.StrikeCount, bombCommander.StrikeLimit, bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
 			}
 		}
