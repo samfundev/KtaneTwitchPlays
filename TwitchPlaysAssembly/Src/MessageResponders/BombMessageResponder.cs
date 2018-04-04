@@ -593,6 +593,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.ZenModeOn)
 			{
+				TwitchPlaySettings.SetRewardBonus(0);
 				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 				{
 					if (!handle.Solved) handle.SolveSilently();
