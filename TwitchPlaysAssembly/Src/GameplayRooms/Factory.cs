@@ -120,11 +120,15 @@ public class Factory : GameRoom
 
 			bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
 			IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
-			if (OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected)
+			if (OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall)
 			{
 				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!enablecamerawall");
 				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
 				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
+			}
+			else
+			{
+				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
 			}
 
 			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
@@ -162,14 +166,24 @@ public class Factory : GameRoom
 				BombMessageResponder.moduleCameras.DetachFromModule(handle.bombComponent);
 			}
 
-			while (currentBomb == GetBomb)
+			if (TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
 			{
-				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
-				while (bombHold.MoveNext()) yield return bombHold.Current;
-				yield return new WaitForSeconds(0.1f);
 				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
 				while (bombHold.MoveNext()) yield return bombHold.Current;
-				yield return new WaitForSeconds(0.1f);
+			}
+
+			while (currentBomb == GetBomb)
+			{
+				yield return new WaitForSeconds(0.10f);
+				if (currentBomb != GetBomb || !TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
+					continue;
+
+				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
+				while (bombHold.MoveNext()) yield return bombHold.Current;
+				yield return new WaitForSeconds(0.10f);
+
+				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
+				while (bombHold.MoveNext()) yield return bombHold.Current;
 			}
 
 			bombHandle.StartCoroutine(DestroyBomb(currentBomb));
