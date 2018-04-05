@@ -333,6 +333,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["neutralization"] = new ModuleInformation { moduleScore = 12, helpText = "Select a base with !{0} base NaOH. Turn the filter on/off with !{0} filter. Set drop count with !{0} conc set 48. Submit with !{0} titrate." };
 		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { moduleScore = 10, helpText = "Switch colors with !{0} toggle. Clear the grid with !{0} clear. Fill the squares at A2, D5 and the entire column C with !{0} fill A2 C D5. Mark a dot at the squares A5, E4 and the entire row 2 with !{0} dot A5 E4 2. Submit your answer with !{0} submit." };
 		ModComponentSolverInformation["spwizPerspectivePegs"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["SupermercadoSalvajeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true, helpText = "Cycle the items with !{0} items. Go to a specific item number with !{0} item 3. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24." };
 		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["pieModule"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["poetry"] = new ModuleInformation { moduleScore = 4 };
