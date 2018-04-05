@@ -570,6 +570,10 @@ public abstract class ComponentSolver
 					case 0:
 						switch (modInfo.moduleID) //handle it on a module by module basis, this is to allow for FE to gain 3 times as many points
 						{
+							case "HexiEvilFMN":
+								moduleScore = (int) (BombCommander.bombSolvableModules * 3 * TwitchPlaySettings.data.DynamicScorePercentage);
+								break;
+
 							default: //only default for now, as FMN is the only module with dynamic settings, FE does not have TP support yet
 								moduleScore = (int) (BombCommander.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 								break;
