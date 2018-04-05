@@ -547,7 +547,7 @@ public class BombMessageResponder : MessageResponder
 				var vanilla = match.Groups[1].Value.Contains("van");
 				var modded = match.Groups[1].Value.Contains("mod");
 				var view = match.Groups[1].Value.Contains("view");
-				var avoid = new[] { "Souvenir", "Forget Me Not", "Turn The Key", "Turn The Keys", "The Swan" };
+				var avoid = new[] { "Souvenir", "Forget Me Not", "Turn The Key", "Turn The Keys", "The Swan", "Forget Everything" };
 
 				var unclaimed = ComponentHandles
 					.Where(handle => (vanilla ? !handle.IsMod : modded ? handle.IsMod : true) && !handle.Claimed && !handle.Solved && !avoid.Contains(handle.HeaderText) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
@@ -793,7 +793,7 @@ public class BombMessageResponder : MessageResponder
 	{
 		string[] keyModules =
 		{
-			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced", "theSwan"
+			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced", "theSwan", "HexiEvilFMN"
 		};
 		bool foundComponents = false;
 
