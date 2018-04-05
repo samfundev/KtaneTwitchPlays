@@ -641,7 +641,7 @@ public class BombCommander : ICommandResponder
 
 	public int NumberModules => bombSolvableModules;
 
-	private static string[] solveBased = new string[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced" };
+	private static string[] solveBased = new string[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN" };
 	private bool removedSolveBasedModules = false;
 	public void RemoveSolveBasedModules()
 	{
