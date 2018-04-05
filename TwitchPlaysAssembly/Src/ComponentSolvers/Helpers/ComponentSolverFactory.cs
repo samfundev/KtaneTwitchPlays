@@ -451,7 +451,7 @@ public static class ComponentSolverFactory
 			info.statusLightLeft = defInfo.statusLightLeft;
 		}
 
-		if (ModuleData.DataHasChanged && writeData && !info.builtIntoTwitchPlays)
+		if (writeData && !info.builtIntoTwitchPlays)
 		{
 			ModuleData.WriteDataToFile();
 		}
@@ -487,8 +487,7 @@ public static class ComponentSolverFactory
 		defInfo.statusLightLeft = statusLightLeft;
 		defInfo.statusLightDown = statusLightBottom;
 
-		if (ModuleData.DataHasChanged)
-			ModuleData.WriteDataToFile();
+		ModuleData.WriteDataToFile();
 
 		return info;
 	}
@@ -704,7 +703,6 @@ public static class ComponentSolverFactory
 			ModuleData.DataHasChanged |= info.moduleID != null;
 
 		info.moduleDisplayName = displayName;
-		ModuleData.DataHasChanged &= !SilentMode;
 		ModuleData.WriteDataToFile();
 
 		AddDefaultModuleInformation(moduleType, displayName, help, manual, statusLeft, statusBottom, regexList);

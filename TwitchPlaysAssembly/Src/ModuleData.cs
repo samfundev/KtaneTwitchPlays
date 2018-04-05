@@ -45,7 +45,7 @@ public static class ModuleData
 	public static bool DataHasChanged = true;
 	public static void WriteDataToFile()
 	{
-		if (!DataHasChanged) return;
+		if (!DataHasChanged || ComponentSolverFactory.SilentMode) return;
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		DebugHelper.Log("ModuleData: Writing file {0}", path);
 

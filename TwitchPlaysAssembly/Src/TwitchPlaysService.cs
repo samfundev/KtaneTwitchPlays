@@ -193,11 +193,9 @@ public class TwitchPlaysService : MonoBehaviour
 		DebugHelper.Log($"Solvable Modules: {string.Join(", ", bombModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
 		DebugHelper.Log($"Needy Modules: {string.Join(", ", needyModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
 
-		bool newModules = false;
 		if (bombModules.Length > 0)
 		{
 			ComponentSolverFactory.SilentMode = true;
-			newModules = true;
 			DebugHelper.Log("Creating a solver for each Solvable module");
 			foreach (KMBombModule bombComponent in bombModules)
 			{
@@ -221,7 +219,6 @@ public class TwitchPlaysService : MonoBehaviour
 		if (needyModules.Length > 0)
 		{
 			ComponentSolverFactory.SilentMode = true;
-			newModules = true;
 			DebugHelper.Log("Creating a solver for each Needy module");
 			foreach (KMNeedyModule bombComponent in needyModules)
 			{
@@ -243,10 +240,6 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 
 		ComponentSolverFactory.SilentMode = false;
-		if (newModules)
-		{
-			ModuleData.DataHasChanged = true;
-			ModuleData.WriteDataToFile();
-		}
+		ModuleData.WriteDataToFile();
 	}
 }
