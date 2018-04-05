@@ -381,6 +381,9 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref BombTimeRemaining, data.BombTimeRemaining, 2);
 		valid &= ValidateString(ref BombTimeStamp, data.BombTimeStamp, 1);
 		valid &= ValidateString(ref BombDetonateCommand, data.BombDetonateCommand, 0);
+		valid &= ValidateString(ref BombStatusTimeMode, data.BombStatusTimeMode, 6);
+		valid &= ValidateString(ref BombStatusVsMode, data.BombStatusVsMode, 5);
+		valid &= ValidateString(ref BombStatus, data.BombStatus, 7);
 
 		valid &= ValidateString(ref NotesSpaceFree, data.NotesSpaceFree, 0);
 		valid &= ValidateString(ref Notes, data.Notes, 2);
