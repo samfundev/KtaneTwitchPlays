@@ -285,6 +285,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["spwizAstrology"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["BinaryLeds"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise Operators", validCommands = new[] { "^submit [0-1]{8}$" } };
 		ModComponentSolverInformation["BlindMaze"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["booleanVennModule"] = new ModuleInformation { moduleScore = 12, helpText = "Select parts of the diagram with !{0} a bc abc. Options are A, AB, ABC, AC, B, BC, C, O (none)." };
