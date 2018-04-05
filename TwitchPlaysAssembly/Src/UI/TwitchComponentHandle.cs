@@ -243,7 +243,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			handle.SolveSilently();
 		}
 
-		if(componentsToRemove.Count > 1)	//Forget me not become unsolvable if MORE than one module is solved at once.
+		if(componentsToRemove.Count > 1)	//Forget Me Not and Forget Everything become unsolvable if MORE than one module is solved at once.
 			RemoveSolveBasedModules();
 
 		_unsupportedComponents.Clear();

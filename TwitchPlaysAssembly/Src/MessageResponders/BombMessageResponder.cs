@@ -853,7 +853,12 @@ public class BombMessageResponder : MessageResponder
 			ComponentHandles.Add(handle);
 
 			if (keyModule)
-				IRCConnection.Instance.SendMessage($"Module {handle.Code} is a {moduleName}");
+			{
+				if (moduleName == "The Swan")
+					IRCConnection.Instance.SendMessage($"Module {handle.Code} is {moduleName}");
+				else
+					IRCConnection.Instance.SendMessage($"Module {handle.Code} is a {moduleName}");
+			}
 		}
 
 		return foundComponents;

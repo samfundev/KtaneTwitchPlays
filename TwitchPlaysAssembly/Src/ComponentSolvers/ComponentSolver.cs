@@ -574,7 +574,7 @@ public abstract class ComponentSolver
 								moduleScore = (int) (BombCommander.bombSolvableModules * 3 * TwitchPlaySettings.data.DynamicScorePercentage);
 								break;
 
-							default: //only default for now, as FMN is the only module with dynamic settings, FE does not have TP support yet
+							default: //default for forget me not
 								moduleScore = (int) (BombCommander.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 								break;
 						}
