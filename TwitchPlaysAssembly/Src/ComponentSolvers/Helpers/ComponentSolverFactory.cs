@@ -748,7 +748,7 @@ public static class ComponentSolverFactory
 			Component[] allComponents = bombComponent?.GetComponentsInChildren<Component>(true) ?? new Component[0];
 			foreach (Component component in allComponents)
 			{
-				string fullName = component.GetType().FullName;
+				string fullName = component?.GetType().FullName;
 				if (string.IsNullOrEmpty(fullName) || FullNamesLogged.Contains(fullName)) continue;
 				FullNamesLogged.Add(fullName);
 
