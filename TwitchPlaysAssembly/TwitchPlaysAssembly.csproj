@@ -98,7 +98,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\Shims\GameOfLifeShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\IceCreamConfirm.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\PressXShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\SpareWizard\3DMazeComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedButtonComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedModuleHelper.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedMorseCodeComponentSolver.cs" />
