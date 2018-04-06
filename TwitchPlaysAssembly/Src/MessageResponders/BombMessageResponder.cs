@@ -247,7 +247,7 @@ public class BombMessageResponder : MessageResponder
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "Couln't Write TwitchPlaysLastClaimed.json:");
+			DebugHelper.LogException(ex, "Couldn't Write TwitchPlaysLastClaimed.json:");
 		}
 	}
 
@@ -427,19 +427,8 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.StartsWith("claim ", StringComparison.InvariantCultureIgnoreCase))
-			{
-				var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (var claim in split.Skip(1))
-				{
-					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
-					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-					handle.AddToClaimQueue(userNickName);
-				}
-				return;
-			}
 
-			if (text.RegexMatch("^(?:claim ?|view ?| ?all ?){2,3}$"))
+			if (text.RegexMatch("^(?:claim ?|view ?|all ?){2,3}$"))
 			{
 				if (text.Contains("claim") && text.Contains("all"))
 				{
@@ -450,6 +439,18 @@ public class BombMessageResponder : MessageResponder
 					}
 					return;
 				}
+			}
+
+			if (text.StartsWith("claim ", StringComparison.InvariantCultureIgnoreCase))
+			{
+				var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (var claim in split.Skip(1))
+				{
+					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
+					handle.AddToClaimQueue(userNickName);
+				}
+				return;
 			}
 
 			if (text.RegexMatch("^(unclaim|release) ?all$"))
