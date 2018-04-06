@@ -495,7 +495,7 @@ public class BombMessageResponder : MessageResponder
 				{
 					string trimmed = query.Trim();
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
 						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code,
 							handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
 						)).ToList();
