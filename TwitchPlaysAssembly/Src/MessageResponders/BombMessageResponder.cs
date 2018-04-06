@@ -479,7 +479,7 @@ public class BombMessageResponder : MessageResponder
 			if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase))
 			{
 				IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
-					.Select(handle => string.Format("{0} ({1})", handle.HeaderText, handle.Code)).ToList();
+					.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code})")).ToList();
 
 				if (unclaimed.Any()) IRCConnection.Instance.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
 				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
@@ -512,7 +512,7 @@ public class BombMessageResponder : MessageResponder
 						)).ToList();
 
 					if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
-					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", trimmed);
+					else IRCConnection.Instance.SendMessage($"Couldn't find any modules containing \"{trimmed}\".");
 				}
 
 				return;
@@ -525,15 +525,15 @@ public class BombMessageResponder : MessageResponder
 				{
 					string trimmed = query.Trim();
 					IEnumerable<TwitchComponentHandle> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ToList();
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ThenBy(handle => handle.Solved).ToList();
 					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed))
-						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
+						.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code}) - Claimed by {handle.PlayerName}")).ToList();
 					if (modules.Any())
 					{
 						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
 						else IRCConnection.Instance.SendMessage("None of the specified modules are claimed/have been solved.");
 					}
-					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", trimmed);
+					else IRCConnection.Instance.SendMessage($"Could not find any modules containing \"{trimmed}\".");
 				}
 			}
 
@@ -547,17 +547,17 @@ public class BombMessageResponder : MessageResponder
 					IEnumerable<TwitchComponentHandle> modules = commanders.SelectMany(x => x.SolvedModules.Where(y => y.Key.ContainsIgnoreCase(trimmed)))
 						.OrderByDescending(x => x.Key.EqualsIgnoreCase(trimmed)).SelectMany(x => x.Value).ToList();
 					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null)
-						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
+						.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code}) - Claimed by {handle.PlayerName}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
 					if (commanders.Any())
 					{
 						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
 						else IRCConnection.Instance.SendMessage("None of the specified modules have been solved.");
 					}
-					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", trimmed);
+					else IRCConnection.Instance.SendMessage($"Could not find any modules containing \"{trimmed}\".");
 				}
 			}
 
-			if (text.RegexMatch(out match, "^(claim(?:any|van|mod)(?:view)?|viewclaim(?:any|van|mod))"))
+			if (text.RegexMatch(out match, "^(claim(?:any|van|dmod)(?:view)?|viewclaim(?:any|van|mod))"))
 			{
 				var vanilla = match.Groups[1].Value.Contains("van");
 				var modded = match.Groups[1].Value.Contains("mod");
@@ -566,8 +566,7 @@ public class BombMessageResponder : MessageResponder
 
 				var unclaimed = ComponentHandles
 					.Where(handle => (vanilla ? !handle.IsMod : modded ? handle.IsMod : true) && !handle.Claimed && !handle.Solved && !avoid.Contains(handle.HeaderText) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-					.Shuffle()
-					.FirstOrDefault();
+					.Shuffle().FirstOrDefault();
 
 				if (unclaimed != null)
 					text = unclaimed.Code + (view ? " claimview" : " claim");
@@ -590,8 +589,7 @@ public class BombMessageResponder : MessageResponder
 				{
 					string trimmed = query.Trim();
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
-						.Select(handle => $"{handle.Code}").ToList();
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).Select(handle => $"{handle.Code}").ToList();
 					if (modules.Any())
 					{
 						if (!validAll) modules = modules.Take(1);
@@ -602,7 +600,7 @@ public class BombMessageResponder : MessageResponder
 							handle.AddToClaimQueue(userNickName, validView);
 						}
 					}
-					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", trimmed);
+					else IRCConnection.Instance.SendMessage($"Couldn't find any modules containing \"{trimmed}\".");
 				}
 				return;
 			}
@@ -684,7 +682,7 @@ public class BombMessageResponder : MessageResponder
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-						handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} unclaim", claim));
+						handle.OnMessageReceived(userNickName, userColorCode, string.Format($"{claim} unclaim"));
 					}
 					return;
 				}
