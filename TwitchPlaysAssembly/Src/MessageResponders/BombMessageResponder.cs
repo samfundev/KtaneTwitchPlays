@@ -487,6 +487,17 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
+			if (text.Equals("unsolved", StringComparison.InvariantCultureIgnoreCase))
+			{
+				IEnumerable<string> unsolved = ComponentHandles.Where(handle => !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
+					.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code,
+					handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)).ToList();
+				if (unsolved.Any()) IRCConnection.Instance.SendMessage("Unsolved Modules: {0}", unsolved.Join(", "));
+				else IRCConnection.Instance.SendMessage("There are no unsolved modules, something went wrong as this message should never be displayed."); //this should never happen
+
+				return;
+			}
+
 			if (text.RegexMatch(out match, "^(?:find|search) (.+)"))
 			{
 				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
