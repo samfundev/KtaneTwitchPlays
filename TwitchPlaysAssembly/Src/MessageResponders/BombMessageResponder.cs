@@ -492,14 +492,15 @@ public class BombMessageResponder : MessageResponder
 
 				foreach (string query in queries)
 				{
-					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					string trimmed = query.Trim();
+					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
 						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null).Take(3)
 						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code,
 							handle.Solved ? "Solved" : (handle.PlayerName == null ? "Unclaimed" : "Claimed by " + handle.PlayerName)
 						)).ToList();
 
 					if (modules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", modules.Join(", "));
-					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", trimmed);
 				}
 
 				return;
@@ -510,16 +511,17 @@ public class BombMessageResponder : MessageResponder
 				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
 				foreach (string query in queries)
 				{
-					IEnumerable<TwitchComponentHandle> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ToList();
-					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query))
+					string trimmed = query.Trim();
+					IEnumerable<TwitchComponentHandle> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ToList();
+					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed))
 						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
 					if (modules.Any())
 					{
 						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
 						else IRCConnection.Instance.SendMessage("None of the specified modules are claimed/have been solved.");
 					}
-					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", query);
+					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", trimmed);
 				}
 			}
 
@@ -528,9 +530,10 @@ public class BombMessageResponder : MessageResponder
 				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
 				foreach (string query in queries)
 				{
-					IEnumerable<BombCommander> commanders = BombCommanders.Where(handle => handle.SolvedModules.Keys.ToArray().Any(x => x.ContainsIgnoreCase(query))).ToList();
-					IEnumerable<TwitchComponentHandle> modules = commanders.SelectMany(x => x.SolvedModules.Where(y => y.Key.ContainsIgnoreCase(query)))
-						.OrderByDescending(x => x.Key.EqualsIgnoreCase(query)).SelectMany(x => x.Value).ToList();
+					string trimmed = query.Trim();
+					IEnumerable<BombCommander> commanders = BombCommanders.Where(handle => handle.SolvedModules.Keys.ToArray().Any(x => x.ContainsIgnoreCase(trimmed))).ToList();
+					IEnumerable<TwitchComponentHandle> modules = commanders.SelectMany(x => x.SolvedModules.Where(y => y.Key.ContainsIgnoreCase(trimmed)))
+						.OrderByDescending(x => x.Key.EqualsIgnoreCase(trimmed)).SelectMany(x => x.Value).ToList();
 					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null)
 						.Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
 					if (commanders.Any())
@@ -538,7 +541,7 @@ public class BombMessageResponder : MessageResponder
 						if (playerModules.Any()) IRCConnection.Instance.SendMessage("Modules: {0}", playerModules.Join(", "));
 						else IRCConnection.Instance.SendMessage("None of the specified modules have been solved.");
 					}
-					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", query);
+					else IRCConnection.Instance.SendMessage("Could not find any modules containing \"{0}\".", trimmed);
 				}
 			}
 
@@ -573,8 +576,9 @@ public class BombMessageResponder : MessageResponder
 
 				foreach (string query in queries)
 				{
-					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(query) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
-						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(query)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
+					string trimmed = query.Trim();
+					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
+						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ThenBy(handle => handle.Solved).ThenBy(handle => handle.PlayerName != null)
 						.Select(handle => $"{handle.Code}").ToList();
 					if (modules.Any())
 					{
@@ -586,7 +590,7 @@ public class BombMessageResponder : MessageResponder
 							handle.AddToClaimQueue(userNickName, validView);
 						}
 					}
-					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", query);
+					else IRCConnection.Instance.SendMessage("Couldn't find any modules containing \"{0}\".", trimmed);
 				}
 				return;
 			}
