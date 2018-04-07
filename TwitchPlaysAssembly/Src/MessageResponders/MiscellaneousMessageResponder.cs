@@ -24,6 +24,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo GameInfo;
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
+	private bool RankCommand = true;
 
 	private void Start()
 	{
@@ -277,9 +278,57 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
 		}
+		else if (text.Equals("disablerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablerank", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = false;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry, {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("enablerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablerank", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = true;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry, {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("togglerank", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = !RankCommand;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry, {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
 		else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (TwitchPlaySettings.data.EnableRankCommand)
+			if (TwitchPlaySettings.data.EnableRankCommand && RankCommand)
 			{
 				Leaderboard.LeaderboardEntry entry = null;
 				if (split.Length > 1)
@@ -407,7 +456,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score: {modules[0].moduleScore}");
 							break;
 						case "statuslight":
-							if(modules[0].statusLightDown && modules[0].statusLightLeft)
+							if (modules[0].statusLightDown && modules[0].statusLightLeft)
 								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Left");
 							else if (modules[0].statusLightDown)
 								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Right");
@@ -441,7 +490,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}");
 							break;
 					}
-					
+
 					break;
 				default:
 					var onemodule = modules.Where(x => x.moduleDisplayName.Equals(match1.Groups[2].Value)).ToList();
@@ -604,8 +653,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 							try
 							{
 								var newModuleColor = SettingsConverter.Deserialize<Color>(changeTo);
-								moduleColor = newModuleColor == new Color() 
-									? JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter()) 
+								moduleColor = newModuleColor == new Color()
+									? JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter())
 									: changeTo;
 								module.unclaimedColor = newModuleColor == new Color()
 									? defaultModule.unclaimedColor
@@ -618,7 +667,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 									moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
 								module.unclaimedColor = defaultModule.unclaimedColor;
 							}
-							
+
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color changed to: {moduleColor}");
 							break;
 					}
