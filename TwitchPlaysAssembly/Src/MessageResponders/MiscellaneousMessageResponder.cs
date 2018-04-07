@@ -22,8 +22,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo GameInfo;
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
-	private bool RankCommand = true;
-	private bool RunCommand = true;
 
 	private void Start()
 	{
@@ -81,7 +79,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	int GetMaximumModules(int maxAllowed=int.MaxValue)
 	{
-		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(),maxAllowed);
+		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(), maxAllowed);
 	}
 
 	string ResolveMissionID(string targetID, out string failureMessage)
@@ -270,93 +268,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
 		}
-		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = !RankCommand;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("enablerankcommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = true;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("disablerankcommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = false;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("toggleruncommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRunCommand)
-				{
-					RunCommand = !RunCommand;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("enableruncommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRunCommand)
-				{
-					RunCommand = true;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("disableruncommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRunCommand)
-				{
-					RunCommand = false;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
 		else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (TwitchPlaySettings.data.EnableRankCommand && RankCommand)
+			if (TwitchPlaySettings.data.EnableRankCommand)
 			{
 				Leaderboard.LeaderboardEntry entry = null;
 				if (split.Length > 1)
@@ -755,17 +669,18 @@ public class MiscellaneousMessageResponder : MessageResponder
 				Dictionary<string, BanData> bandata = UserAccess.GetBans();
 				foreach (string person in target)
 				{
-					if (bandata.Keys.Contains(person))
+					string adjperson = person.Trim();
+					if (bandata.Keys.Contains(adjperson))
 					{
-						bandata.TryGetValue(person, out BanData value);
+						bandata.TryGetValue(adjperson, out BanData value);
 						if (double.IsPositiveInfinity(value.BanExpiry))
 						{
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", adjperson, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
 						}
 						else
 						{
 							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", adjperson, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
 						}
 						found = true;
 					}
@@ -873,16 +788,17 @@ public class MiscellaneousMessageResponder : MessageResponder
 				List<string> target = trimmed.Split(';').ToList();
 				foreach (string person in target)
 				{
-					AccessLevel level = UserAccess.HighestAccessLevel(person);
+					string adjperson = person.Trim();
+					AccessLevel level = UserAccess.HighestAccessLevel(adjperson);
 					string stringLevel = UserAccess.LevelToString(level);
-					IRCConnection.Instance.SendMessage("User {0}, Access Level: {1}", person, stringLevel);
+					IRCConnection.Instance.SendMessage("User {0}, Access Level: {1}", adjperson, stringLevel);
 				}
 			}
 		}
 		switch (split[0])
 		{
 			case "run":
-				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode && RunCommand) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
 					break;
