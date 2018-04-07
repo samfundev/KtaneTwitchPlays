@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Rules;
 
 public class InvisibleWallsComponentSolver : ComponentSolver
 {
