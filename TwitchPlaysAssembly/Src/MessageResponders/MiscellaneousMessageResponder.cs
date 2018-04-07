@@ -290,7 +290,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry, {0}, but the rank command has been globally disabled in the settings", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
@@ -306,7 +306,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry, {0}, but the rank command has been globally disabled in the settings", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
@@ -322,7 +322,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry, {0}, but the rank command has been globally disabled in the settings", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
