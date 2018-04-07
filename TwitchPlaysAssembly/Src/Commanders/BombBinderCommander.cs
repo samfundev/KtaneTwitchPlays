@@ -331,10 +331,6 @@ public class BombBinderCommander : ICommandResponder
 	private readonly SelectableManager SelectableManager = null;
 	#endregion
 
-	#region Private Static Fields
-
-	#endregion
-
 	#region Private Fields
 	private Selectable _currentSelectable = null;
 	private int _currentSelectableIndex = int.MinValue;
