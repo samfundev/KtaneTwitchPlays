@@ -23,6 +23,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
 	private bool RankCommand = true;
+	private bool RunCommand = true;
 
 	private void Start()
 	{
@@ -279,7 +280,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
@@ -293,7 +294,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
@@ -307,7 +308,49 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("toggleruncommand", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRunCommand)
+				{
+					RunCommand = !RunCommand;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("enableruncommand", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRunCommand)
+				{
+					RunCommand = true;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("disableruncommand", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRunCommand)
+				{
+					RunCommand = false;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
@@ -839,7 +882,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		switch (split[0])
 		{
 			case "run":
-				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode && RunCommand) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
 					break;
