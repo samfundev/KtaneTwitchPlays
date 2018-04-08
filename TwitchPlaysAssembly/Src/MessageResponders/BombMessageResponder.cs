@@ -682,9 +682,11 @@ public class BombMessageResponder : MessageResponder
 				bool validAll = match.Groups[1].Value.Contains("all");
 
 				string[] queries = match.Groups[2].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+				int counter = 0;
 
 				foreach (string query in queries)
 				{
+					if (counter == 2) return;
 					string trimmed = query.Trim();
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
 						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).Select(handle => $"{handle.Code}").ToList();
@@ -697,6 +699,7 @@ public class BombMessageResponder : MessageResponder
 							if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 							handle.AddToClaimQueue(userNickName, validView);
 						}
+						if (validAll) counter++;
 					}
 					else IRCConnection.Instance.SendMessage($"Couldn't find any modules containing \"{trimmed}\".");
 				}
