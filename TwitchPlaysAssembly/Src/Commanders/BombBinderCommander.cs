@@ -337,4 +337,3 @@ public class BombBinderCommander : ICommandResponder
 	private Selectable[] _currentSelectables = null;
 	#endregion
 }
-
