@@ -557,7 +557,7 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 
-			if (text.RegexMatch(out match, "^(claim(?:any|van|dmod)(?:view)?|viewclaim(?:any|van|mod))"))
+			if (text.RegexMatch(out match, "^(claim ?(?:any|van|mod) ?(?:view)?|view ?claim ?(?:any|van|mod))"))
 			{
 				var vanilla = match.Groups[1].Value.Contains("van");
 				var modded = match.Groups[1].Value.Contains("mod");
