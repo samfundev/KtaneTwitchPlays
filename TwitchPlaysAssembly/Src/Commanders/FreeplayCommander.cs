@@ -518,4 +518,3 @@ public class FreeplayCommander : ICommandResponder
 	private static FieldInfo _maxModuleField = null;
 	#endregion
 }
-
