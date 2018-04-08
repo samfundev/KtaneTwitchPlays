@@ -360,9 +360,9 @@ public class BombMessageResponder : MessageResponder
 				continue;
 
 			var name = sanitizedName(handle);
-			var code = name.Where(ch => (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z' && ch != 'O')).Take(2).JoinString();
+			var code = name.Where(ch => (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z' && ch != 'O')).Take(2).Join("");
 			if (code.Length < 2 && name.Length >= 2)
-				code = name.Where(ch => char.IsLetterOrDigit(ch)).Take(2).JoinString().ToUpperInvariant();
+				code = name.Where(ch => char.IsLetterOrDigit(ch)).Take(2).Join("").ToUpperInvariant();
 			if (code.Length == 0)
 				code = (++numeric).ToString();
 			handle.Code = code;
