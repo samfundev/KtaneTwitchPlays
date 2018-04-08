@@ -557,46 +557,46 @@ public static class ComponentSolverFactory
 		switch (componentType)
 		{
 			case ComponentTypeEnum.Wires:
-				return new WireSetComponentSolver(bombCommander, (WireSetComponent)bombComponent);
+				return new WireSetComponentSolver(bombCommander, (WireSetComponent) bombComponent);
 
 			case ComponentTypeEnum.Keypad:
-				return new KeypadComponentSolver(bombCommander, (KeypadComponent)bombComponent);
+				return new KeypadComponentSolver(bombCommander, (KeypadComponent) bombComponent);
 
 			case ComponentTypeEnum.BigButton:
-				return new ButtonComponentSolver(bombCommander, (ButtonComponent)bombComponent);
+				return new ButtonComponentSolver(bombCommander, (ButtonComponent) bombComponent);
 
 			case ComponentTypeEnum.Memory:
-				return new MemoryComponentSolver(bombCommander, (MemoryComponent)bombComponent);
+				return new MemoryComponentSolver(bombCommander, (MemoryComponent) bombComponent);
 
 			case ComponentTypeEnum.Simon:
-				return new SimonComponentSolver(bombCommander, (SimonComponent)bombComponent);
+				return new SimonComponentSolver(bombCommander, (SimonComponent) bombComponent);
 
 			case ComponentTypeEnum.Venn:
-				return new VennWireComponentSolver(bombCommander, (VennWireComponent)bombComponent);
+				return new VennWireComponentSolver(bombCommander, (VennWireComponent) bombComponent);
 
 			case ComponentTypeEnum.Morse:
-				return new MorseCodeComponentSolver(bombCommander, (MorseCodeComponent)bombComponent);
+				return new MorseCodeComponentSolver(bombCommander, (MorseCodeComponent) bombComponent);
 
 			case ComponentTypeEnum.WireSequence:
-				return new WireSequenceComponentSolver(bombCommander, (WireSequenceComponent)bombComponent);
+				return new WireSequenceComponentSolver(bombCommander, (WireSequenceComponent) bombComponent);
 
 			case ComponentTypeEnum.Password:
-				return new PasswordComponentSolver(bombCommander, (PasswordComponent)bombComponent);
+				return new PasswordComponentSolver(bombCommander, (PasswordComponent) bombComponent);
 
 			case ComponentTypeEnum.Maze:
-				return new InvisibleWallsComponentSolver(bombCommander, (InvisibleWallsComponent)bombComponent);
+				return new InvisibleWallsComponentSolver(bombCommander, (InvisibleWallsComponent) bombComponent);
 
 			case ComponentTypeEnum.WhosOnFirst:
-				return new WhosOnFirstComponentSolver(bombCommander, (WhosOnFirstComponent)bombComponent);
+				return new WhosOnFirstComponentSolver(bombCommander, (WhosOnFirstComponent) bombComponent);
 
 			case ComponentTypeEnum.NeedyVentGas:
-				return new NeedyVentComponentSolver(bombCommander, (NeedyVentComponent)bombComponent);
+				return new NeedyVentComponentSolver(bombCommander, (NeedyVentComponent) bombComponent);
 
 			case ComponentTypeEnum.NeedyCapacitor:
-				return new NeedyDischargeComponentSolver(bombCommander, (NeedyDischargeComponent)bombComponent);
+				return new NeedyDischargeComponentSolver(bombCommander, (NeedyDischargeComponent) bombComponent);
 
 			case ComponentTypeEnum.NeedyKnob:
-				return new NeedyKnobComponentSolver(bombCommander, (NeedyKnobComponent)bombComponent);
+				return new NeedyKnobComponentSolver(bombCommander, (NeedyKnobComponent) bombComponent);
 
 			case ComponentTypeEnum.Mod:
 				KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
@@ -775,7 +775,7 @@ public static class ComponentSolverFactory
 	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom)
 	{
 		string statusLightStatus = "Attempting to find the modules StatusLightParent...";
-		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component)bombComponent.GetComponentInChildren<KMStatusLightParent>();
+		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component) bombComponent.GetComponentInChildren<KMStatusLightParent>();
 		if (component == null)
 		{
 			DebugLog($"{statusLightStatus} Not found.");
@@ -803,7 +803,7 @@ public static class ComponentSolverFactory
 			validCommands = null;
 			return false;
 		}
-		validCommands = (string[])candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
+		validCommands = (string[]) candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
 		return true;
 	}
 
@@ -820,7 +820,7 @@ public static class ComponentSolverFactory
 			manualCode = null;
 			return false;
 		}
-		manualCode = (string)candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
+		manualCode = (string) candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
 		return true;
 	}
 
@@ -837,7 +837,7 @@ public static class ComponentSolverFactory
 			helpText = null;
 			return false;
 		}
-		helpText = (string)candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
+		helpText = (string) candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
 		return true;
 	}
 
@@ -907,7 +907,7 @@ public static class ComponentSolverFactory
 			return false;
 		}
 
-		if (candidateMethod.ReturnType == typeof(KMSelectable[]))
+		if (candidateMethod.ReturnType == typeof(KMSelectable[]) || candidateMethod.ReturnType == typeof(IEnumerable<KMSelectable>))
 		{
 			DebugLog("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
 			commandType = ModCommandType.Simple;

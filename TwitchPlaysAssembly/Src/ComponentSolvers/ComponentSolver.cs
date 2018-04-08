@@ -324,7 +324,7 @@ public abstract class ComponentSolver
 					HeldSelectables.Add(selectable1);
 				}
 			}
-			else if (currentValue is KMSelectable[] selectables)
+			else if (currentValue is IList<KMSelectable> selectables)
 			{
 				foreach (KMSelectable selectable in selectables)
 				{
@@ -539,7 +539,7 @@ public abstract class ComponentSolver
 	{
 		IRCConnection.Instance.SendMessage("{0}{1}", reason, removeSolveBasedModules ? " Some other modules may also be solved to prevent problems." : "");
 		SolveSilently();
-		if(removeSolveBasedModules)
+		if (removeSolveBasedModules)
 			TwitchComponentHandle.RemoveSolveBasedModules();
 	}
 	#endregion
@@ -983,7 +983,7 @@ public abstract class ComponentSolver
 		{
 			if (!(TryCancelField?.GetValue(CommandComponent.GetType()) is bool))
 				return false;
-			return (bool)TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
@@ -998,7 +998,7 @@ public abstract class ComponentSolver
 		{
 			if (!(ZenModeField?.GetValue(CommandComponent.GetType()) is bool))
 				return false;
-			return (bool)ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{

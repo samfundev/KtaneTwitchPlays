@@ -105,7 +105,7 @@ public class BombMessageResponder : MessageResponder
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "Couln't Read TwitchPlaysLastClaimed.json:");
+			DebugHelper.LogException(ex, "Couldn't read TwitchPlaysLastClaimed.json:");
 			LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 		}
 	}
@@ -270,7 +270,6 @@ public class BombMessageResponder : MessageResponder
 	{
 		TwitchComponentHandle.ResetId();
 
-
 		yield return new WaitUntil(() => (SceneManager.Instance.GameplayState.Bombs != null && SceneManager.Instance.GameplayState.Bombs.Count > 0));
 		List<Bomb> bombs = SceneManager.Instance.GameplayState.Bombs;
 
@@ -309,7 +308,7 @@ public class BombMessageResponder : MessageResponder
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "Failed to Instantiate the module Camera system due to an Exception: ");
+			DebugHelper.LogException(ex, "Failed to Instantiate the module camera system due to an exception:");
 			moduleCameras = null;
 		}
 		moduleCameras?.ChangeBomb(BombCommanders[0]);

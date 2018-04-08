@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -25,7 +27,7 @@ public class SimpleModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		KMSelectable[] selectableSequence = null;
+		IList<KMSelectable> selectableList = null;
 
 		string exception = null;
 		try
@@ -43,8 +45,11 @@ public class SimpleModComponentSolver : ComponentSolver
 			if (!regexValid)
 				yield break;
 
-			selectableSequence = (KMSelectable[]) ProcessMethod.Invoke(CommandComponent, new object[] {inputCommand});
-			if (selectableSequence == null || selectableSequence.Length == 0)
+			var selectableSequence = (IEnumerable<KMSelectable>) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
+			if (selectableSequence == null)
+				yield break;
+			selectableList = (selectableSequence as IList<KMSelectable>) ?? selectableSequence.ToArray();
+			if (selectableList.Count == 0)
 				yield break;
 		}
 		catch (Exception ex)
@@ -71,6 +76,6 @@ public class SimpleModComponentSolver : ComponentSolver
 
 		yield return "modsequence";
 		yield return "trycancelsequence";
-		yield return selectableSequence;
+		yield return selectableList;
 	}
 }
