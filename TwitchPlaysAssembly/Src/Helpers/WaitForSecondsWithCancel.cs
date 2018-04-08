@@ -46,4 +46,3 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
 	private readonly float _startingTime = 0.0f;
 	private readonly bool _resetCancel = true;
 }
-

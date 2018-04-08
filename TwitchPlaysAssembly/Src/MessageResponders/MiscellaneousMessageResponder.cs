@@ -83,7 +83,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	int GetMaximumModules(int maxAllowed=int.MaxValue)
 	{
-		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(),maxAllowed);
+		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(), maxAllowed);
 	}
 
 	string ResolveMissionID(string targetID, out string failureMessage)
@@ -278,36 +278,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
 		}
-		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase))
+		else if (text.Equals("disablerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablerank", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = !RankCommand;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("enablerankcommand", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = true;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("disablerankcommand", StringComparison.InvariantCultureIgnoreCase))
-		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 			{
 				if (TwitchPlaySettings.data.EnableRankCommand)
@@ -316,7 +290,63 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled by the streamer", userNickName);
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("enablerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablerank", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = true;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("togglerank", StringComparison.InvariantCultureIgnoreCase))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+			{
+				if (TwitchPlaySettings.data.EnableRankCommand)
+				{
+					RankCommand = !RankCommand;
+				}
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
+				}
+			}
+		}
+		else if (text.RegexMatch(out match, "^resetuser (.+)"))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+			{
+				string[] users = match.Groups[0].Value.Split(';');
+				foreach (string user in users)
+				{
+					string trimmeduser = user.Trim();
+					Leaderboard.LeaderboardEntry entry = null;
+					Leaderboard.Instance.GetRank(trimmeduser, out entry);
+					if (entry == null)
+					{
+						IRCConnection.Instance.SendMessage("User {0} was not found", trimmeduser);
+						continue;
+					} else
+					{
+						Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
+						Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
+						Leaderboard.Instance.AddStrike(trimmeduser, -entry.StrikeCount);
+						IRCConnection.Instance.SendMessage("User {0} has been reset");
+					}
 				}
 			}
 		}
@@ -450,7 +480,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score: {modules[0].moduleScore}");
 							break;
 						case "statuslight":
-							if(modules[0].statusLightDown && modules[0].statusLightLeft)
+							if (modules[0].statusLightDown && modules[0].statusLightLeft)
 								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Left");
 							else if (modules[0].statusLightDown)
 								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Right");
@@ -484,7 +514,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}");
 							break;
 					}
-					
+
 					break;
 				default:
 					var onemodule = modules.Where(x => x.moduleDisplayName.Equals(match1.Groups[2].Value)).ToList();
@@ -647,8 +677,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 							try
 							{
 								var newModuleColor = SettingsConverter.Deserialize<Color>(changeTo);
-								moduleColor = newModuleColor == new Color() 
-									? JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter()) 
+								moduleColor = newModuleColor == new Color()
+									? JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter())
 									: changeTo;
 								module.unclaimedColor = newModuleColor == new Color()
 									? defaultModule.unclaimedColor
@@ -661,7 +691,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 									moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
 								module.unclaimedColor = defaultModule.unclaimedColor;
 							}
-							
+
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color changed to: {moduleColor}");
 							break;
 					}
@@ -721,17 +751,18 @@ public class MiscellaneousMessageResponder : MessageResponder
 				Dictionary<string, BanData> bandata = UserAccess.GetBans();
 				foreach (string person in target)
 				{
-					if (bandata.Keys.Contains(person))
+					string adjperson = person.Trim();
+					if (bandata.Keys.Contains(adjperson))
 					{
-						bandata.TryGetValue(person, out BanData value);
+						bandata.TryGetValue(adjperson, out BanData value);
 						if (double.IsPositiveInfinity(value.BanExpiry))
 						{
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", adjperson, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
 						}
 						else
 						{
 							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", person, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
+							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", adjperson, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
 						}
 						found = true;
 					}
@@ -839,15 +870,17 @@ public class MiscellaneousMessageResponder : MessageResponder
 				List<string> target = trimmed.Split(';').ToList();
 				foreach (string person in target)
 				{
-					AccessLevel level = UserAccess.HighestAccessLevel(person);
+					string adjperson = person.Trim();
+					AccessLevel level = UserAccess.HighestAccessLevel(adjperson);
 					string stringLevel = UserAccess.LevelToString(level);
-					IRCConnection.Instance.SendMessage("User {0}, Access Level: {1}", person, stringLevel);
+					IRCConnection.Instance.SendMessage("User {0}, Access Level: {1}", adjperson, stringLevel);
 				}
 			}
 		}
 		switch (split[0])
 		{
 			case "run":
+				if (!TwitchPlaySettings.data.EnableTwitchPlaysMode) return;
 				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);

@@ -10,7 +10,7 @@ using UnityEngine;
 public class TwitchPlaySettingsData
 {
 	public int SettingsVersion = 0;
-
+	
 	public bool SkipModManagerInstructionScreen = false;
 	public bool EnableRewardMultipleStrikes = true;
 	public bool EnableMissionBinder = true;
@@ -541,7 +541,7 @@ public static class TwitchPlaySettings
 		ClearPlayerLog();
 		return message;
 	}
-
+	
 	public static void AddRewardBonus(int bonus)
 	{
 		ClearReward += bonus;

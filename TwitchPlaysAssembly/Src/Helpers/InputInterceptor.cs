@@ -41,4 +41,3 @@ public static class InputInterceptor
 
 	private static AbstractControls[] _inputSystems = null;
 }
-

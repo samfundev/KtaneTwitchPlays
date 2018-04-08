@@ -98,6 +98,4 @@ public class CoroutineModComponentSolver : ComponentSolver
 				yield return $"sendtochaterror {exception}";
 		} 
 	}
-
-	
 }
