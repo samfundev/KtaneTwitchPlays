@@ -73,4 +73,3 @@ public class PostGameCommander : ICommandResponder
 	private readonly ResultPage ResultsPage = null;
 	#endregion
 }
-
