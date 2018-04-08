@@ -366,6 +366,30 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 			}
 		}
+		else if (text.RegexMatch(out match, "^resetuser (.+)"))
+		{
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+			{
+				string[] users = match.Groups[0].Value.Split(';');
+				foreach (string user in users)
+				{
+					string trimmeduser = user.Trim();
+					Leaderboard.LeaderboardEntry entry = null;
+					Leaderboard.Instance.GetRank(trimmeduser, out entry);
+					if (entry == null)
+					{
+						IRCConnection.Instance.SendMessage("User {0} was not found", trimmeduser);
+						continue;
+					} else
+					{
+						Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
+						Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
+						Leaderboard.Instance.AddStrike(trimmeduser, -entry.StrikeCount);
+						IRCConnection.Instance.SendMessage("User {0} has been reset");
+					}
+				}
+			}
+		}
 		else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (TwitchPlaySettings.data.EnableRankCommand && RankCommand)
