@@ -18,6 +18,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 	[HideInInspector]
 	public BombComponent bombComponent = null;
 
+	public static MiscellaneousMessageResponder Instance;
+
 	private KMGameCommands GameCommands;
 	private KMGameInfo GameInfo;
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
@@ -32,6 +34,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			CurrentState = state;
 		};
+		Instance = this;
 	}
 
 	public static IEnumerator FindHoldables()
@@ -129,6 +132,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		
 		return mission.name;
+	}
+
+	public void RunMission(KMMission mission)
+	{
+		if (CurrentState != KMGameInfo.State.Setup) return;
+		GetComponent<KMGameCommands>().StartMission(mission, $"{-1}");
 	}
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
