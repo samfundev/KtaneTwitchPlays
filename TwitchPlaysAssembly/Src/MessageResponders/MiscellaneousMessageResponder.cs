@@ -137,7 +137,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	public void RunMission(KMMission mission)
 	{
-		if (CurrentState != KMGameInfo.State.Setup) return;
+		if (CurrentState != KMGameInfo.State.Setup || !RunCommand) return;
 		GetComponent<KMGameCommands>().StartMission(mission, $"{-1}");
 	}
 
