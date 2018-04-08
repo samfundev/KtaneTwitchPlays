@@ -54,7 +54,8 @@ public class TwitchComponentHandle : MonoBehaviour
 	[HideInInspector]
 	public List<Tuple<string, double, bool, bool>> ClaimQueue = new List<Tuple<string, double, bool, bool>>();
 
-	public string Code { get; private set; } = null;
+	public string Code { get; set; } = null;
+	public bool IsKey { get; set; } = false;
 
 	public ComponentSolver Solver { get; private set; } = null;
 
@@ -81,11 +82,6 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Private Statics
 	private static List<TwitchComponentHandle> _unsupportedComponents = new List<TwitchComponentHandle>();
 	private static List<BombCommander> _bombCommanders = new List<BombCommander>();
-	private static int _nextID = 0;
-	private static int GetNewID()
-	{
-		return ++_nextID;
-	}
 	#endregion
 
 	#region Unity Lifecycle
@@ -116,7 +112,6 @@ public class TwitchComponentHandle : MonoBehaviour
 	private void Awake()
 	{
 		_data = GetComponent<TwitchComponentHandleData>();
-		Code = GetNewID().ToString();
 	}
 
 	private void Start()
@@ -299,12 +294,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			DebugHelper.LogException(ex, "Could not add entry to solved modules list due to an exception:");
 		}
 	}
-
-	public static void ResetId()
-	{
-		_nextID = 0;
-	}
-
+	
 	private void OnDestroy()
 	{
 		StopAllCoroutines();

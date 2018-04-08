@@ -87,7 +87,7 @@ public abstract class GameRoom
 
 		Random rand = new Random();
 		const float specialNameProbability = 1.25f;
-		string[] singleNames = 
+		string[] singleNames =
 		{
 			"Bomblebee ",
 			"Big Bomb",
@@ -133,7 +133,7 @@ public abstract class GameRoom
 				bombHandles[1].nameText.text = "The Other Bomb";
 				break;
 			default:
-				foreach(TwitchBombHandle handle in bombHandles)
+				foreach (TwitchBombHandle handle in bombHandles)
 				{
 					handle.nameText.text = singleNames[rand.Next(0, singleNames.Length - 1)];
 				}
@@ -143,7 +143,7 @@ public abstract class GameRoom
 
 	public virtual void OnDisable()
 	{
-		
+
 	}
 
 	private static Camera _mainCamera;
