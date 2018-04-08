@@ -25,7 +25,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
 	private bool RankCommand = true;
-	public static bool RunCommand = true;
 
 	private void Start()
 	{
@@ -137,7 +136,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	public void RunMission(KMMission mission)
 	{
-		if (CurrentState != KMGameInfo.State.Setup || !RunCommand) return;
+		if (CurrentState != KMGameInfo.State.Setup) return;
 		GetComponent<KMGameCommands>().StartMission(mission, $"{-1}");
 	}
 
@@ -324,54 +323,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 				else
 				{
 					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("disableruncommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablerun", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRunCommand)
-				{
-					RunCommand = false;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("enableruncommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablerun", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRunCommand)
-				{
-					RunCommand = true;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("toggleruncommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("togglerun", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRunCommand)
-				{
-					RunCommand = !RunCommand;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the run command has been globally disabled in the settings", userNickName);
 				}
 			}
 		}
@@ -930,7 +881,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			case "run":
 				if (!TwitchPlaySettings.data.EnableTwitchPlaysMode) return;
-				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode && RunCommand) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
 					break;

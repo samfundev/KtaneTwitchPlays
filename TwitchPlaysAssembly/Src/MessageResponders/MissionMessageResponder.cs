@@ -51,7 +51,7 @@ public class MissionMessageResponder : MessageResponder
 		switch (split[0])
 		{
 			case "binder":
-				if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode && MiscellaneousMessageResponder.RunCommand) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+				if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 				{
 					_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, textAfter, null));
 				}
@@ -61,7 +61,7 @@ public class MissionMessageResponder : MessageResponder
 				}
 				break;
 			case "freeplay":
-				if((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode && MiscellaneousMessageResponder.RunCommand) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+				if((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 				{
 					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, textAfter, null));
 				}
