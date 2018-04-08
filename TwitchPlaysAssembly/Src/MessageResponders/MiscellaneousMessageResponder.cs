@@ -25,7 +25,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
 	private bool RankCommand = true;
-	private bool RunCommand = true;
+	public static bool RunCommand = true;
 
 	private void Start()
 	{
