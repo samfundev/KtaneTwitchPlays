@@ -291,6 +291,9 @@ public abstract class HoldableHandler
 							TwitchPlaySettings.WriteDataToFile();
 						}
 						break;
+					case KMMission mission:
+						MiscellaneousMessageResponder.Instance.RunMission(mission);
+						break;
 					case object[] objects:
 						if (objects == null) break;
 						switch (objects.Length)
