@@ -929,6 +929,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		switch (split[0])
 		{
 			case "run":
+				if (!TwitchPlaySettings.data.EnableTwitchPlaysMode) return;
 				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode && RunCommand) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
