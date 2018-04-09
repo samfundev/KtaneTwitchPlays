@@ -487,14 +487,14 @@ public class IRCConnection : MonoBehaviour
 
 	private void ReceiveMessage(string userNickName, string userColorCode, string text)
 	{
-		if (text.Equals("!enablecommands") && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = true;
 			Instance.SendMessage("Commands enabled.");
 			return;
 		}
 		if (!CommandsEnabled) return;
-		if (text.Equals("!disablecommands") && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
 			Instance.SendMessage("Commands disabled.");
