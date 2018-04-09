@@ -21,8 +21,7 @@ public static class KMBombInfoExtensions
 
 		public bool IsOn()
 		{
-			bool isOn = false;
-			bool.TryParse(on, out isOn);
+			bool.TryParse(on, out bool isOn);
 			return isOn;
 		}
 	}
@@ -384,7 +383,7 @@ public static class KMBombInfoExtensions
 	public static string GetSerialNumber(this KMBombInfo bombInfo)
 	{
 		var ret = GetSerialNumberEntries(bombInfo).FirstOrDefault();
-		return ret == null ? null : ret.serial;
+		return ret?.serial;
 	}
 
 	public static IEnumerable<char> GetSerialNumberLetters(this KMBombInfo bombInfo)
