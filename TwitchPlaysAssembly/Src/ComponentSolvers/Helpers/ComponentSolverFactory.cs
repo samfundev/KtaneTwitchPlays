@@ -313,7 +313,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
 		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 15 };
-		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 15 };
+		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 15, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa", DoesTheRightThing = true };
