@@ -346,91 +346,99 @@ public class BombMessageResponder : MessageResponder
 
 	private void InitializeModuleCodes()
 	{
-		// This message assigns a unique code to each module.
+		// This method assigns a unique code to each module.
 
-		// Ignore initial “the” in module names
-		string sanitizedName(TwitchComponentHandle handle) => Regex.Replace(handle.bombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
-
-		// First, assign codes “naively”
-		var dic1 = new Dictionary<string, List<TwitchComponentHandle>>();
-		var numeric = 0;
-		foreach (var handle in ComponentHandles)
+		if (TwitchPlaySettings.data.EnableLetterCodes)
 		{
-			if (handle.componentType == ComponentTypeEnum.Timer || handle.componentType == ComponentTypeEnum.Empty || handle.bombComponent == null)
-				continue;
+			// Ignore initial “the” in module names
+			string sanitizedName(TwitchComponentHandle handle) => Regex.Replace(handle.bombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
 
-			var name = sanitizedName(handle);
-			var code = name.Where(ch => (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z' && ch != 'O')).Take(2).Join("");
-			if (code.Length < 2 && name.Length >= 2)
-				code = name.Where(ch => char.IsLetterOrDigit(ch)).Take(2).Join("").ToUpperInvariant();
-			if (code.Length == 0)
-				code = (++numeric).ToString();
-			handle.Code = code;
-			dic1.AddSafe(code, handle);
-		}
-
-		// If this assignment succeeded in generating unique codes, use it
-		if (dic1.Values.All(list => list.Count < 2))
-			return;
-
-		// See if we can make them all unique by just changing some non-unique ones to different letters in the module name
-		var dic2 = dic1.Where(kvp => kvp.Value.Count < 2).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-		foreach (var kvp in dic1)
-		{
-			if (kvp.Value.Count < 2)
-				continue;
-
-			dic2.AddSafe(kvp.Key, kvp.Value[0]);
-			for (int i = 1; i < kvp.Value.Count; i++)
+			// First, assign codes “naively”
+			var dic1 = new Dictionary<string, List<TwitchComponentHandle>>();
+			var numeric = 0;
+			foreach (var handle in ComponentHandles)
 			{
-				var name = sanitizedName(kvp.Value[i]);
-				for (int chIx = 1; chIx < name.Length; chIx++)
+				if (handle.componentType == ComponentTypeEnum.Timer || handle.componentType == ComponentTypeEnum.Empty || handle.bombComponent == null)
+					continue;
+
+				var name = sanitizedName(handle);
+				var code = name.Where(ch => (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z' && ch != 'O')).Take(2).Join("");
+				if (code.Length < 2 && name.Length >= 2)
+					code = name.Where(ch => char.IsLetterOrDigit(ch)).Take(2).Join("").ToUpperInvariant();
+				if (code.Length == 0)
+					code = (++numeric).ToString();
+				handle.Code = code;
+				dic1.AddSafe(code, handle);
+			}
+
+			// If this assignment succeeded in generating unique codes, use it
+			if (dic1.Values.All(list => list.Count < 2))
+				return;
+
+			// See if we can make them all unique by just changing some non-unique ones to different letters in the module name
+			var dic2 = dic1.Where(kvp => kvp.Value.Count < 2).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			foreach (var kvp in dic1)
+			{
+				if (kvp.Value.Count < 2)
+					continue;
+
+				dic2.AddSafe(kvp.Key, kvp.Value[0]);
+				for (int i = 1; i < kvp.Value.Count; i++)
 				{
-					var newCode = (name[0] + "" + name[chIx]).ToUpperInvariant();
-					if (name[chIx] != 'O' && char.IsLetter(name[chIx]) && !dic2.ContainsKey(newCode))
+					var name = sanitizedName(kvp.Value[i]);
+					for (int chIx = 1; chIx < name.Length; chIx++)
 					{
-						kvp.Value[i].Code = newCode;
-						dic2.AddSafe(newCode, kvp.Value[i]);
-						goto processed;
+						var newCode = (name[0] + "" + name[chIx]).ToUpperInvariant();
+						if (name[chIx] != 'O' && char.IsLetter(name[chIx]) && !dic2.ContainsKey(newCode))
+						{
+							kvp.Value[i].Code = newCode;
+							dic2.AddSafe(newCode, kvp.Value[i]);
+							goto processed;
+						}
 					}
+					dic2.AddSafe(kvp.Key, kvp.Value[i]);
+					processed:;
 				}
-				dic2.AddSafe(kvp.Key, kvp.Value[i]);
-				processed:;
+			}
+
+			// If this assignment succeeded in generating unique codes, use it
+			if (dic2.Values.All(list => list.Count < 2))
+				return;
+
+			var globalNumber = 1;
+
+			// If still no success, gonna hafta use numbers
+			while (true)
+			{
+				var tooMany = dic2.FirstOrDefault(kvp => kvp.Value.Count > 1);
+				// We did it — all unique
+				if (tooMany.Key == null)
+					break;
+
+				// Find other non-unique modules with the same first letter
+				var all = dic2.Where(kvp => kvp.Key[0] == tooMany.Key[0] && kvp.Value.Count > 1).SelectMany(kvp => kvp.Value.Skip(1)).ToList();
+				var number = 1;
+				for (int i = 0; i < all.Count; i++)
+				{
+					dic2[all[i].Code].Remove(all[i]);
+					while (dic2.ContainsKey(all[i].Code[0] + number.ToString()))
+						number++;
+					if (number < 10)
+						all[i].Code = all[i].Code[0] + (number++).ToString();
+					else
+					{
+						while (dic2.ContainsKey(globalNumber.ToString()))
+							globalNumber++;
+						all[i].Code = (globalNumber++).ToString();
+					}
+					dic2.AddSafe(all[i].Code, all[i]);
+				}
 			}
 		}
-
-		// If this assignment succeeded in generating unique codes, use it
-		if (dic2.Values.All(list => list.Count < 2))
-			return;
-
-		var globalNumber = 1;
-
-		// If still no success, gonna hafta use numbers
-		while (true)
+		else
 		{
-			var tooMany = dic2.FirstOrDefault(kvp => kvp.Value.Count > 1);
-			// We did it — all unique
-			if (tooMany.Key == null)
-				break;
-
-			// Find other non-unique modules with the same first letter
-			var all = dic2.Where(kvp => kvp.Key[0] == tooMany.Key[0] && kvp.Value.Count > 1).SelectMany(kvp => kvp.Value.Skip(1)).ToList();
-			var number = 1;
-			for (int i = 0; i < all.Count; i++)
-			{
-				dic2[all[i].Code].Remove(all[i]);
-				while (dic2.ContainsKey(all[i].Code[0] + number.ToString()))
-					number++;
-				if (number < 10)
-					all[i].Code = all[i].Code[0] + (number++).ToString();
-				else
-				{
-					while (dic2.ContainsKey(globalNumber.ToString()))
-						globalNumber++;
-					all[i].Code = (globalNumber++).ToString();
-				}
-				dic2.AddSafe(all[i].Code, all[i]);
-			}
+			int num = 1;
+			foreach (var handle in ComponentHandles) handle.Code = num++.ToString();
 		}
 	}
 
