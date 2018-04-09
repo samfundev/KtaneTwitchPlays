@@ -45,10 +45,10 @@ public static class GeneralExtensions
 		return formatedTime;
 	}
 
-	public static string Join(this IEnumerable<string> strings, string separator = " ")
+	public static string Join<T>(this IEnumerable<T> values, string separator = " ")
 	{
 		StringBuilder stringBuilder = new StringBuilder();
-		IEnumerator<string> enumerator = strings.GetEnumerator();
+		IEnumerator<T> enumerator = values.GetEnumerator();
 		if (enumerator.MoveNext()) stringBuilder.Append(enumerator.Current); else return "";
 
 		while (enumerator.MoveNext()) stringBuilder.Append(separator).Append(enumerator.Current);
