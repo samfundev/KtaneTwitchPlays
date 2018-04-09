@@ -501,7 +501,7 @@ public class IRCConnection : MonoBehaviour
 			Instance.SendMessage("Commands enabled.");
 			return;
 		}
-		if (!CommandsEnabled) return;
+		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
