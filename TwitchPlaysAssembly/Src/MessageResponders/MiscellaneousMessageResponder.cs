@@ -136,7 +136,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	public void RunMission(KMMission mission)
 	{
-		if (CurrentState != KMGameInfo.State.Setup && IRCConnection.CommandsEnabled) return;
+		if (CurrentState != KMGameInfo.State.Setup) return;
 		GetComponent<KMGameCommands>().StartMission(mission, $"{-1}");
 	}
 
@@ -167,9 +167,14 @@ public class MiscellaneousMessageResponder : MessageResponder
 				 text.Equals("help", StringComparison.InvariantCultureIgnoreCase))
 		{
 			string[] Alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-			string letters = Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)];
-			IRCConnection.Instance.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", TwitchPlaySettings.data.EnableLetterCodes ? letters : UnityEngine.Random.Range(0, 100).ToString(), UrlHelper.Instance.VanillaManual);
-			IRCConnection.Instance.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", TwitchPlaySettings.data.EnableLetterCodes ? letters : UnityEngine.Random.Range(0, 100).ToString(), UrlHelper.Instance.CommandReference);
+			string[] randomCodes = 
+			{
+				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] : UnityEngine.Random.Range(1,100).ToString(),
+				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] : UnityEngine.Random.Range(1,100).ToString()
+			};
+
+			IRCConnection.Instance.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", randomCodes[0], UrlHelper.Instance.VanillaManual);
+			IRCConnection.Instance.SendMessage("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", randomCodes[1], UrlHelper.Instance.CommandReference);
 			return;
 		}
 		else if (text.RegexMatch(@"^bonus(?:score|points) (\S+) (-?[0-9]+)$"))

@@ -487,28 +487,34 @@ public class IRCConnection : MonoBehaviour
 
 	private void ReceiveMessage(string userNickName, string userColorCode, string text)
 	{
+		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
+		{
+			lock (_userColors)
+			{
+				_userColors[userNickName] = color;
+			}
+		}
+
 		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = true;
 			Instance.SendMessage("Commands enabled.");
 			return;
 		}
-		if (!CommandsEnabled) return;
+		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && !TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled) return;
 		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
-			Instance.SendMessage("Commands disabled.");
+			if(TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && BombMessageResponder.BombActive)
+				Instance.SendMessage("Commands will be disabled once this bomb is completed or exploded.");
+			else
+				Instance.SendMessage("Commands disabled.");
 			return;
 		}
+
 		lock (_messageQueue)
 		{
 			_messageQueue.Enqueue(new Message(userNickName, userColorCode, text));
-		}
-
-		if (!ColorUtility.TryParseHtmlString(userColorCode, out Color color)) return;
-		lock (_userColors)
-		{
-			_userColors[userNickName] = color;
 		}
 	}
 
