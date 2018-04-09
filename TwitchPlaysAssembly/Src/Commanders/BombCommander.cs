@@ -488,11 +488,13 @@ public class BombCommander : ICommandResponder
 
 	public void CauseStrike(string reason)
 	{
-		StrikeSource strikeSource = new StrikeSource();
-		strikeSource.ComponentType = Assets.Scripts.Missions.ComponentTypeEnum.Mod;
-		strikeSource.InteractionType = Assets.Scripts.Records.InteractionTypeEnum.Other;
-		strikeSource.Time = CurrentTimerElapsed;
-		strikeSource.ComponentName = reason;
+		StrikeSource strikeSource = new StrikeSource
+		{
+			ComponentType = Assets.Scripts.Missions.ComponentTypeEnum.Mod,
+			InteractionType = Assets.Scripts.Records.InteractionTypeEnum.Other,
+			Time = CurrentTimerElapsed,
+			ComponentName = reason
+		};
 
 		RecordManager recordManager = RecordManager.Instance;
 		recordManager.RecordStrike(strikeSource);
