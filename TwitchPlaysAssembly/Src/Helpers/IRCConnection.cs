@@ -487,6 +487,19 @@ public class IRCConnection : MonoBehaviour
 
 	private void ReceiveMessage(string userNickName, string userColorCode, string text)
 	{
+		if (text.Equals("!enablecommands") && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		{
+			CommandsEnabled = true;
+			Instance.SendMessage("Commands enabled.");
+			return;
+		}
+		if (!CommandsEnabled) return;
+		if (text.Equals("!disablecommands") && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		{
+			CommandsEnabled = false;
+			Instance.SendMessage("Commands disabled.");
+			return;
+		}
 		lock (_messageQueue)
 		{
 			_messageQueue.Enqueue(new Message(userNickName, userColorCode, text));
@@ -739,6 +752,7 @@ public class IRCConnection : MonoBehaviour
 			AddTextToHoldable(groups[0].Value);
 		}, false)  //Log otherwise uncaptured lines.
 	};
+	public static bool CommandsEnabled = true;
 	#endregion
 
 	#region Public Fields
