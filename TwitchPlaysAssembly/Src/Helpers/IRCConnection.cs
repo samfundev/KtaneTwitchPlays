@@ -487,6 +487,14 @@ public class IRCConnection : MonoBehaviour
 
 	private void ReceiveMessage(string userNickName, string userColorCode, string text)
 	{
+		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
+		{
+			lock (_userColors)
+			{
+				_userColors[userNickName] = color;
+			}
+		}
+
 		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = true;
@@ -500,15 +508,10 @@ public class IRCConnection : MonoBehaviour
 			Instance.SendMessage("Commands disabled.");
 			return;
 		}
+
 		lock (_messageQueue)
 		{
 			_messageQueue.Enqueue(new Message(userNickName, userColorCode, text));
-		}
-
-		if (!ColorUtility.TryParseHtmlString(userColorCode, out Color color)) return;
-		lock (_userColors)
-		{
-			_userColors[userNickName] = color;
 		}
 	}
 
