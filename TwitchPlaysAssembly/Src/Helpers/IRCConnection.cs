@@ -501,11 +501,14 @@ public class IRCConnection : MonoBehaviour
 			Instance.SendMessage("Commands enabled.");
 			return;
 		}
-		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
+		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && !TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled) return;
 		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
-			Instance.SendMessage("Commands disabled.");
+			if(TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && BombMessageResponder.BombActive)
+				Instance.SendMessage("Commands will be disabled once this bomb is completed or exploded.");
+			else
+				Instance.SendMessage("Commands disabled.");
 			return;
 		}
 
