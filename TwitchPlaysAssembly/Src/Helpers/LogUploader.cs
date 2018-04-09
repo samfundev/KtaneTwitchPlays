@@ -9,7 +9,7 @@ public class LogUploader : MonoBehaviour
 {
 	public static LogUploader Instance;
 
-	public string log { get; private set; }
+	public string Log { get; private set; }
 
 	[HideInInspector]
 	public string analysisUrl = null;
@@ -76,13 +76,13 @@ public class LogUploader : MonoBehaviour
 
 	public void Clear()
 	{
-		log = "";
+		Log = "";
 	}
 
 	public string Flush()
 	{
-		string result = log;
-		log = "";
+		string result = Log;
+		Log = "";
 		return result;
 	}
 
@@ -90,7 +90,7 @@ public class LogUploader : MonoBehaviour
 	{
 		analysisUrl = null;
 		postOnComplete = false;
-		StartCoroutine( DoPost(log, postToChat) );
+		StartCoroutine( DoPost(Log, postToChat) );
 	}
 
 	private IEnumerator DoPost(string data, bool postToChat)
@@ -188,7 +188,7 @@ public class LogUploader : MonoBehaviour
 	{
 		if (_blacklistedLogLines.Any(message.StartsWith)) return;
 		if (message.StartsWith("Function ") && message.Contains(" may only be called from main thread!")) return;
-		log += message + "\n";
+		Log += message + "\n";
 	}
 
 }

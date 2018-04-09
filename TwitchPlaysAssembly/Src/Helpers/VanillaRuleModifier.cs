@@ -10,9 +10,7 @@ public class VanillaRuleModifier
 	{
 		get
 		{
-			return _gameObject == null
-				? null
-				: _gameObject.GetComponent<IDictionary<string, object>>();
+			return _gameObject?.GetComponent<IDictionary<string, object>>();
 		}
 	}
 
