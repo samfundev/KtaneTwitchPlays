@@ -9,8 +9,8 @@ public class EnglishTestComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_englishTestCompoent = bombComponent.GetComponent(_componentType);
-		selectButton = findChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
-		submitButton = findChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
+		selectButton = FindChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
+		submitButton = FindChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)");
 	}
 
@@ -42,13 +42,13 @@ public class EnglishTestComponentSolver : ComponentSolver
 		yield return DoInteractionClick(submitButton);
 	}
 
-	private GameObject findChildGameObjectByName(GameObject parent, string name)
+	private GameObject FindChildGameObjectByName(GameObject parent, string name)
 	{
 		foreach (Transform child in parent.transform)
 		{
 			if (child.gameObject.name == name)
 				return child.gameObject;
-			GameObject childGo = findChildGameObjectByName(child.gameObject, name);
+			GameObject childGo = FindChildGameObjectByName(child.gameObject, name);
 			if (childGo != null)
 				return childGo;
 		}
