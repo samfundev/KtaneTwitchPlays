@@ -265,7 +265,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["skyrim"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 10 };
 		ModComponentSolverInformation["sonic"] = new ModuleInformation { moduleScore = 9 };
-		ModComponentSolverInformation["stopwatch"] = new ModuleInformation { moduleScore = 4 };
+		ModComponentSolverInformation["stopwatch"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 
