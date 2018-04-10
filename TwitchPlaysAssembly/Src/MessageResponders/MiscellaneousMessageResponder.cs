@@ -422,7 +422,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("{0}", result.Second);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
-		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+)$"))
+		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+)$"))
 		{
 			Match match1 = match;
 			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
@@ -458,6 +458,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						case "manual code":
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code: {(string.IsNullOrEmpty(modules[0].manualCode) ? modules[0].moduleDisplayName : modules[0].manualCode)}");
 							break;
+						case "points":
 						case "score":
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score: {modules[0].moduleScore}");
 							break;
@@ -510,7 +511,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					break;
 			}
 		}
-		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?module ?(help(?: ?message)?|manual(?: ?code)?|score|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
+		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)) return;
 			var search = match.Groups[2].Value.ToLowerInvariant().Trim();
@@ -571,6 +572,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code changed to: {(string.IsNullOrEmpty(module.manualCode) ? module.moduleDisplayName : module.manualCode)}");
 							break;
+						case "points":
 						case "score":
 							module.moduleScore = !int.TryParse(changeTo, out int moduleScore) ? defaultModule.moduleScore : moduleScore;
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score changed to: {module.moduleScore}");

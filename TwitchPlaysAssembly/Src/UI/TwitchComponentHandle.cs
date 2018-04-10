@@ -649,6 +649,13 @@ public class TwitchComponentHandle : MonoBehaviour
 
 					return null;
 				}
+				else if (internalCommand.Equals("unmark", StringComparison.InvariantCultureIgnoreCase))
+				{
+					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+					{
+						SetBannerColor(unclaimedBackgroundColor);
+					}
+				}
 			}
 		}
 
