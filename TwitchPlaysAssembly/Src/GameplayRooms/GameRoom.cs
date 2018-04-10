@@ -61,6 +61,7 @@ public abstract class GameRoom
 			BombMessageResponder.Instance.SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
 		}
 		BombCount = (_currentBomb == -1) ? -1 : bombs.Count;
+		BombMessageResponder.Instance.InitializeModuleCodes();
 	}
 
 	protected void InitializeBomb(Bomb bomb)
@@ -71,6 +72,7 @@ public abstract class GameRoom
 			BombMessageResponder.Instance.BombHandles[0].bombCommander.ReuseBombCommander(bomb);
 			BombMessageResponder.Instance.DestroyComponentHandles();
 			BombMessageResponder.Instance.CreateComponentHandlesForBomb(bomb);
+			BombMessageResponder.Instance.InitializeModuleCodes();
 		}
 		else
 		{

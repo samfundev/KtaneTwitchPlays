@@ -280,17 +280,6 @@ public class BombMessageResponder : MessageResponder
 			}
 		}
 
-		InitializeModuleCodes();
-
-		foreach (var handle in ComponentHandles.Where(c => c.IsKey))
-		{
-			var moduleName = handle.bombComponent.GetModuleDisplayName();
-			if (moduleName == "The Swan")
-				IRCConnection.Instance.SendMessage($"Module {handle.Code} is {moduleName}");
-			else
-				IRCConnection.Instance.SendMessage($"Module {handle.Code} is a {moduleName}");
-		}
-
 		try
 		{
 			GameRoom.Instance.InitializeBombNames();
@@ -344,7 +333,7 @@ public class BombMessageResponder : MessageResponder
 		}
 	}
 
-	private void InitializeModuleCodes()
+	internal void InitializeModuleCodes()
 	{
 		// This method assigns a unique code to each module.
 
@@ -439,6 +428,15 @@ public class BombMessageResponder : MessageResponder
 		{
 			int num = 1;
 			foreach (var handle in ComponentHandles) handle.Code = num++.ToString();
+		}
+
+		foreach (var handle in ComponentHandles.Where(c => c.IsKey))
+		{
+			var moduleName = handle.bombComponent.GetModuleDisplayName();
+			if (moduleName == "The Swan")
+				IRCConnection.Instance.SendMessage($"Module {handle.Code} is {moduleName}");
+			else
+				IRCConnection.Instance.SendMessage($"Module {handle.Code} is a {moduleName}");
 		}
 	}
 
