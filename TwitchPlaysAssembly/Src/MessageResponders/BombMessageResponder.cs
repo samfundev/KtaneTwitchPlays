@@ -518,7 +518,10 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
 			{
-				List<string> claimed = (from handle in ComponentHandles where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved select string.Format(TwitchPlaySettings.data.OwnedModule, handle.IDTextMultiDecker.text, handle.HeaderText)).ToList();
+				List<string> claimed = (
+					from handle in ComponentHandles
+					where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved
+					select string.Format(TwitchPlaySettings.data.OwnedModule, handle.Code, handle.HeaderText)).ToList();
 				if (claimed.Count > 0)
 				{
 					string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
@@ -550,7 +553,7 @@ public class BombMessageResponder : MessageResponder
 				var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var claim in split.Skip(1))
 				{
-					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim, StringComparison.InvariantCultureIgnoreCase));
 					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 					handle.AddToClaimQueue(userNickName);
 				}
@@ -575,7 +578,7 @@ public class BombMessageResponder : MessageResponder
 				{
 					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-					handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} unclaim", claim));
+					handle.OnMessageReceived(userNickName, userColorCode, "unclaim");
 				}
 				return;
 			}
@@ -771,7 +774,7 @@ public class BombMessageResponder : MessageResponder
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-						handle.OnMessageReceived(userNickName, userColorCode, string.Format("{0} assign {1}", assign, match.Groups[1].Value));
+						handle.OnMessageReceived(userNickName, userColorCode, string.Format("assign {0}", match.Groups[1].Value));
 					}
 					return;
 				}
@@ -789,7 +792,7 @@ public class BombMessageResponder : MessageResponder
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-						handle.OnMessageReceived(userNickName, userColorCode, string.Format($"{claim} unclaim"));
+						handle.OnMessageReceived(userNickName, userColorCode, "unclaim");
 					}
 					return;
 				}
@@ -853,7 +856,8 @@ public class BombMessageResponder : MessageResponder
 		foreach (TwitchComponentHandle componentHandle in ComponentHandles)
 		{
 			if (!GameRoom.Instance.IsCurrentBomb(componentHandle.bombID)) continue;
-			IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text);
+			if (!text.StartsWith(componentHandle.Code + " ")) continue;
+			IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text.Substring(componentHandle.Code.Length + 1));
 			if (onMessageReceived == null) continue;
 
 			if (_currentBomb != componentHandle.bombID)

@@ -142,8 +142,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 				CanvasGroupUnsupported.gameObject.SetActive(Solver.UnsupportedModule);
 
-				IDTextUnsupported.text = bombComponent is ModBombComponent 
-					? $"To solve this\nmodule, use\n!{Code} solve" 
+				IDTextUnsupported.text = bombComponent is ModBombComponent
+					? $"To solve this\nmodule, use\n!{Code} solve"
 					: $"To disarm this\nneedy, use\n!{Code} solve";
 				if (Solver.UnsupportedModule)
 					_unsupportedComponents.Add(this);
@@ -197,7 +197,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			}
 
 		}
-		
+
 		SetBannerColor(unclaimedBackgroundColor);
 
 		if (!_bombCommanders.Contains(bombCommander))
@@ -221,7 +221,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		return _unsupportedComponents.Any(x => x.Solver == null || !x.Solved);
 	}
 
-	public static bool SolveUnsupportedModules(bool bombStartup=false)
+	public static bool SolveUnsupportedModules(bool bombStartup = false)
 	{
 		List<TwitchComponentHandle> componentsToRemove = bombStartup
 			? _unsupportedComponents.Where(x => x.Solver == null).ToList()
@@ -238,7 +238,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			handle.SolveSilently();
 		}
 
-		if(componentsToRemove.Count > 1)	//Forget Me Not and Forget Everything become unsolvable if MORE than one module is solved at once.
+		if (componentsToRemove.Count > 1)   //Forget Me Not and Forget Everything become unsolvable if MORE than one module is solved at once.
 			RemoveSolveBasedModules();
 
 		_unsupportedComponents.Clear();
@@ -294,7 +294,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			DebugHelper.LogException(ex, "Could not add entry to solved modules list due to an exception:");
 		}
 	}
-	
+
 	private void OnDestroy()
 	{
 		StopAllCoroutines();
@@ -337,7 +337,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		claimCooldown = false;
 	}
 
-	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force=false)
+	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force = false)
 	{
 		if (string.IsNullOrEmpty(userNickName)) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
 
@@ -363,7 +363,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		return new Tuple<bool, double>(true, DateTime.Now.TotalSeconds());
 	}
 
-	public void AddToClaimQueue(string userNickname, bool viewRequested=false, bool viewPinRequested=false)
+	public void AddToClaimQueue(string userNickname, bool viewRequested = false, bool viewPinRequested = false)
 	{
 		double seconds = CanClaimNow(userNickname, false).Second;
 		if (ClaimQueue.Any(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase))) return;
@@ -401,7 +401,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule, bool viewRequested=false, bool viewPinRequested=false)
+	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule, bool viewRequested = false, bool viewPinRequested = false)
 	{
 		if (Solver.AttemptedForcedSolve)
 		{
@@ -410,7 +410,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		if (PlayerName != null)
 		{
-			if(!PlayerName.Equals(userNickName))
+			if (!PlayerName.Equals(userNickName))
 				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, PlayerName, HeaderText));
 		}
@@ -472,17 +472,8 @@ public class TwitchComponentHandle : MonoBehaviour
 	public static List<string> ClaimedList = new List<string>();
 
 	#region Message Interface
-	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
+	public IEnumerator OnMessageReceived(string userNickName, string userColor, string internalCommand)
 	{
-		Match match = Regex.Match(text, string.Format("^({0}) (.+)", Code), RegexOptions.IgnoreCase);
-		if (!match.Success)
-		{
-			return null;
-		}
-
-		string targetModule = match.Groups[1].Value;
-		string internalCommand = match.Groups[2].Value;
-
 		string messageOut = null;
 		if ((internalCommand.StartsWith("manual", StringComparison.InvariantCultureIgnoreCase)) || (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase)))
 		{
@@ -516,29 +507,29 @@ public class TwitchComponentHandle : MonoBehaviour
 						Solver._turnQueued = true;
 						StartCoroutine(Solver.TurnBombOnSolve());
 					}
-					messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, targetModule, HeaderText);
+					messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, Code, HeaderText);
 				}
 				else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
 				{
 					Solver._turnQueued = false;
-					messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, targetModule, HeaderText);
+					messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, Code, HeaderText);
 				}
 				else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
 				{
-					messageOut = ClaimModule(userNickName, targetModule).Second;
+					messageOut = ClaimModule(userNickName, Code).Second;
 				}
 				else if (internalCommand.ToLowerInvariant().EqualsAny("release", "unclaim"))
 				{
-					messageOut = UnclaimModule(userNickName, targetModule).Second;
+					messageOut = UnclaimModule(userNickName, Code).Second;
 				}
-				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cv", "vc", 
+				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cv", "vc",
 					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cvp", "vpc"))
 				{
-					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, text.Contains("p"));
+					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, internalCommand.Contains("p"));
 					if (response.First)
 					{
 						IRCConnection.Instance.SendMessage(response.Second);
-						internalCommand = text.Contains("p") ? "view pin" : "view";
+						internalCommand = internalCommand.Contains("p") ? "view pin" : "view";
 					}
 					else
 					{
@@ -564,7 +555,7 @@ public class TwitchComponentHandle : MonoBehaviour
 					{
 						SetBannerColor(SolvedBackgroundColor);
 						PlayerName = null;
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, targetModule, userNickName, HeaderText);
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, Code, userNickName, HeaderText);
 					}
 					else
 					{
@@ -585,7 +576,7 @@ public class TwitchComponentHandle : MonoBehaviour
 						RemoveFromClaimQueue(userNickName);
 						CanClaimNow(userNickName, true, true);
 						SetBannerColor(ClaimedBackgroundColour);
-						messageOut = string.Format(TwitchPlaySettings.data.AssignModule, targetModule, PlayerName, userNickName, HeaderText);
+						messageOut = string.Format(TwitchPlaySettings.data.AssignModule, Code, PlayerName, userNickName, HeaderText);
 					}
 					else
 					{
@@ -599,45 +590,45 @@ public class TwitchComponentHandle : MonoBehaviour
 						AddToClaimQueue(userNickName);
 						if (TakeInProgress == null)
 						{
-							messageOut = string.Format(TwitchPlaySettings.data.TakeModule, PlayerName, userNickName, targetModule, HeaderText);
-							TakeInProgress = TakeModule(userNickName, targetModule);
+							messageOut = string.Format(TwitchPlaySettings.data.TakeModule, PlayerName, userNickName, Code, HeaderText);
+							TakeInProgress = TakeModule(userNickName, Code);
 							StartCoroutine(TakeInProgress);
 						}
 						else
 						{
-							messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, targetModule, HeaderText);
+							messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, Code, HeaderText);
 						}
 					}
 					else if (PlayerName != null)
 					{
 						if (!PlayerName.Equals(userNickName))
 							AddToClaimQueue(userNickName);
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, targetModule, HeaderText);
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, Code, HeaderText);
 					}
 					else
 					{
-						messageOut = ClaimModule(userNickName, targetModule).Second;
+						messageOut = ClaimModule(userNickName, Code).Second;
 					}
 				}
 				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (PlayerName == userNickName && TakeInProgress != null)
 					{
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, PlayerName, targetModule, HeaderText);
+						messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, PlayerName, Code, HeaderText);
 						StopCoroutine(TakeInProgress);
 						TakeInProgress = null;
 					}
 					else if (PlayerName == null)
 					{
-						messageOut = ClaimModule(userNickName, targetModule).Second;
+						messageOut = ClaimModule(userNickName, Code).Second;
 					}
 					else if (PlayerName == userNickName)
 					{
-						messageOut = string.Format(TwitchPlaySettings.data.NoTakes, userNickName, targetModule, HeaderText);
+						messageOut = string.Format(TwitchPlaySettings.data.NoTakes, userNickName, Code, HeaderText);
 					}
 					else
 					{
-						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, userNickName, HeaderText);
+						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText);
 					}
 				}
 				else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
@@ -664,8 +655,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
 		{
 			messageOut = PlayerName != null
-				? string.Format(TwitchPlaySettings.data.ModulePlayer, targetModule, PlayerName, HeaderText)
-				: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, HeaderText);
+				? string.Format(TwitchPlaySettings.data.ModulePlayer, Code, PlayerName, HeaderText)
+				: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText);
 		}
 
 		if (!string.IsNullOrEmpty(messageOut))
@@ -675,34 +666,30 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 
 		if (Solver != null)
-		{ 
+		{
 			if (!IsAuthorizedDefuser(userNickName, false)) return null;
 
 			if (Solved)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadySolved, targetModule, PlayerName, userNickName, HeaderText);
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, HeaderText);
 				return null;
 			}
-			else
+
+			bool moduleAlreadyClaimed = bombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
+			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
+			moduleAlreadyClaimed &= PlayerName != null;
+			moduleAlreadyClaimed &= PlayerName != userNickName;
+			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
+			moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
+			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
+			if (moduleAlreadyClaimed)
 			{
-				bool moduleAlreadyClaimed = bombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
-				moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
-				moduleAlreadyClaimed &= PlayerName != null;
-				moduleAlreadyClaimed &= PlayerName != userNickName;
-				moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
-				moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
-				moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
-				if (moduleAlreadyClaimed)
-				{
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, userNickName, HeaderText);
-					return null;
-				}
-				else
-				{
-					// Twitch allows newlines in messages, even though they show up in the chat window as spaces, so pretend they’re spaces
-					return RespondToCommandCoroutine(userNickName, internalCommand.Replace("\n", " ").Replace("\r", ""));
-				}
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText);
+				return null;
 			}
+
+			// Twitch allows newlines in messages, even though they show up in the chat window as spaces, so pretend they’re spaces
+			return RespondToCommandCoroutine(userNickName, internalCommand.Replace("\n", " ").Replace("\r", ""));
 		}
 		else
 		{

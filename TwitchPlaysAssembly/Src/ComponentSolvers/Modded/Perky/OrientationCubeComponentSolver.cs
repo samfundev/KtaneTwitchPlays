@@ -53,7 +53,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 		}
 
 		yield return "Orientation Cube Solve Attempt";
-		var debugStart = "[Orientation Cube TP#" + ComponentHandle.IDTextMultiDecker.text + "]";
+		var debugStart = "[Orientation Cube TP#" + Code + "]";
 		Debug.LogFormat("{0} Inputted commands: {1}", debugStart, String.Join(", ", interaction.ToArray()));
 
 		foreach (MonoBehaviour button in buttons)
