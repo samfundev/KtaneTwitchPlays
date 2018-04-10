@@ -677,6 +677,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (Solver != null)
 		{ 
 			if (!IsAuthorizedDefuser(userNickName, false)) return null;
+
 			if (Solved)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadySolved, targetModule, PlayerName, userNickName, HeaderText);
