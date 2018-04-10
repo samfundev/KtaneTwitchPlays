@@ -418,7 +418,7 @@ public class TwitchPlaySettingsData
 
 public static class TwitchPlaySettings
 {
-	public static int SettingsVersion = 2;  //Bump this up each time there is a breaking file format change. (like a changed to the string formats themselves)
+	public static int SettingsVersion = 2;  //Bump this up each time there is a breaking file format change (like a change to the string formats themselves).
 	public static TwitchPlaySettingsData data;
 
 	private static List<string> Players = new List<string>();

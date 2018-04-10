@@ -203,7 +203,7 @@ public abstract class ComponentSolver
 
 					int penalty = Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, "!" + ComponentHandle.IDTextMultiDecker.text, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, Code, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -218,7 +218,7 @@ public abstract class ComponentSolver
 						if (!string.IsNullOrEmpty(match.Groups[1].Value))
 							IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
 						break;
-					}						
+					}
 				}
 				else if (currentString.RegexMatch(out match, "^trycancelsequence((?: (?:.|\\n)+)?)$"))
 				{
@@ -462,8 +462,8 @@ public abstract class ComponentSolver
 			return true;
 		}
 
-		if (!message.RegexMatch(out  match, @"^(sendtochat|sendtochaterror|strikemessage) +(\S(?:\S|\s)*)$")) return false;
-		
+		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage) +(\S(?:\S|\s)*)$")) return false;
+
 		var chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
 
 		switch (match.Groups[1].Value)
