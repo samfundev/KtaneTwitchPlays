@@ -162,6 +162,7 @@ public class TwitchPlaySettingsData
 	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules. The claim has been queued.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
 	public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
+	public string AlreadySolved = "Sorry @{2}, Module {0} ({3}) has already been solved by {1}";
 	public string ClaimCooldown = "Sorry @{2}, Module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
 
 	public string OwnedModule = "({0} - \"{1}\")";
@@ -358,6 +359,7 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
 		valid &= ValidateString(ref ModulePlayer, data.ModulePlayer, 3);
 		valid &= ValidateString(ref AlreadyClaimed, data.AlreadyClaimed, 4);
+		valid &= ValidateString(ref AlreadySolved, data.AlreadySolved, 4);
 		valid &= ValidateString(ref ClaimCooldown, data.ClaimCooldown, 4);
 
 		valid &= ValidateString(ref OwnedModule, data.OwnedModule, 2);

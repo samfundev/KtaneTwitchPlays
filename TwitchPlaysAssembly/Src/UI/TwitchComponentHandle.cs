@@ -677,22 +677,30 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (Solver != null)
 		{ 
 			if (!IsAuthorizedDefuser(userNickName, false)) return null;
-			bool moduleAlreadyClaimed = bombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
-			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
-			moduleAlreadyClaimed &= PlayerName != null;
-			moduleAlreadyClaimed &= PlayerName != userNickName;
-			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
-			moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
-			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
-			if (moduleAlreadyClaimed)
+			if (Solved)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, userNickName, HeaderText);
+				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadySolved, targetModule, PlayerName, userNickName, HeaderText);
 				return null;
 			}
 			else
 			{
-				// Twitch allows newlines in messages, even though they show up in the chat window as spaces, so pretend they’re spaces
-				return RespondToCommandCoroutine(userNickName, internalCommand.Replace("\n", " ").Replace("\r", ""));
+				bool moduleAlreadyClaimed = bombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
+				moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
+				moduleAlreadyClaimed &= PlayerName != null;
+				moduleAlreadyClaimed &= PlayerName != userNickName;
+				moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
+				moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
+				moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
+				if (moduleAlreadyClaimed)
+				{
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, userNickName, HeaderText);
+					return null;
+				}
+				else
+				{
+					// Twitch allows newlines in messages, even though they show up in the chat window as spaces, so pretend they’re spaces
+					return RespondToCommandCoroutine(userNickName, internalCommand.Replace("\n", " ").Replace("\r", ""));
+				}
 			}
 		}
 		else
