@@ -545,23 +545,6 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 
-			if (text.RegexMatch(out match, "^(claim ?(?:any|van|mod) ?(?:view)?|view ?claim ?(?:any|van|mod))"))
-			{
-				var vanilla = match.Groups[1].Value.Contains("van");
-				var modded = match.Groups[1].Value.Contains("mod");
-				var view = match.Groups[1].Value.Contains("view");
-				var avoid = new[] { "Souvenir", "Forget Me Not", "Turn The Key", "Turn The Keys", "The Swan", "Forget Everything" };
-
-				var unclaimed = ComponentHandles
-					.Where(handle => (vanilla ? !handle.IsMod : modded ? handle.IsMod : true) && !handle.Claimed && !handle.Solved && !avoid.Contains(handle.HeaderText) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
-					.Shuffle().FirstOrDefault();
-
-				if (unclaimed != null)
-					text = unclaimed.Code + (view ? " claimview" : " claim");
-				else
-					IRCConnection.Instance.SendMessage(string.Format("There are no more unclaimed{0} modules.", vanilla ? " vanilla" : modded ? " modded" : null));
-			}
-
 			if (text.StartsWith("claim ", StringComparison.InvariantCultureIgnoreCase))
 			{
 				var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -656,6 +639,23 @@ public class BombMessageResponder : MessageResponder
 					}
 					else IRCConnection.Instance.SendMessage($"Could not find any modules containing \"{trimmed}\".");
 				}
+			}
+
+			if (text.RegexMatch(out match, "^(claim ?(?:any|van|mod) ?(?:view)?|view ?claim ?(?:any|van|mod))"))
+			{
+				var vanilla = match.Groups[1].Value.Contains("van");
+				var modded = match.Groups[1].Value.Contains("mod");
+				var view = match.Groups[1].Value.Contains("view");
+				var avoid = new[] { "Souvenir", "Forget Me Not", "Turn The Key", "Turn The Keys", "The Swan", "Forget Everything" };
+
+				var unclaimed = ComponentHandles
+					.Where(handle => (vanilla ? !handle.IsMod : modded ? handle.IsMod : true) && !handle.Claimed && !handle.Solved && !avoid.Contains(handle.HeaderText) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					.Shuffle().FirstOrDefault();
+
+				if (unclaimed != null)
+					text = unclaimed.Code + (view ? " claimview" : " claim");
+				else
+					IRCConnection.Instance.SendMessage(string.Format("There are no more unclaimed{0} modules.", vanilla ? " vanilla" : modded ? " modded" : null));
 			}
 
 			if (text.RegexMatch(out match, "^(?:findsolved|solvedfind|searchsolved|solvedsearch) (.+)"))
