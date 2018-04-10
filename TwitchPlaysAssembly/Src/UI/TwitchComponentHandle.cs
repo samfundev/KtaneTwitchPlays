@@ -655,6 +655,8 @@ public class TwitchComponentHandle : MonoBehaviour
 					{
 						SetBannerColor(unclaimedBackgroundColor);
 					}
+
+					return null;
 				}
 			}
 		}
