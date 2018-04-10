@@ -73,6 +73,7 @@ public class Factory : GameRoom
 
 		ReuseBombCommander = true;
 		BombMessageResponder.Instance.SetBomb(bombs[0], -1);
+		BombMessageResponder.Instance.InitializeModuleCodes();
 		BombCount = bombs.Count;
 	}
 
