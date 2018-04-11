@@ -167,7 +167,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				 text.Equals("help", StringComparison.InvariantCultureIgnoreCase))
 		{
 			string[] Alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-			string[] randomCodes = 
+			string[] randomCodes =
 			{
 				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] : UnityEngine.Random.Range(1,100).ToString(),
 				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] : UnityEngine.Random.Range(1,100).ToString()
@@ -281,7 +281,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.ZenModeCommandDisabled, userNickName);
 			}
 		}
-		else if (text.Equals("modes", StringComparison.InvariantCultureIgnoreCase))
+		else if (text.RegexMatch(out match, $"^modes?"))
 		{
 			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
 		}
