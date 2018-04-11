@@ -634,7 +634,7 @@ public class AssetBundler
                     materialInfo.ShaderNames = new List<string>();
                     foreach(Material material in renderer.sharedMaterials)
                     {
-						if (material == null)
+                        if (material == null)
                         {
                             var obj = renderer.transform;
                             var str = new List<string>();
