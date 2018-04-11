@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
 using System.Linq;
-using System;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 
 /// <summary>
 /// 
@@ -634,6 +634,17 @@ public class AssetBundler
                     materialInfo.ShaderNames = new List<string>();
                     foreach(Material material in renderer.sharedMaterials)
                     {
+						if (material == null)
+                        {
+                            var obj = renderer.transform;
+                            var str = new List<string>();
+                            while (obj != null)
+                            {
+                                str.Add(obj.gameObject.name);
+                                obj = obj.parent;
+                            }
+                            Debug.LogErrorFormat("There is an unassigned material on the following object: {0}", string.Join(" > ", str.ToArray()));
+                        }
                         materialInfo.ShaderNames.Add(material.shader.name);
 
                         if(material.shader.name == "Standard")
