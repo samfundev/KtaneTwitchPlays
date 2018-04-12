@@ -337,7 +337,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 			{
-				string[] users = match.Groups[0].Value.Split(';');
+				string[] users = match.Groups[1].Value.Split(';');
 				foreach (string user in users)
 				{
 					string trimmeduser = user.Trim();
