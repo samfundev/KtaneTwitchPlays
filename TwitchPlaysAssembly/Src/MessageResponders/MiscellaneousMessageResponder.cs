@@ -352,7 +352,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
 						Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
 						Leaderboard.Instance.AddStrike(trimmeduser, -entry.StrikeCount);
-						IRCConnection.Instance.SendMessage("User {0} has been reset");
+						IRCConnection.Instance.SendMessage("User {0} has been reset", user);
 					}
 				}
 			}
