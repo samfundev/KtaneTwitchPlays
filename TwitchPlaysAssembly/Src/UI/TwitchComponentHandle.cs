@@ -644,7 +644,10 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
-						SetBannerColor(unclaimedBackgroundColor);
+						if (!Claimed)
+							SetBannerColor(unclaimedBackgroundColor);
+						else
+							SetBannerColor(ClaimedBackgroundColour);
 					}
 
 					return null;

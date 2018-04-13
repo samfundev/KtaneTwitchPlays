@@ -168,7 +168,7 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 			{
-				bool negitive = split[0].EqualsAny("subtract", "decrease", "remove");
+				bool negative = split[0].EqualsAny("subtract", "decrease", "remove");
 				bool direct = split[0].EqualsAny("set");
 				switch (split[1])
 				{
@@ -202,7 +202,7 @@ public class TwitchBombHandle : MonoBehaviour
 
 						time = (float) Math.Round((decimal) time, 2, MidpointRounding.AwayFromZero);
 						if (!direct && Math.Abs(time) == 0) break;
-						if (negitive) time = -time;
+						if (negative) time = -time;
 
 						if (direct)
 							bombCommander.timerComponent.TimeRemaining = time;
@@ -219,7 +219,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "s":
 						if (int.TryParse(split[2], out int strikes) && (strikes != 0 || direct))
 						{
-							if (negitive) strikes = -strikes;
+							if (negative) strikes = -strikes;
 
 							if (direct && strikes < 0)
 							{
@@ -248,7 +248,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "ms":
 						if (int.TryParse(split[2], out int maxStrikes) && (maxStrikes != 0 || direct))
 						{
-							if (negitive) maxStrikes = -maxStrikes;
+							if (negative) maxStrikes = -maxStrikes;
 
 							if (direct && maxStrikes < 0)
 								maxStrikes = 0;
