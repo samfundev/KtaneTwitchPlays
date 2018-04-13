@@ -27,6 +27,7 @@ public class TwitchPlaySettingsData
 	public bool EnableAutomaticEdgework = false;
 	public bool EnableEdgeworkCommand = true;
 	public bool EnableModeratorsCommand = true;
+	public bool EnableTrollCommands = false;
 	public bool EnableLetterCodes = false;
 	public bool AllowSolvingCurrentBombWithCommandsDisabled = true;
 	public bool ShowHours = true;

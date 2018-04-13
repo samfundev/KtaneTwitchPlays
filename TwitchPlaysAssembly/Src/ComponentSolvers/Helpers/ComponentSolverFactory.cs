@@ -84,6 +84,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["Color Generator"] = (bombCommander, bombComponent) => new ColorGeneratorShim(bombCommander, bombComponent);
+		ModComponentSolverCreatorShims["MazeV2"] = (bombCommandder, bombComponent) => new PlumbingShim(bombCommandder, bombComponent);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -210,6 +211,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true };
+		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", moduleScore = 15 };
 
 		//These modules are not built into TP, but they are created by notable people.
 
@@ -277,7 +279,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ButtonV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Square Button", moduleScore = 8 };
 		ModComponentSolverInformation["SimonV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Simon States", moduleScore = 8 };
 		ModComponentSolverInformation["PasswordV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Safety Safe", moduleScore = 15 };
-		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", moduleScore = 15 };
 		ModComponentSolverInformation["MorseV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Morsematics", moduleScore = 12 };
 		ModComponentSolverInformation["HexiEvilFMN"] = new ModuleInformation {DoesTheRightThing = true, moduleDisplayName = "Forget Everything", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Answering Questions"};

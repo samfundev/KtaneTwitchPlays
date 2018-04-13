@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
-public class ColorGeneratorShim : ComponentSolverShim
+public class PlumbingShim : ComponentSolverShim
 {
-	public ColorGeneratorShim(BombCommander bombCommander, BombComponent bombComponent) :
+	public PlumbingShim(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), ShimData.HelpMessage);
@@ -11,9 +11,9 @@ public class ColorGeneratorShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (inputCommand.ToLowerInvariant().Equals("troll") && !TwitchPlaySettings.data.EnableTrollCommands)
+		if (inputCommand.ToLowerInvariant().Equals("spinme") && !TwitchPlaySettings.data.EnableTrollCommands)
 		{
-			yield return "sendtochaterror Sorry, I am not going the red button 75 times, the green button 75 times, and the blue button 75 times.";
+			yield return "sendtochaterror Sorry, I am not going to waste time spinning every single pipe 360 degrees.";
 		}
 		else
 		{
