@@ -83,6 +83,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
+		ModComponentSolverCreatorShims["Color Generator"] = (bombCommander, bombComponent) => new ColorGeneratorShim(bombCommander, bombComponent);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -208,6 +209,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
+		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true };
 
 		//These modules are not built into TP, but they are created by notable people.
 
@@ -298,7 +300,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", DoesTheRightThing = false };
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
-		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true };
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blacK. (note what letter is capitalized in each color.)" };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 8, helpText = "Press the top button with !{0} press top (also t, 1, etc.)." };
@@ -326,7 +327,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
-		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 8, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
 		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
