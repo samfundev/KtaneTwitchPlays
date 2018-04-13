@@ -327,7 +327,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
 		ModComponentSolverInformation["monsplodeCards"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
-		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 10, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
+		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { moduleScore = 8, helpText = "Use a move with !{0} use splash.", DoesTheRightThing = true };
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
 		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9, helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", DoesTheRightThing = false };
