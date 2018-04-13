@@ -640,6 +640,12 @@ public class TwitchComponentHandle : MonoBehaviour
 
 					return null;
 				}
+				else if (internalCommand.Equals("points", StringComparison.InvariantCultureIgnoreCase) || internalCommand.Equals("score", StringComparison.InvariantCultureIgnoreCase))
+				{
+					IRCConnection.Instance.SendMessage("{0} ({1}) Current score: {2}", HeaderText, Code, Solver.modInfo.moduleScore);
+
+					return null;
+				}
 				else if (internalCommand.Equals("unmark", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
