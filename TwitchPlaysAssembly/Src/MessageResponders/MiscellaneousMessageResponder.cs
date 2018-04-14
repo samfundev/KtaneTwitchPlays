@@ -862,7 +862,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			if (superusers.Any())
 				finalmessage += $"Super Users: {superusers.Join(", ")}{(administrators.Any() || mods.Any() ? " - " : "")}";
 			if (administrators.Any())
-				finalmessage += $"Administrators: {superusers.Join(", ")}{(mods.Any() ? " - " : "")}";
+				finalmessage += $"Administrators: {administrators.Join(", ")}{(mods.Any() ? " - " : "")}";
 			if (mods.Any())
 				finalmessage += $"Moderators: {mods.Join(", ")}";
 
