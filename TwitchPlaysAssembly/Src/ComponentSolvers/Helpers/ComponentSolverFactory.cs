@@ -84,7 +84,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["Color Generator"] = (bombCommander, bombComponent) => new ColorGeneratorShim(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["MazeV2"] = (bombCommandder, bombComponent) => new PlumbingShim(bombCommandder, bombComponent);
+		ModComponentSolverCreatorShims["MazeV2"] = (bombCommander, bombComponent) => new PlumbingShim(bombCommander, bombComponent);
+		ModComponentSolverCreatorShims["SimonScreamsModule"] = (bombCommander, bombComponent) => new SimonScreamsShim(bombCommander, bombComponent);
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -213,6 +214,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", moduleScore = 15 };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
+		ModComponentSolverInformation["SimonScreamsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 
 		//These modules are not built into TP, but they are created by notable people.
 
@@ -246,7 +248,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleScore = 12, manualCode = "Rubik%E2%80%99s Cube", DoesTheRightThing = true };
 		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
-		ModComponentSolverInformation["SimonScreamsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["SymbolCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 12, manualCode = "Tic-Tac-Toe" };

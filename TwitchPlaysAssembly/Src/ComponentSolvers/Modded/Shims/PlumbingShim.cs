@@ -11,7 +11,7 @@ public class PlumbingShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (inputCommand.ToLowerInvariant().Equals("spinme") && !TwitchPlaySettings.data.EnableTrollCommands)
+		if (inputCommand.ToLowerInvariant().Trim().Equals("spinme") && !TwitchPlaySettings.data.EnableTrollCommands)
 		{
 			yield return "sendtochaterror Sorry, I am not going to waste time spinning every single pipe 360 degrees.";
 		}

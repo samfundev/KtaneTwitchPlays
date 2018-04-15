@@ -11,7 +11,7 @@ public class ColorGeneratorShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (inputCommand.ToLowerInvariant().Equals("troll") && !TwitchPlaySettings.data.EnableTrollCommands)
+		if (inputCommand.ToLowerInvariant().Trim().Equals("troll") && !TwitchPlaySettings.data.EnableTrollCommands)
 		{
 			yield return "sendtochaterror Sorry, I am not going to press the red button 75 times, the green button 75 times, and the blue button 75 times.";
 		}

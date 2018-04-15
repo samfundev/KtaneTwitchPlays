@@ -100,6 +100,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Shims\IceCreamConfirm.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\PlumbingShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\PressXShim.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Shims\SimonScreamsShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedButtonComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedModuleHelper.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedMorseCodeComponentSolver.cs" />
