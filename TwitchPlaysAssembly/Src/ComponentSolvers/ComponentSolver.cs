@@ -471,6 +471,9 @@ public abstract class ComponentSolver
 			case "sendtochat":
 				IRCConnection.Instance.SendMessage(chatMsg);
 				return true;
+			case "antitroll":
+				if (TwitchPlaySettings.data.EnableTrollCommands) return false;
+				goto case "sendtochaterror";
 			case "sendtochaterror":
 				ComponentHandle.CommandError(userNickName, chatMsg);
 				return true;
