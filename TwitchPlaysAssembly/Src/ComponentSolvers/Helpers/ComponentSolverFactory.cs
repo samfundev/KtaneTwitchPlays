@@ -83,9 +83,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
 		ModComponentSolverCreatorShims["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["Color Generator"] = (bombCommander, bombComponent) => new ColorGeneratorShim(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["MazeV2"] = (bombCommander, bombComponent) => new PlumbingShim(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["SimonScreamsModule"] = (bombCommander, bombComponent) => new SimonScreamsShim(bombCommander, bombComponent);
+
+		//Anti Troll shims - These are specifically meant to allow the troll commmands to be disabled.
+		ModComponentSolverCreatorShims["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> {{ "troll", "Sorry, I am not going to press the red button 75 times, the green button 75 times, and the blue button 75 times." } });
+		ModComponentSolverCreatorShims["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
+		ModComponentSolverCreatorShims["SimonScreamsModule"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new [] {"disco", "lasershow"}, "Sorry, I am not going to waste time flashing all the colors.");
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -212,6 +214,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+
+		//These modules have troll commands built in.
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", moduleScore = 15 };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonScreamsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
