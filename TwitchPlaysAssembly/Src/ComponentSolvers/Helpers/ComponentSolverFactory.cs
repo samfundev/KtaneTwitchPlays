@@ -310,6 +310,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blacK. (note what letter is capitalized in each color.)" };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 8, helpText = "Press the top button with !{0} press top (also t, 1, etc.)." };
+		ModComponentSolverInformation["cooking"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
 		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
@@ -359,6 +360,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Tangrams"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["theNumber"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["visual_impairment"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["wastemanagement"] = new ModuleInformation { moduleScore = 15 };
