@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelfield, FieldInfo zenmodefield) :
+	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelfield, FieldInfo zenmodefield, FieldInfo abandonModuleField) :
 		base(bombCommander, bombComponent)
 	{
 		ProcessMethod = processMethod;
@@ -15,6 +15,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 		CommandComponent = commandComponent;
 		TryCancelField = cancelfield;
 		ZenModeField = zenmodefield;
+		AbandonModuleField = abandonModuleField;
 		ZenMode = OtherModes.ZenModeOn;
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}

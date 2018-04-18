@@ -728,6 +728,7 @@ public static class ComponentSolverFactory
 		if (method != null)
 		{
 			FieldInfo zenModeField = FindZenModeBool(commandComponentType);
+			FieldInfo abandomModuleField = FindAbandonModuleList(commandComponentType);
 
 			switch (commandType)
 			{
@@ -735,14 +736,14 @@ public static class ComponentSolverFactory
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, zenModeField);
+						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, zenModeField, abandomModuleField);
 					};
 				case ModCommandType.Coroutine:
 					FieldInfo cancelfield = FindCancelBool(commandComponentType);
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField);
+						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, abandomModuleField);
 					};
 				case ModCommandType.Unsupported:
 					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
@@ -871,6 +872,12 @@ public static class ComponentSolverFactory
 		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 			.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 		return solveHandler;
+	}
+
+	internal static FieldInfo FindAbandonModuleList(Type commandComponentType)
+	{
+		FieldInfo cancelField = commandComponentType.GetField("TwitchAbandonModule", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return cancelField?.FieldType == typeof(List<KMBombModule>) ? cancelField : null;
 	}
 
 	internal static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)

@@ -748,6 +748,15 @@ public abstract class ComponentSolver
 	{
 		try
 		{
+			KMBombModule module = handle?.bombComponent.GetComponent<KMBombModule>();
+			if (module != null)
+			{
+				foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombCommander == handle.bombCommander))
+				{
+					h.Solver.AddAbandonedModule(module);
+				}
+			}
+
 			if (!(handle?.Solver?.AttemptedForcedSolve ?? false) && (handle?.Solver?.HandleForcedSolve() ?? false))
 			{
 				handle.Solver.AttemptedForcedSolve = true;
@@ -824,6 +833,13 @@ public abstract class ComponentSolver
 			}
 			else
 			{
+				if (module != null)
+				{
+					foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles)
+					{
+						h.Solver.AddAbandonedModule(module);
+					}
+				}
 				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 				foreach (MonoBehaviour behaviour in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 				{
@@ -936,6 +952,12 @@ public abstract class ComponentSolver
 		Leaderboard.Instance.AddStrike(userNickName, strikeCount);
 		StrikeMessage = string.Empty;
 	}
+
+	protected void AddAbandonedModule(KMBombModule module)
+	{
+		if (!(AbandonModule?.Contains(module) ?? true))
+			AbandonModule?.Add(module);
+	}
 	#endregion
 
 	public string Code
@@ -980,8 +1002,23 @@ public abstract class ComponentSolver
 		}
 	}
 
-	protected FieldInfo TryCancelField { get; set; }
+	protected FieldInfo AbandonModuleField { get; set; }
+	protected List<KMBombModule> AbandonModule
+	{
+		get
+		{
+			if (!(AbandonModuleField?.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is List<KMBombModule>))
+				return null;
+			return (List<KMBombModule>)AbandonModuleField.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+		}
+		set
+		{
+			if (AbandonModuleField?.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is List<KMBombModule>)
+				AbandonModuleField.SetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
+		}
+	}
 
+	protected FieldInfo TryCancelField { get; set; }
 	protected bool TryCancel
 	{
 		get
