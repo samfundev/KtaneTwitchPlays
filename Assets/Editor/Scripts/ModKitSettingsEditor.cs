@@ -34,7 +34,7 @@ public class ModKitSettingsEditor : Editor
 
     public override void OnInspectorGUI()
     {
-         /Basic Info
+        //Basic Info
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("id"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("title"));
@@ -42,7 +42,7 @@ public class ModKitSettingsEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("version"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("outputFolder"));
         EditorGUILayout.EndVertical();
-		
+
         //Preview Image
         EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
         using (new EditorGUILayout.VerticalScope())
