@@ -144,7 +144,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Murder", moduleScore = 10 };
 		ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Sea Shells", moduleScore = 7 };
 		ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Shift", moduleScore = 8 };
-		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base", moduleScore = 6  };
+		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base", moduleScore = 6 };
 
 		//AT_Bash / Bashly
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
@@ -177,7 +177,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", moduleScore = 6 };
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", moduleScore = 3 };
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Curriculum", moduleScore = 12 };
-		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework"};
+		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
@@ -277,9 +277,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["PasswordV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Safety Safe", moduleScore = 15 };
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", moduleScore = 18 };
 		ModComponentSolverInformation["MorseV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Morsematics", moduleScore = 12 };
-		ModComponentSolverInformation["HexiEvilFMN"] = new ModuleInformation {DoesTheRightThing = true, moduleDisplayName = "Forget Everything", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
-		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Answering Questions"};
-		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Rotary Phone"};
+		ModComponentSolverInformation["HexiEvilFMN"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Forget Everything", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
+		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Answering Questions" };
+		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Rotary Phone" };
 
 		//Other modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 16 };
@@ -398,8 +398,8 @@ public static class ComponentSolverFactory
 		AddDefaultModuleInformation(GetModuleInfo(moduleType));
 		ModuleInformation info = DefaultModComponentSolverInformation[moduleType];
 		info.moduleDisplayName = moduleDisplayName;
-		if(!string.IsNullOrEmpty(helpText)) info.helpText = helpText;
-		if(!string.IsNullOrEmpty(manualCode)) info.manualCode = manualCode;
+		if (!string.IsNullOrEmpty(helpText)) info.helpText = helpText;
+		if (!string.IsNullOrEmpty(manualCode)) info.manualCode = manualCode;
 		info.statusLightLeft = statusLeft;
 		info.statusLightDown = statusBottom;
 		info.validCommands = regexList;
@@ -407,8 +407,8 @@ public static class ComponentSolverFactory
 
 	public static ModuleInformation GetDefaultInformation(string moduleType)
 	{
-		if(!DefaultModComponentSolverInformation.ContainsKey(moduleType))
-			AddDefaultModuleInformation(new ModuleInformation() {moduleID = moduleType});
+		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType))
+			AddDefaultModuleInformation(new ModuleInformation() { moduleID = moduleType });
 		return DefaultModComponentSolverInformation[moduleType];
 	}
 
@@ -428,7 +428,7 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ModuleInformation GetModuleInfo(string moduleType, bool writeData=true)
+	public static ModuleInformation GetModuleInfo(string moduleType, bool writeData = true)
 	{
 		if (!ModComponentSolverInformation.ContainsKey(moduleType))
 		{
@@ -438,8 +438,8 @@ public static class ComponentSolverFactory
 		ModuleInformation defInfo = GetDefaultInformation(moduleType);
 		info.moduleID = moduleType;
 		defInfo.moduleID = moduleType;
-		
-		if(!info.helpTextOverride)
+
+		if (!info.helpTextOverride)
 		{
 			ModuleData.DataHasChanged |= info.helpText.TryEquals(defInfo.helpText);
 			info.helpText = defInfo.helpText;
@@ -467,7 +467,7 @@ public static class ComponentSolverFactory
 		return ModComponentSolverInformation[moduleType];
 	}
 
-	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode=null, bool statusLightLeft = false, bool statusLightBottom = false)
+	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode = null, bool statusLightLeft = false, bool statusLightBottom = false)
 	{
 		ModuleInformation info = GetModuleInfo(moduleType, false);
 		ModuleInformation defInfo = GetDefaultInformation(moduleType);
@@ -701,7 +701,7 @@ public static class ComponentSolverFactory
 		}
 		else
 		{
-			if(!info.validCommandsOverride)
+			if (!info.validCommandsOverride)
 				info.validCommands = null;
 		}
 
@@ -859,7 +859,7 @@ public static class ComponentSolverFactory
 	internal static MethodInfo FindSolveMethod(Type commandComponentType)
 	{
 		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-			.FirstOrDefault(x => x.ReturnType == typeof(void) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
+			.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 		return solveHandler;
 	}
 

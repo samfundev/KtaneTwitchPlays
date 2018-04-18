@@ -758,7 +758,9 @@ public abstract class ComponentSolver
 				handle.Solver._silentlySolve = true;
 				try
 				{
-					handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
+					var result = handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
+					if (result is IEnumerator)
+						CoroutineQueue.AddForcedSolve((IEnumerator) result);
 				}
 				catch (Exception ex)
 				{
