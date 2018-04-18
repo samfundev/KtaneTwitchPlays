@@ -44,6 +44,7 @@ public class ColorMorseComponentSolver : ComponentSolver
 				buttonIndexes.Add(2);
 			}
 
+			yield return null;
 			foreach (int index in buttonIndexes.Take(buttonIndexes.Count - 1))
 			{
 				yield return DoInteractionClick(_buttons[index]);

@@ -25,7 +25,7 @@ public class IceCreamConfirm : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (inputCommand.ToLowerInvariant().Equals("hours"))
+		if (inputCommand.ToLowerInvariant().Trim().Equals("hours"))
 		{
 			yield return !TwitchPlaySettings.data.ShowHours
 				? "sendtochat Sorry, hours are currently unavailable. Enjoy your ice cream!"

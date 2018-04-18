@@ -153,7 +153,7 @@ public class Factory : GameRoom
 			yield return new WaitUntil(() =>
 			{
 				bool result = bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive;
-				if (!result) currentBombTimer = bomb1.GetTimer().TimeRemaining;
+				if (!result || OtherModes.TimeModeOn) currentBombTimer = bomb1.GetTimer().TimeRemaining;
 				return result;
 			});
 			if (!BombMessageResponder.BombActive) yield break;
