@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class CurriculumComponentSolver : ComponentSolver
@@ -8,7 +9,7 @@ public class CurriculumComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the buttons !{0} cycle. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.");
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the buttons !{0} cycle. Toggle all the classes with !{0} toggle. Toggle multiple classes with !{0} toggle 1 3 4. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.");
 	}
 
 	int[] buttonOffset = new int[6] { 0, 0, 0, 0, 0, 0 };
@@ -93,7 +94,25 @@ public class CurriculumComponentSolver : ComponentSolver
 					for (int i = 0; i < buttonOffset[buttonPosition]; i++) button.OnInteract();
 				}
 			}
+		}
+		else if (commands[0].EqualsAny("toggle", "flip", "switch"))
+		{
+			if (commands.Length > 1 && commands.Skip(1).Any(x => !int.TryParse(x, out int pos) || !pos.InRange(1, 5))) yield break;
+			int[] buttonPositions = commands.Length == 1 ? new[] {1, 2, 3, 4, 5} : commands.Skip(1).Select(int.Parse).Distinct().ToArray();
 
+			yield return null;
+			foreach (int buttonPosition in buttonPositions)
+			{
+				KMSelectable button = _buttons[buttonPosition - 1];
+				for (int i = 0; i < 3; i++)
+				{
+					button.OnInteract();
+					yield return new WaitForSeconds(0.1f);
+				}
+
+				buttonOffset[buttonPosition - 1] += 3;
+				buttonOffset[buttonPosition - 1] %= 6;
+			}
 		}
 	}
 
