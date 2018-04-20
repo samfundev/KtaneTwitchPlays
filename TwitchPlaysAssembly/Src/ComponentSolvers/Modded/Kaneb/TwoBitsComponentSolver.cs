@@ -8,7 +8,7 @@ public class TwoBitsComponentSolver : ComponentSolver
 {
 	private Component c;
 
-	protected enum State
+	protected enum TwoBitsState
 	{
 		Inactive,
 		Idle,
@@ -70,8 +70,7 @@ public class TwoBitsComponentSolver : ComponentSolver
 					foreach (char y in x)
 					{
 						yield return DoInteractionClick(_buttons[ButtonLabels.IndexOf(y)]);
-						_state = (State)_stateField.GetValue(c);
-						if (_state == State.ShowingError || _state == State.Inactive)
+						if (State == TwoBitsState.ShowingError || State == TwoBitsState.Inactive)
 							yield break;
 					}
 					break;
@@ -79,14 +78,29 @@ public class TwoBitsComponentSolver : ComponentSolver
 			yield return new WaitForSeconds(0.1f);
 		}
 
-		_state = (State)_stateField.GetValue(c);
-		if (_state == State.SubmittingResult)
+		if (State == TwoBitsState.SubmittingResult)
 		{
-			string correctresponse = ((string)_calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
-			string currentQuery = ((string) _getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
-			yield return correctresponse.Equals(currentQuery) ? "solve" : "strike";
+			yield return CorrectResponse.Equals(CurrentQuery) ? "solve" : "strike";
 		}
 	}
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+
+		while (State != TwoBitsState.Complete)
+		{
+			if (CurrentQuery.StartsWith("_") && State == TwoBitsState.Idle) yield return DoInteractionClick(_buttons[ButtonLabels.IndexOf(CorrectResponse.Substring(0, 1), StringComparison.Ordinal)]);
+			if (CurrentQuery.EndsWith("_") && State == TwoBitsState.Idle) yield return DoInteractionClick(_buttons[ButtonLabels.IndexOf(CorrectResponse.Substring(1, 1), StringComparison.Ordinal)]);
+			if (State == TwoBitsState.Idle) yield return CorrectResponse.Equals(CurrentQuery) ? DoInteractionClick(_submit) : DoInteractionClick(_query);
+
+			yield return true;
+		}
+	}
+
+	private string CorrectResponse => ((string)_calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
+	private string CurrentQuery => ((string)_getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
+	private TwoBitsState State => (TwoBitsState) _stateField.GetValue(c);
 
 	static TwoBitsComponentSolver()
 	{
@@ -112,5 +126,5 @@ public class TwoBitsComponentSolver : ComponentSolver
 	private MonoBehaviour[] _buttons = null;
 	private MonoBehaviour _query = null;
 	private MonoBehaviour _submit = null;
-	private State _state;
+	
 }
