@@ -127,16 +127,45 @@ public class MurderComponentSolver : ComponentSolver
 		}
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!_isActivated)
+		{
+			yield return true;
+		}
+
+		DebugHelper.Log($"Display Values = {_displayValue[0]}, {_displayValue[1]}, {_displayValue[2]},  Solution values = {_solutionValue[0]}, {_solutionValue[1]}, {_solutionValue[2]}");
+		while (_displayValue[0] != _solutionValue[0] || _displayValue[1] != _solutionValue[1] || _displayValue[2] != _solutionValue[2])
+		{
+			if (_displayValue[0] != _solutionValue[0])
+				yield return DoInteractionClick(_buttons[1]);
+			else if (_displayValue[1] != _solutionValue[1])
+				yield return DoInteractionClick(_buttons[3]);
+			else
+				yield return DoInteractionClick(_buttons[5]);
+		}
+
+		yield return DoInteractionClick(_buttons[6]);
+	}
+
 	static MurderComponentSolver()
 	{
 		_componentType = ReflectionHelper.FindType("MurderModule");
 		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 		_displayField = _componentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
+
+		_displayValueField = _componentType.GetField("displayVal", BindingFlags.NonPublic | BindingFlags.Instance);
+		_solutionValueField = _componentType.GetField("solution", BindingFlags.NonPublic | BindingFlags.Instance);
+		_isActivatedField = _componentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsField = null;
 	private static FieldInfo _displayField = null;
+	private static FieldInfo _displayValueField = null;
+	private static FieldInfo _solutionValueField = null;
+	private static FieldInfo _isActivatedField = null;
 
 	private static readonly string[] People = new string[6] { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
 	private static readonly string[] Weapons = new string[6] { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };
@@ -147,9 +176,11 @@ public class MurderComponentSolver : ComponentSolver
 	private static readonly string[][] NameSpellings = new string[3][] { People, Weapons, Rooms };
 	private static readonly string[] NameMisspelled = new string[3] {"Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}."};
 
-	
-
 	private object _component = null;
 	private KMSelectable[] _buttons = null;
 	private TextMesh[] _display = null;
+
+	private int[] _displayValue => (int[])_displayValueField.GetValue(_component);
+	private int[] _solutionValue => (int[])_solutionValueField.GetValue(_component);
+	private bool _isActivated => (bool) _isActivatedField.GetValue(_component);
 }
