@@ -26,6 +26,10 @@ public class PostGameCommander : ICommandResponder
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RetryInactive);
 			}
+			else
+			{
+				TwitchPlaySettings.SetRetryReward();
+			}
 			button = TwitchPlaySettings.data.EnableRetryButton ? RetryButton : ContinueButton;
 		}
 
