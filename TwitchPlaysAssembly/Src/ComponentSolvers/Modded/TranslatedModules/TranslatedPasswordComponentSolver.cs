@@ -32,6 +32,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		HashSet<int> alreadyCycled = new HashSet<int>();
 		string[] commandParts = inputCommand.Split(' ');
 		if (commandParts[0].Length != 5)

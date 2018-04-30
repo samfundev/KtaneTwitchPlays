@@ -13,7 +13,8 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 	}
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
-	{     
+	{
+		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("move ", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield break;

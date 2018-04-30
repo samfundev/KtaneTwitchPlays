@@ -14,6 +14,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		if (inputCommand.StartsWith("cycle ", StringComparison.InvariantCultureIgnoreCase))
 		{
 			HashSet<int> alreadyCycled = new HashSet<int>();

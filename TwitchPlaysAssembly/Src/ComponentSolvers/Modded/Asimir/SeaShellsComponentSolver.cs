@@ -17,7 +17,7 @@ public class SeaShellsComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length >= 2 && commands[0].Equals("press"))
 		{

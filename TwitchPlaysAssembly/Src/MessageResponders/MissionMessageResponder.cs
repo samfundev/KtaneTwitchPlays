@@ -44,7 +44,7 @@ public class MissionMessageResponder : MessageResponder
 		}
 
 		if (!text.StartsWith("!") || text.Equals("!")) return;
-		text = text.Substring(1);
+		text = text.Substring(1).Trim();
 
 		string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		string textAfter = split.Skip(1).Join();

@@ -35,7 +35,7 @@ public class TwoBitsComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var split = inputCommand.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+		var split = inputCommand.ToLowerInvariant().Trim().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
 
 		if (split.Length < 2 || split[0] != "press")
 			yield break;

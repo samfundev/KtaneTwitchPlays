@@ -30,7 +30,7 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		inputCommand = inputCommand.ToLowerInvariant();
+		inputCommand = inputCommand.ToLowerInvariant().Trim();
 		if (inputCommand.EqualsAny("y", "yes", "press y", "press yes"))
 		{
 			yield return "yes";

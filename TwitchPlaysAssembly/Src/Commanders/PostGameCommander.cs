@@ -14,7 +14,7 @@ public class PostGameCommander : ICommandResponder
 	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
 	{
 		Selectable button = null;
-		message = message.ToLowerInvariant();
+		message = message.ToLowerInvariant().Trim();
 
 		if (message.EqualsAny("!continue", "!back"))
 		{

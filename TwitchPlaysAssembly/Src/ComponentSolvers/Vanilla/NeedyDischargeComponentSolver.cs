@@ -12,7 +12,7 @@ public class NeedyDischargeComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string[] commandParts = inputCommand.Split(' ');
+		string[] commandParts = inputCommand.Trim().Split(' ');
 
 		if (commandParts.Length != 2 && !commandParts[0].Equals("hold", StringComparison.InvariantCultureIgnoreCase))
 			yield break;

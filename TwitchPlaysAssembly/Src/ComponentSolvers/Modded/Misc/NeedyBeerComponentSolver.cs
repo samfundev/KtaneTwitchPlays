@@ -11,7 +11,7 @@ public class NeedyBeerComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (inputCommand.ToLowerInvariant().EqualsAny("refill"))
+		if (inputCommand.ToLowerInvariant().Trim().EqualsAny("refill"))
 		{
 			yield return null;
 			yield return DoInteractionClick(BombComponent.GetComponentsInChildren<KMSelectable>().FirstOrDefault(x => x.name.Equals("Solve")));

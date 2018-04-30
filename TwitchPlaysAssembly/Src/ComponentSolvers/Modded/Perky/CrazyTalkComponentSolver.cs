@@ -14,7 +14,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length != 3 || !commands[0].EqualsAny("toggle", "flip", "switch") ||
 			!int.TryParse(commands[1], out int downtime) || !int.TryParse(commands[2], out int uptime))
