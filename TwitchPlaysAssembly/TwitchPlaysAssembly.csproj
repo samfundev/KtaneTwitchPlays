@@ -182,6 +182,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods\Twitch Plays\$(TargetFileName)"
-copy "$(TargetPath)" "$(ProjectDir)..\Assets\Plugins\Managed\$(TargetFileName)"</PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>
