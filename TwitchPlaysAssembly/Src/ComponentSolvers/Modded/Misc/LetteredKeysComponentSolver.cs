@@ -11,7 +11,7 @@ public class LetteredKeysComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Lettered%20Keys");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		if (inputCommand.StartsWith("press ", System.StringComparison.InvariantCultureIgnoreCase))
 		{

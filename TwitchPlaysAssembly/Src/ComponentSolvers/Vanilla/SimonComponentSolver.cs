@@ -12,7 +12,7 @@ public class SimonComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver", "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
 		{

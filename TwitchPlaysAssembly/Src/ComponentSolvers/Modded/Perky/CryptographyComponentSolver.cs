@@ -14,7 +14,7 @@ public class CryptographyComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		if (split.Length < 2 || !split[0].EqualsAny("press", "submit"))

@@ -28,7 +28,7 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.ToLowerInvariant();
 		if (inputCommand.EqualsAny("y", "yes", "press y", "press yes"))

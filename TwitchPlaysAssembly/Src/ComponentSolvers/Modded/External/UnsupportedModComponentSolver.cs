@@ -22,7 +22,7 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		selectable.OnDeselect += (x) => { ComponentHandle?.CanvasGroupUnsupported?.gameObject.SetActive(x == null || !selectableHashSet.Contains(x)); };
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		if (!inputCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase)) yield break;
 		yield return null;

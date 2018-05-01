@@ -30,7 +30,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		HashSet<int> alreadyCycled = new HashSet<int>();
 		string[] commandParts = inputCommand.Split(' ');

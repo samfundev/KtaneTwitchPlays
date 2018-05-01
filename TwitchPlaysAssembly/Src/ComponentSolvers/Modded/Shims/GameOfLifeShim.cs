@@ -3,7 +3,7 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class GameOfLifeShim : ComponentSolverShim
 {
-	public GameOfLifeShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent)
+	public GameOfLifeShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent, "GameOfLifeSimple")
 	{
 
 	}

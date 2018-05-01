@@ -20,7 +20,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		if (ProcessMethod == null)
 		{

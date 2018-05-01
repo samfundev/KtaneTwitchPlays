@@ -13,7 +13,7 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !submit 00010100");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		if (!commands[0].Equals("submit") || !commands.Length.Equals(2)) yield break;

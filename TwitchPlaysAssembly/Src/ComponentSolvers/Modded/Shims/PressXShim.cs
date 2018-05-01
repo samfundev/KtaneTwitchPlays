@@ -6,7 +6,7 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class PressXShim : ComponentSolverShim
 {
-	public PressXShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent)
+	public PressXShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent, "PressX")
 	{
 	}
 

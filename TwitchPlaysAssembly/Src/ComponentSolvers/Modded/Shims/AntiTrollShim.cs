@@ -4,17 +4,15 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class AntiTrollShim : ComponentSolverShim
 {
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, Dictionary<string, string> trollCommands)
-		: base(bombCommander, bombComponent)
+	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, Dictionary<string, string> trollCommands)
+		: base(bombCommander, bombComponent, moduleType)
 	{
 		_trollCommands = trollCommands ?? new Dictionary<string, string>();
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), ShimData.HelpMessage);
 	}
 
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string[] commands, string response)
-		: base(bombCommander, bombComponent)
+	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string[] commands, string response)
+		: base(bombCommander, bombComponent, moduleType)
 	{
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), ShimData.HelpMessage);
 		_trollCommands = new Dictionary<string, string>();
 		foreach (string command in commands)
 		{

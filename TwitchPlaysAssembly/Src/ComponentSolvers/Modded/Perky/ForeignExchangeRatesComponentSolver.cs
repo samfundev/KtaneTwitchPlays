@@ -13,7 +13,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		MonoBehaviour button = null;
 		var split = inputCommand.Trim().ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);

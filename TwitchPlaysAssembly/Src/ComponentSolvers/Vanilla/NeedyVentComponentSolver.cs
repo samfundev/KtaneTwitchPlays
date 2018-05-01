@@ -10,7 +10,7 @@ public class NeedyVentComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentComponentSolver", "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.ToLowerInvariant();
 		if (inputCommand.EqualsAny("y", "yes", "press y", "press yes"))

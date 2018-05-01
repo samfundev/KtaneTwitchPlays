@@ -22,7 +22,7 @@ public class MotionSenseComponentSolver : ComponentSolver
 		};
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		if (!inputCommand.Equals("status", StringComparison.InvariantCultureIgnoreCase))
 			yield break;

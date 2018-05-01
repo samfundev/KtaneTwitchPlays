@@ -12,7 +12,7 @@ public class ProbingComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		var split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		if (_wires == null || _wires[0] == null || _wires[1] == null || _wires[2] == null || _wires[3] == null ||

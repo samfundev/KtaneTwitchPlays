@@ -12,7 +12,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver", "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", "Maze");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{     
 		if (!inputCommand.StartsWith("move ", StringComparison.InvariantCultureIgnoreCase))
 		{

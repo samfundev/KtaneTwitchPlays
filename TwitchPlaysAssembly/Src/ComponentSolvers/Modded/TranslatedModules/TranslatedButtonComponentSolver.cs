@@ -28,7 +28,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.ToLowerInvariant();
 		if (!_held && inputCommand.EqualsAny("tap", "click"))
