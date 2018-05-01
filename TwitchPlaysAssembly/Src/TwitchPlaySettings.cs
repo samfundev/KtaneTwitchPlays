@@ -100,8 +100,10 @@ public class TwitchPlaySettingsData
 		{ "heavymixed", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101, Hidden = true } },
 		{ "light", new ModuleDistributions { Vanilla = 0.8f, Modded = 0.2f, DisplayName = "Light", MinModules = 1, MaxModules = 101 } },
 		{ "heavy", new ModuleDistributions { Vanilla = 0.2f, Modded = 0.8f, DisplayName = "Heavy", MinModules = 1, MaxModules = 101 } },
+		{ "extraheavy", new ModuleDistributions { Vanilla = 0.1f, Modded = 0.9f, DisplayName = "Extra Heavy", MinModules = 1, MaxModules = 101 } },
+		{ "extralight", new ModuleDistributions { Vanilla = 0.9f, Modded = 0.1f, DisplayName = "Extra Light", MinModules = 1, MaxModules = 101 } },
 	};
-
+	
 	public string TwitchBotColorOnQuit = string.Empty;
 
 	public bool AllowSnoozeOnly = false;

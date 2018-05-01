@@ -31,6 +31,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToUpperInvariant()).ToList();
 
 		if (inputCommand.Equals("literally blank", StringComparison.InvariantCultureIgnoreCase))

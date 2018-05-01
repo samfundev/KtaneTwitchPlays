@@ -18,7 +18,7 @@ public class ThirdBaseComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToUpperInvariant()).ToList();
+		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToUpperInvariant().Trim()).ToList();
 
 		inputCommand = inputCommand.Replace('0', 'O').ToUpperInvariant();
 		if (inputCommand.StartsWith("PRESS "))

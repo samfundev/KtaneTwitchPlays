@@ -30,7 +30,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		inputCommand = inputCommand.ToLowerInvariant();
+		inputCommand = inputCommand.ToLowerInvariant().Trim();
 		if (!_held && inputCommand.EqualsAny("tap", "click"))
 		{
 			yield return "tap";

@@ -15,7 +15,7 @@ public class SwitchesComponentSolver : ComponentSolver
 	
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string[] commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length <= 1 || !commands[0].EqualsAny("flip", "switch", "press", "toggle")) yield break;
 

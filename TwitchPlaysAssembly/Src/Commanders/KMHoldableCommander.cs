@@ -14,6 +14,7 @@ public class KMHoldableCommander
 
 	public IEnumerator RespondToCommand(string userNickName, string message)
 	{
+		message = message.Trim();
 		if (message.EqualsAny("hold", "pick up"))
 		{
 			IEnumerator holdCoroutine = Hold(_heldFrontFace);

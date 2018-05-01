@@ -11,7 +11,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
+		string[] commandParts = inputCommand.ToLowerInvariant().Trim().Split(' ');
 
 		if (commandParts.Length != 2)
 		{

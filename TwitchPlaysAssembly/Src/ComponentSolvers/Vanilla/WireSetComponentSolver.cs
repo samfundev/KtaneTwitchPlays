@@ -14,6 +14,7 @@ public class WireSetComponentSolver : ComponentSolver
 
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield break;

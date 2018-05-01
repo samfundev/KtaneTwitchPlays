@@ -48,7 +48,7 @@ public class FreeplayCommander : ICommandResponder
 
 	public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
 	{
-		message = message.ToLowerInvariant();
+		message = message.ToLowerInvariant().Trim();
 
 		if (message.EqualsAny("drop", "let go", "put down"))
 		{

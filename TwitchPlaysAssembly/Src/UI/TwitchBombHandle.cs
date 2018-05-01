@@ -84,6 +84,7 @@ public class TwitchBombHandle : MonoBehaviour
 	#region Message Interface    
 	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
 	{
+		text = text.Trim();
 		string internalCommand;
 		Match match = Regex.Match(text, string.Format("^{0} (.+)", _code), RegexOptions.IgnoreCase);
 		if (!match.Success)

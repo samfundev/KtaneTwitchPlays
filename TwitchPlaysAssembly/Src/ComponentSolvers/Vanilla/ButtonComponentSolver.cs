@@ -21,7 +21,7 @@ public class ButtonComponentSolver : ComponentSolver
 	protected override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		bool isModdedSeed = VanillaRuleModifier.IsSeedModded();
-		inputCommand = inputCommand.ToLowerInvariant();
+		inputCommand = inputCommand.ToLowerInvariant().Trim();
 		if (!_held && inputCommand.EqualsAny("tap", "click"))
 		{
 			yield return "tap";

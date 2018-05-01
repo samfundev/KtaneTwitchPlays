@@ -20,7 +20,7 @@ public class BombBinderCommander : ICommandResponder
 	#region Interface Implementation
 	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
 	{
-		message = message.ToLowerInvariant();
+		message = message.ToLowerInvariant().Trim();
 		if (message.EqualsAny("hold", "pick up"))
 		{
 			IEnumerator holdCoroutine = HoldBombBinder();

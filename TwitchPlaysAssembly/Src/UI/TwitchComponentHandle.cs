@@ -474,6 +474,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Message Interface
 	public IEnumerator OnMessageReceived(string userNickName, string userColor, string internalCommand)
 	{
+		internalCommand = internalCommand.ToLower().Trim();
 		string messageOut = null;
 		if ((internalCommand.StartsWith("manual", StringComparison.InvariantCultureIgnoreCase)) || (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase)))
 		{
