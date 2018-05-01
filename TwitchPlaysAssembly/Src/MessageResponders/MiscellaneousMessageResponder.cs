@@ -232,6 +232,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 			{
 				TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
 			}
+			return;
+		}
+		else if (text.RegexMatch("^bonusreward (-?[0-9]+)$"))
+		{
+			if (!IsAuthorizedDefuser(userNickName)) return;
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1], out moduleCountBonus))
+			{
+				TwitchPlaySettings.AddRewardBonus(moduleCountBonus);
+			}
+			return;
 		}
 		else if (text.RegexMatch(out match, $"^timemode ?((?:on|off)?)$"))
 		{

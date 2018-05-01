@@ -424,6 +424,7 @@ public static class TwitchPlaySettings
 
 	private static List<string> Players = new List<string>();
 	private static int ClearReward = 0;
+	private static int RetryReward = 0;
 
 	public static void WriteDataToFile()
 	{
@@ -555,11 +556,17 @@ public static class TwitchPlaySettings
 	public static void SetRewardBonus(int moduleCountBonus)
 	{
 		ClearReward = moduleCountBonus;
+		RetryReward = moduleCountBonus;
 	}
 
 	public static int GetRewardBonus()
 	{
 		return ClearReward;
+	}
+
+	public static void SetRetryReward()
+	{
+		ClearReward = RetryReward;
 	}
 
 	public static Tuple<bool, string> ResetSettingToDefault(string setting)

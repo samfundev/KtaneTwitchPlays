@@ -68,6 +68,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["curriculum"] = (bombCommander, bombComponent) => new CurriculumComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent) => new EdgeworkComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
@@ -84,7 +85,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
-		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "troll", "Sorry, I am not going to press the red button 75 times, the green button 75 times, and the blue button 75 times." } });
+		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "troll", "Sorry, I am not going to press the red button 75 times, the green button 75 times, and the blue button 75 times." }, { "fakestrike", "Sorry, I am not going to generate a fake strike." } });
 		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
 		ModComponentSolverCreators["SimonScreamsModule"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new[] { "disco", "lasershow" }, "Sorry, I am not going to waste time flashing all the colors.");
 
@@ -150,7 +151,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Shift", moduleScore = 8 };
 		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base", moduleScore = 6 };
 
-		//AT_Bash / Bashly
+		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
 
 
@@ -183,6 +184,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Curriculum", moduleScore = 12 };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
+		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3};
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simple Wires", moduleScore = 1 };
@@ -252,6 +254,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
+		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 15 };
 		ModComponentSolverInformation["SymbolCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 12, manualCode = "Tic-Tac-Toe" };
 		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
@@ -313,6 +316,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
 		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
+		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["fastMath"] = new ModuleInformation { moduleScore = 12, helpText = "Start the timer with !{0} go. Submit an answer with !{0} submit 12." };
 		ModComponentSolverInformation["FaultyBackgrounds"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["FestivePianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
@@ -726,6 +730,7 @@ public static class ComponentSolverFactory
 		if (method != null)
 		{
 			FieldInfo zenModeField = FindZenModeBool(commandComponentType);
+			FieldInfo abandomModuleField = FindAbandonModuleList(commandComponentType);
 
 			switch (commandType)
 			{
@@ -733,14 +738,14 @@ public static class ComponentSolverFactory
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, zenModeField);
+						return new SimpleModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, zenModeField, abandomModuleField);
 					};
 				case ModCommandType.Coroutine:
 					FieldInfo cancelfield = FindCancelBool(commandComponentType);
 					return delegate (BombCommander _bombCommander, BombComponent _bombComponent)
 					{
 						Component commandComponent = _bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField);
+						return new CoroutineModComponentSolver(_bombCommander, _bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, abandomModuleField);
 					};
 				case ModCommandType.Unsupported:
 					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
@@ -869,6 +874,12 @@ public static class ComponentSolverFactory
 		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 			.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 		return solveHandler;
+	}
+
+	internal static FieldInfo FindAbandonModuleList(Type commandComponentType)
+	{
+		FieldInfo cancelField = commandComponentType.GetField("TwitchAbandonModule", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return cancelField?.FieldType == typeof(List<KMBombModule>) ? cancelField : null;
 	}
 
 	internal static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)

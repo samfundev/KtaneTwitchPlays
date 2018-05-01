@@ -748,6 +748,15 @@ public abstract class ComponentSolver
 	{
 		try
 		{
+			KMBombModule module = handle?.bombComponent.GetComponent<KMBombModule>();
+			if (module != null)
+			{
+				foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombCommander == handle.bombCommander))
+				{
+					h.Solver.AddAbandonedModule(module);
+				}
+			}
+
 			if (!(handle?.Solver?.AttemptedForcedSolve ?? false) && (handle?.Solver?.HandleForcedSolve() ?? false))
 			{
 				handle.Solver.AttemptedForcedSolve = true;
@@ -824,6 +833,13 @@ public abstract class ComponentSolver
 			}
 			else
 			{
+				if (module != null)
+				{
+					foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles)
+					{
+						h.Solver.AddAbandonedModule(module);
+					}
+				}
 				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 				foreach (MonoBehaviour behaviour in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 				{
@@ -891,7 +907,7 @@ public abstract class ComponentSolver
 
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
 		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
-		TwitchPlaySettings.SetRewardBonus(currentReward);
+		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
 		if (currentReward != originalReward)
 			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 		if (OtherModes.TimeModeOn)
@@ -935,6 +951,12 @@ public abstract class ComponentSolver
 		Leaderboard.Instance.AddScore(userNickName, strikePenalty);
 		Leaderboard.Instance.AddStrike(userNickName, strikeCount);
 		StrikeMessage = string.Empty;
+	}
+
+	protected void AddAbandonedModule(KMBombModule module)
+	{
+		if (!(AbandonModule?.Contains(module) ?? true))
+			AbandonModule?.Add(module);
 	}
 	#endregion
 
@@ -980,19 +1002,34 @@ public abstract class ComponentSolver
 		}
 	}
 
-	protected FieldInfo TryCancelField { get; set; }
+	protected FieldInfo AbandonModuleField { get; set; }
+	protected List<KMBombModule> AbandonModule
+	{
+		get
+		{
+			if (!(AbandonModuleField?.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is List<KMBombModule>))
+				return null;
+			return (List<KMBombModule>)AbandonModuleField.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+		}
+		set
+		{
+			if (AbandonModuleField?.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is List<KMBombModule>)
+				AbandonModuleField.SetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
+		}
+	}
 
+	protected FieldInfo TryCancelField { get; set; }
 	protected bool TryCancel
 	{
 		get
 		{
-			if (!(TryCancelField?.GetValue(CommandComponent.GetType()) is bool))
+			if (!(TryCancelField?.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return false;
 			return (bool) TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
-			if (TryCancelField?.GetValue(BombComponent.GetComponent(CommandComponent.GetType())) is bool)
+			if (TryCancelField?.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool)
 				TryCancelField.SetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
 		}
 	}
@@ -1001,13 +1038,13 @@ public abstract class ComponentSolver
 	{
 		get
 		{
-			if (!(ZenModeField?.GetValue(CommandComponent.GetType()) is bool))
+			if (!(ZenModeField?.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return false;
 			return (bool) ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
-			if (ZenModeField?.GetValue(BombComponent.GetComponent(CommandComponent.GetType())) is bool)
+			if (ZenModeField?.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool)
 				ZenModeField.SetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
 		}
 	}

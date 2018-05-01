@@ -78,6 +78,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\CurriculumComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EdgeworkComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EnglishTestComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\ErrorCodesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\LetteredKeysComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\MicrocontrollerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NeedyBeerComponentSolver.cs" />
@@ -180,7 +181,6 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods\Twitch Plays\$(TargetFileName)"
-copy "$(TargetPath)" "$(ProjectDir)..\Assets\Plugins\Managed\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods\Twitch Plays\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

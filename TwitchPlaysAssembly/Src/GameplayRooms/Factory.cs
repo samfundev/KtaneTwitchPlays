@@ -107,7 +107,6 @@ public class Factory : GameRoom
 		int currentBombID = 1;
 		while (GetBomb != null)
 		{
-			int reward = TwitchPlaySettings.GetRewardBonus();
 			UnityEngine.Object currentBomb = GetBomb;
 
 			TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
@@ -159,7 +158,7 @@ public class Factory : GameRoom
 			if (!BombMessageResponder.BombActive) yield break;
 
 			IRCConnection.Instance.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
-			TwitchPlaySettings.SetRewardBonus(reward);
+			TwitchPlaySettings.SetRetryReward();
 
 			foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
 			{
