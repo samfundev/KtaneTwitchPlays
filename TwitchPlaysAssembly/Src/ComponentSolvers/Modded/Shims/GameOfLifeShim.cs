@@ -8,9 +8,9 @@ public class GameOfLifeShim : ComponentSolverShim
 
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		var send = base.RespondToCommandInternal(inputCommand);
+		var send = RespondToCommandUnshimmed(inputCommand);
 		if (!inputCommand.ToLowerInvariant().Trim().EqualsAny("submit", "reset"))
 		{
 			var split = inputCommand.Split(' ');

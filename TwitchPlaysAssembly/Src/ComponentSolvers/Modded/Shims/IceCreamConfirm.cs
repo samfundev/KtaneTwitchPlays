@@ -23,7 +23,7 @@ public class IceCreamConfirm : ComponentSolverShim
 		}
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
 		if (inputCommand.ToLowerInvariant().Trim().Equals("hours"))
 		{
@@ -33,7 +33,7 @@ public class IceCreamConfirm : ComponentSolverShim
 		}
 		else
 		{
-			IEnumerator command = base.RespondToCommandInternal(inputCommand);
+			IEnumerator command = RespondToCommandUnshimmed(inputCommand);
 			while (command.MoveNext())
 			{
 				yield return command.Current;

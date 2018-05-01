@@ -18,7 +18,6 @@ public static class ComponentSolverFactory
 
 	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
-	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreatorShims;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
 	private static readonly Dictionary<string, ModuleInformation> DefaultModComponentSolverInformation;
 
@@ -28,7 +27,6 @@ public static class ComponentSolverFactory
 	{
 		DebugHelper.Log();
 		ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
-		ModComponentSolverCreatorShims = new Dictionary<string, ModComponentSolverDelegate>();
 		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 		DefaultModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
@@ -78,16 +76,17 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent);
 
-		//Shim added - This overrides at least one specific command or formatting, then passes on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
-		ModComponentSolverCreatorShims["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
-		ModComponentSolverCreatorShims["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
+		// SHIMS
+		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
+		ModComponentSolverCreators["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
+		ModComponentSolverCreators["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
+		ModComponentSolverCreators["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 
-		//Anti Troll shims - These are specifically meant to allow the troll commmands to be disabled.
-		ModComponentSolverCreatorShims["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> {{ "troll", "Sorry, I am not going to press the red button 75 times, the green button 75 times, and the blue button 75 times." } });
-		ModComponentSolverCreatorShims["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
-		ModComponentSolverCreatorShims["SimonScreamsModule"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new [] {"disco", "lasershow"}, "Sorry, I am not going to waste time flashing all the colors.");
+		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
+		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "troll", "Sorry, I am not going to press the red button 75 times, the green button 75 times, and the blue button 75 times." } });
+		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
+		ModComponentSolverCreators["SimonScreamsModule"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, new[] { "disco", "lasershow" }, "Sorry, I am not going to waste time flashing all the colors.");
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -649,10 +648,9 @@ public static class ComponentSolverFactory
 
 	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
 	{
-		bool shimExists = TwitchPlaySettings.data.EnableTwitchPlayShims && ModComponentSolverCreatorShims.ContainsKey(moduleType);
 		if (ModComponentSolverCreators.ContainsKey(moduleType))
 		{
-			ComponentSolver solver = !shimExists ? ModComponentSolverCreators[moduleType](bombCommander, bombComponent) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent);
+			ComponentSolver solver = ModComponentSolverCreators[moduleType](bombCommander, bombComponent);
 			return solver;
 		}
 
@@ -662,7 +660,7 @@ public static class ComponentSolverFactory
 
 		ModComponentSolverCreators[moduleType] = modComponentSolverCreator ?? throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
 
-		return !shimExists ? modComponentSolverCreator(bombCommander, bombComponent) : ModComponentSolverCreatorShims[moduleType](bombCommander, bombComponent);
+		return modComponentSolverCreator(bombCommander, bombComponent);
 	}
 
 	private static ModComponentSolverDelegate GenerateModComponentSolverCreator(BombComponent bombComponent, string moduleType, string displayName)

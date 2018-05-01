@@ -34,7 +34,14 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 				: ComponentSolverFactory.GetModuleInfo(modType, ShimData.HelpMessage, ShimData.ManualCode);
 		}
 
-		protected override IEnumerator RespondToCommandInternal(string inputCommand)
+		protected sealed override IEnumerator RespondToCommandInternal(string inputCommand)
+		{
+			return TwitchPlaySettings.data.EnableTwitchPlayShims ? RespondToCommandShimmed(inputCommand) : RespondToCommandUnshimmed(inputCommand);
+		}
+
+		protected abstract IEnumerator RespondToCommandShimmed(string inputCommand);
+
+		protected IEnumerator RespondToCommandUnshimmed(string inputCommand)
 		{
 			string exception = null;
 			switch (ShimData.ModCommandType)
@@ -43,7 +50,7 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 					KMSelectable[] selectables = null;
 					try
 					{
-						selectables = (KMSelectable[]) ProcessMethod.Invoke(CommandComponent, new object[] {inputCommand});
+						selectables = (KMSelectable[]) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
 					}
 					catch (FormatException ex)
 					{
@@ -67,7 +74,7 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 					bool result;
 					try
 					{
-						handler = (IEnumerator) ProcessMethod.Invoke(CommandComponent, new object[] {inputCommand});
+						handler = (IEnumerator) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
 						result = handler != null;
 					}
 					catch (Exception ex)

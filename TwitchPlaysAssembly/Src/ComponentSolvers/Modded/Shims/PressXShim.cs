@@ -10,7 +10,7 @@ public class PressXShim : ComponentSolverShim
 	{
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
 		var match = Regex.Match(inputCommand.ToLowerInvariant(),
 			"^(?:press |tap )?(x|y|a|b)(?:(?: at| on)?([0-9: ]+))?$");
@@ -19,7 +19,7 @@ public class PressXShim : ComponentSolverShim
 		int index = "xyab".IndexOf(match.Groups[1].Value, StringComparison.Ordinal);
 		if (index < 0) yield break;
 
-		string[] times = match.Groups[2].Value.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+		string[] times = match.Groups[2].Value.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (times.Any() && index < 2)
 		{
@@ -37,7 +37,7 @@ public class PressXShim : ComponentSolverShim
 			yield return null;
 		}
 
-		IEnumerator baseResponder = base.RespondToCommandInternal(inputCommand);
+		IEnumerator baseResponder = RespondToCommandUnshimmed(inputCommand);
 		while (baseResponder.MoveNext())
 		{
 			yield return baseResponder.Current;

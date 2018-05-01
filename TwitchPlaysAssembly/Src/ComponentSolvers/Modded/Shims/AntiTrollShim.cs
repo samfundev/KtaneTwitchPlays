@@ -23,7 +23,7 @@ public class AntiTrollShim : ComponentSolverShim
 		}
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
 		if (!TwitchPlaySettings.data.EnableTrollCommands && _trollCommands.TryGetValue(inputCommand.ToLowerInvariant().Trim().Replace(" ", ""), out string trollResponse))
 		{
@@ -31,7 +31,7 @@ public class AntiTrollShim : ComponentSolverShim
 		}
 		else
 		{
-			IEnumerator respondToCommandInternal = base.RespondToCommandInternal(inputCommand);
+			IEnumerator respondToCommandInternal = RespondToCommandUnshimmed(inputCommand);
 			while (respondToCommandInternal.MoveNext())
 			{
 				yield return respondToCommandInternal.Current;
