@@ -4,17 +4,15 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class AntiTrollShim : ComponentSolverShim
 {
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, Dictionary<string, string> trollCommands)
-		: base(bombCommander, bombComponent)
+	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, Dictionary<string, string> trollCommands)
+		: base(bombCommander, bombComponent, moduleType)
 	{
 		_trollCommands = trollCommands ?? new Dictionary<string, string>();
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), ShimData.HelpMessage);
 	}
 
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string[] commands, string response)
-		: base(bombCommander, bombComponent)
+	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string[] commands, string response)
+		: base(bombCommander, bombComponent, moduleType)
 	{
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), ShimData.HelpMessage);
 		_trollCommands = new Dictionary<string, string>();
 		foreach (string command in commands)
 		{
@@ -23,7 +21,7 @@ public class AntiTrollShim : ComponentSolverShim
 		}
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
 		if (!TwitchPlaySettings.data.EnableTrollCommands && _trollCommands.TryGetValue(inputCommand.ToLowerInvariant().Trim().Replace(" ", ""), out string trollResponse))
 		{
@@ -31,7 +29,7 @@ public class AntiTrollShim : ComponentSolverShim
 		}
 		else
 		{
-			IEnumerator respondToCommandInternal = base.RespondToCommandInternal(inputCommand);
+			IEnumerator respondToCommandInternal = RespondToCommandUnshimmed(inputCommand);
 			while (respondToCommandInternal.MoveNext())
 			{
 				yield return respondToCommandInternal.Current;

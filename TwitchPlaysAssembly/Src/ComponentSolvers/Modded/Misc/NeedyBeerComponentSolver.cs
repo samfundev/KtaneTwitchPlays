@@ -9,7 +9,7 @@ public class NeedyBeerComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Refill that beer with !{0} refill.");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		if (inputCommand.ToLowerInvariant().Trim().EqualsAny("refill"))
 		{

@@ -6,11 +6,11 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class PressXShim : ComponentSolverShim
 {
-	public PressXShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent)
+	public PressXShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent, "PressX")
 	{
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		var match = Regex.Match(inputCommand.ToLowerInvariant(),
@@ -20,7 +20,7 @@ public class PressXShim : ComponentSolverShim
 		int index = "xyab".IndexOf(match.Groups[1].Value, StringComparison.Ordinal);
 		if (index < 0) yield break;
 
-		string[] times = match.Groups[2].Value.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+		string[] times = match.Groups[2].Value.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (times.Any() && index < 2)
 		{
@@ -38,7 +38,7 @@ public class PressXShim : ComponentSolverShim
 			yield return null;
 		}
 
-		IEnumerator baseResponder = base.RespondToCommandInternal(inputCommand);
+		IEnumerator baseResponder = RespondToCommandUnshimmed(inputCommand);
 		while (baseResponder.MoveNext())
 		{
 			yield return baseResponder.Current;

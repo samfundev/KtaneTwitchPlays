@@ -13,7 +13,7 @@ public class VennWireComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver", "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))

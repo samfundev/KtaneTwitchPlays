@@ -12,7 +12,7 @@ public class WireSetComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("WireSetComponentSolver", "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))

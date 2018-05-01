@@ -3,14 +3,14 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class GameOfLifeShim : ComponentSolverShim
 {
-	public GameOfLifeShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent)
+	public GameOfLifeShim(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent, "GameOfLifeSimple")
 	{
 
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		var send = base.RespondToCommandInternal(inputCommand);
+		var send = RespondToCommandUnshimmed(inputCommand);
 		if (!inputCommand.ToLowerInvariant().Trim().EqualsAny("submit", "reset"))
 		{
 			var split = inputCommand.Split(' ');

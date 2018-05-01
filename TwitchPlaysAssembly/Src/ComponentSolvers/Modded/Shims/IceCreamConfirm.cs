@@ -5,11 +5,14 @@ using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class IceCreamConfirm : ComponentSolverShim
 {
-	public IceCreamConfirm(BombCommander bombCommander, BombComponent bombComponent) :
-	base(bombCommander, bombComponent)
+	public IceCreamConfirm(BombCommander bombCommander, BombComponent bombComponent) : base(bombCommander, bombComponent, "iceCreamModule")
 	{
 		_settings = new Settings();
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), ShimData.HelpMessage + " Check the opening hours with !{0} hours.");
+		if (!modInfo.helpTextOverride)
+		{
+			modInfo.helpText += " Check the opening hours with !{0} hours.";
+			modInfo.helpTextOverride = true;
+		}
 		KMModSettings modSettings = bombComponent.GetComponent<KMModSettings>();
 		try
 		{
@@ -23,7 +26,7 @@ public class IceCreamConfirm : ComponentSolverShim
 		}
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
 		if (inputCommand.ToLowerInvariant().Trim().Equals("hours"))
 		{
@@ -33,7 +36,7 @@ public class IceCreamConfirm : ComponentSolverShim
 		}
 		else
 		{
-			IEnumerator command = base.RespondToCommandInternal(inputCommand);
+			IEnumerator command = RespondToCommandUnshimmed(inputCommand);
 			while (command.MoveNext())
 			{
 				yield return command.Current;

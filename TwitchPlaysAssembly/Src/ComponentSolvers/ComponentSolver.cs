@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -418,7 +419,8 @@ public abstract class ComponentSolver
 		{
 			DisableOnStrike = false;
 			BombMessageResponder.moduleCameras?.UpdateStrikes(true);
-			if (Solved) OnPass(null);
+			if (Solved)
+				OnPass(null);
 			AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
 		}
 
@@ -447,7 +449,7 @@ public abstract class ComponentSolver
 	#endregion
 
 	#region Abstract Interface
-	protected abstract IEnumerator RespondToCommandInternal(string inputCommand);
+	protected internal abstract IEnumerator RespondToCommandInternal(string inputCommand);
 	#endregion
 
 	#region Protected Helper Methods
@@ -1009,7 +1011,7 @@ public abstract class ComponentSolver
 		{
 			if (!(AbandonModuleField?.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is List<KMBombModule>))
 				return null;
-			return (List<KMBombModule>)AbandonModuleField.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (List<KMBombModule>) AbandonModuleField.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{

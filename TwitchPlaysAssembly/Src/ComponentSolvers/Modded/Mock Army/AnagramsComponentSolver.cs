@@ -13,7 +13,7 @@ public class AnagramsComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(modType, "Submit your answer with !{0} submit poodle", null, modType.Equals("AnagramsModule"));
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		object[] anagramWords =

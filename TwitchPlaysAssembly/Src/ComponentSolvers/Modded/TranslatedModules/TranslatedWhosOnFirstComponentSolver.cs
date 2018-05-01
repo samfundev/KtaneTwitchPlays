@@ -29,7 +29,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToUpperInvariant()).ToList();

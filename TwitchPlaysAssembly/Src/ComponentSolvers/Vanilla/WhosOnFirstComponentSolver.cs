@@ -15,7 +15,7 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 
 	static string[] phrases = new[] { "ready", "first", "no", "blank", "nothing", "yes", "what", "uhhh", "left", "right", "middle", "okay", "wait", "press", "you", "you are", "your", "you're", "ur", "u", "uh huh", "uh uh", "what?", "done", "next", "hold", "sure", "like" };
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string word = inputCommand.ToLowerInvariant().Trim();
 		if (!phrases.Contains(word))

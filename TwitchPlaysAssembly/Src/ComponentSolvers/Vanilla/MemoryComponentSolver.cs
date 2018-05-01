@@ -11,7 +11,7 @@ public class MemoryComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("MemoryComponentSolver", "!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');

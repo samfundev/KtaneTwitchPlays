@@ -46,7 +46,7 @@ public class ListeningComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Listen to the sound with !{0} press play. Enter the response with !{0} press $ & * * #.");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		if (inputCommand.ToLowerInvariant().EqualsAny("play", "press play"))

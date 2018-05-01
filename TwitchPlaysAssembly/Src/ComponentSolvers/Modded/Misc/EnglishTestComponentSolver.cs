@@ -14,7 +14,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] split = inputCommand.ToLowerInvariant().Trim().Split(' ');
 		if (split.Length != 2 || !split[0].EqualsAny("submit", "answer"))

@@ -9,7 +9,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver", "!{0} rotate 3, !{0} turn 3 [rotate the knob 3 quarter-turns]", "Knob");
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] commandParts = inputCommand.ToLowerInvariant().Trim().Split(' ');
 

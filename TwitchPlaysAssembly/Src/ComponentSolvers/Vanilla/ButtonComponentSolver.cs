@@ -18,7 +18,7 @@ public class ButtonComponentSolver : ComponentSolver
 		modInfo = VanillaRuleModifier.IsSeedVanilla() ? buttonInfo : buttonInfoModified;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		bool isModdedSeed = VanillaRuleModifier.IsSeedModded();
 		inputCommand = inputCommand.ToLowerInvariant().Trim();

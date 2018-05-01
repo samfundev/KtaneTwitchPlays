@@ -81,7 +81,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		return (bool) field.GetValue(BombComponent.GetComponent(_componentType));
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string inputCommand)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		var commands = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
