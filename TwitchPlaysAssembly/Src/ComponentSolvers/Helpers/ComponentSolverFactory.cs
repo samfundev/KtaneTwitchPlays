@@ -229,7 +229,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6 };
-		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["CaesarCipherModule"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
