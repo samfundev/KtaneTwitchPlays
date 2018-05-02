@@ -10,6 +10,7 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 		{
 			// Passing null to the BombCommander argument here because _unshimmed is only used to run RespondToCommandInternal(); we don’t want it to award strikes/solves etc. because this object already does that
 			_unshimmed = ComponentSolverFactory.CreateDefaultModComponentSolver(null, bombComponent, moduleType, bombComponent.GetModuleDisplayName());
+			modInfo = _unshimmed.modInfo;
 		}
 
 		protected internal sealed override IEnumerator RespondToCommandInternal(string inputCommand)
