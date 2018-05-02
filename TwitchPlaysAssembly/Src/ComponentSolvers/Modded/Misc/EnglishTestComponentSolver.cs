@@ -16,7 +16,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string[] split = inputCommand.ToLowerInvariant().Split(' ');
+		string[] split = inputCommand.ToLowerInvariant().Trim().Split(' ');
 		if (split.Length != 2 || !split[0].EqualsAny("submit", "answer"))
 		{
 			yield break;

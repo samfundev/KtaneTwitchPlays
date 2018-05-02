@@ -15,6 +15,7 @@ public class AnagramsComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		object[] anagramWords =
 		{
 			"stream", "master", "tamers", "looped", "poodle", "pooled",

@@ -12,6 +12,7 @@ public class PressXShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		var match = Regex.Match(inputCommand.ToLowerInvariant(),
 			"^(?:press |tap )?(x|y|a|b)(?:(?: at| on)?([0-9: ]+))?$");
 		if (!match.Success) yield break;

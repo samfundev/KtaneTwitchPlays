@@ -15,6 +15,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)$") || !int.TryParse(match.Groups[1].Value, out int targetFrequency))
 		{
 			yield break;

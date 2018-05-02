@@ -14,6 +14,7 @@ public class KeypadComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield break;

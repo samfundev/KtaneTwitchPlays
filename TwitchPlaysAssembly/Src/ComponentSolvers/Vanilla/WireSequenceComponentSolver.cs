@@ -19,7 +19,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		inputCommand = inputCommand.ToLowerInvariant();
+		inputCommand = inputCommand.ToLowerInvariant().Trim();
 		Dictionary<MonoBehaviour, string> buttons = new Dictionary<MonoBehaviour, string>();
 
 		if (inputCommand.Equals("cycle", StringComparison.InvariantCultureIgnoreCase))

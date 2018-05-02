@@ -13,6 +13,7 @@ public class MemoryComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
 		if (commandParts.Length != 2)

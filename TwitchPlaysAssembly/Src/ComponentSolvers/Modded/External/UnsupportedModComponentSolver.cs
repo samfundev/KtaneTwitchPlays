@@ -24,7 +24,7 @@ public class UnsupportedModComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (!inputCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase)) yield break;
+		if (!inputCommand.Trim().Equals("solve", StringComparison.InvariantCultureIgnoreCase)) yield break;
 		yield return null;
 		yield return null;
 		if (bombModule != null)

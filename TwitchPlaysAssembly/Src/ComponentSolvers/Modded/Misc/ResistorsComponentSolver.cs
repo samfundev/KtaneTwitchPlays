@@ -48,7 +48,7 @@ public class ResistorsComponentSolver : ComponentSolver
 	
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length >= 3 && commands.Length % 2 == 1 && commands[0].Equals("connect"))
 		{

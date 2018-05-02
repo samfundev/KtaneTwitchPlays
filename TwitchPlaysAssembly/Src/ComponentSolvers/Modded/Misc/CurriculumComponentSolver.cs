@@ -15,7 +15,7 @@ public class CurriculumComponentSolver : ComponentSolver
 	int[] buttonOffset = new int[6] { 0, 0, 0, 0, 0, 0 };
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length.InRange(2, 3) && commands[0].EqualsAny("click", "press"))
 		{

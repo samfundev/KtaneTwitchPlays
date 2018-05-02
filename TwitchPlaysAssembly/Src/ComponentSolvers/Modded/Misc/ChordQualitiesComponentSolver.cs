@@ -19,7 +19,7 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Replace('♯', '#').Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		var commands = inputCommand.ToLowerInvariant().Trim().Replace('♯', '#').Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length == 5 && commands[0].EqualsAny("submit", "play", "press"))
 		{

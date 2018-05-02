@@ -36,7 +36,7 @@ public class MurderComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		inputCommand = inputCommand.ToLowerInvariant();
+		inputCommand = inputCommand.ToLowerInvariant().Trim();
 
 		if (inputCommand.Equals("accuse"))
 		{

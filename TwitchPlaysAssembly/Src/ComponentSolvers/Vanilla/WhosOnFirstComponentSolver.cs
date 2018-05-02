@@ -17,7 +17,7 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string word = inputCommand.ToLowerInvariant();
+		string word = inputCommand.ToLowerInvariant().Trim();
 		if (!phrases.Contains(word))
 		{
 			yield return null;

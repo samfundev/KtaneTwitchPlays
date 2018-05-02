@@ -1055,6 +1055,7 @@ public abstract class ComponentSolver
 	#region Private Methods
 	private IEnumerator RespondToCommandCommon(string inputCommand, string userNickName)
 	{
+		inputCommand = inputCommand.Trim();
 		if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
 		{
 			cameraPriority = ModuleCameras.CameraNotInUse;

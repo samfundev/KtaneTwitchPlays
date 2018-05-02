@@ -24,6 +24,7 @@ public class MotionSenseComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
+		inputCommand = inputCommand.Trim();
 		if (!inputCommand.Equals("status", StringComparison.InvariantCultureIgnoreCase))
 			yield break;
 

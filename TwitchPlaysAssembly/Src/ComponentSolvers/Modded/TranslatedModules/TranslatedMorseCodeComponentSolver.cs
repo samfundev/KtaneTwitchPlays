@@ -33,7 +33,7 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)$") 
+		if (!inputCommand.Trim().RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)$") 
 				|| !int.TryParse(match.Groups[1].Value, out int targetFrequency)
 				|| !Frequencies.Contains(targetFrequency))
 		{

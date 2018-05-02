@@ -25,7 +25,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 	{
 		DebugHelper.Log($"Received: !ircmanager {command}");
 		
-		string[] split = command.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+		string[] split = command.ToLowerInvariant().Trim().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
 		switch (split[0])
 		{
 			case "elevator" when _elevatorSwitch?.gameObject.activeInHierarchy ?? false:

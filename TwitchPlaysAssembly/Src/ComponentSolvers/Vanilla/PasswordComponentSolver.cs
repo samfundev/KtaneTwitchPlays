@@ -20,7 +20,7 @@ public class PasswordComponentSolver : ComponentSolver
 		if (!Regex.IsMatch(inputCommand, @"^[a-zA-Z]{5}$"))
 		{
 			HashSet<int> alreadyCycled = new HashSet<int>();
-			string[] commandParts = inputCommand.Split(' ');
+			string[] commandParts = inputCommand.Trim().Split(' ');
 			if (!commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase)) yield break;
 
 			foreach (string cycle in commandParts.Skip(1))

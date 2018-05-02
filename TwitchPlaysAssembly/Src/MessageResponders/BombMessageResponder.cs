@@ -459,7 +459,7 @@ public class BombMessageResponder : MessageResponder
 		Match match;
 		int index;
 		if (!text.StartsWith("!") || text.Equals("!")) return;
-		text = text.Substring(1);
+		text = text.Substring(1).Trim();
 
 		if (IsAuthorizedDefuser(userNickName))
 		{
