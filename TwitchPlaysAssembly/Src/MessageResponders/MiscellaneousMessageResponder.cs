@@ -33,6 +33,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		GameInfo.OnStateChange += delegate (KMGameInfo.State state)
 		{
 			CurrentState = state;
+			OtherModes.RefreshModes(state);
 		};
 		Instance = this;
 	}
@@ -138,6 +139,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	{
 		if (CurrentState != KMGameInfo.State.Setup) return;
 		GetComponent<KMGameCommands>().StartMission(mission, $"{-1}");
+		OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 	}
 
 	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
@@ -974,6 +976,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (CurrentState != KMGameInfo.State.Setup) break;
 
 						GameCommands.StartMission(missionID, "-1");
+						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
 				}
 
@@ -1084,12 +1087,17 @@ public class MiscellaneousMessageResponder : MessageResponder
 						TwitchPlaySettings.SetRewardBonus(rewardPoints);
 						IRCConnection.Instance.SendMessage("Reward for completing bomb: " + rewardPoints);
 						GameCommands.StartMission(mission, "-1");
+						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
 				}
 				break;
 			case "runraw":
 				if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
-					if (CurrentState == KMGameInfo.State.Setup) GameCommands.StartMission(textAfter, "-1");
+					if (CurrentState == KMGameInfo.State.Setup)
+					{
+						GameCommands.StartMission(textAfter, "-1");
+						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
+					}
 					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
 				break;
 			case "profile":

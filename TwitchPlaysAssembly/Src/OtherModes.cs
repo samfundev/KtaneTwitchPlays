@@ -17,17 +17,17 @@ public static class OtherModes
 
 	public static bool InMode(TwitchPlaysMode mode) { return currentMode == mode; }
 
+	private static KMGameInfo.State _state = KMGameInfo.State.Transitioning;
+
 	public static bool Set(TwitchPlaysMode mode, bool state = true)
 	{
 		if (state == false) mode = TwitchPlaysMode.Normal;
 
 		nextMode = mode;
-		if (!BombMessageResponder.BombActive)
-		{
-			currentMode = mode;
-			return true;
-		}
-		return false;
+		if (_state != KMGameInfo.State.PostGame && _state != KMGameInfo.State.Setup) return false;
+
+		currentMode = mode;
+		return true;
 	}
 
 	public static void Toggle(TwitchPlaysMode mode)
@@ -64,13 +64,14 @@ public static class OtherModes
 		teamHealth = teamHealth - damage;
 		return teamHealth;
 	}
-	public static void RefreshModes()
+	public static void RefreshModes(KMGameInfo.State state)
 	{
-		if (!BombMessageResponder.BombActive && currentMode != nextMode)
-		{
-			currentMode = nextMode;
-			IRCConnection.Instance.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
-		}
+		_state = state;
+
+		if ((_state != KMGameInfo.State.PostGame && _state != KMGameInfo.State.Setup) || currentMode == nextMode) return;
+
+		currentMode = nextMode;
+		IRCConnection.Instance.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
 	}
 
 	public static float GetMultiplier()
