@@ -53,8 +53,7 @@ public class LogUploader : MonoBehaviour
 	{
 		// In order of preference (favourite first)
 		// The integer value is the data size limit in bytes
-		{ "hastebin.com", 400000 },
-		{ "ktane.w00ty.com", 2000000 }
+		{ "hastebin.com", 400000 }
 	};
 
 	public void Awake()

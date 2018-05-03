@@ -81,7 +81,7 @@ public class TwitchBombHandle : MonoBehaviour
 	}
 	#endregion
 
-	#region Message Interface    
+	#region Message Interface
 	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
 	{
 		text = text.Trim();
