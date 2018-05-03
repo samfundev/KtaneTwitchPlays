@@ -68,6 +68,10 @@ public class TwitchPlaySettingsData
 	public string IRCManagerBackgroundImage = Path.Combine(Application.persistentDataPath, "TwitchPlaysIRCManagerBackground.png");
 	public Color IRCManagerTextColor = new Color(1.00f, 0.44f, 0.00f);
 
+	public bool TwitchPlaysDebugEnabled = false;
+	public string TwitchPlaysDebugUsername = "_TPDEBUG";
+	public Color TwitchPlaysDebugUsernameColor = new Color(0.00f, 0.00f, 0.875f);
+
 	public int InstantModuleClaimCooldown = 20;
 	public int InstantModuleClaimCooldownExpiry = 3600;
 
@@ -414,6 +418,13 @@ public class TwitchPlaySettingsData
 		valid &= ValidateDictionaryEntry("infozen", ref BombCustomMessages, data.BombCustomMessages);
 
 		valid &= ValidateModDistribution(ref ModDistributions);
+
+		if (!TwitchPlaysDebugUsername.StartsWith("_"))
+		{
+			valid = false;
+			DebugHelper.Log("The debugger user name Must begin with an underscore, to ensure that it is not a valid Twitch username.");
+			TwitchPlaysDebugUsername = "_" + TwitchPlaysDebugUsername;
+		}
 
 		return valid;
 	}
