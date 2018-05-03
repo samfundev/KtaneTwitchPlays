@@ -855,7 +855,7 @@ public class BombMessageResponder : MessageResponder
 		foreach (TwitchComponentHandle componentHandle in ComponentHandles)
 		{
 			if (!GameRoom.Instance.IsCurrentBomb(componentHandle.bombID)) continue;
-			if (!text.StartsWith(componentHandle.Code + " ")) continue;
+			if (!text.StartsWith(componentHandle.Code + " ", StringComparison.InvariantCultureIgnoreCase)) continue;
 			IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text.Substring(componentHandle.Code.Length + 1));
 			if (onMessageReceived == null) continue;
 
