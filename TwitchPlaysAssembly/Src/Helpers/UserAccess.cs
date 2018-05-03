@@ -130,6 +130,10 @@ public static class UserAccess
 
 	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
 	{
+		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername)
+		{
+			return true;
+		}
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
 		{
 			return accessLevel == AccessLevel.User;
@@ -153,6 +157,8 @@ public static class UserAccess
 
 	public static AccessLevel HighestAccessLevel(string userNickName)
 	{
+		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername) return AccessLevel.Streamer;
+
 		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName)) return AccessLevel.Streamer;
 
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
