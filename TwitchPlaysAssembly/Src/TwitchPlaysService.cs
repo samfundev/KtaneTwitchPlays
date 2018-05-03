@@ -98,36 +98,51 @@ public class TwitchPlaysService : MonoBehaviour
 		if (Input.GetKeyDown(debugSequence[debugSequenceIndex].ToString()))
 		{
 			debugSequenceIndex++;
-			if (debugSequenceIndex == debugSequence.Length)
-			{
-				debugEnabled = !debugEnabled;
-				debugSequenceIndex = 0;
-			}
+			if (debugSequenceIndex != debugSequence.Length) return;
+
+			TwitchPlaySettings.data.TwitchPlaysDebugEnabled = !TwitchPlaySettings.data.TwitchPlaysDebugEnabled;
+			TwitchPlaySettings.WriteDataToFile();
+
+			debugSequenceIndex = 0;
+			UserAccess.AddUser("_TPDEBUG".ToLowerInvariant(), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
+			UserAccess.WriteAccessList();
 		}
-		else if (Input.anyKeyDown) debugSequenceIndex = 0;
+		else if (Input.anyKeyDown)
+		{
+			debugSequenceIndex = 0;
+		}
 	}
 
 	// Allow users to send commands from ingame. Toggle the UI by typing "tpdebug".
 	private string debugSequence = "tpdebug";
 	private int debugSequenceIndex = 0;
-	private bool debugEnabled = false;
 	private string inputCommand;
 
 	private void OnGUI()
 	{
-		if (debugEnabled)
+		if (!TwitchPlaySettings.data.TwitchPlaysDebugEnabled) return;
+
+		GUILayout.BeginArea(new Rect(50, Screen.height - 75, (Screen.width - 50)*0.2f, 25));
+		GUILayout.BeginHorizontal();
+		inputCommand = GUILayout.TextField(inputCommand, GUILayout.MinWidth(50));
+		if ((GUILayout.Button("Send") || Event.current.keyCode == KeyCode.Return) && inputCommand.Length != 0)
 		{
-			GUILayout.BeginArea(new Rect(25, Screen.height - 50, (Screen.width - 50)*0.2f, 25));
-			GUILayout.BeginHorizontal();
-			inputCommand = GUILayout.TextField(inputCommand, GUILayout.MinWidth(50));
-			if ((GUILayout.Button("Send") || Event.current.keyCode == KeyCode.Return) && inputCommand.Length != 0)
+			if (inputCommand.Equals(debugSequence))
 			{
-				IRCConnection.Instance.OnMessageReceived.Invoke("_TPDEBUG", null, inputCommand);
+				TwitchPlaySettings.data.TwitchPlaysDebugEnabled = !TwitchPlaySettings.data.TwitchPlaysDebugEnabled;
+				TwitchPlaySettings.WriteDataToFile();
 				inputCommand = "";
+				GUILayout.EndHorizontal();
+				GUILayout.EndArea();
+				return;
 			}
-			GUILayout.EndHorizontal();
-			GUILayout.EndArea();
+			IRCConnection.Instance.SetDebugUsername();
+			IRCConnection.Instance.SendMessage(inputCommand);
+			IRCConnection.Instance.OnMessageReceived.Invoke(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand);
+			inputCommand = "";
 		}
+		GUILayout.EndHorizontal();
+		GUILayout.EndArea();
 	}
 
 	private void OnStateChange(KMGameInfo.State state)
