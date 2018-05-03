@@ -15,10 +15,7 @@ public class AntiTrollShim : ComponentSolverShim
 	{
 		_trollCommands = new Dictionary<string, string>();
 		foreach (string command in commands)
-		{
-			if (_trollCommands.ContainsKey(command.ToLowerInvariant().Trim().Replace(" ", ""))) continue;
-			_trollCommands[command] = response;
-		}
+			_trollCommands[command.ToLowerInvariant().Trim().Replace(" ", "")] = response;
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
