@@ -867,7 +867,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.Instance.SendMessage("The moderators command has been disabled.");
 				return;
 			}
-			KeyValuePair<string, AccessLevel>[] moderators = UserAccess.GetUsers().Where(x => !string.IsNullOrEmpty(x.Key) && x.Key != "_usernickname1" && x.Key != "_usernickname2").ToArray();
+			KeyValuePair<string, AccessLevel>[] moderators = UserAccess.GetUsers().Where(x => !string.IsNullOrEmpty(x.Key) && x.Key != "_usernickname1" && x.Key != "_usernickname2" && x.Key != TwitchPlaySettings.data.TwitchPlaysDebugUsername).ToArray();
 			string finalmessage = "Current moderators: ";
 
 			string[] streamers = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Streamer).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
@@ -1246,8 +1246,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 		if (text.RegexMatch(out Match sayasMatch, @"^(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)"))
 		{
 			//Do not allow issuing commands as someone with higher access levels than yourself.
-			if (UserAccess.HighestAccessLevel(userNickName) < UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value)) return;
-			IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
+			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value))
+				IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 		}
 		if (!UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
 		if (text.Equals("secondary camera"))
