@@ -361,10 +361,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					else
 					{
-						Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
-						Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
-						Leaderboard.Instance.AddStrike(trimmeduser, -entry.StrikeCount);
-						IRCConnection.Instance.SendMessage("User {0} has been reset", user);
+						if (entry.SolveScore == 0 && entry.SolveCount == 0 && entry.StrikeCount == 0)
+						{
+							IRCConnection.Instance.SendMessage("User {0} has already been reset", user);
+						} else
+						{
+							Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
+							Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
+							Leaderboard.Instance.AddStrike(trimmeduser, -entry.StrikeCount);
+							IRCConnection.Instance.SendMessage("User {0} has been reset", user);
+						}
 					}
 				}
 			}
