@@ -242,6 +242,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["MarbleTumbleModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20 };
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad", moduleScore = 8, DoesTheRightThing = true };
