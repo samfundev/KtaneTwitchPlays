@@ -24,7 +24,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private KMGameInfo GameInfo;
 	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
 	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
-	private bool RankCommand = true;
 
 	private void Start()
 	{
@@ -297,54 +296,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
 		}
-		else if (text.Equals("disablerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablerank", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = false;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("enablerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablerank", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = true;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
-		else if (text.Equals("togglerankcommand", StringComparison.InvariantCultureIgnoreCase) || text.Equals("togglerank", StringComparison.InvariantCultureIgnoreCase))
-		{
-			if (!IsAuthorizedDefuser(userNickName)) return;
-
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-			{
-				if (TwitchPlaySettings.data.EnableRankCommand)
-				{
-					RankCommand = !RankCommand;
-				}
-				else
-				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, but the rank command has been globally disabled in the settings", userNickName);
-				}
-			}
-		}
 		else if (text.RegexMatch(out match, "^resetusers? (.+)"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
@@ -377,7 +328,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.StartsWith("rank", StringComparison.InvariantCultureIgnoreCase))
 		{
-			if (TwitchPlaySettings.data.EnableRankCommand && RankCommand)
+			if (TwitchPlaySettings.data.EnableRankCommand)
 			{
 				Leaderboard.LeaderboardEntry entry = null;
 				if (split.Length > 1)
