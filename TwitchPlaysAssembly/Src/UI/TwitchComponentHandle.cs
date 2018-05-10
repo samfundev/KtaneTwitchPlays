@@ -472,9 +472,9 @@ public class TwitchComponentHandle : MonoBehaviour
 	public static List<string> ClaimedList = new List<string>();
 
 	#region Message Interface
-	public IEnumerator OnMessageReceived(string userNickName, string userColor, string internalCommand)
+	public IEnumerator OnMessageReceived(string userNickName, string userColor, string unprocessedCommand)
 	{
-		internalCommand = internalCommand.ToLower().Trim();
+		string internalCommand = unprocessedCommand.ToLower().Trim();
 		string messageOut = null;
 		if ((internalCommand.StartsWith("manual", StringComparison.InvariantCultureIgnoreCase)) || (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase)))
 		{
@@ -571,7 +571,7 @@ public class TwitchComponentHandle : MonoBehaviour
 						{
 							ClaimedList.Remove(PlayerName);
 						}
-						string newplayerName = internalCommand.Remove(0, 7).Trim();
+						string newplayerName = unprocessedCommand.Remove(0, 7).Trim();
 						PlayerName = newplayerName;
 						ClaimedList.Add(PlayerName);
 						RemoveFromClaimQueue(userNickName);
