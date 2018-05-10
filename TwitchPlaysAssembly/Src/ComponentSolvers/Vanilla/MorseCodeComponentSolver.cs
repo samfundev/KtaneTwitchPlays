@@ -10,13 +10,13 @@ public class MorseCodeComponentSolver : ComponentSolver
 		_upButton = bombComponent.UpButton;
 		_downButton = bombComponent.DownButton;
 		_transmitButton = bombComponent.TransmitButton;
-		modInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver", "!{0} transmit 3.573, !{0} trans 573, !{0} tx 573 [transmit frequency 3.573]");
+		modInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver", "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
-		if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)$") || !int.TryParse(match.Groups[1].Value, out int targetFrequency))
+		if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)( mhz)?$") || !int.TryParse(match.Groups[1].Value, out int targetFrequency))
 		{
 			yield break;
 		}
