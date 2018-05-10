@@ -212,7 +212,7 @@ public static class ComponentSolverFactory
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 12, manualCode = "Game%20of%20Life" };
+		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 15, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
@@ -326,7 +326,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
 		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 4 };
-		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 15 };
+		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 20 };
 		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
