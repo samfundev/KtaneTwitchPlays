@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class InterruptMusic : MonoBehaviour
 {
-	public static InterruptMusic Instance => _instance;
+	public static InterruptMusic Instance { get; private set; } = null;
 
-	private static InterruptMusic _instance = null;
 	private static FieldInfo _volumeLevelGameplayField = null;
 	private Dictionary<int, float> _oldVolumesGameplay = new Dictionary<int, float>();
 	private static FieldInfo _volumeLevelOtherField = null;
@@ -20,7 +19,7 @@ public class InterruptMusic : MonoBehaviour
 
 	private void Awake()
 	{
-		_instance = this;
+		Instance = this;
 	}
 
 	public void SetMusicInterrupt(bool enableInterrupt)

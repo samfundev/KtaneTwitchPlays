@@ -51,5 +51,5 @@ public class CrazyTalkComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _toggleField = null;
 
-	private MonoBehaviour _toggle = null;
+	private readonly MonoBehaviour _toggle = null;
 }

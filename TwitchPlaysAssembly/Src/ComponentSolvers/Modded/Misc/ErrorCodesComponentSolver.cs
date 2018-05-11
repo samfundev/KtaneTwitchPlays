@@ -48,7 +48,7 @@ public class ErrorCodesComponentSolver : ComponentSolver
 	private static FieldInfo _buttonsField = null;
 	private static FieldInfo _sendField = null;
 
-	private object _component = null;
-	private KMSelectable[] _buttons = null;
-	private KMSelectable submit = null;
+	private readonly object _component = null;
+	private readonly KMSelectable[] _buttons = null;
+	private readonly KMSelectable submit = null;
 }

@@ -61,5 +61,5 @@ public class ColorMorseComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsField = null;
 
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons = null;
 }

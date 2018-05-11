@@ -84,7 +84,7 @@ public class Leaderboard
 				{
 					return 0;
 				}
-				return ((float) RecordSoloTime) / Leaderboard.RequiredSoloSolves;
+				return RecordSoloTime / RequiredSoloSolves;
 			}
 		}
 

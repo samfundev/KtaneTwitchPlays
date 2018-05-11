@@ -491,7 +491,7 @@ public class BombCommander : ICommandResponder
 		StrikeSource strikeSource = new StrikeSource
 		{
 			ComponentType = Assets.Scripts.Missions.ComponentTypeEnum.Mod,
-			InteractionType = Assets.Scripts.Records.InteractionTypeEnum.Other,
+			InteractionType = InteractionTypeEnum.Other,
 			Time = CurrentTimerElapsed,
 			ComponentName = reason
 		};
@@ -629,7 +629,7 @@ public class BombCommander : ICommandResponder
 		get => Bomb.NumStrikes;
 		set
 		{
-			if (value < 0) value = 0;   //Simon says is unsolvable with less than zero strikes.
+			if (value < 0) value = 0; //Simon says is unsolvable with less than zero strikes.
 			Bomb.NumStrikes = value;
 			HandleStrikeChanges();
 		}

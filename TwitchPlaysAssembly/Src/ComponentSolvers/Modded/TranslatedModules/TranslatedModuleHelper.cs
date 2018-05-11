@@ -60,7 +60,7 @@ public static class TranslatedModuleHelper
 		try
 		{
 			if (bombComponent == null || bombComponent.GetComponent<KMModSettings>() == null || !InitialializeSettings()) return " (Unknown)";
-			string[] languages = (string[])_getAllCurrentLanguagesMethod.Invoke(null, new object[] { bombComponent.GetComponent<KMModSettings>(), (TextAsset)null });
+			string[] languages = (string[])_getAllCurrentLanguagesMethod.Invoke(null, new object[] { bombComponent.GetComponent<KMModSettings>(), null });
 			if (languages == null || languages.Length == 0 || languages[0].Length == 0 || !DisplayNameAddons.TryGetValue(languages[0].ToLowerInvariant(), out string addon)) return " (Unknown)";
 			return addon;
 		}
@@ -76,7 +76,7 @@ public static class TranslatedModuleHelper
 		try
 		{
 			if (bombComponent == null || bombComponent.GetComponent<KMModSettings>() == null || !InitialializeSettings()) return "";
-			string[] languages = (string[]) _getAllCurrentLanguagesMethod.Invoke(null, new object[] {bombComponent.GetComponent<KMModSettings>(), (TextAsset) null});
+			string[] languages = (string[]) _getAllCurrentLanguagesMethod.Invoke(null, new object[] {bombComponent.GetComponent<KMModSettings>(), null });
 			if (languages == null || languages.Length == 0 || languages[0].Length == 0 || !ManualCodeAddons.TryGetValue(languages[0].ToLowerInvariant(), out string addon)) return "";
 			return addon;
 		}

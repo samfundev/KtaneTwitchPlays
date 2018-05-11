@@ -61,5 +61,5 @@ public class MemoryComponentSolver : ComponentSolver
 		}
 	}
 
-	private KeypadButton[] _buttons = null;
+	private readonly KeypadButton[] _buttons = null;
 }

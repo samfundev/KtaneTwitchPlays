@@ -40,5 +40,5 @@ public class LetteredKeysComponentSolver : ComponentSolver
 		}
 	}
 
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons = null;
 }

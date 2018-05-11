@@ -101,6 +101,6 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	private static FieldInfo _buttonField = null;
 	private static FieldInfo _selectedField = null;
 
-	private KMSelectable _button = null;
+	private readonly KMSelectable _button = null;
 	private bool _held = false;
 }

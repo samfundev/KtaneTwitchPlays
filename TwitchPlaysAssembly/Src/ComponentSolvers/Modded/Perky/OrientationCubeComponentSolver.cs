@@ -49,7 +49,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 				case "set": case "submit":buttons.Add(_submit); interaction.Add("submit"); break;
 
 				default: yield break;
-			}   //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
+			} //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.
 		}
 
 		yield return "Orientation Cube Solve Attempt";
@@ -87,10 +87,10 @@ public class OrientationCubeComponentSolver : ComponentSolver
 	private bool first = true;
 	private float originalAngle;*/
 
-	private MonoBehaviour _submit = null;
-	private MonoBehaviour _left = null;
-	private MonoBehaviour _right = null;
-	private MonoBehaviour _ccw = null;
-	private MonoBehaviour _cw = null;
+	private readonly MonoBehaviour _submit = null;
+	private readonly MonoBehaviour _left = null;
+	private readonly MonoBehaviour _right = null;
+	private readonly MonoBehaviour _ccw = null;
+	private readonly MonoBehaviour _cw = null;
 	//private float virtualAngleEmulator;
 }

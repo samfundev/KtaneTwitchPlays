@@ -81,7 +81,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
-	int GetMaximumModules(int maxAllowed=int.MaxValue)
+	int GetMaximumModules(int maxAllowed = int.MaxValue)
 	{
 		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(), maxAllowed);
 	}

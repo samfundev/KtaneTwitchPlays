@@ -16,7 +16,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
-		if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)( mhz)?$") || !int.TryParse(match.Groups[1].Value, out int targetFrequency))
+		if (!inputCommand.RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)( ?mhz)?$") || !int.TryParse(match.Groups[1].Value, out int targetFrequency))
 		{
 			yield break;
 		}
@@ -55,7 +55,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 
-	private KeypadButton _upButton = null;
-	private KeypadButton _downButton = null;
-	private KeypadButton _transmitButton = null;
+	private readonly KeypadButton _upButton = null;
+	private readonly KeypadButton _downButton = null;
+	private readonly KeypadButton _transmitButton = null;
 }

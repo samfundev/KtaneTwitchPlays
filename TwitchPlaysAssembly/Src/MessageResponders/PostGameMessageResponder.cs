@@ -12,7 +12,7 @@ public class PostGameMessageResponder : MessageResponder
 	{
 		StartCoroutine(CheckForResultsPage());
 
-		_leaderboardDisplay = Instantiate<TwitchLeaderboard>(twitchLeaderboardPrefab);
+		_leaderboardDisplay = Instantiate(twitchLeaderboardPrefab);
 
 		Leaderboard.Instance.SaveDataToFile();
 	}

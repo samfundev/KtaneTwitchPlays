@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 static class ProfileHelper
 {
-	static string modSelectorConfig = Path.Combine(Application.persistentDataPath, "modSelectorConfig.json");
+	static readonly string modSelectorConfig = Path.Combine(Application.persistentDataPath, "modSelectorConfig.json");
 
 	public static List<string> Profiles
 	{

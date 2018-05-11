@@ -147,7 +147,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 	private static FieldInfo _wireSequenceField = null;
 	private static FieldInfo _currentPageField = null;
 
-	private List<WireSequenceComponent.WireConfiguration> _wireSequence = null;
-	private Selectable _upButton = null;
-	private Selectable _downButton = null;
+	private readonly List<WireSequenceComponent.WireConfiguration> _wireSequence = null;
+	private readonly Selectable _upButton = null;
+	private readonly Selectable _downButton = null;
 }

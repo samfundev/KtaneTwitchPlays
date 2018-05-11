@@ -55,7 +55,7 @@ public class ThirdBaseComponentSolver : ComponentSolver
 	private static FieldInfo _buttonsField = null;
 	private static FieldInfo _phraseField = null;
 
-	private object _component = null;
+	private readonly object _component = null;
 	private KMSelectable[] _buttons = null;
 	private string[] _phrase = null;
 }

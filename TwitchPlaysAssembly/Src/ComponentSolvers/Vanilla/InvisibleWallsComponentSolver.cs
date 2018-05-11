@@ -97,5 +97,5 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[_mazeStack.Pop()]);
 	}
 
-	private List<KeypadButton> _buttons = null;
+	private readonly List<KeypadButton> _buttons = null;
 }

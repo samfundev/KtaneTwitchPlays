@@ -54,6 +54,6 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 	private static FieldInfo _yesButtonField = null;
 	private static FieldInfo _noButtonField = null;
 
-	private MonoBehaviour _yesButton = null;
-	private MonoBehaviour _noButton = null;
+	private readonly MonoBehaviour _yesButton = null;
+	private readonly MonoBehaviour _noButton = null;
 }

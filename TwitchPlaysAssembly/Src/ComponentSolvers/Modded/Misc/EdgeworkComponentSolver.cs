@@ -71,6 +71,6 @@ public class EdgeworkComponentSolver : ComponentSolver
 	private static FieldInfo _buttonsField = null;
 	private static FieldInfo _canPressButtonsField = null;
 
-	private KMSelectable[] _buttons = null;
-	private object _component = null;
+	private readonly KMSelectable[] _buttons = null;
+	private readonly object _component = null;
 }

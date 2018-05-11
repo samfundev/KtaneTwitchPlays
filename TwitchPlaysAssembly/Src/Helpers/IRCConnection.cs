@@ -60,7 +60,7 @@ public class IRCConnection : MonoBehaviour
 
 		private static Dictionary<string, string> UserColors = new Dictionary<string, string>
 		{
-			{ "Blue".ToLowerInvariant(),      "#0000FF" },
+			{"Blue".ToLowerInvariant(),       "#0000FF" },
 			{"BlueViolet".ToLowerInvariant(), "#8A2BE2" },
 			{"CadetBlue".ToLowerInvariant(),  "#5F9EA0" },
 			{"Chocolate".ToLowerInvariant(),  "#D2691E" },
@@ -793,7 +793,7 @@ public class IRCConnection : MonoBehaviour
 		new ActionMap(@".+", delegate(GroupCollection groups)
 		{
 			AddTextToHoldable(groups[0].Value);
-		}, false)  //Log otherwise uncaptured lines.
+		}, false) //Log otherwise uncaptured lines.
 	};
 	public static bool CommandsEnabled = true;
 	#endregion

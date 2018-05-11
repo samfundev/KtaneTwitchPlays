@@ -70,10 +70,10 @@ public class ChordQualitiesComponentSolver : ComponentSolver
 	private static FieldInfo _submitButtonField = null;
 	private static FieldInfo _positionField = null;
 
-	private static string[] noteIndexes = { "a", "a#", "b", "c", "c#", "d", "d#", "e", "f", "f#", "g", "g#" };
+	private static readonly string[] noteIndexes = { "a", "a#", "b", "c", "c#", "d", "d#", "e", "f", "f#", "g", "g#" };
 	private int currentPosition = 0;
 
-	private KMSelectable _wheelButton = null;
-	private KMSelectable _selectButton = null;
-	private KMSelectable _submitButton = null;
+	private readonly KMSelectable _wheelButton = null;
+	private readonly KMSelectable _selectButton = null;
+	private readonly KMSelectable _submitButton = null;
 }

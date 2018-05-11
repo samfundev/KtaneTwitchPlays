@@ -290,7 +290,7 @@ public class ElevatorGameRoom : GameRoom
 		Dropped
 	}
 
-	private Vector3[] ElevatorCameraRotations =
+	private readonly Vector3[] ElevatorCameraRotations =
 	{
 		new Vector3(0, -90, 0),
 		Vector3.zero,
@@ -299,7 +299,7 @@ public class ElevatorGameRoom : GameRoom
 		new Vector3(26.39f, 0, 0)
 	};
 
-	private Vector3[] ElevatorEdgeworkCameraRotations =
+	private readonly Vector3[] ElevatorEdgeworkCameraRotations =
 	{
 		new Vector3(20, -90, 0),
 		new Vector3(20, 0, 0),
@@ -307,7 +307,7 @@ public class ElevatorGameRoom : GameRoom
 		new Vector3(26.39f, 0, 0)
 	};
 
-	private Vector3[] ElevatorCameraPositions =
+	private readonly Vector3[] ElevatorCameraPositions =
 	{
 		new Vector3(0.625f, 0.125f, 1.425f),
 		new Vector3(-0.125f, 0.125f, 0.8f),
@@ -315,7 +315,7 @@ public class ElevatorGameRoom : GameRoom
 		Vector3.zero
 	};
 
-	private Vector3[] ElevatorEdgeworkCameraPositions =
+	private readonly Vector3[] ElevatorEdgeworkCameraPositions =
 	{
 		new Vector3(0.625f, 0.125f, 1.425f),
 		new Vector3(-0.125f, 0.125f, 0.8f),

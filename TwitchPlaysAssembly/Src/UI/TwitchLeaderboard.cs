@@ -35,16 +35,16 @@ public class TwitchLeaderboard : MonoBehaviour
 		if (!TwitchPlaySettings.data.EnableRunCommand)
 			runTransform.gameObject.SetActive(false);
 
-		statsTable = Instantiate<TwitchLeaderboardStats>(twitchLeaderboardStatsPrefab);
+		statsTable = Instantiate(twitchLeaderboardStatsPrefab);
 		
 		if (Leaderboard.Instance.Count > 0)
 		{
-			mainTable = Instantiate<TwitchLeaderboardTable>(twitchLeaderboardTablePrefab);
+			mainTable = Instantiate(twitchLeaderboardTablePrefab);
 		}
 
 		if (Leaderboard.Instance.SoloCount > 0)
 		{
-			soloTable = Instantiate<TwitchLeaderboardTableSolo>(twitchLeaderboardTableSoloPrefab);
+			soloTable = Instantiate(twitchLeaderboardTableSoloPrefab);
 			leftMaskTransform.gameObject.SetActive(true);
 
 			bool prioritiseSolo = (Leaderboard.Instance.SoloSolver != null);

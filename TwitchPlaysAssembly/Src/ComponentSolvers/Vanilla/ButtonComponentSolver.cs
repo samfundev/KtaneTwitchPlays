@@ -225,6 +225,6 @@ public class ButtonComponentSolver : ComponentSolver
 		ruleset.RuleList.RemoveAt(0);
 	}
 
-	private PressableButton _button = null;
+	private readonly PressableButton _button = null;
 	private bool _held = false;
 }

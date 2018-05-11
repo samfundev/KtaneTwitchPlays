@@ -370,7 +370,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["visual_impairment"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["wastemanagement"] = new ModuleInformation { moduleScore = 15 };
 		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject." };
-		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, moduleDisplayName = "X01 Darts", manualCode = "X01" };
+		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, moduleDisplayName = "X01", manualCode = "X01" };
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
 		{

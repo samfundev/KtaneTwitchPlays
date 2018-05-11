@@ -59,6 +59,6 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsField = null;
 
-	private object _component = null;
+	private readonly object _component = null;
 	private KMSelectable[] _buttons = null;
 }

@@ -12,7 +12,7 @@ public class CurriculumComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the buttons !{0} cycle. Toggle all the classes with !{0} toggle. Toggle multiple classes with !{0} toggle 1 3 4. Click a button using !{0} click 2. It's possible to add a number of times to click: !{0} click 2 3. Buttons are numbered left to right. Submit your answer with !{0} submit.");
 	}
 
-	int[] buttonOffset = new int[6] { 0, 0, 0, 0, 0, 0 };
+	readonly int[] buttonOffset = new int[6] { 0, 0, 0, 0, 0, 0 };
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -116,5 +116,5 @@ public class CurriculumComponentSolver : ComponentSolver
 		}
 	}
 
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons = null;
 }

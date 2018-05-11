@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -125,10 +124,10 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _leftKeyField = null;
 	private static FieldInfo _rightKeyField = null;
-	private static FieldInfo _activatedField = null;
+	private static readonly FieldInfo _activatedField = null;
 	private static FieldInfo _beforeLeftKeyField = null;
 	private static FieldInfo _beforeRightKeyField = null;
-	private static FieldInfo _afterLeftKeyField = null;
+	private static readonly FieldInfo _afterLeftKeyField = null;
 	private static FieldInfo _leftKeyTurnedField = null;
 	private static FieldInfo _rightKeyTurnedField = null;
 	private static FieldInfo _rightKeyAnimatorField = null;
@@ -137,8 +136,8 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	private static MethodInfo _onLeftKeyTurnMethod = null;
 	private static MethodInfo _onRightKeyTurnMethod = null;
 
-	private MonoBehaviour _leftKey = null;
-	private MonoBehaviour _rightKey = null;
+	private readonly MonoBehaviour _leftKey = null;
+	private readonly MonoBehaviour _rightKey = null;
 
 	private static string[] LeftAfterA = new string[]
 	{

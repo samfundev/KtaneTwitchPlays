@@ -27,7 +27,7 @@ public class TwitchLeaderboardTable : MonoBehaviour
 
 		foreach (Leaderboard.LeaderboardEntry entry in Leaderboard.Instance.GetSortedEntriesIncluding(Leaderboard.Instance.CurrentSolvers.Keys, maximumRowCount))
 		{
-			TwitchLeaderboardRow row = Instantiate<TwitchLeaderboardRow>(index < specialRows.Length ? specialRows[index] : normalRow);
+			TwitchLeaderboardRow row = Instantiate(index < specialRows.Length ? specialRows[index] : normalRow);
 
 			row.position = entry.Rank;
 			row.leaderboardEntry = entry;

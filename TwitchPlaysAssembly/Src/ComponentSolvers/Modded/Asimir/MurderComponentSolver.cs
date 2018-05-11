@@ -176,9 +176,9 @@ public class MurderComponentSolver : ComponentSolver
 	private static readonly string[][] NameSpellings = new string[3][] { People, Weapons, Rooms };
 	private static readonly string[] NameMisspelled = new string[3] {"Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}."};
 
-	private object _component = null;
-	private KMSelectable[] _buttons = null;
-	private TextMesh[] _display = null;
+	private readonly object _component = null;
+	private readonly KMSelectable[] _buttons = null;
+	private readonly TextMesh[] _display = null;
 
 	private int[] _displayValue => (int[])_displayValueField.GetValue(_component);
 	private int[] _solutionValue => (int[])_solutionValueField.GetValue(_component);

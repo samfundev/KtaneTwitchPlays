@@ -64,7 +64,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _indexField = null;
 	
-	private Component _englishTestCompoent;
-	private KMSelectable selectButton;
-	private KMSelectable submitButton;
+	private readonly Component _englishTestCompoent;
+	private readonly KMSelectable selectButton;
+	private readonly KMSelectable submitButton;
 }

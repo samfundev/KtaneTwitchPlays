@@ -66,9 +66,9 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 	private static FieldInfo _buttonOKField = null;
 	private static FieldInfo _buttonUpField = null;
 
-	private static string[] _colors = { "white", "red", "yellow", "magenta", "blue", "green" };
+	private static readonly string[] _colors = { "white", "red", "yellow", "magenta", "blue", "green" };
 	private int currentIndex = 0;
 
-	private KMSelectable _buttonOK = null;
-	private KMSelectable _buttonUp = null;
+	private readonly KMSelectable _buttonOK = null;
+	private readonly KMSelectable _buttonUp = null;
 }

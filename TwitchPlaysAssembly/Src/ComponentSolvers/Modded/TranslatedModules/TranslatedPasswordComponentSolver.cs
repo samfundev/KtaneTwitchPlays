@@ -123,7 +123,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	private static FieldInfo _submitButtonField = null;
 	private static FieldInfo _downButtonField = null;
 
-	private MonoBehaviour _submitButton = null;
+	private readonly MonoBehaviour _submitButton = null;
 	private KMSelectable[] _downButtons = null;
-	private TextMesh[] _display = null;
+	private readonly TextMesh[] _display = null;
 }
