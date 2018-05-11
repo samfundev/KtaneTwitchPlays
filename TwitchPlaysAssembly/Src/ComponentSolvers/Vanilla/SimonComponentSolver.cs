@@ -58,5 +58,5 @@ public class SimonComponentSolver : ComponentSolver
 		{"r", 0}, {"b", 1}, {"g", 2}, {"y", 3}
 	};
 
-	private SimonButton[] _buttons = null;
+	private readonly SimonButton[] _buttons = null;
 }

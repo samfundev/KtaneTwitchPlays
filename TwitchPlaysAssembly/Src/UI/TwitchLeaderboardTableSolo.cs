@@ -35,7 +35,7 @@ public class TwitchLeaderboardTableSolo : MonoBehaviour
 
 		foreach (Leaderboard.LeaderboardEntry entry in entries)
 		{
-			TwitchLeaderboardSoloRow row = Instantiate<TwitchLeaderboardSoloRow>(index < specialRows.Length ? specialRows[index] : normalRow);
+			TwitchLeaderboardSoloRow row = Instantiate(index < specialRows.Length ? specialRows[index] : normalRow);
 
 			row.position = entry.SoloRank;
 			row.leaderboardEntry = entry;

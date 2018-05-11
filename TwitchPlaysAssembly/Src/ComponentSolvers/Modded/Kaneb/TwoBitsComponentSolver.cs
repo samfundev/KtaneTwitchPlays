@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TwoBitsComponentSolver : ComponentSolver
 {
-	private Component c;
+	private readonly Component c;
 
 	protected enum TwoBitsState
 	{
@@ -123,8 +123,8 @@ public class TwoBitsComponentSolver : ComponentSolver
 	private static MethodInfo _getCurrentQueryStringMethod = null;
 	private static FieldInfo _stateField = null;
 
-	private MonoBehaviour[] _buttons = null;
-	private MonoBehaviour _query = null;
-	private MonoBehaviour _submit = null;
+	private readonly MonoBehaviour[] _buttons = null;
+	private readonly MonoBehaviour _query = null;
+	private readonly MonoBehaviour _submit = null;
 	
 }

@@ -97,7 +97,7 @@ public class ResistorsComponentSolver : ComponentSolver
 	private static FieldInfo _checkButtonField = null;
 	private static FieldInfo _clearButtonField = null;
 
-	private KMSelectable[] _pins = null;
-	private KMSelectable _checkButton = null;
-	private KMSelectable _clearButton = null;
+	private readonly KMSelectable[] _pins = null;
+	private readonly KMSelectable _checkButton = null;
+	private readonly KMSelectable _clearButton = null;
 }

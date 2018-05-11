@@ -102,7 +102,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 	private static FieldInfo _displayRField = null;
 	private static FieldInfo _isActivatedField = null;
 
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons = null;
 	private int _displayL;
 	private int _displayR;
 	private int initialL;

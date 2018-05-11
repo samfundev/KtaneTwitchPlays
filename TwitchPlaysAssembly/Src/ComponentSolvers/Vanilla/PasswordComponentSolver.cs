@@ -101,5 +101,5 @@ public class PasswordComponentSolver : ComponentSolver
 	}
 
 	private List<CharSpinner> _spinners = null;
-	private KeypadButton _submitButton = null;
+	private readonly KeypadButton _submitButton = null;
 }

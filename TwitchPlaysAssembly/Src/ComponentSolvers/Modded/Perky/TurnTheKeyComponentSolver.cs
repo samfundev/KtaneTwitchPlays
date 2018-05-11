@@ -233,5 +233,5 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	private static List<int> _keyTurnTimes = null;
 	private static string _previousSerialNumber = null;
 
-	private MonoBehaviour _lock = null;
+	private readonly MonoBehaviour _lock = null;
 }

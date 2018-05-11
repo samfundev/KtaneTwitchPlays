@@ -23,7 +23,7 @@ public class BombMessageResponder : MessageResponder
 	private Dictionary<int, string> _notesDictionary = new Dictionary<int, string>();
 
 #pragma warning disable 169
-	private AlarmClock alarmClock;
+	private readonly AlarmClock alarmClock;
 #pragma warning restore 169
 
 	public static ModuleCameras moduleCameras = null;
@@ -301,7 +301,7 @@ public class BombMessageResponder : MessageResponder
 
 		try
 		{
-			moduleCameras = Instantiate<ModuleCameras>(moduleCamerasPrefab);
+			moduleCameras = Instantiate(moduleCamerasPrefab);
 		}
 		catch (Exception ex)
 		{
@@ -497,7 +497,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("snooze", StringComparison.InvariantCultureIgnoreCase))
 			{
-				if (GameRoom.Instance is ElevatorGameRoom) return;  //There is no alarm clock in the elevator room.
+				if (GameRoom.Instance is ElevatorGameRoom) return; //There is no alarm clock in the elevator room.
 				DropCurrentBomb();
 				_coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze"));
 				return;
@@ -967,7 +967,7 @@ public class BombMessageResponder : MessageResponder
 			if (!bombCommander.SolvedModules.ContainsKey(moduleName))
 				bombCommander.SolvedModules[moduleName] = new List<TwitchComponentHandle>();
 
-			TwitchComponentHandle handle = Instantiate<TwitchComponentHandle>(twitchComponentHandlePrefab, bombComponent.transform, false);
+			TwitchComponentHandle handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
 			handle.bombCommander = bombCommander;
 			handle.bombComponent = bombComponent;
 			handle.componentType = componentType;

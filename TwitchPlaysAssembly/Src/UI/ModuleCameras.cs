@@ -245,9 +245,9 @@ public class ModuleCameras : MonoBehaviour
 	#region Private Fields
 	private ModuleCamerasData _data = null;
 	private Dictionary<BombComponent, ModuleItem> moduleItems = new Dictionary<BombComponent, ModuleItem>();
-	private Stack<ModuleItem>[] stacks = new Stack<ModuleItem>[4];
+	private readonly Stack<ModuleItem>[] stacks = new Stack<ModuleItem>[4];
 	private Stack<ModuleItem> moduleStack = new Stack<ModuleItem>();
-	private Stack<ModuleItem> claimedModuleStack = new Stack<ModuleItem>();
+	private readonly Stack<ModuleItem> claimedModuleStack = new Stack<ModuleItem>();
 	private Stack<ModuleItem> priorityModuleStack = new Stack<ModuleItem>();
 	private Stack<ModuleItem> pinnedModuleStack = new Stack<ModuleItem>();
 	private List<ModuleCamera> cameras = new List<ModuleCamera>();
@@ -313,7 +313,7 @@ public class ModuleCameras : MonoBehaviour
 
 	private void InstantiateCamera(int layer)
 	{
-		Camera instantiatedCamera = Instantiate<Camera>(CameraPrefab);
+		Camera instantiatedCamera = Instantiate(CameraPrefab);
 		instantiatedCamera.rect = cameraLocations[layer];
 		instantiatedCamera.aspect = 1f;
 		instantiatedCamera.depth = 99;
@@ -676,7 +676,7 @@ public class ModuleCameras : MonoBehaviour
 	{
 		foreach (ModuleCamera camera in cameras)
 		{
-			if ((camera.module == null) || (!object.ReferenceEquals(camera.module.component, component))) continue;
+			if ((camera.module == null) || (!ReferenceEquals(camera.module.component, component))) continue;
 			if (delay)
 			{
 				yield return new WaitForSeconds(1.0f);
@@ -685,7 +685,7 @@ public class ModuleCameras : MonoBehaviour
 			// As long as the delay ends before the current move does, this won't be an issue for most modules
 			// But some modules with delayed solves would fall foul of it
 			if ((camera.module != null) &&
-				(object.ReferenceEquals(camera.module.component, component)))
+				(ReferenceEquals(camera.module.component, component)))
 			{
 				camera.Refresh();
 			}
@@ -733,7 +733,7 @@ public class ModuleCameras : MonoBehaviour
 		foreach (ModuleCamera camera in cameras)
 		{
 			if ( (camera.module != null) &&
-				(object.ReferenceEquals(camera.module.component, component)) )
+				(ReferenceEquals(camera.module.component, component)) )
 			{
 				return i;
 			}

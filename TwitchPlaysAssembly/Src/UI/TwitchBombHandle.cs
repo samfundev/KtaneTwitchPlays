@@ -105,7 +105,7 @@ public class TwitchBombHandle : MonoBehaviour
 
 		internalCommand = match.Groups[1].Value;
 
-		TwitchMessage message = Instantiate<TwitchMessage>(messagePrefab, messageScrollContents.transform, false);
+		TwitchMessage message = Instantiate(messagePrefab, messageScrollContents.transform, false);
 		message.SetMessage(string.IsNullOrEmpty(userColor) 
 			? string.Format("<b>{0}</b>: {1}", userNickName, internalCommand) 
 			: string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, userColor));
@@ -228,7 +228,7 @@ public class TwitchBombHandle : MonoBehaviour
 							}
 							else if (!direct && (bombCommander.StrikeCount + strikes) < 0)
 							{
-								strikes = -bombCommander.StrikeCount;   //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
+								strikes = -bombCommander.StrikeCount; //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
 							}
 
 							if (direct)
@@ -308,8 +308,6 @@ public class TwitchBombHandle : MonoBehaviour
 	{
 		StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
 	}
-	
-	
 	#endregion
 
 	#region Private Methods

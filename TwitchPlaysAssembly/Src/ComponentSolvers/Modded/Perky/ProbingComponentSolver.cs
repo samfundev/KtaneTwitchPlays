@@ -30,7 +30,7 @@ public class ProbingComponentSolver : ComponentSolver
 				yield return new WaitForSecondsWithCancel(2.0f, false);
 				if (CoroutineCanceller.ShouldCancel) break;
 			}
-			yield return ConnectWires(4, 4);  //Leave the blue wire disconnected.
+			yield return ConnectWires(4, 4); //Leave the blue wire disconnected.
 			yield return "trycancel The probing cycle was cancelled";
 			yield break;
 		}
@@ -91,5 +91,5 @@ public class ProbingComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _wiresField = null;
 
-	private MonoBehaviour[] _wires = null;
+	private readonly MonoBehaviour[] _wires = null;
 }

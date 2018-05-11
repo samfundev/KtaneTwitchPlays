@@ -70,6 +70,6 @@ public class ListeningComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[button]);
 	}
 
-	private MonoBehaviour _play = null;
+	private readonly MonoBehaviour _play = null;
 	private MonoBehaviour[] _buttons = null;
 }

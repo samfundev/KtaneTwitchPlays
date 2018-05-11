@@ -28,5 +28,5 @@ public class NeedyDischargeComponentSolver : ComponentSolver
 		DoInteractionEnd(_dischargeButton);
 	}
 
-	private SpringedSwitch _dischargeButton = null;
+	private readonly SpringedSwitch _dischargeButton = null;
 }

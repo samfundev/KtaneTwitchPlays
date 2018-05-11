@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class Factory : GameRoom
 {
-	private bool _finiteMode = false;
-	private bool _infiniteMode = false;
-	private bool _zenMode = false;	//For future use.
+	private readonly bool _finiteMode = false;
+	private readonly bool _infiniteMode = false;
+	private readonly bool _zenMode = false;	//For future use.
 
 	public static Type FactoryType()
 	{
@@ -209,6 +209,6 @@ public class Factory : GameRoom
 	private static PropertyInfo _gameModeProperty = null;
 	private static FieldInfo _currentBombField = null;
 
-	private object _factory = null;
+	private readonly object _factory = null;
 	private object _gameroom = null;
 }

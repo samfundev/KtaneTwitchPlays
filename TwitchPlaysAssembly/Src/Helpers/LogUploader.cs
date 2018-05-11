@@ -49,7 +49,7 @@ public class LogUploader : MonoBehaviour
 		"(Filename:  Line: 21)"
 	};
 
-	private OrderedDictionary domainNames = new OrderedDictionary
+	private readonly OrderedDictionary domainNames = new OrderedDictionary
 	{
 		// In order of preference (favourite first)
 		// The integer value is the data size limit in bytes
@@ -59,7 +59,6 @@ public class LogUploader : MonoBehaviour
 	public void Awake()
 	{
 		Instance = this;
-		
 	}
 
 	public void OnEnable()

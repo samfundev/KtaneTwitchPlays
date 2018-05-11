@@ -98,8 +98,8 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 	private static FieldInfo _transmitButtonField = null;
 	private static FieldInfo _currentFrqIndexField = null;
 
-	private Component _component = null;
-	private MonoBehaviour _upButton = null;
-	private MonoBehaviour _downButton = null;
-	private MonoBehaviour _transmitButton = null;
+	private readonly Component _component = null;
+	private readonly MonoBehaviour _upButton = null;
+	private readonly MonoBehaviour _downButton = null;
+	private readonly MonoBehaviour _transmitButton = null;
 }

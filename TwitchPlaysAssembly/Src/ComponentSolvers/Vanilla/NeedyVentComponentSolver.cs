@@ -25,6 +25,6 @@ public class NeedyVentComponentSolver : ComponentSolver
 		}
 	}
 
-	private KeypadButton _yesButton = null;
-	private KeypadButton _noButton = null;
+	private readonly KeypadButton _yesButton = null;
+	private readonly KeypadButton _noButton = null;
 }

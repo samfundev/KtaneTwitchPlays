@@ -39,5 +39,5 @@ public class NeedyKnobComponentSolver : ComponentSolver
 		}
 	}
 
-	private PointingKnob _pointingKnob = null;
+	private readonly PointingKnob _pointingKnob = null;
 }

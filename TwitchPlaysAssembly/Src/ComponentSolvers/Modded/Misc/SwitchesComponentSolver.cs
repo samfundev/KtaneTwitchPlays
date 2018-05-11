@@ -45,5 +45,5 @@ public class SwitchesComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static MethodInfo _OnToggleMethod = null;
 
-	private object _component = null;
+	private readonly object _component = null;
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -585,7 +584,7 @@ public abstract class ComponentSolver
 						}
 						break;
 					default:
-						moduleScore = 5;
+						moduleScore = modInfo.moduleScore;
 						break;
 				}
 			}
