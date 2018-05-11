@@ -691,10 +691,11 @@ public class BombMessageResponder : MessageResponder
 
 				string[] queries = match.Groups[2].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 				int counter = 0;
+				List<string> failedQueries = new List<string>();
 
 				foreach (string query in queries)
 				{
-					if (counter == 2) return;
+					if (counter == 2) break;
 					string trimmed = query.Trim();
 					IEnumerable<string> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID) && !handle.Solved && !handle.Claimed)
 						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).Select(handle => $"{handle.Code}").ToList();
@@ -709,8 +710,10 @@ public class BombMessageResponder : MessageResponder
 						}
 						if (validAll) counter++;
 					}
-					else IRCConnection.Instance.SendMessage($"Couldn't find any modules containing \"{trimmed}\".");
+					else failedQueries.Add(trimmed);
 				}
+				if (failedQueries.Count > 0) IRCConnection.Instance.SendMessage($"Couldn't find any modules containing \"{failedQueries.Join("\", \"")}\".");
+
 				return;
 			}
 
