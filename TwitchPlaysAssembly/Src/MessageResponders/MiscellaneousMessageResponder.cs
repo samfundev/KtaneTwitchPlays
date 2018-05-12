@@ -7,6 +7,7 @@ using Assets.Scripts.Missions;
 using Newtonsoft.Json;
 using TwitchPlaysAssembly.Helpers;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(KMGameCommands))]
 [RequireComponent(typeof(KMGameInfo))]
@@ -170,8 +171,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 			string[] Alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 			string[] randomCodes =
 			{
-				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] : UnityEngine.Random.Range(1,100).ToString(),
-				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] + Alphabet[UnityEngine.Random.Range(0, Alphabet.Length)] : UnityEngine.Random.Range(1,100).ToString()
+				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[Random.Range(0, Alphabet.Length)] + Alphabet[Random.Range(0, Alphabet.Length)] : Random.Range(1,100).ToString(),
+				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[Random.Range(0, Alphabet.Length)] + Alphabet[Random.Range(0, Alphabet.Length)] : Random.Range(1,100).ToString()
 			};
 
 			IRCConnection.Instance.SendMessage("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", randomCodes[0], UrlHelper.Instance.VanillaManual);
@@ -392,16 +393,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			if (!IsAuthorizedDefuser(userNickName)) return;
 			IRCConnection.Instance.SendMessage((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs");
-		}
-		else if (text.Equals("about", StringComparison.InvariantCultureIgnoreCase))
-		{
-			IRCConnection.Instance.SendMessage("Twitch Plays: KTaNE is an alternative way of playing !ktane. Unlike the original game, you play as both defuser and expert, and defuse the bomb by sending special commands to the chat. Try !help for more information!");
-			return;
-		}
-		else if (text.Equals("ktane", StringComparison.InvariantCultureIgnoreCase))
-		{
-			IRCConnection.Instance.SendMessage("Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!");
-			return;
 		}
 		else if (text.RegexMatch(out match, @"^(?:read|write|change|set) ?settings? (\S+)$"))
 		{
@@ -1040,7 +1031,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							};
 						}
 						
-						int rewardPoints = Convert.ToInt32((5 * modules) - (3 * vanillaModules));
+						int rewardPoints = (5 * modules) - (3 * vanillaModules);
 						TwitchPlaySettings.SetRewardBonus(rewardPoints);
 						IRCConnection.Instance.SendMessage("Reward for completing bomb: " + rewardPoints);
 						GameCommands.StartMission(mission, "-1");
@@ -1078,7 +1069,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (profileList.Contains(profileString))
 						{
 							string filename = profileString.Replace(' ', '_');
-							if (split[1].EqualsAny("enable", "add"))
+							if (split[1].EqualsAny("enable", "add", "activate"))
 							{
 								if (ProfileHelper.Add(filename)) IRCConnection.Instance.SendMessage("Enabled profile: {0}.", profileString);
 								else IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled");
@@ -1212,40 +1203,22 @@ public class MiscellaneousMessageResponder : MessageResponder
 		
 		bool cameraChanged = false;
 		bool cameraChangeAttempted = false;
-		if (text.RegexMatch(out match, "move ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
+		if (text.RegexMatch(out match, "(move|rotate) ?camera ?([xyz]) (-?[0-9]+(?:\\.[0-9]+)*)"))
 		{
-			GameRoom.MoveCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
-			cameraChanged = !GameRoom.IsMainCamera;
-			cameraChangeAttempted = true;
-		}
-		if (text.RegexMatch(out match, "move ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
-		{
-			GameRoom.MoveCamera(new Vector3(0, float.Parse(match.Groups[1].Value), 0));
-			cameraChanged = !GameRoom.IsMainCamera;
-			cameraChangeAttempted = true;
-		}
-		if (text.RegexMatch(out match, "move ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
-		{
-			GameRoom.MoveCamera(new Vector3(0, 0, float.Parse(match.Groups[1].Value)));
-			cameraChanged = !GameRoom.IsMainCamera;
-			cameraChangeAttempted = true;
-		}
+			Vector3 vector = new Vector3();
+			switch (match.Groups[2].Value)
+			{
+				case "x": vector = new Vector3(float.Parse(match.Groups[3].Value), 0, 0); break;
+				case "y": vector = new Vector3(0, float.Parse(match.Groups[3].Value), 0); break;
+				case "z": vector = new Vector3(0, 0, float.Parse(match.Groups[3].Value)); break;
+			}
+			
+			switch (match.Groups[1].Value)
+			{
+				case "move": GameRoom.MoveCamera(vector); break;
+				case "rotate": GameRoom.RotateCamera(vector); break;
+			}
 
-		if (text.RegexMatch(out match, "rotate ?camera ?x (-?[0-9]+(?:\\.[0-9]+)*)"))
-		{
-			GameRoom.RotateCamera(new Vector3(float.Parse(match.Groups[1].Value), 0, 0));
-			cameraChanged = !GameRoom.IsMainCamera;
-			cameraChangeAttempted = true;
-		}
-		if (text.RegexMatch(out match, "rotate ?camera ?y (-?[0-9]+(?:\\.[0-9]+)*)"))
-		{
-			GameRoom.RotateCamera(new Vector3(0, float.Parse(match.Groups[1].Value), 0));
-			cameraChanged = !GameRoom.IsMainCamera;
-			cameraChangeAttempted = true;
-		}
-		if (text.RegexMatch(out match, "rotate ?camera ?z (-?[0-9]+(?:\\.[0-9]+)*)"))
-		{
-			GameRoom.RotateCamera(new Vector3(0, 0, float.Parse(match.Groups[1].Value)));
 			cameraChanged = !GameRoom.IsMainCamera;
 			cameraChangeAttempted = true;
 		}
