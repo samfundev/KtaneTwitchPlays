@@ -324,7 +324,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["FestivePianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["Filibuster"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12 };
-		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
+		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 20 };
 		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 10 };
