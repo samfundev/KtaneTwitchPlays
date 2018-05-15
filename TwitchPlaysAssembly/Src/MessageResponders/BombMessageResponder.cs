@@ -824,7 +824,7 @@ public class BombMessageResponder : MessageResponder
 			}
 			else
 			{
-				if (text.RegexMatch(out match, "^edgework (.+)"))
+				if (text.RegexMatch(out match, "^edgework (.+)") && (TwitchPlaySettings.data.EnableEdgeworkCommand || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					string internalCommand = match.Groups[1].Value;
 					text = string.Format("edgework{0} {1}", _currentBomb + 1, internalCommand);
