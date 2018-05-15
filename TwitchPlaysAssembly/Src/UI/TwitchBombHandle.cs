@@ -93,7 +93,7 @@ public class TwitchBombHandle : MonoBehaviour
 			if (match.Success)
 			{
 				internalCommand = match.Groups[1].Value;
-				if (!string.IsNullOrEmpty(internalCommand))
+				if (!string.IsNullOrEmpty(internalCommand) && (TwitchPlaySettings.data.EnableEdgeworkCommand || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					if (!IsAuthorizedDefuser(userNickName)) return null;
 					edgeworkText.text = internalCommand;
