@@ -61,6 +61,7 @@ public class TwitchPlaySettingsData
 	public bool EnableFactoryAutomaticNextBomb = true;
 
 	public bool EnableZenModeForEveryone = false;
+	public bool EnableFilledgeworkForEveryone = false;
 
 	public int MinTimeLeftForClaims = 60;
 	public int MinUnsolvedModulesLeftForClaims = 3;

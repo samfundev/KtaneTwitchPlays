@@ -726,6 +726,11 @@ public class BombMessageResponder : MessageResponder
 				}
 				return;
 			}
+			if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase) && (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableFilledgeworkForEveryone))
+			{
+				foreach (var commander in BombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
+				return;
+			}
 		}
 
 		if (text.RegexMatch(out match, "^notes(-?[0-9]+)$") && int.TryParse(match.Groups[1].Value, out index))
@@ -798,13 +803,8 @@ public class BombMessageResponder : MessageResponder
 					}
 					return;
 				}
-
-				if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase))
-				{
-					foreach (var commander in BombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
-					return;
-				}
 				break;
+
 		}
 
 		GameRoom.Instance.RefreshBombID(ref _currentBomb);
