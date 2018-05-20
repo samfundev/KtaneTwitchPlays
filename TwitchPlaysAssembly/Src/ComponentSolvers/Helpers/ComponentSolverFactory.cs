@@ -81,7 +81,6 @@ public static class ComponentSolverFactory
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 		ModComponentSolverCreators["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
-		ModComponentSolverCreators["GameOfLifeSimple"] = (bombCommander, bombComponent) => new GameOfLifeShim(bombCommander, bombComponent);
 		ModComponentSolverCreators["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
@@ -212,7 +211,6 @@ public static class ComponentSolverFactory
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 15, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
@@ -327,6 +325,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["FlagsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 20 };
+		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 15, manualCode = "Game%20of%20Life" };
 		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
