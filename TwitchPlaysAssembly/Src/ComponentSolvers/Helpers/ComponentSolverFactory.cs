@@ -926,7 +926,7 @@ public static class ComponentSolverFactory
 			return false;
 		}
 
-		if (candidateMethod.ReturnType == typeof(KMSelectable[]) || candidateMethod.ReturnType == typeof(IEnumerable<KMSelectable>))
+		if (typeof(IEnumerable<KMSelectable>).IsAssignableFrom(candidateMethod.ReturnType))
 		{
 			DebugLog("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
 			commandType = ModCommandType.Simple;
