@@ -154,7 +154,6 @@ public static class ComponentSolverFactory
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
 
-
 		//Perky
 		ModComponentSolverInformation["CrazyTalk"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Crazy Talk", moduleScore = 3 };
 		ModComponentSolverInformation["CryptModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptography", moduleScore = 9 };
@@ -240,6 +239,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["GridlockModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["logicalButtonsModule"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["MarbleTumbleModule"] = new ModuleInformation { moduleScore = 9 };
@@ -316,6 +316,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["cooking"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { moduleScore = 6, helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
 		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["digitalRoot"] = new ModuleInformation { moduleScore = 2 };
 		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8 };
@@ -365,6 +366,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["spwizTetris"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["Tangrams"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
+		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["theNumber"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5 };
