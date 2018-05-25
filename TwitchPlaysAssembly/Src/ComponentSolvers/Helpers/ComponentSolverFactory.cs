@@ -364,6 +364,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["symbolicPasswordModule"] = new ModuleInformation { moduleScore = 9, helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!" };
 		ModComponentSolverInformation["spwizTetris"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["Tangrams"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["tapCode"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9 };
