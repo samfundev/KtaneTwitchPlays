@@ -81,7 +81,6 @@ public static class ComponentSolverFactory
 		// SHIMS
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 		ModComponentSolverCreators["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["iceCreamModule"] = (bombCommander, bombComponent) => new IceCreamConfirm(bombCommander, bombComponent);
 		ModComponentSolverCreators["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
@@ -212,7 +211,6 @@ public static class ComponentSolverFactory
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
 		//These modules have troll commands built in.
@@ -332,6 +330,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 10 };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the response with !{0} resp 123." };
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
+		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 15, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa", DoesTheRightThing = true };
 		ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b." };
 		ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right." };

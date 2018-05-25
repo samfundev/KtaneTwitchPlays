@@ -30,7 +30,6 @@ public class TwitchPlaySettingsData
 	public bool EnableTrollCommands = false;
 	public bool EnableLetterCodes = false;
 	public bool AllowSolvingCurrentBombWithCommandsDisabled = true;
-	public bool ShowHours = true;
 	public int BombLiveMessageDelay = 0;
 	public int ClaimCooldownTime = 30;
 	public int ModuleClaimLimit = 2;
