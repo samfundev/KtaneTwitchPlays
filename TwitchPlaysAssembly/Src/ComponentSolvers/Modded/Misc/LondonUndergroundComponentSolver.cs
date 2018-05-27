@@ -27,7 +27,7 @@ public class LondonUndergroundComponentSolver : ComponentSolver
 		_northernStations = (string[])_northernStationsField.GetValue(_component);
 		_piccadillyStations = (string[])_piccadillyStationsField.GetValue(_component);
 		_victoriaStations = (string[])_victoriaStationsField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a line and station for the top row with !{0} top circle embankment. Use Hammersmith for the Hammersmith & City line.");
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a line and station for the top row with !{0} top circle embankment, substitute top for with middle or bottom for the middle and bottom rows respectivly. Use Hammersmith for the Hammersmith & City line.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
