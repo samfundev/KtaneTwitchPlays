@@ -97,6 +97,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\AntiTrollShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ComponentSolverShim.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Shims\EuropeanTravelShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ExtendedPasswordComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\PressXShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedButtonComponentSolver.cs" />
