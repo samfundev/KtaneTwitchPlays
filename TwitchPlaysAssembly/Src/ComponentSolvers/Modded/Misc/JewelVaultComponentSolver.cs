@@ -50,7 +50,7 @@ public class JewelVaultComponentSolver : ComponentSolver
 	private static FieldInfo _resetButtonField = null;
 	private static FieldInfo _submitButtonField = null;
 
-	private KMSelectable[] _wheels = null;
-	private KMSelectable _resetButton = null;
-	private KMSelectable _submitButton = null;
+	private readonly KMSelectable[] _wheels = null;
+	private readonly KMSelectable _resetButton = null;
+	private readonly KMSelectable _submitButton = null;
 }

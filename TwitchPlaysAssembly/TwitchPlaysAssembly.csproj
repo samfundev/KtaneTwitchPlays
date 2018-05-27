@@ -81,6 +81,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ErrorCodesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\JewelVaultComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\LetteredKeysComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\LondonUndergroundComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\MicrocontrollerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NeedyBeerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ResistorsComponentSolver.cs" />

@@ -8,7 +8,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 	public EnglishTestComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_englishTestCompoent = bombComponent.GetComponent(_componentType);
+		_englishTestComponent = bombComponent.GetComponent(_componentType);
 		selectButton = FindChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
 		submitButton = FindChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)");
@@ -28,12 +28,12 @@ public class EnglishTestComponentSolver : ComponentSolver
 		}
 		desiredIndex--;
 		yield return null;
-		int currentIndex = (int) _indexField.GetValue(_englishTestCompoent);
+		int currentIndex = (int) _indexField.GetValue(_englishTestComponent);
 
-		while ((int)_indexField.GetValue(_englishTestCompoent) != desiredIndex)
+		while ((int)_indexField.GetValue(_englishTestComponent) != desiredIndex)
 		{
 			yield return DoInteractionClick(selectButton);
-			if ((int) _indexField.GetValue(_englishTestCompoent) == currentIndex)
+			if ((int) _indexField.GetValue(_englishTestComponent) == currentIndex)
 			{
 				yield return string.Format("sendtochaterror I can't select answer #{0} because that answer doesn't exist.", desiredIndex + 1);
 				yield break;
@@ -64,7 +64,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _indexField = null;
 	
-	private readonly Component _englishTestCompoent;
+	private readonly Component _englishTestComponent;
 	private readonly KMSelectable selectButton;
 	private readonly KMSelectable submitButton;
 }

@@ -70,6 +70,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["jewelVault"] = (bombCommander, bombComponent) => new JewelVaultComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["londonUnderground"] = (bombCommander, bombComponent) => new LondonUndergroundComponentSolver(bombCommander, bombComponent);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
@@ -172,6 +173,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 3 };
 
+		//Royal_Flu$h
+		ModComponentSolverInformation["jewelVault"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jewel Vault", moduleScore = 9 };
+		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "London Underground", moduleScore = 15 };
+
 		//Misc
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", moduleScore = 9 };
 		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Color Morse", moduleScore = 5 };
@@ -184,7 +189,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3 };
-		ModComponentSolverInformation["jewelVault"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jewel Vault", moduleScore = 9 };
+
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simple Wires", moduleScore = 1 };
