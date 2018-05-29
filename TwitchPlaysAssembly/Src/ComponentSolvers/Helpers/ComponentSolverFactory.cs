@@ -59,7 +59,6 @@ public static class ComponentSolverFactory
 
 		//Misc Modules
 		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent) => new ChordQualitiesComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["ColorMorseModule"] = (bombCommander, bombComponent) => new ColorMorseComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetteredKeysComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
@@ -176,7 +175,6 @@ public static class ComponentSolverFactory
 
 		//Misc
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", moduleScore = 9 };
-		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Color Morse", moduleScore = 5 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Lettered Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
@@ -317,6 +315,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { moduleScore = 12, helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", DoesTheRightThing = false };
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blacK. (note what letter is capitalized in each color.)" };
+		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 8, helpText = "Press the top button with !{0} press top (also t, 1, etc.)." };
 		ModComponentSolverInformation["cooking"] = new ModuleInformation { moduleScore = 8 };
