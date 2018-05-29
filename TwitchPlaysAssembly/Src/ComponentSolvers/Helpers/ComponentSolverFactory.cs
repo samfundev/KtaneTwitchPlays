@@ -282,6 +282,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["skyrim"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 10 };
 		ModComponentSolverInformation["sonic"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["stopwatch"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
+		ModComponentSolverInformation["sun"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["wire"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
@@ -304,7 +305,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["BinaryLeds"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
-		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise Operators", validCommands = new[] { "^submit [0-1]{8}$" } };
+		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise%20Operations", validCommands = new[] { "^submit [0-1]{8}$" } };
 		ModComponentSolverInformation["BlindMaze"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["booleanVennModule"] = new ModuleInformation { moduleScore = 10, helpText = "Select parts of the diagram with !{0} a bc abc. Options are A, AB, ABC, AC, B, BC, C, O (none)." };
 		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 10 };
