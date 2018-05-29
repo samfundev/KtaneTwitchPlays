@@ -68,7 +68,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent) => new EdgeworkComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["jewelVault"] = (bombCommander, bombComponent) => new JewelVaultComponentSolver(bombCommander, bombComponent);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
@@ -169,9 +168,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 3 };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 3 };
-
-		//Royal_Flu$h
-		ModComponentSolverInformation["jewelVault"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jewel Vault", moduleScore = 9 };
+		
 
 		//Misc
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", moduleScore = 9 };
@@ -273,6 +270,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["graffitiNumbers"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["identityParade"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["iPhone"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
+		ModComponentSolverInformation["jewelVault"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 15 };
 		ModComponentSolverInformation["jukebox"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
