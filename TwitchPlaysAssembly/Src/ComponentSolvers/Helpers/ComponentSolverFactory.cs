@@ -70,7 +70,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["jewelVault"] = (bombCommander, bombComponent) => new JewelVaultComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["londonUnderground"] = (bombCommander, bombComponent) => new LondonUndergroundComponentSolver(bombCommander, bombComponent);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
@@ -175,7 +174,6 @@ public static class ComponentSolverFactory
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["jewelVault"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jewel Vault", moduleScore = 9 };
-		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "London Underground", moduleScore = 15 };
 
 		//Misc
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", moduleScore = 9 };
@@ -279,6 +277,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["iPhone"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
 		ModComponentSolverInformation["jukebox"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
+		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8 };
