@@ -276,7 +276,8 @@ public static class ComponentSolverFactory
 
 		//Livio
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3 };
-		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8 };
+		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8 };	//The author has requested that this module doesn't gain any more support than it already has, if any.
+																									//I was going to potentially write a timing shim for this. That is not happening anymore.
 		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8 };
 		
 		//Marksam32
