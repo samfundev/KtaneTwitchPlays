@@ -79,7 +79,6 @@ public static class ComponentSolverFactory
 		// SHIMS
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 		ModComponentSolverCreators["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["PressX"] = (bombCommander, bombComponent) => new PressXShim(bombCommander, bombComponent);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
 		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "Color Generator", new Dictionary<string, string> { { "troll", "Sorry, I am not going to press each button 75 times." }, { "fakestrike", "Sorry, I am not going to generate a fake strike." } });
@@ -209,7 +208,6 @@ public static class ComponentSolverFactory
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
 		//These modules have troll commands built in.
 		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true };
@@ -421,6 +419,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, manualCode = "Playfair%20Cipher", moduleDisplayName = "Playfair Cipher" };
+		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["SupermercadoSalvajeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true, helpText = "Cycle the items with !{0} items. Go to a specific item number with !{0} item 3. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24." };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, moduleDisplayName = "X01", manualCode = "X01" };
