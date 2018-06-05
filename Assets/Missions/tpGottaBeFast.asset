@@ -45,7 +45,7 @@ MonoBehaviour:
       ComponentTypes: 
       SpecialComponentType: 0
       ModTypes:
-      - LetteredKeys
+      - LetterKeys
     - Count: 4
       AllowedSources: 2
       ComponentTypes: 

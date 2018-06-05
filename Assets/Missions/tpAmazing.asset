@@ -29,8 +29,7 @@ MonoBehaviour:
       AllowedSources: 2
       ComponentTypes: 0b000000
       SpecialComponentType: 0
-      ModTypes:
-      - 
+      ModTypes: []
     - Count: 2
       AllowedSources: 2
       ComponentTypes: 
