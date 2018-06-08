@@ -278,7 +278,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8 };	//The author has requested that this module doesn't gain any more support than it already has, if any.
 																									//I was going to potentially write a timing shim for this. That is not happening anymore.
-		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8 };
+		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		
 		//Marksam32
 		ModComponentSolverInformation["burglarAlarm"] = new ModuleInformation { moduleScore = 8 };
@@ -298,6 +298,7 @@ public static class ComponentSolverFactory
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["cube"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["europeanTravel"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["graffitiNumbers"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["identityParade"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
@@ -307,6 +308,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
+		ModComponentSolverInformation["moon"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["skyrim"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 10 };
@@ -346,6 +348,10 @@ public static class ComponentSolverFactory
 		//Extented passwords, which is shimmed above.
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10 };
 
+		//ThatGuyCalledJules
+		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
+		ModComponentSolverInformation["synonyms"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo modules maintained by Timwi)
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12 };
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet", moduleScore = 2, DoesTheRightThing = true };
@@ -365,7 +371,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["MarbleTumbleModule"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["MarbleTumbleModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 20 };
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad", moduleScore = 8, DoesTheRightThing = true };
@@ -378,6 +384,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSendsModule"] = new ModuleInformation { moduleScore = 15 };
+		ModComponentSolverInformation["SimonShrieksModule"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSingsModule"] = new ModuleInformation { moduleScore = 9 };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 15 };
@@ -421,7 +428,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, manualCode = "Playfair%20Cipher", moduleDisplayName = "Playfair Cipher" };
-		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["SupermercadoSalvajeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true, helpText = "Cycle the items with !{0} items. Go to a specific item number with !{0} item 3. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24." };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5 };
 		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, moduleDisplayName = "X01", manualCode = "X01" };
