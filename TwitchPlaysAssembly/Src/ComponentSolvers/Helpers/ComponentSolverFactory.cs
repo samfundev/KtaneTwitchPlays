@@ -308,7 +308,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4 };
 		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
-		ModComponentSolverInformation["moon"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["moon"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["skyrim"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 10 };
