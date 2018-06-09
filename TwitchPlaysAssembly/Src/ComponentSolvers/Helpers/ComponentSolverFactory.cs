@@ -250,6 +250,7 @@ public static class ComponentSolverFactory
 		//Groover
 		ModComponentSolverInformation["logicGates"] = new ModuleInformation { moduleScore = 7 };
 		ModComponentSolverInformation["rubiksClock"] = new ModuleInformation { manualCode = "Rubik%E2%80%99s Clock", moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["turtleRobot"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
 
 		//Hexicube
 		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Forget Me Not", moduleScoreIsDynamic = true, moduleScore = 0, CameraPinningAlwaysAllowed = true };
