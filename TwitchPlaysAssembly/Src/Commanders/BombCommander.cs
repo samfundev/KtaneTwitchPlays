@@ -376,16 +376,49 @@ public class BombCommander : ICommandResponder
 		Dictionary<string, string> portNames = new Dictionary<string, string>()
 		{
 			{ "RJ45", "RJ" },
-			{ "StereoRCA", "RCA" }
+			{ "StereoRCA", "RCA" },
+			{ "ComponentVideo", "Component" },
+			{ "CompositeVideo", "Composite" }
 		};
 
-		var batteries = QueryWidgets<int>(KMBombInfo.QUERYKEY_GET_BATTERIES);
-		edgework.Add(string.Format("{0}B {1}H", batteries.Sum(x => x["numbatteries"]), batteries.Count()));
+		var batteries = QueryWidgets<int>(KMBombInfo.QUERYKEY_GET_BATTERIES).ToList();
+		edgework.Add(batteries.All(x => (new[] {1, 2}).Contains(x["numbatteries"]))
+			? $"{batteries.Sum(x => x["numbatteries"])}B {batteries.Count()}H"
+			: batteries.OrderBy(x => x["numbatteries"]).Select(x => x["numbatteries"]).Distinct()
+				.Select(holder => batteries.Count(x => x["numbatteries"] == holder) + "x[" + (holder == 0 ? "Empty" : holder.ToString()) + "]").Join());
 
-		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_INDICATOR).OrderBy(x => x["label"]).Select(x => (x["on"] == "True" ? "*" : "") + x["label"]).Join());
+
+		var indicators = QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_INDICATOR).OrderBy(x => x["label"]).ToList();
+		var colorindicators = QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_INDICATOR + "Color").OrderBy(x => x["label"]).ToList();
+
+		foreach (var indicator in colorindicators)
+		{
+			foreach (var vanillaIndicator in indicators)
+			{
+				if (vanillaIndicator["label"] != indicator["label"]) continue;
+				if (vanillaIndicator["on"] != (indicator["color"] == "Black" ? "False" : "True")) continue;
+				if (vanillaIndicator.ContainsKey("color")) continue;
+				vanillaIndicator["on"] = $"({indicator["color"]})";
+				break;
+			}
+		}
+
+		foreach (var indicator in indicators)
+		{
+			if (indicator["on"] == "True")
+				indicator["on"] = "*";
+			else if (indicator["on"] == "False")
+				indicator["on"] = "";
+			if (indicator.ContainsKey("display"))
+				indicator["label"] = indicator["display"] + "(" + indicator["color"] + ")";
+		}
+
+		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
 
 		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x == "" ? "Empty" : x).Select(x => "[" + x + "]").Join(" "));
 		
+		edgework.Add(QueryWidgets<int>(KMBombInfoExtensions.WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
+
 		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
 		
 		string edgeworkString = edgework.Where(str => str != "").Join(" // ");

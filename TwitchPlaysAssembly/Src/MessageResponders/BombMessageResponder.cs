@@ -82,7 +82,7 @@ public class BombMessageResponder : MessageResponder
 			? TwitchPlaySettings.data.BombLiveMessage
 			: TwitchPlaySettings.data.MultiBombLiveMessage);
 
-		if (TwitchPlaySettings.data.EnableAutomaticEdgework) foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
+		StartCoroutine(AutoFillEdgework());
 		GameRoom.Instance.InitializeGameModes(GameRoom.Instance.InitializeOnLightsOn);
 	}
 
@@ -264,6 +264,16 @@ public class BombMessageResponder : MessageResponder
 	#endregion
 
 	#region Protected/Private Methods
+
+	private IEnumerator AutoFillEdgework()
+	{
+		while (true)
+		{
+			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
+				foreach (var commander in BombCommanders) commander.FillEdgework(commander.twitchBombHandle.bombID != _currentBomb);
+			yield return new WaitForSeconds(0.1f);
+		}
+	}
 
 	private IEnumerator CheckForBomb()
 	{
