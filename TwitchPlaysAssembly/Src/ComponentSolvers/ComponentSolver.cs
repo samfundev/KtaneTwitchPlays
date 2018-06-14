@@ -324,7 +324,7 @@ public abstract class ComponentSolver
 					HeldSelectables.Add(selectable1);
 				}
 			}
-			else if (currentValue is IList<KMSelectable> selectables)
+			else if (currentValue is IEnumerable<KMSelectable> selectables)
 			{
 				foreach (KMSelectable selectable in selectables)
 				{
