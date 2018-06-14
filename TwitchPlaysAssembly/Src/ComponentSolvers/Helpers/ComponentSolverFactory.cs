@@ -218,6 +218,7 @@ public static class ComponentSolverFactory
 
 		//AAces
 		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3 };
+		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6 };
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
