@@ -86,22 +86,22 @@ public class PropertiesBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public void Add(KeyValuePair<string, object> item)
 	{
-		throw new NotImplementedException("You can't add items to this Dictionary.");
+		throw new NotSupportedException("You can't add items to this Dictionary.");
 	}
 
 	public void Add(string key, object value)
 	{
-		throw new NotImplementedException("You can't add items to this Dictionary.");
+		throw new NotSupportedException("You can't add items to this Dictionary.");
 	}
 
 	public void Clear()
 	{
-		throw new NotImplementedException("You can't clear this Dictionary.");
+		throw new NotSupportedException("You can't clear this Dictionary.");
 	}
 
 	public bool Contains(KeyValuePair<string, object> item)
 	{
-		throw new NotImplementedException("The Contains method is not supported in this Dictionary.");
+		throw new NotSupportedException("The Contains method is not supported in this Dictionary.");
 	}
 
 	public bool ContainsKey(string key)
@@ -111,22 +111,22 @@ public class PropertiesBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
 	{
-		throw new NotImplementedException("The CopyTo method is not supported in this Dictionary.");
+		throw new NotSupportedException("The CopyTo method is not supported in this Dictionary.");
 	}
 
 	public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
 	{
-		throw new NotImplementedException("The GetEnumerator method is not supported in this Dictionary.");
+		throw new NotSupportedException("The GetEnumerator method is not supported in this Dictionary.");
 	}
 
 	public bool Remove(KeyValuePair<string, object> item)
 	{
-		throw new NotImplementedException("The Remove method is not supported in this Dictionary.");
+		throw new NotSupportedException("The Remove method is not supported in this Dictionary.");
 	}
 
 	public bool Remove(string key)
 	{
-		throw new NotImplementedException("The Remove method is not supported in this Dictionary.");
+		throw new NotSupportedException("The Remove method is not supported in this Dictionary.");
 	}
 
 	public bool TryGetValue(string key, out object value)
@@ -147,6 +147,6 @@ public class PropertiesBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	IEnumerator IEnumerable.GetEnumerator()
 	{
-		throw new NotImplementedException("The GetEnumerator method is not supported in this Dictionary.");
+		throw new NotSupportedException("The GetEnumerator method is not supported in this Dictionary.");
 	}
 }

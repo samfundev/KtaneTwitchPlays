@@ -343,7 +343,7 @@ public class IRCConnection : MonoBehaviour
 				{
 					AddTextToHoldable("serverPort - Most likely to be 6667");
 				}
-				AddTextToHoldable("\nOpen up the Mod manager holdable, and select Open mod settins folder.");
+				AddTextToHoldable("\nOpen up the Mod manager holdable, and select \"open mod settings folder\".");
 				return;
 			}
 		}
@@ -399,8 +399,8 @@ public class IRCConnection : MonoBehaviour
 			_outputThread = new Thread(() => OutputThreadMethod(outputStream));
 			_outputThread.Start();
 
-			SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands", _settings.authToken, Environment.NewLine, _settings.userName));
-			AddTextToHoldable("PASS oauth:*****REDACTED******\nNICK {0}\nCAP REQ :twitch.tv/tags\nCAP REQ :twitch.tv/commands", _settings.userName);
+			SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands{1}CAP REQ :twitch.tv/membership", _settings.authToken, Environment.NewLine, _settings.userName));
+			AddTextToHoldable("PASS oauth:*****REDACTED******\nNICK {0}\nCAP REQ :twitch.tv/tags\nCAP REQ :twitch.tv/commands\nCAP REQ :twitch.tv/membership", _settings.userName);
 			while (_state == IRCConnectionState.Connecting)
 			{
 				Thread.Sleep(25);
@@ -444,7 +444,7 @@ public class IRCConnection : MonoBehaviour
 				_state = IRCConnectionState.Disconnecting;
 				break;
 			case IRCConnectionState.Disabled:
-				AddTextToHoldable("[IRC:Connect] Twitch plays is currently disabled");
+				AddTextToHoldable("[IRC:Connect] Twitch Plays is currently disabled.");
 				break;
 			default:
 				_state = IRCConnectionState.Disconnected;
@@ -478,19 +478,19 @@ public class IRCConnection : MonoBehaviour
 	{
 		if (!_silenceMode)
 		{
-			SendCommand(string.Format("PRIVMSG #{0} :Silence mode on", _settings.channelName));
+			SendCommand(string.Format("PRIVMSG #{0} :Silence mode on.", _settings.channelName));
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on", true));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on.", true));
 			}
 		}
 		_silenceMode = !_silenceMode;
 		if (!_silenceMode)
 		{
-			SendCommand(string.Format("PRIVMSG #{0} :Silence mode off", _settings.channelName));
+			SendCommand(string.Format("PRIVMSG #{0} :Silence mode off.", _settings.channelName));
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off", true));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off.", true));
 			}
 		}
 	}
@@ -674,7 +674,7 @@ public class IRCConnection : MonoBehaviour
 			_state = IRCConnectionState.Disconnected;
 		}
 		if (!gameObject.activeInHierarchy)
-			AddTextToHoldable("[IRC:Disconnect] Twitch plays disabled");
+			AddTextToHoldable("[IRC:Disconnect] Twitch plays disabled.");
 	}
 
 	private void SetDelay(string badges, string nickname, string channel)

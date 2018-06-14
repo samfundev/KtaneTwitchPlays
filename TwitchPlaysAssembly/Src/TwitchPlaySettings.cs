@@ -144,6 +144,8 @@ public class TwitchPlaySettingsData
 
 	public string BombAbortedMessage = "VoteNay VoteNay The bomb was aborted, with {0} remaining! VoteNay VoteNay";
 
+	public string LogTooBig = "BibleThump The bomb log is too big to upload to any of the supported services, sorry!";
+
 	public string RankTooLow = "Nobody here with that rank!";
 
 	public string SolverAndSolo = "solver ";
@@ -374,6 +376,8 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref OwnedModule, data.OwnedModule, 2);
 		valid &= ValidateString(ref OwnedModuleList, data.OwnedModuleList, 2);
 		valid &= ValidateString(ref NoOwnedModules, data.NoOwnedModules, 1);
+
+		valid &= ValidateString(ref LogTooBig, data.LogTooBig, 0);
 
 		valid &= ValidateString(ref TwitchPlaysDisabled, data.TwitchPlaysDisabled, 1);
 		valid &= ValidateString(ref MissionBinderDisabled, data.MissionBinderDisabled, 1);

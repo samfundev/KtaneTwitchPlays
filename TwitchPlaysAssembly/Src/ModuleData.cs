@@ -68,7 +68,7 @@ public static class ModuleData
 		}
 
 		DataHasChanged = false;
-		DebugHelper.Log("ModuleData: Writing of file {0} completed successfully", path);
+		DebugHelper.Log("ModuleData: Writing of file {0} completed successfully.", path);
 	}
 
 	public static bool LoadDataFromFile()

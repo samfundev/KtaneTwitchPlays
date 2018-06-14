@@ -151,7 +151,7 @@ public class LogUploader : MonoBehaviour
 
 		if (tooLong)
 		{
-			IRCConnection.Instance.SendMessage("BibleThump The bomb log is too big to upload to any of the supported services, sorry!");
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.LogTooBig);
 		}
 
 		try
