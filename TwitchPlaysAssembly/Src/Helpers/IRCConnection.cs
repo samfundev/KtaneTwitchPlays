@@ -674,7 +674,7 @@ public class IRCConnection : MonoBehaviour
 			_state = IRCConnectionState.Disconnected;
 		}
 		if (!gameObject.activeInHierarchy)
-			AddTextToHoldable("[IRC:Disconnect] Twitch plays disabled.");
+			AddTextToHoldable("[IRC:Disconnect] Twitch Plays disabled.");
 	}
 
 	private void SetDelay(string badges, string nickname, string channel)
