@@ -25,7 +25,7 @@ public class MusicPlayer : MonoBehaviour
 
 	public static MusicPlayer StartRandomMusic()
 	{
-		MusicPlayer player = _musicPlayers.Values.ElementAt(UnityEngine.Random.Range(0, _musicPlayers.Values.Count));
+		MusicPlayer player = _musicPlayers.Values.ElementAt(Random.Range(0, _musicPlayers.Values.Count));
 		player.StartMusic();
 		return player;
 	}
