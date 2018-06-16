@@ -176,6 +176,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "time":
 					case "t":
 						float time = 0;
+						float originalTime = bombCommander.timerComponent.TimeRemaining;
 						Dictionary<string, float> timeLengths = new Dictionary<string, float>()
 						{
 							{ "ms", 0.001f },
@@ -210,6 +211,9 @@ public class TwitchBombHandle : MonoBehaviour
 						else
 							bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
 
+						if(originalTime < bombCommander.timerComponent.TimeRemaining)
+							OtherModes.DisableLeaderboard(true);
+
 						if (direct)
 							IRCConnection.Instance.SendMessage("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime());
 						else
@@ -220,6 +224,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "s":
 						if (int.TryParse(split[2], out int strikes) && (strikes != 0 || direct))
 						{
+							int originalStrikes = bombCommander.StrikeCount;
 							if (negative) strikes = -strikes;
 
 							if (direct && strikes < 0)
@@ -236,6 +241,9 @@ public class TwitchBombHandle : MonoBehaviour
 							else
 								bombCommander.StrikeCount += strikes;
 
+							if (bombCommander.StrikeCount < originalStrikes)
+								OtherModes.DisableLeaderboard(true);
+
 							if (direct)
 								IRCConnection.Instance.SendMessage("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike");
 							else
@@ -249,6 +257,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "ms":
 						if (int.TryParse(split[2], out int maxStrikes) && (maxStrikes != 0 || direct))
 						{
+							int originalStrikeLimit = bombCommander.StrikeLimit;
 							if (negative) maxStrikes = -maxStrikes;
 
 							if (direct && maxStrikes < 0)
@@ -260,6 +269,9 @@ public class TwitchBombHandle : MonoBehaviour
 								bombCommander.StrikeLimit = maxStrikes;
 							else
 								bombCommander.StrikeLimit += maxStrikes;
+
+							if (originalStrikeLimit < bombCommander.StrikeLimit)
+								OtherModes.DisableLeaderboard(true);
 
 							if (direct)
 								IRCConnection.Instance.SendMessage("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike");
