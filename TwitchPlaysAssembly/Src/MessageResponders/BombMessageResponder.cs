@@ -729,6 +729,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.ZenModeOn)
 			{
+				OtherModes.DisableLeaderboard(true);
 				TwitchPlaySettings.AddRewardBonus(-TwitchPlaySettings.GetRewardBonus());
 				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 				{
@@ -763,6 +764,7 @@ public class BombMessageResponder : MessageResponder
 
 				if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase))
 				{
+					OtherModes.DisableLeaderboard();
 					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 					{
 						if (!handle.Solved) handle.SolveSilently();
