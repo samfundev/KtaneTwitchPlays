@@ -725,6 +725,7 @@ public abstract class ComponentSolver
 			HandleForcedSolve(ComponentHandle);
 		else
 			HandleForcedSolve(BombComponent);
+		OtherModes.DisableLeaderboard(true);
 	}
 
 	protected virtual IEnumerator ForcedSolveIEnumerator()
