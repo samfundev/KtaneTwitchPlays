@@ -19,6 +19,9 @@ public static class OtherModes
 
 	private static KMGameInfo.State _state = KMGameInfo.State.Transitioning;
 
+	private static bool _disableStats = Assets.Scripts.Stats.StatsManager.Instance?.DisableStatChanges ?? false;
+	private static bool _disableBestRecords = Assets.Scripts.Records.RecordManager.Instance?.DisableBestRecords ?? false;
+
 	public static bool Set(TwitchPlaysMode mode, bool state = true)
 	{
 		if (state == false) mode = TwitchPlaysMode.Normal;
@@ -27,12 +30,22 @@ public static class OtherModes
 		if (_state != KMGameInfo.State.PostGame && _state != KMGameInfo.State.Setup) return false;
 
 		currentMode = mode;
+		DisableLeaderboard();
 		return true;
 	}
 
 	public static void Toggle(TwitchPlaysMode mode)
 	{
 		Set(mode, nextMode != mode);
+	}
+
+	public static void DisableLeaderboard(bool force=false)
+	{
+		if (Assets.Scripts.Records.RecordManager.Instance != null)
+			Assets.Scripts.Records.RecordManager.Instance.DisableBestRecords = currentMode != TwitchPlaysMode.Normal || force || _disableBestRecords;
+
+		if(Assets.Scripts.Stats.StatsManager.Instance != null)
+			Assets.Scripts.Stats.StatsManager.Instance.DisableStatChanges = currentMode != TwitchPlaysMode.Normal || force || _disableStats;
 	}
 
 	public static bool TimeModeOn { get { return InMode(TwitchPlaysMode.Time); } set { Set(TwitchPlaysMode.Time, value); } }
@@ -68,9 +81,18 @@ public static class OtherModes
 	{
 		_state = state;
 
+		if (currentMode == TwitchPlaysMode.Normal)
+		{
+			if (Assets.Scripts.Records.RecordManager.Instance != null)
+				_disableBestRecords = Assets.Scripts.Records.RecordManager.Instance.DisableBestRecords;
+			if (Assets.Scripts.Stats.StatsManager.Instance != null)
+				_disableStats = Assets.Scripts.Stats.StatsManager.Instance.DisableStatChanges;
+		}
+
 		if ((_state != KMGameInfo.State.PostGame && _state != KMGameInfo.State.Setup) || currentMode == nextMode) return;
 
 		currentMode = nextMode;
+		DisableLeaderboard();
 		IRCConnection.Instance.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
 	}
 
