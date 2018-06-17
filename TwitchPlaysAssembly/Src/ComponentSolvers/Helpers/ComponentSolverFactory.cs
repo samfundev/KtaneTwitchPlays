@@ -217,8 +217,9 @@ public static class ComponentSolverFactory
 		//These modules are not built into TP, but they are created by notable people.
 
 		//AAces
-		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3 };
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6 };
+		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3 };
+		ModComponentSolverInformation["subways"] = new ModuleInformation { moduleScore = 5 };
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
