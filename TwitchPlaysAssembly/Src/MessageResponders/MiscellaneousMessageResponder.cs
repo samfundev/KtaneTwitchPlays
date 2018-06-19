@@ -406,7 +406,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("{0}", result.Second);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
-		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+)$"))
+		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r|(valid ?)?commands) (.+)$"))
 		{
 			Match match1 = match;
 			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
@@ -479,6 +479,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 							if (modules[0].unclaimedColor != new Color())
 								moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}");
+							break;
+						case "commands":
+						case "valid commands":
+						case "validcommands":
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Valid commands: {modules[0].validCommands}");
 							break;
 					}
 
