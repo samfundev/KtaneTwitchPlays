@@ -2,13 +2,13 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public class LetteredKeysComponentSolver : ComponentSolver
+public class LetterKeysComponentSolver : ComponentSolver
 {
-	public LetteredKeysComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
+	public LetterKeysComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Lettered%20Keys");
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Letter%20Keys");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

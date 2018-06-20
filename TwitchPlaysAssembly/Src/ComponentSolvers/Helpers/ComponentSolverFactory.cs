@@ -60,7 +60,7 @@ public static class ComponentSolverFactory
 		//Misc Modules
 		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent) => new ChordQualitiesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetteredKeysComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetterKeysComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent) => new ResistorsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent) => new SwitchesComponentSolver(bombCommander, bombComponent);
@@ -171,7 +171,7 @@ public static class ComponentSolverFactory
 		//Misc
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", moduleScore = 9 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
-		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Lettered Keys", moduleScore = 3 };
+		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", moduleScore = 6 };
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", moduleScore = 3 };
