@@ -368,6 +368,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet", moduleScore = 2, DoesTheRightThing = true };
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 8 };
 		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 9 };
+		ModComponentSolverInformation["BlackHoleModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6 };
 		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["CaesarCipherModule"] = new ModuleInformation { moduleScore = 3 };
