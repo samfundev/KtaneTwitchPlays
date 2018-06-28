@@ -240,8 +240,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["poetry"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 
 		//Eotall
-		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = false };
-		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 15, manualCode = "Game%20of%20Life", DoesTheRightThing = false };
+		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
+		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 15, manualCode = "Game%20of%20Life", DoesTheRightThing = true };
 		ModComponentSolverInformation["Mastermind Simple"] = new ModuleInformation { moduleScore = 12, manualCode = "Mastermind", DoesTheRightThing = true };
 		ModComponentSolverInformation["Mastermind Cruel"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 
@@ -304,7 +304,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["wastemanagement"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 
 		//Riverbui
-		ModComponentSolverInformation["lasers"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["USA"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
 		//Royal_Flu$h
@@ -381,6 +380,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["GridlockModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["lasers"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MafiaModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["MarbleTumbleModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
