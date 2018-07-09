@@ -58,7 +58,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 
 		//Misc Modules
-		ModComponentSolverCreators["ChordQualities"] = (bombCommander, bombComponent) => new ChordQualitiesComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetterKeysComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
@@ -166,10 +165,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 3 };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 3 };
-		
 
 		//Misc
-		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Qualities", moduleScore = 9 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
@@ -178,7 +175,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3 };
-
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
@@ -217,7 +213,9 @@ public static class ComponentSolverFactory
 		//AAces
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
+		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true };
 		ModComponentSolverInformation["subways"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["timeKeeper"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
@@ -227,6 +225,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["Semaphore"] = new ModuleInformation { moduleScore = 7, helpText = "Move to the next flag with !{0} move right or !{0} press right. Move to previous flag with !{0} move left or !{0} press left. Submit with !{0} press ok.", DoesTheRightThing = true };
 		ModComponentSolverInformation["Tangrams"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+
+		//billy_bao
+		ModComponentSolverInformation["binaryTree"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["greekCalculus"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
 
 		//CaitSith2
 		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
@@ -283,8 +285,7 @@ public static class ComponentSolverFactory
 
 		//Livio
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
-		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8 };	//The author has requested that this module doesn't gain any more support than it already has, if any.
-																									//I was going to potentially write a timing shim for this. That is not happening anymore.
+		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		
 		//Marksam32
@@ -304,6 +305,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["wastemanagement"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 
 		//Riverbui
+		ModComponentSolverInformation["MazeScrambler"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["mineseeker"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["USA"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
 		//Royal_Flu$h
@@ -411,7 +414,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ZooModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 
 		//Trainzack
-		//Chord Qualities - currently TP supported TP side, a PR by red031000 to implement it module side does exist.
+		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 9 };
 		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9, helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", DoesTheRightThing = false };
 		
 		//Virepri
@@ -419,7 +422,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b.", DoesTheRightThing = true };
 
 		//Windesign
-		//color decoding once it has TP support.
+		ModComponentSolverInformation["Color Decoding"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 
 		//ZekNikZ
@@ -436,7 +439,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleScore = 5, moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20", DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["Filibuster"] = new ModuleInformation { moduleScore = 5, helpText = "" };
-		ModComponentSolverInformation["greekCalculus"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, manualCode = "Playfair%20Cipher", moduleDisplayName = "Playfair Cipher" };
