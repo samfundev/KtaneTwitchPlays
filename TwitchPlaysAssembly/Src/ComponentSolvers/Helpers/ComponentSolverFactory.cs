@@ -79,7 +79,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
-		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "Color Generator", new Dictionary<string, string> { { "troll", "Sorry, I am not going to press each button 75 times." }, { "fakestrike", "Sorry, I am not going to generate a fake strike." } });
+		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "Color Generator", new Dictionary<string, string> { { "troll", "Sorry, I am not going to press each button 75 times." }, { "fakestrike", "Sorry, I am not going to generate a fake strike." }, { "needystart", "Sorry, I'm not going to act like a needy." }, { "needyend", "Sorry, I'm not going to act like a needy." } });
 		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
 		ModComponentSolverCreators["SimonScreamsModule"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "SimonScreamsModule", new[] { "disco", "lasershow" }, "Sorry, I am not going to waste time flashing all the colors.");
 
