@@ -365,7 +365,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["synonyms"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 
-		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo modules maintained by Timwi)
+		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo/Riverbui modules maintained by Timwi)
 		ModComponentSolverInformation["AdjacentLettersModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet", moduleScore = 2, DoesTheRightThing = true };
 		ModComponentSolverInformation["BattleshipModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
@@ -438,9 +438,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BinaryLeds"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleScore = 5, moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20", DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
-		ModComponentSolverInformation["Filibuster"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { moduleScore = 5, helpText = "" };
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, manualCode = "Playfair%20Cipher", moduleDisplayName = "Playfair Cipher" };
 		ModComponentSolverInformation["SupermercadoSalvajeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true, helpText = "Cycle the items with !{0} items. Go to a specific item number with !{0} item 3. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24." };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
