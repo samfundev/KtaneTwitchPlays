@@ -513,7 +513,7 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.Equals("modules", StringComparison.InvariantCultureIgnoreCase))
+			if (text.ToLowerInvariant().EqualsAny("modules", "view all", "viewall"))
 			{
 				moduleCameras?.AttachToModules(ComponentHandles);
 				return;
