@@ -128,6 +128,8 @@ public static class UserAccess
 	}
 	public static string usersSavePath = "AccessLevels.json";
 
+	public static bool ModeratorsEnabled = true;
+
 	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
 	{
 		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername)
@@ -145,7 +147,7 @@ public static class UserAccess
 
 		do
 		{
-			if ((accessLevel & userAccessLevel) == accessLevel)
+			if ((accessLevel & userAccessLevel) == accessLevel && (ModeratorsEnabled || accessLevel < (AccessLevel)0x2000 || accessLevel == AccessLevel.Streamer))
 			{
 				return true;
 			}
