@@ -1133,7 +1133,7 @@ public abstract class ComponentSolver
 
 	public TwitchComponentHandle ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
-	protected MethodInfo ForcedSolveMethod = null;
-	protected Component CommandComponent = null;
+	public MethodInfo ForcedSolveMethod = null;
+	public Component CommandComponent = null;
 
 }
