@@ -21,6 +21,7 @@ public class BombMessageResponder : MessageResponder
 	public List<TwitchComponentHandle> ComponentHandles = new List<TwitchComponentHandle>();
 	private int _currentBomb = -1;
 	private Dictionary<int, string> _notesDictionary = new Dictionary<int, string>();
+	private int _cullingMask;
 
 #pragma warning disable 169
 	private readonly AlarmClock alarmClock;
@@ -88,6 +89,7 @@ public class BombMessageResponder : MessageResponder
 
 	private void OnEnable()
 	{
+		_cullingMask = Camera.main.cullingMask;
 		Instance = this;
 		BombActive = true;
 		EnableDisableInput();
@@ -209,7 +211,7 @@ public class BombMessageResponder : MessageResponder
 
 	private void OnDisable()
 	{
-		_hideBombs = false;
+		Camera.main.cullingMask = _cullingMask;
 		BombActive = false;
 		EnableDisableInput();
 		TwitchComponentHandle.ClaimedList.Clear();
@@ -775,14 +777,14 @@ public class BombMessageResponder : MessageResponder
 			case AccessLevel.Admin:
 				if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
+					Camera.main.cullingMask = 0;
 					moduleCameras.EnableWallOfCameras();
-					StartCoroutine(HideBombs());
 				}
 
 				if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
+					Camera.main.cullingMask = _cullingMask;
 					moduleCameras.DisableWallOfCameras();
-					_hideBombs = false;
 				}
 				goto case AccessLevel.Mod;
 			case AccessLevel.Mod:
@@ -887,34 +889,6 @@ public class BombMessageResponder : MessageResponder
 		if (TwitchPlaySettings.data.BombCustomMessages.ContainsKey(text.ToLowerInvariant()))
 		{
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombCustomMessages[text.ToLowerInvariant()]);
-		}
-	}
-
-	private bool _hideBombs = false;
-	private IEnumerator HideBombs()
-	{
-		if (_hideBombs) yield break;
-		_hideBombs = true;
-		Dictionary<Bomb, Vector3> originalBombPositions = new Dictionary<Bomb, Vector3>();
-		foreach (BombCommander commander in BombCommanders)
-		{
-			//Store the original positions of the bombs.
-			originalBombPositions[commander.Bomb] = commander.Bomb.transform.localPosition;
-		}
-		while (_hideBombs)
-		{
-			foreach (BombCommander commander in BombCommanders)
-			{
-				//Required every frame for every bomb with floating holdables attached.
-				commander.Bomb.transform.localPosition = new Vector3(0, -1.25f, 0);
-			}
-			yield return null;
-		}
-		foreach (BombCommander commander in BombCommanders)
-		{
-			//Required for bombs with no floating holdables attached.
-			if (!originalBombPositions.TryGetValue(commander.Bomb, out Vector3 value)) continue;
-			commander.Bomb.transform.localPosition = value;
 		}
 	}
 
