@@ -102,7 +102,7 @@ public static class ComponentSolverFactory
 				"statusLightDown": false,
 				"validCommandsOverride": false,
 				"validCommands": null,
-				"DoesTheRightThing": false,
+				"DoesTheRightThing": true,
 				"CameraPinningAlwaysAllowed": false
 			},
 		 * 

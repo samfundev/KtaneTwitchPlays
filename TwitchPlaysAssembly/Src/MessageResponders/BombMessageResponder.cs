@@ -731,13 +731,22 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("newbomb", StringComparison.InvariantCultureIgnoreCase) && OtherModes.ZenModeOn)
 			{
-				OtherModes.DisableLeaderboard(true);
-				TwitchPlaySettings.AddRewardBonus(-TwitchPlaySettings.GetRewardBonus());
-				foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
+				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
+				if (entry.SolveScore >= TwitchPlaySettings.data.MinScoreForNewbomb || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true))
 				{
-					if (!handle.Solved) handle.SolveSilently();
+					OtherModes.DisableLeaderboard(true);
+					TwitchPlaySettings.AddRewardBonus(-TwitchPlaySettings.GetRewardBonus());
+					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
+					{
+						if (!handle.Solved) handle.SolveSilently();
+					}
+					return;
 				}
-				return;
+				else
+				{
+					IRCConnection.Instance.SendMessage("Sorry, you don't have enough points to use the newbomb command.");
+					return;
+				}
 			}
 			if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase) && (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableFilledgeworkForEveryone))
 			{

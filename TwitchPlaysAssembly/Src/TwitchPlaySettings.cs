@@ -43,6 +43,7 @@ public class TwitchPlaySettingsData
 	public bool EnforceSolveAllBeforeTurningKeys = true;
 	public bool LogUploaderShortUrls = false;
 	public bool SuperStreamerIgnoreClaimLimit = false;
+	public int MinScoreForNewbomb = 100;
 
 	public bool EnableTimeModeForEveryone = false;
 	public int TimeModeStartingTime = 5;
