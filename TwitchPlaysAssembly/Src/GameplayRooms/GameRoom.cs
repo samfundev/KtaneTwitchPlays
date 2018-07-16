@@ -149,10 +149,13 @@ public abstract class GameRoom
 	private static Camera _mainCamera;
 	public static Camera SecondaryCamera;
 	public static bool IsMainCamera = true;
+	public static int MainCameraCullingMask;
+	public static int SecondryCameraCullingMask;
 	public static void InitializeSecondaryCamera()
 	{
+		
 		if (SecondaryCamera != null) return;
-
+		
 		GameObject customMover = new GameObject("CustomCameraMover");
 		customMover.transform.SetParent(Camera.main.transform.parent.parent);
 		_mainCamera = Camera.main;
@@ -165,6 +168,9 @@ public abstract class GameRoom
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 		SecondaryCamera.gameObject.SetActive(false);
 		DebugHelper.Log($"Main Camera Culling mask = {_mainCamera.cullingMask:X8}\nSecondary Camera Culling mask = {SecondaryCamera.cullingMask:X8}");
+
+		MainCameraCullingMask = _mainCamera.cullingMask;
+		SecondryCameraCullingMask = SecondaryCamera.cullingMask;
 	}
 
 	public static void ToggleCamera(bool main)
@@ -172,6 +178,20 @@ public abstract class GameRoom
 		IsMainCamera = main;
 		SecondaryCamera.gameObject.SetActive(!main);
 		_mainCamera.gameObject.SetActive(main);
+	}
+
+	public static void HideCamera()
+	{
+		_mainCamera.cullingMask = 0;
+		if(SecondaryCamera != null)
+			SecondaryCamera.cullingMask = 0;
+	}
+
+	public static void ShowCamera()
+	{
+		_mainCamera.cullingMask = MainCameraCullingMask;
+		if(SecondaryCamera != null)
+			SecondaryCamera.cullingMask = SecondryCameraCullingMask;
 	}
 
 	public static void ResetCamera()
