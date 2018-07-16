@@ -406,7 +406,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage("{0}", result.Second);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
-		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r|(valid ?)?commands) (.+)$"))
+		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r|(?:valid ?)?commands) (.+)$"))
 		{
 			Match match1 = match;
 			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
