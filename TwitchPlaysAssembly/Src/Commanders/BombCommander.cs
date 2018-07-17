@@ -563,15 +563,24 @@ public class BombCommander : ICommandResponder
 			float currentZSpin = Mathf.SmoothStep(oldZSpin, targetZSpin, lerp);
 
 			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
+			Vector3 HeldObjectTiltEulerAngles = _selectableManager.GetHeldObjectTiltEulerAngles();
+			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, 0 - 95f, 95f);
+			HeldObjectTiltEulerAngles.z -= _selectableManager.GetZSpin() - currentZSpin;
 
 			_selectableManager.SetZSpin(currentZSpin);
 			_selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+			_selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTiltEulerAngles);
 			_selectableManager.HandleFaceSelection();
 			yield return null;
 		}
 
+		Vector3 HeldObjectTileEulerAnglesFinal = _selectableManager.GetHeldObjectTiltEulerAngles();
+		HeldObjectTileEulerAnglesFinal.x = Mathf.Clamp(HeldObjectTileEulerAnglesFinal.x, 0 - 95f, 95f);
+		HeldObjectTileEulerAnglesFinal.z -= _selectableManager.GetZSpin() - targetZSpin;
+
 		_selectableManager.SetZSpin(targetZSpin);
 		_selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+		_selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTileEulerAnglesFinal);
 		_selectableManager.HandleFaceSelection();
 
 		_heldFrontFace = frontFace;
