@@ -167,8 +167,11 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		else if (internalCommandLower.Equals("pause") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 		{
-			if (bombCommander.timerComponent.IsUpdating)
-				bombCommander.timerComponent.StopTimer();
+			if (!bombCommander.timerComponent.IsUpdating)
+				return null;
+
+			OtherModes.DisableLeaderboard();
+			bombCommander.timerComponent.StopTimer();
 		}
 		else if (internalCommandLower.Equals("unpause") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 		{
