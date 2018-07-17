@@ -21,7 +21,6 @@ public class BombMessageResponder : MessageResponder
 	public List<TwitchComponentHandle> ComponentHandles = new List<TwitchComponentHandle>();
 	private int _currentBomb = -1;
 	private Dictionary<int, string> _notesDictionary = new Dictionary<int, string>();
-	private int _cullingMask;
 
 #pragma warning disable 169
 	private readonly AlarmClock alarmClock;
@@ -89,7 +88,6 @@ public class BombMessageResponder : MessageResponder
 
 	private void OnEnable()
 	{
-		_cullingMask = Camera.main.cullingMask;
 		Instance = this;
 		BombActive = true;
 		EnableDisableInput();
@@ -211,7 +209,7 @@ public class BombMessageResponder : MessageResponder
 
 	private void OnDisable()
 	{
-		Camera.main.cullingMask = _cullingMask;
+		GameRoom.ShowCamera();
 		BombActive = false;
 		EnableDisableInput();
 		TwitchComponentHandle.ClaimedList.Clear();
@@ -786,13 +784,13 @@ public class BombMessageResponder : MessageResponder
 			case AccessLevel.Admin:
 				if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
-					Camera.main.cullingMask = 0;
+					GameRoom.HideCamera();
 					moduleCameras.EnableWallOfCameras();
 				}
 
 				if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
-					Camera.main.cullingMask = _cullingMask;
+					GameRoom.ShowCamera();
 					moduleCameras.DisableWallOfCameras();
 				}
 				goto case AccessLevel.Mod;

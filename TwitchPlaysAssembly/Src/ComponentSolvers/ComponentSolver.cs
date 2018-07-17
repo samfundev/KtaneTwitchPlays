@@ -228,7 +228,7 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
 				{
-					yield return new WaitForSecondsWithCancel(waitCancelTime, false);
+					yield return new WaitForSecondsWithCancel(waitCancelTime, false, this);
 					if (CoroutineCanceller.ShouldCancel)
 					{
 						CoroutineCanceller.ResetCancel();
@@ -978,11 +978,11 @@ public abstract class ComponentSolver
 		set;
 	}
 
-	protected bool Solved => BombComponent.IsSolved;
+	public bool Solved => BombComponent.IsSolved;
 
 	protected bool Detonated => BombCommander.Bomb.HasDetonated;
 
-	protected int StrikeCount { get; private set; } = 0;
+	public int StrikeCount { get; private set; } = 0;
 
 	protected float FocusDistance
 	{
