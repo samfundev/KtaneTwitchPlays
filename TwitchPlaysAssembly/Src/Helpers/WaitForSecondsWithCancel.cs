@@ -34,15 +34,10 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
 	{
 		get
 		{
-			int currentStrikes = _solver?.StrikeCount ?? 0;
-
-			if (!CoroutineCanceller.ShouldCancel && !(_solver?.Solved ?? false) && currentStrikes == _startingStrikes)
+			if (!CoroutineCanceller.ShouldCancel && !(_solver?.Solved ?? false) && (_solver?.StrikeCount ?? 0) == _startingStrikes)
 				return (Time.time - _startingTime) < _seconds;
 
-			if (!CoroutineCanceller.ShouldCancel)
-				return false;
-
-			if(_resetCancel)
+			if(CoroutineCanceller.ShouldCancel && _resetCancel)
 				CoroutineCanceller.ResetCancel();
 
 			return false;
