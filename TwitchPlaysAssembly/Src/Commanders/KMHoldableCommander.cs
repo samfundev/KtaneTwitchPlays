@@ -155,15 +155,24 @@ public class KMHoldableCommander
 			float currentZSpin = Mathf.SmoothStep(oldZSpin, targetZSpin, lerp);
 
 			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
+			Vector3 HeldObjectTiltEulerAngles = selectableManager.GetHeldObjectTiltEulerAngles();
+			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, 0 - 95f, 95f);
+			HeldObjectTiltEulerAngles.z -= selectableManager.GetZSpin() - currentZSpin;
 
 			selectableManager.SetZSpin(currentZSpin);
 			selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+			selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTiltEulerAngles);
 			selectableManager.HandleFaceSelection();
 			yield return null;
 		}
 
+		Vector3 HeldObjectTileEulerAnglesFinal = selectableManager.GetHeldObjectTiltEulerAngles();
+		HeldObjectTileEulerAnglesFinal.x = Mathf.Clamp(HeldObjectTileEulerAnglesFinal.x, 0 - 95f, 95f);
+		HeldObjectTileEulerAnglesFinal.z -= selectableManager.GetZSpin() - targetZSpin;
+
 		selectableManager.SetZSpin(targetZSpin);
 		selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+		selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTileEulerAnglesFinal);
 		selectableManager.HandleFaceSelection();
 
 		_heldFrontFace = frontFace;
