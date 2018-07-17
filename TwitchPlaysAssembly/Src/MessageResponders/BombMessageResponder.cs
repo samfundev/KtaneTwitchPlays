@@ -734,6 +734,12 @@ public class BombMessageResponder : MessageResponder
 				{
 					OtherModes.DisableLeaderboard(true);
 					TwitchPlaySettings.AddRewardBonus(-TwitchPlaySettings.GetRewardBonus());
+
+					foreach (var handle in BombHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
+					{
+						handle.bombCommander.timerComponent.StopTimer();
+					}
+
 					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 					{
 						if (!handle.Solved) handle.SolveSilently();
