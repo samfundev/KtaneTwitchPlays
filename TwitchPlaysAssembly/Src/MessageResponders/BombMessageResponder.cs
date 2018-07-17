@@ -774,7 +774,12 @@ public class BombMessageResponder : MessageResponder
 				if (text.Equals("solvebomb", StringComparison.InvariantCultureIgnoreCase))
 				{
 					OtherModes.DisableLeaderboard();
-					BombCommanders[_currentBomb].timerComponent.StopTimer();
+
+					foreach (var handle in BombHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
+					{
+						handle.bombCommander.timerComponent.StopTimer();
+					}
+
 					foreach (var handle in ComponentHandles.Where(x => GameRoom.Instance.IsCurrentBomb(x.bombID)))
 					{
 						if (!handle.Solved) handle.SolveSilently();
