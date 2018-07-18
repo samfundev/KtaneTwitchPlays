@@ -10,7 +10,7 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[])_buttonsField.GetValue(_component);
 		submit = (KMSelectable)_sendField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !submit 00010100");
+		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

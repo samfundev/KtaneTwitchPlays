@@ -75,6 +75,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\External\SimpleModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\UnsupportedModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Kaneb\TwoBitsComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\AlphabetNumbersComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EdgeworkComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EnglishTestComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ErrorCodesComponentSolver.cs" />
