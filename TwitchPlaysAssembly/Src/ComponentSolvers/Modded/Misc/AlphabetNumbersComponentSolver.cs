@@ -30,27 +30,7 @@ public class AlphabetNumbersComponentSolver : ComponentSolver
 		foreach (int number in correct)
 		{
 			yield return null;
-			switch (number)
-			{
-				case 1:
-					yield return DoInteractionClick(buttons[0]);
-					break;
-				case 2:
-					yield return DoInteractionClick(buttons[2]);
-					break;
-				case 3:
-					yield return DoInteractionClick(buttons[4]);
-					break;
-				case 4:
-					yield return DoInteractionClick(buttons[5]);
-					break;
-				case 5:
-					yield return DoInteractionClick(buttons[3]);
-					break;
-				case 6:
-					yield return DoInteractionClick(buttons[1]);
-					break;
-			}
+			yield return DoInteractionClick(buttons[_buttonMap[number - 1]]);
 		}
 	}
 
@@ -60,6 +40,8 @@ public class AlphabetNumbersComponentSolver : ComponentSolver
 	}
 
 	private static Type _componentType = null;
+
+	private readonly int[] _buttonMap = { 0, 2, 4, 5, 3, 1 };
 
 	private readonly Component _alphabetNumberComponent = null;
 	private readonly KMSelectable[] buttons;
