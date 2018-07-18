@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Input;
 using Assets.Scripts.Records;
 using UnityEngine;
 
@@ -553,7 +554,7 @@ public class BombCommander : ICommandResponder
 		if (FloatingHoldable == null) yield break;
 		Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
 
-		float oldZSpin = _heldFrontFace ? 0.0f : 180.0f;
+		float oldZSpin = _selectableManager.GetZSpin();
 		float targetZSpin = frontFace ? 0.0f : 180.0f;
 
 		float initialTime = Time.time;
@@ -582,8 +583,6 @@ public class BombCommander : ICommandResponder
 		_selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
 		_selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTileEulerAnglesFinal);
 		_selectableManager.HandleFaceSelection();
-
-		_heldFrontFace = frontFace;
 	}
 
 	private IEnumerator DoFreeYRotate(float initialYSpin, float initialPitch, float targetYSpin, float targetPitch, float duration)
@@ -723,5 +722,5 @@ public class BombCommander : ICommandResponder
 	public int bombSolvedModules;
 	public float bombStartingTimer;
 
-	private bool _heldFrontFace = true;
+	private bool _heldFrontFace => _selectableManager.GetActiveFace() == FaceEnum.Front;
 }

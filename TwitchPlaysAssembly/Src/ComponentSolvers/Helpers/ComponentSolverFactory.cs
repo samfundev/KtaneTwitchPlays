@@ -58,7 +58,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 
 		//Misc Modules
-		ModComponentSolverCreators["alphabetNumbers"] = (bombCommander, bombComponent) => new AlphabetNumbersComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetterKeysComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
@@ -67,6 +66,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent) => new EdgeworkComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
+
+		//Royal_Flu$h Modules
+		ModComponentSolverCreators["alphabetNumbers"] = (bombCommander, bombComponent) => new AlphabetNumbersComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["stockMarket"] = (bombCommander, bombComponent) => new StockMarketComponentSolver(bombCommander, bombComponent);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
@@ -167,7 +170,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 3 };
 
 		//Misc
-		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alphabet Numbers", moduleScore = 5 };
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
@@ -176,6 +178,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3 };
+
+		//Royal_Flu$h
+		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alphabet Numbers", moduleScore = 5 };
+		ModComponentSolverInformation["stockMarket"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Stock Market", moduleScore = 12 };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };

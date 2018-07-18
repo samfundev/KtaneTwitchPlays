@@ -75,7 +75,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\External\SimpleModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\UnsupportedModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Kaneb\TwoBitsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\AlphabetNumbersComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\AlphabetNumbersComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EdgeworkComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EnglishTestComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ErrorCodesComponentSolver.cs" />
@@ -94,6 +94,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Perky\ProbingComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyAdvancedComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\StockMarketComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\AntiTrollShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ComponentSolverShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ExtendedPasswordComponentSolver.cs" />

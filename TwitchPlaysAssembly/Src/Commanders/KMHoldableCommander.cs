@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Input;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -145,7 +146,7 @@ public class KMHoldableCommander
 		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
 		Transform baseTransform = selectableManager.GetBaseHeldObjectTransform();
 
-		float oldZSpin = _heldFrontFace ? 0.0f : 180.0f;
+		float oldZSpin = selectableManager.GetZSpin();
 		float targetZSpin = frontFace ? 0.0f : 180.0f;
 
 		float initialTime = Time.time;
@@ -174,8 +175,6 @@ public class KMHoldableCommander
 		selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
 		selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTileEulerAnglesFinal);
 		selectableManager.HandleFaceSelection();
-
-		_heldFrontFace = frontFace;
 	}
 
 	private IEnumerator DoFreeYRotate(float initialYSpin, float initialPitch, float targetYSpin, float targetPitch, float duration)
@@ -209,5 +208,5 @@ public class KMHoldableCommander
 
 	public MonoBehaviour Selectable;
 	public MonoBehaviour FloatingHoldable;
-	private bool _heldFrontFace = true;
+	private bool _heldFrontFace => KTInputManager.Instance.SelectableManager.GetActiveFace() == FaceEnum.Front;
 }
