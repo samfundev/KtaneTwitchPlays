@@ -141,7 +141,23 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || (OtherModes.ZenModeOn && internalCommandLower.Equals("endzenmode")))
 			{
-				return DelayBombExplosionCoroutine(notifier);
+				if (internalCommandLower.Equals("endzenmode"))
+				{
+					Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
+					if (entry.SolveScore >= TwitchPlaySettings.data.MinScoreForNewbomb || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true))
+					{
+						return DelayBombExplosionCoroutine(notifier);
+					}
+					else
+					{
+						IRCConnection.Instance.SendMessage("Sorry, you don't have enough points to use the endzenmode command.");
+						return null;
+					}
+				}
+				else
+				{
+					return DelayBombExplosionCoroutine(notifier);
+				}
 			}
 
 			return null;
