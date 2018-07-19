@@ -208,5 +208,6 @@ public class KMHoldableCommander
 
 	public MonoBehaviour Selectable;
 	public MonoBehaviour FloatingHoldable;
-	private bool _heldFrontFace => KTInputManager.Instance.SelectableManager.GetActiveFace() == FaceEnum.Front;
+
+	private bool _heldFrontFace => KTInputManager.Instance.SelectableManager.GetZSpin() > 270f || KTInputManager.Instance.SelectableManager.GetZSpin() < 90f;
 }
