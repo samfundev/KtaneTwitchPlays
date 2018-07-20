@@ -399,6 +399,7 @@ public class BombCommander : ICommandResponder
 				if (vanillaIndicator["label"] != indicator["label"]) continue;
 				if (vanillaIndicator["on"] != (indicator["color"] == "Black" ? "False" : "True")) continue;
 				if (vanillaIndicator.ContainsKey("color")) continue;
+				if (vanillaIndicator.TryGetValue("display", out string display) != indicator.TryGetValue("display", out string display1) || display != display1) continue;
 				vanillaIndicator["on"] = $"({indicator["color"]})";
 				break;
 			}
@@ -410,8 +411,10 @@ public class BombCommander : ICommandResponder
 				indicator["on"] = "*";
 			else if (indicator["on"] == "False")
 				indicator["on"] = "";
-			if (indicator.ContainsKey("display"))
-				indicator["label"] = indicator["display"] + "(" + indicator["color"] + ")";
+			if (indicator.TryGetValue("display", out string display))
+				indicator["label"] = display;
+			if (indicator.TryGetValue("color", out string color))
+				indicator["label"] += "(" + color + ")";
 		}
 
 		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
