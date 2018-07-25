@@ -293,11 +293,13 @@ public static class UserAccess
 			ban.BannedBy = IRCConnection.Instance.ChannelName;
 		}
 
-		if (!unban && !HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand) 
-			&& !usernickname.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant())) return ban;
+		unban |= HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand)
+		              || usernickname.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant());
 
-		UnbanUser(usernickname);
-		return null;
+		if (unban)
+			UnbanUser(usernickname);
+
+		return TwitchPlaySettings.data.AnarchyMode || unban ? null : ban;
 	}
 
 	public static void AddUser(string userNickName, AccessLevel level)
