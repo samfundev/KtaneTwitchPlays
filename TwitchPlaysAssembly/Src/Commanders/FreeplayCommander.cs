@@ -75,7 +75,7 @@ public class FreeplayCommander : ICommandResponder
 
 		if (message.EqualsAny("needy on", "needy off"))
 		{
-			if (TwitchPlaySettings.data.EnableFreeplayNeedy || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			if (TwitchPlaySettings.data.EnableFreeplayNeedy || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 			{
 				SetNeedy(message.Equals("needy on"));
 			}
@@ -86,7 +86,7 @@ public class FreeplayCommander : ICommandResponder
 		}
 		else if (message.EqualsAny("hardcore on", "hardcore off"))
 		{
-			if (TwitchPlaySettings.data.EnableFreeplayHardcore || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			if (TwitchPlaySettings.data.EnableFreeplayHardcore || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 			{
 				SetHardcore(message.Equals("hardcore on"));
 			}
@@ -97,7 +97,7 @@ public class FreeplayCommander : ICommandResponder
 		}
 		else if (message.EqualsAny("mods only on", "mods only off"))
 		{
-			if (TwitchPlaySettings.data.EnableFreeplayModsOnly || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			if (TwitchPlaySettings.data.EnableFreeplayModsOnly || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 			{
 				SetModsOnly(message.Equals("mods only on"));
 			}
@@ -208,7 +208,7 @@ public class FreeplayCommander : ICommandResponder
 
 			startBomb = true;
 
-			if (TwitchPlaySettings.data.EnableFreeplayHardcore || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			if (TwitchPlaySettings.data.EnableFreeplayHardcore || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 			{
 				SetHardcore(message.Contains("hardcore"));
 			}
@@ -218,7 +218,7 @@ public class FreeplayCommander : ICommandResponder
 				startBomb = false;
 			}
 
-			if (TwitchPlaySettings.data.EnableFreeplayNeedy || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			if (TwitchPlaySettings.data.EnableFreeplayNeedy || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 			{
 				SetNeedy(message.Contains("needy"));
 			}
@@ -228,7 +228,7 @@ public class FreeplayCommander : ICommandResponder
 				startBomb = false;
 			}
 
-			if (TwitchPlaySettings.data.EnableFreeplayModsOnly || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+			if (TwitchPlaySettings.data.EnableFreeplayModsOnly || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 			{
 				if (message.Contains("vanilla"))
 				{

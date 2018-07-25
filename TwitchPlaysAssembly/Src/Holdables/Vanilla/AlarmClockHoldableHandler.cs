@@ -8,7 +8,7 @@ public class AlarmClockHoldableHandler : HoldableHandler
 	{
 		clock = Holdable.GetComponentInChildren<AlarmClock>();
 		HelpMessage = "Snooze the alarm clock with !{0} snooze.";
-		HelpMessage += TwitchPlaySettings.data.AllowSnoozeOnly 
+		HelpMessage += (TwitchPlaySettings.data.AllowSnoozeOnly && !TwitchPlaySettings.data.AnarchyMode)
 			? " (Current Twitch play settings forbids turning the Alarm clock back on.)" 
 			: " Alarm clock may also be turned back on with !{0} snooze.";
 		Instance = this;
@@ -16,7 +16,7 @@ public class AlarmClockHoldableHandler : HoldableHandler
 
 	protected override IEnumerator RespondToCommandInternal(string command)
 	{
-		if ((TwitchPlaySettings.data.AllowSnoozeOnly && (!(bool) _alarmClockOnField.GetValue(clock)))) yield break;
+		if ((TwitchPlaySettings.data.AllowSnoozeOnly && !TwitchPlaySettings.data.AnarchyMode && (!(bool) _alarmClockOnField.GetValue(clock)))) yield break;
 
 		yield return null;
 		yield return DoInteractionClick(clock.SnoozeButton);

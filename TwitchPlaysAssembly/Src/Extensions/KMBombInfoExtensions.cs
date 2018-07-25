@@ -93,7 +93,8 @@ public static class KMBombInfoExtensions
 		MSA,
 		TRN,
 		BOB,
-		FRK
+		FRK,
+		NLL
 	}
 
 	public enum IndicatorColor

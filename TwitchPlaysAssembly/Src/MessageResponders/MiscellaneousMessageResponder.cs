@@ -247,7 +247,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.RegexMatch(out match, $"^timemode ?((?:on|off)?)$"))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone)
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone || TwitchPlaySettings.data.AnarchyMode)
 			{
 				switch (match.Groups[1].Value.ToLowerInvariant())
 				{
@@ -271,7 +271,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.RegexMatch(out match, $"^zenmode ?((?:on|off)?)$"))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableZenModeForEveryone)
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableZenModeForEveryone || TwitchPlaySettings.data.AnarchyMode)
 			{
 				switch (match.Groups[1].Value.ToLowerInvariant())
 				{
@@ -296,6 +296,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 		else if (text.RegexMatch(out match, $"^modes?"))
 		{
 			IRCConnection.Instance.SendMessage("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode));
+			if (TwitchPlaySettings.data.AnarchyMode)
+				IRCConnection.Instance.SendMessage("We are currently in anarchy mode.");
 		}
 		else if (text.RegexMatch(out match, "^resetusers? (.+)"))
 		{
@@ -814,7 +816,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.Instance.SendMessage("The moderators command has been disabled.");
 				return;
 			}
-			KeyValuePair<string, AccessLevel>[] moderators = UserAccess.GetUsers().Where(x => !string.IsNullOrEmpty(x.Key) && x.Key != "_usernickname1" && x.Key != "_usernickname2" && x.Key != TwitchPlaySettings.data.TwitchPlaysDebugUsername).ToArray();
+			KeyValuePair<string, AccessLevel>[] moderators = UserAccess.GetUsers().Where(x => !string.IsNullOrEmpty(x.Key) && x.Key != "_usernickname1" && x.Key != "_usernickname2" && x.Key != (TwitchPlaySettings.data.TwitchPlaysDebugUsername.StartsWith("_") ? TwitchPlaySettings.data.TwitchPlaysDebugUsername : "_" + TwitchPlaySettings.data.TwitchPlaysDebugUsername)).ToArray();
 			string finalmessage = "Current moderators: ";
 
 			string[] streamers = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Streamer).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
@@ -853,7 +855,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		switch (split[0])
 		{
 			case "run":
-				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
+				if (!((TwitchPlaySettings.data.EnableRunCommand && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true || TwitchPlaySettings.data.AnarchyMode)))
 				{
 					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, userNickName);
 					break;
@@ -953,7 +955,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							break;
 						}
 
-						if (!distribution.Enabled && !UserAccess.HasAccess(userNickName, AccessLevel.Mod))
+						if (!distribution.Enabled && !UserAccess.HasAccess(userNickName, AccessLevel.Mod) && !TwitchPlaySettings.data.AnarchyMode)
 						{
 							IRCConnection.Instance.SendMessage("Sorry, distribution \"{0}\" is disabled", distribution.DisplayName);
 							break;

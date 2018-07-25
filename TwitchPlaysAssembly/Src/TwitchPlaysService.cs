@@ -253,7 +253,7 @@ public class TwitchPlaysService : MonoBehaviour
 				}
 				catch (Exception e)
 				{
-					DebugHelper.LogException(e, "Couldn't Create a component solver during startup for the following reason:");
+					DebugHelper.LogException(e, "Couldn't create a component solver during startup for the following reason:");
 				}
 				DebugHelper.Log(solver != null
 					? $"Found a solver of type \"{solver.GetType().FullName}\" for solvable component \"{bombComponent.ModuleDisplayName}\" ({bombComponent.ModuleType}). This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
@@ -276,7 +276,7 @@ public class TwitchPlaysService : MonoBehaviour
 				}
 				catch (Exception e)
 				{
-					DebugHelper.LogException(e, "Couldn't Create a component solver during startup for the following reason:");
+					DebugHelper.LogException(e, "Couldn't create a component solver during startup for the following reason:");
 				}
 				DebugHelper.Log(solver != null
 					? $"Found a solver of type \"{solver.GetType().FullName}\" for needy component \"{bombComponent.ModuleDisplayName}\" ({bombComponent.ModuleType}). This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."

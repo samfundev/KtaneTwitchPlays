@@ -11,7 +11,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 	{
 		_connectButton = holdable.GetComponent<IRCConnectionManagerHoldable>().ConnectButton;
 		_elevatorSwitch = TPElevatorSwitch.Instance;
-		HelpMessage = "Disconnect the IRC from twitch plays with !{0} disconnect.  For obvious reasons, only the streamer may do this.";
+		HelpMessage = "Disconnect the IRC from twitch plays with !{0} disconnect. For obvious reasons, only the streamer may do this.";
 		if (_elevatorSwitch?.gameObject.activeInHierarchy ?? false)
 		{
 			HelpMessage += " Turn the elevator on with !{0} elevator on. Turn the Elevator off with !{0} elevator off. Flip the elevator on/off with !{0} elevator toggle";

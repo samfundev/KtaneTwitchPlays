@@ -10,7 +10,9 @@ using UnityEngine;
 public class TwitchPlaySettingsData
 {
 	public int SettingsVersion = 0;
-	
+
+	public bool AnarchyMode = false;
+
 	public bool SkipModManagerInstructionScreen = false;
 	public bool EnableRewardMultipleStrikes = true;
 	public bool EnableMissionBinder = true;

@@ -408,6 +408,11 @@ public class TwitchComponentHandle : MonoBehaviour
 			return new Tuple<bool, string>(false, string.Format("Sorry, @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, PlayerName, HeaderText));
 		}
 
+		if (TwitchPlaySettings.data.AnarchyMode)
+		{
+			return new Tuple<bool, string>(false, string.Format("Sorry, {0}, claiming modules is not allowed in anarchy mode.", PlayerName));
+		}
+
 		if (PlayerName != null)
 		{
 			if (!PlayerName.Equals(userNickName))
@@ -568,7 +573,11 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 					{
-						if (PlayerName != null)
+						if (TwitchPlaySettings.data.AnarchyMode)
+						{
+							messageOut = string.Format("Sorry {0}, assigning modules is not allowed in anarchy mode.", PlayerName);
+						}
+						else if (PlayerName != null)
 						{
 							ClaimedList.Remove(PlayerName);
 						}
@@ -587,7 +596,11 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 				{
-					if (PlayerName != null && userNickName != PlayerName)
+					if (TwitchPlaySettings.data.AnarchyMode)
+					{
+						messageOut = string.Format("Sorry {0}, taking modules is not allowed in anarchy mode.", PlayerName);
+					}
+					else if (PlayerName != null && userNickName != PlayerName)
 					{
 						AddToClaimQueue(userNickName);
 						if (TakeInProgress == null)
@@ -689,6 +702,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			bool moduleAlreadyClaimed = bombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
 			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.bombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
 			moduleAlreadyClaimed &= PlayerName != null;
+			moduleAlreadyClaimed &= !TwitchPlaySettings.data.AnarchyMode;
 			moduleAlreadyClaimed &= PlayerName != userNickName;
 			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
 			moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));

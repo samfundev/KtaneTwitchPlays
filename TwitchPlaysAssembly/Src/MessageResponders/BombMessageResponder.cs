@@ -246,7 +246,7 @@ public class BombMessageResponder : MessageResponder
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "Couldn't Write TwitchPlaysLastClaimed.json:");
+			DebugHelper.LogException(ex, "Couldn't write TwitchPlaysLastClaimed.json:");
 		}
 	}
 
@@ -527,6 +527,11 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.Equals("claims", StringComparison.InvariantCultureIgnoreCase))
 			{
+				if (TwitchPlaySettings.data.AnarchyMode)
+				{
+					IRCConnection.Instance.SendMessage("Sorry {0}, claiming modules is not available in anarchy mode.");
+					return;
+				}
 				List<string> claimed = (
 					from handle in ComponentHandles
 					where handle.PlayerName != null && handle.PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) && !handle.Solved
@@ -548,6 +553,11 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (text.Contains("claim") && text.Contains("all"))
 				{
+					if (TwitchPlaySettings.data.AnarchyMode)
+					{
+						IRCConnection.Instance.SendMessage("Sorry {0}, claiming modules is not allowed in anarchy mode");
+						return;
+					}
 					foreach (var handle in ComponentHandles)
 					{
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
@@ -592,7 +602,7 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase))
+			if (text.Equals("unclaimed", StringComparison.InvariantCultureIgnoreCase) && !TwitchPlaySettings.data.AnarchyMode)
 			{
 				IEnumerable<string> unclaimed = ComponentHandles.Where(handle => !handle.Claimed && !handle.Solved && GameRoom.Instance.IsCurrentBomb(handle.bombID)).Shuffle().Take(3)
 					.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code})")).ToList();
@@ -634,7 +644,7 @@ public class BombMessageResponder : MessageResponder
 				return;
 			}
 
-			if (text.RegexMatch(out match, "^(?:findplayer|playerfind|searchplayer|playersearch) (.+)"))
+			if (text.RegexMatch(out match, "^(?:findplayer|playerfind|searchplayer|playersearch) (.+)") && !TwitchPlaySettings.data.AnarchyMode)
 			{
 				string[] queries = match.Groups[1].Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
 				foreach (string query in queries)
@@ -752,7 +762,7 @@ public class BombMessageResponder : MessageResponder
 					return;
 				}
 			}
-			if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase) && (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableFilledgeworkForEveryone))
+			if (text.Equals("filledgework", StringComparison.InvariantCultureIgnoreCase) && (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableFilledgeworkForEveryone || TwitchPlaySettings.data.AnarchyMode))
 			{
 				foreach (var commander in BombCommanders) commander.FillEdgework(_currentBomb != commander.twitchBombHandle.bombID);
 				return;
@@ -765,6 +775,18 @@ public class BombMessageResponder : MessageResponder
 				_notesDictionary[index - 1] = TwitchPlaySettings.data.NotesSpaceFree;
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.Notes, index, _notesDictionary[index - 1]);
 			return;
+		}
+
+		if ((text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablemodulewall", StringComparison.InvariantCultureIgnoreCase)) && TwitchPlaySettings.data.AnarchyMode)
+		{
+			GameRoom.HideCamera();
+			moduleCameras.EnableWallOfCameras();
+		}
+
+		if ((text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablemodulewall", StringComparison.InvariantCultureIgnoreCase)) && TwitchPlaySettings.data.AnarchyMode)
+		{
+			GameRoom.ShowCamera();
+			moduleCameras.DisableWallOfCameras();
 		}
 
 		switch (UserAccess.HighestAccessLevel(userNickName))

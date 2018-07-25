@@ -240,14 +240,14 @@ public class IRCConnection : MonoBehaviour
 				{
 					case IRCConnectionState.DoNotRetry:
 						_state = IRCConnectionState.Disconnected;
-						AddTextToHoldable("[IRC:Connect] aborted.");
+						AddTextToHoldable("[IRC:Connect] Aborted.");
 						yield break;
 					case IRCConnectionState.Connected:
-						AddTextToHoldable("[IRC:Connect] Successful");
+						AddTextToHoldable("[IRC:Connect] Successful.");
 						break;
 					default:
 						_state = IRCConnectionState.Retrying;
-						AddTextToHoldable($"[IRC:Connect] Failed - Retrying in {connectionRetryDelay[connectionRetryIndex] / 1000} seconds");
+						AddTextToHoldable($"[IRC:Connect] Failed - Retrying in {connectionRetryDelay[connectionRetryIndex] / 1000} seconds.");
 						break;
 				}
 			}
@@ -262,7 +262,7 @@ public class IRCConnection : MonoBehaviour
 					AddTextToHoldable("[IRC:Disconnect] Disconnecting from chat IRC.");
 					yield break;
 				default:
-					AddTextToHoldable("[IRC:Connect] Retrying to reconnect");
+					AddTextToHoldable("[IRC:Connect] Trying to reconnect.");
 					break;
 			}
 		}
@@ -473,6 +473,29 @@ public class IRCConnection : MonoBehaviour
 	{
 		SendMessage(string.Format(message, args));
 	}
+
+	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
+	[StringFormatMethod("message")]
+	public void SendWhisper(string userNickName, string message)
+	{
+		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
+		{
+			if (!_silenceMode && _state != IRCConnectionState.Disconnected)
+				SendCommand(string.Format("PRIVMSG #{0} :.w {1} {2}", _settings.channelName, userNickName, line));
+			if (line.StartsWith(".") || line.StartsWith("/")) continue;
+			lock (_messageQueue)
+			{
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true));
+			}
+		}
+	}
+
+	[StringFormatMethod("message")]
+	public void SendWhisper(string userNickName, string message, params object[] args)
+	{
+		SendWhisper(userNickName, string.Format(message, args));
+	}
+
 
 	public void ToggleSilenceMode()
 	{
