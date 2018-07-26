@@ -77,6 +77,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	private bool statusLightLeft = false;
 	private bool statusLightDown = false;
 	private Vector3 originalIDPosition = Vector3.zero;
+	private bool anarchyMode = TwitchPlaySettings.data.AnarchyMode;
 	#endregion
 
 	#region Private Statics
@@ -87,6 +88,21 @@ public class TwitchComponentHandle : MonoBehaviour
 	#region Unity Lifecycle
 	private void Update()
 	{
+		if (anarchyMode != TwitchPlaySettings.data.AnarchyMode)
+		{
+			anarchyMode = TwitchPlaySettings.data.AnarchyMode;
+			if (anarchyMode)
+			{
+				CanvasGroupMultiDecker.alpha = Solved ? 0.5f : 1.0f;
+				SetBannerColor(unclaimedBackgroundColor);
+			}
+			else
+			{
+				CanvasGroupMultiDecker.alpha = Solved ? 0.0f : 1.0f;
+				SetBannerColor(Claimed && !Solved ? ClaimedBackgroundColour : unclaimedBackgroundColor);
+			}
+		}
+
 		if (originalIDPosition == Vector3.zero) return;
 		if ((Solver.modInfo.statusLightLeft != statusLightLeft || Solver.modInfo.statusLightDown != statusLightDown))
 		{
@@ -99,13 +115,13 @@ public class TwitchComponentHandle : MonoBehaviour
 		if (Solver.modInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != Solver.modInfo.unclaimedColor)
 		{
 			unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;
-			if (!Claimed) SetBannerColor(unclaimedBackgroundColor);
+			if (!Claimed || Solved) SetBannerColor(unclaimedBackgroundColor);
 		}
 
 		if (!Solver.modInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != TwitchPlaySettings.data.UnclaimedColor)
 		{
 			unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
-			if (!Claimed) SetBannerColor(unclaimedBackgroundColor);
+			if (!Claimed || Solved) SetBannerColor(unclaimedBackgroundColor);
 		}
 	}
 
@@ -266,7 +282,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void OnPass(string userNickname)
 	{
-		CanvasGroupMultiDecker.alpha = 0.0f;
+		CanvasGroupMultiDecker.alpha = TwitchPlaySettings.data.AnarchyMode ? 0.5f : 0.0f;
 		Solved = true;
 		if (PlayerName != null)
 		{
@@ -699,7 +715,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		{
 			if (!IsAuthorizedDefuser(userNickName, false)) return null;
 
-			if (Solved)
+			if (Solved && !TwitchPlaySettings.data.AnarchyMode)
 			{
 				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, HeaderText);
 				return null;

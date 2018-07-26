@@ -25,11 +25,20 @@ public abstract class ComponentSolver
 	#region Interface Implementation
 	public IEnumerator RespondToCommand(string userNickName, string message)
 	{
+		DisableAnarchyStrike = true;
+		IEnumerator respondToCommand = RespondToCommandInternal(userNickName, message);
+		while (respondToCommand.MoveNext())
+			yield return respondToCommand.Current;
+		DisableAnarchyStrike = false;
+	}
+
+	private IEnumerator RespondToCommandInternal(string userNickName, string message)
+	{
 		TryCancel = false;
 		_responded = false;
 		_zoom = false;
 		_processingTwitchCommand = true;
-		if (Solved)
+		if (Solved && !TwitchPlaySettings.data.AnarchyMode)
 		{
 			_processingTwitchCommand = false;
 			yield break;
@@ -98,9 +107,9 @@ public abstract class ComponentSolver
 				}
 			}
 
-			if (subcoroutine == null || !moved || Solved || beforeStrikeCount != StrikeCount)
+			if (subcoroutine == null || !moved || ((Solved || beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode))
 			{
-				if (Solved || beforeStrikeCount != StrikeCount)
+				if ((Solved || beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode)
 				{
 					IRCConnection.Instance.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", ComponentHandle.Code, ComponentHandle.HeaderText);
 					if (modInfo != null)
@@ -166,7 +175,7 @@ public abstract class ComponentSolver
 		bool exceptionThrown = false;
 		bool trycancelsequence = false;
 
-		while ((previousStrikeCount == StrikeCount && !Solved) || DisableOnStrike)
+		while (((previousStrikeCount == StrikeCount && !Solved) || DisableOnStrike || TwitchPlaySettings.data.AnarchyMode) && !BombCommander.Bomb.HasDetonated)
 		{
 			try
 			{
@@ -252,12 +261,12 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 				{
-					if (previousStrikeCount == StrikeCount)
+					if (previousStrikeCount == StrikeCount && !TwitchPlaySettings.data.AnarchyMode)
 					{
 						DisableOnStrike = false;
 						if (Solved) OnPass(null);
 					}
-					else
+					else if (!TwitchPlaySettings.data.AnarchyMode)
 					{
 						break;
 					}
@@ -329,7 +338,7 @@ public abstract class ComponentSolver
 				foreach (KMSelectable selectable in selectables)
 				{
 					yield return DoInteractionClick(selectable);
-					if ((previousStrikeCount != StrikeCount && !DisableOnStrike) || Solved || (trycancelsequence && CoroutineCanceller.ShouldCancel))
+					if ((((previousStrikeCount != StrikeCount && !DisableOnStrike) || Solved) && !TwitchPlaySettings.data.AnarchyMode) || (trycancelsequence && CoroutineCanceller.ShouldCancel) || BombCommander.Bomb.HasDetonated)
 						break;
 				}
 				if (trycancelsequence && CoroutineCanceller.ShouldCancel)
@@ -422,6 +431,13 @@ public abstract class ComponentSolver
 				OnPass(null);
 			AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
 		}
+		else if (TwitchPlaySettings.data.AnarchyMode)
+		{
+			DisableAnarchyStrike = false;
+			if (StrikeCount != previousStrikeCount)
+				AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
+		}
+
 
 		if (!parseError)
 		{
@@ -473,7 +489,7 @@ public abstract class ComponentSolver
 				IRCConnection.Instance.SendMessage(chatMsg);
 				return true;
 			case "antitroll":
-				if (TwitchPlaySettings.data.EnableTrollCommands) return false;
+				if (TwitchPlaySettings.data.EnableTrollCommands || TwitchPlaySettings.data.AnarchyMode) return false;
 				goto case "sendtochaterror";
 			case "sendtochaterror":
 				ComponentHandle.CommandError(userNickName, chatMsg);
@@ -679,12 +695,17 @@ public abstract class ComponentSolver
 	}
 
 	private bool DisableOnStrike;
+	private bool DisableAnarchyStrike;
 	private bool OnStrike(object _ignore)
 	{
 		//string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 		StrikeCount++;
 
-		if (DisableOnStrike) return false;
+		if (DisableOnStrike || DisableAnarchyStrike)
+		{
+			BombMessageResponder.moduleCameras?.UpdateStrikes(true);
+			return false;
+		}
 
 		if (_delegatedStrikeUserNickName != null)
 		{
