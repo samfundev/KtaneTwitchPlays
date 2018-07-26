@@ -546,8 +546,8 @@ public abstract class ComponentSolver
 	{
 		if (strikeMessage != null)
 		{
-			StrikeMessage = strikeMessage;
 			StrikeMessageConflict |= StrikeCount != _beforeStrikeCount && !string.IsNullOrEmpty(StrikeMessage) && !StrikeMessage.Equals(strikeMessage);
+			StrikeMessage = strikeMessage;
 		}
 
 		if (interactable != null)
@@ -932,7 +932,7 @@ public abstract class ComponentSolver
 		string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		if (OtherModes.ZenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) && !StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
+		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
 		if (strikeCount <= 0) return;
 
 		string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
