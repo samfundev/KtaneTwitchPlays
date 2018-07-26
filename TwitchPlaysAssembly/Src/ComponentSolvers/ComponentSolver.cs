@@ -169,7 +169,6 @@ public abstract class ComponentSolver
 			}
 		}
 
-		int previousStrikeCount = StrikeCount;
 		bool parseError = false;
 		bool needQuaternionReset = false;
 		bool hideCamera = false;
