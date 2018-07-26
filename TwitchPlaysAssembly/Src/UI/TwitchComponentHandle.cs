@@ -339,6 +339,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force = false)
 	{
+		if(TwitchPlaySettings.data.AnarchyMode) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
+
 		if (string.IsNullOrEmpty(userNickName)) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
 
 		if (BombMessageResponder.Instance.LastClaimedModule == null)
