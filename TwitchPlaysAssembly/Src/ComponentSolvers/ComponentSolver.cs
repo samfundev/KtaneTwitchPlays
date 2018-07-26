@@ -80,6 +80,7 @@ public abstract class ComponentSolver
 			}
 
 			bool moved = false;
+			bool solved = Solved;
 			if (subcoroutine != null)
 			{
 				try
@@ -108,23 +109,24 @@ public abstract class ComponentSolver
 				}
 			}
 
-			if (subcoroutine == null || !moved || ((Solved  || _beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode))
+			if (Solved != solved || _beforeStrikeCount != StrikeCount)
 			{
-				if ((Solved || _beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode)
+				IRCConnection.Instance.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", ComponentHandle.Code, ComponentHandle.HeaderText);
+				if (modInfo != null)
 				{
-					IRCConnection.Instance.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", ComponentHandle.Code, ComponentHandle.HeaderText);
-					if (modInfo != null)
-					{
-						modInfo.DoesTheRightThing = false;
-						ModuleData.DataHasChanged = true;
-						ModuleData.WriteDataToFile();
-					}
+					modInfo.DoesTheRightThing = false;
+					ModuleData.DataHasChanged = true;
+					ModuleData.WriteDataToFile();
+				}
 
+				if (!TwitchPlaySettings.data.AnarchyMode)
+				{
 					IEnumerator focusDefocus = BombCommander.Focus(Selectable, FocusDistance, FrontFace);
 					while (focusDefocus.MoveNext())
 					{
 						yield return focusDefocus.Current;
 					}
+
 					yield return new WaitForSeconds(0.5f);
 
 					focusDefocus = BombCommander.Defocus(Selectable, FrontFace);
@@ -132,12 +134,18 @@ public abstract class ComponentSolver
 					{
 						yield return focusDefocus.Current;
 					}
+
 					yield return new WaitForSeconds(0.5f);
+					_currentUserNickName = null;
+					_processingTwitchCommand = false;
+					yield break;
 				}
-				else if (!_responded)
-				{
+			}
+
+			if (subcoroutine == null || !moved)
+			{
+				if (!_responded)
 					ComponentHandle.CommandInvalid(userNickName);
-				}
 
 				_currentUserNickName = null;
 				_processingTwitchCommand = false;
