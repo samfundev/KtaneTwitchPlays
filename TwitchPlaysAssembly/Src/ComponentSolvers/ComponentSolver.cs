@@ -32,6 +32,7 @@ public abstract class ComponentSolver
 		DisableAnarchyStrike = false;
 	}
 
+	private int _beforeStrikeCount;
 	private IEnumerator RespondToCommandInternal(string userNickName, string message)
 	{
 		TryCancel = false;
@@ -46,7 +47,7 @@ public abstract class ComponentSolver
 
 		_currentUserNickName = userNickName;
 
-		int beforeStrikeCount = StrikeCount;
+		_beforeStrikeCount = StrikeCount;
 
 		IEnumerator subcoroutine = null;
 		if (message.StartsWith("send to module ", StringComparison.InvariantCultureIgnoreCase))
@@ -107,9 +108,9 @@ public abstract class ComponentSolver
 				}
 			}
 
-			if (subcoroutine == null || !moved || ((Solved || beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode))
+			if (subcoroutine == null || !moved || ((Solved  || _beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode))
 			{
-				if ((Solved || beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode)
+				if ((Solved || _beforeStrikeCount != StrikeCount) && !TwitchPlaySettings.data.AnarchyMode)
 				{
 					IRCConnection.Instance.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", ComponentHandle.Code, ComponentHandle.HeaderText);
 					if (modInfo != null)
@@ -175,7 +176,7 @@ public abstract class ComponentSolver
 		bool exceptionThrown = false;
 		bool trycancelsequence = false;
 
-		while (((previousStrikeCount == StrikeCount && !Solved) || DisableOnStrike || TwitchPlaySettings.data.AnarchyMode) && !BombCommander.Bomb.HasDetonated)
+		while (((_beforeStrikeCount == StrikeCount && !Solved) || DisableOnStrike || TwitchPlaySettings.data.AnarchyMode) && !Detonated)
 		{
 			try
 			{
@@ -261,7 +262,7 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 				{
-					if (previousStrikeCount == StrikeCount && !TwitchPlaySettings.data.AnarchyMode)
+					if (_beforeStrikeCount == StrikeCount && !TwitchPlaySettings.data.AnarchyMode)
 					{
 						DisableOnStrike = false;
 						if (Solved) OnPass(null);
@@ -338,7 +339,7 @@ public abstract class ComponentSolver
 				foreach (KMSelectable selectable in selectables)
 				{
 					yield return DoInteractionClick(selectable);
-					if ((((previousStrikeCount != StrikeCount && !DisableOnStrike) || Solved) && !TwitchPlaySettings.data.AnarchyMode) || (trycancelsequence && CoroutineCanceller.ShouldCancel) || BombCommander.Bomb.HasDetonated)
+					if ((((_beforeStrikeCount != StrikeCount && !DisableOnStrike) || Solved) && !TwitchPlaySettings.data.AnarchyMode) || (trycancelsequence && CoroutineCanceller.ShouldCancel) || Detonated)
 						break;
 				}
 				if (trycancelsequence && CoroutineCanceller.ShouldCancel)
@@ -429,13 +430,13 @@ public abstract class ComponentSolver
 			BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 			if (Solved)
 				OnPass(null);
-			AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
+			AwardStrikes(_currentUserNickName, StrikeCount - _beforeStrikeCount);
 		}
 		else if (TwitchPlaySettings.data.AnarchyMode)
 		{
 			DisableAnarchyStrike = false;
-			if (StrikeCount != previousStrikeCount)
-				AwardStrikes(_currentUserNickName, StrikeCount - previousStrikeCount);
+			if (StrikeCount != _beforeStrikeCount)
+				AwardStrikes(_currentUserNickName, StrikeCount - _beforeStrikeCount);
 		}
 
 
