@@ -405,12 +405,12 @@ public class TwitchComponentHandle : MonoBehaviour
 	{
 		if (Solver.AttemptedForcedSolve)
 		{
-			return new Tuple<bool, string>(false, string.Format("Sorry, @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, PlayerName, HeaderText));
+			return new Tuple<bool, string>(false, string.Format("Sorry, @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, userNickName, HeaderText));
 		}
 
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
-			return new Tuple<bool, string>(false, string.Format("Sorry, {0}, claiming modules is not allowed in anarchy mode.", PlayerName));
+			return new Tuple<bool, string>(false, string.Format("Sorry, {0}, claiming modules is not allowed in anarchy mode.", userNickName));
 		}
 
 		if (PlayerName != null)
@@ -575,19 +575,23 @@ public class TwitchComponentHandle : MonoBehaviour
 					{
 						if (TwitchPlaySettings.data.AnarchyMode)
 						{
-							messageOut = string.Format("Sorry {0}, assigning modules is not allowed in anarchy mode.", PlayerName);
+							messageOut = string.Format("Sorry {0}, assigning modules is not allowed in anarchy mode.", userNickName);
 						}
-						else if (PlayerName != null)
+						else
 						{
-							ClaimedList.Remove(PlayerName);
+							if (PlayerName != null)
+							{
+								ClaimedList.Remove(PlayerName);
+							}
+
+							string newplayerName = unprocessedCommand.Remove(0, 7).Trim();
+							PlayerName = newplayerName;
+							ClaimedList.Add(PlayerName);
+							RemoveFromClaimQueue(userNickName);
+							CanClaimNow(userNickName, true, true);
+							SetBannerColor(ClaimedBackgroundColour);
+							messageOut = string.Format(TwitchPlaySettings.data.AssignModule, Code, PlayerName, userNickName, HeaderText);
 						}
-						string newplayerName = unprocessedCommand.Remove(0, 7).Trim();
-						PlayerName = newplayerName;
-						ClaimedList.Add(PlayerName);
-						RemoveFromClaimQueue(userNickName);
-						CanClaimNow(userNickName, true, true);
-						SetBannerColor(ClaimedBackgroundColour);
-						messageOut = string.Format(TwitchPlaySettings.data.AssignModule, Code, PlayerName, userNickName, HeaderText);
 					}
 					else
 					{
@@ -598,7 +602,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (TwitchPlaySettings.data.AnarchyMode)
 					{
-						messageOut = string.Format("Sorry {0}, taking modules is not allowed in anarchy mode.", PlayerName);
+						messageOut = string.Format("Sorry {0}, taking modules is not allowed in anarchy mode.", userNickName);
 					}
 					else if (PlayerName != null && userNickName != PlayerName)
 					{
