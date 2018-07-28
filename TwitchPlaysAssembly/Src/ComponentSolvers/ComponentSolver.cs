@@ -25,7 +25,7 @@ public abstract class ComponentSolver
 	#region Interface Implementation
 	public IEnumerator RespondToCommand(string userNickName, string message)
 	{
-		DisableAnarchyStrike = true;
+		DisableAnarchyStrike = TwitchPlaySettings.data.AnarchyMode;
 		IEnumerator respondToCommand = RespondToCommandInternal(userNickName, message);
 		while (respondToCommand.MoveNext())
 			yield return respondToCommand.Current;
