@@ -290,6 +290,19 @@ public abstract class ComponentSolver
 					BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
 					break;
 				}
+				else if (currentString.RegexMatch(out match, "^(detonate|explode) ([0-9]+(?:\\.[0-9])?)") && float.TryParse(match.Groups[1].Value, out float explosionTime))
+				{
+					_delayedExplosionPending = true;
+					if (_delayedExplosionCoroutine != null)
+						ComponentHandle.StopCoroutine(_delayedExplosionCoroutine);
+					_delayedExplosionCoroutine = ComponentHandle.StartCoroutine(DelayedModuleBombExplosion(explosionTime, userNickName));
+				}
+				else if (currentString.RegexMatch(out match, "^cancel (detonate|explode|detonation|explosion)$"))
+				{
+					_delayedExplosionPending = false;
+					if (_delayedExplosionCoroutine != null)
+						ComponentHandle.StopCoroutine(_delayedExplosionCoroutine);
+				}
 				else if (currentString.RegexMatch(out match, "^(end |toggle )?(?:elevator|hold|waiting) music$"))
 				{
 					if (match.Groups.Count > 1 && _musicPlayer != null)
@@ -522,6 +535,15 @@ public abstract class ComponentSolver
 	{
 		yield return new WaitForSeconds(delay);
 		IRCConnection.Instance.SendMessage(message);
+	}
+
+	protected IEnumerator DelayedModuleBombExplosion(float delay, string userNickName)
+	{
+		yield return new WaitForSeconds(delay);
+		if (!_delayedExplosionPending) yield break;
+
+		AwardStrikes(userNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+		BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
 	}
 
 	protected void DoInteractionStart(MonoBehaviour interactable)
@@ -1171,6 +1193,8 @@ public abstract class ComponentSolver
 	private bool _responded = false;
 	private bool _zoom = false;
 	public bool AttemptedForcedSolve = false;
+	private bool _delayedExplosionPending = false;
+	private Coroutine _delayedExplosionCoroutine = null;
 
 	public TwitchComponentHandle ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
