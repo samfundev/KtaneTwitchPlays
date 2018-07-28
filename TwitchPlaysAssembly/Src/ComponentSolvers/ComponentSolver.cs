@@ -93,7 +93,7 @@ public abstract class ComponentSolver
 						switch (subcoroutine.Current)
 						{
 							case string currentString:
-								if (SendToTwitchChat(currentString, userNickName) && !currentString.StartsWith("strikemessage", StringComparison.InvariantCultureIgnoreCase))
+								if (SendToTwitchChat(currentString, userNickName) == SendToTwitchChatResponse.InstantResponse)
 								{
 									yield break;
 								}
@@ -255,7 +255,7 @@ public abstract class ComponentSolver
 					}
 				}
 				// Commands that allow messages to be sent to the chat.
-				else if (SendToTwitchChat(currentString, userNickName))
+				else if (SendToTwitchChat(currentString, userNickName) != SendToTwitchChatResponse.NotHandled)
 				{
 					//handled
 				}
@@ -476,7 +476,14 @@ public abstract class ComponentSolver
 	#endregion
 
 	#region Protected Helper Methods
-	protected bool SendToTwitchChat(string message, string userNickName)
+	protected enum SendToTwitchChatResponse
+	{
+		InstantResponse,
+		Handled,
+		NotHandled
+	}
+
+	protected SendToTwitchChatResponse SendToTwitchChat(string message, string userNickName)
 	{
 		// Within the messages, allow variables:
 		// {0} = user’s nickname
@@ -484,10 +491,10 @@ public abstract class ComponentSolver
 		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9])?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
 		{
 			ComponentHandle.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(match.Groups[3].Value, userNickName, ComponentHandle.Code)));
-			return true;
+			return SendToTwitchChatResponse.InstantResponse;
 		}
 
-		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return false;
+		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
 
 		var chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
 
@@ -495,19 +502,19 @@ public abstract class ComponentSolver
 		{
 			case "sendtochat":
 				IRCConnection.Instance.SendMessage(chatMsg);
-				return true;
+				return SendToTwitchChatResponse.InstantResponse;
 			case "antitroll":
-				if (TwitchPlaySettings.data.EnableTrollCommands || TwitchPlaySettings.data.AnarchyMode) return false;
+				if (TwitchPlaySettings.data.EnableTrollCommands || TwitchPlaySettings.data.AnarchyMode) return SendToTwitchChatResponse.Handled;
 				goto case "sendtochaterror";
 			case "sendtochaterror":
 				ComponentHandle.CommandError(userNickName, chatMsg);
-				return true;
+				return SendToTwitchChatResponse.InstantResponse;
 			case "strikemessage":
 				StrikeMessageConflict |= StrikeCount != _beforeStrikeCount && !string.IsNullOrEmpty(StrikeMessage) && !StrikeMessage.Equals(chatMsg);
 				StrikeMessage = chatMsg;
-				return true;
+				return SendToTwitchChatResponse.Handled;
 			default:
-				return false;
+				return SendToTwitchChatResponse.NotHandled;
 		}
 	}
 
