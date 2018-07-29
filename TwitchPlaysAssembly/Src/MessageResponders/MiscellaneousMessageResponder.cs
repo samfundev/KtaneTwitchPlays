@@ -1125,6 +1125,20 @@ public class MiscellaneousMessageResponder : MessageResponder
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.GeneralCustomMessages[text.ToLowerInvariant()]);
 		}
 
+		if (UserAccess.HasAccess(userNickName, AccessLevel.Streamer))
+		{
+			if (text.Equals("disablemods", StringComparison.InvariantCultureIgnoreCase))
+			{
+				UserAccess.ModeratorsEnabled = false;
+				IRCConnection.Instance.SendMessage("All moderators temporarily disabled.");
+			}
+			else if (text.Equals("enablemods", StringComparison.InvariantCultureIgnoreCase))
+			{
+				UserAccess.ModeratorsEnabled = true;
+				IRCConnection.Instance.SendMessage("All moderators restored.");
+			}
+		}
+
 		if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			if (text.Equals("reloaddata", StringComparison.InvariantCultureIgnoreCase))
@@ -1185,7 +1199,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 			{
 				IRCConnection.Instance.ToggleSilenceMode();
 			}
-
 		}
 
 		//As of now, Debugging commands are streamer only, apart from issue command as person, which is superuser and above.

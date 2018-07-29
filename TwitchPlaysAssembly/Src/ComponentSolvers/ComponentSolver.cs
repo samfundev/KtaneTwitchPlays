@@ -463,7 +463,7 @@ public abstract class ComponentSolver
 			return true;
 		}
 
-		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage) +(\S(?:\S|\s)*)$")) return false;
+		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return false;
 
 		var chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
 
@@ -1133,7 +1133,7 @@ public abstract class ComponentSolver
 
 	public TwitchComponentHandle ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
-	protected MethodInfo ForcedSolveMethod = null;
-	protected Component CommandComponent = null;
+	public MethodInfo ForcedSolveMethod = null;
+	public Component CommandComponent = null;
 
 }

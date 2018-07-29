@@ -13,6 +13,33 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 			modInfo = _unshimmed.modInfo;
 		}
 
+		protected sealed override IEnumerator ForcedSolveIEnumerator()
+		{
+			return TwitchPlaySettings.data.EnableTwitchPlayShims ? ForcedSolveIEnumratorShimmed() : ForcedSolveIEnumeratorUnshimmed();
+		}
+
+		protected virtual IEnumerator ForcedSolveIEnumratorShimmed()
+		{
+			return ForcedSolveIEnumeratorUnshimmed();
+		}
+
+		protected IEnumerator ForcedSolveIEnumeratorUnshimmed()
+		{
+			if (_unshimmed.ForcedSolveMethod == null) yield break;
+
+			object result = _unshimmed.ForcedSolveMethod.Invoke(_unshimmed.CommandComponent, null);
+			if (result is IEnumerator e)
+			{
+				while (e.MoveNext())
+					yield return e.Current;
+			}
+			else
+			{
+				yield return null;
+			}
+		}
+		
+
 		protected internal sealed override IEnumerator RespondToCommandInternal(string inputCommand)
 		{
 			return TwitchPlaySettings.data.EnableTwitchPlayShims ? RespondToCommandShimmed(inputCommand) : RespondToCommandUnshimmed(inputCommand);
