@@ -84,7 +84,6 @@ public static class ComponentSolverFactory
 
 		// Anti-troll shims - These are specifically meant to allow the troll commmands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
-		ModComponentSolverCreators["SimonScreamsModule"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "SimonScreamsModule", new[] { "disco", "lasershow" }, "Sorry, I am not going to waste time flashing all the colors.");
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -294,7 +293,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelingCode"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
-		
+
 		//Marksam32
 		ModComponentSolverInformation["burglarAlarm"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["cooking"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
@@ -346,7 +345,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		
+
 		//SL7205
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, helpText = "Set the correct number with !{0} set a,k,m,y. Submit your set answer with !{0} submit. colors are Red, Orange, Yellow, Green, Blue, Purple, Magenta, White, grAy, blacK. (note what letter is capitalized in each color.)" };
 		ModComponentSolverInformation["fastMath"] = new ModuleInformation { moduleScore = 12, helpText = "Start the timer with !{0} go. Submit an answer with !{0} submit 12." };
@@ -356,7 +355,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["screw"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
 		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject." };
-		
+
 		//Spare Wizard
 		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 16 };
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -423,7 +422,7 @@ public static class ComponentSolverFactory
 		//Trainzack
 		ModComponentSolverInformation["ChordQualities"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 9 };
 		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { moduleScore = 9, helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", DoesTheRightThing = false };
-		
+
 		//Virepri
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { moduleScore = 10, helpText = "Submit the correct answer with !{0} submit 10101010.", manualCode = "Bitwise%20Operations", validCommands = new[] { "^submit [0-1]{8}$" }, DoesTheRightThing = true };
 		ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b.", DoesTheRightThing = true };
