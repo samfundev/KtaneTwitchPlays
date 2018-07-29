@@ -454,7 +454,7 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	[StringFormatMethod("message")]
-	public new void SendMessage(string message)
+	public void SendChatMessage(string message)
 	{
 		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
 		{
@@ -469,9 +469,39 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	[StringFormatMethod("message")]
+	public void SendChatMessage(string message, params object[] args)
+	{
+		SendMessage(string.Format(message, args));
+	}
+
+	[StringFormatMethod("message")]
 	public void SendMessage(string message, params object[] args)
 	{
 		SendMessage(string.Format(message, args));
+	}
+
+	[StringFormatMethod("message")]
+	public new void SendMessage(string message)
+	{
+		SendMessage(message, null, true);
+	}
+
+	[StringFormatMethod("message")]
+	public void SendMessage(string message, string userNickName, bool sendToChat)
+	{
+		if (sendToChat || string.IsNullOrEmpty(userNickName))
+		{
+			SendChatMessage(message);
+		} else
+		{
+			SendWhisper(userNickName, message);
+		}
+	}
+
+	[StringFormatMethod("message")]
+	public void SendMessage(string message, string userNickName, bool sendToChat, params object[] args)
+	{
+		SendMessage(string.Format(message, args), userNickName, sendToChat);
 	}
 
 	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
