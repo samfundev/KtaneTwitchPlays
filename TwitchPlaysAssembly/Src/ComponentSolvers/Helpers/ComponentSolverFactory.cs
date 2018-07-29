@@ -355,7 +355,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["screw"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["TextField"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button in column 3 row 2 and column 4 row 3 with !{0} press 3,2 4,3." };
 		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, helpText = "Accept the design with !{0} acc. Consider the design with !{0} con. Reject the design with !{0} reject." };
-
+		
 		//Spare Wizard
 		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 16 };
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
