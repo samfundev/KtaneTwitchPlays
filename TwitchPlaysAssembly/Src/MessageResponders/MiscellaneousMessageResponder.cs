@@ -1211,6 +1211,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value))
 				IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
 		}
+		if (text.Equals("whispertest"))
+		{
+			IRCConnection.Instance.SendMessage("Test succesful", userNickName, false);
+		}
 		if (!UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
 		if (text.Equals("secondary camera"))
 		{
