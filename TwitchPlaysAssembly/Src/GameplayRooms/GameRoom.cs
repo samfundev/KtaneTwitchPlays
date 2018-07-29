@@ -119,7 +119,7 @@ public abstract class GameRoom
 			case 1 when rand.NextDouble() >= specialNameProbability:
 				break;
 			case 2 when rand.NextDouble() < specialNameProbability:
-				int nameIndex = rand.Next(0, doubleNames.Length - 1);
+				int nameIndex = rand.Next(0, doubleNames.GetLength(0));
 				for (int i = 0; i < 2; i++)
 				{
 					string nameText = doubleNames[nameIndex, i];
@@ -135,7 +135,7 @@ public abstract class GameRoom
 			default:
 				foreach (TwitchBombHandle handle in bombHandles)
 				{
-					handle.nameText.text = singleNames[rand.Next(0, singleNames.Length - 1)];
+					handle.nameText.text = singleNames[rand.Next(0, singleNames.Length)];
 				}
 				break;
 		}
