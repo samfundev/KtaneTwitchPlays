@@ -481,6 +481,12 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	[StringFormatMethod("message")]
+	public new void SendMessage(string message, object arg)
+	{
+		SendMessage(string.Format(message, arg));
+	}
+
+	[StringFormatMethod("message")]
 	public new void SendMessage(string message)
 	{
 		SendMessage(message, null, true);
