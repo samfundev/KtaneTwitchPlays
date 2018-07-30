@@ -529,7 +529,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (TwitchPlaySettings.data.AnarchyMode)
 				{
-					IRCConnection.Instance.SendMessage("Sorry {0}, claiming modules is not available in anarchy mode.");
+					IRCConnection.Instance.SendMessage("Sorry {0}, claiming modules is not available in anarchy mode.", args: userNickName);
 					return;
 				}
 				List<string> claimed = (
