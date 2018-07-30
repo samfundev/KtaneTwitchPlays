@@ -424,7 +424,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["LEDEnc"] = new ModuleInformation { moduleScore = 6, helpText = "Press the button with label B with !{0} press b.", DoesTheRightThing = true };
 
 		//Windesign
-		ModComponentSolverInformation["Color Decoding"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["Color Decoding"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true, moduleDisplayName = "Color Decoding", manualCode = "Color Decoding" };
 		ModComponentSolverInformation["GridMatching"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 
 		//ZekNikZ
