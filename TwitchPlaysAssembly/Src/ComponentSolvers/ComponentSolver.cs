@@ -290,7 +290,7 @@ public abstract class ComponentSolver
 					BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
 					break;
 				}
-				else if (currentString.RegexMatch(out match, "^(detonate|explode) ([0-9]+(?:\\.[0-9])?)") && float.TryParse(match.Groups[1].Value, out float explosionTime))
+				else if (currentString.RegexMatch(out match, "^(?:detonate|explode) ([0-9]+(?:\\.[0-9])?)") && float.TryParse(match.Groups[1].Value, out float explosionTime))
 				{
 					_delayedExplosionPending = true;
 					if (_delayedExplosionCoroutine != null)
