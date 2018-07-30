@@ -67,9 +67,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
 
-		//Royal_Flu$h Modules
-		ModComponentSolverCreators["alphabetNumbers"] = (bombCommander, bombComponent) => new AlphabetNumbersComponentSolver(bombCommander, bombComponent);
-
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent);
@@ -176,9 +173,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3 };
-
-		//Royal_Flu$h
-		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alphabet Numbers", moduleScore = 5 };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
@@ -315,6 +309,7 @@ public static class ComponentSolverFactory
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["cube"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["europeanTravel"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = false };
 		ModComponentSolverInformation["graffitiNumbers"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
