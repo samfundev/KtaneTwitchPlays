@@ -36,7 +36,7 @@ public class MissionMessageResponder : MessageResponder
 
 	
 
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
+	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
 	{
 		if (_bombBinderCommander == null)
 		{

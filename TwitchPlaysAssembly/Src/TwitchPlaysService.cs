@@ -138,7 +138,7 @@ public class TwitchPlaysService : MonoBehaviour
 			}
 			IRCConnection.Instance.SetDebugUsername();
 			IRCConnection.Instance.SendMessage(inputCommand);
-			IRCConnection.Instance.OnMessageReceived.Invoke(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand);
+			IRCConnection.Instance.OnMessageReceived.Invoke(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand, false);
 			inputCommand = "";
 		}
 		GUILayout.EndHorizontal();

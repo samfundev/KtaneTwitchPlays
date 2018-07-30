@@ -412,7 +412,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
 				if (!claim.First) continue;
 				IRCConnection.Instance.SendMessage(claim.Second);
-				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}");
+				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}", false);
 				ClaimQueue.RemoveAt(i);
 				break;
 			}

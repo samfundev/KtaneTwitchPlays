@@ -55,13 +55,13 @@ public abstract class MessageResponder : MonoBehaviour
 		return result;
 	}
 
-	protected abstract void OnMessageReceived(string userNickName, string userColorCode, string text);
+	protected abstract void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper);
 
-	private void OnInternalMessageReceived(string userNickName, string userColorCode, string text)
+	private void OnInternalMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
 	{
 		if (gameObject.activeInHierarchy && isActiveAndEnabled)
 		{
-			OnMessageReceived(userNickName, userColorCode, text);
+			OnMessageReceived(userNickName, userColorCode, text, isWhisper);
 		}
 	}
 }

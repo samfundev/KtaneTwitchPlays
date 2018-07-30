@@ -29,7 +29,7 @@ public class PostGameMessageResponder : MessageResponder
 	#endregion
 
 	#region Protected/Private Methods
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
+	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
 	{
 		
 		if (_postGameCommander != null)

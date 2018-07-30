@@ -142,7 +142,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 	}
 
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text)
+	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
 	{
 		Match match;
 
@@ -927,7 +927,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					else
 					{
-						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
 						if (CurrentState != KMGameInfo.State.Setup) break;
 
 						GameCommands.StartMission(missionID, "-1");
@@ -977,7 +977,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							break;
 						}
 
-						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
 						if (CurrentState != KMGameInfo.State.Setup) break;
 						
 						int vanillaModules = Mathf.FloorToInt(modules * distribution.Vanilla);
@@ -1053,7 +1053,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						GameCommands.StartMission(textAfter, "-1");
 						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
-					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text));
+					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
 				break;
 			case "profile":
 			case "profiles":
@@ -1209,7 +1209,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			//Do not allow issuing commands as someone with higher access levels than yourself.
 			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value))
-				IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value);
+				IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value, isWhisper);
 		}
 		if (text.Equals("whispertest"))
 		{
@@ -1267,11 +1267,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 	}
 
-	private IEnumerator ReturnToSetup(string userNickName, string text)
+	private IEnumerator ReturnToSetup(string userNickName, string text, bool isWhisper)
 	{
-		IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, "!back");
+		IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, "!back", isWhisper);
 		yield return new WaitUntil(() => CurrentState == KMGameInfo.State.Setup);
-		IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, text);
+		IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, text, isWhisper);
 	}
 
 	private void EnableDisableInput()

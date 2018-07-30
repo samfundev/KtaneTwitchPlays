@@ -15,17 +15,18 @@ using UnityEngine.Events;
 public class IRCConnection : MonoBehaviour
 {
 	#region Nested Types
-	public class MessageEvent : UnityEvent<string, string, string>
+	public class MessageEvent : UnityEvent<string, string, string, bool>
 	{
 	}
 
 	private class Message
 	{
-		public Message(string userNickName, string userColorCode, string text, bool internalMessage = false)
+		public Message(string userNickName, string userColorCode, string text, bool internalMessage = false, bool isWhisper = false)
 		{
 			UserNickName = userNickName;
 			UserColorCode = userColorCode;
 			Text = text;
+			IsWhisper = isWhisper;
 			Internal = internalMessage;
 		}
 
@@ -33,6 +34,7 @@ public class IRCConnection : MonoBehaviour
 		public readonly string UserColorCode;
 		public readonly string Text;
 		public readonly bool Internal;
+		public readonly bool IsWhisper;
 	}
 
 	private class Commands
@@ -131,7 +133,7 @@ public class IRCConnection : MonoBehaviour
 			{
 				Message message = _messageQueue.Dequeue();
 				if(!message.Internal)
-					OnMessageReceived.Invoke(message.UserNickName, message.UserColorCode, message.Text);
+					OnMessageReceived.Invoke(message.UserNickName, message.UserColorCode, message.Text, message.IsWhisper);
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
 		}
@@ -463,7 +465,7 @@ public class IRCConnection : MonoBehaviour
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true, false));
 			}
 		}
 	}
@@ -521,7 +523,7 @@ public class IRCConnection : MonoBehaviour
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true, true));
 			}
 		}
 	}
@@ -540,7 +542,7 @@ public class IRCConnection : MonoBehaviour
 			SendCommand(string.Format("PRIVMSG #{0} :Silence mode on.", _settings.channelName));
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on.", true));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on.", true, false));
 			}
 		}
 		_silenceMode = !_silenceMode;
@@ -549,7 +551,7 @@ public class IRCConnection : MonoBehaviour
 			SendCommand(string.Format("PRIVMSG #{0} :Silence mode off.", _settings.channelName));
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off.", true));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off.", true, false));
 			}
 		}
 	}
@@ -581,7 +583,7 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	private void ReceiveMessage(string userNickName, string userColorCode, string text)
+	private void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
 	{
 		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
@@ -610,7 +612,7 @@ public class IRCConnection : MonoBehaviour
 
 		lock (_messageQueue)
 		{
-			_messageQueue.Enqueue(new Message(userNickName, userColorCode, text));
+			_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, false, isWhisper));
 		}
 	}
 
@@ -818,6 +820,11 @@ public class IRCConnection : MonoBehaviour
 		new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
 		{
 			Instance.ReceiveMessage(groups[1].Value, null, groups[3].Value);
+		}),
+
+		new ActionMap(@":(\S+)!\S+ WHISPER (\S+) :(.+)", delegate(GroupCollection groups)
+		{
+			Instance.ReceiveMessage(groups[1].Value, null, groups[3].Value, true);
 		}),
 
 		new ActionMap(@"PING (.+)", delegate(GroupCollection groups)
