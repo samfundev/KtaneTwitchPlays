@@ -17,21 +17,34 @@ public class PasswordComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (!Regex.IsMatch(inputCommand, @"^[a-zA-Z]{5}$"))
+		if (!Regex.IsMatch(inputCommand, @"^[a-zA-Z]{5}$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) || inputCommand.Trim().ToLowerInvariant() == "cycle")
 		{
 			HashSet<int> alreadyCycled = new HashSet<int>();
 			string[] commandParts = inputCommand.Trim().Split(' ');
 			if (!commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase)) yield break;
-
-			foreach (string cycle in commandParts.Skip(1))
+			if (inputCommand != "cycle")
 			{
-				if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _spinners.Count)
-					continue;
-
-				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[spinnerIndex-1]);
-				while (spinnerCoroutine.MoveNext())
+				foreach (string cycle in commandParts.Skip(1))
 				{
-					yield return spinnerCoroutine.Current;
+					if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _spinners.Count)
+						continue;
+
+					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[spinnerIndex - 1]);
+					while (spinnerCoroutine.MoveNext())
+					{
+						yield return spinnerCoroutine.Current;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[i]);
+					while (spinnerCoroutine.MoveNext())
+					{
+						yield return spinnerCoroutine.Current;
+					}
 				}
 			}
 		}
@@ -39,7 +52,7 @@ public class PasswordComponentSolver : ComponentSolver
 		{
 			yield return "password";
 
-			IEnumerator solveCoroutine = SolveCoroutine(inputCommand);
+			IEnumerator solveCoroutine = SolveCoroutine(inputCommand.Trim().ToLowerInvariant());
 			while (solveCoroutine.MoveNext())
 			{
 				yield return solveCoroutine.Current;
