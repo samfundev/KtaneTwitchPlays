@@ -257,6 +257,8 @@ public abstract class ComponentSolver
 				// Commands that allow messages to be sent to the chat.
 				else if (SendToTwitchChat(currentString, userNickName) != SendToTwitchChatResponse.NotHandled)
 				{
+					if (currentString.StartsWith("antitroll") && !TwitchPlaySettings.data.EnableTrollCommands && !TwitchPlaySettings.data.AnarchyMode)
+						break;
 					//handled
 				}
 				else if (currentString.StartsWith("add strike", StringComparison.InvariantCultureIgnoreCase))
