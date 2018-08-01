@@ -1115,6 +1115,21 @@ public abstract class ComponentSolver
 				ZenModeField.SetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
 		}
 	}
+	protected FieldInfo TwitchPlaysField { get; set; }
+	protected bool TwitchPlays
+	{
+		get
+		{
+			if (!(TwitchPlaysField?.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
+				return false;
+			return (bool)TwitchPlaysField.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+		}
+		set
+		{
+			if (TwitchPlaysField?.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool)
+				TwitchPlaysField.SetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
+		}
+	}
 	#endregion
 
 	#region Private Methods

@@ -804,19 +804,20 @@ public static class ComponentSolverFactory
 		{
 			FieldInfo zenModeField = FindZenModeBool(commandComponentType);
 			FieldInfo abandonModuleField = FindAbandonModuleList(commandComponentType);
+			FieldInfo twitchPlaysField = FindTwitchPlaysBool(commandComponentType);
 
 			switch (commandType)
 			{
 				case ModCommandType.Simple:
 					{
 						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, abandonModuleField);
+						return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, abandonModuleField, twitchPlaysField);
 					}
 				case ModCommandType.Coroutine:
 					{
 						FieldInfo cancelfield = FindCancelBool(commandComponentType);
 						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, abandonModuleField);
+						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, abandonModuleField, twitchPlaysField);
 					}
 				case ModCommandType.Unsupported:
 					{
@@ -940,6 +941,12 @@ public static class ComponentSolverFactory
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
+	}
+
+	internal static FieldInfo FindTwitchPlaysBool(Type commandComponentType)
+	{
+		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 
 	internal static MethodInfo FindSolveMethod(Type commandComponentType)

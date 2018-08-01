@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-	public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo zenmodefield, FieldInfo abandonModuleField) :
+	public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo zenmodefield, FieldInfo abandonModuleField, FieldInfo twitchPlaysField) :
 		base(bombCommander, bombComponent)
 	{
 		ProcessMethod = processMethod;
@@ -16,6 +16,8 @@ public class SimpleModComponentSolver : ComponentSolver
 		CommandComponent = commandComponent;
 		ZenModeField = zenmodefield;
 		AbandonModuleField = abandonModuleField;
+		TwitchPlaysField = twitchPlaysField;
+		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
