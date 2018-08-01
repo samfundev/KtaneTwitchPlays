@@ -1211,7 +1211,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value))
 				IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value, isWhisper);
 		}
-		if (text.Equals("whispertest"))
+		if (text.Equals("whispertest") && TwitchPlaySettings.data.EnableWhispers)
 		{
 			IRCConnection.Instance.SendMessage("Test succesful", userNickName, false);
 		}

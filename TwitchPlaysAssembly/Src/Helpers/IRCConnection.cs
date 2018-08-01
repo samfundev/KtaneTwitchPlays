@@ -497,7 +497,7 @@ public class IRCConnection : MonoBehaviour
 	[StringFormatMethod("message")]
 	public void SendMessage(string message, string userNickName, bool sendToChat)
 	{
-		if (sendToChat || string.IsNullOrEmpty(userNickName))
+		if (sendToChat || string.IsNullOrEmpty(userNickName) || !TwitchPlaySettings.data.EnableWhispers)
 		{
 			SendChatMessage(message);
 		} else
@@ -610,9 +610,12 @@ public class IRCConnection : MonoBehaviour
 			return;
 		}
 
-		lock (_messageQueue)
+		if (!isWhisper || TwitchPlaySettings.data.EnableWhispers)
 		{
-			_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, false, isWhisper));
+			lock (_messageQueue)
+			{
+				_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, false, isWhisper));
+			}
 		}
 	}
 
