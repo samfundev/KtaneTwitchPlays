@@ -52,8 +52,6 @@ public class SimpleModComponentSolver : ComponentSolver
 			if (selectableSequence == null)
 				yield break;
 			selectableList = (selectableSequence as IList<KMSelectable>) ?? selectableSequence.ToArray();
-			if (selectableList.Count == 0)
-				yield break;
 		}
 		catch (Exception ex)
 		{
@@ -77,8 +75,13 @@ public class SimpleModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		yield return "modsequence";
-		yield return "trycancelsequence";
-		yield return selectableList;
+		if (selectableList?.Count == 0)
+			yield return null;
+		else
+		{
+			yield return "modsequence";
+			yield return "trycancelsequence";
+			yield return selectableList;
+		}
 	}
 }
