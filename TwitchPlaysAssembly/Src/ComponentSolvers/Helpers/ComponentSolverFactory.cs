@@ -284,7 +284,6 @@ public static class ComponentSolverFactory
 
 		//Livio
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
-		ModComponentSolverInformation["TheCruelCode"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true, helpText = "Submit the answer with “!{0} submit 1234”. Submit the answer at time with “!{0} submit 573 at 9:33”. Query the next number with “!{0} query”", helpTextOverride = true };
 		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 
 		//Marksam32
