@@ -210,6 +210,7 @@ public static class ComponentSolverFactory
 
 		//AAces
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["characterShift"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true };
 		ModComponentSolverInformation["equations"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
@@ -319,6 +320,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["jewelVault"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 15 };
 		ModComponentSolverInformation["jukebox"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["ledGrid"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
+		ModComponentSolverInformation["lightspeed"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["londonUnderground"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["maintenance"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = false };
 		ModComponentSolverInformation["moon"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
@@ -412,6 +414,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 12, manualCode = "Tic-Tac-Toe", DoesTheRightThing = true };
 		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["UncoloredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["WordSearchModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["XRayModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
