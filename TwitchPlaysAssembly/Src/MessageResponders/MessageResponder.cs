@@ -20,7 +20,7 @@ public abstract class MessageResponder : MonoBehaviour
 
 	public static bool IsAuthorizedDefuser(string userNickName, bool silent=false)
 	{
-		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName))
+		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName))
 			return true;
 		BanData ban = UserAccess.IsBanned(userNickName);
 		if (ban != null)

@@ -696,23 +696,23 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
 		{
-			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, match.Groups[3].Value, banTimeout);
+			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, match.Groups[3].Value, banTimeout, isWhisper);
 		}
 		else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+)") && int.TryParse(match.Groups[2].Value, out banTimeout))
 		{
-			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, null, banTimeout);
+			UserAccess.TimeoutUser(match.Groups[1].Value, userNickName, null, banTimeout, isWhisper);
 		}
 		else if (text.RegexMatch(out match, @"^ban (\S+) (.+)"))
 		{
-			UserAccess.BanUser(match.Groups[1].Value, userNickName, match.Groups[2].Value);
+			UserAccess.BanUser(match.Groups[1].Value, userNickName, match.Groups[2].Value, isWhisper);
 		}
 		else if (text.RegexMatch(out match, @"^ban (\S+)"))
 		{
-			UserAccess.BanUser(match.Groups[1].Value, userNickName, null);
+			UserAccess.BanUser(match.Groups[1].Value, userNickName, null, isWhisper);
 		}
 		else if (text.RegexMatch(out match, @"^unban (\S+)$"))
 		{
-			UserAccess.UnbanUser(match.Groups[1].Value, userNickName);
+			UserAccess.UnbanUser(match.Groups[1].Value, userNickName, isWhisper);
 		}
 		else if (text.RegexMatch(@"^(isbanned|banstats|bandata) (\S+)"))
 		{
@@ -1051,6 +1051,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 					if (CurrentState == KMGameInfo.State.Setup)
 					{
 						GameCommands.StartMission(textAfter, "-1");
+						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
+					}
+					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
+				break;
+			case "runrawseed":
+				if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+					if (CurrentState == KMGameInfo.State.Setup)
+					{
+						string textAfter2 = split.Skip(2).Join();
+						GameCommands.StartMission(textAfter2, split[1]);
 						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
 					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));

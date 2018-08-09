@@ -212,14 +212,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["characterShift"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
-		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true };
-		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true };
+		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = true, statusLightLeft = true};
+		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = true };
 		ModComponentSolverInformation["equations"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["subways"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["timeKeeper"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 
 		//AT_Bash / Bashly / Ashthebash
-		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = false };
+		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = true };
 		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { moduleScore = 15, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["FestivePianoKeys"] = new ModuleInformation { moduleScore = 6, helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
 		ModComponentSolverInformation["LightsOut"] = new ModuleInformation { moduleScore = 5, helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right." };
@@ -807,6 +807,7 @@ public static class ComponentSolverFactory
 		if (method != null)
 		{
 			FieldInfo zenModeField = FindZenModeBool(commandComponentType);
+			FieldInfo timeModeField = FindTimeModeBool(commandComponentType);
 			FieldInfo abandonModuleField = FindAbandonModuleList(commandComponentType);
 			FieldInfo twitchPlaysField = FindTwitchPlaysBool(commandComponentType);
 
@@ -815,13 +816,13 @@ public static class ComponentSolverFactory
 				case ModCommandType.Simple:
 					{
 						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, abandonModuleField, twitchPlaysField);
+						return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, timeModeField, abandonModuleField, twitchPlaysField);
 					}
 				case ModCommandType.Coroutine:
 					{
 						FieldInfo cancelfield = FindCancelBool(commandComponentType);
 						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, abandonModuleField, twitchPlaysField);
+						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, timeModeField, abandonModuleField, twitchPlaysField);
 					}
 				case ModCommandType.Unsupported:
 					{
@@ -943,8 +944,14 @@ public static class ComponentSolverFactory
 
 	internal static FieldInfo FindZenModeBool(Type commandComponentType)
 	{
-		FieldInfo cancelField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
+		FieldInfo zenField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return zenField?.FieldType == typeof(bool) ? zenField : null;
+	}
+
+	internal static FieldInfo FindTimeModeBool(Type commandComponentType)
+	{
+		FieldInfo timeField = commandComponentType.GetField("TwitchTimeMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return timeField?.FieldType == typeof(bool) ? timeField : null;
 	}
 
 	internal static FieldInfo FindTwitchPlaysBool(Type commandComponentType)

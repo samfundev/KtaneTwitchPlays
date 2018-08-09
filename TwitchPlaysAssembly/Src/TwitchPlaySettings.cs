@@ -94,7 +94,8 @@ public class TwitchPlaySettingsData
 	{
 		{"welcome", "Welcome, this is a Twitch Plays version of Keep Talking and Nobody Explodes. For some basic info and how to get started, you may find this link useful: https://docs.google.com/document/d/1ESin9CKWtt4nT3oxDvYqCmbf3xyFLpjM1wcXL78v29A/edit?usp=sharing" },
 		{"ktane", "Keep Talking and Nobody Explodes is developed by Steel Crate Games. It's available for Windows PC, Mac OS X, PlayStation VR, Samsung Gear VR and Google Daydream. See http://www.keeptalkinggame.com/ for more information!" },
-		{"about", "Twitch Plays: KTaNE is an alternative way of playing !ktane. Unlike the original game, you play as both defuser and expert, and defuse the bomb by sending special commands to the chat. Try !help for more information!" }
+		{"about", "Twitch Plays: KTaNE is an alternative way of playing !ktane. Unlike the original game, you play as both defuser and expert, and defuse the bomb by sending special commands to the chat. Try !help for more information!" },
+		{"discord", "Join the KTaNE discord here: https://discord.gg/Fv7YEDj" }
 	};
 
 	public Dictionary<string, bool> ModPermissions = new Dictionary<string, bool>();

@@ -497,10 +497,11 @@ public class IRCConnection : MonoBehaviour
 	[StringFormatMethod("message")]
 	public void SendMessage(string message, string userNickName, bool sendToChat)
 	{
-		if (sendToChat || string.IsNullOrEmpty(userNickName) || !TwitchPlaySettings.data.EnableWhispers)
+		if (sendToChat || string.IsNullOrEmpty(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == UserNickName) //can't send whispers to yourself
 		{
 			SendChatMessage(message);
-		} else
+		}
+		else
 		{
 			SendWhisper(userNickName, message);
 		}

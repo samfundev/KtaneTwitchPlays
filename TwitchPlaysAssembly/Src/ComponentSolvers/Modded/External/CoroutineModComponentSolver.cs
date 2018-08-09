@@ -6,18 +6,20 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelfield, FieldInfo zenmodefield, FieldInfo abandonModuleField, FieldInfo twitchPlaysField) :
+	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelField, FieldInfo zenModeField, FieldInfo timeModeField, FieldInfo abandonModuleField, FieldInfo twitchPlaysField) :
 		base(bombCommander, bombComponent)
 	{
 		ProcessMethod = processMethod;
 		ForcedSolveMethod = forcedSolveMethod;
 		CommandComponent = commandComponent;
-		TryCancelField = cancelfield;
-		ZenModeField = zenmodefield;
+		TryCancelField = cancelField;
+		ZenModeField = zenModeField;
+		TimeModeField = timeModeField;
 		AbandonModuleField = abandonModuleField;
 		TwitchPlaysField = twitchPlaysField;
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
+		TimeMode = OtherModes.TimeModeOn;
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 

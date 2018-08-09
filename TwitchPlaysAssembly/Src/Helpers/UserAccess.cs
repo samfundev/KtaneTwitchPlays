@@ -132,7 +132,7 @@ public static class UserAccess
 
 	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
 	{
-		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername)
+		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername || userNickName == "Bomb Factory")
 		{
 			return true;
 		}
@@ -154,6 +154,9 @@ public static class UserAccess
 			userAccessLevel = (AccessLevel) ((int) userAccessLevel >> 1);
 		} while (userAccessLevel != AccessLevel.User && orHigher);
 
+		if (TwitchPlaySettings.data.AnarchyMode && userAccessLevel == AccessLevel.Defuser)
+			return true;
+
 		return false;
 	}
 
@@ -174,29 +177,31 @@ public static class UserAccess
 			if ((userAccessLevel & level) == level)
 				return level;
 		}
+		if (TwitchPlaySettings.data.AnarchyMode)
+			return AccessLevel.Defuser;
 		return AccessLevel.User;
 	}
 
-	public static void TimeoutUser(string userNickName, string moderator, string reason, int timeout)
+	public static void TimeoutUser(string userNickName, string moderator, string reason, int timeout, bool isWhisper)
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
 			return;
 		}
 		if (timeout <= 0)
 		{
-			IRCConnection.Instance.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.");
+			IRCConnection.Instance.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.", moderator, !isWhisper);
 			return;
 		}
 		if (HasAccess(userNickName, AccessLevel.Streamer))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout the streamer.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout the streamer.", moderator, !isWhisper);
 			return;
 		}
 		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout yourself.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout yourself.", moderator, !isWhisper);
 			return;
 		}
 		AddUser(userNickName, AccessLevel.Banned);
@@ -209,23 +214,25 @@ public static class UserAccess
 
 		WriteAccessList();
 		IRCConnection.Instance.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
+		if (TwitchPlaySettings.data.EnableWhispers)
+			IRCConnection.Instance.SendMessage($"You were timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
 	}
 
-	public static void BanUser(string userNickName, string moderator, string reason)
+	public static void BanUser(string userNickName, string moderator, string reason, bool isWhisper)
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
 			return;
 		}
 		if (HasAccess(userNickName, AccessLevel.Streamer))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban the streamer.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban the streamer.", moderator, !isWhisper);
 			return;
 		}
 		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban yourself.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban yourself.", moderator, !isWhisper);
 			return;
 		}
 		AddUser(userNickName, AccessLevel.Banned);
@@ -237,6 +244,8 @@ public static class UserAccess
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 		WriteAccessList();
 		IRCConnection.Instance.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
+		if (TwitchPlaySettings.data.EnableWhispers)
+			IRCConnection.Instance.SendMessage($"You were banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
 	}
 
 	private static void UnbanUser(string userNickName, bool rewrite=true)
@@ -248,15 +257,17 @@ public static class UserAccess
 			WriteAccessList();
 	}
 
-	public static void UnbanUser(string userNickName, string moderator)
+	public static void UnbanUser(string userNickName, string moderator, bool isWhisper)
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.");
+			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
 			return;
 		}
 		UnbanUser(userNickName);
-		IRCConnection.Instance.SendMessage($"User {userNickName} was unbanned from Twitch plays.");
+		IRCConnection.Instance.SendMessage($"User {userNickName} was unbanned from Twitch plays by {moderator}.");
+		if (TwitchPlaySettings.data.EnableWhispers)
+			IRCConnection.Instance.SendMessage($"You were unbanned from Twitch Plays by {moderator}.", userNickName, false);
 	}
 
 	public static BanData IsBanned(string usernickname)
