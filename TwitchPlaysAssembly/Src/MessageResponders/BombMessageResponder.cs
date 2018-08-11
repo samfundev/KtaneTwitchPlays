@@ -608,7 +608,7 @@ public class BombMessageResponder : MessageResponder
 					.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code})")).ToList();
 
 				if (unclaimed.Any()) IRCConnection.Instance.SendMessage("Unclaimed Modules: {0}", unclaimed.Join(", "));
-				else IRCConnection.Instance.SendMessage("There are no more unclaimed modules.");
+				else IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoUnclaimed, userNickName);
 
 				return;
 			}

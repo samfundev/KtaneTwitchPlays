@@ -176,6 +176,7 @@ public class TwitchPlaySettingsData
 	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
 	public string NoTakes = "Sorry {0}, there are no takeover attempts on Module {1} ({2})";
 	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules. The claim has been queued.";
+	public string NoUnclaimed = "Sorry {0}, There are no more unclaimed modules.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
 	public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
 	public string AlreadySolved = "Sorry @{2}, Module {0} ({3}) has already been solved by {1}";
@@ -373,6 +374,7 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref ModuleIsMine, data.ModuleIsMine, 3);
 		valid &= ValidateString(ref NoTakes, data.NoTakes, 3);
 		valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
+		valid &= ValidateString(ref NoUnclaimed, data.NoUnclaimed, 1);
 		valid &= ValidateString(ref ModulePlayer, data.ModulePlayer, 3);
 		valid &= ValidateString(ref AlreadyClaimed, data.AlreadyClaimed, 4);
 		valid &= ValidateString(ref AlreadySolved, data.AlreadySolved, 4);
