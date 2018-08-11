@@ -126,12 +126,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		if (moduleCount > GetMaximumModules())
 		{
-			failureMessage = TPElevatorSwitch.IsON 
+			failureMessage = TPElevatorSwitch.IsON
 				? $"Mission \"{targetID}\" was found, however, this mission has too many modules to use in the elevator."
 				: $"Mission \"{targetID}\" was found, however, a bomb case with at least {moduleCount} is not installed / enabled";
 			return null;
 		}
-		
+
 		return mission.name;
 	}
 
@@ -318,7 +318,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (entry.SolveScore == 0 && entry.SolveCount == 0 && entry.StrikeCount == 0)
 						{
 							IRCConnection.Instance.SendMessage("User {0} has already been reset", user);
-						} else
+						}
+						else
 						{
 							Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
 							Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
@@ -399,13 +400,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 		else if (text.RegexMatch(out match, @"^(?:read|write|change|set) ?settings? (\S+)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)) return;
-			IRCConnection.Instance.SendMessage("{0}", TwitchPlaySettings.GetSetting(match.Groups[1].Value));
+			IRCConnection.Instance.SendMessage($"{TwitchPlaySettings.GetSetting(match.Groups[1].Value)}", userNickName, !isWhisper);
 		}
 		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?settings? (\S+) (.+)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 			var result = TwitchPlaySettings.ChangeSetting(match.Groups[1].Value, match.Groups[2].Value);
-			IRCConnection.Instance.SendMessage("{0}", result.Second);
+			IRCConnection.Instance.SendMessage($"{result.Second}", userNickName, !isWhisper);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
 		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r|(?:valid ?)?commands) (.+)$"))
@@ -428,7 +429,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						goto default;
 					}
 
-					IRCConnection.Instance.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"");
+					IRCConnection.Instance.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"", userNickName, !isWhisper);
 					break;
 				case 1:
 					var moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
@@ -437,26 +438,26 @@ public class MiscellaneousMessageResponder : MessageResponder
 						case "help":
 						case "helpmessage":
 						case "help message":
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" help message: {modules[0].helpText}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" help message: {modules[0].helpText}", userNickName, !isWhisper);
 							break;
 						case "manual":
 						case "manualcode":
 						case "manual code":
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code: {(string.IsNullOrEmpty(modules[0].manualCode) ? modules[0].moduleDisplayName : modules[0].manualCode)}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code: {(string.IsNullOrEmpty(modules[0].manualCode) ? modules[0].moduleDisplayName : modules[0].manualCode)}", userNickName, !isWhisper);
 							break;
 						case "points":
 						case "score":
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score: {modules[0].moduleScore}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score: {modules[0].moduleScore}", userNickName, !isWhisper);
 							break;
 						case "statuslight":
 							if (modules[0].statusLightDown && modules[0].statusLightLeft)
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Left");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Left", userNickName, !isWhisper);
 							else if (modules[0].statusLightDown)
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Right");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Bottom Right", userNickName, !isWhisper);
 							else if (modules[0].statusLightLeft)
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Top Left");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Top Left", userNickName, !isWhisper);
 							else
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Top Right");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position: Top Right", userNickName, !isWhisper);
 							break;
 						case "module pin allowed":
 						case "camera pin allowed":
@@ -468,24 +469,24 @@ public class MiscellaneousMessageResponder : MessageResponder
 						case "camerapinallowed":
 						case "pinallowed":
 						case "pin allowed":
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Module pinning always allowed: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Module pinning always allowed: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}", userNickName, !isWhisper);
 							break;
 						case "strike":
 						case "strikepenalty":
 						case "strike penalty":
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Strike Penalty: {modules[0].strikePenalty}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Strike Penalty: {modules[0].strikePenalty}", userNickName, !isWhisper);
 							break;
 						case "color":
 						case "colour":
 							var moduleColor = JsonConvert.SerializeObject(TwitchPlaySettings.data.UnclaimedColor, Formatting.None, new ColorConverter());
 							if (modules[0].unclaimedColor != new Color())
 								moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}", userNickName, !isWhisper);
 							break;
 						case "commands":
 						case "valid commands":
 						case "validcommands":
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Valid commands: {modules[0].validCommands}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Valid commands: {modules[0].validCommands}", userNickName, !isWhisper);
 							break;
 					}
 
@@ -498,7 +499,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						goto case 1;
 					}
 
-					IRCConnection.Instance.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"(\"{x.moduleID}\":\"{x.moduleDisplayName}\")").Join(", ")}");
+					IRCConnection.Instance.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"(\"{x.moduleID}\":\"{x.moduleDisplayName}\")").Join(", ")}", userNickName, !isWhisper);
 					break;
 			}
 		}
@@ -524,7 +525,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						goto default;
 					}
 
-					IRCConnection.Instance.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"");
+					IRCConnection.Instance.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"", userNickName, !isWhisper);
 					break;
 				case 1:
 					var moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
@@ -545,7 +546,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 								module.helpText = changeTo;
 								module.helpTextOverride = true;
 							}
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" help message changed to: {module.helpText}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" help message changed to: {module.helpText}", userNickName, !isWhisper);
 							break;
 						case "manual":
 						case "manualcode":
@@ -561,12 +562,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 								module.manualCodeOverride = true;
 							}
 
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code changed to: {(string.IsNullOrEmpty(module.manualCode) ? module.moduleDisplayName : module.manualCode)}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" manual code changed to: {(string.IsNullOrEmpty(module.manualCode) ? module.moduleDisplayName : module.manualCode)}", userNickName, !isWhisper);
 							break;
 						case "points":
 						case "score":
 							module.moduleScore = !int.TryParse(changeTo, out int moduleScore) ? defaultModule.moduleScore : moduleScore;
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score changed to: {module.moduleScore}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score changed to: {module.moduleScore}", userNickName, !isWhisper);
 							break;
 						case "statuslight":
 							switch (changeTo.ToLowerInvariant())
@@ -606,13 +607,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 									break;
 							}
 							if (module.statusLightDown && module.statusLightLeft)
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Bottom Left");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Bottom Left", userNickName, !isWhisper);
 							else if (module.statusLightDown)
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Bottom Right");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Bottom Right", userNickName, !isWhisper);
 							else if (module.statusLightLeft)
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Top Left");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Top Left", userNickName, !isWhisper);
 							else
-								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Top Right");
+								IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" status light position changed to: Top Right", userNickName, !isWhisper);
 							break;
 						case "module pin allowed":
 						case "camera pin allowed":
@@ -638,13 +639,13 @@ public class MiscellaneousMessageResponder : MessageResponder
 									module.CameraPinningAlwaysAllowed = defaultModule.CameraPinningAlwaysAllowed;
 									break;
 							}
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Module pinning always allowed changed to: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Module pinning always allowed changed to: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}", userNickName, !isWhisper);
 							break;
 						case "strike":
 						case "strikepenalty":
 						case "strike penalty":
 							module.strikePenalty = !int.TryParse(changeTo, out int strikePenalty) ? defaultModule.strikePenalty : -strikePenalty;
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Strike Penalty changed to: {modules[0].strikePenalty}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Strike Penalty changed to: {modules[0].strikePenalty}", userNickName, !isWhisper);
 							break;
 						case "color":
 						case "colour":
@@ -667,7 +668,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 								module.unclaimedColor = defaultModule.unclaimedColor;
 							}
 
-							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color changed to: {moduleColor}");
+							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" Unclaimed color changed to: {moduleColor}", userNickName, !isWhisper);
 							break;
 					}
 					ModuleData.DataHasChanged = true;
@@ -682,7 +683,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						goto case 1;
 					}
 
-					IRCConnection.Instance.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"(\"{x.moduleID}\":\"{x.moduleDisplayName}\")").Join(", ")}");
+					IRCConnection.Instance.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"(\"{x.moduleID}\":\"{x.moduleDisplayName}\")").Join(", ")}", userNickName, !isWhisper);
 					break;
 			}
 		}
@@ -691,7 +692,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 
 			var result = TwitchPlaySettings.ResetSettingToDefault(match.Groups[1].Value);
-			IRCConnection.Instance.SendMessage("{0}", result.Second);
+			IRCConnection.Instance.SendMessage($"{result.Second}", userNickName, !isWhisper);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
 		else if (text.RegexMatch(out match, @"^timeout (\S+) (\d+) (.+)") && int.TryParse(match.Groups[2].Value, out int banTimeout))
@@ -732,19 +733,19 @@ public class MiscellaneousMessageResponder : MessageResponder
 						bandata.TryGetValue(adjperson, out BanData value);
 						if (double.IsPositiveInfinity(value.BanExpiry))
 						{
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} This ban is permanant.", adjperson, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".");
+							IRCConnection.Instance.SendMessage($"User: {adjperson}, Banned by: {value.BannedBy}{(string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".")} This ban is permanant.", userNickName, !isWhisper);
 						}
 						else
 						{
 							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
-							IRCConnection.Instance.SendMessage("User: {0}, Banned by: {1}{2} Ban duration left: {3}.", adjperson, value.BannedBy, string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".", durationleft);
+							IRCConnection.Instance.SendMessage($"User: {adjperson}, Banned by: {value.BannedBy}{(string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".")} Ban duration left: {durationleft}.", userNickName, !isWhisper);
 						}
 						found = true;
 					}
 				}
 				if (!found)
 				{
-					IRCConnection.Instance.SendMessage("The specified user has no ban data.");
+					IRCConnection.Instance.SendMessage("The specified user has no ban data.", userNickName, !isWhisper);
 				}
 			}
 		}
@@ -864,8 +865,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 				if (split.Length == 1)
 				{
 					string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
-					IRCConnection.Instance.SendMessage(validDistributions.Any() 
-						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}" 
+					IRCConnection.Instance.SendMessage(validDistributions.Any()
+						? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}"
 						: "Sorry, !run <module_count> <distribution> has been disabled.");
 					break;
 				}
@@ -880,7 +881,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					zenModeDistribution.MinModules = 1;
 					zenModeDistribution.MaxModules = GetMaximumModules(18);
 					zenModeDistribution.Hidden = true;
-					
+
 					Array.Resize(ref split, 3);
 					split[2] = "zen";
 				}
@@ -910,9 +911,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 							break;
 						}
 
-						string distributionName = TwitchPlaySettings.data.ModDistributions.Keys.FirstOrDefault(y => int.TryParse(split[1].Replace(y,""),out _));
+						string distributionName = TwitchPlaySettings.data.ModDistributions.Keys.FirstOrDefault(y => int.TryParse(split[1].Replace(y, ""), out _));
 						if (distributionName == null || !int.TryParse(split[1].Replace(distributionName, ""), out int modules) ||
-							modules < TwitchPlaySettings.data.ModDistributions[distributionName].MinModules || 
+							modules < TwitchPlaySettings.data.ModDistributions[distributionName].MinModules ||
 							modules > GetMaximumModules(TwitchPlaySettings.data.ModDistributions[distributionName].MaxModules) ||
 							!(TwitchPlaySettings.data.ModDistributions[distributionName].Enabled && !UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 						{
@@ -963,10 +964,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 						if (modules < distribution.MinModules && !zen)
 						{
-							IRCConnection.Instance.SendMessage("Sorry, the minimum number of modules for \"{0}\" is {1}.", distribution.DisplayName , distribution.MinModules);
+							IRCConnection.Instance.SendMessage("Sorry, the minimum number of modules for \"{0}\" is {1}.", distribution.DisplayName, distribution.MinModules);
 							break;
 						}
-						
+
 						int maxModules = GetMaximumModules(zen ? GetMaximumModules(18) : distribution.MaxModules);
 						if (modules > maxModules)
 						{
@@ -979,7 +980,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
 						if (CurrentState != KMGameInfo.State.Setup) break;
-						
+
 						int vanillaModules = Mathf.FloorToInt(modules * distribution.Vanilla);
 						int moddedModules = Mathf.FloorToInt(modules * distribution.Modded);
 
@@ -1011,7 +1012,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							KMComponentPool factoryPool = new KMComponentPool
 							{
 								Count = 8,
-								ModTypes = new List<string>(new[] {"Factory Mode"})
+								ModTypes = new List<string>(new[] { "Factory Mode" })
 							};
 
 							pools.Add(factoryPool);
@@ -1037,7 +1038,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 								NumStrikes = Math.Max(3, modules / 12)
 							};
 						}
-						
+
 						int rewardPoints = (5 * modules) - (3 * vanillaModules);
 						TwitchPlaySettings.SetRewardBonus(rewardPoints);
 						IRCConnection.Instance.SendMessage("Reward for completing bomb: " + rewardPoints);
@@ -1234,7 +1235,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			GameRoom.ToggleCamera(true);
 		}
-		
+
 		bool cameraChanged = false;
 		bool cameraChangeAttempted = false;
 		if (text.RegexMatch(out match, "(move|rotate) ?camera ?([xyz]) (-?[0-9]+(?:\\.[0-9]+)*)"))
@@ -1246,7 +1247,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				case "y": vector = new Vector3(0, float.Parse(match.Groups[3].Value), 0); break;
 				case "z": vector = new Vector3(0, 0, float.Parse(match.Groups[3].Value)); break;
 			}
-			
+
 			switch (match.Groups[1].Value)
 			{
 				case "move": GameRoom.MoveCamera(vector); break;
@@ -1288,7 +1289,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	{
 		if (!BombMessageResponder.EnableDisableInput()) return;
 
-		if(TwitchComponentHandle.SolveUnsupportedModules(true))
+		if (TwitchComponentHandle.SolveUnsupportedModules(true))
 			IRCConnection.Instance.SendMessage("Some modules were automatically solved to prevent problems with defusing this bomb.");
 
 		if (TwitchComponentHandle.UnsupportedModulesPresent())
