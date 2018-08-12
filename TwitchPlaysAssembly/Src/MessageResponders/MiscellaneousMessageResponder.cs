@@ -1130,7 +1130,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			if (!IsAuthorizedDefuser(userNickName)) return;
 			BombMessageResponder.Instance?.DropCurrentBomb();
-			_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter));
+			_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, isWhisper));
 		}
 
 		if (TwitchPlaySettings.data.GeneralCustomMessages.ContainsKey(text.ToLowerInvariant()))

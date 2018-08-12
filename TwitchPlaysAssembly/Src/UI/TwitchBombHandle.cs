@@ -82,7 +82,7 @@ public class TwitchBombHandle : MonoBehaviour
 	#endregion
 
 	#region Message Interface
-	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text)
+	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text, bool isWhisper = false)
 	{
 		text = text.Trim();
 		string internalCommand;
@@ -321,7 +321,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		else
 		{
-			return RespondToCommandCoroutine(userNickName, internalCommand, message);
+			return RespondToCommandCoroutine(userNickName, internalCommand, message, isWhisper);
 		}
 
 		return null;
@@ -373,7 +373,7 @@ public class TwitchBombHandle : MonoBehaviour
 		bombCommander.CauseStrikesToExplosion(reason);
 	}
 
-	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, float fadeDuration = 0.1f)
+	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, bool isWhisper, float fadeDuration = 0.1f)
 	{
 		float time = Time.time;
 		while (Time.time - time < fadeDuration)
@@ -384,7 +384,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		highlightGroup.alpha = 1.0f;
 
-		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message);
+		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message, isWhisper);
 		while (commandResponseCoroutine.MoveNext())
 		{
 			if (commandResponseCoroutine.Current is string chatmessage)

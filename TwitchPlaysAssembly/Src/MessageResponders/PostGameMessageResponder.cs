@@ -34,7 +34,7 @@ public class PostGameMessageResponder : MessageResponder
 		
 		if (_postGameCommander != null)
 		{
-			_coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(userNickName, text, null));
+			_coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(userNickName, text, null, isWhisper));
 		}
 	}
 

@@ -495,7 +495,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public static List<string> ClaimedList = new List<string>();
 
 	#region Message Interface
-	public IEnumerator OnMessageReceived(string userNickName, string userColor, string unprocessedCommand)
+	public IEnumerator OnMessageReceived(string userNickName, string userColor, string unprocessedCommand, bool isWhisper = false)
 	{
 		unprocessedCommand = unprocessedCommand.Trim();
 		string internalCommand = unprocessedCommand.ToLower().Trim();

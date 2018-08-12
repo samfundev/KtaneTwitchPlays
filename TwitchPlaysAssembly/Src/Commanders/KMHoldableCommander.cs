@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Input;
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ public class KMHoldableCommander
 		Handler = HoldableFactory.CreateHandler(this, holdable);
 	}
 
-	public IEnumerator RespondToCommand(string userNickName, string message)
+	public IEnumerator RespondToCommand(string userNickName, string message, bool isWhisper = false)
 	{
 		message = message.Trim();
 		if (message.EqualsAny("hold", "pick up"))

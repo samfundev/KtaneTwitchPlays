@@ -26,7 +26,7 @@ public class FreeplayCommander : ICommandResponder
 
 	#region Interface Implementation
 
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false)
 	{
 		IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier);
 		bool result;

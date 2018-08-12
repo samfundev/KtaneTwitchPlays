@@ -18,7 +18,7 @@ public abstract class MessageResponder : MonoBehaviour
 		IRCConnection.Instance?.OnMessageReceived.AddListener(OnInternalMessageReceived);
 	}
 
-	public static bool IsAuthorizedDefuser(string userNickName, bool silent=false)
+	public static bool IsAuthorizedDefuser(string userNickName, bool silent = false)
 	{
 		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName))
 			return true;

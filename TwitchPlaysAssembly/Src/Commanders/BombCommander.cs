@@ -32,7 +32,7 @@ public class BombCommander : ICommandResponder
 		SolvedModules = new Dictionary<string, List<TwitchComponentHandle>>();
 	}
 	
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false)
 	{
 		message = message.ToLowerInvariant().Trim();
 
