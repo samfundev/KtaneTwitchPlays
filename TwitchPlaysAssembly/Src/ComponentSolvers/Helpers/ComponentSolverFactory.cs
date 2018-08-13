@@ -945,12 +945,16 @@ public static class ComponentSolverFactory
 	internal static FieldInfo FindZenModeBool(Type commandComponentType)
 	{
 		FieldInfo zenField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		if (zenField == null)
+			zenField = commandComponentType.GetField("ZenModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return zenField?.FieldType == typeof(bool) ? zenField : null;
 	}
 
 	internal static FieldInfo FindTimeModeBool(Type commandComponentType)
 	{
 		FieldInfo timeField = commandComponentType.GetField("TwitchTimeMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		if (timeField == null)
+			timeField = commandComponentType.GetField("TimeModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return timeField?.FieldType == typeof(bool) ? timeField : null;
 	}
 
