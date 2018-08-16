@@ -15,7 +15,7 @@ public class TwitchPlaysService : MonoBehaviour
 		public string userName = "";
 		public string channelName = "";
 		public string serverName = "irc.twitch.tv";
-		public int serverPort = 6667;
+		public int serverPort = 6697;
 	}
 
 	public BombMessageResponder bombMessageResponder = null;

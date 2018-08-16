@@ -1,14 +1,16 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -84,7 +86,7 @@ public class IRCConnection : MonoBehaviour
 
 	private class ActionMap
 	{
-		public ActionMap(string regexString, Action<GroupCollection> action, bool logLine=true)
+		public ActionMap(string regexString, Action<GroupCollection> action, bool logLine = true)
 		{
 			_matchingRegex = new Regex(regexString);
 			_action = action;
@@ -132,7 +134,7 @@ public class IRCConnection : MonoBehaviour
 			while (_messageQueue.Count > 0)
 			{
 				Message message = _messageQueue.Dequeue();
-				if(!message.Internal)
+				if (!message.Internal)
 					OnMessageReceived.Invoke(message.UserNickName, message.UserColorCode, message.Text, message.IsWhisper);
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
@@ -143,7 +145,7 @@ public class IRCConnection : MonoBehaviour
 	private void OnDisable()
 	{
 		StopAllCoroutines();
-		if(!_justDisabled)
+		if (!_justDisabled)
 			_onDisableState = _state;
 		_justDisabled = true;
 		_state = (_state == IRCConnectionState.Connected) ? IRCConnectionState.Disconnecting : IRCConnectionState.Disconnected;
@@ -180,7 +182,7 @@ public class IRCConnection : MonoBehaviour
 		IRCConnectionManagerHoldable.IRCTextToDisplay.AddRange($"{text}\n{ex.Message}\nSee output_log.txt for stack trace".Wrap(60).Split(new[] { "\n" }, StringSplitOptions.None));
 	}
 
-	private static void AddTextToHoldable(string text, params object[]args)
+	private static void AddTextToHoldable(string text, params object[] args)
 	{
 		UnityEngine.Debug.LogFormat(text, args);
 		IRCConnectionManagerHoldable.IRCTextToDisplay.AddRange(string.Format(text, args).Wrap(60).Split(new[] { "\n" }, StringSplitOptions.None));
@@ -188,7 +190,7 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Public Methods
-	public void SetDebugUsername(bool force=false)
+	public void SetDebugUsername(bool force = false)
 	{
 		if (!UserAccess.HasAccess(TwitchPlaySettings.data.TwitchPlaysDebugUsername, AccessLevel.Streamer))
 		{
@@ -217,7 +219,6 @@ public class IRCConnection : MonoBehaviour
 		while (true)
 		{
 			int connectionRetryIndex = 0;
-			
 
 			while (_state != IRCConnectionState.Connected)
 			{
@@ -254,7 +255,7 @@ public class IRCConnection : MonoBehaviour
 				}
 			}
 			while (_state == IRCConnectionState.Connected) yield return new WaitForSeconds(0.1f);
-			if(BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
+			if (BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
 			switch (_state)
 			{
 				case IRCConnectionState.DoNotRetry:
@@ -343,7 +344,7 @@ public class IRCConnection : MonoBehaviour
 				}
 				if (_settings.serverPort < 1 || _settings.serverPort > 65535)
 				{
-					AddTextToHoldable("serverPort - Most likely to be 6667");
+					AddTextToHoldable("serverPort - Most likely to be 6697");
 				}
 				AddTextToHoldable("\nOpen up the Mod manager holdable, and select \"open mod settings folder\".");
 				return;
@@ -384,22 +385,62 @@ public class IRCConnection : MonoBehaviour
 			AddTextToHoldable("[IRC:Connect] Connection to chat IRC successful.");
 
 			NetworkStream networkStream = sock.GetStream();
-			StreamReader inputStream = new StreamReader(networkStream);
-			StreamWriter outputStream = new StreamWriter(networkStream);
-
-			if (_state == IRCConnectionState.DoNotRetry)
+			try
 			{
-				SetDebugUsername(true);
-				networkStream.Close();
-				sock.Close();
-				return;
+				AddTextToHoldable("[IRC:Connect] Attempting to set up SSL connection.");
+				SslStream sslStream = new SslStream(networkStream, true, new RemoteCertificateValidationCallback(VerifyServerCertificate));
+				sslStream.AuthenticateAsClient(_settings.serverName);
+
+				DebugHelper.Log($"SSL encrypted: {sslStream.IsEncrypted}.");
+				DebugHelper.Log($"SSL authenticated: {sslStream.IsAuthenticated}.");
+				DebugHelper.Log($"SSL signed: {sslStream.IsSigned}.");
+				DebugHelper.Log($"SSL mutually authenticated: {sslStream.IsMutuallyAuthenticated}.");
+
+				StreamReader inputStream = new StreamReader(sslStream);
+				StreamWriter outputStream = new StreamWriter(sslStream);
+
+				if (_state == IRCConnectionState.DoNotRetry)
+				{
+					SetDebugUsername(true);
+					sslStream.Close();
+					sock.Close();
+					return;
+				}
+
+				_inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
+				_inputThread.Start();
+
+				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
+				_outputThread.Start();
+
+				AddTextToHoldable("[IRC:Connect] SSL setup completed with no errors.");
 			}
+			catch (Exception ex)
+			{
+				AddTextToHoldable("[IRC:Connect] SSL connection failed, defaulting to insecure connection.");
+				if (_settings.serverPort == 6667)
+					AddTextToHoldable("[IRC:Connect] The configured port does not use SSL, please change it to 6697 if you wish to use SSL.");
+				DebugHelper.LogException(ex, "An Exception has occured when attempting to connect using SSL, using insecure stream instead:");
+				_settings.serverPort = 6667;
+				sock = new TcpClient(_settings.serverName, _settings.serverPort);
+				networkStream = sock.GetStream();
+				StreamReader inputStream = new StreamReader(networkStream);
+				StreamWriter outputStream = new StreamWriter(networkStream);
 
-			_inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
-			_inputThread.Start();
+				if (_state == IRCConnectionState.DoNotRetry)
+				{
+					SetDebugUsername(true);
+					networkStream.Close();
+					sock.Close();
+					return;
+				}
 
-			_outputThread = new Thread(() => OutputThreadMethod(outputStream));
-			_outputThread.Start();
+				_inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
+				_inputThread.Start();
+
+				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
+				_outputThread.Start();
+			}
 
 			SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands{1}CAP REQ :twitch.tv/membership", _settings.authToken, Environment.NewLine, _settings.userName));
 			AddTextToHoldable("PASS oauth:*****REDACTED******\nNICK {0}\nCAP REQ :twitch.tv/tags\nCAP REQ :twitch.tv/commands\nCAP REQ :twitch.tv/membership", _settings.userName);
@@ -418,7 +459,7 @@ public class IRCConnection : MonoBehaviour
 					_state = IRCConnectionState.DoNotRetry;
 					break;
 				default:
-					if(_state != IRCConnectionState.DoNotRetry)
+					if (_state != IRCConnectionState.DoNotRetry)
 						_state = IRCConnectionState.Disconnected;
 					break;
 			}
@@ -428,6 +469,25 @@ public class IRCConnection : MonoBehaviour
 			_state = IRCConnectionState.DoNotRetry;
 			AddTextToHoldable(ex, $"[IRC:Connect] Failed to connect to chat IRC {_settings.serverName}:{_settings.serverPort}. Due to the following Exception:");
 		}
+	}
+
+	private bool VerifyServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+	{
+		X509Certificate2 cert2 = new X509Certificate2(certificate);
+		if (cert2.Subject.Contains(_settings.serverName.Substring(4)) && DateTime.UtcNow <= cert2.NotAfter && DateTime.UtcNow >= cert2.NotBefore)
+		{
+			DebugHelper.Log("SSL certificate valid.");
+			return true;
+		}
+
+		if (!cert2.Subject.Contains(_settings.serverName.Substring(4)))
+			DebugHelper.Log("SSL certificate not issued to the server we are connected to.");
+		else if (DateTime.UtcNow > cert2.NotAfter)
+			DebugHelper.Log("SSL certificate expired.");
+		else if (DateTime.UtcNow < cert2.NotBefore)
+			DebugHelper.Log("SSL certificate issued for the future.");
+
+		return false;
 	}
 
 	public void Disconnect()
@@ -458,7 +518,7 @@ public class IRCConnection : MonoBehaviour
 	[StringFormatMethod("message")]
 	public void SendChatMessage(string message)
 	{
-		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries))
+		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
 		{
 			if (!_silenceMode && _state != IRCConnectionState.Disconnected)
 				SendCommand(string.Format("PRIVMSG #{0} :{1}", _settings.channelName, line));
@@ -559,7 +619,7 @@ public class IRCConnection : MonoBehaviour
 
 	public Color GetUserColor(string userNickName)
 	{
-		lock(_userColors)
+		lock (_userColors)
 		{
 			return _userColors.TryGetValue(userNickName, out Color color) ? color : Color.black;
 		}
@@ -604,7 +664,7 @@ public class IRCConnection : MonoBehaviour
 		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
-			if(TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && BombMessageResponder.BombActive)
+			if (TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && BombMessageResponder.BombActive)
 				Instance.SendMessage("Commands will be disabled once this bomb is completed or exploded.");
 			else
 				Instance.SendMessage("Commands disabled.");
@@ -753,7 +813,7 @@ public class IRCConnection : MonoBehaviour
 				return;
 			}
 
-			string[] badgeset = badges.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			string[] badgeset = badges.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string badge in badgeset)
 			{
 				if (badge.StartsWith("broadcaster/") ||
@@ -819,7 +879,7 @@ public class IRCConnection : MonoBehaviour
 			Instance.CurrentColor = string.IsNullOrEmpty(groups[2].Value) ? string.Empty : groups[2].Value;
 			Instance.SetDelay(groups[1].Value, groups[3].Value, groups[4].Value);
 			Instance.SetOwnColor();
-		}, false), 
+		}, false),
 
 		new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
 		{
@@ -891,7 +951,7 @@ public class IRCConnection : MonoBehaviour
 	private bool _isModerator = false;
 	private int _messageDelay = 2000;
 	private bool _silenceMode = false;
-	
+
 	public string CurrentColor { get; private set; } = string.Empty;
 
 	private Queue<Message> _messageQueue = new Queue<Message>();
