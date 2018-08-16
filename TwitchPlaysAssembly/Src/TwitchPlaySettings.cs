@@ -29,6 +29,8 @@ public class TwitchPlaySettingsData
 	public bool EnableInteractiveMode = false;
 	public bool EnableAutomaticEdgework = false;
 	public bool EnableEdgeworkCommand = true;
+	public string RepositoryUrl = "https://ktane.timwi.de/";
+	public string AnalyzerUrl = "https://ktane.timwi.de/More/Logfile%20Analyzer.html";
 	public bool EnableModeratorsCommand = true;
 	public bool EnableTrollCommands = false;
 	public bool EnableLetterCodes = false;

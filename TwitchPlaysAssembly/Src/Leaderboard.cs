@@ -268,6 +268,15 @@ public class Leaderboard
 		return entry?.SoloRank ?? 0;
 	}
 
+	public int GetSoloRank(string userName, out LeaderboardEntry entry)
+	{
+		entry = _entryListSolo.Where(x => x.UserName == userName).First();
+		if (entry != null)
+			return _entryListSolo.IndexOf(entry);
+		else
+			return 0;
+	}
+
 	public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int scoreCount)
 	{
 		solveCount = 0;
@@ -305,6 +314,18 @@ public class Leaderboard
 		{
 			AddEntry(entry);
 		}
+	}
+
+	public void DeleteEntry(LeaderboardEntry user)
+	{
+		_entryDictionary.Remove(user.UserName);
+		_entryList.Remove(user);
+		_entryListSolo.Remove(user);
+	}
+
+	public void DeleteEntry(string userNickName)
+	{
+		DeleteEntry(GetEntry(userNickName));
 	}
 
 	private void ResetSortFlag()

@@ -308,24 +308,16 @@ public class MiscellaneousMessageResponder : MessageResponder
 				{
 					string trimmeduser = user.Trim();
 					Leaderboard.Instance.GetRank(trimmeduser, out Leaderboard.LeaderboardEntry entry);
-					if (entry == null)
+					Leaderboard.Instance.GetSoloRank(trimmeduser, out Leaderboard.LeaderboardEntry soloEntry);
+					if (entry == null && soloEntry == null)
 					{
-						IRCConnection.Instance.SendMessage("User {0} was not found", trimmeduser);
+						IRCConnection.Instance.SendMessage("User {0} was not found or has already been reset", trimmeduser);
 						continue;
 					}
 					else
 					{
-						if (entry.SolveScore == 0 && entry.SolveCount == 0 && entry.StrikeCount == 0)
-						{
-							IRCConnection.Instance.SendMessage("User {0} has already been reset", user);
-						}
-						else
-						{
-							Leaderboard.Instance.AddScore(trimmeduser, -entry.SolveScore);
-							Leaderboard.Instance.AddSolve(trimmeduser, -entry.SolveCount);
-							Leaderboard.Instance.AddStrike(trimmeduser, -entry.StrikeCount);
-							IRCConnection.Instance.SendMessage("User {0} has been reset", user);
-						}
+						Leaderboard.Instance.DeleteEntry(entry);
+						IRCConnection.Instance.SendMessage("User {0} has been reset", trimmeduser);
 					}
 				}
 			}
