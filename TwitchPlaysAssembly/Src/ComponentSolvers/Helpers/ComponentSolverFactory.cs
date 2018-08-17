@@ -345,6 +345,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["SynchronizationModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 
 		//SL7205
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
