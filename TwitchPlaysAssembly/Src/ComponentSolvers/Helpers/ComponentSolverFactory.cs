@@ -370,7 +370,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 
 		//ThatGuyCalledJules
-		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
+		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["synonyms"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo/Riverbui modules maintained by Timwi)
