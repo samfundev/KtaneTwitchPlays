@@ -355,7 +355,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					if (entry == null)
 					{
-						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankTooLow);
+						IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankTooLow, userNickName, !isWhisper);
 						return;
 					}
 				}
@@ -373,11 +373,11 @@ public class MiscellaneousMessageResponder : MessageResponder
 						txtSolver = TwitchPlaySettings.data.SolverAndSolo;
 						txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int)recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
 					}
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore);
+					IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore), userNickName, !isWhisper);
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, userNickName);
+					IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.DoYouEvenPlayBro, userNickName), userNickName, !isWhisper);
 				}
 				return;
 			}

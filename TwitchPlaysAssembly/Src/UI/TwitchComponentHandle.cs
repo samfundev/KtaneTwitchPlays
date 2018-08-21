@@ -541,18 +541,34 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
+						return null;
+					}
 					messageOut = ClaimModule(userNickName, Code).Second;
 				}
 				else if (internalCommand.ToLowerInvariant().EqualsAny("release", "unclaim"))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
+						return null;
+					}
 					messageOut = UnclaimModule(userNickName, Code).Second;
 				}
 				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cv", "vc",
 					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cvp", "vpc"))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
+						return null;
+					}
 					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, internalCommand.Contains("p"));
 					if (response.First)
 					{
+
 						IRCConnection.Instance.SendMessage(response.Second);
 						internalCommand = internalCommand.Contains("p") ? "view pin" : "view";
 					}
@@ -563,6 +579,11 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.ToLowerInvariant().EqualsAny("unclaim unview", "unview unclaim", "unclaimview", "unviewclaim", "uncv", "unvc"))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
+						return null;
+					}
 					Tuple<bool, string> response = UnclaimModule(userNickName, Code);
 					if (response.First)
 					{
@@ -618,6 +639,11 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, taking modules is not allowed in whispers", userNickName, false);
+						return null;
+					}
 					if (TwitchPlaySettings.data.AnarchyMode)
 					{
 						messageOut = string.Format("Sorry {0}, taking modules is not allowed in anarchy mode.", userNickName);
@@ -649,6 +675,11 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, using mine on modules is not allowed in whispers", userNickName, false);
+						return null;
+					}
 					if (PlayerName == userNickName && TakeInProgress != null)
 					{
 						messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, PlayerName, Code, HeaderText);
@@ -728,6 +759,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			moduleAlreadyClaimed &= PlayerName != userNickName;
 			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
 			moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
+			moduleAlreadyClaimed &= !(internalCommand.Equals("viewpin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
 			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
 			if (moduleAlreadyClaimed)
 			{

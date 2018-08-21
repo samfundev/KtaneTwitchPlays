@@ -1165,7 +1165,7 @@ public abstract class ComponentSolver
 			if (inputCommand.StartsWith("view", StringComparison.InvariantCultureIgnoreCase))
 			{
 				_responded = true;
-				bool pinAllowed = inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) &&
+				bool pinAllowed = (inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) || inputCommand.Equals("viewpin", StringComparison.InvariantCultureIgnoreCase)) &&
 								  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode);
 
 				cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
