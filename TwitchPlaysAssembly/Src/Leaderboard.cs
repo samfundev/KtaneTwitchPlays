@@ -320,12 +320,21 @@ public class Leaderboard
 	{
 		_entryDictionary.Remove(user.UserName);
 		_entryList.Remove(user);
-		_entryListSolo.Remove(user);
 	}
 
 	public void DeleteEntry(string userNickName)
 	{
 		DeleteEntry(GetEntry(userNickName));
+	}
+
+	public void DeleteSoloEntry(LeaderboardEntry user)
+	{
+		_entryListSolo.Remove(user);
+	}
+
+	public void DeleteSoloEntry(string userNickName)
+	{
+		DeleteSoloEntry(_entryListSolo.Where(x => x.UserName == userNickName).First());
 	}
 
 	private void ResetSortFlag()

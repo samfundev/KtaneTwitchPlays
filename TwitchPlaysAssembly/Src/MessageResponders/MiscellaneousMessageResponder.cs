@@ -303,7 +303,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 			{
-				string[] users = match.Groups[1].Value.Split(';');
+				string[] users = split[1].Split(';');
 				foreach (string user in users)
 				{
 					string trimmeduser = user.Trim();
@@ -316,7 +316,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					else
 					{
-						Leaderboard.Instance.DeleteEntry(entry);
+						if (entry != null)
+							Leaderboard.Instance.DeleteEntry(entry);
+						if (soloEntry != null)
+							Leaderboard.Instance.DeleteSoloEntry(soloEntry);
 						IRCConnection.Instance.SendMessage("User {0} has been reset", trimmeduser);
 					}
 				}
