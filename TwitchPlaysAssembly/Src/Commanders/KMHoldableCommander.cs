@@ -156,7 +156,7 @@ public class KMHoldableCommander
 
 			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 			Vector3 HeldObjectTiltEulerAngles = selectableManager.GetHeldObjectTiltEulerAngles();
-			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, 0 - 95f, 95f);
+			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, -95f, 95f);
 			HeldObjectTiltEulerAngles.z -= selectableManager.GetZSpin() - currentZSpin;
 
 			selectableManager.SetZSpin(currentZSpin);
@@ -167,7 +167,7 @@ public class KMHoldableCommander
 		}
 
 		Vector3 HeldObjectTileEulerAnglesFinal = selectableManager.GetHeldObjectTiltEulerAngles();
-		HeldObjectTileEulerAnglesFinal.x = Mathf.Clamp(HeldObjectTileEulerAnglesFinal.x, 0 - 95f, 95f);
+		HeldObjectTileEulerAnglesFinal.x = Mathf.Clamp(HeldObjectTileEulerAnglesFinal.x, -95f, 95f);
 		HeldObjectTileEulerAnglesFinal.z -= selectableManager.GetZSpin() - targetZSpin;
 
 		selectableManager.SetZSpin(targetZSpin);

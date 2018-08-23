@@ -565,7 +565,7 @@ public class BombCommander : ICommandResponder
 
 			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 			Vector3 HeldObjectTiltEulerAngles = _selectableManager.GetHeldObjectTiltEulerAngles();
-			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, 0 - 95f, 95f);
+			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, -95f, 95f);
 			HeldObjectTiltEulerAngles.z -= _selectableManager.GetZSpin() - currentZSpin;
 
 			_selectableManager.SetZSpin(currentZSpin);
@@ -576,7 +576,7 @@ public class BombCommander : ICommandResponder
 		}
 
 		Vector3 HeldObjectTileEulerAnglesFinal = _selectableManager.GetHeldObjectTiltEulerAngles();
-		HeldObjectTileEulerAnglesFinal.x = Mathf.Clamp(HeldObjectTileEulerAnglesFinal.x, 0 - 95f, 95f);
+		HeldObjectTileEulerAnglesFinal.x = Mathf.Clamp(HeldObjectTileEulerAnglesFinal.x, -95f, 95f);
 		HeldObjectTileEulerAnglesFinal.z -= _selectableManager.GetZSpin() - targetZSpin;
 
 		_selectableManager.SetZSpin(targetZSpin);
