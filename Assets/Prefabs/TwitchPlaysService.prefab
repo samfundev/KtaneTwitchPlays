@@ -2633,7 +2633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Settings: "{ \t\"authToken\": \"\", \t\"userName\": \"\", \t\"channelName\": \"\",
-    \t\"serverName\": \"irc.twitch.tv\", \t\"serverPort\": 6667 }"
+    \t\"serverName\": \"irc.twitch.tv\", \t\"serverPort\": 6697 }"
   SettingsPath: 
 --- !u!114 &114000010973963816
 MonoBehaviour:
@@ -2842,7 +2842,6 @@ MonoBehaviour:
   m_Script: {fileID: -1365468908, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ircConnection: {fileID: 0}
   analysisUrl: 
   postOnComplete: 0
   LOGPREFIX: 
@@ -3679,7 +3678,6 @@ MonoBehaviour:
   edgeworkText: {fileID: 114756238846964178}
   edgeworkWindowTransform: {fileID: 224522128380578156}
   edgeworkHighlightTransform: {fileID: 224578456146686952}
-  ircConnection: {fileID: 0}
   coroutineQueue: {fileID: 0}
   bombID: -1
 --- !u!114 &114346900928478898
@@ -4500,28 +4498,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   messagePrefab: {fileID: 114000012089106560, guid: e10d34a7a56337b4ea2b48779d780807,
     type: 2}
-  unsupportedPrefab: {fileID: 0}
-  idBannerPrefab: {fileID: 0}
-  canvasGroup: {fileID: 0}
-  highlightGroup: {fileID: 0}
   canvasGroupMultiDecker: {fileID: 225129366150916298}
   canvasGroupUnsupported: {fileID: 225786798170740212}
-  headerText: {fileID: 0}
-  idText: {fileID: 0}
   idTextMultiDecker: {fileID: 114906445961636792}
   idTextUnsupported: {fileID: 114124734569453512}
-  claimedUser: {fileID: 0}
   claimedUserMultiDecker: {fileID: 114879826322931700}
-  messageScroll: {fileID: 0}
-  messageScrollContents: {fileID: 0}
-  upArrow: {fileID: 0}
-  downArrow: {fileID: 0}
-  leftArrow: {fileID: 0}
-  rightArrow: {fileID: 0}
-  upArrowHighlight: {fileID: 0}
-  downArrowHighlight: {fileID: 0}
-  leftArrowHighlight: {fileID: 0}
-  rightArrowHighlight: {fileID: 0}
   claimedBackgroundColour: {r: 255, g: 0, b: 0, a: 1}
   solvedBackgroundColor: {r: 0, g: 128, b: 0, a: 1}
   markedBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
