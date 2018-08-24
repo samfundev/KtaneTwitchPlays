@@ -28,7 +28,7 @@ public class FreeplayCommander : ICommandResponder
 
 	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false)
 	{
-		IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier);
+		IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier, isWhisper);
 		bool result;
 		do
 		{
@@ -46,7 +46,7 @@ public class FreeplayCommander : ICommandResponder
 		} while (result);
 	}
 
-	public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier)
+	public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper)
 	{
 		message = message.ToLowerInvariant().Trim();
 
@@ -81,7 +81,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName), userNickName, !isWhisper);
 			}
 		}
 		else if (message.EqualsAny("hardcore on", "hardcore off"))
@@ -92,7 +92,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName), !isWhisper);
 			}
 		}
 		else if (message.EqualsAny("mods only on", "mods only off"))
@@ -103,7 +103,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName), userNickName, !isWhisper);
 			}
 		}
 		else if (message.Equals("start"))
@@ -214,7 +214,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else if (message.Contains("hardcore") != IsHardcore)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName), userNickName, !isWhisper);
 				startBomb = false;
 			}
 
@@ -224,7 +224,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else if (message.Contains("needy") != HasNeedy)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName), userNickName, !isWhisper);
 				startBomb = false;
 			}
 
@@ -241,7 +241,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else if (message.Contains("vanilla") || message.Contains("mods"))
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName), userNickName, !isWhisper);
 				startBomb = false;
 			}
 		}
@@ -438,7 +438,7 @@ public class FreeplayCommander : ICommandResponder
 	public void StartBomb()
 	{
 		KeypadButton startButton = FreeplayDevice.StartButton;
-		SelectObject( startButton.GetComponent<Selectable>());
+		SelectObject(startButton.GetComponent<Selectable>());
 	}
 
 	public IEnumerator HoldFreeplayDevice()

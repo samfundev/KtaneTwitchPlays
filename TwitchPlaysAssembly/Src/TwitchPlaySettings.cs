@@ -135,6 +135,7 @@ public class TwitchPlaySettingsData
 	public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
 	public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
 	public string AwardHoldableStrike = "VoteNay Holdable !{0} got {1} strike{2}! {3} points from {4}{5} VoteNay";
+	public string AwardRewardStrike = "VoteNay Module {0} ({3}) got {1} strike{2}{4}! VoteNay";
 
 	public string BombLiveMessage = "The next bomb is now live! Start sending your commands! MrDestructoid";
 	public string MultiBombLiveMessage = "The next set of bombs are now live! Start sending your commands! MrDestructoid";

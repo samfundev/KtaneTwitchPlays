@@ -77,7 +77,7 @@ public class BombCommander : ICommandResponder
 			responseNotifier.ProcessResponse(CommandResponse.Start);
 			if (!TwitchPlaySettings.data.EnableEdgeworkCommand && !TwitchPlaySettings.data.AnarchyMode)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text), userNickName, !isWhisper);
 			}
 			else
 			{
