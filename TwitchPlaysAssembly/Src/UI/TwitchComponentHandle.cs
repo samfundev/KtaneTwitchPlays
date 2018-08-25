@@ -758,8 +758,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			moduleAlreadyClaimed &= !TwitchPlaySettings.data.AnarchyMode;
 			moduleAlreadyClaimed &= PlayerName != userNickName;
 			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
-			moduleAlreadyClaimed &= !(internalCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
-			moduleAlreadyClaimed &= !(internalCommand.Equals("viewpin", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
+			moduleAlreadyClaimed &= !(internalCommand.ToLowerInvariant().EqualsAny("viewpin", "view pin") && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
 			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
 			if (moduleAlreadyClaimed)
 			{

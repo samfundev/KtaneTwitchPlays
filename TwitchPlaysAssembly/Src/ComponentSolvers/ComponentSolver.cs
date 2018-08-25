@@ -767,7 +767,7 @@ public abstract class ComponentSolver
 		else
 		{
 			//AwardStrikes(IRCConnection.Instance.ChannelName, 1); - Instead of striking the streamer, decrease the reward
-			AwardRewardStrike(1);
+			AwardStrikes(1);
 		}
 
 		BombMessageResponder.moduleCameras?.UpdateStrikes(true);
@@ -962,60 +962,9 @@ public abstract class ComponentSolver
 		}
 	}
 
-	private void AwardRewardStrike(int strikeCount)
+	private void AwardStrikes(int strikeCount)
 	{
-		string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardRewardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
-		if (strikeCount <= 0) return;
-
-		string RecordMessageTone = $"Module ID: {Code} | Module Name: {headerText} | Strike";
-		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
-
-		int originalReward = TwitchPlaySettings.GetRewardBonus();
-		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
-		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
-		if (currentReward != originalReward)
-			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
-		if (OtherModes.TimeModeOn)
-		{
-			float originalMultiplier = OtherModes.GetAdjustedMultiplier();
-			bool multiDropped = OtherModes.DropMultiplier();
-			float multiplier = OtherModes.GetAdjustedMultiplier();
-			string tempMessage;
-			if (multiDropped)
-			{
-				if (Mathf.Abs(originalMultiplier - multiplier) >= 0.1)
-					tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
-				else
-					tempMessage = "Time";
-			}
-			else
-			{
-				tempMessage = $"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
-			}
-			if (BombCommander.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
-			{
-				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
-				tempMessage += $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
-			}
-			else
-			{
-				float timeReducer = BombCommander.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
-				double easyText = Math.Round(timeReducer, 1);
-				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
-				tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
-			}
-			IRCConnection.Instance.SendMessage(tempMessage);
-			BombCommander.StrikeCount = 0;
-			BombMessageResponder.moduleCameras.UpdateStrikes();
-		}
-		if (OtherModes.ZenModeOn)
-		{
-			BombCommander.StrikeLimit += strikeCount;
-		}
-
-		StrikeMessage = string.Empty;
-		StrikeMessageConflict = false;
+		AwardStrikes(null, strikeCount);
 	}
 
 	private void AwardStrikes(string userNickName, int strikeCount)
@@ -1023,10 +972,19 @@ public abstract class ComponentSolver
 		string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		if (OtherModes.ZenModeOn) strikePenalty = (int)(strikePenalty * 0.20f);
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
+		if (!string.IsNullOrEmpty(userNickName))
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
+		else
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardRewardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
 		if (strikeCount <= 0) return;
 
-		string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
+		string RecordMessageTone;
+
+		if (!string.IsNullOrEmpty(userNickName))
+			RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
+		else
+			RecordMessageTone = $"Module ID: {Code} | Module Name: {headerText} | Strike";
+
 		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
@@ -1072,8 +1030,11 @@ public abstract class ComponentSolver
 			BombCommander.StrikeLimit += strikeCount;
 		}
 
-		Leaderboard.Instance.AddScore(userNickName, strikePenalty);
-		Leaderboard.Instance.AddStrike(userNickName, strikeCount);
+		if (!string.IsNullOrEmpty(userNickName))
+		{
+			Leaderboard.Instance.AddScore(userNickName, strikePenalty);
+			Leaderboard.Instance.AddStrike(userNickName, strikeCount);
+		}
 		StrikeMessage = string.Empty;
 		StrikeMessageConflict = false;
 	}
@@ -1222,7 +1183,7 @@ public abstract class ComponentSolver
 			if (inputCommand.StartsWith("view", StringComparison.InvariantCultureIgnoreCase))
 			{
 				_responded = true;
-				bool pinAllowed = (inputCommand.Equals("view pin", StringComparison.InvariantCultureIgnoreCase) || inputCommand.Equals("viewpin", StringComparison.InvariantCultureIgnoreCase)) &&
+				bool pinAllowed = inputCommand.ToLowerInvariant().EqualsAny("view pin", "viewpin") &&
 								  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode);
 
 				cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
