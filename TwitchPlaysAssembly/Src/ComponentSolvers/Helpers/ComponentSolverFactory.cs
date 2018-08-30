@@ -480,6 +480,7 @@ public static class ComponentSolverFactory
 				moduleDisplayName = info.moduleDisplayName,
 				moduleID = info.moduleID,
 				moduleScore = info.moduleScore,
+				moduleScoreOverride = false,
 				moduleScoreIsDynamic = info.moduleScoreIsDynamic,
 				statusLightDown = info.statusLightDown,
 				statusLightLeft = info.statusLightLeft,
@@ -545,6 +546,12 @@ public static class ComponentSolverFactory
 			info.helpText = defInfo.helpText;
 		}
 
+		if (!info.moduleScoreOverride)
+		{
+			ModuleData.DataHasChanged |= info.moduleScore.Equals(defInfo.moduleScore);
+			info.moduleScore = defInfo.moduleScore;
+		}
+
 		if (!info.manualCodeOverride)
 		{
 			ModuleData.DataHasChanged |= info.manualCode.TryEquals(defInfo.manualCode);
@@ -582,6 +589,7 @@ public static class ComponentSolverFactory
 			ModuleData.DataHasChanged |= !info.manualCode.TryEquals(manualCode);
 			info.manualCode = manualCode;
 		}
+
 		if (!info.statusLightOverride)
 		{
 			ModuleData.DataHasChanged |= info.statusLightLeft == statusLightLeft;
@@ -636,6 +644,7 @@ public static class ComponentSolverFactory
 			i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
 			i.strikePenalty = info.strikePenalty;
 
+			i.moduleScoreOverride = info.moduleScoreOverride;
 			i.helpTextOverride = info.helpTextOverride;
 			i.manualCodeOverride = info.manualCodeOverride;
 			i.statusLightOverride = info.statusLightOverride;
@@ -771,6 +780,12 @@ public static class ComponentSolverFactory
 			ModuleData.DataHasChanged |= info.statusLightDown != statusBottom;
 			info.statusLightLeft = statusLeft;
 			info.statusLightDown = statusBottom;
+		}
+
+		if (FindModuleScore(bombComponent, commandComponentType, out int score) && !info.moduleScoreOverride)
+		{
+			ModuleData.DataHasChanged |= !score.Equals(info.moduleScore);
+			info.moduleScore = score;
 		}
 
 		if (FindRegexList(bombComponent, commandComponentType, out string[] regexList) && !info.validCommandsOverride)
@@ -919,6 +934,23 @@ public static class ComponentSolverFactory
 			return false;
 		}
 		manualCode = (string) candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
+		return true;
+	}
+
+	internal static bool FindModuleScore(MonoBehaviour bombComponent, Type commandComponentType, out int moduleScore)
+	{
+		FieldInfo candidateInt = commandComponentType.GetField("TwitchModuleScore", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		if (candidateInt == null)
+		{
+			moduleScore = 5;
+			return false;
+		}
+		if (!(candidateInt.GetValue(candidateInt.IsStatic ? null : bombComponent.GetComponent(commandComponentType)) is int))
+		{
+			moduleScore = 5;
+			return false;
+		}
+		moduleScore = (int)candidateInt.GetValue(candidateInt.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
 		return true;
 	}
 

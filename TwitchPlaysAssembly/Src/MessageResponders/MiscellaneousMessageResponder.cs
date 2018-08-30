@@ -74,7 +74,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
 		}
-		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand("The Bomb", "drop", null);
+		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand("The Bomb", "drop", null, false);
 		while (drop != null && drop.MoveNext())
 			yield return drop.Current;
 		drop = BombBinderCommander.Instance?.RespondToCommand("The Bomb", "drop", null);
@@ -562,6 +562,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						case "points":
 						case "score":
 							module.moduleScore = !int.TryParse(changeTo, out int moduleScore) ? defaultModule.moduleScore : moduleScore;
+							module.moduleScoreOverride = true;
 							IRCConnection.Instance.SendMessage($"Module \"{moduleName}\" score changed to: {module.moduleScore}", userNickName, !isWhisper);
 							break;
 						case "statuslight":

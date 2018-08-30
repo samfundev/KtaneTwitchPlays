@@ -9,6 +9,7 @@ public class ModuleInformation
 	public string moduleDisplayName = string.Empty;
 	public string moduleID;
 
+	public bool moduleScoreOverride;
 	public int moduleScore = 5;
 	public int strikePenalty = -6;
 	public bool moduleScoreIsDynamic;
