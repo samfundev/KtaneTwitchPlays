@@ -61,6 +61,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public bool IsMod => bombComponent is ModBombComponent || bombComponent is ModNeedyComponent;
 
+	public static bool ClaimsEnabled;
+
 	private string _headerText;
 	public string HeaderText
 	{
@@ -423,12 +425,17 @@ public class TwitchComponentHandle : MonoBehaviour
 	{
 		if (Solver.AttemptedForcedSolve)
 		{
-			return new Tuple<bool, string>(false, string.Format("Sorry, @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, userNickName, HeaderText));
+			return new Tuple<bool, string>(false, string.Format("Sorry @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, userNickName, HeaderText));
 		}
 
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
-			return new Tuple<bool, string>(false, string.Format("Sorry, {0}, claiming modules is not allowed in anarchy mode.", userNickName));
+			return new Tuple<bool, string>(false, string.Format("Sorry {0}, claiming modules is not allowed in anarchy mode.", userNickName));
+		}
+
+		if (!ClaimsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
+		{
+			return new Tuple<bool, string>(false, string.Format("Sorry {0}, claims have been disabled.", userNickName));
 		}
 
 		if (PlayerName != null)
