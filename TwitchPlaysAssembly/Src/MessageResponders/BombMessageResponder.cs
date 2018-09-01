@@ -212,17 +212,20 @@ public class BombMessageResponder : MessageResponder
 		GameRoom.ShowCamera();
 		BombActive = false;
 		EnableDisableInput();
+		bool ClaimsEnabled = TwitchComponentHandle.ClaimsEnabled;
 		TwitchComponentHandle.ClaimedList.Clear();
 		TwitchComponentHandle.ClearUnsupportedModules();
-		TwitchComponentHandle.ClaimsEnabled = true;
+		if (!ClaimsEnabled)
+			TwitchComponentHandle.ClaimsEnabled = true;
 		StopAllCoroutines();
 		Leaderboard.Instance.BombsAttempted++;
 		parentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
 
 		LogUploader.Instance.Post();
 		parentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
-		parentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
-
+		if (!ClaimsEnabled)
+			parentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
+		
 		moduleCameras?.gameObject.SetActive(false);
 
 		foreach (TwitchBombHandle handle in BombHandles)
