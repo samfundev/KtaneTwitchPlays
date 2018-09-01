@@ -61,7 +61,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public bool IsMod => bombComponent is ModBombComponent || bombComponent is ModNeedyComponent;
 
-	public static bool ClaimsEnabled;
+	public static bool ClaimsEnabled = true;
 
 	private string _headerText;
 	public string HeaderText
