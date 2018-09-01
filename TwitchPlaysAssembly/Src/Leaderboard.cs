@@ -270,7 +270,7 @@ public class Leaderboard
 
 	public int GetSoloRank(string userName, out LeaderboardEntry entry)
 	{
-		entry = _entryListSolo.Where(x => x.UserName == userName).First();
+		entry = _entryListSolo.Where(x => x.UserName == userName).FirstOrDefault();
 		if (entry != null)
 			return _entryListSolo.IndexOf(entry);
 		else

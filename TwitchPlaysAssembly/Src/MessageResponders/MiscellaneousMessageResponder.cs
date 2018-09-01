@@ -146,8 +146,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 	{
 		Match match;
 
-		if (!text.StartsWith("!") || text.Equals("!")) return;
-		text = text.Substring(1).Trim();
+		if ((!text.StartsWith("!") && !isWhisper) || text.Equals("!")) return;
+		if (text.StartsWith("!"))
+			text = text.Substring(1).Trim();
 
 		string[] split = text.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		string textAfter = split.Skip(1).Join();
@@ -321,6 +322,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						if (soloEntry != null)
 							Leaderboard.Instance.DeleteSoloEntry(soloEntry);
 						IRCConnection.Instance.SendMessage("User {0} has been reset", trimmeduser);
+						continue;
 					}
 				}
 			}
