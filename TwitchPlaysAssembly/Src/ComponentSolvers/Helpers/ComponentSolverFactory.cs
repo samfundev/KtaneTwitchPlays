@@ -273,7 +273,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Rotary Phone" };
 
 		//JoketteWuzHere
-		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = false };
 		ModComponentSolverInformation["BlindMaze"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["FaultyBackgrounds"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
@@ -313,7 +313,7 @@ public static class ComponentSolverFactory
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["cube"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["europeanTravel"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = false };
 		ModComponentSolverInformation["graffitiNumbers"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
@@ -345,7 +345,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
+		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["SynchronizationModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 
