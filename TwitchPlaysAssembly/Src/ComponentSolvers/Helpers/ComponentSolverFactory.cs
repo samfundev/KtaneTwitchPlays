@@ -216,7 +216,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = true };
 		ModComponentSolverInformation["equations"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["subways"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
-		ModComponentSolverInformation["timeKeeper"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["timeKeeper"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { moduleScore = 6, helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", manualCode = "Color Flash", DoesTheRightThing = true };
