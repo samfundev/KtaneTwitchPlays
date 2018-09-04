@@ -37,12 +37,7 @@ public class UrlHelper : MonoBehaviour
 
 	public string ManualFor(string module, string type = "html", bool useVanillaRuleModifier = false)
 	{
-		if (useVanillaRuleModifier && VanillaRuleModifier.GetRuleSeed() != 1)
-		{
-			return $"{TwitchPlaySettings.data.RepositoryUrl}manual/{Escape(module)}.html?VanillaRuleSeed={VanillaRuleModifier.GetRuleSeed()}";
-		}
-
-		return string.Format(TwitchPlaySettings.data.RepositoryUrl + "{0}/{1}.{2}", type.ToUpper(), Escape(module), type);
+		return string.Format(TwitchPlaySettings.data.RepositoryUrl + "{0}/{1}.{2}{3}", type.ToUpper(), Escape(module), type, (useVanillaRuleModifier && type.Equals("html")) ? $"#{VanillaRuleModifier.GetRuleSeed()}" : "");
 	}
 
 	public string VanillaManual = "http://www.bombmanual.com/";
