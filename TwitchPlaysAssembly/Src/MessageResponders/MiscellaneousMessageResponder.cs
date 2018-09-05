@@ -342,7 +342,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						case 3 when split[1].Equals("solo", StringComparison.InvariantCultureIgnoreCase) && !int.TryParse(split[2], out _):
 							Leaderboard.Instance.GetRank(split[2], out entry);
 							if (entry != null) break;
-							IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[2]);
+							IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.DoYouEvenPlayBro, split[2]), userNickName, !isWhisper);
 							return;
 						case 2 when int.TryParse(split[1], out int desiredRank):
 							Leaderboard.Instance.GetRank(desiredRank, out entry);
@@ -350,7 +350,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						case 2 when !int.TryParse(split[1], out _):
 							Leaderboard.Instance.GetRank(split[1], out entry);
 							if (entry != null) break;
-							IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]);
+							IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.DoYouEvenPlayBro, split[1]), userNickName, !isWhisper);
 							return;
 						default:
 							return;
