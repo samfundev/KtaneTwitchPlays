@@ -277,6 +277,40 @@ public class Leaderboard
 			return 0;
 	}
 
+	public bool IsDuplicate(LeaderboardEntry person, out List<LeaderboardEntry> entries)
+	{
+		if (_entryDictionary.ContainsValue(person))
+		{
+			entries = _entryList.Where(x => x.SolveScore == person.SolveScore && x.UserName != person.UserName).ToList();
+			if (entries != null && entries.Any())
+				return true;
+			else
+			{
+				entries = null;
+				return false;
+			}
+		}
+		entries = null;
+		return false;
+	}
+
+	public bool IsSoloDuplicate(LeaderboardEntry person, out List<LeaderboardEntry> entries)
+	{
+		if (_entryListSolo.Contains(person))
+		{
+			entries = _entryListSolo.Where(x => x.RecordSoloTime == person.RecordSoloTime && x.UserName != person.UserName).ToList();
+			if (entries != null && entries.Any())
+				return true;
+			else
+			{
+				entries = null;
+				return false;
+			}
+		}
+		entries = null;
+		return false;
+	}
+
 	public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int scoreCount)
 	{
 		solveCount = 0;

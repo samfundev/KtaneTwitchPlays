@@ -367,15 +367,24 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				if (entry != null)
 				{
-					string txtSolver = "";
-					string txtSolo = ".";
-					if (entry.TotalSoloClears > 0)
+					var matchingEntries = new List<Leaderboard.LeaderboardEntry>() { entry };
+					if (Leaderboard.Instance.IsDuplicate(entry, out List<Leaderboard.LeaderboardEntry> duplicates) && int.TryParse(split[1], out _))
+						matchingEntries.AddRange(duplicates);
+					else if (Leaderboard.Instance.IsSoloDuplicate(entry, out List<Leaderboard.LeaderboardEntry> soloDuplicates) && int.TryParse(split[2], out _))
+						matchingEntries.AddRange(soloDuplicates);
+
+					foreach (Leaderboard.LeaderboardEntry dentry in matchingEntries)
 					{
-						TimeSpan recordTimeSpan = TimeSpan.FromSeconds(entry.RecordSoloTime);
-						txtSolver = TwitchPlaySettings.data.SolverAndSolo;
-						txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int)recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
+						string txtSolver = "";
+						string txtSolo = "";
+						if (dentry.TotalSoloClears > 0)
+						{
+							TimeSpan recordTimeSpan = TimeSpan.FromSeconds(dentry.RecordSoloTime);
+							txtSolver = TwitchPlaySettings.data.SolverAndSolo;
+							txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, dentry.SoloRank, (int) recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
+						}
+						IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, dentry.UserName, dentry.Rank, dentry.SolveCount, dentry.StrikeCount, txtSolver, txtSolo, dentry.SolveScore), userNickName, !isWhisper);
 					}
-					IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore), userNickName, !isWhisper);
 				}
 				else
 				{
