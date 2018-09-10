@@ -59,6 +59,7 @@ public static class ComponentSolverFactory
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["KnowYourWay"] = (bombCommander, bombComponent) => new KnowYourWayComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetterKeysComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent) => new ResistorsComponentSolver(bombCommander, bombComponent);
@@ -167,6 +168,7 @@ public static class ComponentSolverFactory
 
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
+		ModComponentSolverInformation["KnowYourWay"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Know Your Way", moduleScore = 10};
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", moduleScore = 6 };
