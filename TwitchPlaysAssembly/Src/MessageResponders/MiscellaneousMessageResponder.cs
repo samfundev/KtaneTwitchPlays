@@ -302,7 +302,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.RegexMatch(out match, "^resetusers? (.+)"))
 		{
-			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+			if (UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 			{
 				string[] users = split[1].Split(';');
 				foreach (string user in users)
