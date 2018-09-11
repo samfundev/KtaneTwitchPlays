@@ -55,6 +55,7 @@ public static class ComponentSolverFactory
 		//Mock Army Modules
 		ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent) => new EmojiMathComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["Needy Math"] = (bombCommander, bombComponent) => new NeedyMathComponentSolver(bombCommander, bombComponent);
 		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
 
 		//Misc Modules
@@ -164,6 +165,7 @@ public static class ComponentSolverFactory
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 3 };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
+		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math" };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 3 };
 
 		//Misc

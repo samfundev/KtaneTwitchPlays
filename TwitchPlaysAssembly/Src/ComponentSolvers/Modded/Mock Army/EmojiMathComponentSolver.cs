@@ -19,14 +19,14 @@ public class EmojiMathComponentSolver : ComponentSolver
 		if (commands.Length == 2 && commands[0] == "submit")
 		{
 			List<int> buttonIndexes = new List<int>();
-			bool negitive = false;
+			bool negative = false;
 
 			int index = 0;
 			foreach (char c in commands[1].ToCharArray())
 			{
 				if (c == '-' && index == 0)
 				{
-					negitive = true;
+					negative = true;
 				}
 				else
 				{
@@ -43,10 +43,10 @@ public class EmojiMathComponentSolver : ComponentSolver
 				index++;
 			}
 			
-			if (negitive != negitiveActive)
+			if (negative != negativeActive)
 			{
 				yield return DoInteractionClick(_buttons[10]);
-				negitiveActive = negitive;
+				negativeActive = negative;
 			}
 
 			foreach (int ind in buttonIndexes) yield return DoInteractionClick(_buttons[ind]);
@@ -65,5 +65,5 @@ public class EmojiMathComponentSolver : ComponentSolver
 	private static FieldInfo _buttonsField = null;
 
 	private readonly KMSelectable[] _buttons = null;
-	private bool negitiveActive = false;
+	private bool negativeActive = false;
 }

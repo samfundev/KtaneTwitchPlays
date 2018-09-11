@@ -86,6 +86,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\SwitchesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Mock Army\AnagramsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Mock Army\EmojiMathComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Mock Army\NeedyMathComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\CrazyTalkComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\CryptographyComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\ForeignExchangeRatesComponentSolver.cs" />
