@@ -25,7 +25,7 @@ public class BanData
 {
 	public string BannedBy;
 	public string BannedReason;
-	public Double BanExpiry;
+	public double BanExpiry;
 }
 
 public static class UserAccess
@@ -287,16 +287,22 @@ public static class UserAccess
 			{
 				unban = true;
 				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
+				if (TwitchPlaySettings.data.EnableWhispers)
+					IRCConnection.Instance.SendMessage($"You are no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.", usernickname, false);
 			}
 			if (!double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
 			{
 				unban = true;
 				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
+				if (TwitchPlaySettings.data.EnableWhispers)
+					IRCConnection.Instance.SendMessage($"You are no longer timed out from twitch plays because {ban.BannedBy} no longer has the pwoer to issue time outs.", usernickname, false);
 			}
 		}
 		else if (!UserAccessData.Instance.StickyBans && !unban)
 		{
-			IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays, as there is no one to hold accoutable for the ban.");
+			IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays, as there is no one to hold accountable for the ban.");
+			if (TwitchPlaySettings.data.EnableWhispers)
+				IRCConnection.Instance.SendMessage("You are no longer banned from twitch plays, as there is no one to hold accountable for the ban.", usernickname, false);
 			unban = true;
 		}
 		else

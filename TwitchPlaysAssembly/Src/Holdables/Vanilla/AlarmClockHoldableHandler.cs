@@ -14,7 +14,7 @@ public class AlarmClockHoldableHandler : HoldableHandler
 		Instance = this;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string command)
+	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
 		if ((TwitchPlaySettings.data.AllowSnoozeOnly && !TwitchPlaySettings.data.AnarchyMode && (!(bool) _alarmClockOnField.GetValue(clock)))) yield break;
 

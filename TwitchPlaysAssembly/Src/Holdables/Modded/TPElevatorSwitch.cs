@@ -148,7 +148,7 @@ public class TPElevatorSwitch : MonoBehaviour
 		DebugHelper.Log("Setting Elevator state to {0}", elevatorState);
 		if (elevatorSwitch == null)
 		{
-			IEnumerator ircManager = IRCConnectionManagerHandler.Instance.RespondToCommand("Elevator Switch", elevatorState ? "elevator on" : "elevator off");
+			IEnumerator ircManager = IRCConnectionManagerHandler.Instance.RespondToCommand("Elevator Switch", elevatorState ? "elevator on" : "elevator off", false);
 			while (ircManager.MoveNext())
 				yield return ircManager.Current;
 			yield break;

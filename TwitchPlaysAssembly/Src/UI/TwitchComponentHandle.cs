@@ -490,7 +490,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void CommandError(string userNickName, string message)
 	{
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message);
+		IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message));
 	}
 
 	public void CommandInvalid(string userNickName)

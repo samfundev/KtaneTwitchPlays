@@ -476,13 +476,13 @@ public class BombMessageResponder : MessageResponder
 		if (text.StartsWith("!"))
 			text = text.Substring(1).Trim();
 
-		if (IsAuthorizedDefuser(userNickName))
+		if (IsAuthorizedDefuser(userNickName, isWhisper))
 		{
 			if (text.RegexMatch(out match, "^notes(-?[0-9]+) (.+)$") && int.TryParse(match.Groups[1].Value, out index))
 			{
 				string notes = match.Groups[2].Value;
 
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesTaken, index--, notes);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.NotesTaken, index--, notes), userNickName, !isWhisper);
 
 				_notesDictionary[index] = notes;
 				moduleCameras?.SetNotes(index, notes);
@@ -493,7 +493,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				string notes = match.Groups[2].Value;
 
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NotesAppended, index--, notes);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.NotesAppended, index--, notes), userNickName, !isWhisper);
 				if (!_notesDictionary.ContainsKey(index))
 					_notesDictionary[index] = TwitchPlaySettings.data.NotesSpaceFree;
 
@@ -504,7 +504,7 @@ public class BombMessageResponder : MessageResponder
 
 			if (text.RegexMatch(out match, "^clearnotes(-?[0-9]+)$", "^notes(-?[0-9]+)clear$") && int.TryParse(match.Groups[1].Value, out index))
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.NoteSlotCleared, index--);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.NoteSlotCleared, index--), userNickName, !isWhisper);
 
 				_notesDictionary[index] = (OtherModes.ZenModeOn && index == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
 				moduleCameras?.SetNotes(index, _notesDictionary[index]);
@@ -515,7 +515,7 @@ public class BombMessageResponder : MessageResponder
 			{
 				if (GameRoom.Instance is ElevatorGameRoom) return; //There is no alarm clock in the elevator room.
 				DropCurrentBomb();
-				_coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze"));
+				_coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze", isWhisper));
 				return;
 			}
 
@@ -810,7 +810,7 @@ public class BombMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage("Sorry, you don't have enough points to use the newbomb command.");
+					IRCConnection.Instance.SendMessage($"Sorry {userNickName}, you don't have enough points to use the newbomb command.");
 					return;
 				}
 			}

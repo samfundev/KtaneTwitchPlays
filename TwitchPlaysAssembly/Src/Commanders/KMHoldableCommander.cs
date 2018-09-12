@@ -41,7 +41,7 @@ public class KMHoldableCommander
 		}
 		else
 		{
-			IEnumerator handler = Handler.RespondToCommand(userNickName, message);
+			IEnumerator handler = Handler.RespondToCommand(userNickName, message, isWhisper);
 			bool result;
 			DebugHelper.Log($"Coroutine for holdable {Holdable.name} started");
 			do

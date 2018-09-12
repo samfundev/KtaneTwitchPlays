@@ -12,7 +12,7 @@ public class SimpleHoldableHandler : HoldableHandler
 		HelpMessage = helpMessage;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string command)
+	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
 		KMSelectable[] selectables = (KMSelectable[]) HandlerMethod.Invoke(CommandComponent, new object[] {command});
 		if (selectables == null)

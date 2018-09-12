@@ -524,8 +524,8 @@ public class ModuleCameras : MonoBehaviour
 		{
 			float timedMultiplier = OtherModes.GetAdjustedMultiplier();
 			ConfidencePrefab.color = Color.yellow;
-			string conf = "x" + String.Format("{0:0.0}", timedMultiplier);
-			string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
+			string conf = "x" + string.Format("{0:0.0}", timedMultiplier);
+			string pts = "+" + string.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
 			ConfidencePrefab.text = pts;
 			StrikesPrefab.color = Color.yellow;
 			StrikeLimitPrefab.color = Color.yellow;
@@ -535,7 +535,7 @@ public class ModuleCameras : MonoBehaviour
 		else if (OtherModes.ZenModeOn)
 		{
 			ConfidencePrefab.color = Color.yellow;
-			string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
+			string pts = "+" + string.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
 			ConfidencePrefab.text = pts;
 			StrikesPrefab.color = Color.red;
 			StrikeLimitPrefab.color = Color.red;
@@ -558,7 +558,7 @@ public class ModuleCameras : MonoBehaviour
 		else
 		{
 			ConfidencePrefab.color = Color.yellow;
-			string pts = "+" + String.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
+			string pts = "+" + string.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
 			ConfidencePrefab.text = pts;
 		}
 	}

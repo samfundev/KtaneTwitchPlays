@@ -21,7 +21,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 		Instance = this;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string command)
+	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
 		DebugHelper.Log($"Received: !ircmanager {command}");
 		

@@ -13,7 +13,7 @@ public class CoroutineHoldableHandler : HoldableHandler
 		HelpMessage = helpMessage;
 	}
 
-	protected override IEnumerator RespondToCommandInternal(string command)
+	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
 		IEnumerator handler = (IEnumerator) HandlerMethod.Invoke(CommandComponent, new object[] {command});
 		CancelBool?.SetValue(CommandComponent, false);

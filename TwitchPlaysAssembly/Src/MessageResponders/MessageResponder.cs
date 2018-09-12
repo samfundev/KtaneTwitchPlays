@@ -18,7 +18,7 @@ public abstract class MessageResponder : MonoBehaviour
 		IRCConnection.Instance?.OnMessageReceived.AddListener(OnInternalMessageReceived);
 	}
 
-	public static bool IsAuthorizedDefuser(string userNickName, bool silent = false)
+	public static bool IsAuthorizedDefuser(string userNickName, bool isWhisper, bool silent = false)
 	{
 		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName))
 			return true;
@@ -29,7 +29,7 @@ public abstract class MessageResponder : MonoBehaviour
 
 			if (double.IsPositiveInfinity(ban.BanExpiry))
 			{
-				IRCConnection.Instance?.SendMessage("Sorry @{0}, You were banned permanently from Twitch Plays by {1}{2}", userNickName, ban.BannedBy, string.IsNullOrEmpty(ban.BannedReason) ? "." : $", for the following reason: {ban.BannedReason}");
+				IRCConnection.Instance?.SendMessage(string.Format("Sorry @{0}, You were banned permanently from Twitch Plays by {1}{2}", userNickName, ban.BannedBy, string.IsNullOrEmpty(ban.BannedReason) ? "." : $", for the following reason: {ban.BannedReason}"), userNickName, !isWhisper);
 			}
 			else
 			{
@@ -43,14 +43,14 @@ public abstract class MessageResponder : MonoBehaviour
 				else if (hoursRemaining > 0) timeRemaining = $"{hoursRemaining} hours, {minutesRemaining} minutes, {secondsRemaining} seconds.";
 				else if (minutesRemaining > 0) timeRemaining = $"{minutesRemaining} minutes, {secondsRemaining} seconds.";
 
-				IRCConnection.Instance?.SendMessage("Sorry @{0}, You were timed out from Twitch Plays by {1}{2} You can participate again in {3}", userNickName, ban.BannedBy, string.IsNullOrEmpty(ban.BannedReason) ? "." : $", For the following reason: {ban.BannedReason}", timeRemaining);
+				IRCConnection.Instance?.SendMessage(string.Format("Sorry @{0}, You were timed out from Twitch Plays by {1}{2} You can participate again in {3}", userNickName, ban.BannedBy, string.IsNullOrEmpty(ban.BannedReason) ? "." : $", For the following reason: {ban.BannedReason}", timeRemaining), userNickName, !isWhisper);
 			}
 			return false;
 		}
 
 		bool result = (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true));
 		if (!result && !silent)
-			IRCConnection.Instance?.SendMessage(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName);
+			IRCConnection.Instance?.SendMessage(string.Format(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName), userNickName, !isWhisper);
 
 		return result;
 	}

@@ -97,7 +97,7 @@ public abstract class HoldableHandler
 		yield return item;
 	}
 	
-	public IEnumerator RespondToCommand(string userNickName, string message)
+	public IEnumerator RespondToCommand(string userNickName, string message, bool isWhisper)
 	{
 		DisableOnStrike = false;
 		Strike = false;
@@ -121,7 +121,7 @@ public abstract class HoldableHandler
 		if (processCommand == null || !processCommand.MoveNext())
 		{	
 			DebugHelper.Log("Running RespondToCommandInternal()");
-			processCommand = RespondToCommandInternal(message);
+			processCommand = RespondToCommandInternal(message, isWhisper);
 			bool cancelled = false;
 			bool parseError = false;
 			bool cancelling = false;
@@ -130,7 +130,7 @@ public abstract class HoldableHandler
 			{
 				if(!Strike)
 				{
-					SendToChat(null, userNickName, ref parseError);
+					SendToChat(null, userNickName, isWhisper, ref parseError);
 				}
 			}
 			else
@@ -257,7 +257,7 @@ public abstract class HoldableHandler
 						}
 						else
 						{
-							SendToChat(currentString, userNickName, ref parseError);
+							SendToChat(currentString, userNickName, isWhisper, ref parseError);
 						}
 						break;
 					case string[] currentStrings:
@@ -322,7 +322,7 @@ public abstract class HoldableHandler
 												actionFalse.Invoke();
 												break;
 											case string objStr2 when !string.IsNullOrEmpty(objStr2):
-												SendToChat(objStr2, userNickName, ref parseError);
+												SendToChat(objStr2, userNickName, isWhisper, ref parseError);
 												break;
 											case IEnumerator iEnumerator when iEnumerator != null:
 												processIEnumerators.Push(iEnumerator);
@@ -415,30 +415,30 @@ public abstract class HoldableHandler
 		}
 	}
 
-	private void SendToChat(string message, string userNickname, ref bool parseerror)
+	private void SendToChat(string message, string userNickname, bool isWhisper, ref bool parseerror)
 	{
 		if (string.IsNullOrEmpty(message))
 		{
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.HoldableInvalidCommand, HoldableCommander.ID, userNickname);
+			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.HoldableInvalidCommand, HoldableCommander.ID, userNickname), userNickname, !isWhisper);
 			return;
 		}
 		if (message.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(11).Trim() != string.Empty)
 		{
-			IRCConnection.Instance.SendMessage(message.Substring(11), HoldableCommander.ID, userNickname);
+			IRCConnection.Instance.SendMessage(string.Format(message.Substring(11), HoldableCommander.ID, userNickname), userNickname, !isWhisper);
 			return;
 		}
 		if (message.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(16).Trim() != string.Empty)
 		{
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.HoldableCommandError, HoldableCommander.ID, userNickname, message.Substring(16));
+			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.HoldableCommandError, HoldableCommander.ID, userNickname, message.Substring(16)), userNickname, !isWhisper);
 			parseerror = true;
 			return;
 		}
 		if (!message.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase)) return;
-		IRCConnection.Instance.SendMessage($"Sorry @{userNickname}, there was an error parsing the command for !{HoldableCommander.ID}");
+		IRCConnection.Instance.SendMessage($"Sorry @{userNickname}, there was an error parsing the command for !{HoldableCommander.ID}", userNickname, !isWhisper);
 		parseerror = true;
 	}
 
-	protected abstract IEnumerator RespondToCommandInternal(string command);
+	protected abstract IEnumerator RespondToCommandInternal(string command, bool isWhisper);
 
 	protected IEnumerator RespondToCommandCommon(string command)
 	{

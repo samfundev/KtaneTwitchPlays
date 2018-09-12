@@ -95,10 +95,10 @@ public class TwitchBombHandle : MonoBehaviour
 				internalCommand = match.Groups[1].Value;
 				if (!string.IsNullOrEmpty(internalCommand) && (TwitchPlaySettings.data.EnableEdgeworkCommand || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
-					if (!IsAuthorizedDefuser(userNickName)) return null;
+					if (!IsAuthorizedDefuser(userNickName, isWhisper)) return null;
 					edgeworkText.text = internalCommand;
 				}
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkText.text);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, edgeworkText.text), userNickName, !isWhisper);
 			}
 			return null;
 		}
@@ -120,21 +120,21 @@ public class TwitchBombHandle : MonoBehaviour
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 
 			notifier.ProcessResponse(CommandResponse.Start);
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp);
+			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp), userNickName, !isWhisper);
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.Equals("help"))
 		{
 			notifier.ProcessResponse(CommandResponse.Start);
 
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombHelp);
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombHelp, userNickName, !isWhisper);
 
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.EqualsAny("time", "timer", "clock"))
 		{
 			notifier.ProcessResponse(CommandResponse.Start);
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime);
+			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime), userNickName, !isWhisper);
 			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.EqualsAny("explode", "detonate", "endzenmode"))
@@ -143,6 +143,11 @@ public class TwitchBombHandle : MonoBehaviour
 			{
 				if (internalCommandLower.Equals("endzenmode"))
 				{
+					if (isWhisper)
+					{
+						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, you can't use the endzenmode command in a whisper.", userNickName, false);
+						return null;
+					}
 					Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
 					if (entry.SolveScore >= TwitchPlaySettings.data.MinScoreForNewbomb || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true))
 					{
@@ -167,18 +172,18 @@ public class TwitchBombHandle : MonoBehaviour
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
 			if (OtherModes.TimeModeOn)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
-					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
+					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward), userNickName, !isWhisper);
 			}
 			else if (OtherModes.VSModeOn)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
-					bombCommander.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
+					bombCommander.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward), userNickName, !isWhisper);
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
-					bombCommander.StrikeCount, bombCommander.StrikeLimit, bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
+					bombCommander.StrikeCount, bombCommander.StrikeLimit, bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward), userNickName, !isWhisper);
 			}
 		}
 		else if (internalCommandLower.Equals("pause") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
@@ -244,9 +249,9 @@ public class TwitchBombHandle : MonoBehaviour
 							OtherModes.DisableLeaderboard(true);
 
 						if (direct)
-							IRCConnection.Instance.SendMessage("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime());
+							IRCConnection.Instance.SendMessage(string.Format("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime()), userNickName, !isWhisper);
 						else
-							IRCConnection.Instance.SendMessage("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from");
+							IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from"), userNickName, !isWhisper);
 						break;
 					case "strikes":
 					case "strike":
@@ -274,9 +279,9 @@ public class TwitchBombHandle : MonoBehaviour
 								OtherModes.DisableLeaderboard(true);
 
 							if (direct)
-								IRCConnection.Instance.SendMessage("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike");
+								IRCConnection.Instance.SendMessage(string.Format("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
 							else
-								IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from");
+								IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from"), userNickName, !isWhisper);
 							BombMessageResponder.moduleCameras.UpdateStrikes();
 						}
 						break;
@@ -303,9 +308,9 @@ public class TwitchBombHandle : MonoBehaviour
 								OtherModes.DisableLeaderboard(true);
 
 							if (direct)
-								IRCConnection.Instance.SendMessage("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike");
+								IRCConnection.Instance.SendMessage(string.Format("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
 							else
-								IRCConnection.Instance.SendMessage("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from");
+								IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from"), userNickName, !isWhisper);
 							BombMessageResponder.moduleCameras.UpdateStrikes();
 							BombMessageResponder.moduleCameras.UpdateStrikeLimit();
 						}
@@ -315,7 +320,7 @@ public class TwitchBombHandle : MonoBehaviour
 
 			return null;
 		}
-		else if (!IsAuthorizedDefuser(userNickName))
+		else if (!IsAuthorizedDefuser(userNickName, isWhisper))
 		{
 			return null;
 		}
@@ -352,9 +357,9 @@ public class TwitchBombHandle : MonoBehaviour
 	#endregion
 
 	#region Private Methods
-	private bool IsAuthorizedDefuser(string userNickName)
+	private bool IsAuthorizedDefuser(string userNickName, bool isWhisper)
 	{
-		return MessageResponder.IsAuthorizedDefuser(userNickName);
+		return MessageResponder.IsAuthorizedDefuser(userNickName, isWhisper);
 	}
 
 	private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
