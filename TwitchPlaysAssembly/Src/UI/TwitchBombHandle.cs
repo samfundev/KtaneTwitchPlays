@@ -82,9 +82,12 @@ public class TwitchBombHandle : MonoBehaviour
 	#endregion
 
 	#region Message Interface
-	public IEnumerator OnMessageReceived(string userNickName, string userColor, string text, bool isWhisper = false)
+	public IEnumerator OnMessageReceived(Message message)
 	{
-		text = text.Trim();
+		string text = message.Text.Trim();
+		string userNickName = message.UserNickName;
+		bool isWhisper = message.IsWhisper;
+
 		string internalCommand;
 		Match match = Regex.Match(text, string.Format("^{0} (.+)", _code), RegexOptions.IgnoreCase);
 		if (!match.Success)
@@ -105,16 +108,16 @@ public class TwitchBombHandle : MonoBehaviour
 
 		internalCommand = match.Groups[1].Value;
 
-		TwitchMessage message = Instantiate(messagePrefab, messageScrollContents.transform, false);
-		message.SetMessage(string.IsNullOrEmpty(userColor) 
+		TwitchMessage twitchMessage = Instantiate(messagePrefab, messageScrollContents.transform, false);
+		twitchMessage.SetMessage(string.IsNullOrEmpty(message.UserColorCode) 
 			? string.Format("<b>{0}</b>: {1}", userNickName, internalCommand) 
-			: string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, userColor));
+			: string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, message.UserColorCode));
 
 		string internalCommandLower = internalCommand.ToLowerInvariant();
 		string[] split = internalCommandLower.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		//Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
-		ICommandResponseNotifier notifier = message;
+		ICommandResponseNotifier notifier = twitchMessage;
 		if (internalCommandLower.EqualsAny("timestamp", "date"))
 		{
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
@@ -326,7 +329,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		else
 		{
-			return RespondToCommandCoroutine(userNickName, internalCommand, message, isWhisper);
+			return RespondToCommandCoroutine(userNickName, internalCommand, twitchMessage, isWhisper);
 		}
 
 		return null;
@@ -389,7 +392,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		highlightGroup.alpha = 1.0f;
 
-		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(userNickName, internalCommand, message, isWhisper);
+		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(new Message(userNickName, null, internalCommand, isWhisper), message);
 		while (commandResponseCoroutine.MoveNext())
 		{
 			if (commandResponseCoroutine.Current is string chatmessage)

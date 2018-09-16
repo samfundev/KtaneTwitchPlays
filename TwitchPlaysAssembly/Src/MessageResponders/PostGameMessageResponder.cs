@@ -29,12 +29,12 @@ public class PostGameMessageResponder : MessageResponder
 	#endregion
 
 	#region Protected/Private Methods
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
+	protected override void OnMessageReceived(Message message)
 	{
 		
 		if (_postGameCommander != null)
 		{
-			_coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(userNickName, text, null, isWhisper));
+			_coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(message, null));
 		}
 	}
 

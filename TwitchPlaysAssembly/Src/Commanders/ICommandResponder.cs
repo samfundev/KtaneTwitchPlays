@@ -2,5 +2,5 @@
 
 public interface ICommandResponder
 {
-	IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false);
+	IEnumerator RespondToCommand(Message message, ICommandResponseNotifier responseNotifier);
 }

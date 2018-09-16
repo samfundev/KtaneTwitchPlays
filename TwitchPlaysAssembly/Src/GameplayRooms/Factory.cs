@@ -142,7 +142,7 @@ public class Factory : GameRoom
 			if(OtherModes.ZenModeOn)
 				bombHandle.bombCommander.StrikeLimit += bombHandle.bombCommander.StrikeCount;
 			
-			IEnumerator bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
+			IEnumerator bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb hold"));
 			while (bombHold.MoveNext())
 			{
 				yield return bombHold.Current;
@@ -168,7 +168,7 @@ public class Factory : GameRoom
 
 			if (TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
 			{
-				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
+				bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb drop"));
 				while (bombHold.MoveNext()) yield return bombHold.Current;
 			}
 
@@ -178,11 +178,11 @@ public class Factory : GameRoom
 				if (currentBomb != GetBomb || !TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
 					continue;
 
-				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb hold");
+				bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb hold"));
 				while (bombHold.MoveNext()) yield return bombHold.Current;
 				yield return new WaitForSeconds(0.10f);
 
-				bombHold = bombHandle.OnMessageReceived("Bomb Factory", "red", "bomb drop");
+				bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb drop"));
 				while (bombHold.MoveNext()) yield return bombHold.Current;
 			}
 

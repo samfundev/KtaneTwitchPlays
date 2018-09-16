@@ -26,9 +26,9 @@ public class FreeplayCommander : ICommandResponder
 
 	#region Interface Implementation
 
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false)
+	public IEnumerator RespondToCommand(Message message, ICommandResponseNotifier responseNotifier)
 	{
-		IEnumerator respond = FreeplayRespondToCommand(userNickName, message, responseNotifier, isWhisper);
+		IEnumerator respond = FreeplayRespondToCommand(message, responseNotifier);
 		bool result;
 		do
 		{
@@ -46,9 +46,11 @@ public class FreeplayCommander : ICommandResponder
 		} while (result);
 	}
 
-	public IEnumerator FreeplayRespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper)
+	public IEnumerator FreeplayRespondToCommand(Message messageObj, ICommandResponseNotifier responseNotifier)
 	{
-		message = message.ToLowerInvariant().Trim();
+		string message = messageObj.Text.ToLowerInvariant().Trim();
+		string userNickName = messageObj.UserNickName;
+		bool isWhisper = messageObj.IsWhisper;
 
 		if (message.EqualsAny("drop", "let go", "put down"))
 		{

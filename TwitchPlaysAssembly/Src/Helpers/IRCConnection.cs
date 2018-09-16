@@ -14,29 +14,41 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
 
+public class Message
+{
+	public Message(string userNickName, string userColorCode, string text, bool isWhisper = false, bool internalMessage = false)
+	{
+		UserNickName = userNickName;
+		UserColorCode = userColorCode;
+		Text = text;
+		IsWhisper = isWhisper;
+		Internal = internalMessage;
+	}
+
+	public readonly string UserNickName;
+	public readonly string UserColorCode;
+	public string Text { get; private set; }
+	public readonly bool Internal;
+	public readonly bool IsWhisper;
+
+	/// <summary>
+	/// Creates a duplicate <see cref="Message"/>Message</see> object with the Text changed.
+	/// </summary>
+	/// <param name="text">The Message's new text.</param>
+	/// <returns>Returns a duplicate <see cref="Message">Message</see> object with the new Text.</returns>
+	public Message Duplicate(string text)
+	{
+		Message message = (Message) MemberwiseClone();
+		message.Text = text;
+		return message;
+	}
+}
+
 public class IRCConnection : MonoBehaviour
 {
 	#region Nested Types
-	public class MessageEvent : UnityEvent<string, string, string, bool>
+	public class MessageEvent : UnityEvent<Message>
 	{
-	}
-
-	private class Message
-	{
-		public Message(string userNickName, string userColorCode, string text, bool internalMessage = false, bool isWhisper = false)
-		{
-			UserNickName = userNickName;
-			UserColorCode = userColorCode;
-			Text = text;
-			IsWhisper = isWhisper;
-			Internal = internalMessage;
-		}
-
-		public readonly string UserNickName;
-		public readonly string UserColorCode;
-		public readonly string Text;
-		public readonly bool Internal;
-		public readonly bool IsWhisper;
 	}
 
 	private class Commands
@@ -135,7 +147,7 @@ public class IRCConnection : MonoBehaviour
 			{
 				Message message = _messageQueue.Dequeue();
 				if (!message.Internal)
-					OnMessageReceived.Invoke(message.UserNickName, message.UserColorCode, message.Text, message.IsWhisper);
+					OnMessageReceived.Invoke(message);
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
 		}
@@ -525,7 +537,7 @@ public class IRCConnection : MonoBehaviour
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true, false));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, false, true));
 			}
 		}
 	}
@@ -603,7 +615,7 @@ public class IRCConnection : MonoBehaviour
 			SendCommand(string.Format("PRIVMSG #{0} :Silence mode on.", _settings.channelName));
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on.", true, false));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on.", false, true));
 			}
 		}
 		_silenceMode = !_silenceMode;
@@ -612,7 +624,7 @@ public class IRCConnection : MonoBehaviour
 			SendCommand(string.Format("PRIVMSG #{0} :Silence mode off.", _settings.channelName));
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off.", true, false));
+				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off.", false, true));
 			}
 		}
 	}
@@ -675,7 +687,7 @@ public class IRCConnection : MonoBehaviour
 		{
 			lock (_messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, false, isWhisper));
+				_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, isWhisper));
 			}
 		}
 	}

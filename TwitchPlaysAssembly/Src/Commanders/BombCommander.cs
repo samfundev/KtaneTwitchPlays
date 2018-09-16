@@ -32,9 +32,9 @@ public class BombCommander : ICommandResponder
 		SolvedModules = new Dictionary<string, List<TwitchComponentHandle>>();
 	}
 	
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false)
+	public IEnumerator RespondToCommand(Message messageObj, ICommandResponseNotifier responseNotifier)
 	{
-		message = message.ToLowerInvariant().Trim();
+		string message = messageObj.Text.ToLowerInvariant().Trim();
 
 		if(message.EqualsAny("hold", "pick up"))
 		{
@@ -77,7 +77,7 @@ public class BombCommander : ICommandResponder
 			responseNotifier.ProcessResponse(CommandResponse.Start);
 			if (!TwitchPlaySettings.data.EnableEdgeworkCommand && !TwitchPlaySettings.data.AnarchyMode)
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text), userNickName, !isWhisper);
+				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text), messageObj.UserNickName, !messageObj.IsWhisper);
 			}
 			else
 			{

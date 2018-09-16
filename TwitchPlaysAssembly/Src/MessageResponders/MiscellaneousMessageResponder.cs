@@ -74,10 +74,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
 		}
-		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand("The Bomb", "drop", null, false);
+		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand(new Message("The Bomb", null, "drop"), null);
 		while (drop != null && drop.MoveNext())
 			yield return drop.Current;
-		drop = BombBinderCommander.Instance?.RespondToCommand("The Bomb", "drop", null);
+		drop = BombBinderCommander.Instance?.RespondToCommand(new Message("The Bomb", null, "drop"), null);
 		while (drop != null && drop.MoveNext())
 			yield return drop.Current;
 	}
@@ -142,8 +142,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 		OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 	}
 
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
+	protected override void OnMessageReceived(Message message)
 	{
+		string text = message.Text;
+		bool isWhisper = message.IsWhisper;
+		string userNickName = message.UserNickName;
+
 		Match match;
 
 		if ((!text.StartsWith("!") && !isWhisper) || text.Equals("!")) return;
@@ -1227,7 +1231,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			//Do not allow issuing commands as someone with higher access levels than yourself.
 			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value))
-				IRCConnection.Instance.OnMessageReceived.Invoke(sayasMatch.Groups[1].Value, userColorCode, sayasMatch.Groups[2].Value, isWhisper);
+				IRCConnection.Instance.OnMessageReceived.Invoke(new Message(sayasMatch.Groups[1].Value, message.UserColorCode, sayasMatch.Groups[2].Value, isWhisper));
 		}
 		if (text.Equals("whispertest") && TwitchPlaySettings.data.EnableWhispers)
 		{
@@ -1287,9 +1291,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	private IEnumerator ReturnToSetup(string userNickName, string text, bool isWhisper)
 	{
-		IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, "!back", isWhisper);
+		IRCConnection.Instance.OnMessageReceived.Invoke(new Message(userNickName, null, "!back", isWhisper));
 		yield return new WaitUntil(() => CurrentState == KMGameInfo.State.Setup);
-		IRCConnection.Instance.OnMessageReceived.Invoke(userNickName, null, text, isWhisper);
+		IRCConnection.Instance.OnMessageReceived.Invoke(new Message(userNickName, null, text, isWhisper));
 	}
 
 	private void EnableDisableInput()

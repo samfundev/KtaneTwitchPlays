@@ -83,7 +83,7 @@ public class ElevatorGameRoom : GameRoom
 		{
 			if (Input.GetKey(KeyCode.Escape))
 			{
-				IEnumerator bombDrop = bombHandle.OnMessageReceived(bombHandle.nameText.text, "red", "bomb drop");
+				IEnumerator bombDrop = bombHandle.OnMessageReceived(new Message(bombHandle.nameText.text, "red", "bomb drop"));
 				while (bombDrop.MoveNext())
 					yield return bombDrop.Current;
 			}

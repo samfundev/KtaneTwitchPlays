@@ -36,12 +36,16 @@ public class MissionMessageResponder : MessageResponder
 
 	
 
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
+	protected override void OnMessageReceived(Message message)
 	{
 		if (_bombBinderCommander == null)
 		{
 			return;
 		}
+		
+		string text = message.Text;
+		bool isWhisper = message.IsWhisper;
+		string userNickName = message.UserNickName;
 
 		if (!text.StartsWith("!") || text.Equals("!")) return;
 		text = text.Substring(1).Trim();
@@ -53,7 +57,7 @@ public class MissionMessageResponder : MessageResponder
 			case "binder":
 				if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 				{
-					_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(userNickName, textAfter, null, isWhisper));
+					_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
 				}
 				else
 				{
@@ -63,7 +67,7 @@ public class MissionMessageResponder : MessageResponder
 			case "freeplay":
 				if((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 				{
-					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(userNickName, textAfter, null, isWhisper));
+					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
 				}
 				else
 				{

@@ -18,9 +18,9 @@ public class BombBinderCommander : ICommandResponder
 	#endregion
 
 	#region Interface Implementation
-	public IEnumerator RespondToCommand(string userNickName, string message, ICommandResponseNotifier responseNotifier, bool isWhisper = false)
+	public IEnumerator RespondToCommand(Message messageObj, ICommandResponseNotifier responseNotifier)
 	{
-		message = message.ToLowerInvariant().Trim();
+		string message = messageObj.Text.ToLowerInvariant().Trim();
 		if (message.EqualsAny("hold", "pick up"))
 		{
 			IEnumerator holdCoroutine = HoldBombBinder();

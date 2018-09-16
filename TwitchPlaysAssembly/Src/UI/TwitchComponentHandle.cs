@@ -414,7 +414,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
 				if (!claim.First) continue;
 				IRCConnection.Instance.SendMessage(claim.Second);
-				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}", false);
+				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(new Message(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}"));
 				ClaimQueue.RemoveAt(i);
 				break;
 			}
@@ -502,10 +502,13 @@ public class TwitchComponentHandle : MonoBehaviour
 	public static List<string> ClaimedList = new List<string>();
 
 	#region Message Interface
-	public IEnumerator OnMessageReceived(string userNickName, string userColor, string unprocessedCommand, bool isWhisper = false)
+	public IEnumerator OnMessageReceived(Message message)
 	{
-		unprocessedCommand = unprocessedCommand.Trim();
+		string unprocessedCommand = message.Text.Trim();
 		string internalCommand = unprocessedCommand.ToLower().Trim();
+		string userNickName = message.UserNickName;
+		bool isWhisper = message.IsWhisper;
+
 		string messageOut = null;
 		if ((internalCommand.StartsWith("manual", StringComparison.InvariantCultureIgnoreCase)) || (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase)))
 		{

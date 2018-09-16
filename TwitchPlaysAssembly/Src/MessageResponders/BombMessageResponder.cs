@@ -307,7 +307,7 @@ public class BombMessageResponder : MessageResponder
 		try
 		{
 			if (GameRoom.Instance.HoldBomb)
-				_coroutineQueue.AddToQueue(BombHandles[0].OnMessageReceived(BombHandles[0].nameText.text, "red", "bomb hold"), _currentBomb);
+				_coroutineQueue.AddToQueue(BombHandles[0].OnMessageReceived(new Message(BombHandles[0].nameText.text, "red", "bomb hold")), _currentBomb);
 		}
 		catch (Exception ex)
 		{
@@ -465,11 +465,15 @@ public class BombMessageResponder : MessageResponder
 
 	public void OnMessageReceived(string userNickName, string text, bool isWhisper = false)
 	{
-		OnMessageReceived(userNickName, null, text, isWhisper);
+		OnMessageReceived(new Message(userNickName, null, text, isWhisper));
 	}
 
-	protected override void OnMessageReceived(string userNickName, string userColorCode, string text, bool isWhisper)
+	protected override void OnMessageReceived(Message message)
 	{
+		string text = message.Text;
+		bool isWhisper = message.IsWhisper;
+		string userNickName = message.UserNickName;
+
 		Match match;
 		int index;
 		if ((!text.StartsWith("!") && !isWhisper) || text.Equals("!")) return;
@@ -535,7 +539,7 @@ public class BombMessageResponder : MessageResponder
 				else if (isWhisper && TwitchPlaySettings.data.EnableWhispers)
 					IRCConnection.Instance.SendMessage("Checking other people's claims in whispers is not supported", userNickName, false);
 				else
-					OnMessageReceived(match.Groups[1].Value, userColorCode, "!claims", isWhisper);
+					OnMessageReceived(new Message(match.Groups[1].Value, message.UserColorCode, "!claims", isWhisper));
 				return;
 			}
 
@@ -552,10 +556,10 @@ public class BombMessageResponder : MessageResponder
 					select string.Format(TwitchPlaySettings.data.OwnedModule, handle.Code, handle.HeaderText)).ToList();
 				if (claimed.Count > 0)
 				{
-					string message = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
+					string newMessage = string.Format(TwitchPlaySettings.data.OwnedModuleList, userNickName, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
 					if (claimed.Count > 5)
-						message += "...";
-					IRCConnection.Instance.SendMessage(message, userNickName, !isWhisper);
+						newMessage += "...";
+					IRCConnection.Instance.SendMessage(newMessage, userNickName, !isWhisper);
 				}
 				else
 					IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.NoOwnedModules, userNickName), userNickName, !isWhisper);
@@ -630,7 +634,7 @@ public class BombMessageResponder : MessageResponder
 				{
 					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-					handle.OnMessageReceived(userNickName, userColorCode, "unclaim");
+					handle.OnMessageReceived(message.Duplicate("unclaim"));
 				}
 				return;
 			}
@@ -900,7 +904,7 @@ public class BombMessageResponder : MessageResponder
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-						handle.OnMessageReceived(userNickName, userColorCode, string.Format("assign {0}", match.Groups[1].Value), isWhisper);
+						handle.OnMessageReceived(message.Duplicate(string.Format("assign {0}", match.Groups[1].Value)));
 					}
 					return;
 				}
@@ -918,7 +922,7 @@ public class BombMessageResponder : MessageResponder
 					{
 						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
-						handle.OnMessageReceived(userNickName, userColorCode, "unclaim");
+						handle.OnMessageReceived(new Message(userNickName, message.UserColorCode, "unclaim"));
 					}
 					return;
 				}
@@ -954,7 +958,7 @@ public class BombMessageResponder : MessageResponder
 		foreach (TwitchBombHandle handle in BombHandles)
 		{
 			if (handle == null) continue;
-			IEnumerator onMessageReceived = handle.OnMessageReceived(userNickName, userColorCode, text, isWhisper);
+			IEnumerator onMessageReceived = handle.OnMessageReceived(message);
 			if (onMessageReceived == null)
 			{
 				continue;
@@ -978,7 +982,7 @@ public class BombMessageResponder : MessageResponder
 		{
 			if (!GameRoom.Instance.IsCurrentBomb(componentHandle.bombID)) continue;
 			if (!text.StartsWith(componentHandle.Code + " ", StringComparison.InvariantCultureIgnoreCase)) continue;
-			IEnumerator onMessageReceived = componentHandle.OnMessageReceived(userNickName, userColorCode, text.Substring(componentHandle.Code.Length + 1), isWhisper);
+			IEnumerator onMessageReceived = componentHandle.OnMessageReceived(message.Duplicate(text.Substring(componentHandle.Code.Length + 1)));
 			if (onMessageReceived == null) continue;
 
 			if (_currentBomb != componentHandle.bombID)

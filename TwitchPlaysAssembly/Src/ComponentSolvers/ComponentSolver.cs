@@ -691,7 +691,7 @@ public abstract class ComponentSolver
 		CommonReflectedTypeInfo.UpdateTimerDisplayMethod.Invoke(BombCommander.timerComponent, null);
 
 		if ((BombCommander.bombSolvableModules - BombCommander.bombSolvedModules) == 6) //6 solvable modules left
-			IRCConnection.Instance.OnMessageReceived.Invoke("Bomb Factory", "red", "!modules", false);
+			IRCConnection.Instance.OnMessageReceived.Invoke(new Message("Bomb Factory", "red", "!modules"));
 
 		return false;
 	}
