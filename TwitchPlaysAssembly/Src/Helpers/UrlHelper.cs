@@ -30,7 +30,7 @@ public class UrlHelper : MonoBehaviour
 
 	public string LogAnalyserFor(string url)
 	{
-		return string.Format(TwitchPlaySettings.data.AnalyzerUrl + "#url={0}", url);
+		return string.Format(TwitchPlaySettings.data.AnalyzerUrl + (url.StartsWith("https://ktane.timwi.de") ? "#file={0}" : "#url={0}"), url);
 	}
 
 	public string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
