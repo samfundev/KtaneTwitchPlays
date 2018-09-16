@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class LogUploader : MonoBehaviour
@@ -53,6 +54,7 @@ public class LogUploader : MonoBehaviour
 	{
 		// In order of preference (favourite first)
 		// The integer value is the data size limit in bytes
+		{ "ktane.timwi.de", 25000000 },
 		{ "hastebin.com", 400000 }
 	};
 
@@ -115,22 +117,42 @@ public class LogUploader : MonoBehaviour
 			}
 
 			Debug.Log(LOGPREFIX + "Posting new log to " + domainName);
-
-			string url = "https://" + domainName + "/documents";
-
-			WWW www = new WWW(url, encodedData);
+			string url;
+			WWW www;
+			if (domainName == "ktane.timwi.de")
+			{
+				url = "https://" + domainName + "/upload-log";
+				WWWForm wwwform = new WWWForm();
+				wwwform.AddField("name", "log");
+				wwwform.AddBinaryData("upload", encodedData, $"Bomb { DateTime.Now:yyyy-MM-dd THH-mm-ss}.txt");
+				www = new WWW(url, wwwform);
+			}
+			else
+			{
+				url = "https://" + domainName + "/documents";
+				www = new WWW(url, encodedData);
+			}
 
 			yield return www;
 
 			if (www.error == null)
 			{
-				// example result
-				// {"key":"oxekofidik"}
-
-				string key = www.text;
-				key = key.Substring(0, key.Length - 2);
-				key = key.Substring(key.LastIndexOf("\"") + 1);
-				string rawUrl = "https://" + domainName + "/raw/" + key;
+				string rawUrl;
+				if (domainName == "ktane.timwi.de")
+				{
+					var sha1 = SHA1.Create().ComputeHash(encodedData).ToHex();
+					rawUrl = "https://ktane.timwi.de/Logfiles/" + sha1;
+					DebugHelper.Log(sha1);
+				}
+				else
+				{
+					// example result
+					// {"key":"oxekofidik"}
+					string key = www.text;
+					key = key.Substring(0, key.Length - 2);
+					key = key.Substring(key.LastIndexOf("\"") + 1);
+					rawUrl = "https://" + domainName + "/raw/" + key;
+				}
 
 				Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
 
@@ -145,7 +167,7 @@ public class LogUploader : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log(LOGPREFIX + "Error: " + www.error);
+				Debug.Log(LOGPREFIX + "Error: " + www.error + ", " + www.text);
 			}
 		}
 

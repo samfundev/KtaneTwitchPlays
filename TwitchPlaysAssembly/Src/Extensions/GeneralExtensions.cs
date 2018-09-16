@@ -199,4 +199,25 @@ public static class GeneralExtensions
 			dic[key] = new List<V>();
 		dic[key].Add(value);
 	}
+
+	/// <summary>Generates a representation of the specified byte sequence as hexadecimal numbers (“hexdump”).</summary>
+	public static string ToHex(this IEnumerable<byte> data, int spacesEvery = 0)
+	{
+		if (data == null)
+			throw new ArgumentNullException("data");
+
+		var result = new StringBuilder();
+		var i = 0;
+		foreach (var bb in data)
+		{
+			byte b = (byte)(bb >> 4);
+			result.Append((char)(b < 10 ? '0' + b : 'W' + b));   // 'a'-10 = 'W'
+			b = (byte)(bb & 0xf);
+			result.Append((char)(b < 10 ? '0' + b : 'W' + b));
+			i++;
+			if (spacesEvery != 0 && i % spacesEvery == 0)
+				result.Append(" ");
+		}
+		return result.ToString();
+	}
 }
