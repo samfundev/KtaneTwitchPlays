@@ -1,9 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class LogUploader : MonoBehaviour
 {
@@ -53,6 +57,7 @@ public class LogUploader : MonoBehaviour
 	{
 		// In order of preference (favourite first)
 		// The integer value is the data size limit in bytes
+		{ "ktane.timwi.de", 25000000 },
 		{ "hastebin.com", 400000 }
 	};
 
@@ -100,7 +105,7 @@ public class LogUploader : MonoBehaviour
 		int dataLength = encodedData.Length;
 
 		bool tooLong = false;
-
+		
 		foreach (DictionaryEntry domain in domainNames)
 		{
 			string domainName = (string)domain.Key;
@@ -116,37 +121,67 @@ public class LogUploader : MonoBehaviour
 
 			Debug.Log(LOGPREFIX + "Posting new log to " + domainName);
 
-			string url = "https://" + domainName + "/documents";
-
-			WWW www = new WWW(url, encodedData);
-
-			yield return www;
-
-			if (www.error == null)
+			if (domainName == "ktane.timwi.de")
 			{
-				// example result
-				// {"key":"oxekofidik"}
+				UnityWebRequest www = UnityWebRequest.Post(TwitchPlaySettings.data.RepositoryUrl + "/upload-log", new List<IMultipartFormSection> {
+					new MultipartFormFileSection("log", encodedData, null, "output_log.txt"),
+					new MultipartFormDataSection("noredirect", "1", Encoding.UTF8, "text/plain")
+				});
+				
+				yield return www.Send();
 
-				string key = www.text;
-				key = key.Substring(0, key.Length - 2);
-				key = key.Substring(key.LastIndexOf("\"") + 1);
-				string rawUrl = "https://" + domainName + "/raw/" + key;
-
-				Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
-
-				analysisUrl = UrlHelper.Instance.LogAnalyserFor(rawUrl);
-
-				if (postOnComplete)
+				if (!www.isNetworkError && !www.isHttpError)
 				{
-					PostToChat();
-				}
+					analysisUrl = www.downloadHandler.text;
+					Debug.Log(LOGPREFIX + "Logfile now available at " + analysisUrl);
 
-				break;
+					if (postOnComplete)
+					{
+						PostToChat();
+					}
+
+					break;
+				}
+				else
+				{
+					Debug.Log(LOGPREFIX + "Error: " + www.error);
+				}
 			}
 			else
 			{
-				Debug.Log(LOGPREFIX + "Error: " + www.error);
+				string url = "https://" + domainName + "/documents";
+
+				WWW www = new WWW(url, encodedData);
+
+				yield return www;
+
+				if (www.error == null)
+				{
+					// example result
+					// {"key":"oxekofidik"}
+
+					string key = www.text;
+					key = key.Substring(0, key.Length - 2);
+					key = key.Substring(key.LastIndexOf("\"") + 1);
+					string rawUrl = "https://" + domainName + "/raw/" + key;
+
+					Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
+
+					analysisUrl = UrlHelper.Instance.LogAnalyserFor(rawUrl);
+
+					if (postOnComplete)
+					{
+						PostToChat();
+					}
+
+					break;
+				}
+				else
+				{
+					Debug.Log(LOGPREFIX + "Error: " + www.error);
+				}
 			}
+
 		}
 
 		if (tooLong)
