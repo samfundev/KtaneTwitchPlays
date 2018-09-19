@@ -958,7 +958,7 @@ public class BombMessageResponder : MessageResponder
 		foreach (TwitchBombHandle handle in BombHandles)
 		{
 			if (handle == null) continue;
-			IEnumerator onMessageReceived = handle.OnMessageReceived(message);
+			IEnumerator onMessageReceived = handle.OnMessageReceived(message.Duplicate(text));
 			if (onMessageReceived == null)
 			{
 				continue;
