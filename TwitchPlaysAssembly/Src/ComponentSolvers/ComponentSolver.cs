@@ -1142,7 +1142,7 @@ public abstract class ComponentSolver
 		get
 		{
 			if (!(TimeModeField?.GetValue(TimeModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
-				return false;
+				return OtherModes.TimeModeOn;
 			return (bool)TimeModeField.GetValue(TimeModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
@@ -1157,7 +1157,7 @@ public abstract class ComponentSolver
 		get
 		{
 			if (!(TwitchPlaysField?.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
-				return false;
+				return OtherModes.ZenModeOn;
 			return (bool)TwitchPlaysField.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
