@@ -492,6 +492,7 @@ public static class ComponentSolverFactory
 				statusLightLeft = info.statusLightLeft,
 				statusLightOverride = false,
 				strikePenalty = info.strikePenalty,
+				strikePenaltyOverride = info.strikePenaltyOverride,
 				unclaimedColor = info.unclaimedColor,
 				validCommands = info.validCommands,
 				validCommandsOverride = false
@@ -556,6 +557,12 @@ public static class ComponentSolverFactory
 		{
 			ModuleData.DataHasChanged |= info.moduleScore.Equals(defInfo.moduleScore);
 			info.moduleScore = defInfo.moduleScore;
+		}
+
+		if (!info.strikePenaltyOverride)
+		{
+			ModuleData.DataHasChanged |= info.strikePenalty.Equals(defInfo.strikePenalty);
+			info.strikePenalty = defInfo.strikePenalty;
 		}
 
 		if (!info.manualCodeOverride)
@@ -651,6 +658,7 @@ public static class ComponentSolverFactory
 			i.strikePenalty = info.strikePenalty;
 
 			i.moduleScoreOverride = info.moduleScoreOverride;
+			i.strikePenaltyOverride = info.strikePenaltyOverride;
 			i.helpTextOverride = info.helpTextOverride;
 			i.manualCodeOverride = info.manualCodeOverride;
 			i.statusLightOverride = info.statusLightOverride;
@@ -792,6 +800,12 @@ public static class ComponentSolverFactory
 		{
 			ModuleData.DataHasChanged |= !score.Equals(info.moduleScore);
 			info.moduleScore = score;
+		}
+
+		if (FindStrikePenalty(bombComponent, commandComponentType, out int penalty) && !info.strikePenaltyOverride)
+		{
+			ModuleData.DataHasChanged |= !penalty.Equals(info.strikePenalty);
+			info.strikePenalty = penalty;
 		}
 
 		if (FindRegexList(bombComponent, commandComponentType, out string[] regexList) && !info.validCommandsOverride)
@@ -957,6 +971,23 @@ public static class ComponentSolverFactory
 			return false;
 		}
 		moduleScore = (int)candidateInt.GetValue(candidateInt.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
+		return true;
+	}
+
+	internal static bool FindStrikePenalty(MonoBehaviour bombComponent, Type commandComponentType, out int strikePenalty)
+	{
+		FieldInfo candidateInt = commandComponentType.GetField("TwitchStrikePenalty", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		if (candidateInt == null)
+		{
+			strikePenalty = -6;
+			return false;
+		}
+		if (!(candidateInt.GetValue(candidateInt.IsStatic ? null : bombComponent.GetComponent(commandComponentType)) is int))
+		{
+			strikePenalty = -6;
+			return false;
+		}
+		strikePenalty = (int)candidateInt.GetValue(candidateInt.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
 		return true;
 	}
 

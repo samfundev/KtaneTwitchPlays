@@ -11,6 +11,7 @@ public class ModuleInformation
 
 	public bool moduleScoreOverride;
 	public int moduleScore = 5;
+	public bool strikePenaltyOverride;
 	public int strikePenalty = -6;
 	public bool moduleScoreIsDynamic;
 
