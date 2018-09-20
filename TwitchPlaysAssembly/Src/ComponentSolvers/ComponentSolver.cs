@@ -337,6 +337,17 @@ public abstract class ComponentSolver
 					TryCancel = false;
 					break;
 				}
+				else if (currentString.RegexMatch(out match, "^(?:skiptime|settime) ([0-9:.]+)") && match.Groups[1].Value.TryParseTime(out float skipTimeTo))
+				{
+					if (BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved).All(x => x.Solver.SkipTimeAllowed))
+					{
+						if (ZenMode && BombCommander.timerComponent.TimeRemaining < skipTimeTo)
+							BombCommander.timerComponent.TimeRemaining = skipTimeTo;
+
+						if (!ZenMode && BombCommander.timerComponent.TimeRemaining > skipTimeTo)
+							BombCommander.timerComponent.TimeRemaining = skipTimeTo;
+					}
+				}
 				else
 				{
 					if (TwitchPlaySettings.data.EnableDebuggingCommands)
@@ -1090,6 +1101,24 @@ public abstract class ComponentSolver
 		}
 	}
 
+	protected FieldInfo SkipTimeField { get; set; }
+	private bool _skipTimeAllowed;
+	public bool SkipTimeAllowed
+	{
+		get
+		{
+			if (!(SkipTimeField?.GetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
+				return _skipTimeAllowed;
+			return (bool)SkipTimeField.GetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+		}
+		protected set
+		{
+			if (SkipTimeField?.GetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool)
+				SkipTimeField.SetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()), value);
+			else _skipTimeAllowed = value;
+		}
+	}
+
 	protected FieldInfo AbandonModuleField { get; set; }
 	protected List<KMBombModule> AbandonModule
 	{
@@ -1127,7 +1156,7 @@ public abstract class ComponentSolver
 		get
 		{
 			if (!(ZenModeField?.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
-				return false;
+				return OtherModes.ZenModeOn;
 			return (bool)ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
@@ -1157,7 +1186,7 @@ public abstract class ComponentSolver
 		get
 		{
 			if (!(TwitchPlaysField?.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
-				return OtherModes.ZenModeOn;
+				return false;
 			return (bool)TwitchPlaysField.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set

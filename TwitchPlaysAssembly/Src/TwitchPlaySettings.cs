@@ -42,7 +42,6 @@ public class TwitchPlaySettingsData
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
-	public bool AllowTurnTheKeyInstantSolveWhenOnlyModuleLeft = false;
 	public bool AllowTurnTheKeyEarlyLate = false;
 	public bool DisableTurnTheKeysSoftLock = false;
 	public bool EnforceSolveAllBeforeTurningKeys = true;

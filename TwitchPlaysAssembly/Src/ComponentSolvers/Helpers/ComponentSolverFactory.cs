@@ -848,6 +848,7 @@ public static class ComponentSolverFactory
 			FieldInfo timeModeField = FindTimeModeBool(commandComponentType);
 			FieldInfo abandonModuleField = FindAbandonModuleList(commandComponentType);
 			FieldInfo twitchPlaysField = FindTwitchPlaysBool(commandComponentType);
+			FieldInfo twitchPlaysSkipTimeField = FindTwitchPlaysSkipTimeBool(commandComponentType);
 
 			switch (commandType)
 			{
@@ -860,7 +861,7 @@ public static class ComponentSolverFactory
 					{
 						FieldInfo cancelfield = FindCancelBool(commandComponentType);
 						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, timeModeField, abandonModuleField, twitchPlaysField);
+						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, timeModeField, abandonModuleField, twitchPlaysField, twitchPlaysSkipTimeField);
 					}
 				case ModCommandType.Unsupported:
 					{
@@ -1033,6 +1034,12 @@ public static class ComponentSolverFactory
 	internal static FieldInfo FindTwitchPlaysBool(Type commandComponentType)
 	{
 		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
+	}
+
+	internal static FieldInfo FindTwitchPlaysSkipTimeBool(Type commandComponentType)
+	{
+		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysSkipTimeAllowed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 

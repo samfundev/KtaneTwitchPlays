@@ -199,4 +199,21 @@ public static class GeneralExtensions
 			dic[key] = new List<V>();
 		dic[key].Add(value);
 	}
+
+	public static bool TryParseTime(this string timeString, out float time)
+	{
+		int[] multiplier = new int[] {0, 1, 60, 3600, 86400};
+
+		string[] split = timeString.Split(new[] {':'}, StringSplitOptions.None);
+		float[] splitFloat = split.Where(x => float.TryParse(x, out _)).Select(float.Parse).ToArray();
+
+		if (split.Length != splitFloat.Length)
+		{
+			time = 0;
+			return false;
+		}
+
+		time = splitFloat.Select((t, i) => t * multiplier[split.Length - i]).Sum();
+		return true;
+	}
 }

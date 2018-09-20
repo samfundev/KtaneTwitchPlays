@@ -14,6 +14,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the key at specified time with !{0} turn 8:29");
 		bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
 		bombComponent.GetComponent<KMBombModule>().OnActivate = OnActivate;
+		SkipTimeAllowed = true;
 	}
 
 	private bool IsTargetTurnTimeCorrect(int turnTime)
@@ -30,16 +31,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 	private bool CanTurnEarlyWithoutStrike(int turnTime)
 	{
-		if (!TwitchPlaySettings.data.AllowTurnTheKeyInstantSolveWhenOnlyModuleLeft) return false;
 		int time = (int)_targetTimeField.GetValue(BombComponent.GetComponent(_componentType));
 		int timeRemaining = (int)BombCommander.Bomb.GetTimer().TimeRemaining;
-		if ((!OtherModes.ZenModeOn && timeRemaining < time) || (OtherModes.ZenModeOn && timeRemaining > time)) return false;
-		IEnumerable<BombComponent> components = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved && x.bombComponent != BombComponent).Select(x => x.bombComponent).ToArray();
-		if (components.Any(x => x.GetComponent(_componentType) == null)) return false;
-		if(!OtherModes.ZenModeOn)
-			return !components.Any(x => ((int) _targetTimeField.GetValue(x.GetComponent(_componentType)) > time)) && IsTargetTurnTimeCorrect(turnTime);
-		else
-			return !components.Any(x => ((int)_targetTimeField.GetValue(x.GetComponent(_componentType)) < time)) && IsTargetTurnTimeCorrect(turnTime);
+		if ((!OtherModes.ZenModeOn && timeRemaining < time) || (OtherModes.ZenModeOn && timeRemaining > time) || !IsTargetTurnTimeCorrect(turnTime)) return false;
+		return BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved).All(x => x.Solver.SkipTimeAllowed);
 	}
 
 	private bool OnKeyTurn(int turnTime = -1)
@@ -164,6 +159,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 	private IEnumerator ReleaseCoroutine(string second)
 	{
+		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
 		if (!int.TryParse(second, out int timeTarget))
 		{
 			string[] minsec = second.Split(':');
@@ -172,13 +168,14 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		}
 
 		yield return "release";
-
-		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		
+		if (CanTurnEarlyWithoutStrike(timeTarget))
+			yield return $"skiptime {timeTarget + 0.5f:0.00}";
 
 		int waitingTime = (int) (timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
 		waitingTime -= timeTarget;
 
-		if (Math.Abs(waitingTime) >= 30 && !CanTurnEarlyWithoutStrike(timeTarget))
+		if (Math.Abs(waitingTime) >= 30)
 		{
 			yield return "elevator music";
 		}
@@ -193,7 +190,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 				yield return "sendtochaterror The bomb timer has already gone past the time specified.";
 				yield break;
 			}
-			if (timeRemaining == timeTarget || CanTurnEarlyWithoutStrike(timeTarget))
+			if ((int)timeRemaining == timeTarget)
 			{
 				OnKeyTurn(timeTarget);
 				yield return new WaitForSeconds(0.1f);
