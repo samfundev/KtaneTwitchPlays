@@ -50,7 +50,7 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 		}
 	}
 
-	private IEnumerator DoBackgroundColorChange(Color targetColor, float duration = 0.2f)
+	public IEnumerator DoBackgroundColorChange(Color targetColor, float duration = 0.2f)
 	{
 		Color initialColor = _messageBackground.color;
 		float currentTime = Time.time;
@@ -63,5 +63,10 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 		}
 
 		_messageBackground.color = targetColor;
+	}
+
+	public void RemoveMessage()
+	{
+		IRCConnection.Instance.scrollOutStartTime[this] = Time.time;
 	}
 }

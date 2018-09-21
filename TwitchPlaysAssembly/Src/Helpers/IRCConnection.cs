@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class Message
 {
@@ -46,6 +47,15 @@ public class Message
 
 public class IRCConnection : MonoBehaviour
 {
+	public TwitchMessage messagePrefab;
+
+	public CanvasGroup highlightGroup = null;
+	public ScrollRect messageScroll = null;
+
+	public GameObject messageScrollContents = null;
+	public RectTransform mainWindowTransform = null;
+	public RectTransform highlightTransform = null;
+
 	#region Nested Types
 	public class MessageEvent : UnityEvent<Message>
 	{
@@ -137,8 +147,11 @@ public class IRCConnection : MonoBehaviour
 	private void Start()
 	{
 		Connect();
+
+		highlightGroup.alpha = 0.0f;
 	}
 
+	public Dictionary<TwitchMessage, float> scrollOutStartTime = new Dictionary<TwitchMessage, float>();
 	private void Update()
 	{
 		lock (_messageQueue)
@@ -147,10 +160,68 @@ public class IRCConnection : MonoBehaviour
 			{
 				Message message = _messageQueue.Dequeue();
 				if (!message.Internal)
+				{
+					bool isCommand = message.Text.StartsWith("!");
+
+					TwitchMessage twitchMessage = null;
+					if (isCommand)
+					{
+						highlightGroup.alpha = 1;
+
+						twitchMessage = Instantiate(messagePrefab, messageScrollContents.transform, false);
+						twitchMessage.SetMessage(string.IsNullOrEmpty(message.UserColorCode)
+							? string.Format("<b>{0}</b>: {1}", message.UserNickName, message.Text)
+							: string.Format("<b><color={2}>{0}</color></b>: {1}", message.UserNickName, message.Text, message.UserColorCode));
+
+						TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HighlightMessage(twitchMessage));
+					}
+
 					OnMessageReceived.Invoke(message);
+
+					if (isCommand) TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
+				}
+				
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
 		}
+
+		if (scrollOutStartTime.Count > 0)
+		{
+			float vertScroll = 0;
+			List<TwitchMessage> finishedMessages = new List<TwitchMessage>();
+			foreach (var pair in scrollOutStartTime)
+			{
+				float alpha = Mathf.Pow(Mathf.Min((Time.time - pair.Value) / 0.167f, 1), 4);
+				if (alpha < 1) vertScroll += alpha * pair.Key.GetComponent<RectTransform>().rect.height;
+				else finishedMessages.Add(pair.Key);
+			}
+
+			foreach (TwitchMessage twitchMessage in finishedMessages)
+			{
+				scrollOutStartTime.Remove(twitchMessage);
+				Destroy(twitchMessage.gameObject);
+			}
+
+			Vector3 localPosition = messageScrollContents.transform.localPosition;
+			messageScrollContents.transform.localPosition = new Vector3(localPosition.x, vertScroll, localPosition.z);
+		}
+	}
+
+	IEnumerator HighlightMessage(TwitchMessage twitchMessage)
+	{
+		StartCoroutine(twitchMessage.DoBackgroundColorChange(twitchMessage.highlightColor));
+		yield break;
+	}
+
+	IEnumerator HideMessage(TwitchMessage twitchMessage)
+	{
+		twitchMessage.RemoveMessage();
+		yield break;
+	}
+
+	private void FixedUpdate()
+	{
+		highlightGroup.alpha = Mathf.Max(highlightGroup.alpha - 0.01f, 0);
 	}
 
 	private bool _justDisabled = false;
@@ -656,7 +727,7 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	private void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
+	public void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
 	{
 		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
@@ -686,7 +757,7 @@ public class IRCConnection : MonoBehaviour
 		if (!isWhisper || TwitchPlaySettings.data.EnableWhispers)
 		{
 			lock (_messageQueue)
-			{
+			{	
 				_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, isWhisper));
 			}
 		}

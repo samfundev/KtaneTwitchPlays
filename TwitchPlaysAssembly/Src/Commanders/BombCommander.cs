@@ -7,7 +7,7 @@ using Assets.Scripts.Input;
 using Assets.Scripts.Records;
 using UnityEngine;
 
-public class BombCommander : ICommandResponder
+public class BombCommander
 {
 	#region Constructors
 	public BombCommander(Bomb bomb)
@@ -32,49 +32,36 @@ public class BombCommander : ICommandResponder
 		SolvedModules = new Dictionary<string, List<TwitchComponentHandle>>();
 	}
 	
-	public IEnumerator RespondToCommand(Message messageObj, ICommandResponseNotifier responseNotifier)
+	public IEnumerator RespondToCommand(Message messageObj)
 	{
 		string message = messageObj.Text.ToLowerInvariant().Trim();
 
 		if(message.EqualsAny("hold", "pick up"))
 		{
-			responseNotifier.ProcessResponse(CommandResponse.Start);
-
 			IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
 			while (holdCoroutine.MoveNext())
 			{
 				yield return holdCoroutine.Current;
 			}
-
-			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (message.EqualsAny("turn", "turn round", "turn around", "rotate", "flip", "spin"))
 		{
-			responseNotifier.ProcessResponse(CommandResponse.Start);
-
 			IEnumerator turnCoroutine = TurnBomb();
 			while (turnCoroutine.MoveNext())
 			{
 				yield return turnCoroutine.Current;
 			}
-
-			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (message.EqualsAny("drop", "let go", "put down"))
 		{
-			responseNotifier.ProcessResponse(CommandResponse.Start);
-
 			IEnumerator letGoCoroutine = LetGoBomb();
 			while (letGoCoroutine.MoveNext())
 			{
 				yield return letGoCoroutine.Current;
 			}
-
-			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (message.RegexMatch(out Match edgeworkMatch, GameRoom.Instance.ValidEdgeworkRegex))
 		{
-			responseNotifier.ProcessResponse(CommandResponse.Start);
 			if (!TwitchPlaySettings.data.EnableEdgeworkCommand && !TwitchPlaySettings.data.AnarchyMode)
 			{
 				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text), messageObj.UserNickName, !messageObj.IsWhisper);
@@ -87,11 +74,6 @@ public class BombCommander : ICommandResponder
 					yield return edgeworkCoroutine.Current;
 				}
 			}
-			responseNotifier.ProcessResponse(CommandResponse.EndNotComplete);
-		}
-		else
-		{
-			responseNotifier.ProcessResponse(CommandResponse.NoResponse);
 		}
 	}
 	#endregion

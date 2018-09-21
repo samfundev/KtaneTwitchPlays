@@ -98,7 +98,7 @@ public class Factory : GameRoom
 
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
 		
-		bombHandle.nameText.text = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
+		bombHandle.bombName = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
 
 		yield return new WaitUntil(() => GetBomb != null || bombHandle.bombCommander.Bomb.HasDetonated);
 		if (bombHandle.bombCommander.Bomb.HasDetonated && !_zenMode) yield break;
@@ -118,7 +118,7 @@ public class Factory : GameRoom
 				InitializeGameModes(true);
 			}
 
-			bombHandle.nameText.text = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
+			bombHandle.bombName = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
 			IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
 			if (OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall)
 			{

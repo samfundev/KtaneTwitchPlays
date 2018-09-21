@@ -293,7 +293,7 @@ public class BombMessageResponder : MessageResponder
 				break;
 			}
 		}
-
+		
 		try
 		{
 			GameRoom.Instance.InitializeBombNames();
@@ -307,7 +307,7 @@ public class BombMessageResponder : MessageResponder
 		try
 		{
 			if (GameRoom.Instance.HoldBomb)
-				_coroutineQueue.AddToQueue(BombHandles[0].OnMessageReceived(new Message(BombHandles[0].nameText.text, "red", "bomb hold")), _currentBomb);
+				_coroutineQueue.AddToQueue(BombHandles[0].OnMessageReceived(new Message(BombHandles[0].bombName, "red", "bomb hold")), _currentBomb);
 		}
 		catch (Exception ex)
 		{
@@ -954,7 +954,7 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 		}
-
+		
 		foreach (TwitchBombHandle handle in BombHandles)
 		{
 			if (handle == null) continue;

@@ -125,17 +125,17 @@ public abstract class GameRoom
 					string nameText = doubleNames[nameIndex, i];
 					if (nameText != null)
 					{
-						bombHandles[i].nameText.text = nameText;
+						bombHandles[i].bombName = nameText;
 					}
 				}
 				break;
 			case 2:
-				bombHandles[1].nameText.text = "The Other Bomb";
+				bombHandles[1].bombName = "The Other Bomb";
 				break;
 			default:
 				foreach (TwitchBombHandle handle in bombHandles)
 				{
-					handle.nameText.text = singleNames[rand.Next(0, singleNames.Length)];
+					handle.bombName = singleNames[rand.Next(0, singleNames.Length)];
 				}
 				break;
 		}

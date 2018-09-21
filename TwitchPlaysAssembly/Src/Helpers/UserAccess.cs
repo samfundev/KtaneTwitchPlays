@@ -164,7 +164,7 @@ public static class UserAccess
 	{
 		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername) return AccessLevel.Streamer;
 
-		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Select(x => x.nameText.text).Contains(userNickName)) return AccessLevel.Streamer;
+		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Any(x => x.bombName == userNickName)) return AccessLevel.Streamer;
 
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
 		{

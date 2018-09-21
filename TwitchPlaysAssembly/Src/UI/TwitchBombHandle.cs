@@ -9,16 +9,7 @@ using System.Collections.Generic;
 public class TwitchBombHandle : MonoBehaviour
 {
 	#region Public Fields
-	public TwitchMessage messagePrefab = null;
-
 	public CanvasGroup canvasGroup = null;
-	public CanvasGroup highlightGroup = null;
-	public Text idText = null;
-	public Text nameText = null;
-	public ScrollRect messageScroll = null;
-	public GameObject messageScrollContents = null;
-	public RectTransform mainWindowTransform = null;
-	public RectTransform highlightTransform = null;
 
 	public Text edgeworkIDText = null;
 	public Text edgeworkText = null;
@@ -38,6 +29,20 @@ public class TwitchBombHandle : MonoBehaviour
 	#region Private Fields
 	private string _code = null;
 	private string _edgeworkCode = null;
+
+	private string _bombName = null;
+	public string bombName
+	{
+		get
+		{
+			return _bombName;
+		}
+		set
+		{
+			_bombName = value;
+			if (BombMessageResponder.moduleCameras != null) BombMessageResponder.moduleCameras.UpdateHeader();
+		}
+	}
 	#endregion
 
 	#region Unity Lifecycle
@@ -54,25 +59,16 @@ public class TwitchBombHandle : MonoBehaviour
 			_code = "bomb" + (bombID + 1);
 			_edgeworkCode = "edgework" + (bombID + 1);
 		}
-
-		idText.text = string.Format("!{0}", _code);
+		
 		edgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
 		edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
 		canvasGroup.alpha = 1.0f;
-		highlightGroup.alpha = 0.0f;
 		if (bombID > 0)
 		{
 			edgeworkWindowTransform.localScale = Vector3.zero;
 			edgeworkHighlightTransform.localScale = Vector3.zero;
-			mainWindowTransform.localScale = Vector3.zero;
-			highlightTransform.localScale = Vector3.zero;
 		}
-	}
-
-	private void LateUpdate()
-	{
-		messageScroll.verticalNormalizedPosition = 0.0f;
 	}
 
 	private void OnDestroy()
@@ -108,37 +104,23 @@ public class TwitchBombHandle : MonoBehaviour
 
 		internalCommand = match.Groups[1].Value;
 
-		TwitchMessage twitchMessage = Instantiate(messagePrefab, messageScrollContents.transform, false);
-		twitchMessage.SetMessage(string.IsNullOrEmpty(message.UserColorCode) 
-			? string.Format("<b>{0}</b>: {1}", userNickName, internalCommand) 
-			: string.Format("<b><color={2}>{0}</color></b>: {1}", userNickName, internalCommand, message.UserColorCode));
-
 		string internalCommandLower = internalCommand.ToLowerInvariant();
 		string[] split = internalCommandLower.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		//Respond instantly to these commands without dropping "The Bomb", should the command be for "The Other Bomb" and vice versa.
-		ICommandResponseNotifier notifier = twitchMessage;
 		if (internalCommandLower.EqualsAny("timestamp", "date"))
 		{
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
-
-			notifier.ProcessResponse(CommandResponse.Start);
+			
 			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp), userNickName, !isWhisper);
-			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.Equals("help"))
 		{
-			notifier.ProcessResponse(CommandResponse.Start);
-
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombHelp, userNickName, !isWhisper);
-
-			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.EqualsAny("time", "timer", "clock"))
 		{
-			notifier.ProcessResponse(CommandResponse.Start);
 			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime), userNickName, !isWhisper);
-			notifier.ProcessResponse(CommandResponse.EndNotComplete);
 		}
 		else if (internalCommandLower.EqualsAny("explode", "detonate", "endzenmode"))
 		{
@@ -154,7 +136,7 @@ public class TwitchBombHandle : MonoBehaviour
 					Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
 					if (entry.SolveScore >= TwitchPlaySettings.data.MinScoreForNewbomb || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true))
 					{
-						return DelayBombExplosionCoroutine(notifier);
+						return DelayBombExplosionCoroutine();
 					}
 					else
 					{
@@ -164,7 +146,7 @@ public class TwitchBombHandle : MonoBehaviour
 				}
 				else
 				{
-					return DelayBombExplosionCoroutine(notifier);
+					return DelayBombExplosionCoroutine();
 				}
 			}
 
@@ -329,7 +311,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		else
 		{
-			return RespondToCommandCoroutine(userNickName, internalCommand, twitchMessage, isWhisper);
+			return RespondToCommandCoroutine(userNickName, internalCommand, isWhisper);
 		}
 
 		return null;
@@ -339,8 +321,8 @@ public class TwitchBombHandle : MonoBehaviour
 	{
 		edgeworkWindowTransform.localScale = Vector3.zero;
 		edgeworkHighlightTransform.localScale = Vector3.zero;
-		mainWindowTransform.localScale = Vector3.zero;
-		highlightTransform.localScale = Vector3.zero;
+		IRCConnection.Instance.mainWindowTransform.localScale = Vector3.zero;
+		IRCConnection.Instance.highlightTransform.localScale = Vector3.zero;
 		yield return null;
 	}
 
@@ -348,8 +330,8 @@ public class TwitchBombHandle : MonoBehaviour
 	{
 		edgeworkWindowTransform.localScale = Vector3.one;
 		edgeworkHighlightTransform.localScale = Vector3.one;
-		mainWindowTransform.localScale = Vector3.one;
-		highlightTransform.localScale = Vector3.one;
+		IRCConnection.Instance.mainWindowTransform.localScale = Vector3.one;
+		IRCConnection.Instance.highlightTransform.localScale = Vector3.one;
 		yield return null;
 	}
 
@@ -365,11 +347,9 @@ public class TwitchBombHandle : MonoBehaviour
 		return MessageResponder.IsAuthorizedDefuser(userNickName, isWhisper);
 	}
 
-	private IEnumerator DelayBombExplosionCoroutine(ICommandResponseNotifier notifier)
+	private IEnumerator DelayBombExplosionCoroutine()
 	{
-		notifier.ProcessResponse(CommandResponse.Start);
 		yield return DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
-		notifier.ProcessResponse(CommandResponse.EndNotComplete);
 	}
 
 	private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
@@ -381,18 +361,9 @@ public class TwitchBombHandle : MonoBehaviour
 		bombCommander.CauseStrikesToExplosion(reason);
 	}
 
-	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, ICommandResponseNotifier message, bool isWhisper, float fadeDuration = 0.1f)
+	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, bool isWhisper, float fadeDuration = 0.1f)
 	{
-		float time = Time.time;
-		while (Time.time - time < fadeDuration)
-		{
-			float lerp = (Time.time - time) / fadeDuration;
-			highlightGroup.alpha = Mathf.Lerp(0.0f, 1.0f, lerp);
-			yield return null;
-		}
-		highlightGroup.alpha = 1.0f;
-
-		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(new Message(userNickName, null, internalCommand, isWhisper), message);
+		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(new Message(userNickName, null, internalCommand, isWhisper));
 		while (commandResponseCoroutine.MoveNext())
 		{
 			if (commandResponseCoroutine.Current is string chatmessage)
@@ -405,15 +376,6 @@ public class TwitchBombHandle : MonoBehaviour
 
 			yield return commandResponseCoroutine.Current;
 		}
-
-		time = Time.time;
-		while (Time.time - time < fadeDuration)
-		{
-			float lerp = (Time.time - time) / fadeDuration;
-			highlightGroup.alpha = Mathf.Lerp(1.0f, 0.0f, lerp);
-			yield return null;
-		}
-		highlightGroup.alpha = 0.0f;
 	}
 	#endregion    
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class ModuleCamerasData : MonoBehaviour
 {
+	public Text headerPrefab = null;
 	public Text timerPrefab = null;
 	public Text timerShadowPrefab = null;
 	public Text strikesPrefab = null;

@@ -64,7 +64,7 @@ public class ElevatorGameRoom : GameRoom
 		if (!(rand.NextDouble() < specialNameProbability)) return;
 		foreach (TwitchBombHandle handle in bombHandles)
 		{
-			handle.nameText.text = singleNames[rand.Next(0, singleNames.Length - 1)];
+			handle.bombName = singleNames[rand.Next(0, singleNames.Length - 1)];
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ElevatorGameRoom : GameRoom
 		{
 			if (Input.GetKey(KeyCode.Escape))
 			{
-				IEnumerator bombDrop = bombHandle.OnMessageReceived(new Message(bombHandle.nameText.text, "red", "bomb drop"));
+				IEnumerator bombDrop = bombHandle.OnMessageReceived(new Message(bombHandle.bombName, "red", "bomb drop"));
 				while (bombDrop.MoveNext())
 					yield return bombDrop.Current;
 			}

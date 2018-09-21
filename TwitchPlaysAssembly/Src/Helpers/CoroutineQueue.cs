@@ -43,6 +43,11 @@ public class CoroutineQueue : MonoBehaviour
 
 	public void CancelFutureSubcoroutines()
 	{
+		foreach (TwitchMessage twitchMessage in IRCConnection.Instance.messageScrollContents.GetComponentsInChildren<TwitchMessage>())
+		{
+			twitchMessage.RemoveMessage();
+		}
+
 		_coroutineQueue.Clear();
 		_bombIDProcessed.Clear();
 	}

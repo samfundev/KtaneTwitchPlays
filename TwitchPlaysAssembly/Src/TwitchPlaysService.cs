@@ -23,8 +23,10 @@ public class TwitchPlaysService : MonoBehaviour
 	public MissionMessageResponder missionMessageResponder = null;
 	public MiscellaneousMessageResponder miscellaneousMessageResponder = null;
 
+	public static TwitchPlaysService Instance = null;
+	public CoroutineQueue coroutineQueue = null;
+
 	private KMGameInfo _gameInfo = null;
-	private CoroutineQueue _coroutineQueue = null;
 
 	private MessageResponder _activeMessageResponder = null;
 
@@ -34,6 +36,8 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private void Start()
 	{
+		Instance = this;
+
 		transform.Find("Prefabs").gameObject.SetActive(false);
 		bombMessageResponder = GetComponentInChildren<BombMessageResponder>(true);
 		postGameMessageResponder = GetComponentInChildren<PostGameMessageResponder>(true);
@@ -50,7 +54,7 @@ public class TwitchPlaysService : MonoBehaviour
 		_gameInfo = GetComponent<KMGameInfo>();
 		_gameInfo.OnStateChange += OnStateChange;
 
-		_coroutineQueue = GetComponent<CoroutineQueue>();
+		coroutineQueue = GetComponent<CoroutineQueue>();
 
 		Leaderboard.Instance.LoadDataFromFile();
 
@@ -76,9 +80,9 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private void OnDisable()
 	{
-		_coroutineQueue.StopQueue();
-		_coroutineQueue.CancelFutureSubcoroutines();
-		_coroutineQueue.StopForcedSolve();
+		coroutineQueue.StopQueue();
+		coroutineQueue.CancelFutureSubcoroutines();
+		coroutineQueue.StopForcedSolve();
 		StopAllCoroutines();
 	}
 
@@ -138,7 +142,7 @@ public class TwitchPlaysService : MonoBehaviour
 			}
 			IRCConnection.Instance.SetDebugUsername();
 			IRCConnection.Instance.SendMessage(inputCommand);
-			IRCConnection.Instance.OnMessageReceived.Invoke(new Message(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand));
+			IRCConnection.Instance.ReceiveMessage(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand);
 			inputCommand = "";
 		}
 		GUILayout.EndHorizontal();
@@ -170,9 +174,9 @@ public class TwitchPlaysService : MonoBehaviour
 	{
 		yield return new WaitForSeconds(2.0f);
 		_coroutinesToStart.Enqueue(MiscellaneousMessageResponder.FindHoldables());
-		_coroutineQueue.StopQueue();
-		_coroutineQueue.CancelFutureSubcoroutines();
-		_coroutineQueue.StopForcedSolve();
+		coroutineQueue.StopQueue();
+		coroutineQueue.CancelFutureSubcoroutines();
+		coroutineQueue.StopForcedSolve();
 		StopAllCoroutines();
 		while (_coroutinesToStart.Count > 0)
 			StartCoroutine(_coroutinesToStart.Dequeue());
@@ -183,7 +187,7 @@ public class TwitchPlaysService : MonoBehaviour
 	{
 		if (responder != null)
 		{
-			responder.SetupResponder(_coroutineQueue);
+			responder.SetupResponder(coroutineQueue);
 		}
 	}
 

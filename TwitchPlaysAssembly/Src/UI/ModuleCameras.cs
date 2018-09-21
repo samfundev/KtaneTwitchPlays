@@ -229,6 +229,7 @@ public class ModuleCameras : MonoBehaviour
 	}
 
 	#region Public Fields
+	public Text HeaderPrefab { get => _data.headerPrefab; set => _data.headerPrefab = value; }
 	public Text TimerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
 	public Text TimerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
 	public Text StrikesPrefab { get => _data.strikesPrefab; set => _data.strikesPrefab = value; }
@@ -486,6 +487,11 @@ public class ModuleCameras : MonoBehaviour
 		BombStatus.localScale = HUDScale;
 	}
 
+	public void UpdateHeader()
+	{
+		HeaderPrefab.text = currentBomb.twitchBombHandle.bombName;
+	}
+
 	public void UpdateStrikes(bool delay = false)
 	{
 		StartCoroutine(UpdateStrikesCoroutine(delay));
@@ -616,6 +622,7 @@ public class ModuleCameras : MonoBehaviour
 	{
 		Debug.Log(LogPrefix + "Switching bomb");
 		currentBomb = bomb;
+		UpdateHeader();
 		UpdateStrikes();
 		UpdateStrikeLimit();
 		UpdateSolves();
