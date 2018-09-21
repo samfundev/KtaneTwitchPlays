@@ -49,24 +49,20 @@ public class PostGameCommander : ICommandResponder
 	#endregion
 
 	#region Public Fields
-	public Selectable ContinueButton
-	{
-		get { return ResultsPage.ContinueButton; }
-	}
 
-	public Selectable RetryButton
-	{
-		get { return ResultsPage.RetryButton; }
-	}
+	private Selectable ContinueButton => ResultsPage.ContinueButton;
+
+	private Selectable RetryButton => ResultsPage.RetryButton;
+
 	#endregion
 
 	#region Private Methods
-	private void DoInteractionStart(Selectable selectable)
+	private static void DoInteractionStart(Selectable selectable)
 	{
 		selectable.HandleInteract();
 	}
 
-	private void DoInteractionEnd(Selectable selectable)
+	private static void DoInteractionEnd(Selectable selectable)
 	{
 		selectable.OnInteractEnded();
 		selectable.SetHighlight(false);

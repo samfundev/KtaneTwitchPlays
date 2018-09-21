@@ -47,12 +47,12 @@ public class KnowYourWayComponentSolver : ComponentSolver
 		_textFields = _directions.Select(direction => _componentType.GetField(direction + "Text", BindingFlags.Public | BindingFlags.Instance)).ToArray();
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo[] _buttonFields = null;
-	private static FieldInfo[] _textFields = null;
-	private KMSelectable[] _buttons = null;
-	private TextMesh[] _textMeshes = null;
+	private static readonly Type _componentType = null;
+	private static readonly FieldInfo[] _buttonFields = null;
+	private static readonly FieldInfo[] _textFields = null;
+	private readonly KMSelectable[] _buttons = null;
+	private readonly TextMesh[] _textMeshes = null;
 
-	private static readonly string[] _directions = new string[4] { "Up", "Right", "Down", "Left" };
+	private static readonly string[] _directions = { "Up", "Right", "Down", "Left" };
 	private readonly object _component = null;
 }

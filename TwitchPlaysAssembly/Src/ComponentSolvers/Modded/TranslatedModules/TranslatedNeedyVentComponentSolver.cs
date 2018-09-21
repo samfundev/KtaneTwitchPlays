@@ -11,15 +11,13 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 		_yesButton = (MonoBehaviour)_yesButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
 		_noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
-		
-		if (bombCommander != null)
-		{
-			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-			if (language != null) modInfo.manualCode = "Venting%20Gas";
-			//if (language != null) modInfo.manualCode = $"Venting%20Gas{language}";
-			modInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
-			bombComponent.StartCoroutine(SetHeaderText());
-		}
+
+		if (bombCommander == null) return;
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		if (language != null) modInfo.manualCode = "Venting%20Gas";
+		//if (language != null) modInfo.manualCode = $"Venting%20Gas{language}";
+		modInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()

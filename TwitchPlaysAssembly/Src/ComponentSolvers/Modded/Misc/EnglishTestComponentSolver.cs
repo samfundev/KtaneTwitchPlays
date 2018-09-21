@@ -33,16 +33,15 @@ public class EnglishTestComponentSolver : ComponentSolver
 		while ((int)_indexField.GetValue(_englishTestComponent) != desiredIndex)
 		{
 			yield return DoInteractionClick(selectButton);
-			if ((int) _indexField.GetValue(_englishTestComponent) == currentIndex)
-			{
-				yield return string.Format("sendtochaterror I can't select answer #{0} because that answer doesn't exist.", desiredIndex + 1);
-				yield break;
-			}
+			if ((int) _indexField.GetValue(_englishTestComponent) != currentIndex) continue;
+			yield return
+				$"sendtochaterror I can't select answer #{desiredIndex + 1} because that answer doesn't exist.";
+			yield break;
 		}
 		yield return DoInteractionClick(submitButton);
 	}
 
-	private GameObject FindChildGameObjectByName(GameObject parent, string name)
+	private static GameObject FindChildGameObjectByName(GameObject parent, string name)
 	{
 		foreach (Transform child in parent.transform)
 		{

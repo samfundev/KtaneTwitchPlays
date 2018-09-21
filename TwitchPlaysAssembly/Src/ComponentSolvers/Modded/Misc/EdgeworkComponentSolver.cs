@@ -13,7 +13,7 @@ public class EdgeworkComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position.");
 	}
 
-	int? ButtonToIndex(string button)
+	private static int? ButtonToIndex(string button)
 	{
 		switch (button)
 		{
@@ -39,25 +39,23 @@ public class EdgeworkComponentSolver : ComponentSolver
 	
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length == 2 && commands[0].EqualsAny("press", "submit", "click", "answer"))
+		if (commands.Length != 2 || !commands[0].EqualsAny("press", "submit", "click", "answer")) yield break;
+		if ((bool) _canPressButtonsField.GetValue(_component) == false)
 		{
-			if ((bool) _canPressButtonsField.GetValue(_component) == false)
-			{
-				yield return null;
-				yield return "sendtochaterror You can't interact with the module right now.";
-				yield break;
-			}
-
-			int? buttonIndex = ButtonToIndex(commands[1]);
-			if (buttonIndex == null) yield break;
-			
 			yield return null;
-
-			_buttons[(int) buttonIndex].OnInteract();
-			yield return new WaitForSeconds(0.1f);
+			yield return "sendtochaterror You can't interact with the module right now.";
+			yield break;
 		}
+
+		int? buttonIndex = ButtonToIndex(commands[1]);
+		if (buttonIndex == null) yield break;
+			
+		yield return null;
+
+		_buttons[(int) buttonIndex].OnInteract();
+		yield return new WaitForSeconds(0.1f);
 	}
 
 	static EdgeworkComponentSolver()

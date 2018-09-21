@@ -28,7 +28,7 @@ public class ErrorCodesComponentSolver : ComponentSolver
 			else if (c >= 'a' && c <= 'f')
 			{
 				yield return null;
-				var s = c.ToString();
+				string s = c.ToString();
 				yield return DoInteractionClick(_buttons[Convert.ToInt32(s, 16)]);
 			}
 			else yield break;

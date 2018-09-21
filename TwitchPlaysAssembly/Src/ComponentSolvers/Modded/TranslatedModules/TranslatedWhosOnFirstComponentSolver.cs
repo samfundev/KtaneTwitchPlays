@@ -13,14 +13,12 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
-		
-		if (bombCommander != null)
-		{
-			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-			if (language != null) modInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
-			modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
-			bombComponent.StartCoroutine(SetHeaderText());
-		}
+
+		if (bombCommander == null) return;
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		if (language != null) modInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
+		modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
@@ -43,7 +41,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 			yield return null;
 			yield return buttonLabels.Any(label => label == " ")
 				? "sendtochaterror The module is not ready for input yet."
-				: string.Format("sendtochaterror There isn't any label that contains \"{0}\".", inputCommand.Replace("\u2003\u2003", "Literally Blank"));
+				: $"sendtochaterror There isn't any label that contains \"{inputCommand.Replace("\u2003\u2003", "Literally Blank")}\".";
 			yield break;
 		}
 		yield return null;

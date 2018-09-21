@@ -13,13 +13,11 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		Selectable selectable = bombComponent.GetComponent<Selectable>();
 		selectable.OnCancel += () => { _selectedField.SetValue(bombComponent.GetComponent(_componentType), false); return true; };
 
-		if (bombCommander != null)
-		{
-			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-			if (language != null) modInfo.manualCode = $"The%20Button{language}";
-			modInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
-			bombComponent.StartCoroutine(SetHeaderText());
-		}
+		if (bombCommander == null) return;
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		if (language != null) modInfo.manualCode = $"The%20Button{language}";
+		modInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
@@ -47,21 +45,17 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		else if (_held)
 		{
 			string[] commandParts = inputCommand.Split(' ');
-			if (commandParts.Length == 2 && commandParts[0].Equals("release"))
+			if (commandParts.Length != 2 || !commandParts[0].Equals("release")) yield break;
+			if (!int.TryParse(commandParts[1], out int second))
 			{
-				if (!int.TryParse(commandParts[1], out int second))
-				{
-					yield break;
-				}
+				yield break;
+			}
 
-				if (second >= 0 && second <= 9)
-				{
-					IEnumerator releaseCoroutine = ReleaseCoroutine(second);
-					while (releaseCoroutine.MoveNext())
-					{
-						yield return releaseCoroutine.Current;
-					}
-				}
+			if (second < 0 || second > 9) yield break;
+			IEnumerator releaseCoroutine = ReleaseCoroutine(second);
+			while (releaseCoroutine.MoveNext())
+			{
+				yield return releaseCoroutine.Current;
 			}
 		}
 

@@ -53,8 +53,8 @@ public class OrientationCubeComponentSolver : ComponentSolver
 		}
 
 		yield return "Orientation Cube Solve Attempt";
-		var debugStart = "[Orientation Cube TP#" + Code + "]";
-		Debug.LogFormat("{0} Inputted commands: {1}", debugStart, String.Join(", ", interaction.ToArray()));
+		string debugStart = "[Orientation Cube TP#" + Code + "]";
+		Debug.LogFormat("{0} Inputted commands: {1}", debugStart, string.Join(", ", interaction.ToArray()));
 
 		foreach (MonoBehaviour button in buttons)
 		{
@@ -81,7 +81,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 	private static FieldInfo _cwField = null;
 	//private static FieldInfo _virtualField = null;
 
-	private List<string> interaction = new List<string>();
+	private readonly List<string> interaction = new List<string>();
 	/*private string[] sides = new string[] { "l", "r", "f", "b", "t", "o" };
 	private Quaternion emulatedView;
 	private bool first = true;

@@ -32,7 +32,6 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 					yield return "trycancel";
 				}
 			}
-			yield break;
 		}
 		else if (inputCommand.Trim().Length == 6)
 		{

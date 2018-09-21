@@ -28,7 +28,7 @@ public class FreeplayCommander : ICommandResponder
 
 	public IEnumerator RespondToCommand(Message message, ICommandResponseNotifier responseNotifier)
 	{
-		IEnumerator respond = FreeplayRespondToCommand(message, responseNotifier);
+		IEnumerator respond = FreeplayRespondToCommand(message);
 		bool result;
 		do
 		{
@@ -46,7 +46,7 @@ public class FreeplayCommander : ICommandResponder
 		} while (result);
 	}
 
-	public IEnumerator FreeplayRespondToCommand(Message messageObj, ICommandResponseNotifier responseNotifier)
+	public IEnumerator FreeplayRespondToCommand(Message messageObj)
 	{
 		string message = messageObj.Text.ToLowerInvariant().Trim();
 		string userNickName = messageObj.UserNickName;
@@ -59,13 +59,11 @@ public class FreeplayCommander : ICommandResponder
 				yield return drop.Current;
 			yield break;
 		}
-		else
+
+		IEnumerator holdCoroutine = HoldFreeplayDevice();
+		while (holdCoroutine.MoveNext())
 		{
-			IEnumerator holdCoroutine = HoldFreeplayDevice();
-			while (holdCoroutine.MoveNext())
-			{
-				yield return holdCoroutine.Current;
-			}
+			yield return holdCoroutine.Current;
 		}
 
 		string changeHoursTo = string.Empty;
@@ -116,6 +114,7 @@ public class FreeplayCommander : ICommandResponder
 		{
 			string profile = message.Remove(0, 8).Trim();
 
+			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (profile)
 			{
 				case "single":
@@ -310,7 +309,8 @@ public class FreeplayCommander : ICommandResponder
 	#endregion
 
 	#region Helper Methods
-	public IEnumerator SetBombTimer(string hours, string mins, string secs)
+
+	private IEnumerator SetBombTimer(string hours, string mins, string secs)
 	{
 		DebugHelper.Log("Time parsing section");
 		int hoursInt = 0;
@@ -337,7 +337,7 @@ public class FreeplayCommander : ICommandResponder
 		float originalMaxTime = FreeplayDevice.MAX_SECONDS_TO_SOLVE;
 		int maxModules = (int)_maxModuleField.GetValue(FreeplayDevice);
 		int multiplier = MultipleBombs.Installed() ? (MultipleBombs.GetMaximumBombCount() * 2) - 1 : 1;
-		float newMaxTime = 600f + ((maxModules - 1) * multiplier * 60);
+		float newMaxTime = 600f + (maxModules - 1) * multiplier * 60;
 		FreeplayDevice.MAX_SECONDS_TO_SOLVE = newMaxTime;
 
 		DebugHelper.Log("Freeplay settings reading section");
@@ -361,7 +361,7 @@ public class FreeplayCommander : ICommandResponder
 		FreeplayDevice.MAX_SECONDS_TO_SOLVE = originalMaxTime;
 	}
 
-	public IEnumerator SetBombCount(string bombs)
+	private IEnumerator SetBombCount(string bombs)
 	{
 		if (!int.TryParse(bombs, out int bombCount))
 		{
@@ -386,7 +386,7 @@ public class FreeplayCommander : ICommandResponder
 		}
 	}
 
-	public IEnumerator SetBombModules(string mods)
+	private IEnumerator SetBombModules(string mods)
 	{
 		if (!int.TryParse(mods, out int moduleCount))
 		{
@@ -408,65 +408,57 @@ public class FreeplayCommander : ICommandResponder
 		}
 	}
 
-	public void SetNeedy(bool on = true)
+	private void SetNeedy(bool on = true)
 	{
-		if (HasNeedy != on)
-		{
-			ToggleSwitch needyToggle = FreeplayDevice.NeedyToggle;
-			SelectObject( needyToggle.GetComponent<Selectable>() );
-		}
+		if (HasNeedy == on) return;
+		ToggleSwitch needyToggle = FreeplayDevice.NeedyToggle;
+		SelectObject( needyToggle.GetComponent<Selectable>() );
 	}
 
-	public void SetHardcore(bool on = true)
+	private void SetHardcore(bool on = true)
 	{
-		if (IsHardcore != on)
-		{
-			ToggleSwitch hardcoreToggle = FreeplayDevice.HardcoreToggle;
-			SelectObject( hardcoreToggle.GetComponent<Selectable>() );
-		}
+		if (IsHardcore == on) return;
+		ToggleSwitch hardcoreToggle = FreeplayDevice.HardcoreToggle;
+		SelectObject( hardcoreToggle.GetComponent<Selectable>() );
 	}
 
-	public void SetModsOnly(bool on = true)
+	private void SetModsOnly(bool on = true)
 	{
 		FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings;
 		bool onlyMods = currentSettings.OnlyMods;
-		if (onlyMods != on)
-		{
-			ToggleSwitch modsToggle = FreeplayDevice.ModsOnly;
-			SelectObject( modsToggle.GetComponent<Selectable>());
-		}
+		if (onlyMods == on) return;
+		ToggleSwitch modsToggle = FreeplayDevice.ModsOnly;
+		SelectObject( modsToggle.GetComponent<Selectable>());
 	}
 
-	public void StartBomb()
+	private void StartBomb()
 	{
 		KeypadButton startButton = FreeplayDevice.StartButton;
 		SelectObject(startButton.GetComponent<Selectable>());
 	}
 
-	public IEnumerator HoldFreeplayDevice()
+	private IEnumerator HoldFreeplayDevice()
 	{
 		FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 
-		if (holdState != FloatingHoldable.HoldStateEnum.Held)
-		{
-			SelectObject(Selectable);
+		if (holdState == FloatingHoldable.HoldStateEnum.Held) yield break;
+		SelectObject(Selectable);
 
-			float holdTime = FloatingHoldable.PickupTime;
-			IEnumerator forceRotationCoroutine = ForceHeldRotation(holdTime);
-			while (forceRotationCoroutine.MoveNext())
-			{
-				yield return forceRotationCoroutine.Current;
-			}
+		float holdTime = FloatingHoldable.PickupTime;
+		IEnumerator forceRotationCoroutine = ForceHeldRotation(holdTime);
+		while (forceRotationCoroutine.MoveNext())
+		{
+			yield return forceRotationCoroutine.Current;
 		}
 	}
 
-	public IEnumerator LetGoFreeplayDevice()
+	private IEnumerator LetGoFreeplayDevice()
 	{
 		FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 		if (holdState != FloatingHoldable.HoldStateEnum.Held) yield break;
 		while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
 		{
-			DeselectObject(Selectable);
+			DeselectObject();
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
@@ -479,7 +471,7 @@ public class FreeplayCommander : ICommandResponder
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject(Selectable selectable)
+	private void DeselectObject()
 	{
 		SelectableManager.HandleCancel();
 	}
@@ -507,13 +499,13 @@ public class FreeplayCommander : ICommandResponder
 
 	#region Readonly Fields
 	public static FreeplayCommander Instance;
-	public readonly FreeplayDevice FreeplayDevice = null;
-	public readonly Selectable Selectable = null;
-	public readonly Selectable[] SelectableChildren = null;
-	public readonly FloatingHoldable FloatingHoldable = null;
+	private readonly FreeplayDevice FreeplayDevice = null;
+	private readonly Selectable Selectable = null;
+	private readonly Selectable[] SelectableChildren = null;
+	private readonly FloatingHoldable FloatingHoldable = null;
 	private readonly SelectableManager SelectableManager = null;
-	public bool HasNeedy { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.HasNeedy; }}
-	public bool IsHardcore { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.IsHardCore; }}
+	private bool HasNeedy { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.HasNeedy; }}
+	private bool IsHardcore { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.IsHardCore; }}
 	#endregion
 
 	#region Private Static Fields

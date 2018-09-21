@@ -13,30 +13,27 @@ public class LetterKeysComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (inputCommand.StartsWith("press ", System.StringComparison.InvariantCultureIgnoreCase))
+		if (!inputCommand.StartsWith("press ", System.StringComparison.InvariantCultureIgnoreCase)) yield break;
+		Match match = Regex.Match(inputCommand, "[1-4a-d]", RegexOptions.IgnoreCase);
+		if (!match.Success)
 		{
-			Match match = Regex.Match(inputCommand, "[1-4a-d]", RegexOptions.IgnoreCase);
-			if (!match.Success)
-			{
-				yield break;
-			}
+			yield break;
+		}
 
-			if (int.TryParse(match.Value, out int buttonID))
-			{
-				yield return null;
-				yield return DoInteractionClick(_buttons[buttonID - 1]);
-				yield break;
-			}
+		if (int.TryParse(match.Value, out int buttonID))
+		{
+			yield return null;
+			yield return DoInteractionClick(_buttons[buttonID - 1]);
+			yield break;
+		}
 
-			foreach (KMSelectable button in _buttons)
-			{
-				if (match.Value.Equals(button.GetComponentInChildren<TextMesh>().text, System.StringComparison.InvariantCultureIgnoreCase))
-				{
-					yield return null;
-					yield return DoInteractionClick(button);
-					yield break;
-				}
-			}
+		foreach (KMSelectable button in _buttons)
+		{
+			if (!match.Value.Equals(button.GetComponentInChildren<TextMesh>().text,
+				System.StringComparison.InvariantCultureIgnoreCase)) continue;
+			yield return null;
+			yield return DoInteractionClick(button);
+			yield break;
 		}
 	}
 

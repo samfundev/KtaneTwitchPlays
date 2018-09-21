@@ -50,14 +50,15 @@ public class SimpleModComponentSolver : ComponentSolver
 			if (!regexValid)
 				yield break;
 
-			var selectableSequence = (IEnumerable<KMSelectable>) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
+			IEnumerable<KMSelectable> selectableSequence = (IEnumerable<KMSelectable>) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
 			if (selectableSequence == null)
 				yield break;
-			selectableList = (selectableSequence as IList<KMSelectable>) ?? selectableSequence.ToArray();
+			selectableList = selectableSequence as IList<KMSelectable> ?? selectableSequence.ToArray();
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, string.Format("An exception occurred while trying to invoke {0}.{1}; the command invocation will not continue.", ProcessMethod?.DeclaringType?.FullName, ProcessMethod.Name));
+			DebugHelper.LogException(ex,
+				$"An exception occurred while trying to invoke {ProcessMethod?.DeclaringType?.FullName}.{ProcessMethod.Name}; the command invocation will not continue.");
 			loop:
 			switch (ex)
 			{

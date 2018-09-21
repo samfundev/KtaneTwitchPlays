@@ -35,35 +35,31 @@ public class AnagramsComponentSolver : ComponentSolver
 
 		List<KMSelectable> buttons = new List<KMSelectable>();
 		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
-		if (inputCommand.StartsWith("submit ", System.StringComparison.InvariantCultureIgnoreCase))
+		if (!inputCommand.StartsWith("submit ", System.StringComparison.InvariantCultureIgnoreCase)) yield break;
+		inputCommand = inputCommand.Substring(7).ToLowerInvariant();
+		foreach (char c in inputCommand)
 		{
-			inputCommand = inputCommand.Substring(7).ToLowerInvariant();
-			foreach (char c in inputCommand)
+			int index = buttonLabels.IndexOf(c.ToString());
+			if (index < 0)
 			{
-				int index = buttonLabels.IndexOf(c.ToString());
-				if (index < 0)
-				{
-					if (inputCommand.EqualsAny(anagramWords) || inputCommand.EqualsAny(wordscrambleWords))
-					{
-						yield return null;
-						yield return "unsubmittablepenalty";
-					}
-					yield break;
-				}
-				buttons.Add(_buttons[index]);
+				if (!inputCommand.EqualsAny(anagramWords) && !inputCommand.EqualsAny(wordscrambleWords)) yield break;
+				yield return null;
+				yield return "unsubmittablepenalty";
+				yield break;
 			}
-
-			if (buttons.Count != 6) yield break;
-
-			yield return null;
-			yield return DoInteractionClick(_buttons[3]);
-			foreach (KMSelectable b in buttons)
-			{
-				yield return DoInteractionClick(b);
-			}
-			yield return DoInteractionClick(_buttons[7]);
+			buttons.Add(_buttons[index]);
 		}
-		
+
+		if (buttons.Count != 6) yield break;
+
+		yield return null;
+		yield return DoInteractionClick(_buttons[3]);
+		foreach (KMSelectable b in buttons)
+		{
+			yield return DoInteractionClick(b);
+		}
+		yield return DoInteractionClick(_buttons[7]);
+
 	}
 
 	private KMSelectable[] _buttons = null;

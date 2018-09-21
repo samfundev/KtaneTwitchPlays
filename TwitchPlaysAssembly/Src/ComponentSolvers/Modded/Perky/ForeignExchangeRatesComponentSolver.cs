@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ForeignExchangeRatesComponentSolver : ComponentSolver
@@ -16,25 +17,22 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		MonoBehaviour button = null;
-		var split = inputCommand.Trim().ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+		string[] split = inputCommand.Trim().ToLowerInvariant().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 		if (split.Length != 2 || split[0] != "press")
 			yield break;
 
 		if (_buttons.Length < 9)
 			yield break;
 
-		var cmds = split.Skip(1).Select(cmd =>
-		{
-			return cmd.Replace("center", "middle")
+		IEnumerable<string> cmds = split.Skip(1).Select(cmd => cmd.Replace("center", "middle")
 			.Replace("centre", "middle")
 			.Replace("top", "t")
 			.Replace("bottom", "b")
 			.Replace("left", "l")
 			.Replace("right", "r")
-			.Replace("middle", "m");
-		});
+			.Replace("middle", "m"));
 
-		foreach (var cmd in cmds)
+		foreach (string cmd in cmds)
 		{
 			if (cmd.EqualsAny("tl", "lt", "1")) button = _buttons[0];
 			else if (cmd.EqualsAny("tm", "mt", "2")) button = _buttons[1];

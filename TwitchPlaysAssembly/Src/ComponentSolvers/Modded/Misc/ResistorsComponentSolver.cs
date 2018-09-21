@@ -17,7 +17,7 @@ public class ResistorsComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.");
 	}
 
-	int? PinToIndex(string pin)
+	private static int? PinToIndex(string pin)
 	{
 		switch (pin)
 		{
@@ -48,20 +48,25 @@ public class ResistorsComponentSolver : ComponentSolver
 	
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length >= 3 && commands.Length % 2 == 1 && commands[0].Equals("connect"))
 		{
-			IEnumerable<int?> pins = commands.Where((_, i) => i > 0).Select(pin => PinToIndex(pin));
+			IEnumerable<int?> pins = commands.Where((_, i) => i > 0).Select(PinToIndex);
 
-			if (pins.All(pinIndex => pinIndex != null))
+			IEnumerable<int?> pinIndices = pins as int?[] ?? pins.ToArray();
+			if (pinIndices.All(pinIndex => pinIndex != null))
 			{
 				yield return null;
 
-				foreach (int? pinIndex in pins)
+				foreach (int? pinIndex in pinIndices)
 				{
-					KMSelectable pinSelectable = _pins[(int) pinIndex];
-					DoInteractionClick(pinSelectable);
+					if (pinIndex != null)
+					{
+						KMSelectable pinSelectable = _pins[(int) pinIndex];
+						DoInteractionClick(pinSelectable);
+					}
+
 					yield return new WaitForSeconds(0.1f);
 				}
 
@@ -72,15 +77,17 @@ public class ResistorsComponentSolver : ComponentSolver
 		if (commands.Length == 2 && commands[0].EqualsAny("hit", "press", "click"))
 			commands = commands.Skip(1).ToArray();
 
-		if (commands.Length == 1 && commands[0].EqualsAny("check", "submit"))
+		// ReSharper disable once SwitchStatementMissingSomeCases
+		switch (commands.Length)
 		{
-			yield return null;
-			yield return DoInteractionClick(_checkButton);
-		}
-		else if (commands.Length == 1 && commands[0].EqualsAny("clear", "reset"))
-		{
-			yield return null;
-			yield return DoInteractionClick(_clearButton);
+			case 1 when commands[0].EqualsAny("check", "submit"):
+				yield return null;
+				yield return DoInteractionClick(_checkButton);
+				break;
+			case 1 when commands[0].EqualsAny("clear", "reset"):
+				yield return null;
+				yield return DoInteractionClick(_clearButton);
+				break;
 		}
 	}
 

@@ -373,7 +373,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["spwizTetris"] = new ModuleInformation { moduleScore = 5 };
 
 		//taggedjc
-		//Extented passwords, which is shimmed above.
+		//Extended passwords, which is shimmed above.
 		ModComponentSolverInformation["hunting"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 
 		//ThatGuyCalledJules
@@ -407,6 +407,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad", moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["OnlyConnectModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["PatternCubeModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["PerplexingWiresModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["PointOfOrderModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["PolyhedralMazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
@@ -420,7 +421,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SymbolCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		ModComponentSolverInformation["TennisModule"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["TennisModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 12, manualCode = "Tic-Tac-Toe", DoesTheRightThing = true };
 		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
@@ -447,7 +448,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["booleanVennModule"] = new ModuleInformation { moduleScore = 10, helpText = "Select parts of the diagram with !{0} a bc abc. Options are A, AB, ABC, AC, B, BC, C, O (none).", DoesTheRightThing = true };
 		ModComponentSolverInformation["buttonSequencesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["ColorMorseModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 8, helpText = "Press the top button with !{0} press top (also t, 1, etc.).", DoesTheRightThing = true };
+		ModComponentSolverInformation["complicatedButtonsModule"] = new ModuleInformation { moduleScore = 5, helpText = "Press the top button with !{0} press top (also t, 1, etc.).", DoesTheRightThing = true };
 		ModComponentSolverInformation["fizzBuzzModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["iceCreamModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["symbolicPasswordModule"] = new ModuleInformation { moduleScore = 9, helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!", DoesTheRightThing = true };
@@ -456,8 +457,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BinaryLeds"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleScore = 5, moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20", DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
+		ModComponentSolverInformation["manometers"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, manualCode = "Playfair%20Cipher", moduleDisplayName = "Playfair Cipher" };
+		ModComponentSolverInformation["Signals"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["SupermercadoSalvajeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true, helpText = "Cycle the items with !{0} items. Go to a specific item number with !{0} item 3. Get customers to pay the correct amount with !{0} submit. Return the proper change with !{0} submit 3.24." };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
@@ -516,11 +519,11 @@ public static class ComponentSolverFactory
 	public static ModuleInformation GetDefaultInformation(string moduleType)
 	{
 		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType))
-			AddDefaultModuleInformation(new ModuleInformation() { moduleID = moduleType });
+			AddDefaultModuleInformation(new ModuleInformation { moduleID = moduleType });
 		return DefaultModComponentSolverInformation[moduleType];
 	}
 
-	public static void ResetModuleInformationToDefault(string moduleType)
+	private static void ResetModuleInformationToDefault(string moduleType)
 	{
 		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType)) return;
 		if (ModComponentSolverInformation.ContainsKey(moduleType)) ModComponentSolverInformation.Remove(moduleType);
@@ -680,6 +683,7 @@ public static class ComponentSolverFactory
 
 	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType)
 	{
+		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (componentType)
 		{
 			case ComponentTypeEnum.Wires:
@@ -733,7 +737,7 @@ public static class ComponentSolverFactory
 				catch
 				{
 					DebugLog("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
-					DebugLog("Using Fallback Compoment solver instead.");
+					DebugLog("Using Fallback Component solver instead.");
 					LogAllComponentTypes(solvableModule);
 
 					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
@@ -748,7 +752,7 @@ public static class ComponentSolverFactory
 				catch
 				{
 					DebugLog("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
-					DebugLog("Using Fallback Compoment solver instead.");
+					DebugLog("Using Fallback Component solver instead.");
 					LogAllComponentTypes(needyModule);
 
 					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
@@ -756,17 +760,17 @@ public static class ComponentSolverFactory
 
 			default:
 				LogAllComponentTypes(bombComponent);
-				throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays'.", bombComponent.GetModuleDisplayName()));
+				throw new NotSupportedException($"Currently {bombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays'.");
 		}
 	}
 
 	/// <summary>Returns the solver for a specific module. If there is a shim or a built-in solver, it will return that.</summary>
-	public static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
+	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
 	{
-		if (ModComponentSolverCreators.TryGetValue(moduleType, out var solverCreator))
+		if (ModComponentSolverCreators.TryGetValue(moduleType, out ModComponentSolverDelegate solverCreator))
 			return solverCreator(bombCommander, bombComponent);
 		return CreateDefaultModComponentSolver(bombCommander, bombComponent, moduleType, displayName)
-			?? throw new NotSupportedException(string.Format("Currently {0} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!", bombComponent.GetModuleDisplayName()));
+			?? throw new NotSupportedException($"Currently {bombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!");
 	}
 
 	/// <summary>Returns a solver that relies on the module�s own implementation, bypassing built-in solvers and shims.</summary>
@@ -842,43 +846,39 @@ public static class ComponentSolverFactory
 
 		AddDefaultModuleInformation(moduleType, displayName, help, manual, statusLeft, statusBottom, regexList);
 
-		if (method != null)
+		if (method == null) return null;
+		FieldInfo zenModeField = FindZenModeBool(commandComponentType);
+		FieldInfo timeModeField = FindTimeModeBool(commandComponentType);
+		FieldInfo abandonModuleField = FindAbandonModuleList(commandComponentType);
+		FieldInfo twitchPlaysField = FindTwitchPlaysBool(commandComponentType);
+		FieldInfo twitchPlaysSkipTimeField = FindTwitchPlaysSkipTimeBool(commandComponentType);
+
+		// ReSharper disable once SwitchStatementMissingSomeCases
+		switch (commandType)
 		{
-			FieldInfo zenModeField = FindZenModeBool(commandComponentType);
-			FieldInfo timeModeField = FindTimeModeBool(commandComponentType);
-			FieldInfo abandonModuleField = FindAbandonModuleList(commandComponentType);
-			FieldInfo twitchPlaysField = FindTwitchPlaysBool(commandComponentType);
-			FieldInfo twitchPlaysSkipTimeField = FindTwitchPlaysSkipTimeBool(commandComponentType);
-
-			switch (commandType)
-			{
-				case ModCommandType.Simple:
-					{
-						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, timeModeField, abandonModuleField, twitchPlaysField);
-					}
-				case ModCommandType.Coroutine:
-					{
-						FieldInfo cancelfield = FindCancelBool(commandComponentType);
-						Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-						return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, timeModeField, abandonModuleField, twitchPlaysField, twitchPlaysSkipTimeField);
-					}
-				case ModCommandType.Unsupported:
-					{
-						DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
-						return new UnsupportedModComponentSolver(bombCommander, bombComponent);
-					}
-
-				default:
-					break;
-			}
+			case ModCommandType.Simple:
+				{
+					Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
+					return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, timeModeField, abandonModuleField, twitchPlaysField);
+				}
+			case ModCommandType.Coroutine:
+				{
+					FieldInfo cancelfield = FindCancelBool(commandComponentType);
+					Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
+					return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, timeModeField, abandonModuleField, twitchPlaysField, twitchPlaysSkipTimeField);
+				}
+			case ModCommandType.Unsupported:
+				{
+					DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
+					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
+				}
 		}
 
 		return null;
 	}
 
 	private static readonly List<string> FullNamesLogged = new List<string>();
-	private static void LogAllComponentTypes(MonoBehaviour bombComponent)
+	private static void LogAllComponentTypes(Component bombComponent)
 	{
 		try
 		{
@@ -906,25 +906,25 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	private static bool FindStatusLightPosition(MonoBehaviour bombComponent, out bool StatusLightLeft, out bool StatusLightBottom)
+	private static bool FindStatusLightPosition(Component bombComponent, out bool statusLightLeft, out bool statusLightBottom)
 	{
-		string statusLightStatus = "Attempting to find the module’s StatusLightParent...";
+		const string statusLightStatus = "Attempting to find the module’s StatusLightParent...";
 		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component) bombComponent.GetComponentInChildren<KMStatusLightParent>();
 		if (component == null)
 		{
 			DebugLog($"{statusLightStatus} Not found.");
-			StatusLightLeft = false;
-			StatusLightBottom = false;
+			statusLightLeft = false;
+			statusLightBottom = false;
 			return false;
 		}
 
-		StatusLightLeft = (component.transform.localPosition.x < 0);
-		StatusLightBottom = (component.transform.localPosition.z < 0);
-		DebugLog($"{statusLightStatus} Found in the {(StatusLightBottom ? "bottom" : "top")} {(StatusLightLeft ? "left" : "right")} corner.");
+		statusLightLeft = (component.transform.localPosition.x < 0);
+		statusLightBottom = (component.transform.localPosition.z < 0);
+		DebugLog($"{statusLightStatus} Found in the {(statusLightBottom ? "bottom" : "top")} {(statusLightLeft ? "left" : "right")} corner.");
 		return true;
 	}
 
-	private static bool FindRegexList(MonoBehaviour bombComponent, Type commandComponentType, out string[] validCommands)
+	private static bool FindRegexList(Component bombComponent, Type commandComponentType, out string[] validCommands)
 	{
 		FieldInfo candidateString = commandComponentType.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateString == null)
@@ -941,7 +941,7 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	internal static bool FindManualCode(MonoBehaviour bombComponent, Type commandComponentType, out string manualCode)
+	private static bool FindManualCode(Component bombComponent, Type commandComponentType, out string manualCode)
 	{
 		FieldInfo candidateString = commandComponentType.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateString == null)
@@ -958,7 +958,7 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	internal static bool FindModuleScore(MonoBehaviour bombComponent, Type commandComponentType, out int moduleScore)
+	private static bool FindModuleScore(Component bombComponent, Type commandComponentType, out int moduleScore)
 	{
 		FieldInfo candidateInt = commandComponentType.GetField("TwitchModuleScore", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateInt == null)
@@ -975,7 +975,7 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	internal static bool FindStrikePenalty(MonoBehaviour bombComponent, Type commandComponentType, out int strikePenalty)
+	private static bool FindStrikePenalty(Component bombComponent, Type commandComponentType, out int strikePenalty)
 	{
 		FieldInfo candidateInt = commandComponentType.GetField("TwitchStrikePenalty", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateInt == null)
@@ -992,7 +992,7 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	internal static bool FindHelpMessage(MonoBehaviour bombComponent, Type commandComponentType, out string helpText)
+	private static bool FindHelpMessage(Component bombComponent, Type commandComponentType, out string helpText)
 	{
 		FieldInfo candidateString = commandComponentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateString == null)
@@ -1009,54 +1009,52 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	internal static FieldInfo FindCancelBool(Type commandComponentType)
+	private static FieldInfo FindCancelBool(Type commandComponentType)
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
 	}
 
-	internal static FieldInfo FindZenModeBool(Type commandComponentType)
+	private static FieldInfo FindZenModeBool(Type commandComponentType)
 	{
-		FieldInfo zenField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-		if (zenField == null)
-			zenField = commandComponentType.GetField("ZenModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo zenField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ??
+							commandComponentType.GetField("ZenModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return zenField?.FieldType == typeof(bool) ? zenField : null;
 	}
 
-	internal static FieldInfo FindTimeModeBool(Type commandComponentType)
+	private static FieldInfo FindTimeModeBool(Type commandComponentType)
 	{
-		FieldInfo timeField = commandComponentType.GetField("TwitchTimeMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-		if (timeField == null)
-			timeField = commandComponentType.GetField("TimeModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo timeField = commandComponentType.GetField("TwitchTimeMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ??
+							commandComponentType.GetField("TimeModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return timeField?.FieldType == typeof(bool) ? timeField : null;
 	}
 
-	internal static FieldInfo FindTwitchPlaysBool(Type commandComponentType)
+	private static FieldInfo FindTwitchPlaysBool(Type commandComponentType)
 	{
 		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 
-	internal static FieldInfo FindTwitchPlaysSkipTimeBool(Type commandComponentType)
+	private static FieldInfo FindTwitchPlaysSkipTimeBool(Type commandComponentType)
 	{
 		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysSkipTimeAllowed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 
-	internal static MethodInfo FindSolveMethod(Type commandComponentType)
+	private static MethodInfo FindSolveMethod(Type commandComponentType)
 	{
 		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 			.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 		return solveHandler;
 	}
 
-	internal static FieldInfo FindAbandonModuleList(Type commandComponentType)
+	private static FieldInfo FindAbandonModuleList(Type commandComponentType)
 	{
 		FieldInfo cancelField = commandComponentType.GetField("TwitchAbandonModule", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(List<KMBombModule>) ? cancelField : null;
 	}
 
-	internal static MethodInfo FindProcessCommandMethod(MonoBehaviour bombComponent, out ModCommandType commandType, out Type commandComponentType)
+	private static MethodInfo FindProcessCommandMethod(Component bombComponent, out ModCommandType commandType, out Type commandComponentType)
 	{
 		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
 		foreach (Component component in allComponents)
@@ -1068,11 +1066,9 @@ public static class ComponentSolverFactory
 				continue;
 			}
 
-			if (ValidateMethodCommandMethod(type, candidateMethod, out commandType))
-			{
-				commandComponentType = type;
-				return candidateMethod;
-			}
+			if (!ValidateMethodCommandMethod(type, candidateMethod, out commandType)) continue;
+			commandComponentType = type;
+			return candidateMethod;
 		}
 
 		commandType = ModCommandType.Unsupported;
@@ -1085,7 +1081,7 @@ public static class ComponentSolverFactory
 		commandType = ModCommandType.Unsupported;
 
 		ParameterInfo[] parameters = candidateMethod.GetParameters();
-		if (parameters == null || parameters.Length == 0)
+		if (parameters.Length == 0)
 		{
 			DebugLog("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
 			return false;
@@ -1110,13 +1106,10 @@ public static class ComponentSolverFactory
 			return true;
 		}
 
-		if (candidateMethod.ReturnType == typeof(IEnumerator))
-		{
-			DebugLog("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
-			commandType = ModCommandType.Coroutine;
-			return true;
-		}
+		if (candidateMethod.ReturnType != typeof(IEnumerator)) return false;
+		DebugLog("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
+		commandType = ModCommandType.Coroutine;
+		return true;
 
-		return false;
 	}
 }

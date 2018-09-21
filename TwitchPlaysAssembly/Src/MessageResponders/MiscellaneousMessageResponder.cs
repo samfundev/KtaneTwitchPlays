@@ -74,7 +74,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
 		}
-		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand(new Message("The Bomb", null, "drop"), null);
+		drop = FreeplayCommander.Instance?.FreeplayRespondToCommand(new Message("The Bomb", null, "drop"));
 		while (drop != null && drop.MoveNext())
 			yield return drop.Current;
 		drop = BombBinderCommander.Instance?.RespondToCommand(new Message("The Bomb", null, "drop"), null);

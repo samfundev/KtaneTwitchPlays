@@ -14,7 +14,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length != 3 || !commands[0].EqualsAny("toggle", "flip", "switch") ||
 			!int.TryParse(commands[1], out int downtime) || !int.TryParse(commands[2], out int uptime))
@@ -25,19 +25,19 @@ public class CrazyTalkComponentSolver : ComponentSolver
 
 		yield return "Crazy Talk Solve Attempt";
 		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
-		int timeRemaining = (int)(timerComponent.TimeRemaining);
+		int timeRemaining = (int)timerComponent.TimeRemaining;
 
-		while ((timeRemaining%10) != downtime)
+		while (timeRemaining % 10 != downtime)
 		{
 			yield return null;
-			timeRemaining = (int)(timerComponent.TimeRemaining);
+			timeRemaining = (int)timerComponent.TimeRemaining;
 		}
 		yield return DoInteractionClick(_toggle);
 
-		while ((timeRemaining % 10) != uptime)
+		while (timeRemaining % 10 != uptime)
 		{
 			yield return null;
-			timeRemaining = (int)(timerComponent.TimeRemaining);
+			timeRemaining = (int)timerComponent.TimeRemaining;
 		}
 		yield return DoInteractionClick(_toggle);
 	}

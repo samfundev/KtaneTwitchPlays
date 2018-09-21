@@ -49,7 +49,7 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 
 		protected IEnumerator RespondToCommandUnshimmed(string inputCommand)
 		{
-			var e = _unshimmed.RespondToCommandInternal(inputCommand);
+			IEnumerator e = _unshimmed.RespondToCommandInternal(inputCommand);
 			while (e.MoveNext())
 				yield return e.Current;
 		}

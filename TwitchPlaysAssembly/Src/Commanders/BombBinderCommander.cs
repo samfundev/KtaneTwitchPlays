@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Missions;
 using UnityEngine;
@@ -54,9 +55,9 @@ public class BombBinderCommander : ICommandResponder
 			else if (message.StartsWith("select"))
 			{
 				string[] commandParts = message.Split(' ');
-				IEnumerator selectCoroutine = null;
-				if ( (commandParts.Length == 2) &&
-					(int.TryParse(commandParts[1], out int index)) )
+				IEnumerator selectCoroutine;
+				if ( commandParts.Length == 2 &&
+					int.TryParse(commandParts[1], out int index) )
 				{
 					selectCoroutine = SelectOnPage(index);
 				}
@@ -91,49 +92,48 @@ public class BombBinderCommander : ICommandResponder
 	#endregion
 
 	#region Helper Methods
-	public IEnumerator HoldBombBinder()
+
+	private IEnumerator HoldBombBinder()
 	{
 		FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 
-		if (holdState != FloatingHoldable.HoldStateEnum.Held)
+		if (holdState == FloatingHoldable.HoldStateEnum.Held) yield break;
+		SelectObject(Selectable);
+
+		float holdTime = FloatingHoldable.PickupTime;
+		IEnumerator forceRotationCoroutine = ForceHeldRotation(holdTime);
+		while (forceRotationCoroutine.MoveNext())
 		{
-			SelectObject(Selectable);
-
-			float holdTime = FloatingHoldable.PickupTime;
-			IEnumerator forceRotationCoroutine = ForceHeldRotation(holdTime);
-			while (forceRotationCoroutine.MoveNext())
-			{
-				yield return forceRotationCoroutine.Current;
-			}
-
-			yield return null;
-
-			InitialisePage();
+			yield return forceRotationCoroutine.Current;
 		}
+
+		yield return null;
+
+		InitialisePage();
 	}
 
-	public IEnumerator LetGoBombBinder()
+	private IEnumerator LetGoBombBinder()
 	{
 		FloatingHoldable.HoldStateEnum holdState = FloatingHoldable.HoldState;
 		if (holdState != FloatingHoldable.HoldStateEnum.Held) yield break;
 		while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
 		{
-			DeselectObject(Selectable);
+			DeselectObject();
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
 	
 	private void InitialisePage()
 	{
-		Selectable currentPage = Selectable.GetComponentsInChildren<Selectable>(false).Where((x) => x != Selectable).FirstOrDefault();
-		_currentSelectable = currentPage.GetCurrentChild();
+		Selectable currentPage = Selectable.GetComponentsInChildren<Selectable>(false).FirstOrDefault(x => x != Selectable);
+		_currentSelectable = currentPage?.GetCurrentChild();
 
-		_currentSelectable.HandleSelect(true);
+		_currentSelectable?.HandleSelect(true);
 
-		_currentSelectables = currentPage.Children;
+		_currentSelectables = currentPage?.Children;
 
 		_currentSelectableIndex = 0;
-		for (; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
+		for (; _currentSelectableIndex < _currentSelectables?.Length; ++_currentSelectableIndex)
 		{
 			Selectable selectable = _currentSelectables[_currentSelectableIndex];
 			if (selectable != null && _currentSelectable == selectable)
@@ -157,13 +157,11 @@ public class BombBinderCommander : ICommandResponder
 		for (++_currentSelectableIndex; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
 		{
 			Selectable newSelectable = _currentSelectables[_currentSelectableIndex];
-			if (newSelectable != null)
-			{
-				_currentSelectable.HandleDeselect(null);
-				_currentSelectable = newSelectable;
-				_currentSelectable.HandleSelect(true);
-				return;
-			}
+			if (newSelectable == null) continue;
+			_currentSelectable.HandleDeselect();
+			_currentSelectable = newSelectable;
+			_currentSelectable.HandleSelect(true);
+			return;
 		}
 
 		_currentSelectableIndex = oldSelectableIndex;
@@ -181,21 +179,19 @@ public class BombBinderCommander : ICommandResponder
 		for (--_currentSelectableIndex; _currentSelectableIndex >= 0; --_currentSelectableIndex)
 		{
 			Selectable newSelectable = _currentSelectables[_currentSelectableIndex];
-			if (newSelectable != null)
-			{
-				_currentSelectable.HandleDeselect(null);
-				_currentSelectable = newSelectable;
-				_currentSelectable.HandleSelect(true);
-				return;
-			}
+			if (newSelectable == null) continue;
+			_currentSelectable.HandleDeselect();
+			_currentSelectable = newSelectable;
+			_currentSelectable.HandleSelect(true);
+			return;
 		}
 
 		_currentSelectableIndex = oldSelectableIndex;
 	}
 
-	private IEnumerator SelectOnPage(int index = 0, string[] search = null)
+	private IEnumerator SelectOnPage(int index = 0, IList<string> search = null)
 	{
-		if ( (index > 0) || (search != null) )
+		if ( index > 0 || search != null )
 		{
 			if ( (_currentSelectables == null) || (index > _currentSelectables.Length) )
 			{
@@ -207,57 +203,50 @@ public class BombBinderCommander : ICommandResponder
 			for (_currentSelectableIndex = 0; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
 			{
 				newSelectable = _currentSelectables[_currentSelectableIndex];
-				if (newSelectable != null)
+				if (newSelectable == null) continue;
+				// Index mode
+				if (index > 0)
 				{
-					// Index mode
-					if (index > 0)
+					if (++i == index)
 					{
-						if (++i == index)
-						{
-							break;
-						}
+						break;
 					}
-					// Search mode
-					else
+				}
+				// Search mode
+				else
+				{
+					MissionTableOfContentsMissionEntry tableOfContentsEntryObject = newSelectable.GetComponent<MissionTableOfContentsMissionEntry>();
+					if (tableOfContentsEntryObject == null)
 					{
-						MissionTableOfContentsMissionEntry tableOfContentsEntryObject = newSelectable.GetComponent<MissionTableOfContentsMissionEntry>();
-						if (tableOfContentsEntryObject == null)
-						{
-							// Previous/Next buttons!
-							newSelectable = null;
-							break;
-						}
+						// Previous/Next buttons!
+						newSelectable = null;
+						break;
+					}
 
-						string entryText = tableOfContentsEntryObject.EntryText.text.ToLowerInvariant();
-						string subsectionText = tableOfContentsEntryObject.SubsectionText.text.ToLowerInvariant();
+					string entryText = tableOfContentsEntryObject.EntryText.text.ToLowerInvariant();
+					string subsectionText = tableOfContentsEntryObject.SubsectionText.text.ToLowerInvariant();
 
-						if (subsectionText.Equals(search[0]))
-						{
-							// The first search term matches the mission ID ("2.1" etc)
-							break;
-						}
+					if (subsectionText.Equals(search?[0]))
+					{
+						// The first search term matches the mission ID ("2.1" etc)
+						break;
+					}
+					// All search terms must be found in the mission name
+					if (search != null && search.Any(s => !entryText.Contains(s.ToLowerInvariant())))
+					{
+						newSelectable = null;
+					}
 
-						foreach (string s in search)
-						{
-							// All search terms must be found in the mission name
-							if (!entryText.Contains(s.ToLowerInvariant()))
-							{
-								newSelectable = null;
-								break;
-							}
-						}
-
-						if (newSelectable != null)
-						{
-							break;
-						}
+					if (newSelectable != null)
+					{
+						break;
 					}
 				}
 			}
 
 			if (newSelectable != null)
 			{
-				_currentSelectable.HandleDeselect(null);
+				_currentSelectable.HandleDeselect();
 				_currentSelectable = newSelectable;
 				_currentSelectable.HandleSelect(true);
 			}
@@ -267,7 +256,7 @@ public class BombBinderCommander : ICommandResponder
 			}
 		}
 
-		if (_currentSelectable != null)
+		if (_currentSelectable == null) yield break;
 		{
 			//Some protection to prevent going into a tutorial; don't have complete support for that!
 			MissionTableOfContentsMissionEntry tableOfContentsEntryObject = _currentSelectable.GetComponent<MissionTableOfContentsMissionEntry>();
@@ -297,7 +286,7 @@ public class BombBinderCommander : ICommandResponder
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject(Selectable selectable)
+	private void DeselectObject()
 	{
 		SelectableManager.HandleCancel();
 	}
@@ -325,9 +314,9 @@ public class BombBinderCommander : ICommandResponder
 
 	#region Readonly Fields
 	public static BombBinderCommander Instance;
-	public readonly BombBinder BombBinder = null;
-	public readonly Selectable Selectable = null;
-	public readonly FloatingHoldable FloatingHoldable = null;
+	private readonly BombBinder BombBinder = null;
+	private readonly Selectable Selectable = null;
+	private readonly FloatingHoldable FloatingHoldable = null;
 	private readonly SelectableManager SelectableManager = null;
 	#endregion
 

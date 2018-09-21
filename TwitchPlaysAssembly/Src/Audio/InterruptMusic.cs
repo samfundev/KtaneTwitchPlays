@@ -36,11 +36,9 @@ public class InterruptMusic : MonoBehaviour
 			}
 			else
 			{
-				if (_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
-				{
-					musicController.SetVolume(_oldVolumesGameplay[musicControllerInstanceID], true);
-					_oldVolumesGameplay.Remove(musicControllerInstanceID);
-				}
+				if (!_oldVolumesGameplay.ContainsKey(musicControllerInstanceID)) continue;
+				musicController.SetVolume(_oldVolumesGameplay[musicControllerInstanceID], true);
+				_oldVolumesGameplay.Remove(musicControllerInstanceID);
 			}
 		}
 

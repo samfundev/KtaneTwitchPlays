@@ -16,41 +16,49 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length == 2 && commands[0].Equals("set"))
+		// ReSharper disable once SwitchStatementMissingSomeCases
+		switch (commands.Length)
 		{
-			int colorIndex = Array.IndexOf(_colors, commands[1]);
-			if (colorIndex > -1)
+			case 2 when commands[0].Equals("set"):
+			{
+				int colorIndex = Array.IndexOf(_colors, commands[1]);
+				if (colorIndex > -1)
+				{
+					yield return null;
+
+					while (currentIndex != colorIndex) {
+						DoInteractionClick(_buttonUp);
+						currentIndex = (currentIndex + 1) % 6;
+
+						yield return new WaitForSeconds(0.1f);
+					}
+
+					int lastStrikeCount = StrikeCount;
+
+					DoInteractionClick(_buttonOK);
+					yield return new WaitForSeconds(0.1f);
+
+					if (lastStrikeCount == StrikeCount)
+					{
+						currentIndex = 0;
+					}
+				}
+
+				break;
+			}
+			case 1 when commands[0].Equals("cycle"):
 			{
 				yield return null;
 
-				while (currentIndex != colorIndex) {
-					DoInteractionClick(_buttonUp);
-					currentIndex = (currentIndex + 1) % 6;
-
-					yield return new WaitForSeconds(0.1f);
-				}
-
-				int lastStrikeCount = StrikeCount;
-
-				DoInteractionClick(_buttonOK);
-				yield return new WaitForSeconds(0.1f);
-
-				if (lastStrikeCount == StrikeCount)
+				for (int i = 0; i < 6; i++)
 				{
-					currentIndex = 0;
+					DoInteractionClick(_buttonUp);
+					yield return new WaitForSeconds(0.2f);
 				}
-			}
-		}
-		else if (commands.Length == 1 && commands[0].Equals("cycle"))
-		{
-			yield return null;
 
-			for (int i = 0; i < 6; i++)
-			{
-				DoInteractionClick(_buttonUp);
-				yield return new WaitForSeconds(0.2f);
+				break;
 			}
 		}
 	}

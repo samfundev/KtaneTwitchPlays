@@ -21,11 +21,7 @@ public class NeedyMathComponentSolver : ComponentSolver
 
 		inputCommand = inputCommand.Substring(7);
 
-		string trimmedCommand;
-		if (inputCommand.StartsWith("-"))
-			trimmedCommand = inputCommand.Substring(1);
-		else
-			trimmedCommand = inputCommand;
+		string trimmedCommand = inputCommand.StartsWith("-") ? inputCommand.Substring(1) : inputCommand;
 
 		if (!int.TryParse(trimmedCommand, out _))
 			yield break;

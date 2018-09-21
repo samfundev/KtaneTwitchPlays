@@ -65,25 +65,30 @@ public class ShapeShiftComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length == 3 && commands[0].Equals("submit"))
+		// ReSharper disable once SwitchStatementMissingSomeCases
+		switch (commands.Length)
 		{
-			int? shapeL = ToShapeIndex(commands[1]);
-			int? shapeR = ToShapeIndex(commands[2]);
-
-			if (shapeL != null && shapeR != null)
+			case 3 when commands[0].Equals("submit"):
 			{
-				yield return null;
-				yield return SetDisplay((int) shapeL, (int) shapeR);
+				int? shapeL = ToShapeIndex(commands[1]);
+				int? shapeR = ToShapeIndex(commands[2]);
 
-				DoInteractionClick(_buttons[1]);
+				if (shapeL != null && shapeR != null)
+				{
+					yield return null;
+					yield return SetDisplay((int) shapeL, (int) shapeR);
+
+					DoInteractionClick(_buttons[1]);
+				}
+
+				break;
 			}
-		}
-		else if (commands.Length == 1 && commands[0].Equals("reset"))
-		{
-			yield return null;
-			yield return SetDisplay(initialL, initialR);
+			case 1 when commands[0].Equals("reset"):
+				yield return null;
+				yield return SetDisplay(initialL, initialR);
+				break;
 		}
 	}
 

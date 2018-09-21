@@ -17,55 +17,52 @@ public class SeaShellsComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length >= 2 && commands[0].Equals("press"))
+		if (commands.Length < 2 || !commands[0].Equals("press")) yield break;
+		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
+
+		if (buttonLabels.Any(label => label == " ")) yield break;
 		{
-			List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
+			yield return null;
 
-			if (!buttonLabels.Any(label => label == " "))
+			IEnumerable<string> submittedText = commands.Where((_, i) => i > 0);
+			List<string> fixedLabels = new List<string>();
+			foreach (string text in submittedText)
 			{
-				yield return null;
+				IEnumerable<string> matchingLabels = buttonLabels.Where(label => label.Contains(text));
 
-				IEnumerable<string> submittedText = commands.Where((_, i) => i > 0);
-				List<string> fixedLabels = new List<string>();
-				foreach (string text in submittedText)
+				int matchedCount = matchingLabels.Count();
+				if (buttonLabels.Any(label => label.Equals(text)))
 				{
-					IEnumerable<string> matchingLabels = buttonLabels.Where(label => label.Contains(text));
-
-					int matchedCount = matchingLabels.Count();
-					if (buttonLabels.Any(label => label.Equals(text)))
-					{
-						fixedLabels.Add(text);
-					}
-					else if (matchedCount == 1)
-					{
-						fixedLabels.Add(matchingLabels.First());
-					}
-					else if (matchedCount == 0)
-					{
-						yield return string.Format("sendtochaterror There isn't any label that contains \"{0}\".", text);
-						yield break;
-					}
-					else
-					{
-						yield return string.Format("sendtochaterror There are multiple labels that contain \"{0}\": {1}.", text, string.Join(", ", matchingLabels.ToArray()));
-						yield break;
-					}
+					fixedLabels.Add(text);
 				}
-				
-				int startingStage = (int) _stageField.GetValue(_component);
-				foreach (string fixedLabel in fixedLabels)
+				else switch (matchedCount)
 				{
-					KMSelectable button = _buttons[buttonLabels.IndexOf(fixedLabel)];
-					DoInteractionClick(button);
-
-					yield return new WaitForSeconds(0.1f);
-
-					if (startingStage != (int) _stageField.GetValue(_component))
-					{
+					case 1:
+						fixedLabels.Add(matchingLabels.First());
+						break;
+					case 0:
+						yield return $"sendtochaterror There isn't any label that contains \"{text}\".";
 						yield break;
-					}
+					default:
+						yield return
+							$"sendtochaterror There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
+						yield break;
+				}
+			}
+				
+			int startingStage = (int) _stageField.GetValue(_component);
+			foreach (string fixedLabel in fixedLabels)
+			{
+				KMSelectable button = _buttons[buttonLabels.IndexOf(fixedLabel)];
+				DoInteractionClick(button);
+
+				yield return new WaitForSeconds(0.1f);
+
+				if (startingStage != (int) _stageField.GetValue(_component))
+				{
+					yield break;
 				}
 			}
 		}

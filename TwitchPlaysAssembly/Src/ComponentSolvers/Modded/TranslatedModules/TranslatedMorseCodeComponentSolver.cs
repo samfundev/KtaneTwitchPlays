@@ -15,14 +15,12 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		_downButton = (MonoBehaviour)_downButtonField.GetValue(_component);
 		_transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
-		
-		if (bombCommander != null)
-		{
-			string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
-			if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
-			modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
-			bombComponent.StartCoroutine(SetHeaderText());
-		}
+
+		if (bombCommander == null) return;
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
+		modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
@@ -70,8 +68,7 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		
 	}
 
-	private static readonly int[] Frequencies = new int[]
-	{
+	private static readonly int[] Frequencies = {
 		505,
 		515,
 		522,

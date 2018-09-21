@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -101,7 +100,7 @@ public class LogUploader : MonoBehaviour
 		// This first line is necessary as the Log Analyser uses it as an identifier
 		data = "Initialize engine version: Twitch Plays\n" + data;
 
-		byte[] encodedData = System.Text.Encoding.UTF8.GetBytes(data);
+		byte[] encodedData = Encoding.UTF8.GetBytes(data);
 		int dataLength = encodedData.Length;
 
 		bool tooLong = false;
@@ -142,10 +141,8 @@ public class LogUploader : MonoBehaviour
 
 					break;
 				}
-				else
-				{
-					Debug.Log(LOGPREFIX + "Error: " + www.error);
-				}
+
+				Debug.Log(LOGPREFIX + "Error: " + www.error);
 			}
 			else
 			{
@@ -162,7 +159,7 @@ public class LogUploader : MonoBehaviour
 
 					string key = www.text;
 					key = key.Substring(0, key.Length - 2);
-					key = key.Substring(key.LastIndexOf("\"") + 1);
+					key = key.Substring(key.LastIndexOf("\"", StringComparison.InvariantCulture) + 1);
 					string rawUrl = "https://" + domainName + "/raw/" + key;
 
 					Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
@@ -176,10 +173,8 @@ public class LogUploader : MonoBehaviour
 
 					break;
 				}
-				else
-				{
-					Debug.Log(LOGPREFIX + "Error: " + www.error);
-				}
+
+				Debug.Log(LOGPREFIX + "Error: " + www.error);
 			}
 
 		}
@@ -200,8 +195,6 @@ public class LogUploader : MonoBehaviour
 		{ 
 			//
 		}
-
-		yield break;
 	}
 
 	public bool PostToChat(string format = "Analysis for this bomb: {0}", string emote = "copyThis")

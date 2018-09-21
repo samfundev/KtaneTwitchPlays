@@ -97,11 +97,11 @@ public class KMHoldableCommander
 		}
 	}
 
-	public IEnumerator LetGoBomb()
+	private IEnumerator LetGoBomb()
 	{
 		if (FloatingHoldable.GetComponent<FloatingHoldable>().HoldState != global::FloatingHoldable.HoldStateEnum.Held) yield break;
 
-		IEnumerator turnCoroutine = Hold(true);
+		IEnumerator turnCoroutine = Hold();
 		while (turnCoroutine.MoveNext())
 		{
 			yield return turnCoroutine.Current;
@@ -109,7 +109,7 @@ public class KMHoldableCommander
 
 		while (FloatingHoldable.GetComponent<FloatingHoldable>().HoldState == global::FloatingHoldable.HoldStateEnum.Held)
 		{
-			DeselectObject(Selectable.GetComponent<Selectable>());
+			DeselectObject();
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
@@ -125,7 +125,7 @@ public class KMHoldableCommander
 		selectableManager.HandleFaceSelection();
 	}
 
-	private void SelectObject(Selectable selectable)
+	private static void SelectObject(Selectable selectable)
 	{
 		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
 		selectable.HandleSelect(true);
@@ -134,13 +134,13 @@ public class KMHoldableCommander
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject(Selectable selectable)
+	private static void DeselectObject()
 	{
 		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
 		selectableManager.HandleCancel();
 	}
 
-	private IEnumerator ForceHeldRotation(bool frontFace, float duration)
+	private static IEnumerator ForceHeldRotation(bool frontFace, float duration)
 	{
 		SelectableManager selectableManager = KTInputManager.Instance.SelectableManager;
 		Transform baseTransform = selectableManager.GetBaseHeldObjectTransform();
@@ -201,12 +201,12 @@ public class KMHoldableCommander
 		RotateByLocalQuaternion(target);
 	}
 
-	public MonoBehaviour Holdable;
+	private MonoBehaviour Holdable;
 	public HoldableHandler Handler;
 	public string ID = null;
 
-	public MonoBehaviour Selectable;
-	public MonoBehaviour FloatingHoldable;
+	private MonoBehaviour Selectable;
+	private MonoBehaviour FloatingHoldable;
 
-	private bool _heldFrontFace => KTInputManager.Instance.SelectableManager.GetZSpin() > 270f || KTInputManager.Instance.SelectableManager.GetZSpin() < 90f;
+	private static bool _heldFrontFace => KTInputManager.Instance.SelectableManager.GetZSpin() > 270f || KTInputManager.Instance.SelectableManager.GetZSpin() < 90f;
 }

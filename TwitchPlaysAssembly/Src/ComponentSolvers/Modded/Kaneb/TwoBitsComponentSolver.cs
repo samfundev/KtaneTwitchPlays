@@ -8,7 +8,7 @@ public class TwoBitsComponentSolver : ComponentSolver
 {
 	private readonly Component c;
 
-	protected enum TwoBitsState
+	private enum TwoBitsState
 	{
 		Inactive,
 		Idle,

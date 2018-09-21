@@ -14,45 +14,43 @@ public class EmojiMathComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length == 2 && commands[0] == "submit")
+		if (commands.Length != 2 || commands[0] != "submit") yield break;
+		List<int> buttonIndexes = new List<int>();
+		bool negative = false;
+
+		int index = 0;
+		foreach (char c in commands[1])
 		{
-			List<int> buttonIndexes = new List<int>();
-			bool negative = false;
-
-			int index = 0;
-			foreach (char c in commands[1].ToCharArray())
+			if (c == '-' && index == 0)
 			{
-				if (c == '-' && index == 0)
+				negative = true;
+			}
+			else
+			{
+				if (int.TryParse(c.ToString(), out int num))
 				{
-					negative = true;
+					buttonIndexes.Add(num);
 				}
 				else
 				{
-					if (int.TryParse(c.ToString(), out int num))
-					{
-						buttonIndexes.Add(num);
-					}
-					else
-					{
-						yield break;
-					}
+					yield break;
 				}
-
-				index++;
-			}
-			
-			if (negative != negativeActive)
-			{
-				yield return DoInteractionClick(_buttons[10]);
-				negativeActive = negative;
 			}
 
-			foreach (int ind in buttonIndexes) yield return DoInteractionClick(_buttons[ind]);
-				
-			yield return DoInteractionClick(_buttons[11]);
+			index++;
 		}
+			
+		if (negative != negativeActive)
+		{
+			yield return DoInteractionClick(_buttons[10]);
+			negativeActive = negative;
+		}
+
+		foreach (int ind in buttonIndexes) yield return DoInteractionClick(_buttons[ind]);
+				
+		yield return DoInteractionClick(_buttons[11]);
 	}
 
 	static EmojiMathComponentSolver()

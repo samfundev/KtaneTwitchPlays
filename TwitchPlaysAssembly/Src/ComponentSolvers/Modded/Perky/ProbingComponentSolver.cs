@@ -14,7 +14,7 @@ public class ProbingComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] split = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		if (_wires == null || _wires[0] == null || _wires[1] == null || _wires[2] == null || _wires[3] == null ||
 			_wires[4] == null || _wires[5] == null)
 			yield break;
@@ -49,7 +49,7 @@ public class ProbingComponentSolver : ComponentSolver
 		yield return "strike";
 	}
 
-	IEnumerator EnsureWiresConnected(int red, int blue)
+	private IEnumerator EnsureWiresConnected(int red, int blue)
 	{
 		int x = (red + 1) % 6;
 		while (x == red || x == blue)
@@ -76,7 +76,7 @@ public class ProbingComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_wires[blue]);
 	}
 
-	IEnumerator ConnectWires(int red, int blue)
+	private IEnumerator ConnectWires(int red, int blue)
 	{
 		yield return DoInteractionClick(_wires[red]);
 		yield return DoInteractionClick(_wires[blue]);

@@ -17,15 +17,15 @@ public class MurderComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.");
 	}
 
-	IEnumerable CycleThroughCategory(int index, string search = null)
+	private IEnumerable CycleThroughCategory(int index, string search = null)
 	{
-		int length = (index == 2) ? 9 : 4;
+		int length = index == 2 ? 9 : 4;
 		//float delay = (search != null) ? 0.05f : 1.0f; // Doesn't seem to be used.
-		KMSelectable button = _buttons[(index * 2) + 1];
+		KMSelectable button = _buttons[index * 2 + 1];
 		for (int i = 0; i < length; i++)
 		{
-			if ((search != null) &&
-				(_display[index].text.ToLowerInvariant().EndsWith(search)))
+			if (search != null &&
+				_display[index].text.ToLowerInvariant().EndsWith(search))
 			{
 				yield return true;
 				break;
@@ -44,29 +44,28 @@ public class MurderComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[6]);
 			yield break;
 		}
-		else if (inputCommand.StartsWith("cycle"))
+
+		if (inputCommand.StartsWith("cycle"))
 		{
-			bool cycleAll = (inputCommand.Equals("cycle"));
+			bool cycleAll = inputCommand.Equals("cycle");
 			for (int i = 0; i < 3; i++)
 			{
-				if ((!cycleAll) && (!inputCommand.EndsWith(NameTypes[i]))) continue;
+				if (!cycleAll && !inputCommand.EndsWith(NameTypes[i])) continue;
 
 				yield return inputCommand;
 				yield return null;
-				var j = 0.0;
-				foreach (var item in CycleThroughCategory(i))
+				foreach (object item in CycleThroughCategory(i))
 				{
-					if (i == 2) j = 0.8;
-					else j = 1.5;
+					double j = i == 2 ? 0.8 : 1.5;
 					DoInteractionClick((MonoBehaviour) item);
-					yield return "trywaitcancel " + j.ToString() + " The murder cycle command was cancelled";
+					yield return "trywaitcancel " + j + " The murder cycle command was cancelled";
 				}
 			}
 			yield break;
 		}
 
-		bool[] set = new bool[3] { false, false, false };
-		bool[] tried = new bool[3] { false, false, false };
+		bool[] set = { false, false, false };
+		bool[] tried = { false, false, false };
 
 		List<Match> matches = Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)").Cast<Match>()
 			.Where(match => Array.IndexOf(Commands, match.Groups[1].ToString()) > -1).ToList();
@@ -99,9 +98,9 @@ public class MurderComponentSolver : ComponentSolver
 
 			tried[catIndex] = true;
 
-			foreach (var item in CycleThroughCategory(catIndex, value))
+			foreach (object item in CycleThroughCategory(catIndex, value))
 			{
-				if ((item is bool b) && b)
+				if (item is bool b && b)
 				{
 					yield return null;
 					yield return null;
@@ -112,13 +111,13 @@ public class MurderComponentSolver : ComponentSolver
 			}
 		}
 
-		if ((set[0]) && (set[1]) && (set[2]))
+		if (set[0] && set[1] && set[2])
 		{
 			yield return DoInteractionClick(_buttons[6]);
 		}
 		else
 		{
-			for (var i = 0; i < 3; i++)
+			for (int i = 0; i < 3; i++)
 			{
 				if (!tried[i] || set[i]) continue;
 				yield return "unsubmittablepenalty";
@@ -167,14 +166,14 @@ public class MurderComponentSolver : ComponentSolver
 	private static FieldInfo _solutionValueField = null;
 	private static FieldInfo _isActivatedField = null;
 
-	private static readonly string[] People = new string[6] { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
-	private static readonly string[] Weapons = new string[6] { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };
-	private static readonly string[] Rooms = new string[9] { "Ballroom", "Billiard Room", "Conservatory", "Dining Room", "Hall", "Kitchen", "Library", "Lounge", "Study"};
+	private static readonly string[] People = { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
+	private static readonly string[] Weapons = { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };
+	private static readonly string[] Rooms = { "Ballroom", "Billiard Room", "Conservatory", "Dining Room", "Hall", "Kitchen", "Library", "Lounge", "Study"};
 
-	private static readonly string[] Commands = new string[3] { "it was", "with the", "in the" };
-	private static readonly string[] NameTypes = new string[3] { "people", "weapons", "rooms" };
-	private static readonly string[][] NameSpellings = new string[3][] { People, Weapons, Rooms };
-	private static readonly string[] NameMisspelled = new string[3] {"Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}."};
+	private static readonly string[] Commands = { "it was", "with the", "in the" };
+	private static readonly string[] NameTypes = { "people", "weapons", "rooms" };
+	private static readonly string[][] NameSpellings = { People, Weapons, Rooms };
+	private static readonly string[] NameMisspelled = {"Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}."};
 
 	private readonly object _component = null;
 	private readonly KMSelectable[] _buttons = null;

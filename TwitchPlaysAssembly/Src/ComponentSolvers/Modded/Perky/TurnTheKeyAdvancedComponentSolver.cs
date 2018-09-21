@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		((KMSelectable) _rightKey).OnInteract = () => HandleKey(RightBeforeA, RightAfterA, _rightKeyTurnedField, _leftKeyTurnedField, _beforeRightKeyField, _onRightKeyTurnMethod, _rightKeyAnimatorField);
 	}
 
-	private bool HandleKey(string[] modulesBefore, string[] modulesAfter, FieldInfo keyTurned, FieldInfo otherKeyTurned, FieldInfo beforeKeyField, MethodInfo onKeyTurn, FieldInfo animatorField)
+	private bool HandleKey(string[] modulesBefore, IEnumerable<string> modulesAfter, FieldInfo keyTurned, FieldInfo otherKeyTurned, FieldInfo beforeKeyField, MethodInfo onKeyTurn, FieldInfo animatorField)
 	{
 		if (!GetValue(_activatedField) || GetValue(keyTurned)) return false;
 		KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
@@ -42,12 +43,10 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 			if (TwitchPlaySettings.data.DisableTurnTheKeysSoftLock && bombInfo.GetSolvedModuleNames().Any(modulesBefore.Contains))
 				bombModule.HandleStrike(); //If so, Award a strike for it.
 
-			if (GetValue(otherKeyTurned))
-			{
-				int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
-				TwitchPlaySettings.AddRewardBonus(2 * modules);
-				IRCConnection.Instance.SendMessage("Reward increased by {0} for defusing module !{1} ({2}).", modules * 2, Code, bombModule.ModuleDisplayName);
-			}
+			if (!GetValue(otherKeyTurned)) return false;
+			int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
+			TwitchPlaySettings.AddRewardBonus(2 * modules);
+			IRCConnection.Instance.SendMessage("Reward increased by {0} for defusing module !{1} ({2}).", modules * 2, Code, bombModule.ModuleDisplayName);
 		}
 		else
 		{
@@ -82,7 +81,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.Trim().ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length != 2 || commands[0] != "turn")
 			yield break;
@@ -139,8 +138,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	private readonly MonoBehaviour _leftKey = null;
 	private readonly MonoBehaviour _rightKey = null;
 
-	private static string[] LeftAfterA = new string[]
-	{
+	private static readonly string[] LeftAfterA = {
 		"Password",
 		"Crazy Talk",
 		"Who's on First",
@@ -149,8 +147,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		"Orientation Cube"
 	};
 
-	private static string[] LeftBeforeA = new string[]
-	{
+	private static readonly string[] LeftBeforeA = {
 		"Maze",
 		"Memory",
 		"Complicated Wires",
@@ -158,8 +155,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		"Cryptography"
 	};
 
-	private static string[] RightAfterA = new string[]
-	{
+	private static readonly string[] RightAfterA = {
 		"Morse Code",
 		"Wires",
 		"Two Bits",
@@ -168,8 +164,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		"Round Keypad"
 	};
 
-	private static string[] RightBeforeA = new string[]
-	{
+	private static readonly string[] RightBeforeA = {
 		"Semaphore",
 		"Combination Lock",
 		"Simon Says",

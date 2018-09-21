@@ -10,7 +10,7 @@ public class AntiTrollShim : ComponentSolverShim
 		_trollCommands = trollCommands ?? new Dictionary<string, string>();
 	}
 
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string[] commands, string response)
+	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, IEnumerable<string> commands, string response)
 		: base(bombCommander, bombComponent, moduleType)
 	{
 		_trollCommands = new Dictionary<string, string>();

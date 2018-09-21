@@ -79,7 +79,8 @@ public class BombCommander
 	#endregion
 
 	#region Helper Methods
-	public IEnumerator HoldBomb(bool frontFace = true)
+
+	private IEnumerator HoldBomb(bool frontFace = true)
 	{
 		IEnumerator gameRoomHoldBomb = GameRoom.Instance?.BombCommanderHoldBomb(Bomb, frontFace);
 		bool continueInvocation = true;
@@ -107,14 +108,12 @@ public class BombCommander
 			doForceRotate = true;
 		}
 
-		if (doForceRotate)
+		if (!doForceRotate) yield break;
+		float holdTime = FloatingHoldable.PickupTime;
+		IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
+		while (forceRotationCoroutine.MoveNext())
 		{
-			float holdTime = FloatingHoldable.PickupTime;
-			IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
-			while (forceRotationCoroutine.MoveNext())
-			{
-				yield return forceRotationCoroutine.Current;
-			}
+			yield return forceRotationCoroutine.Current;
 		}
 	}
 
@@ -155,7 +154,7 @@ public class BombCommander
 		if (!continueInvocation || FloatingHoldable == null) yield break;
 		if (FloatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
 
-		IEnumerator turnBombCoroutine = HoldBomb(true);
+		IEnumerator turnBombCoroutine = HoldBomb();
 		while (turnBombCoroutine.MoveNext())
 		{
 			yield return turnBombCoroutine.Current;
@@ -163,12 +162,12 @@ public class BombCommander
 
 		while (FloatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
 		{
-			DeselectObject(Selectable);
+			DeselectObject();
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
 
-	public IEnumerator ShowEdgework(Match edgeworkMatch)
+	private IEnumerator ShowEdgework(Match edgeworkMatch)
 	{
 		const string allEdges = "all edges";
 		IEnumerator gameRoomShowEdgework = GameRoom.Instance?.BombCommanderBombEdgework(Bomb, edgeworkMatch);
@@ -329,13 +328,6 @@ public class BombCommander
 				returnToFace = DoFreeYRotate(-180.0f, 90.0f, 0.0f, 0.0f, 0.3f);
 				break;
 			default:
-			case "top right":
-			case "right top":
-			case "tr":
-			case "rt":
-			case "45":
-			case "-45":
-			case allEdges:
 				returnToFace = DoFreeYRotate(-225.0f + offset, 90.0f, 0.0f, 0.0f, 0.3f);
 				break;
 		}
@@ -350,13 +342,13 @@ public class BombCommander
 
 	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null)
 	{
-		return widgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(str => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>(str));
+		return widgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>);
 	}
 
 	public void FillEdgework(bool silent = false)
 	{
 		List<string> edgework = new List<string>();
-		Dictionary<string, string> portNames = new Dictionary<string, string>()
+		Dictionary<string, string> portNames = new Dictionary<string, string>
 		{
 			{ "RJ45", "RJ" },
 			{ "StereoRCA", "RCA" },
@@ -388,10 +380,16 @@ public class BombCommander
 
 		foreach (var indicator in indicators)
 		{
-			if (indicator["on"] == "True")
-				indicator["on"] = "*";
-			else if (indicator["on"] == "False")
-				indicator["on"] = "";
+			switch (indicator["on"])
+			{
+				case "True":
+					indicator["on"] = "*";
+					break;
+				case "False":
+					indicator["on"] = "";
+					break;
+			}
+
 			if (indicator.ContainsKey("display"))
 				indicator["label"] = indicator["display"] + "(" + indicator["color"] + ")";
 		}
@@ -480,7 +478,7 @@ public class BombCommander
 		int originalLayer = -1;
 		for (int i = 0; i < 32 && originalLayer < 0; i++)
 		{
-			if ((cam.cullingMask & (1 << i)) != (1 << i)) continue;
+			if ((cam.cullingMask & (1 << i)) != 1 << i) continue;
 			originalLayer = i;
 		}
 
@@ -502,7 +500,7 @@ public class BombCommander
 		}
 	}
 
-	public void CauseStrike(string reason)
+	private void CauseStrike(string reason)
 	{
 		StrikeSource strikeSource = new StrikeSource
 		{
@@ -526,7 +524,7 @@ public class BombCommander
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject(Selectable selectable)
+	private void DeselectObject()
 	{
 		_selectableManager.HandleCancel();
 	}
@@ -621,7 +619,7 @@ public class BombCommander
 		}
 		else
 		{
-			Debug.Log(string.Format("[Bomb] Strike from TwitchPlays! {0} / {1} strikes", StrikeCount, StrikeLimit));
+			Debug.Log($"[Bomb] Strike from TwitchPlays! {StrikeCount} / {StrikeLimit} strikes");
 			CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeCount);
 			float[] rates = { 1, 1.25f, 1.5f, 1.75f, 2 };
 			timerComponent.SetRateModifier(rates[Math.Min(strikeCount, 4)]);
@@ -631,7 +629,7 @@ public class BombCommander
 
 	public bool IsSolved => Bomb.IsSolved();
 
-	public float CurrentTimerElapsed => timerComponent.TimeElapsed;
+	private float CurrentTimerElapsed => timerComponent.TimeElapsed;
 
 	public float CurrentTimer
 	{
@@ -666,7 +664,7 @@ public class BombCommander
 
 	public int NumberModules => bombSolvableModules;
 
-	private static string[] solveBased = new string[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN" };
+	private static string[] solveBased = new[] { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN" };
 	private bool removedSolveBasedModules = false;
 	public void RemoveSolveBasedModules()
 	{
@@ -690,8 +688,8 @@ public class BombCommander
 	#endregion
 
 	public Bomb Bomb = null;
-	public Selectable Selectable = null;
-	public FloatingHoldable FloatingHoldable = null;
+	private Selectable Selectable = null;
+	private FloatingHoldable FloatingHoldable = null;
 	public DateTime BombTimeStamp;
 	public Dictionary<string, List<TwitchComponentHandle>> SolvedModules;
 
@@ -699,7 +697,7 @@ public class BombCommander
 
 	public TwitchBombHandle twitchBombHandle = null;
 	public TimerComponent timerComponent = null;
-	public WidgetManager widgetManager = null;
+	private WidgetManager widgetManager = null;
 	public int bombSolvableModules;
 	public int bombSolvedModules;
 	public float bombStartingTimer;

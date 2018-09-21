@@ -99,7 +99,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 			}
 
 			_keyTurnTimes.Clear();
-			for (int i = (OtherModes.ZenModeOn ? 45 : 3); i < (OtherModes.ZenModeOn ? 3600 : (BombCommander.CurrentTimer - 45)); i += 3)
+			for (int i = OtherModes.ZenModeOn ? 45 : 3; i < (OtherModes.ZenModeOn ? 3600 : BombCommander.CurrentTimer - 45); i += 3)
 			{
 				_keyTurnTimes.Add(i);
 			}
@@ -135,7 +135,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		while (!BombComponent.IsSolved)
 		{
 			int time = Mathf.FloorToInt(BombCommander.CurrentTimer);
-			if (((!OtherModes.ZenModeOn && time < expectedTime) || (OtherModes.ZenModeOn && time > expectedTime)) &&
+			if ((!OtherModes.ZenModeOn && time < expectedTime || OtherModes.ZenModeOn && time > expectedTime) &&
 				!(bool)_solvedField.GetValue(BombComponent.GetComponent(_componentType)) &&
 				!TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate)
 			{
@@ -147,7 +147,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var commands = inputCommand.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		string[] commands = inputCommand.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length != 2 || !commands[0].Equals("turn", StringComparison.InvariantCultureIgnoreCase))
 			yield break;
@@ -185,7 +185,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		{
 			timeRemaining = (int) (timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
 
-			if ((!OtherModes.ZenModeOn && timeRemaining < timeTarget) || (OtherModes.ZenModeOn && timeRemaining > timeTarget))
+			if (!OtherModes.ZenModeOn && timeRemaining < timeTarget || OtherModes.ZenModeOn && timeRemaining > timeTarget)
 			{
 				yield return "sendtochaterror The bomb timer has already gone past the time specified.";
 				yield break;
