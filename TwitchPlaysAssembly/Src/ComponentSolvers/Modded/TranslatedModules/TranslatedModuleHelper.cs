@@ -4,7 +4,7 @@ using System.Reflection;
 
 public static class TranslatedModuleHelper
 {
-	private static readonly Dictionary<string, string> ManualCodeAddons = new Dictionary<string, string>()
+	private static readonly Dictionary<string, string> ManualCodeAddons = new Dictionary<string, string>
 	{
 		{"en", "" },
 		{"cu", null },

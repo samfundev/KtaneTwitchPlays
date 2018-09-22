@@ -20,20 +20,20 @@ public class SeaShellsComponentSolver : ComponentSolver
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length < 2 || !commands[0].Equals("press")) yield break;
-		List<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant()).ToList();
+		IEnumerable<string> buttonLabels = _buttons.Select(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant());
 
 		if (buttonLabels.Any(label => label == " ")) yield break;
 		{
 			yield return null;
 
-			IEnumerable<string> submittedText = commands.Where((_, i) => i > 0);
+			IEnumerable<string> submittedText = commands.Skip(1);
 			List<string> fixedLabels = new List<string>();
 			foreach (string text in submittedText)
 			{
 				IEnumerable<string> matchingLabels = buttonLabels.Where(label => label.Contains(text));
 
 				int matchedCount = matchingLabels.Count();
-				if (buttonLabels.Any(label => label.Equals(text)))
+				if (buttonLabels.Contains(text))
 				{
 					fixedLabels.Add(text);
 				}
@@ -55,15 +55,13 @@ public class SeaShellsComponentSolver : ComponentSolver
 			int startingStage = (int) _stageField.GetValue(_component);
 			foreach (string fixedLabel in fixedLabels)
 			{
-				KMSelectable button = _buttons[buttonLabels.IndexOf(fixedLabel)];
+				KMSelectable button = _buttons[buttonLabels.ToList().IndexOf(fixedLabel)];
 				DoInteractionClick(button);
 
 				yield return new WaitForSeconds(0.1f);
 
 				if (startingStage != (int) _stageField.GetValue(_component))
-				{
 					yield break;
-				}
 			}
 		}
 	}

@@ -61,11 +61,8 @@ public class ResistorsComponentSolver : ComponentSolver
 
 				foreach (int? pinIndex in pinIndices)
 				{
-					if (pinIndex != null)
-					{
-						KMSelectable pinSelectable = _pins[(int) pinIndex];
-						DoInteractionClick(pinSelectable);
-					}
+					KMSelectable pinSelectable = _pins[(int) pinIndex];
+					DoInteractionClick(pinSelectable);
 
 					yield return new WaitForSeconds(0.1f);
 				}
@@ -77,17 +74,18 @@ public class ResistorsComponentSolver : ComponentSolver
 		if (commands.Length == 2 && commands[0].EqualsAny("hit", "press", "click"))
 			commands = commands.Skip(1).ToArray();
 
-		// ReSharper disable once SwitchStatementMissingSomeCases
-		switch (commands.Length)
+		if (commands.Length != 1) yield break;
+
+		if (commands[0].EqualsAny("check", "submit"))
 		{
-			case 1 when commands[0].EqualsAny("check", "submit"):
-				yield return null;
-				yield return DoInteractionClick(_checkButton);
-				break;
-			case 1 when commands[0].EqualsAny("clear", "reset"):
-				yield return null;
-				yield return DoInteractionClick(_clearButton);
-				break;
+			yield return null;
+			yield return DoInteractionClick(_checkButton);
+		}
+
+		else if (commands[0].EqualsAny("clear", "reset"))
+		{
+			yield return null;
+			yield return DoInteractionClick(_clearButton);
 		}
 	}
 

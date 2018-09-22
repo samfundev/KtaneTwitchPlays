@@ -16,9 +16,7 @@ public class LetterKeysComponentSolver : ComponentSolver
 		if (!inputCommand.StartsWith("press ", System.StringComparison.InvariantCultureIgnoreCase)) yield break;
 		Match match = Regex.Match(inputCommand, "[1-4a-d]", RegexOptions.IgnoreCase);
 		if (!match.Success)
-		{
 			yield break;
-		}
 
 		if (int.TryParse(match.Value, out int buttonID))
 		{

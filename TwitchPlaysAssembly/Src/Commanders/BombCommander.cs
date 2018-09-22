@@ -357,8 +357,8 @@ public class BombCommander
 		};
 
 		var batteries = QueryWidgets<int>(KMBombInfo.QUERYKEY_GET_BATTERIES).ToList();
-		edgework.Add(batteries.All(x => (new[] {1, 2}).Contains(x["numbatteries"]))
-			? $"{batteries.Sum(x => x["numbatteries"])}B {batteries.Count()}H"
+		edgework.Add(batteries.All(x => new[] {1, 2}.Contains(x["numbatteries"]))
+			? $"{batteries.Sum(x => x["numbatteries"])}B {batteries.Count}H"
 			: batteries.OrderBy(x => x["numbatteries"]).Select(x => x["numbatteries"]).Distinct()
 				.Select(holder => batteries.Count(x => x["numbatteries"] == holder) + "x[" + (holder == 0 ? "Empty" : holder.ToString()) + "]").Join());
 
@@ -380,15 +380,7 @@ public class BombCommander
 
 		foreach (var indicator in indicators)
 		{
-			switch (indicator["on"])
-			{
-				case "True":
-					indicator["on"] = "*";
-					break;
-				case "False":
-					indicator["on"] = "";
-					break;
-			}
+			indicator["on"] = indicator["on"] == "True" ? "*" : "";
 
 			if (indicator.ContainsKey("display"))
 				indicator["label"] = indicator["display"] + "(" + indicator["color"] + ")";
