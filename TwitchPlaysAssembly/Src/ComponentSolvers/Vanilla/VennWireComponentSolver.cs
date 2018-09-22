@@ -30,24 +30,22 @@ public class VennWireComponentSolver : ComponentSolver
 			}
 			wireIndex--;
 
-			if (wireIndex >= 0 && wireIndex < _wires.Length)
-			{
-				if (_wires[wireIndex].Snipped)
-					continue;
+			if (wireIndex < 0 || wireIndex >= _wires.Length) continue;
+			if (_wires[wireIndex].Snipped)
+				continue;
 
-				yield return wireIndexString.Value;
+			yield return wireIndexString.Value;
 
-				yield return "trycancel";
-				VennSnippableWire wire = _wires[wireIndex];
-				yield return DoInteractionClick(wire, string.Format("cutting wire {0}", wireIndexString.Value));
-			}
+			yield return "trycancel";
+			VennSnippableWire wire = _wires[wireIndex];
+			yield return DoInteractionClick(wire, $"cutting wire {wireIndexString.Value}");
 		}
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		VennWireComponent vwc = ((VennWireComponent) BombComponent);
+		VennWireComponent vwc = (VennWireComponent) BombComponent;
 		VennWireRuleSet ruleSet = RuleManager.Instance.VennWireRuleSet;
 		foreach (VennSnippableWire wire in _wires)
 		{

@@ -16,9 +16,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 	{     
 		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("move ", StringComparison.InvariantCultureIgnoreCase))
-		{
 			yield break;
-		}
 
 		inputCommand = inputCommand.Substring(5);
 		MatchCollection matches = Regex.Matches(inputCommand, @"[udlr]", RegexOptions.IgnoreCase);
@@ -31,13 +29,11 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 		foreach (Match move in matches)
 		{
 			KeypadButton button = _buttons[ buttonIndex[ move.Value.ToLowerInvariant() ] ];
-			
-			if (button != null)
-			{
-				yield return move.Value;
-				yield return "trycancel";
-				yield return DoInteractionClick(button);
-			}            
+
+			if (button == null) continue;
+			yield return move.Value;
+			yield return "trycancel";
+			yield return DoInteractionClick(button);
 		}
 	}
 	
@@ -46,9 +42,9 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 		{"u", 0}, {"l", 1}, {"r", 2}, {"d", 3}
 	};
 
-	private int GetLocationFromCell(MazeCell cell)
+	private static int GetLocationFromCell(MazeCell cell)
 	{
-		return (cell.Y * 10) + cell.X;
+		return cell.Y * 10 + cell.X;
 	}
 
 	private readonly Stack<int> _mazeStack = new Stack<int>();
@@ -60,23 +56,23 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 			_explored = new bool[60];
 			startXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).CurrentCell);
 		}
-		var endXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).GoalCell);
+		int endXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).GoalCell);
 
 
-		var x = startXY % 10;
-		var y = startXY / 10;
+		int x = startXY % 10;
+		int y = startXY / 10;
 
-		if ((x > 5) || (y > 5) || (endXY == 66)) return false;
+		if (x > 5 || y > 5 || endXY == 66) return false;
 		//var directions = _mazes[maze, y, x];
-		var cell = ((InvisibleWallsComponent) BombComponent).Maze.GetCell(x, y);
-		var directions = new[] { cell.WallAbove, cell.WallBelow, cell.WallLeft, cell.WallRight };
+		MazeCell cell = ((InvisibleWallsComponent) BombComponent).Maze.GetCell(x, y);
+		bool[] directions = { cell.WallAbove, cell.WallBelow, cell.WallLeft, cell.WallRight };
 		if (startXY == endXY) return true;
 		_explored[startXY] = true;
 
-		var directionInt = new[] { -10, 10, -1, 1 };
-		var directionReturn = new[] { 0, 3, 1, 2 };
+		int[] directionInt = { -10, 10, -1, 1 };
+		int[] directionReturn = { 0, 3, 1, 2 };
 
-		for (var i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			if (directions[i]) continue;
 			if (_explored[startXY + directionInt[i]]) continue;

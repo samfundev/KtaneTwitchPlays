@@ -17,41 +17,33 @@ public class MemoryComponentSolver : ComponentSolver
 		string[] commandParts = inputCommand.ToLowerInvariant().Split(' ');
 
 		if (commandParts.Length != 2)
-		{
 			yield break;
-		}
 
 		if (!int.TryParse(commandParts[1], out int buttonNumber))
-		{
 			yield break;
-		}
 
-		if (buttonNumber >= 1 && buttonNumber <= 4)
+		if (buttonNumber < 1 || buttonNumber > 4) yield break;
+		if (commandParts[0].EqualsAny("position", "pos", "p"))
 		{
-			if (commandParts[0].EqualsAny("position", "pos", "p"))
-			{
-				yield return "position";
+			yield return "position";
 				
-				yield return DoInteractionClick(_buttons[buttonNumber - 1]);
-			}
-			else if (commandParts[0].EqualsAny("label", "lab", "l"))
+			yield return DoInteractionClick(_buttons[buttonNumber - 1]);
+		}
+		else if (commandParts[0].EqualsAny("label", "lab", "l"))
+		{
+			foreach(KeypadButton button in _buttons)
 			{
-				foreach(KeypadButton button in _buttons)
-				{
-					if (button.GetText().Equals(buttonNumber.ToString()))
-					{
-						yield return "label";
-						yield return DoInteractionClick(button);
-						break;
-					}
-				}
+				if (!button.GetText().Equals(buttonNumber.ToString())) continue;
+				yield return "label";
+				yield return DoInteractionClick(button);
+				break;
 			}
 		}
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		MemoryComponent mc = ((MemoryComponent) BombComponent);
+		MemoryComponent mc = (MemoryComponent) BombComponent;
 		while (!BombComponent.IsActive) yield return true;
 		while (!BombComponent.IsSolved)
 		{

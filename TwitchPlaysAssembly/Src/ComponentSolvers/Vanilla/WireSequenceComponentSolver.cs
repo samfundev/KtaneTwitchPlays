@@ -57,9 +57,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 		{
 			if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase) &&
 				!inputCommand.StartsWith("c ", StringComparison.InvariantCultureIgnoreCase))
-			{
 				yield break;
-			}
 			string[] sequence = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 			foreach (string wireIndexString in sequence.Skip(1))
@@ -84,7 +82,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 				WireSequenceWire wire = GetWire(wireIndex);
 				if (wire == null) yield break;
 				if (wire.Snipped || buttons.ContainsKey(wire)) continue;
-				buttons.Add(wire, string.Format("cutting Wire {0}.", wireIndex + 1));
+				buttons.Add(wire, $"cutting Wire {wireIndex + 1}.");
 			}
 
 			yield return "wire sequence";
@@ -126,15 +124,13 @@ public class WireSequenceComponentSolver : ComponentSolver
 		
 		for (int i = 0; i < 4; i++)
 		{
-			while (((WireSequenceComponent)BombComponent).IsChangingPage)
-			{
+			while (((WireSequenceComponent) BombComponent).IsChangingPage)
 				yield return true;
-			}
 
 			if (!CanInteractWithWire(i * 3)) continue;
 			for (int j = 0; j < 3; j++)
 			{
-				var wire = _wireSequence[(i*3)+j];
+				var wire = _wireSequence[i*3+j];
 				if (wire.NoWire || !RuleManager.Instance.WireSequenceRuleSet.ShouldBeSnipped(wire.Color, wire.Number, wire.To) || wire.IsSnipped) continue;
 				yield return DoInteractionClick(wire.Wire);
 			}
@@ -144,8 +140,8 @@ public class WireSequenceComponentSolver : ComponentSolver
 	}
 
 	private static Type _wireSequenceComponentType = null;
-	private static FieldInfo _wireSequenceField = null;
-	private static FieldInfo _currentPageField = null;
+	private static readonly FieldInfo _wireSequenceField = null;
+	private static readonly FieldInfo _currentPageField = null;
 
 	private readonly List<WireSequenceComponent.WireConfiguration> _wireSequence = null;
 	private readonly Selectable _upButton = null;

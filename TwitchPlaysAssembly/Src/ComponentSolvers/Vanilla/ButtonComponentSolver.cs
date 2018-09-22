@@ -37,9 +37,7 @@ public class ButtonComponentSolver : ComponentSolver
 
 			IEnumerator releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
 			while (releaseCoroutine.MoveNext())
-			{
 				yield return releaseCoroutine.Current;
-			}
 		}
 		else if (!_held && inputCommand.Equals("hold"))
 		{
@@ -52,31 +50,23 @@ public class ButtonComponentSolver : ComponentSolver
 		else if (_held)
 		{
 			string[] commandParts = inputCommand.Split(' ');
-			if (commandParts.Length == 2 && commandParts[0].Equals("release"))
+			if (commandParts.Length != 2 || !commandParts[0].Equals("release")) yield break;
+			IEnumerator releaseCoroutine;
+
+			if (!isModdedSeed)
 			{
-				IEnumerator releaseCoroutine;
-
-				if (!isModdedSeed)
-				{
-					if (!int.TryParse(commandParts[1], out int second))
-					{
-						yield break;
-					}
-					if (second >= 0 && second <= 9)
-						releaseCoroutine = ReleaseCoroutineVanilla(second);
-					else
-						yield break;
-				}
+				if (!int.TryParse(commandParts[1], out int second))
+					yield break;
+				if (second >= 0 && second <= 9)
+					releaseCoroutine = ReleaseCoroutineVanilla(second);
 				else
-				{
-					releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
-				}
-
-				while (releaseCoroutine.MoveNext())
-				{
-					yield return releaseCoroutine.Current;
-				}
+					yield break;
 			}
+			else
+				releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
+
+			while (releaseCoroutine.MoveNext())
+				yield return releaseCoroutine.Current;
 		}
 	}
 
@@ -96,7 +86,7 @@ public class ButtonComponentSolver : ComponentSolver
 				_held = false;
 			}
 
-			yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+			yield return $"trycancel The button was not {(_held ? "released" : "tapped")} due to a request to cancel.";
 		}
 	}
 
@@ -119,7 +109,7 @@ public class ButtonComponentSolver : ComponentSolver
 				case 2 when int.TryParse(split[0], out minutesInt) && int.TryParse(split[1], out secondsInt):
 				case 3 when int.TryParse(split[0], out hoursInt) && int.TryParse(split[1], out minutesInt) && int.TryParse(split[2], out secondsInt):
 				case 4 when int.TryParse(split[0], out daysInt) && int.TryParse(split[1], out hoursInt) && int.TryParse(split[2], out minutesInt) && int.TryParse(split[3], out secondsInt):
-					result.Add((daysInt * 86400) + (hoursInt * 3600) + (minutesInt * 60) + secondsInt);
+					result.Add(daysInt * 86400 + hoursInt * 3600 + minutesInt * 60 + secondsInt);
 					break;
 				default:
 					yield break;
@@ -140,28 +130,35 @@ public class ButtonComponentSolver : ComponentSolver
 		{
 			int r = result[i];
 			if (!minutes && !OtherModes.ZenModeOn)
-			{
-				waitingMusic &= ((target + (r > target ? 60 : 0)) - r) > 30;
-			}
+				waitingMusic &= target + (r > target ? 60 : 0) - r > 30;
 			else if (!minutes)
-			{
-				waitingMusic &= ((r + (r < target ? 60 : 0)) - target) > 30;
-			}
+				waitingMusic &= r + (r < target ? 60 : 0) - target > 30;
 			else if (!OtherModes.ZenModeOn)
 			{
-				if (r > target) { result.RemoveAt(i); continue; }
-				waitingMusic &= (target - r) > 30;
+				if (r > target)
+				{
+					result.RemoveAt(i);
+					continue;
+				}
+
+				waitingMusic &= target - r > 30;
 			}
 			else
 			{
-				if (r < target) { result.RemoveAt(i); continue; }
-				waitingMusic &= (r - target) > 30;
+				if (r < target)
+				{
+					result.RemoveAt(i);
+					continue;
+				}
+
+				waitingMusic &= r - target > 30;
 			}
 		}
 
 		if (!result.Any())
 		{
-			yield return string.Format("sendtochaterror The button was not {0} because all of your specfied times are {1} than the time remaining.", _held ? "released" : "tapped", OtherModes.ZenModeOn ? "less" : "greater");
+			yield return
+				$"sendtochaterror The button was not {(_held ? "released" : "tapped")} because all of your specified times are {(OtherModes.ZenModeOn ? "less" : "greater")} than the time remaining.";
 			yield break;
 		}
 
@@ -170,48 +167,45 @@ public class ButtonComponentSolver : ComponentSolver
 
 		while (result.All(x => x != target))
 		{
-			yield return string.Format("trycancel The button was not {0} due to a request to cancel.", _held ? "released" : "tapped");
+			yield return $"trycancel The button was not {(_held ? "released" : "tapped")} due to a request to cancel.";
 			target = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
 			if (!minutes) target %= 60;
 		}
 
 		if (!_held)
-		{
 			yield return DoInteractionClick(_button);
-		}
 		else
-		{
 			DoInteractionEnd(_button);
-		}
+
 		_held = false;
 	}
 
-	protected static Rule ForcedSolveRule()
+	private static Rule ForcedSolveRule()
 	{
-		var rule = new Rule();
+		Rule rule = new Rule();
 		rule.Queries.Add(new Query { Property = ButtonForceSolveQuery, Args = new Dictionary<string, object>() });
 		rule.SolutionArgs = new Dictionary<string, object>();
 		rule.Solution = ButtonForceSolveSolution;
 		return rule;
 	}
 
-	protected static QueryableButtonProperty ButtonForceSolveQuery = new QueryableButtonProperty
+	private static readonly QueryableButtonProperty ButtonForceSolveQuery = new QueryableButtonProperty
 	{
 		Name = "forcesolve",
-		Text = $"If the user with AccessLevel.Admin or higher has issued !# solve on this Big Button instance on Twitch Plays",
-		QueryFunc = ((BombComponent comp, Dictionary<string, object> args) => true)
+		Text = "If the user with AccessLevel.Admin or higher has issued !# solve on this Big Button instance on Twitch Plays",
+		QueryFunc = ((comp, args) => true)
 	};
 
-	protected static Solution ButtonForceSolveSolution = new Solution
+	private static readonly Solution ButtonForceSolveSolution = new Solution
 	{
 		Text = "Force solve The Button.",
-		SolutionMethod = (BombComponent comp, Dictionary<string, object> args) => 0
+		SolutionMethod = (comp, args) => 0
 	};
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		var ruleset = RuleManager.Instance.ButtonRuleSet;
+		ButtonRuleSet ruleset = RuleManager.Instance.ButtonRuleSet;
 		ruleset.HoldRuleList.Insert(0, ForcedSolveRule());
 		ruleset.RuleList.Insert(0, ForcedSolveRule());
 		if (!_held)
