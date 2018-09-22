@@ -33,11 +33,12 @@ public class CoroutineQueue : MonoBehaviour
 	public void AddToQueue(IEnumerator subcoroutine)
 	{
 		_coroutineQueue.Enqueue(subcoroutine);
+		queueModified = true;
 	}
 
 	public void AddToQueue(IEnumerator subcoroutine, int bombID)
 	{
-		_coroutineQueue.Enqueue(subcoroutine);
+		AddToQueue(subcoroutine);
 		_bombIDProcessed.Enqueue(bombID);
 	}
 
@@ -146,6 +147,7 @@ public class CoroutineQueue : MonoBehaviour
 	private bool _processingForcedSolve = false;
 	private Coroutine _activeForceSolveCoroutine = null;
 
+	public bool queueModified = false;
 	private Queue<IEnumerator> _coroutineQueue = null;
 	private bool _processing = false;
 	private Coroutine _activeCoroutine = null;

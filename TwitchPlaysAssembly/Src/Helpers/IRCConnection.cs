@@ -164,6 +164,7 @@ public class IRCConnection : MonoBehaviour
 					bool isCommand = message.Text.StartsWith("!");
 
 					TwitchMessage twitchMessage = null;
+					CoroutineQueue coroutineQueue = TwitchPlaysService.Instance.coroutineQueue;
 					if (isCommand)
 					{
 						highlightGroup.alpha = 1;
@@ -176,9 +177,11 @@ public class IRCConnection : MonoBehaviour
 						TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HighlightMessage(twitchMessage));
 					}
 
+					coroutineQueue.queueModified = false;
 					OnMessageReceived.Invoke(message);
 
-					if (isCommand) TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
+					if (coroutineQueue.queueModified == false) Destroy(twitchMessage.gameObject);
+					else if (isCommand) TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
 				}
 				
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
@@ -209,6 +212,8 @@ public class IRCConnection : MonoBehaviour
 
 	IEnumerator HighlightMessage(TwitchMessage twitchMessage)
 	{
+		if (twitchMessage == null) yield break; // twitchMessage could be null if the original message never added any coroutines to the queue.
+
 		StartCoroutine(twitchMessage.DoBackgroundColorChange(twitchMessage.highlightColor));
 		yield break;
 	}
