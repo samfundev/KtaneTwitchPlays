@@ -233,9 +233,7 @@ public class ModuleCameras : MonoBehaviour
 	public Text TimerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
 	public Text TimerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
 	public Text StrikesPrefab { get => _data.strikesPrefab; set => _data.strikesPrefab = value; }
-	public Text StrikeLimitPrefab { get => _data.strikeLimitPrefab; set => _data.strikeLimitPrefab = value; }
 	public Text SolvesPrefab { get => _data.solvesPrefab; set => _data.solvesPrefab = value; }
-	public Text TotalModulesPrefab { get => _data.totalModulesPrefab; set => _data.totalModulesPrefab = value; }
 	public Text ConfidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
 	public Camera CameraPrefab { get => _data.cameraPrefab; set => _data.cameraPrefab = value; }
 	public RectTransform BombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
@@ -497,31 +495,14 @@ public class ModuleCameras : MonoBehaviour
 		StartCoroutine(UpdateStrikesCoroutine(delay));
 	}
 
-	public void UpdateStrikeLimit()
-	{
-		if (currentBomb == null) return;
-		currentTotalStrikes = currentBomb.StrikeLimit;
-		string totalStrikesText = currentTotalStrikes.ToString();
-		Debug.Log(LogPrefix + "Updating strike limit to " + totalStrikesText);
-		StrikeLimitPrefab.text = "/" + totalStrikesText;
-	}
-
 	public void UpdateSolves()
 	{
 		if (currentBomb == null) return;
 		currentSolves = currentBomb.bombSolvedModules;
-		string solves = currentSolves.ToString().PadLeft(currentBomb.bombSolvableModules.ToString().Length, Char.Parse("0"));
-		Debug.Log(LogPrefix + "Updating solves to " + solves);
-		SolvesPrefab.text = solves;
-	}
-
-	public void UpdateTotalModules()
-	{
-		if (currentBomb == null) return;
 		currentTotalModules = currentBomb.bombSolvableModules;
-		string total = currentTotalModules.ToString();
-		Debug.Log(LogPrefix + "Updating total modules to " + total);
-		TotalModulesPrefab.text = "/" + total;
+		string solves = currentSolves.ToString().PadLeft(currentTotalModules.ToString().Length, char.Parse("0"));
+		Debug.Log(LogPrefix + "Updating solves to " + solves);
+		SolvesPrefab.text = $"{solves}<size=25>/{currentTotalModules}</size>";
 	}
 
 	public void UpdateConfidence()
@@ -534,9 +515,7 @@ public class ModuleCameras : MonoBehaviour
 			string pts = "+" + string.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
 			ConfidencePrefab.text = pts;
 			StrikesPrefab.color = Color.yellow;
-			StrikeLimitPrefab.color = Color.yellow;
 			StrikesPrefab.text = conf;
-			StrikeLimitPrefab.text = "";
 		}
 		else if (OtherModes.ZenModeOn)
 		{
@@ -544,10 +523,8 @@ public class ModuleCameras : MonoBehaviour
 			string pts = "+" + string.Format("{0:0}", TwitchPlaySettings.GetRewardBonus());
 			ConfidencePrefab.text = pts;
 			StrikesPrefab.color = Color.red;
-			StrikeLimitPrefab.color = Color.red;
 			if(currentBomb != null)
 				StrikesPrefab.text = currentBomb.StrikeCount.ToString();
-			StrikeLimitPrefab.text = "";
 		}
 
 		else if (OtherModes.VSModeOn)
@@ -555,9 +532,7 @@ public class ModuleCameras : MonoBehaviour
 			int bossHealth = OtherModes.GetBossHealth();
 			int teamHealth = OtherModes.GetTeamHealth();
 			StrikesPrefab.color = Color.cyan;
-			StrikeLimitPrefab.color = Color.cyan;
 			ConfidencePrefab.color = Color.red;
-			StrikeLimitPrefab.text = "";
 			StrikesPrefab.text = $"{teamHealth} HP";
 			ConfidencePrefab.text = $"{bossHealth} HP";
 		}
@@ -624,9 +599,7 @@ public class ModuleCameras : MonoBehaviour
 		currentBomb = bomb;
 		UpdateHeader();
 		UpdateStrikes();
-		UpdateStrikeLimit();
 		UpdateSolves();
-		UpdateTotalModules();
 		UpdateConfidence();
 	}
 	#endregion
@@ -643,9 +616,9 @@ public class ModuleCameras : MonoBehaviour
 		if (currentBomb == null) yield break;
 		currentStrikes = currentBomb.StrikeCount;
 		currentTotalStrikes = currentBomb.StrikeLimit;
-		string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, Char.Parse("0"));
+		string strikesText = currentStrikes.ToString().PadLeft(currentTotalStrikes.ToString().Length, char.Parse("0"));
 		Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
-		StrikesPrefab.text = strikesText;
+		StrikesPrefab.text = $"{strikesText}<size=25>/{currentTotalStrikes}</size>";
 	}
 
 	private void AddModuleToStack(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)

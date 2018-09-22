@@ -297,7 +297,6 @@ public class TwitchBombHandle : MonoBehaviour
 							else
 								IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from"), userNickName, !isWhisper);
 							BombMessageResponder.moduleCameras.UpdateStrikes();
-							BombMessageResponder.moduleCameras.UpdateStrikeLimit();
 						}
 						break;
 				}
