@@ -31,9 +31,7 @@ public class PasswordComponentSolver : ComponentSolver
 
 					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[spinnerIndex - 1]);
 					while (spinnerCoroutine.MoveNext())
-					{
 						yield return spinnerCoroutine.Current;
-					}
 				}
 			}
 			else
@@ -42,9 +40,7 @@ public class PasswordComponentSolver : ComponentSolver
 				{
 					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[i]);
 					while (spinnerCoroutine.MoveNext())
-					{
 						yield return spinnerCoroutine.Current;
-					}
 				}
 			}
 		}
@@ -54,9 +50,7 @@ public class PasswordComponentSolver : ComponentSolver
 
 			IEnumerator solveCoroutine = SolveCoroutine(inputCommand.Trim().ToLowerInvariant());
 			while (solveCoroutine.MoveNext())
-			{
 				yield return solveCoroutine.Current;
-			}
 		}
 	}
 
@@ -86,11 +80,10 @@ public class PasswordComponentSolver : ComponentSolver
 			}
 
 			//Break out of the sequence if a column spinner doesn't have a matching character
-			if (char.ToLowerInvariant(spinner.GetCurrentChar()) != char.ToLowerInvariant(characters[characterIndex]))
-			{
-				yield return "unsubmittablepenalty";
-				yield break;
-			}
+			if (char.ToLowerInvariant(spinner.GetCurrentChar()) ==
+				char.ToLowerInvariant(characters[characterIndex])) continue;
+			yield return "unsubmittablepenalty";
+			yield break;
 		}
 
 		yield return DoInteractionClick(_submitButton);
@@ -113,6 +106,6 @@ public class PasswordComponentSolver : ComponentSolver
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 
-	private List<CharSpinner> _spinners = null;
+	private readonly List<CharSpinner> _spinners = null;
 	private readonly KeypadButton _submitButton = null;
 }

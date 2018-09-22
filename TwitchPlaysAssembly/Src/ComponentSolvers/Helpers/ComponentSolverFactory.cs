@@ -214,11 +214,12 @@ public static class ComponentSolverFactory
 		//These modules are not built into TP, but they are created by notable people.
 
 		//AAces
+		ModComponentSolverInformation["boggle"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["characterShift"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = true, statusLightLeft = true};
-		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = true };
+		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = true };
 		ModComponentSolverInformation["equations"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["subways"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["timeKeeper"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };

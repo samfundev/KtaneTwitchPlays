@@ -31,11 +31,9 @@ public static class GeneralExtensions
 			foreach (int timeLength in timeLengths)
 			{
 				int time = (int) (seconds / timeLength);
-				if (time > 0 || timeParts.Count > 0)
-				{
-					timeParts.Add(time);
-					seconds -= time * timeLength;
-				}
+				if (time <= 0 && timeParts.Count <= 0) continue;
+				timeParts.Add(time);
+				seconds -= time * timeLength;
 			}
 		}
 
@@ -53,6 +51,8 @@ public static class GeneralExtensions
 
 		while (enumerator.MoveNext()) stringBuilder.Append(separator).Append(enumerator.Current);
 
+		enumerator.Dispose();
+
 		return stringBuilder.ToString();
 	}
 
@@ -62,25 +62,21 @@ public static class GeneralExtensions
 	}
 
 	//String wrapping code from http://www.java2s.com/Code/CSharp/Data-Types/ForcesthestringtowordwrapsothateachlinedoesntexceedthemaxLineLength.htm
-	public static string Wrap(this string str, int maxLength)
-	{
-		return Wrap(str, maxLength, "");
-	}
 
-	public static string Wrap(this string str, int maxLength, string prefix)
+	public static string Wrap(this string str, int maxLength, string prefix = "")
 	{
 		if (string.IsNullOrEmpty(str)) return "";
 		if (maxLength <= 0) return prefix + str;
 
-		var lines = new List<string>();
+		List<string> lines = new List<string>();
 
 		// breaking the string into lines makes it easier to process.
 		foreach (string line in str.Split("\n".ToCharArray()))
 		{
-			var remainingLine = line.Trim();
+			string remainingLine = line.Trim();
 			do
 			{
-				var newLine = GetLine(remainingLine, maxLength - prefix.Length);
+				string newLine = GetLine(remainingLine, maxLength - prefix.Length);
 				lines.Add(newLine);
 				remainingLine = remainingLine.Substring(newLine.Length).Trim();
 				// Keep iterating as int as we've got words remaining 
@@ -126,7 +122,8 @@ public static class GeneralExtensions
 
 	public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int N)
 	{
-		return source.Skip(Math.Max(0, source.Count() - N));
+		IEnumerable<T> enumerable = source.ToList();
+		return enumerable.Skip(Math.Max(0, enumerable.Count() - N));
 	}
 
 	public static bool RegexMatch(this string str, params string[] patterns)
@@ -164,16 +161,14 @@ public static class GeneralExtensions
 	{
 		if (!string.IsNullOrEmpty(str) && !string.IsNullOrEmpty(value)) return str.Equals(value);
 		if (str == null && value == null) return true;
-		if (str == string.Empty && value == string.Empty) return true;
-		return false;
+		return str == string.Empty && value == string.Empty;
 	}
 
 	public static bool TryEquals(this string str, string value, StringComparison comparisonType)
 	{
 		if (!string.IsNullOrEmpty(str) && !string.IsNullOrEmpty(value)) return str.Equals(value, comparisonType);
 		if (str == null && value == null) return true;
-		if (str == string.Empty && value == string.Empty) return true;
-		return false;
+		return str == string.Empty && value == string.Empty;
 	}
 
 	/// <summary>
@@ -192,9 +187,9 @@ public static class GeneralExtensions
 	public static void AddSafe<K, V>(this IDictionary<K, List<V>> dic, K key, V value)
 	{
 		if (dic == null)
-			throw new ArgumentNullException("dic");
+			throw new ArgumentNullException(nameof(dic));
 		if (key == null)
-			throw new ArgumentNullException("key", "Null values cannot be used for keys in dictionaries.");
+			throw new ArgumentNullException(nameof(key), "Null values cannot be used for keys in dictionaries.");
 		if (!dic.ContainsKey(key))
 			dic[key] = new List<V>();
 		dic[key].Add(value);
@@ -202,7 +197,7 @@ public static class GeneralExtensions
 
 	public static bool TryParseTime(this string timeString, out float time)
 	{
-		int[] multiplier = new int[] {0, 1, 60, 3600, 86400};
+		int[] multiplier = {0, 1, 60, 3600, 86400};
 
 		string[] split = timeString.Split(new[] {':'}, StringSplitOptions.None);
 		float[] splitFloat = split.Where(x => float.TryParse(x, out _)).Select(float.Parse).ToArray();

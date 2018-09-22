@@ -8,8 +8,6 @@ using UnityEngine;
 
 public abstract class ComponentSolver
 {
-	public delegate IEnumerator RegexResponse(Match match);
-
 	#region Constructors
 	protected ComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
 	{
@@ -51,20 +49,14 @@ public abstract class ComponentSolver
 
 		IEnumerator subcoroutine = null;
 		if (message.StartsWith("send to module ", StringComparison.InvariantCultureIgnoreCase))
-		{
 			message = message.Substring(15);
-		}
 		else
-		{
 			subcoroutine = RespondToCommandCommon(message, userNickName);
-		}
 
 		if (subcoroutine == null || !subcoroutine.MoveNext())
 		{
 			if (_responded)
-			{
 				yield break;
-			}
 
 			if (_zoom)
 				message = message.Substring(4).Trim();
@@ -93,10 +85,9 @@ public abstract class ComponentSolver
 						switch (subcoroutine.Current)
 						{
 							case string currentString:
-								if (SendToTwitchChat(currentString, userNickName) == SendToTwitchChatResponse.InstantResponse)
-								{
+								if (SendToTwitchChat(currentString, userNickName) ==
+									SendToTwitchChatResponse.InstantResponse)
 									yield break;
-								}
 								break;
 						}
 						_responded = true;
@@ -123,17 +114,13 @@ public abstract class ComponentSolver
 				{
 					IEnumerator focusDefocus = BombCommander.Focus(Selectable, FocusDistance, FrontFace);
 					while (focusDefocus.MoveNext())
-					{
 						yield return focusDefocus.Current;
-					}
 
 					yield return new WaitForSeconds(0.5f);
 
 					focusDefocus = BombCommander.Defocus(Selectable, FrontFace);
 					while (focusDefocus.MoveNext())
-					{
 						yield return focusDefocus.Current;
-					}
 
 					yield return new WaitForSeconds(0.5f);
 					_currentUserNickName = null;
@@ -155,9 +142,7 @@ public abstract class ComponentSolver
 
 		IEnumerator focusCoroutine = BombCommander.Focus(Selectable, FocusDistance, FrontFace);
 		while (focusCoroutine.MoveNext())
-		{
 			yield return focusCoroutine.Current;
-		}
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -167,14 +152,10 @@ public abstract class ComponentSolver
 			IEnumerator zoom = BombMessageResponder.moduleCameras?.ZoomCamera(BombComponent, 1);
 			unzoom = BombMessageResponder.moduleCameras?.UnzoomCamera(BombComponent, 1);
 			if (zoom == null || unzoom == null)
-			{
 				_zoom = false;
-			}
 			else
-			{
 				while (zoom.MoveNext())
 					yield return zoom.Current;
-			}
 		}
 
 		bool parseError = false;
@@ -183,18 +164,14 @@ public abstract class ComponentSolver
 		bool exceptionThrown = false;
 		bool trycancelsequence = false;
 
-		while (((_beforeStrikeCount == StrikeCount && !Solved) || DisableOnStrike || TwitchPlaySettings.data.AnarchyMode) && !Detonated)
+		while ((_beforeStrikeCount == StrikeCount && !Solved || DisableOnStrike || TwitchPlaySettings.data.AnarchyMode) && !Detonated)
 		{
 			try
 			{
 				if (!subcoroutine.MoveNext())
-				{
 					break;
-				}
-				else
-				{
-					_responded = true;
-				}
+
+				_responded = true;
 			}
 			catch (Exception e)
 			{
@@ -207,20 +184,18 @@ public abstract class ComponentSolver
 			if (currentValue is string currentString)
 			{
 				if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
-				{
 					_delegatedStrikeUserNickName = userNickName;
-				}
 				else if (currentString.Equals("solve", StringComparison.InvariantCultureIgnoreCase))
-				{
 					_delegatedSolveUserNickName = userNickName;
-				}
 				else if (currentString.Equals("unsubmittablepenalty", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
 
-					int penalty = Math.Max((int)(modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
+					int penalty =
+						Math.Max((int) (modInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty, _currentUserNickName, Code, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
+					IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty,
+						_currentUserNickName, Code, modInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -233,7 +208,8 @@ public abstract class ComponentSolver
 					{
 						CoroutineCanceller.ResetCancel();
 						if (!string.IsNullOrEmpty(match.Groups[1].Value))
-							IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
+							IRCConnection.Instance.SendMessage(
+								$"Sorry @{userNickName}, {match.Groups[1].Value.Trim()}");
 						break;
 					}
 				}
@@ -243,32 +219,32 @@ public abstract class ComponentSolver
 					yield return currentValue;
 					continue;
 				}
-				else if (currentString.RegexMatch(out match, "^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") && float.TryParse(match.Groups[1].Value, out float waitCancelTime))
+				else if (currentString.RegexMatch(out match,
+							"^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") &&
+						float.TryParse(match.Groups[1].Value, out float waitCancelTime))
 				{
 					yield return new WaitForSecondsWithCancel(waitCancelTime, false, this);
 					if (CoroutineCanceller.ShouldCancel)
 					{
 						CoroutineCanceller.ResetCancel();
 						if (!string.IsNullOrEmpty(match.Groups[2].Value))
-							IRCConnection.Instance.SendMessage($"Sorry @{userNickName}, {match.Groups[2].Value.Trim()}");
+							IRCConnection.Instance.SendMessage(
+								$"Sorry @{userNickName}, {match.Groups[2].Value.Trim()}");
 						break;
 					}
 				}
 				// Commands that allow messages to be sent to the chat.
 				else if (SendToTwitchChat(currentString, userNickName) != SendToTwitchChatResponse.NotHandled)
 				{
-					if (currentString.StartsWith("antitroll") && !TwitchPlaySettings.data.EnableTrollCommands && !TwitchPlaySettings.data.AnarchyMode)
+					if (currentString.StartsWith("antitroll") && !TwitchPlaySettings.data.EnableTrollCommands &&
+						!TwitchPlaySettings.data.AnarchyMode)
 						break;
 					//handled
 				}
 				else if (currentString.StartsWith("add strike", StringComparison.InvariantCultureIgnoreCase))
-				{
 					OnStrike(null);
-				}
 				else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
-				{
 					DisableOnStrike = true;
-				}
 				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (_beforeStrikeCount == StrikeCount && !TwitchPlaySettings.data.AnarchyMode)
@@ -277,9 +253,7 @@ public abstract class ComponentSolver
 						if (Solved) OnPass(null);
 					}
 					else if (!TwitchPlaySettings.data.AnarchyMode)
-					{
 						break;
-					}
 				}
 				else if (currentString.StartsWith("autosolve", StringComparison.InvariantCultureIgnoreCase))
 				{
@@ -289,15 +263,18 @@ public abstract class ComponentSolver
 				else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode"))
 				{
 					AwardStrikes(_currentUserNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
-					BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
+					BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
+						modInfo.moduleDisplayName);
 					break;
 				}
-				else if (currentString.RegexMatch(out match, "^(?:detonate|explode) ([0-9]+(?:\\.[0-9])?)") && float.TryParse(match.Groups[1].Value, out float explosionTime))
+				else if (currentString.RegexMatch(out match, "^(?:detonate|explode) ([0-9]+(?:\\.[0-9])?)") &&
+						float.TryParse(match.Groups[1].Value, out float explosionTime))
 				{
 					_delayedExplosionPending = true;
 					if (_delayedExplosionCoroutine != null)
 						ComponentHandle.StopCoroutine(_delayedExplosionCoroutine);
-					_delayedExplosionCoroutine = ComponentHandle.StartCoroutine(DelayedModuleBombExplosion(explosionTime, userNickName));
+					_delayedExplosionCoroutine =
+						ComponentHandle.StartCoroutine(DelayedModuleBombExplosion(explosionTime, userNickName));
 				}
 				else if (currentString.RegexMatch(out match, "^cancel (detonate|explode|detonation|explosion)$"))
 				{
@@ -312,10 +289,9 @@ public abstract class ComponentSolver
 						_musicPlayer.StopMusic();
 						_musicPlayer = null;
 					}
-					else if (!currentString.StartsWith("end ", StringComparison.InvariantCultureIgnoreCase) && _musicPlayer == null)
-					{
+					else if (!currentString.StartsWith("end ", StringComparison.InvariantCultureIgnoreCase) &&
+							_musicPlayer == null)
 						_musicPlayer = MusicPlayer.StartRandomMusic();
-					}
 				}
 				else if (currentString.ToLowerInvariant().Equals("hide camera"))
 				{
@@ -325,21 +301,24 @@ public abstract class ComponentSolver
 						BombMessageResponder.moduleCameras?.HideHUD();
 						IEnumerator hideUI = BombCommander.twitchBombHandle.HideMainUIWindow();
 						while (hideUI.MoveNext())
-						{
 							yield return hideUI.Current;
-						}
 					}
+
 					hideCamera = true;
 				}
-				else if (currentString.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase) && CoroutineCanceller.ShouldCancel)
+				else if (currentString.Equals("cancelled", StringComparison.InvariantCultureIgnoreCase) &&
+						CoroutineCanceller.ShouldCancel)
 				{
 					CoroutineCanceller.ResetCancel();
 					TryCancel = false;
 					break;
 				}
-				else if (currentString.RegexMatch(out match, "^(?:skiptime|settime) ([0-9:.]+)") && match.Groups[1].Value.TryParseTime(out float skipTimeTo))
+				else if (currentString.RegexMatch(out match, "^(?:skiptime|settime) ([0-9:.]+)") &&
+						match.Groups[1].Value.TryParseTime(out float skipTimeTo))
 				{
-					if (BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable && !x.bombComponent.IsSolved).All(x => x.Solver.SkipTimeAllowed))
+					if (BombMessageResponder.Instance.ComponentHandles
+						.Where(x => x.bombID == ComponentHandle.bombID && x.bombComponent.IsSolvable &&
+									!x.bombComponent.IsSolved).All(x => x.Solver.SkipTimeAllowed))
 					{
 						if (ZenMode && BombCommander.timerComponent.TimeRemaining < skipTimeTo)
 							BombCommander.timerComponent.TimeRemaining = skipTimeTo;
@@ -348,11 +327,8 @@ public abstract class ComponentSolver
 							BombCommander.timerComponent.TimeRemaining = skipTimeTo;
 					}
 				}
-				else
-				{
-					if (TwitchPlaySettings.data.EnableDebuggingCommands)
-						DebugHelper.Log($"Unprocessed string: {currentString}");
-				}
+				else if (TwitchPlaySettings.data.EnableDebuggingCommands)
+					DebugHelper.Log($"Unprocessed string: {currentString}");
 			}
 			else if (currentValue is KMSelectable selectable1)
 			{
@@ -372,7 +348,7 @@ public abstract class ComponentSolver
 				foreach (KMSelectable selectable in selectables)
 				{
 					yield return DoInteractionClick(selectable);
-					if ((((_beforeStrikeCount != StrikeCount && !DisableOnStrike) || Solved) && !TwitchPlaySettings.data.AnarchyMode) || (trycancelsequence && CoroutineCanceller.ShouldCancel) || Detonated)
+					if ((_beforeStrikeCount != StrikeCount && !DisableOnStrike || Solved) && !TwitchPlaySettings.data.AnarchyMode || trycancelsequence && CoroutineCanceller.ShouldCancel || Detonated)
 						break;
 				}
 				if (trycancelsequence && CoroutineCanceller.ShouldCancel)
@@ -430,9 +406,7 @@ public abstract class ComponentSolver
 		}
 
 		if (!_responded && !exceptionThrown)
-		{
 			ComponentHandle.CommandInvalid(userNickName);
-		}
 
 		if (needQuaternionReset)
 		{
@@ -446,9 +420,7 @@ public abstract class ComponentSolver
 			BombMessageResponder.moduleCameras?.ShowHUD();
 			IEnumerator showUI = BombCommander.twitchBombHandle.ShowMainUIWindow();
 			while (showUI.MoveNext())
-			{
 				yield return showUI.Current;
-			}
 		}
 
 		if (_musicPlayer != null)
@@ -474,21 +446,15 @@ public abstract class ComponentSolver
 
 
 		if (!parseError)
-		{
 			yield return new WaitForSeconds(0.5f);
-		}
 
 		if (_zoom)
-		{
 			while (unzoom?.MoveNext() ?? false)
 				yield return unzoom.Current;
-		}
 
 		IEnumerator defocusCoroutine = BombCommander.Defocus(Selectable, FrontFace);
 		while (defocusCoroutine.MoveNext())
-		{
 			yield return defocusCoroutine.Current;
-		}
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -522,7 +488,7 @@ public abstract class ComponentSolver
 
 		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
 
-		var chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
+		string chatMsg = string.Format(match.Groups[2].Value, userNickName, ComponentHandle.Code);
 
 		switch (match.Groups[1].Value)
 		{
@@ -577,11 +543,9 @@ public abstract class ComponentSolver
 		if (bombModule != null)
 			return bombModule.ModuleType;
 		KMNeedyModule needyModule = BombComponent.GetComponent<KMNeedyModule>();
-		if (needyModule != null)
-			return needyModule.ModuleType;
-		return null;
+		return needyModule?.ModuleType;
 	}
-
+	
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, float delay) => DoInteractionClick(interactable, null, delay);
 
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, string strikeMessage = null, float delay = 0.1f)
@@ -592,11 +556,9 @@ public abstract class ComponentSolver
 			StrikeMessage = strikeMessage;
 		}
 
-		if (interactable != null)
-		{
-			DoInteractionStart(interactable);
-			DoInteractionEnd(interactable);
-		}
+		if (interactable == null) return new WaitForSeconds(delay);
+		DoInteractionStart(interactable);
+		DoInteractionEnd(interactable);
 		return new WaitForSeconds(delay);
 	}
 
@@ -672,17 +634,12 @@ public abstract class ComponentSolver
 					_delegatedSolveUserNickName = null;
 				}
 				else if (_currentUserNickName != null)
-				{
 					solverNickname = _currentUserNickName;
-				}
 				else if (ComponentHandle?.PlayerName != null)
-				{
 					solverNickname = ComponentHandle.PlayerName;
-				}
 				else
-				{
 					solverNickname = IRCConnection.Instance.ChannelName;
-				}
+
 				AwardSolve(solverNickname, moduleScore);
 			}
 			ComponentHandle?.OnPass(solverNickname);
@@ -701,7 +658,7 @@ public abstract class ComponentSolver
 		BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent, true);
 		CommonReflectedTypeInfo.UpdateTimerDisplayMethod.Invoke(BombCommander.timerComponent, null);
 
-		if ((BombCommander.bombSolvableModules - BombCommander.bombSolvedModules) == 6) //6 solvable modules left
+		if (BombCommander.bombSolvableModules - BombCommander.bombSolvedModules == 6) //6 solvable modules left
 			IRCConnection.Instance.OnMessageReceived.Invoke(new Message("Bomb Factory", "red", "!modules"));
 
 		return false;
@@ -721,9 +678,7 @@ public abstract class ComponentSolver
 		_readyToTurn = false;
 		IEnumerator turnCoroutine = BombCommander.TurnBomb();
 		while (turnCoroutine.MoveNext())
-		{
 			yield return turnCoroutine.Current;
-		}
 
 		yield return new WaitForSeconds(0.5f);
 	}
@@ -736,17 +691,11 @@ public abstract class ComponentSolver
 			_delegatedStrikeUserNickName = null;
 		}
 		else if (_currentUserNickName != null)
-		{
 			AwardStrikes(_currentUserNickName, 0);
-		}
 		else if (ComponentHandle.PlayerName != null)
-		{
 			AwardStrikes(ComponentHandle.PlayerName, 0);
-		}
 		else
-		{
 			AwardStrikes(IRCConnection.Instance.ChannelName, 0);
-		}
 	}
 
 	private bool DisableOnStrike;
@@ -768,18 +717,12 @@ public abstract class ComponentSolver
 			_delegatedStrikeUserNickName = null;
 		}
 		else if (_currentUserNickName != null)
-		{
 			AwardStrikes(_currentUserNickName, 1);
-		}
 		else if (ComponentHandle.PlayerName != null)
-		{
 			AwardStrikes(ComponentHandle.PlayerName, 1);
-		}
 		else
-		{
 			//AwardStrikes(IRCConnection.Instance.ChannelName, 1); - Instead of striking the streamer, decrease the reward
 			AwardStrikes(1);
-		}
 
 		BombMessageResponder.moduleCameras?.UpdateStrikes(true);
 
@@ -823,7 +766,7 @@ public abstract class ComponentSolver
 		return true;
 	}
 
-	public static void HandleForcedSolve(TwitchComponentHandle handle)
+	private static void HandleForcedSolve(TwitchComponentHandle handle)
 	{
 		try
 		{
@@ -849,9 +792,9 @@ public abstract class ComponentSolver
 				handle.Solver._silentlySolve = true;
 				try
 				{
-					var result = handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
-					if (result is IEnumerator)
-						CoroutineQueue.AddForcedSolve((IEnumerator)result);
+					object result = handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
+					if (result is IEnumerator enumerator)
+						CoroutineQueue.AddForcedSolve(enumerator);
 				}
 				catch (Exception ex)
 				{
@@ -885,7 +828,7 @@ public abstract class ComponentSolver
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "An exception occured while silently soving a module:");
+			DebugHelper.LogException(ex, "An exception occured while silently solving a module:");
 		}
 	}
 
@@ -897,80 +840,68 @@ public abstract class ComponentSolver
 			KMBombModule module = bombComponent.GetComponent<KMBombModule>();
 			KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
 			if (module != null)
-			{
-				handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
+				handle = BombMessageResponder.Instance.ComponentHandles
+					.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
 					.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == module);
-			}
 			else if (needyModule != null)
-			{
-				handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
+				handle = BombMessageResponder.Instance.ComponentHandles
+					.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
 					.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == needyModule);
-			}
+
 			if (handle != null)
-			{
 				HandleForcedSolve(handle);
-			}
 			else
 			{
 				if (module != null)
-				{
 					foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles)
-					{
 						h.Solver.AddAbandonedModule(module);
-					}
-				}
+
 				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 				foreach (MonoBehaviour behaviour in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
-				{
 					behaviour.StopAllCoroutines();
-				}
 			}
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "An exception occured while silently soving a module:");
+			DebugHelper.LogException(ex, "An exception occured while silently solving a module:");
 		}
 	}
 
-	private void AwardSolve(string userNickName, int ComponentValue)
+	private void AwardSolve(string userNickName, int componentValue)
 	{
-		if (OtherModes.ZenModeOn) ComponentValue = (int)Math.Ceiling(ComponentValue * 0.20f);
+		if (OtherModes.ZenModeOn) componentValue = (int)Math.Ceiling(componentValue * 0.20f);
 		if (userNickName == null)
-		{
-			TwitchPlaySettings.AddRewardBonus(ComponentValue);
-		}
+			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
 		{
 			string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, ComponentValue, headerText);
-			string RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {ComponentValue}";
+			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
+				headerText);
+			string RecordMessageTone =
+				$"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
 			Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
-			{
-				Leaderboard.Instance?.AddScore(userNickName, ComponentValue);
-			}
+				Leaderboard.Instance?.AddScore(userNickName, componentValue);
 			else
-			{
-				TwitchPlaySettings.AddRewardBonus(ComponentValue);
-			}
+				TwitchPlaySettings.AddRewardBonus(componentValue);
+
 			TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone);
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
 		}
-		if (OtherModes.TimeModeOn)
+
+		if (!OtherModes.TimeModeOn) return;
+		float time = OtherModes.GetAdjustedMultiplier() * componentValue;
+		if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
 		{
-			float time = OtherModes.GetAdjustedMultiplier() * ComponentValue;
-			if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
-			{
-				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
-				IRCConnection.Instance.SendMessage("Bomb time increased by the minimum {0} seconds!", TwitchPlaySettings.data.TimeModeMinimumTimeGained);
-			}
-			else
-			{
-				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
-				IRCConnection.Instance.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
-			}
-			OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
+			BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
+			IRCConnection.Instance.SendMessage("Bomb time increased by the minimum {0} seconds!", TwitchPlaySettings.data.TimeModeMinimumTimeGained);
 		}
+		else
+		{
+			BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
+			IRCConnection.Instance.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
+		}
+		OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 	}
 
 	private void AwardStrikes(int strikeCount)
@@ -989,12 +920,7 @@ public abstract class ComponentSolver
 			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardRewardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
 		if (strikeCount <= 0) return;
 
-		string RecordMessageTone;
-
-		if (!string.IsNullOrEmpty(userNickName))
-			RecordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike";
-		else
-			RecordMessageTone = $"Module ID: {Code} | Module Name: {headerText} | Strike";
+		string RecordMessageTone = !string.IsNullOrEmpty(userNickName) ? $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike" : $"Module ID: {Code} | Module Name: {headerText} | Strike";
 
 		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 
@@ -1017,9 +943,9 @@ public abstract class ComponentSolver
 					tempMessage = "Time";
 			}
 			else
-			{
-				tempMessage = $"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
-			}
+				tempMessage =
+					$"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
+
 			if (BombCommander.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
 			{
 				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
@@ -1036,10 +962,9 @@ public abstract class ComponentSolver
 			BombCommander.StrikeCount = 0;
 			BombMessageResponder.moduleCameras.UpdateStrikes();
 		}
+
 		if (OtherModes.ZenModeOn)
-		{
 			BombCommander.StrikeLimit += strikeCount;
-		}
 
 		if (!string.IsNullOrEmpty(userNickName))
 		{
@@ -1215,7 +1140,7 @@ public abstract class ComponentSolver
 				bool pinAllowed = inputCommand.ToLowerInvariant().EqualsAny("view pin", "viewpin") &&
 								  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode);
 
-				cameraPriority = (pinAllowed) ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
+				cameraPriority = pinAllowed ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
 			}
 			BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
 
@@ -1232,9 +1157,7 @@ public abstract class ComponentSolver
 			}
 
 			if (inputCommand.StartsWith("zoom ", StringComparison.InvariantCultureIgnoreCase))
-			{
 				_zoom = true;
-			}
 		}
 
 		if (inputCommand.Equals("show", StringComparison.InvariantCultureIgnoreCase))
@@ -1242,8 +1165,8 @@ public abstract class ComponentSolver
 			yield return "show";
 			yield return null;
 		}
-		else if (inputCommand.Equals("solve") && ((UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !UnsupportedModule) ||
-				(UnsupportedModule && GetType() != typeof(UnsupportedModComponentSolver))))
+		else if (inputCommand.Equals("solve") && (UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) && !UnsupportedModule ||
+				UnsupportedModule && GetType() != typeof(UnsupportedModComponentSolver)))
 		{
 			SolveModule($"A module ({modInfo.moduleDisplayName}) is being automatically solved.", false);
 			_responded = true;

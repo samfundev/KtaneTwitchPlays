@@ -16,9 +16,7 @@ public class WireSetComponentSolver : ComponentSolver
 	{
 		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("cut ", StringComparison.InvariantCultureIgnoreCase))
-		{
 			yield break;
-		}
 		inputCommand = inputCommand.Substring(4);
 
 		if (!int.TryParse(inputCommand, out int wireIndex) || wireIndex < 1 || wireIndex > _wires.Count) yield break;
@@ -33,5 +31,5 @@ public class WireSetComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_wires[RuleManager.Instance.WireRuleSet.GetSolutionIndex((WireSetComponent) BombComponent)]);
 	}
 
-	private List<SnippableWire> _wires;
+	private readonly List<SnippableWire> _wires;
 }

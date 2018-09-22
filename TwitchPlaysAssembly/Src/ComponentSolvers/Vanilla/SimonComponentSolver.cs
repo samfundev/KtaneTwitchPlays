@@ -16,9 +16,7 @@ public class SimonComponentSolver : ComponentSolver
 	{
 		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase))
-		{
 			yield break;
-		}
 		inputCommand = inputCommand.Substring(6);
 
 		string sequence = "pressing ";
@@ -26,19 +24,17 @@ public class SimonComponentSolver : ComponentSolver
 		{
 			SimonButton button = _buttons[buttonIndex[move.Value.Substring(0, 1).ToLowerInvariant()]];
 
-			if (button != null)
+			if (button == null) continue;
+			yield return move.Value;
+			sequence += move.Value + " ";
+
+			if (CoroutineCanceller.ShouldCancel)
 			{
-				yield return move.Value;
-				sequence += move.Value + " ";
-
-				if (CoroutineCanceller.ShouldCancel)
-				{
-					CoroutineCanceller.ResetCancel();
-					yield break;
-				}
-
-				yield return DoInteractionClick(button, sequence);
+				CoroutineCanceller.ResetCancel();
+				yield break;
 			}
+
+			yield return DoInteractionClick(button, sequence);
 		}
 	}
 
