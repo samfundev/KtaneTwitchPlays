@@ -61,7 +61,7 @@ public class Factory : GameRoom
 		HoldBomb = false;
 	}
 
-	private UnityEngine.Object GetBomb => (_finiteMode || _infiniteMode)  ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
+	private UnityEngine.Object GetBomb => _finiteMode || _infiniteMode  ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
 
 	public override void InitializeBombs(List<Bomb> bombs)
 	{
@@ -210,5 +210,5 @@ public class Factory : GameRoom
 	private static FieldInfo _currentBombField = null;
 
 	private readonly object _factory = null;
-	private object _gameroom = null;
+	private readonly object _gameroom = null;
 }

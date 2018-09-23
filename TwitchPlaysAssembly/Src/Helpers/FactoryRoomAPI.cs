@@ -9,18 +9,12 @@ namespace TwitchPlaysAssembly.Helpers
 	{
 		private static GameObject _gameObject;
 
-		private static IDictionary<string, object> Properties
-		{
-			get
-			{
-				return _gameObject?.GetComponent<IDictionary<string, object>>();
-			}
-		}
+		private static IDictionary<string, object> Properties => _gameObject?.GetComponent<IDictionary<string, object>>();
 
 		//Call this in KMGameState.Setup
 		public static IEnumerator Refresh()
 		{
-			for (var i = 0; i < 4 && _gameObject == null; i++)
+			for (int i = 0; i < 4 && _gameObject == null; i++)
 			{
 				_gameObject = GameObject.Find("Factory_Info");
 				yield return null;

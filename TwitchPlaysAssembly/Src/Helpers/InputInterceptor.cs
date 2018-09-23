@@ -11,7 +11,6 @@ public static class InputInterceptor
 	public static void EnableInput()
 	{
 		foreach (AbstractControls inputSystem in _inputSystems)
-		{
 			try
 			{
 				inputSystem.gameObject.SetActive(true);
@@ -21,13 +20,11 @@ public static class InputInterceptor
 			{
 				DebugHelper.LogException(ex);
 			}
-		}
 	}
 
 	public static void DisableInput()
 	{
 		foreach (AbstractControls inputSystem in _inputSystems)
-		{
 			try
 			{
 				inputSystem.gameObject.SetActive(false);
@@ -36,7 +33,6 @@ public static class InputInterceptor
 			{
 				DebugHelper.LogException(ex);
 			}
-		}
 	}
 
 	private static readonly AbstractControls[] _inputSystems = null;

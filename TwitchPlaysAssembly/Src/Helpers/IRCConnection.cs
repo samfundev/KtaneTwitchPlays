@@ -33,7 +33,7 @@ public class Message
 	public readonly bool IsWhisper;
 
 	/// <summary>
-	/// Creates a duplicate <see cref="Message"/>Message</see> object with the Text changed.
+	/// Creates a duplicate <see cref="Message">Message</see> object with the Text changed.
 	/// </summary>
 	/// <param name="text">The Message's new text.</param>
 	/// <returns>Returns a duplicate <see cref="Message">Message</see> object with the new Text.</returns>
@@ -71,12 +71,9 @@ public class IRCConnection : MonoBehaviour
 		public string GetColor()
 		{
 			Match match = Regex.Match(Command, "[./]color ((>?#[0-9A-F]{6})|Blue|BlueViolet|CadetBlue|Chocolate|Coral|DodgerBlue|Firebrick|GoldenRod|Green|HotPink|OrangeRed|Red|SeaGreen|SpringGreen|YellowGreen)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-			if (match.Success)
-			{
-				string color = match.Groups[1].Value.ToLowerInvariant();
-				return UserColors.TryGetValue(color, out string hexcolor) ? hexcolor : color;
-			}
-			return null;
+			if (!match.Success) return null;
+			string color = match.Groups[1].Value.ToLowerInvariant();
+			return UserColors.TryGetValue(color, out string hexcolor) ? hexcolor : color;
 		}
 
 		public bool CommandIsColor()
@@ -118,17 +115,12 @@ public class IRCConnection : MonoBehaviour
 		public bool TryMatch(string input)
 		{
 			Match match = _matchingRegex.Match(input);
-			if (match.Success)
-			{
-				_action(match.Groups);
-				if (LogLine)
-				{
-					UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
-				}
-				return true;
-			}
+			if (!match.Success) return false;
+			_action(match.Groups);
+			if (LogLine)
+				UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
+			return true;
 
-			return false;
 		}
 
 		public readonly bool LogLine;
@@ -155,7 +147,6 @@ public class IRCConnection : MonoBehaviour
 	private void Update()
 	{
 		lock (_messageQueue)
-		{
 			while (_messageQueue.Count > 0)
 			{
 				Message message = _messageQueue.Dequeue();
@@ -171,8 +162,8 @@ public class IRCConnection : MonoBehaviour
 
 						twitchMessage = Instantiate(messagePrefab, messageScrollContents.transform, false);
 						twitchMessage.SetMessage(string.IsNullOrEmpty(message.UserColorCode)
-							? string.Format("<b>{0}</b>: {1}", message.UserNickName, message.Text)
-							: string.Format("<b><color={2}>{0}</color></b>: {1}", message.UserNickName, message.Text, message.UserColorCode));
+							? $"<b>{message.UserNickName}</b>: {message.Text}"
+							: $"<b><color={message.UserColorCode}>{message.UserNickName}</color></b>: {message.Text}");
 
 						TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HighlightMessage(twitchMessage));
 					}
@@ -187,34 +178,32 @@ public class IRCConnection : MonoBehaviour
 						DebugHelper.LogException(exception, "An exception has occured while invoking OnMessageRecieved:");
 					}
 
-					if (coroutineQueue.queueModified == false) Destroy(twitchMessage.gameObject);
-					else if (isCommand) TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
+					if (coroutineQueue.queueModified == false) Destroy(twitchMessage?.gameObject);
+					else if (isCommand)
+						TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
 				}
-				
+
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
-		}
 
-		if (scrollOutStartTime.Count > 0)
+		if (scrollOutStartTime.Count <= 0) return;
+		float vertScroll = 0;
+		List<TwitchMessage> finishedMessages = new List<TwitchMessage>();
+		foreach (var pair in scrollOutStartTime)
 		{
-			float vertScroll = 0;
-			List<TwitchMessage> finishedMessages = new List<TwitchMessage>();
-			foreach (var pair in scrollOutStartTime)
-			{
-				float alpha = Mathf.Pow(Mathf.Min((Time.time - pair.Value) / 0.167f, 1), 4);
-				if (alpha < 1) vertScroll += alpha * pair.Key.GetComponent<RectTransform>().rect.height;
-				else finishedMessages.Add(pair.Key);
-			}
-
-			foreach (TwitchMessage twitchMessage in finishedMessages)
-			{
-				scrollOutStartTime.Remove(twitchMessage);
-				Destroy(twitchMessage.gameObject);
-			}
-
-			Vector3 localPosition = messageScrollContents.transform.localPosition;
-			messageScrollContents.transform.localPosition = new Vector3(localPosition.x, vertScroll, localPosition.z);
+			float alpha = Mathf.Pow(Mathf.Min((Time.time - pair.Value) / 0.167f, 1), 4);
+			if (alpha < 1) vertScroll += alpha * pair.Key.GetComponent<RectTransform>().rect.height;
+			else finishedMessages.Add(pair.Key);
 		}
+
+		foreach (TwitchMessage twitchMessage in finishedMessages)
+		{
+			scrollOutStartTime.Remove(twitchMessage);
+			Destroy(twitchMessage.gameObject);
+		}
+
+		Vector3 localPosition = messageScrollContents.transform.localPosition;
+		messageScrollContents.transform.localPosition = new Vector3(localPosition.x, vertScroll, localPosition.z);
 	}
 
 	IEnumerator HighlightMessage(TwitchMessage twitchMessage)
@@ -222,7 +211,6 @@ public class IRCConnection : MonoBehaviour
 		if (twitchMessage == null) yield break; // twitchMessage could be null if the original message never added any coroutines to the queue.
 
 		StartCoroutine(twitchMessage.DoBackgroundColorChange(twitchMessage.highlightColor));
-		yield break;
 	}
 
 	IEnumerator HideMessage(TwitchMessage twitchMessage)
@@ -243,7 +231,7 @@ public class IRCConnection : MonoBehaviour
 		if (!_justDisabled)
 			_onDisableState = _state;
 		_justDisabled = true;
-		_state = (_state == IRCConnectionState.Connected) ? IRCConnectionState.Disconnecting : IRCConnectionState.Disconnected;
+		_state = _state == IRCConnectionState.Connected ? IRCConnectionState.Disconnecting : IRCConnectionState.Disconnected;
 	}
 
 	private void OnEnable()
@@ -256,6 +244,7 @@ public class IRCConnection : MonoBehaviour
 		yield return new WaitForSeconds(0.25f);
 		if (!gameObject.activeInHierarchy) yield break;
 		_justDisabled = false;
+		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (_onDisableState)
 		{
 			case IRCConnectionState.Retrying:
@@ -289,22 +278,19 @@ public class IRCConnection : MonoBehaviour
 	{
 		if (!UserAccess.HasAccess(TwitchPlaySettings.data.TwitchPlaysDebugUsername, AccessLevel.Streamer))
 		{
-			foreach (string username in UserAccess.GetUsers().Where(kvp => kvp.Key.StartsWith("_")).Select(kvp => kvp.Key).ToArray())
-			{
+			foreach (string username in UserAccess.GetUsers().Where(kvp => kvp.Key.StartsWith("_"))
+				.Select(kvp => kvp.Key).ToArray())
 				UserAccess.RemoveUser(username, ~AccessLevel.User);
-			}
 			UserAccess.AddUser(TwitchPlaySettings.data.TwitchPlaysDebugUsername, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 			UserAccess.WriteAccessList();
 		}
 
 		if (Instance == null) return;
 
-		if (Instance.UserNickName.StartsWith("_") || force)
-		{
-			Instance.UserNickName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
-			Instance.ChannelName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
-			Instance.CurrentColor = "#" + ColorUtility.ToHtmlStringRGB(TwitchPlaySettings.data.TwitchPlaysDebugUsernameColor);
-		}
+		if (!Instance.UserNickName.StartsWith("_") && !force) return;
+		Instance.UserNickName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
+		Instance.ChannelName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
+		Instance.CurrentColor = "#" + ColorUtility.ToHtmlStringRGB(TwitchPlaySettings.data.TwitchPlaysDebugUsernameColor);
 	}
 
 	public IEnumerator KeepConnectionAlive()
@@ -323,12 +309,10 @@ public class IRCConnection : MonoBehaviour
 				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex])
 				{
 					yield return new WaitForSeconds(0.1f);
-					if (_state == IRCConnectionState.DoNotRetry)
-					{
-						_state = IRCConnectionState.Disconnected;
-						AddTextToHoldable("\nCancelled connection retry attempt");
-						yield break;
-					}
+					if (_state != IRCConnectionState.DoNotRetry) continue;
+					_state = IRCConnectionState.Disconnected;
+					AddTextToHoldable("\nCancelled connection retry attempt");
+					yield break;
 				}
 				stopwatch.Reset();
 
@@ -336,6 +320,7 @@ public class IRCConnection : MonoBehaviour
 				Thread connectionAttempt = new Thread(ConnectToIRC);
 				connectionAttempt.Start();
 				while (connectionAttempt.IsAlive) yield return new WaitForSeconds(0.1f);
+				// ReSharper disable once SwitchStatementMissingSomeCases
 				switch (_state)
 				{
 					case IRCConnectionState.DoNotRetry:
@@ -353,6 +338,7 @@ public class IRCConnection : MonoBehaviour
 			}
 			while (_state == IRCConnectionState.Connected) yield return new WaitForSeconds(0.1f);
 			if (BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
+			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (_state)
 			{
 				case IRCConnectionState.DoNotRetry:
@@ -427,25 +413,16 @@ public class IRCConnection : MonoBehaviour
 				SetDebugUsername(true);
 				AddTextToHoldable("[IRC:Connect] Your settings file is not configured correctly.\nThe following items need to be configured:\n");
 				if (!IsAuthTokenValid(settings.authToken))
-				{
-					AddTextToHoldable("AuthToken - Be sure oauth: is included.\n-   Retrieve from https://twitchapps.com/tmi/");
-				}
+					AddTextToHoldable(
+						"AuthToken - Be sure oauth: is included.\n-   Retrieve from https://twitchapps.com/tmi/");
 				if (!IsUsernameValid(settings.userName))
-				{
 					AddTextToHoldable("userName");
-				}
 				if (!IsUsernameValid(settings.channelName))
-				{
 					AddTextToHoldable("channelName");
-				}
 				if (string.IsNullOrEmpty(settings.serverName))
-				{
 					AddTextToHoldable("serverName - Most likely to be irc.twitch.tv");
-				}
 				if (settings.serverPort < 1 || settings.serverPort > 65535)
-				{
 					AddTextToHoldable("serverPort - Most likely to be 6697");
-				}
 				AddTextToHoldable("\nOpen up the Mod manager holdable, and select \"open mod settings folder\".");
 				return;
 			}
@@ -457,8 +434,8 @@ public class IRCConnection : MonoBehaviour
 			return;
 		}
 
-		Instance._keepConnnectionAlive = Instance.KeepConnectionAlive();
-		Instance.StartCoroutine(Instance._keepConnnectionAlive);
+		Instance._keepConnectionAlive = Instance.KeepConnectionAlive();
+		Instance.StartCoroutine(Instance._keepConnectionAlive);
 	}
 
 	private void ConnectToIRC()
@@ -488,7 +465,7 @@ public class IRCConnection : MonoBehaviour
 			try
 			{
 				AddTextToHoldable("[IRC:Connect] Attempting to set up SSL connection.");
-				SslStream sslStream = new SslStream(networkStream, true, new RemoteCertificateValidationCallback(VerifyServerCertificate));
+				SslStream sslStream = new SslStream(networkStream, true, VerifyServerCertificate);
 				sslStream.AuthenticateAsClient(_settings.serverName);
 
 				DebugHelper.Log($"SSL encrypted: {sslStream.IsEncrypted}.");
@@ -503,11 +480,13 @@ public class IRCConnection : MonoBehaviour
 				{
 					SetDebugUsername(true);
 					sslStream.Close();
+					networkStream.Close();
 					sock.Close();
 					return;
 				}
 
-				_inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
+				NetworkStream stream = networkStream;
+				_inputThread = new Thread(() => InputThreadMethod(inputStream, stream));
 				_inputThread.Start();
 
 				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
@@ -542,16 +521,16 @@ public class IRCConnection : MonoBehaviour
 				_outputThread.Start();
 			}
 
-			SendCommand(string.Format("PASS {0}{1}NICK {2}{1}CAP REQ :twitch.tv/tags{1}CAP REQ :twitch.tv/commands{1}CAP REQ :twitch.tv/membership", _settings.authToken, Environment.NewLine, _settings.userName));
+			SendCommand(
+				$"PASS {_settings.authToken}{Environment.NewLine}NICK {_settings.userName}{Environment.NewLine}CAP REQ :twitch.tv/tags{Environment.NewLine}CAP REQ :twitch.tv/commands{Environment.NewLine}CAP REQ :twitch.tv/membership");
 			AddTextToHoldable("PASS oauth:*****REDACTED******\nNICK {0}\nCAP REQ :twitch.tv/tags\nCAP REQ :twitch.tv/commands\nCAP REQ :twitch.tv/membership", _settings.userName);
 			while (_state == IRCConnectionState.Connecting)
-			{
 				Thread.Sleep(25);
-			}
 		}
 		catch (SocketException ex)
 		{
 			AddTextToHoldable($"[IRC:Connect] Failed to connect to chat IRC {_settings.serverName}:{_settings.serverPort}. Due to the following Socket Exception: {ex.SocketErrorCode} - {ex.Message}");
+			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (ex.SocketErrorCode)
 			{
 				case SocketError.ConnectionRefused:
@@ -626,6 +605,7 @@ public class IRCConnection : MonoBehaviour
 	[StringFormatMethod("message")]
 	public static void SendWhisper(string userNickName, string message, params object[] args)
 	{
+
 		SendMessage(message, userNickName, false, args);
 	}
 
@@ -646,30 +626,24 @@ public class IRCConnection : MonoBehaviour
 		if (Instance == null) return;
 		if (!Instance._silenceMode)
 		{
-			Instance.SendCommand(string.Format("PRIVMSG #{0} :Silence mode on.", Instance._settings.channelName));
+			Instance.SendCommand($"PRIVMSG #{Instance._settings.channelName} :Silence mode on.");
 			lock (Instance._messageQueue)
-			{
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, "Silence mode on.", false, true));
-			}
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor,
+					"Silence mode on.", false, true));
 		}
 		Instance._silenceMode = !Instance._silenceMode;
-		if (!Instance._silenceMode)
-		{
-			Instance.SendCommand($"PRIVMSG #{Instance._settings.channelName} :Silence mode off.");
-			lock (Instance._messageQueue)
-			{
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, "Silence mode off.", false, true));
-			}
-		}
+		if (Instance._silenceMode) return;
+		Instance.SendCommand($"PRIVMSG #{Instance._settings.channelName} :Silence mode off.");
+		lock (Instance._messageQueue)
+			Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor,
+				"Silence mode off.", false, true));
 	}
 
 	public static Color GetUserColor(string userNickName)
 	{
 		if (Instance == null) return Color.black;
 		lock (Instance._userColors)
-		{
 			return Instance._userColors.TryGetValue(userNickName, out Color color) ? color : Color.black;
-		}
 	}
 	#endregion
 
@@ -697,17 +671,13 @@ public class IRCConnection : MonoBehaviour
 	{
 		if (!ColorUtility.TryParseHtmlString(CurrentColor, out Color color)) return;
 		lock (_userColors)
-		{
 			_userColors[_settings.userName] = color;
-		}
 	}
 
 	private void SendCommand(string command)
 	{
 		lock (_commandQueue)
-		{
 			_commandQueue.Enqueue(new Commands(command));
-		}
 	}
 
 	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
@@ -716,9 +686,7 @@ public class IRCConnection : MonoBehaviour
 		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
 			lock (Instance._userColors)
-			{
 				Instance._userColors[userNickName] = color;
-			}
 		}
 
 		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
@@ -774,12 +742,8 @@ public class IRCConnection : MonoBehaviour
 				stopwatch.Start();
 				string buffer = input.ReadLine();
 				foreach (ActionMap action in Actions)
-				{
 					if (action.TryMatch(buffer))
-					{
 						break;
-					}
-				}
 			}
 		}
 		catch
@@ -808,10 +772,9 @@ public class IRCConnection : MonoBehaviour
 					command = _commandQueue.Dequeue();
 				}
 
-				if (command.CommandIsColor() && CurrentColor.Equals(command.GetColor(), StringComparison.InvariantCultureIgnoreCase))
-				{
+				if (command.CommandIsColor() &&
+					CurrentColor.Equals(command.GetColor(), StringComparison.InvariantCultureIgnoreCase))
 					continue;
-				}
 
 				output.WriteLine(command.Command);
 				output.Flush();
@@ -835,31 +798,26 @@ public class IRCConnection : MonoBehaviour
 		{
 			if (_state == IRCConnectionState.Disconnecting)
 			{
-				Commands setColor = new Commands(string.Format("PRIVMSG #{0} :.color {1}", _settings.channelName, ColorOnDisconnect));
+				Commands setColor = new Commands($"PRIVMSG #{_settings.channelName} :.color {ColorOnDisconnect}");
 				if (setColor.CommandIsColor())
 				{
 					AddTextToHoldable("[IRC:Disconnect] Color {0} was requested, setting it now.", ColorOnDisconnect);
 					while (stopWatch.ElapsedMilliseconds < _messageDelay)
-					{
 						Thread.Sleep(25);
-					}
 					output.WriteLine(setColor.Command);
 					output.Flush();
 
 					stopWatch.Reset();
 					stopWatch.Start();
 					while (stopWatch.ElapsedMilliseconds < 1200)
-					{
 						Thread.Sleep(25);
-					}
 				}
 				_state = IRCConnectionState.Disconnected;
 				AddTextToHoldable("[IRC:Disconnect] Disconnected from chat IRC.");
 			}
+
 			lock (_commandQueue)
-			{
 				_commandQueue.Clear();
-			}
 		}
 		catch
 		{
@@ -871,30 +829,20 @@ public class IRCConnection : MonoBehaviour
 
 	private void SetDelay(string badges, string nickname, string channel)
 	{
-		if (channel.Equals(_settings.channelName, StringComparison.InvariantCultureIgnoreCase) &&
-			nickname.Equals(_settings.userName, StringComparison.InvariantCultureIgnoreCase))
-		{
-			_messageDelay = MessageDelayUser;
-			if (string.IsNullOrEmpty(badges))
-			{
-				return;
-			}
+		if (!channel.Equals(_settings.channelName, StringComparison.InvariantCultureIgnoreCase) ||
+			!nickname.Equals(_settings.userName, StringComparison.InvariantCultureIgnoreCase)) return;
+		_messageDelay = MessageDelayUser;
+		if (string.IsNullOrEmpty(badges))
+			return;
 
-			string[] badgeset = badges.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (string badge in badgeset)
-			{
-				if (badge.StartsWith("broadcaster/") ||
-					badge.StartsWith("moderator/") ||
-					badge.StartsWith("admin/") ||
-					badge.StartsWith("global_mod/") ||
-					badge.StartsWith("staff/"))
-				{
-					_messageDelay = MessageDelayMod;
-					_isModerator = true;
-					return;
-				}
-			}
-		}
+		string[] badgeset = badges.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+		if (!badgeset.Any(badge => badge.StartsWith("broadcaster/") ||
+									badge.StartsWith("moderator/") ||
+									badge.StartsWith("admin/") ||
+									badge.StartsWith("global_mod/") ||
+									badge.StartsWith("staff/"))) return;
+		_messageDelay = MessageDelayMod;
+		_isModerator = true;
 	}
 
 	protected void InternalMessageReceived(string userNickName, string userColorCode, string text)
@@ -931,14 +879,8 @@ public class IRCConnection : MonoBehaviour
 	{
 		new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+:(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
 		{
-			if (!string.IsNullOrEmpty(groups[2].Value))
-			{
-				ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
-			}
-			else
-			{
-				ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
-			}
+			ReceiveMessage(!string.IsNullOrEmpty(groups[2].Value) ? groups[2].Value : groups[3].Value, groups[1].Value,
+				groups[5].Value);
 		}),
 
 		new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", delegate(GroupCollection groups)
@@ -961,13 +903,13 @@ public class IRCConnection : MonoBehaviour
 		new ActionMap(@"PING (.+)", delegate(GroupCollection groups)
 		{
 			AddTextToHoldable($"---PING--- ---PONG--- {groups[1].Value}");
-			Instance.SendCommand(string.Format("PONG {0}", groups[1].Value));
+			Instance.SendCommand($"PONG {groups[1].Value}");
 		}, false),
 
 		new ActionMap(@"\S* 001.*", delegate(GroupCollection groups)
 		{
 			AddTextToHoldable(groups[0].Value);
-			Instance.SendCommand(string.Format("JOIN #{0}", Instance._settings.channelName));
+			Instance.SendCommand($"JOIN #{Instance._settings.channelName}");
 			Instance._state = IRCConnectionState.Connected;
 			BombMessageResponder.EnableDisableInput();
 			UserAccess.AddUser(Instance._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
@@ -1025,7 +967,7 @@ public class IRCConnection : MonoBehaviour
 	private Queue<Commands> _commandQueue = new Queue<Commands>();
 	private Dictionary<string, Color> _userColors = new Dictionary<string, Color>();
 	private IRCConnectionState _onDisableState = IRCConnectionState.Disconnected;
-	private IEnumerator _keepConnnectionAlive;
+	private IEnumerator _keepConnectionAlive;
 	#endregion
 }
 

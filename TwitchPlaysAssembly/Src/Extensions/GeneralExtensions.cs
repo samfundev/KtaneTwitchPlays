@@ -37,10 +37,10 @@ public static class GeneralExtensions
 			}
 		}
 
-		string formatedTime = string.Join(":", timeParts.Select((time, i) => timeParts.Count > 2 && i == 0 ? time.ToString() : time.ToString("00")).ToArray());
-		if (addMilliseconds) formatedTime += ((int) (seconds * 100)).ToString(@"\.00");
+		string formattedTime = string.Join(":", timeParts.Select((time, i) => timeParts.Count > 2 && i == 0 ? time.ToString() : time.ToString("00")).ToArray());
+		if (addMilliseconds) formattedTime += ((int) (seconds * 100)).ToString(@"\.00");
 
-		return formatedTime;
+		return formattedTime;
 	}
 
 	public static string Join<T>(this IEnumerable<T> values, string separator = " ")
@@ -92,7 +92,7 @@ public static class GeneralExtensions
 		// The string is less than the max length so just return it.
 		if (str.Length <= maxLength) return str;
 
-		// Search backwords in the string for a whitespace char
+		// Search backwards in the string for a whitespace char
 		// starting with the char one after the maximum length
 		// (if the next char is a whitespace, the last word fits).
 		for (int i = maxLength; i >= 0; i--)

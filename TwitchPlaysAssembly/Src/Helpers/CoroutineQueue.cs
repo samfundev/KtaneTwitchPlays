@@ -18,11 +18,10 @@ public class CoroutineQueue : MonoBehaviour
 			_processing = true;
 			_activeCoroutine = StartCoroutine(ProcessQueueCoroutine());
 		}
-		if (!_processingForcedSolve && _forceSolveQueue.Count > 0)
-		{
-			_processingForcedSolve = true;
-			_activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
-		}
+
+		if (_processingForcedSolve || _forceSolveQueue.Count <= 0) return;
+		_processingForcedSolve = true;
+		_activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
 	}
 
 	public static void AddForcedSolve(IEnumerator subcoroutine)
@@ -44,10 +43,9 @@ public class CoroutineQueue : MonoBehaviour
 
 	public void CancelFutureSubcoroutines()
 	{
-		foreach (TwitchMessage twitchMessage in IRCConnection.Instance.messageScrollContents.GetComponentsInChildren<TwitchMessage>())
-		{
+		foreach (TwitchMessage twitchMessage in IRCConnection.Instance.messageScrollContents
+			.GetComponentsInChildren<TwitchMessage>())
 			twitchMessage.RemoveMessage();
-		}
 
 		_coroutineQueue.Clear();
 		_bombIDProcessed.Clear();

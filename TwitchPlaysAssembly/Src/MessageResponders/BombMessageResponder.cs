@@ -83,7 +83,7 @@ public class BombMessageResponder : MessageResponder
 			: TwitchPlaySettings.data.MultiBombLiveMessage);
 
 		StartCoroutine(AutoFillEdgework());
-		GameRoom.Instance.InitializeGameModes(GameRoom.Instance.InitializeOnLightsOn);
+		GameRoom.InitializeGameModes(GameRoom.Instance.InitializeOnLightsOn);
 	}
 
 	private void OnEnable()

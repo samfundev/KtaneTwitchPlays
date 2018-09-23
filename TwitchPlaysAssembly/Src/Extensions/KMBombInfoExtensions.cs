@@ -113,10 +113,7 @@ public static class KMBombInfoExtensions
 
 	private static IEnumerable<T> GetJSONEntries<T>(KMBombInfo bombInfo, string queryKey, string queryInfo) where T : new()
 	{
-		return bombInfo.QueryWidgets(queryKey, queryInfo).Select(delegate (string queryEntry)
-		{
-			return JsonConvert.DeserializeObject<T>(queryEntry);
-		});
+		return bombInfo.QueryWidgets(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<T>);
 	}
 
 	private static IEnumerable<IndicatorJSON> GetIndicatorEntries(KMBombInfo bombInfo)
@@ -159,7 +156,7 @@ public static class KMBombInfoExtensions
 
 	public static bool IsIndicatorPresent(this KMBombInfo bombInfo, string indicatorLabel)
 	{
-		return GetIndicatorEntries(bombInfo).Any((x) => indicatorLabel.Equals(x.label));
+		return GetIndicatorEntries(bombInfo).Any(x => indicatorLabel.Equals(x.label));
 	}
 
 	public static bool IsIndicatorColored(this KMBombInfo bombInfo, Indicator indicatorLabel, string indicatorColor)
@@ -169,7 +166,7 @@ public static class KMBombInfoExtensions
 
 	public static bool IsIndicatorColored(this KMBombInfo bombInfo, string indicatorLabel, string indicatorColor)
 	{
-		return GetColoredIndicators(bombInfo, indicatorColor).Any((x) => x.Equals(indicatorLabel));
+		return GetColoredIndicators(bombInfo, indicatorColor).Any(x => x.Equals(indicatorLabel));
 	}
 
 	public static bool IsIndicatorColorPresent(this KMBombInfo bombInfo, string indicatorColor)
@@ -184,7 +181,7 @@ public static class KMBombInfoExtensions
 
 	public static bool IsIndicatorOn(this KMBombInfo bombInfo, string indicatorLabel)
 	{
-		return GetIndicatorEntries(bombInfo).Any((x) => x.IsOn() && indicatorLabel.Equals(x.label));
+		return GetIndicatorEntries(bombInfo).Any(x => x.IsOn() && indicatorLabel.Equals(x.label));
 	}
 
 	public static bool IsIndicatorOff(this KMBombInfo bombInfo, Indicator indicatorLabel)
@@ -194,22 +191,22 @@ public static class KMBombInfoExtensions
 
 	public static bool IsIndicatorOff(this KMBombInfo bombInfo, string indicatorLabel)
 	{
-		return GetIndicatorEntries(bombInfo).Any((x) => !x.IsOn() && indicatorLabel.Equals(x.label));
+		return GetIndicatorEntries(bombInfo).Any(x => !x.IsOn() && indicatorLabel.Equals(x.label));
 	}
 
 	public static IEnumerable<string> GetIndicators(this KMBombInfo bombInfo)
 	{
-		return GetIndicatorEntries(bombInfo).Select((x) => x.label);
+		return GetIndicatorEntries(bombInfo).Select(x => x.label);
 	}
 
 	public static IEnumerable<string> GetOnIndicators(this KMBombInfo bombInfo)
 	{
-		return GetIndicatorEntries(bombInfo).Where((x) => x.IsOn()).Select((x) => x.label);
+		return GetIndicatorEntries(bombInfo).Where(x => x.IsOn()).Select(x => x.label);
 	}
 
 	public static IEnumerable<string> GetOffIndicators(this KMBombInfo bombInfo)
 	{
-		return GetIndicatorEntries(bombInfo).Where((x) => !x.IsOn()).Select((x) => x.label);
+		return GetIndicatorEntries(bombInfo).Where(x => !x.IsOn()).Select(x => x.label);
 	}
 
 	public static IEnumerable<string> GetColoredIndicators(this KMBombInfo bombInfo, Indicator label)
@@ -224,48 +221,43 @@ public static class KMBombInfoExtensions
 
 	public static IEnumerable<string> GetColoredIndicators(this KMBombInfo bombInfo, string color = null, string label = null)
 	{
-		var Colors = new List<string> { "Black", "White", "Blue", "Gray", "Green", "Magenta", "Orange", "Purple", "Red", "Yellow" };
+		List<string> Colors = new List<string>
+			{"Black", "White", "Blue", "Gray", "Green", "Magenta", "Orange", "Purple", "Red", "Yellow"};
 		if (color != null)
 		{
 			Colors.RemoveAt(0);
 			Colors.RemoveAt(0);
 			if (color.Equals("Black"))
-			{
 				return GetOffIndicators(bombInfo);
-			}
-			if (color.Equals("White"))
-			{
-				List<string> OnIndicators = new List<string>(GetOnIndicators(bombInfo));
 
-				foreach (string c in Colors)
-				{
-					foreach (string indicator in GetColoredIndicators(bombInfo, c))
-					{
-						OnIndicators.Remove(indicator);
-					}
-				}
-				return OnIndicators;
-			}
+			if (!color.Equals("White"))
+				return GetColorIndicatorEntries(bombInfo)
+					.Where(x => x.color.Equals(color, StringComparison.InvariantCultureIgnoreCase))
+					.Select(x => x.label);
+			List<string> OnIndicators = new List<string>(GetOnIndicators(bombInfo));
 
-			return GetColorIndicatorEntries(bombInfo)
-				.Where((x) => x.color.Equals(color, StringComparison.InvariantCultureIgnoreCase))
-				.Select((x) => x.label);
+			foreach (string c in Colors)
+			foreach (string indicator in GetColoredIndicators(bombInfo, c))
+				OnIndicators.Remove(indicator);
+
+			return OnIndicators;
 		}
-		if (label != null)
+
+		if (label == null) return new List<string>();
+		List<string> colorList = new List<string>();
+		foreach (string c in Colors)
 		{
-			var colorList = new List<string>();
-			foreach (var c in Colors)
-			{
-				colorList.AddRange(from i in bombInfo.GetColoredIndicators(c) where label.Equals(i, StringComparison.InvariantCultureIgnoreCase) select c);
-			}
-			return colorList;
+			colorList.AddRange(from i in bombInfo.GetColoredIndicators(c)
+				where label.Equals(i, StringComparison.InvariantCultureIgnoreCase)
+				select c);
 		}
-		return new List<string>();
+
+		return colorList;
 	}
 
 	public static int GetBatteryCount(this KMBombInfo bombInfo)
 	{
-		return GetBatteryEntries(bombInfo).Sum((x) => x.numbatteries);
+		return GetBatteryEntries(bombInfo).Sum(x => x.numbatteries);
 	}
 
 	public static int GetBatteryCount(this KMBombInfo bombInfo, Battery batteryType)
@@ -275,8 +267,8 @@ public static class KMBombInfoExtensions
 
 	public static int GetBatteryCount(this KMBombInfo bombInfo, int batteryType)
 	{
-		return GetBatteryEntries(bombInfo).Where((x) => x.numbatteries == batteryType)
-			.Sum((x) => x.numbatteries);
+		return GetBatteryEntries(bombInfo).Where(x => x.numbatteries == batteryType)
+			.Sum(x => x.numbatteries);
 	}
 
 	public static int GetBatteryHolderCount(this KMBombInfo bombInfo)
@@ -296,7 +288,7 @@ public static class KMBombInfoExtensions
 
 	public static int GetPortCount(this KMBombInfo bombInfo)
 	{
-		return GetPortEntries(bombInfo).Sum((x) => x.presentPorts.Length);
+		return GetPortEntries(bombInfo).Sum(x => x.presentPorts.Length);
 	}
 
 	public static int GetPortCount(this KMBombInfo bombInfo, Port portType)
@@ -306,7 +298,7 @@ public static class KMBombInfoExtensions
 
 	public static int GetPortCount(this KMBombInfo bombInfo, string portType)
 	{
-		return GetPortEntries(bombInfo).Sum((x) => x.presentPorts.Count((y) => portType.Equals(y)));
+		return GetPortEntries(bombInfo).Sum(x => x.presentPorts.Count(y => portType.Equals(y)));
 	}
 
 	public static int GetPortPlateCount(this KMBombInfo bombInfo)
@@ -316,12 +308,12 @@ public static class KMBombInfoExtensions
 
 	public static IEnumerable<string> GetPorts(this KMBombInfo bombInfo)
 	{
-		return GetPortEntries(bombInfo).SelectMany((x) => x.presentPorts);
+		return GetPortEntries(bombInfo).SelectMany(x => x.presentPorts);
 	}
 
 	public static IEnumerable<string[]> GetPortPlates(this KMBombInfo bombInfo)
 	{
-		return GetPortEntries(bombInfo).Select((x) => x.presentPorts);
+		return GetPortEntries(bombInfo).Select(x => x.presentPorts);
 	}
 
 	public static bool IsPortPresent(this KMBombInfo bombInfo, Port portType)
@@ -331,18 +323,16 @@ public static class KMBombInfoExtensions
 
 	public static bool IsPortPresent(this KMBombInfo bombInfo, string portType)
 	{
-		return GetPortEntries(bombInfo).Any((x) => x.presentPorts != null && x.presentPorts.Any((y) => portType.Equals(y)));
+		return GetPortEntries(bombInfo).Any(x => x.presentPorts != null && x.presentPorts.Any(y => portType.Equals(y)));
 	}
 
 	public static int CountUniquePorts(this KMBombInfo bombInfo)
 	{
 		List<string> ports = new List<string>();
 
-		foreach (var port in GetPorts(bombInfo))
-		{
+		foreach (string port in GetPorts(bombInfo))
 			if (!ports.Contains(port))
 				ports.Add(port);
-		}
 
 		return ports.Count;
 	}
@@ -350,13 +340,11 @@ public static class KMBombInfoExtensions
 	public static bool IsDuplicatePortPresent(this KMBombInfo bombInfo)
 	{
 		List<string> ports = new List<string>();
-		foreach (var port in GetPorts(bombInfo))
-		{
+		foreach (string port in GetPorts(bombInfo))
 			if (!ports.Contains(port))
 				ports.Add(port);
 			else
 				return true;
-		}
 		return false;
 	}
 
@@ -373,28 +361,26 @@ public static class KMBombInfoExtensions
 	public static int CountDuplicatePorts(this KMBombInfo bombInfo)
 	{
 		List<string> ports = new List<string>();
-		foreach (var port in GetPorts(bombInfo))
-		{
+		foreach (string port in GetPorts(bombInfo))
 			if (!ports.Contains(port) && IsDuplicatePortPresent(bombInfo, port))
 				ports.Add(port);
-		}
 		return ports.Count;
 	}
 
 	public static string GetSerialNumber(this KMBombInfo bombInfo)
 	{
-		var ret = GetSerialNumberEntries(bombInfo).FirstOrDefault();
+		SerialNumberJSON ret = GetSerialNumberEntries(bombInfo).FirstOrDefault();
 		return ret?.serial;
 	}
 
 	public static IEnumerable<char> GetSerialNumberLetters(this KMBombInfo bombInfo)
 	{
-		return GetSerialNumber(bombInfo).Where((x) => x < '0' && x > '9');
+		return GetSerialNumber(bombInfo).Where(x => x < '0' && x > '9');
 	}
 
 	public static IEnumerable<int> GetSerialNumberNumbers(this KMBombInfo bombInfo)
 	{
-		return GetSerialNumber(bombInfo).Where((x) => x >= '0' && x <= '9').Select((y) => int.Parse("" + y));
+		return GetSerialNumber(bombInfo).Where(x => x >= '0' && x <= '9').Select(y => int.Parse("" + y));
 	}
 
 	public static bool IsTwoFactorPresent(this KMBombInfo bombInfo)
@@ -409,7 +395,7 @@ public static class KMBombInfoExtensions
 
 	public static IEnumerable<int> GetTwoFactorCodes(this KMBombInfo bombInfo)
 	{
-		return GetTwoFactorEntries(bombInfo).Select((x) => x.twofactor_key);
+		return GetTwoFactorEntries(bombInfo).Select(x => x.twofactor_key);
 	}
 	#endregion
 }

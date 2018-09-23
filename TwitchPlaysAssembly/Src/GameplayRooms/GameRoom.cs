@@ -11,12 +11,12 @@ public abstract class GameRoom
 	public static GameRoom Instance;
 
 	public delegate Type GameRoomType();
-	public delegate bool CreateRoom(UnityEngine.Object[] roomObjects, out GameRoom room);
+	public delegate bool CreateRoom(Object[] roomObjects, out GameRoom room);
 
 	protected bool ReuseBombCommander = false;
 	protected int BombCount;
 
-	public static GameRoomType[] GameRoomTypes =
+	public static readonly GameRoomType[] GameRoomTypes =
 	{
 		//Supported Mod gameplay room types
 		Factory.FactoryType,
@@ -30,7 +30,7 @@ public abstract class GameRoom
 		DefaultGameRoom.RoomType
 	};
 
-	public static CreateRoom[] CreateRooms =
+	public static readonly CreateRoom[] CreateRooms =
 	{
 		Factory.TrySetupFactory,
 		PortalRoom.TryCreatePortalRoom,
@@ -60,7 +60,7 @@ public abstract class GameRoom
 		{
 			BombMessageResponder.Instance.SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
 		}
-		BombCount = (_currentBomb == -1) ? -1 : bombs.Count;
+		BombCount = _currentBomb == -1 ? -1 : bombs.Count;
 		BombMessageResponder.Instance.InitializeModuleCodes();
 	}
 
@@ -124,9 +124,7 @@ public abstract class GameRoom
 				{
 					string nameText = doubleNames[nameIndex, i];
 					if (nameText != null)
-					{
 						bombHandles[i].bombName = nameText;
-					}
 				}
 				break;
 			case 2:
@@ -134,9 +132,7 @@ public abstract class GameRoom
 				break;
 			default:
 				foreach (TwitchBombHandle handle in bombHandles)
-				{
 					handle.bombName = singleNames[rand.Next(0, singleNames.Length)];
-				}
 				break;
 		}
 	}
@@ -150,7 +146,7 @@ public abstract class GameRoom
 	public static Camera SecondaryCamera;
 	public static bool IsMainCamera = true;
 	public static int MainCameraCullingMask;
-	public static int SecondryCameraCullingMask;
+	public static int SecondaryCameraCullingMask;
 	public static void InitializeSecondaryCamera()
 	{
 		
@@ -162,15 +158,13 @@ public abstract class GameRoom
 		_mainCamera.cullingMask |= 0x00002000;
 		SecondaryCamera = Object.Instantiate(_mainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
 		for (int i = 0; i < SecondaryCamera.transform.childCount; i++)
-		{
 			Object.DestroyImmediate(SecondaryCamera.transform.GetChild(i).gameObject);
-		}
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 		SecondaryCamera.gameObject.SetActive(false);
 		DebugHelper.Log($"Main Camera Culling mask = {_mainCamera.cullingMask:X8}\nSecondary Camera Culling mask = {SecondaryCamera.cullingMask:X8}");
 
 		MainCameraCullingMask = _mainCamera.cullingMask;
-		SecondryCameraCullingMask = SecondaryCamera.cullingMask;
+		SecondaryCameraCullingMask = SecondaryCamera.cullingMask;
 	}
 
 	public static void ToggleCamera(bool main)
@@ -191,7 +185,7 @@ public abstract class GameRoom
 	{
 		_mainCamera.cullingMask = MainCameraCullingMask;
 		if(SecondaryCamera != null)
-			SecondaryCamera.cullingMask = SecondryCameraCullingMask;
+			SecondaryCamera.cullingMask = SecondaryCameraCullingMask;
 	}
 
 	public static void ResetCamera()
@@ -200,7 +194,7 @@ public abstract class GameRoom
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 	}
 
-	public static void SetCameraPostion(Vector3 movement)
+	public static void SetCameraPosition(Vector3 movement)
 	{
 		if (IsMainCamera) return;
 		SecondaryCamera.transform.localPosition = movement;
@@ -231,26 +225,18 @@ public abstract class GameRoom
 	public static Vector3 CurrentCameraEulerAngles => SecondaryCamera.transform.localEulerAngles;
 
 	public bool InitializeOnLightsOn = true;
-	public void InitializeGameModes(bool lightsOn)
+	public static void InitializeGameModes(bool lightsOn)
 	{
 		if (!lightsOn) return;
 		if (OtherModes.TimeModeOn)
-		{
 			OtherModes.SetMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
-		}
 
 		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
 		foreach (TwitchBombHandle handle in bombHandles)
-		{
 			if (OtherModes.TimeModeOn)
-			{
 				handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
-			}
 			else if (OtherModes.ZenModeOn)
-			{
 				handle.bombCommander.timerComponent.TimeRemaining = 1;
-			}
-		}
 	}
 
 	public virtual IEnumerator ReportBombStatus()

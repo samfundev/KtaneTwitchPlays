@@ -20,11 +20,9 @@ public class ElevatorGameRoom : GameRoom
 			room = null;
 			return false;
 		}
-		else
-		{
-			room = new ElevatorGameRoom(roomObjects[0]);
-			return true;
-		}
+
+		room = new ElevatorGameRoom(roomObjects[0]);
+		return true;
 
 	}
 
@@ -72,7 +70,7 @@ public class ElevatorGameRoom : GameRoom
 	{
 		IEnumerator baseIEnumerator = base.ReportBombStatus();
 		while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
-		ValidEdgeworkRegex = new[] { $"^edgework((?: right| left| back| r| l| b)?)$" };
+		ValidEdgeworkRegex = new[] { "^edgework((?: right| left| back| r| l| b)?)$" };
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
 		TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
 		yield return new WaitUntil(() => timerComponent.IsActive);
@@ -138,9 +136,7 @@ public class ElevatorGameRoom : GameRoom
 		yield return false;
 		IEnumerator dropAllHoldables = MiscellaneousMessageResponder.DropAllHoldables();
 		while (dropAllHoldables.MoveNext())
-		{
 			yield return dropAllHoldables.Current;
-		}
 		IEnumerator rotateCamera;
 		switch (_currentWall)
 		{
@@ -159,10 +155,9 @@ public class ElevatorGameRoom : GameRoom
 				break;
 			default: yield break;
 		}
+
 		while (rotateCamera.MoveNext())
-		{
 			yield return rotateCamera.Current;
-		}
 	}
 
 	public override IEnumerator BombCommanderBombEdgework(Bomb bomb, Match edgeworkMatch)
@@ -221,6 +216,7 @@ public class ElevatorGameRoom : GameRoom
 		DebugHelper.Log($"selectable position = {Math.Round(selectable.transform.localPosition.x, 3)},{Math.Round(selectable.transform.localPosition.y, 3)},{Math.Round(selectable.transform.localPosition.z, 3)}");
 		DebugHelper.Log($"selectable rotation = {Math.Round(selectable.transform.localEulerAngles.y, 3)}");
 
+		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (rotation)
 		{
 			case 90 when _currentWall != CurrentElevatorWall.Left:
@@ -265,7 +261,7 @@ public class ElevatorGameRoom : GameRoom
 		Vector3 newWallPosition = toEdgework ? ElevatorEdgeworkCameraPositions[(int)newWall] : ElevatorCameraPositions[(int)newWall];
 		Vector3 newWallRotation = toEdgework ? ElevatorEdgeworkCameraRotations[(int)newWall] : ElevatorCameraRotations[(int)newWall];
 		Transform camera = SecondaryCamera.transform;
-		while ((Time.time - initialTime) < duration)
+		while (Time.time - initialTime < duration)
 		{
 			float lerp = (Time.time - initialTime) / duration;
 			camera.localPosition = new Vector3(Mathf.SmoothStep(currentWallPosition.x, newWallPosition.x, lerp),
@@ -326,5 +322,5 @@ public class ElevatorGameRoom : GameRoom
 	private CurrentElevatorWall _currentWall = CurrentElevatorWall.Dropped;
 	#endregion
 
-	private ElevatorRoom _elevatorRoom;
+	private readonly ElevatorRoom _elevatorRoom;
 }

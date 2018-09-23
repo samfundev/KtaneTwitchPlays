@@ -15,12 +15,10 @@ public class DefaultGameRoom : GameRoom
 			room = null;
 			return false;
 		}
-		else
-		{
-			room = new DefaultGameRoom(roomObjects[0]);
-			return true;
-		}
-			
+
+		room = new DefaultGameRoom(roomObjects[0]);
+		return true;
+
 	}
 
 	private DefaultGameRoom(UnityEngine.Object roomObjects)

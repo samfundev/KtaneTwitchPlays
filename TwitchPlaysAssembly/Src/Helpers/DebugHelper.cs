@@ -75,19 +75,15 @@ public static class DebugHelper
 			_treeBuilder.Append($"{prefix} scale = {Math.Round(t.localScale.x, 7)},{Math.Round(t.localScale.y, 7)},{Math.Round(t.localScale.z, 7)}\n");
 
 			if (printComponents)
-			{
 				foreach (Component component in t.GetComponents<Component>())
 				{
 					if (component is Transform) continue;
 					_treeBuilder.Append($"{prefix} Component: {component.GetType().FullName}\n");
 				}
-			}
 
-		
+
 			for (int i = 0; i < t.childCount; i++)
-			{
 				PrintTree(t.GetChild(i), forbiddenTypes, printComponents, false, level + 1);
-			}
 		}
 
 		if (level == 0)
@@ -110,18 +106,14 @@ public static class DebugHelper
 		_treeBuilder.Append($"{prefix} scale = {Math.Round(t.localScale.x, 7)},{Math.Round(t.localScale.y, 7)},{Math.Round(t.localScale.z, 7)}\n");
 
 		if (printComponents)
-		{
 			foreach (Component component in t.GetComponents<Component>())
 			{
 				if (component is Transform) continue;
 				_treeBuilder.Append($"{prefix} Component: {component.GetType().FullName}\n");
 			}
-		}
 
 		if (t.parent != null)
-		{
 			PrintParents(t.parent, level + 1, printComponents);
-		}
 
 		if (level == 0)
 			Log(_treeBuilder.ToString());
