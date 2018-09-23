@@ -260,21 +260,24 @@ public abstract class ComponentSolver
 					HandleModuleException(new Exception(currentString));
 					break;
 				}
-				else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode"))
+				else if (currentString.RegexMatch(out match, "^(?:detonate|explode)(?: ([0-9.]+))?(?: ((?:.|\\n)+))?$"))
 				{
-					AwardStrikes(_currentUserNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
-					BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
-						modInfo.moduleDisplayName);
-					break;
-				}
-				else if (currentString.RegexMatch(out match, "^(?:detonate|explode) ([0-9]+(?:\\.[0-9])?)") &&
-						float.TryParse(match.Groups[1].Value, out float explosionTime))
-				{
+					if (!float.TryParse(match.Groups[1].Value, out float explosionTime))
+					{
+						if (string.IsNullOrEmpty(match.Groups[1].Value))
+							explosionTime = 0.1f;
+						else
+						{
+							DebugHelper.Log($"Badly formatted detonate command string: {currentString}");
+							yield return currentValue;
+							continue;
+						}
+					}
+
 					_delayedExplosionPending = true;
 					if (_delayedExplosionCoroutine != null)
 						ComponentHandle.StopCoroutine(_delayedExplosionCoroutine);
-					_delayedExplosionCoroutine =
-						ComponentHandle.StartCoroutine(DelayedModuleBombExplosion(explosionTime, userNickName));
+					_delayedExplosionCoroutine = ComponentHandle.StartCoroutine(DelayedModuleBombExplosion(explosionTime, userNickName, match.Groups[2].Value));
 				}
 				else if (currentString.RegexMatch(out match, "^cancel (detonate|explode|detonation|explosion)$"))
 				{
@@ -516,11 +519,12 @@ public abstract class ComponentSolver
 		IRCConnection.Instance.SendMessage(message);
 	}
 
-	protected IEnumerator DelayedModuleBombExplosion(float delay, string userNickName)
+	protected IEnumerator DelayedModuleBombExplosion(float delay, string userNickName, string chatMessage)
 	{
 		yield return new WaitForSeconds(delay);
 		if (!_delayedExplosionPending) yield break;
 
+		if (!string.IsNullOrEmpty(chatMessage)) SendToTwitchChat($"sendtochat {chatMessage}", userNickName);
 		AwardStrikes(userNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
 		BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
 	}
