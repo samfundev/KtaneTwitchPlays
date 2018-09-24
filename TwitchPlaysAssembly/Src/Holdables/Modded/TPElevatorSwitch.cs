@@ -75,7 +75,7 @@ public class TPElevatorSwitch : MonoBehaviour
 				}
 
 				GameplayState.GameplayRoomPrefabOverride = toggleState ? ElevatorRoomGameObject : null;
-				IRCConnection.Instance.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (ElevatorRoomGameObject == null ? "not loaded" : "off") : "on");
+				IRCConnection.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (ElevatorRoomGameObject == null ? "not loaded" : "off") : "on");
 				elevatorSwitch.LEDOn.SetActive(GameplayState.GameplayRoomPrefabOverride != null);
 				elevatorSwitch.LEDOff.SetActive(GameplayState.GameplayRoomPrefabOverride == null);
 			};
@@ -94,7 +94,7 @@ public class TPElevatorSwitch : MonoBehaviour
 
 	public void ReportState()
 	{
-		IRCConnection.Instance.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (ElevatorRoomGameObject == null ? "not loaded" : "off") : "on");
+		IRCConnection.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (ElevatorRoomGameObject == null ? "not loaded" : "off") : "on");
 	}
 
 	private IEnumerator FlipSwitch(bool on)

@@ -61,7 +61,7 @@ public class MissionMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.MissionBinderDisabled, userNickName), userNickName, !isWhisper);
+					IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.MissionBinderDisabled, userNickName), userNickName, !isWhisper);
 				}
 				break;
 			case "freeplay":
@@ -71,7 +71,7 @@ public class MissionMessageResponder : MessageResponder
 				}
 				else
 				{
-					IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayDisabled, userNickName), userNickName, !isWhisper);
+					IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayDisabled, userNickName), userNickName, !isWhisper);
 				}
 				break;
 			default:

@@ -119,7 +119,7 @@ public class Factory : GameRoom
 			}
 
 			bombHandle.bombName = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
-			IRCConnection.Instance.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
+			IRCConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
 			if (OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall)
 			{
 				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!enablecamerawall");
@@ -157,7 +157,7 @@ public class Factory : GameRoom
 			});
 			if (!BombMessageResponder.BombActive) yield break;
 
-			IRCConnection.Instance.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
+			IRCConnection.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRetryReward();
 
 			foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)

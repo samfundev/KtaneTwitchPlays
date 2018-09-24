@@ -93,7 +93,7 @@ public static class OtherModes
 
 		currentMode = nextMode;
 		DisableLeaderboard();
-		IRCConnection.Instance.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
+		IRCConnection.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
 	}
 
 	public static float GetMultiplier()

@@ -140,9 +140,9 @@ public class TwitchPlaysService : MonoBehaviour
 				GUILayout.EndArea();
 				return;
 			}
-			IRCConnection.Instance.SetDebugUsername();
-			IRCConnection.Instance.SendMessage(inputCommand);
-			IRCConnection.Instance.ReceiveMessage(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand);
+			IRCConnection.SetDebugUsername();
+			IRCConnection.SendMessage(inputCommand);
+			IRCConnection.ReceiveMessage(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, inputCommand);
 			inputCommand = "";
 		}
 		GUILayout.EndHorizontal();

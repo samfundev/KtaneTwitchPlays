@@ -5,7 +5,7 @@
 		AddProperty("TimeMode", new Property(() => OtherModes.TimeModeOn, x => OtherModes.TimeModeOn = (bool) x));
 		AddProperty("ZenMode", new Property(() => OtherModes.ZenModeOn, x => OtherModes.ZenModeOn = (bool) x));
 		AddProperty("TimeModeTimeLimit", new Property(() => TwitchPlaySettings.data.TimeModeStartingTime, SetTimeModeTimeLimit));
-		AddProperty("ircConnectionSendMessage", new Property(null, x => IRCConnection.Instance.SendMessage((string)x)));
+		AddProperty("ircConnectionSendMessage", new Property(null, x => IRCConnection.SendMessage((string)x)));
 		AddProperty("Reward", new Property(() => TwitchPlaySettings.GetRewardBonus(), x => TwitchPlaySettings.SetRewardBonus((int) x)));
 		AddProperty("CauseFakeStrike", new Property(null, CauseFakeStrike));
 	}

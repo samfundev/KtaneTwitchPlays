@@ -278,7 +278,7 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Public Methods
-	public void SetDebugUsername(bool force = false)
+	public static void SetDebugUsername(bool force = false)
 	{
 		if (!UserAccess.HasAccess(TwitchPlaySettings.data.TwitchPlaysDebugUsername, AccessLevel.Streamer))
 		{
@@ -290,11 +290,13 @@ public class IRCConnection : MonoBehaviour
 			UserAccess.WriteAccessList();
 		}
 
-		if (UserNickName.StartsWith("_") || force)
+		if (Instance == null) return;
+
+		if (Instance.UserNickName.StartsWith("_") || force)
 		{
-			UserNickName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
-			ChannelName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
-			CurrentColor = "#" + ColorUtility.ToHtmlStringRGB(TwitchPlaySettings.data.TwitchPlaysDebugUsernameColor);
+			Instance.UserNickName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
+			Instance.ChannelName = TwitchPlaySettings.data.TwitchPlaysDebugUsername;
+			Instance.CurrentColor = "#" + ColorUtility.ToHtmlStringRGB(TwitchPlaySettings.data.TwitchPlaysDebugUsernameColor);
 		}
 	}
 
@@ -359,30 +361,31 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	private bool IsUsernameValid(string username)
+	private static bool IsUsernameValid(string username)
 	{
 		return !string.IsNullOrEmpty(username) && Regex.IsMatch(username, "^(#)?[a-z0-9][a-z0-9_]{2,24}$");
 	}
 
-	private bool IsAuthTokenValid(string authtoken)
+	private static bool IsAuthTokenValid(string authtoken)
 	{
 		return !string.IsNullOrEmpty(authtoken) && Regex.IsMatch(authtoken, "^oauth:[a-z0-9]{30}$");
 	}
 
-	public void Connect()
+	public static void Connect()
 	{
-		if (!gameObject.activeInHierarchy)
+		if (Instance == null) return;
+		if (!Instance.gameObject.activeInHierarchy)
 		{
 			SetDebugUsername(true);
 			return;
 		}
-		if (!File.Exists(_ircConnectionSettings.SettingsPath))
+		if (!File.Exists(Instance._ircConnectionSettings.SettingsPath))
 		{
 			AddTextToHoldable("The settings file does not exist. Trying to create it now.");
 			SetDebugUsername(true);
 			try
 			{
-				File.WriteAllText(_ircConnectionSettings.SettingsPath, JsonConvert.SerializeObject(new TwitchPlaysService.ModSettingsJSON(), Formatting.Indented));
+				File.WriteAllText(Instance._ircConnectionSettings.SettingsPath, JsonConvert.SerializeObject(new TwitchPlaysService.ModSettingsJSON(), Formatting.Indented));
 				AddTextToHoldable("Settings file successfully created. Configure it now. Open up the Mod manager holdable, and select Open mod settins folder.");
 			}
 			catch (Exception ex)
@@ -393,44 +396,46 @@ public class IRCConnection : MonoBehaviour
 		}
 		try
 		{
-			_settings = JsonConvert.DeserializeObject<TwitchPlaysService.ModSettingsJSON>(File.ReadAllText(_ircConnectionSettings.SettingsPath));
-			if (_settings == null)
+			Instance._settings = JsonConvert.DeserializeObject<TwitchPlaysService.ModSettingsJSON>(File.ReadAllText(Instance._ircConnectionSettings.SettingsPath));
+			TwitchPlaysService.ModSettingsJSON settings = Instance._settings;
+
+			if (settings == null)
 			{
 				SetDebugUsername(true);
 				AddTextToHoldable("[IRC:Connect] Failed to read connection settings from mod settings.");
 				return;
 			}
 
-			UserNickName = _settings.userName.Replace("#", "");
-			ChannelName = _settings.channelName.Replace("#", "");
-			CurrentColor = new Commands($".color {TwitchPlaySettings.data.TwitchBotColorOnQuit}").GetColor();
+			Instance.UserNickName = Instance._settings.userName.Replace("#", "");
+			Instance.ChannelName = Instance._settings.channelName.Replace("#", "");
+			Instance.CurrentColor = new Commands($".color {TwitchPlaySettings.data.TwitchBotColorOnQuit}").GetColor();
 
-			_settings.authToken = _settings.authToken.ToLowerInvariant();
-			_settings.channelName = ChannelName.ToLowerInvariant();
-			_settings.userName = UserNickName.ToLowerInvariant();
-			_settings.serverName = _settings.serverName.ToLowerInvariant();
+			settings.authToken = Instance._settings.authToken.ToLowerInvariant();
+			settings.channelName = Instance.ChannelName.ToLowerInvariant();
+			settings.userName = Instance.UserNickName.ToLowerInvariant();
+			settings.serverName = Instance._settings.serverName.ToLowerInvariant();
 
-			if (!IsAuthTokenValid(_settings.authToken) || !IsUsernameValid(_settings.channelName) || !IsUsernameValid(_settings.userName) || string.IsNullOrEmpty(_settings.serverName) || _settings.serverPort < 1 || _settings.serverPort > 65535)
+			if (!IsAuthTokenValid(settings.authToken) || !IsUsernameValid(settings.channelName) || !IsUsernameValid(settings.userName) || string.IsNullOrEmpty(settings.serverName) || settings.serverPort < 1 || settings.serverPort > 65535)
 			{
 				SetDebugUsername(true);
 				AddTextToHoldable("[IRC:Connect] Your settings file is not configured correctly.\nThe following items need to be configured:\n");
-				if (!IsAuthTokenValid(_settings.authToken))
+				if (!IsAuthTokenValid(settings.authToken))
 				{
 					AddTextToHoldable("AuthToken - Be sure oauth: is included.\n-   Retrieve from https://twitchapps.com/tmi/");
 				}
-				if (!IsUsernameValid(_settings.userName))
+				if (!IsUsernameValid(settings.userName))
 				{
 					AddTextToHoldable("userName");
 				}
-				if (!IsUsernameValid(_settings.channelName))
+				if (!IsUsernameValid(settings.channelName))
 				{
 					AddTextToHoldable("channelName");
 				}
-				if (string.IsNullOrEmpty(_settings.serverName))
+				if (string.IsNullOrEmpty(settings.serverName))
 				{
 					AddTextToHoldable("serverName - Most likely to be irc.twitch.tv");
 				}
-				if (_settings.serverPort < 1 || _settings.serverPort > 65535)
+				if (settings.serverPort < 1 || settings.serverPort > 65535)
 				{
 					AddTextToHoldable("serverPort - Most likely to be 6697");
 				}
@@ -445,8 +450,8 @@ public class IRCConnection : MonoBehaviour
 			return;
 		}
 
-		_keepConnnectionAlive = KeepConnectionAlive();
-		StartCoroutine(_keepConnnectionAlive);
+		Instance._keepConnnectionAlive = Instance.KeepConnectionAlive();
+		Instance.StartCoroutine(Instance._keepConnnectionAlive);
 	}
 
 	private void ConnectToIRC()
@@ -578,74 +583,77 @@ public class IRCConnection : MonoBehaviour
 		return false;
 	}
 
-	public void Disconnect()
+	public static void Disconnect()
 	{
+		if (Instance == null) return;
 		SetDebugUsername(true);
 		if (BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
 		// ReSharper disable once SwitchStatementMissingSomeCases
-		switch (_state)
+		switch (Instance._state)
 		{
 			case IRCConnectionState.Connecting:
 			case IRCConnectionState.Retrying:
-				_state = IRCConnectionState.DoNotRetry;
+				Instance._state = IRCConnectionState.DoNotRetry;
 				break;
 			case IRCConnectionState.Connected:
-				ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
-				_state = IRCConnectionState.Disconnecting;
+				Instance.ColorOnDisconnect = TwitchPlaySettings.data.TwitchBotColorOnQuit;
+				Instance._state = IRCConnectionState.Disconnecting;
 				break;
 			case IRCConnectionState.Disabled:
 				AddTextToHoldable("[IRC:Connect] Twitch Plays is currently disabled.");
 				break;
 			default:
-				_state = IRCConnectionState.Disconnected;
+				Instance._state = IRCConnectionState.Disconnected;
 				break;
 
 		}
 	}
 
 	[StringFormatMethod("message")]
-	public void SendChatMessage(string message)
+	public static void SendChatMessage(string message)
 	{
+		if (Instance == null) return;
 		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
 		{
-			if (!_silenceMode && _state != IRCConnectionState.Disconnected)
-				SendCommand(string.Format("PRIVMSG #{0} :{1}", _settings.channelName, line));
+			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
+				Instance.SendCommand(string.Format("PRIVMSG #{0} :{1}", Instance._settings.channelName, line));
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
-			lock (_messageQueue)
+			lock (Instance._messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, false, true));
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, false, true));
 			}
 		}
 	}
 
 	[StringFormatMethod("message")]
-	public void SendChatMessage(string message, params object[] args)
+	public static void SendChatMessage(string message, params object[] args)
 	{
 		SendMessage(string.Format(message, args));
 	}
 
 	[StringFormatMethod("message")]
-	public void SendMessage(string message, params object[] args)
+	public static void SendMessage(string message, params object[] args)
 	{
 		SendMessage(string.Format(message, args));
 	}
 
 	[StringFormatMethod("message")]
-	public new void SendMessage(string message, object arg)
+	public new static void SendMessage(string message, object arg)
 	{
 		SendMessage(string.Format(message, arg));
 	}
 
 	[StringFormatMethod("message")]
-	public new void SendMessage(string message)
+	public new static void SendMessage(string message)
 	{
 		SendMessage(message, null, true);
 	}
 
 	[StringFormatMethod("message")]
-	public void SendMessage(string message, string userNickName, bool sendToChat)
+	public static void SendMessage(string message, string userNickName, bool sendToChat)
 	{
-		if (sendToChat || string.IsNullOrEmpty(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == UserNickName) //can't send whispers to yourself
+		if (Instance == null) return;
+		if (sendToChat || string.IsNullOrEmpty(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == Instance.UserNickName) //can't send whispers to yourself
 		{
 			SendChatMessage(message);
 		}
@@ -656,60 +664,63 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	[StringFormatMethod("message")]
-	public void SendMessage(string message, string userNickName, bool sendToChat, params object[] args)
+	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args)
 	{
 		SendMessage(string.Format(message, args), userNickName, sendToChat);
 	}
 
 	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
 	[StringFormatMethod("message")]
-	public void SendWhisper(string userNickName, string message)
+	public static void SendWhisper(string userNickName, string message)
 	{
+		if (Instance == null) return;
 		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
 		{
-			if (!_silenceMode && _state != IRCConnectionState.Disconnected)
-				SendCommand(string.Format("PRIVMSG #{0} :.w {1} {2}", _settings.channelName, userNickName, line));
+			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
+				Instance.SendCommand(string.Format("PRIVMSG #{0} :.w {1} {2}", Instance._settings.channelName, userNickName, line));
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
-			lock (_messageQueue)
+			lock (Instance._messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, line, true, true));
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, true, true));
 			}
 		}
 	}
 
 	[StringFormatMethod("message")]
-	public void SendWhisper(string userNickName, string message, params object[] args)
+	public static void SendWhisper(string userNickName, string message, params object[] args)
 	{
 		SendWhisper(userNickName, string.Format(message, args));
 	}
 
 
-	public void ToggleSilenceMode()
+	public static void ToggleSilenceMode()
 	{
-		if (!_silenceMode)
+		if (Instance == null) return;
+		if (!Instance._silenceMode)
 		{
-			SendCommand(string.Format("PRIVMSG #{0} :Silence mode on.", _settings.channelName));
-			lock (_messageQueue)
+			Instance.SendCommand(string.Format("PRIVMSG #{0} :Silence mode on.", Instance._settings.channelName));
+			lock (Instance._messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode on.", false, true));
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, "Silence mode on.", false, true));
 			}
 		}
-		_silenceMode = !_silenceMode;
-		if (!_silenceMode)
+		Instance._silenceMode = !Instance._silenceMode;
+		if (!Instance._silenceMode)
 		{
-			SendCommand(string.Format("PRIVMSG #{0} :Silence mode off.", _settings.channelName));
-			lock (_messageQueue)
+			Instance.SendCommand(string.Format("PRIVMSG #{0} :Silence mode off.", Instance._settings.channelName));
+			lock (Instance._messageQueue)
 			{
-				_messageQueue.Enqueue(new Message(UserNickName, CurrentColor, "Silence mode off.", false, true));
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, "Silence mode off.", false, true));
 			}
 		}
 	}
 
-	public Color GetUserColor(string userNickName)
+	public static Color GetUserColor(string userNickName)
 	{
-		lock (_userColors)
+		if (Instance == null) return Color.black;
+		lock (Instance._userColors)
 		{
-			return _userColors.TryGetValue(userNickName, out Color color) ? color : Color.black;
+			return Instance._userColors.TryGetValue(userNickName, out Color color) ? color : Color.black;
 		}
 	}
 	#endregion
@@ -732,20 +743,21 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	public void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
+	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
 	{
+		if (Instance == null) return;
 		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
-			lock (_userColors)
+			lock (Instance._userColors)
 			{
-				_userColors[userNickName] = color;
+				Instance._userColors[userNickName] = color;
 			}
 		}
 
 		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = true;
-			Instance.SendMessage("Commands enabled.");
+			SendMessage("Commands enabled.");
 			return;
 		}
 		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && (!TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled || !BombMessageResponder.BombActive)) return;
@@ -753,17 +765,17 @@ public class IRCConnection : MonoBehaviour
 		{
 			CommandsEnabled = false;
 			if (TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && BombMessageResponder.BombActive)
-				Instance.SendMessage("Commands will be disabled once this bomb is completed or exploded.");
+				SendMessage("Commands will be disabled once this bomb is completed or exploded.");
 			else
-				Instance.SendMessage("Commands disabled.");
+				SendMessage("Commands disabled.");
 			return;
 		}
 
 		if (!isWhisper || TwitchPlaySettings.data.EnableWhispers)
 		{
-			lock (_messageQueue)
-			{	
-				_messageQueue.Enqueue(new Message(userNickName, userColorCode, text, isWhisper));
+			lock (Instance._messageQueue)
+			{
+				Instance._messageQueue.Enqueue(new Message(userNickName, userColorCode, text, isWhisper));
 			}
 		}
 	}
@@ -954,11 +966,11 @@ public class IRCConnection : MonoBehaviour
 		{
 			if (!string.IsNullOrEmpty(groups[2].Value))
 			{
-				Instance.ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
+				ReceiveMessage(groups[2].Value, groups[1].Value, groups[5].Value);
 			}
 			else
 			{
-				Instance.ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
+				ReceiveMessage(groups[3].Value, groups[1].Value, groups[5].Value);
 			}
 		}),
 
@@ -971,12 +983,12 @@ public class IRCConnection : MonoBehaviour
 
 		new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
 		{
-			Instance.ReceiveMessage(groups[1].Value, null, groups[3].Value);
+			ReceiveMessage(groups[1].Value, null, groups[3].Value);
 		}),
 
 		new ActionMap(@":(\S+)!\S+ WHISPER (\S+) :(.+)", delegate(GroupCollection groups)
 		{
-			Instance.ReceiveMessage(groups[1].Value, null, groups[3].Value, true);
+			ReceiveMessage(groups[1].Value, null, groups[3].Value, true);
 		}),
 
 		new ActionMap(@"PING (.+)", delegate(GroupCollection groups)

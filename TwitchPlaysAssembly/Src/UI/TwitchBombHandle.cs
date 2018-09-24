@@ -97,7 +97,7 @@ public class TwitchBombHandle : MonoBehaviour
 					if (!IsAuthorizedDefuser(userNickName, isWhisper)) return null;
 					edgeworkText.text = internalCommand;
 				}
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, edgeworkText.text), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, edgeworkText.text), userNickName, !isWhisper);
 			}
 			return null;
 		}
@@ -112,15 +112,15 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 			
-			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp), userNickName, !isWhisper);
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp), userNickName, !isWhisper);
 		}
 		else if (internalCommandLower.Equals("help"))
 		{
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombHelp, userNickName, !isWhisper);
+			IRCConnection.SendMessage(TwitchPlaySettings.data.BombHelp, userNickName, !isWhisper);
 		}
 		else if (internalCommandLower.EqualsAny("time", "timer", "clock"))
 		{
-			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime), userNickName, !isWhisper);
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime), userNickName, !isWhisper);
 		}
 		else if (internalCommandLower.EqualsAny("explode", "detonate", "endzenmode"))
 		{
@@ -130,7 +130,7 @@ public class TwitchBombHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, you can't use the endzenmode command in a whisper.", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, you can't use the endzenmode command in a whisper.", userNickName, false);
 						return null;
 					}
 					Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
@@ -140,7 +140,7 @@ public class TwitchBombHandle : MonoBehaviour
 					}
 					else
 					{
-						IRCConnection.Instance.SendMessage("Sorry, you don't have enough points to use the endzenmode command.");
+						IRCConnection.SendMessage("Sorry, you don't have enough points to use the endzenmode command.");
 						return null;
 					}
 				}
@@ -157,17 +157,17 @@ public class TwitchBombHandle : MonoBehaviour
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
 			if (OtherModes.TimeModeOn)
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
 					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward), userNickName, !isWhisper);
 			}
 			else if (OtherModes.VSModeOn)
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
 					bombCommander.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward), userNickName, !isWhisper);
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
 					bombCommander.StrikeCount, bombCommander.StrikeLimit, bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward), userNickName, !isWhisper);
 			}
 		}
@@ -234,9 +234,9 @@ public class TwitchBombHandle : MonoBehaviour
 							OtherModes.DisableLeaderboard(true);
 
 						if (direct)
-							IRCConnection.Instance.SendMessage(string.Format("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime()), userNickName, !isWhisper);
+							IRCConnection.SendMessage(string.Format("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime()), userNickName, !isWhisper);
 						else
-							IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from"), userNickName, !isWhisper);
+							IRCConnection.SendMessage(string.Format("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from"), userNickName, !isWhisper);
 						break;
 					case "strikes":
 					case "strike":
@@ -264,9 +264,9 @@ public class TwitchBombHandle : MonoBehaviour
 								OtherModes.DisableLeaderboard(true);
 
 							if (direct)
-								IRCConnection.Instance.SendMessage(string.Format("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
+								IRCConnection.SendMessage(string.Format("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
 							else
-								IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from"), userNickName, !isWhisper);
+								IRCConnection.SendMessage(string.Format("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from"), userNickName, !isWhisper);
 							BombMessageResponder.moduleCameras.UpdateStrikes();
 						}
 						break;
@@ -293,9 +293,9 @@ public class TwitchBombHandle : MonoBehaviour
 								OtherModes.DisableLeaderboard(true);
 
 							if (direct)
-								IRCConnection.Instance.SendMessage(string.Format("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
+								IRCConnection.SendMessage(string.Format("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
 							else
-								IRCConnection.Instance.SendMessage(string.Format("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from"), userNickName, !isWhisper);
+								IRCConnection.SendMessage(string.Format("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from"), userNickName, !isWhisper);
 							BombMessageResponder.moduleCameras.UpdateStrikes();
 						}
 						break;
@@ -355,7 +355,7 @@ public class TwitchBombHandle : MonoBehaviour
 	{
 		bombCommander.StrikeCount = bombCommander.StrikeLimit - 1;
 		if (!string.IsNullOrEmpty(message))
-			IRCConnection.Instance.SendMessage(message);
+			IRCConnection.SendMessage(message);
 		yield return new WaitForSeconds(delay);
 		bombCommander.CauseStrikesToExplosion(reason);
 	}
@@ -369,7 +369,7 @@ public class TwitchBombHandle : MonoBehaviour
 			{
 				if(chatmessage.StartsWith("sendtochat "))
 				{
-					IRCConnection.Instance.SendMessage(chatmessage.Substring(11));
+					IRCConnection.SendMessage(chatmessage.Substring(11));
 				}
 			}
 

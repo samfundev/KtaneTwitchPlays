@@ -181,7 +181,7 @@ public class LogUploader : MonoBehaviour
 
 		if (tooLong)
 		{
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.LogTooBig);
+			IRCConnection.SendMessage(TwitchPlaySettings.data.LogTooBig);
 		}
 
 		try
@@ -206,7 +206,7 @@ public class LogUploader : MonoBehaviour
 		}
 		Debug.Log(LOGPREFIX + "Posting analysis URL to chat");
 		emote = " " + emote + " ";
-		IRCConnection.Instance.SendMessage(emote + format, analysisUrl);
+		IRCConnection.SendMessage(emote + format, analysisUrl);
 		return true;
 	}
 

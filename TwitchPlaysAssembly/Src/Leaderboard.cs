@@ -107,7 +107,7 @@ public class Leaderboard
 
 	private Color SafeGetColor(string userName)
 	{
-		return IRCConnection.Instance?.GetUserColor(userName) ?? Color.black;
+		return IRCConnection.GetUserColor(userName);
 	}
 
 	private bool GetEntry(string UserName, out LeaderboardEntry entry)

@@ -40,7 +40,7 @@ public abstract class HoldableHandler
 		int strikePenalty = -5;
 		strikePenalty = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? (strikeCount * strikePenalty) : (Math.Min(strikePenalty, strikeCount * strikePenalty));
 
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike, 
+		IRCConnection.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike, 
 			HoldableCommander.ID, 
 			strikeCount == 1 ? "a" : strikeCount.ToString(), 
 			strikeCount == 1 ? "" : "s",
@@ -56,7 +56,7 @@ public abstract class HoldableHandler
 		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
 		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
 		if(currentReward != originalReward)
-			IRCConnection.Instance.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
+			IRCConnection.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 		if (OtherModes.TimeModeOn)
 		{
 			bool multiDropped = OtherModes.DropMultiplier();
@@ -82,7 +82,7 @@ public abstract class HoldableHandler
 				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
 				tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
-			IRCConnection.Instance.SendMessage(tempMessage);
+			IRCConnection.SendMessage(tempMessage);
 			BombCommander.StrikeCount = 0;
 			BombMessageResponder.moduleCameras?.UpdateStrikes();
 		}
@@ -419,22 +419,22 @@ public abstract class HoldableHandler
 	{
 		if (string.IsNullOrEmpty(message))
 		{
-			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.HoldableInvalidCommand, HoldableCommander.ID, userNickname), userNickname, !isWhisper);
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.HoldableInvalidCommand, HoldableCommander.ID, userNickname), userNickname, !isWhisper);
 			return;
 		}
 		if (message.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(11).Trim() != string.Empty)
 		{
-			IRCConnection.Instance.SendMessage(string.Format(message.Substring(11), HoldableCommander.ID, userNickname), userNickname, !isWhisper);
+			IRCConnection.SendMessage(string.Format(message.Substring(11), HoldableCommander.ID, userNickname), userNickname, !isWhisper);
 			return;
 		}
 		if (message.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(16).Trim() != string.Empty)
 		{
-			IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.HoldableCommandError, HoldableCommander.ID, userNickname, message.Substring(16)), userNickname, !isWhisper);
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.HoldableCommandError, HoldableCommander.ID, userNickname, message.Substring(16)), userNickname, !isWhisper);
 			parseerror = true;
 			return;
 		}
 		if (!message.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase)) return;
-		IRCConnection.Instance.SendMessage($"Sorry @{userNickname}, there was an error parsing the command for !{HoldableCommander.ID}", userNickname, !isWhisper);
+		IRCConnection.SendMessage($"Sorry @{userNickname}, there was an error parsing the command for !{HoldableCommander.ID}", userNickname, !isWhisper);
 		parseerror = true;
 	}
 
@@ -474,7 +474,7 @@ public abstract class HoldableHandler
 	public void ShowHelp()
 	{
 		if (!string.IsNullOrEmpty(HelpMessage))
-			IRCConnection.Instance.SendMessage(HelpMessage, HoldableCommander.ID);
+			IRCConnection.SendMessage(HelpMessage, HoldableCommander.ID);
 	}
 
 	private string _delegatedStrikeUserNickName = null;

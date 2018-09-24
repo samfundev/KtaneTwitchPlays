@@ -81,7 +81,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName), userNickName, !isWhisper);
 			}
 		}
 		else if (message.EqualsAny("hardcore on", "hardcore off"))
@@ -92,7 +92,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName), !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName), !isWhisper);
 			}
 		}
 		else if (message.EqualsAny("mods only on", "mods only off"))
@@ -103,7 +103,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName), userNickName, !isWhisper);
 			}
 		}
 		else if (message.Equals("start"))
@@ -215,7 +215,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else if (message.Contains("hardcore") != IsHardcore)
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayHardcoreDisabled, userNickName), userNickName, !isWhisper);
 				startBomb = false;
 			}
 
@@ -225,7 +225,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else if (message.Contains("needy") != HasNeedy)
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayNeedyDisabled, userNickName), userNickName, !isWhisper);
 				startBomb = false;
 			}
 
@@ -242,7 +242,7 @@ public class FreeplayCommander : ICommandResponder
 			}
 			else if (message.Contains("vanilla") || message.Contains("mods"))
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.FreePlayModsOnlyDisabled, userNickName), userNickName, !isWhisper);
 				startBomb = false;
 			}
 		}

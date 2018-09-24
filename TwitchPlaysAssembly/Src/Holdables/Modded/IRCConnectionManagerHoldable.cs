@@ -122,11 +122,11 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 
 		if (IRCConnection.Instance.State == IRCConnectionState.Disconnected)
 		{
-			IRCConnection.Instance.Connect();
+			IRCConnection.Connect();
 		}
 		else
 		{
-			IRCConnection.Instance.Disconnect();
+			IRCConnection.Disconnect();
 		}
 		return false;
 	}

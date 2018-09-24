@@ -13,12 +13,12 @@ public class MotionSenseComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
 		_needy.OnNeedyActivation += () =>
 		{
-			IRCConnection.Instance.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");
+			IRCConnection.SendMessage($"Motion Sense just activated: Active for {(int)_needy.GetNeedyTimeRemaining()} seconds.");
 		};
 
 		_needy.OnTimerExpired += () =>
 		{
-			IRCConnection.Instance.SendMessage($"Motion Sense now Inactive.");
+			IRCConnection.SendMessage($"Motion Sense now Inactive.");
 		};
 	}
 
@@ -29,7 +29,7 @@ public class MotionSenseComponentSolver : ComponentSolver
 			yield break;
 
 		bool active = (bool)_activeField.GetValue(_component);
-		IRCConnection.Instance.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
+		IRCConnection.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int)_needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
 	}
 
 	static MotionSenseComponentSolver()

@@ -226,7 +226,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public static void DeactivateNeedyModule(TwitchComponentHandle handle)
 	{
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
+		IRCConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
 		KMNeedyModule needyModule = handle.bombComponent.GetComponent<KMNeedyModule>();
 		needyModule.OnNeedyActivation = () => { needyModule.StartCoroutine(KeepUnsupportedNeedySilent(needyModule)); };
 		needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.HandlePass(); };
@@ -330,7 +330,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		SetBannerColor(unclaimedBackgroundColor);
 		if (PlayerName != null)
 		{
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, PlayerName, HeaderText);
+			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, PlayerName, HeaderText);
 			ClaimedList.Remove(PlayerName);
 			PlayerName = null;
 			TakeInProgress = null;
@@ -413,7 +413,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			{
 				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
 				if (!claim.First) continue;
-				IRCConnection.Instance.SendMessage(claim.Second);
+				IRCConnection.SendMessage(claim.Second);
 				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(new Message(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}"));
 				ClaimQueue.RemoveAt(i);
 				break;
@@ -490,12 +490,12 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void CommandError(string userNickName, string message)
 	{
-		IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message));
+		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message));
 	}
 
 	public void CommandInvalid(string userNickName)
 	{
-		IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
+		IRCConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
 	}
 
 	public IEnumerator TakeInProgress = null;
@@ -553,7 +553,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
 						return null;
 					}
 					messageOut = ClaimModule(userNickName, Code).Second;
@@ -562,7 +562,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
 						return null;
 					}
 					messageOut = UnclaimModule(userNickName, Code).Second;
@@ -572,14 +572,14 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
 						return null;
 					}
 					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, internalCommand.Contains("p"));
 					if (response.First)
 					{
 
-						IRCConnection.Instance.SendMessage(response.Second);
+						IRCConnection.SendMessage(response.Second);
 						internalCommand = internalCommand.Contains("p") ? "view pin" : "view";
 					}
 					else
@@ -591,13 +591,13 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
 						return null;
 					}
 					Tuple<bool, string> response = UnclaimModule(userNickName, Code);
 					if (response.First)
 					{
-						IRCConnection.Instance.SendMessage(response.Second);
+						IRCConnection.SendMessage(response.Second);
 						internalCommand = "unview";
 					}
 					else
@@ -651,7 +651,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, taking modules is not allowed in whispers", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, taking modules is not allowed in whispers", userNickName, false);
 						return null;
 					}
 					if (TwitchPlaySettings.data.AnarchyMode)
@@ -687,7 +687,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				{
 					if (isWhisper)
 					{
-						IRCConnection.Instance.SendMessage($"Sorry {userNickName}, using mine on modules is not allowed in whispers", userNickName, false);
+						IRCConnection.SendMessage($"Sorry {userNickName}, using mine on modules is not allowed in whispers", userNickName, false);
 						return null;
 					}
 					if (PlayerName == userNickName && TakeInProgress != null)
@@ -720,7 +720,7 @@ public class TwitchComponentHandle : MonoBehaviour
 				}
 				else if (internalCommand.Equals("points", StringComparison.InvariantCultureIgnoreCase) || internalCommand.Equals("score", StringComparison.InvariantCultureIgnoreCase))
 				{
-					IRCConnection.Instance.SendMessage("{0} ({1}) Current score: {2}", HeaderText, Code, Solver.modInfo.moduleScore);
+					IRCConnection.SendMessage("{0} ({1}) Current score: {2}", HeaderText, Code, Solver.modInfo.moduleScore);
 
 					return null;
 				}
@@ -748,7 +748,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		if (!string.IsNullOrEmpty(messageOut))
 		{
-			IRCConnection.Instance.SendMessage(messageOut, Code, HeaderText);
+			IRCConnection.SendMessage(messageOut, Code, HeaderText);
 			return null;
 		}
 
@@ -758,7 +758,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 			if (Solved && !TwitchPlaySettings.data.AnarchyMode)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, HeaderText);
+				IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, HeaderText);
 				return null;
 			}
 
@@ -772,7 +772,7 @@ public class TwitchComponentHandle : MonoBehaviour
 			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
 			if (moduleAlreadyClaimed)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText);
+				IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText);
 				return null;
 			}
 

@@ -186,22 +186,22 @@ public static class UserAccess
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
 			return;
 		}
 		if (timeout <= 0)
 		{
-			IRCConnection.Instance.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.", moderator, !isWhisper);
+			IRCConnection.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.", moderator, !isWhisper);
 			return;
 		}
 		if (HasAccess(userNickName, AccessLevel.Streamer))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout the streamer.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot timeout the streamer.", moderator, !isWhisper);
 			return;
 		}
 		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot timeout yourself.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot timeout yourself.", moderator, !isWhisper);
 			return;
 		}
 		AddUser(userNickName, AccessLevel.Banned);
@@ -213,26 +213,26 @@ public static class UserAccess
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 
 		WriteAccessList();
-		IRCConnection.Instance.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
+		IRCConnection.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
 		if (TwitchPlaySettings.data.EnableWhispers)
-			IRCConnection.Instance.SendMessage($"You were timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
+			IRCConnection.SendMessage($"You were timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
 	}
 
 	public static void BanUser(string userNickName, string moderator, string reason, bool isWhisper)
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
 			return;
 		}
 		if (HasAccess(userNickName, AccessLevel.Streamer))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban the streamer.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot ban the streamer.", moderator, !isWhisper);
 			return;
 		}
 		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you cannot ban yourself.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot ban yourself.", moderator, !isWhisper);
 			return;
 		}
 		AddUser(userNickName, AccessLevel.Banned);
@@ -243,9 +243,9 @@ public static class UserAccess
 		ban.BanExpiry = double.PositiveInfinity;
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 		WriteAccessList();
-		IRCConnection.Instance.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
+		IRCConnection.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
 		if (TwitchPlaySettings.data.EnableWhispers)
-			IRCConnection.Instance.SendMessage($"You were banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
+			IRCConnection.SendMessage($"You were banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
 	}
 
 	private static void UnbanUser(string userNickName, bool rewrite=true)
@@ -261,13 +261,13 @@ public static class UserAccess
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true))
 		{
-			IRCConnection.Instance.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
 			return;
 		}
 		UnbanUser(userNickName);
-		IRCConnection.Instance.SendMessage($"User {userNickName} was unbanned from Twitch plays by {moderator}.");
+		IRCConnection.SendMessage($"User {userNickName} was unbanned from Twitch plays by {moderator}.");
 		if (TwitchPlaySettings.data.EnableWhispers)
-			IRCConnection.Instance.SendMessage($"You were unbanned from Twitch Plays by {moderator}.", userNickName, false);
+			IRCConnection.SendMessage($"You were unbanned from Twitch Plays by {moderator}.", userNickName, false);
 	}
 
 	public static BanData IsBanned(string usernickname)
@@ -286,23 +286,23 @@ public static class UserAccess
 			if (double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForBanCommand))
 			{
 				unban = true;
-				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
+				IRCConnection.SendMessage($"User {usernickname} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
 				if (TwitchPlaySettings.data.EnableWhispers)
-					IRCConnection.Instance.SendMessage($"You are no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.", usernickname, false);
+					IRCConnection.SendMessage($"You are no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.", usernickname, false);
 			}
 			if (!double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
 			{
 				unban = true;
-				IRCConnection.Instance.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
+				IRCConnection.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
 				if (TwitchPlaySettings.data.EnableWhispers)
-					IRCConnection.Instance.SendMessage($"You are no longer timed out from twitch plays because {ban.BannedBy} no longer has the pwoer to issue time outs.", usernickname, false);
+					IRCConnection.SendMessage($"You are no longer timed out from twitch plays because {ban.BannedBy} no longer has the pwoer to issue time outs.", usernickname, false);
 			}
 		}
 		else if (!UserAccessData.Instance.StickyBans && !unban)
 		{
-			IRCConnection.Instance.SendMessage($"User {usernickname} is no longer banned from twitch plays, as there is no one to hold accountable for the ban.");
+			IRCConnection.SendMessage($"User {usernickname} is no longer banned from twitch plays, as there is no one to hold accountable for the ban.");
 			if (TwitchPlaySettings.data.EnableWhispers)
-				IRCConnection.Instance.SendMessage("You are no longer banned from twitch plays, as there is no one to hold accountable for the ban.", usernickname, false);
+				IRCConnection.SendMessage("You are no longer banned from twitch plays, as there is no one to hold accountable for the ban.", usernickname, false);
 			unban = true;
 		}
 		else

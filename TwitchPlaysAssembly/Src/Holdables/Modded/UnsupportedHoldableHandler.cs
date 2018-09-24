@@ -10,7 +10,7 @@ public class UnsupportedHoldableHandler : HoldableHandler
 
 	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
-		IRCConnection.Instance.SendMessage($"Sorry @{UserNickName}, This holdable is not supported in TwitchPlays yet.", UserNickName, !isWhisper);
+		IRCConnection.SendMessage($"Sorry @{UserNickName}, This holdable is not supported in TwitchPlays yet.", UserNickName, !isWhisper);
 		yield break;
 	}
 }

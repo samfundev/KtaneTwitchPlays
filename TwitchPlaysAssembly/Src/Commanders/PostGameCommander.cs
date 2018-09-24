@@ -24,7 +24,7 @@ public class PostGameCommander : ICommandResponder
 		{
 			if (!TwitchPlaySettings.data.EnableRetryButton)
 			{
-				IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.RetryInactive, messageObj.UserNickName, !messageObj.IsWhisper);
+				IRCConnection.SendMessage(TwitchPlaySettings.data.RetryInactive, messageObj.UserNickName, !messageObj.IsWhisper);
 			}
 			else
 			{

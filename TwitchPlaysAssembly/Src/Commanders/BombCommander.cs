@@ -64,7 +64,7 @@ public class BombCommander
 		{
 			if (!TwitchPlaySettings.data.EnableEdgeworkCommand && !TwitchPlaySettings.data.AnarchyMode)
 			{
-				IRCConnection.Instance.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text), messageObj.UserNickName, !messageObj.IsWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, twitchBombHandle.edgeworkText.text), messageObj.UserNickName, !messageObj.IsWhisper);
 			}
 			else
 			{
@@ -400,7 +400,7 @@ public class BombCommander
 		twitchBombHandle.edgeworkText.text = edgeworkString;
 
 		if(!silent)
-			IRCConnection.Instance.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
+			IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
 	}
 	
 	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
