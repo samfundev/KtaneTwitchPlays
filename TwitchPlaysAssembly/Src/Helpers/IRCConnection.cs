@@ -610,25 +610,16 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	[StringFormatMethod("message")]
-	public static void SendChatMessage(string message)
-	{
-		if (Instance == null) return;
-		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
-		{
-			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
-				Instance.SendCommand(string.Format("PRIVMSG #{0} :{1}", Instance._settings.channelName, line));
-			if (line.StartsWith(".") || line.StartsWith("/")) continue;
-			lock (Instance._messageQueue)
-			{
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, false, true));
-			}
-		}
-	}
-
-	[StringFormatMethod("message")]
 	public static void SendChatMessage(string message, params object[] args)
 	{
-		SendMessage(string.Format(message, args));
+		SendMessage(message, args);
+	}
+
+	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
+	[StringFormatMethod("message")]
+	public static void SendWhisper(string userNickName, string message, params object[] args)
+	{
+		SendMessage(message, userNickName, false, args);
 	}
 
 	[StringFormatMethod("message")]
@@ -638,60 +629,10 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	[StringFormatMethod("message")]
-	public new static void SendMessage(string message, object arg)
-	{
-		SendMessage(string.Format(message, arg));
-	}
-
-	[StringFormatMethod("message")]
-	public new static void SendMessage(string message)
-	{
-		SendMessage(message, null, true);
-	}
-
-	[StringFormatMethod("message")]
-	public static void SendMessage(string message, string userNickName, bool sendToChat)
-	{
-		if (Instance == null) return;
-		if (sendToChat || string.IsNullOrEmpty(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == Instance.UserNickName) //can't send whispers to yourself
-		{
-			SendChatMessage(message);
-		}
-		else
-		{
-			SendWhisper(userNickName, message);
-		}
-	}
-
-	[StringFormatMethod("message")]
 	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args)
 	{
 		SendMessage(string.Format(message, args), userNickName, sendToChat);
 	}
-
-	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
-	[StringFormatMethod("message")]
-	public static void SendWhisper(string userNickName, string message)
-	{
-		if (Instance == null) return;
-		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
-		{
-			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
-				Instance.SendCommand(string.Format("PRIVMSG #{0} :.w {1} {2}", Instance._settings.channelName, userNickName, line));
-			if (line.StartsWith(".") || line.StartsWith("/")) continue;
-			lock (Instance._messageQueue)
-			{
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, true, true));
-			}
-		}
-	}
-
-	[StringFormatMethod("message")]
-	public static void SendWhisper(string userNickName, string message, params object[] args)
-	{
-		SendWhisper(userNickName, string.Format(message, args));
-	}
-
 
 	public static void ToggleSilenceMode()
 	{
@@ -707,7 +648,7 @@ public class IRCConnection : MonoBehaviour
 		Instance._silenceMode = !Instance._silenceMode;
 		if (!Instance._silenceMode)
 		{
-			Instance.SendCommand(string.Format("PRIVMSG #{0} :Silence mode off.", Instance._settings.channelName));
+			Instance.SendCommand($"PRIVMSG #{Instance._settings.channelName} :Silence mode off.");
 			lock (Instance._messageQueue)
 			{
 				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, "Silence mode off.", false, true));
@@ -726,6 +667,25 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Private Methods
+	private static void SendMessage(string message, string userNickName = null, bool sendToChat = true)
+	{
+		if (Instance == null) return;
+
+		sendToChat |= !IsUsernameValid(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == Instance.UserNickName;
+		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
+		{
+			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
+				Instance.SendCommand(sendToChat
+					? $"PRIVMSG #{Instance._settings.channelName} :{line}"
+					: $"PRIVMSG #{Instance._settings.channelName} :.w {userNickName} {line}");
+			if (line.StartsWith(".") || line.StartsWith("/")) continue;
+			lock (Instance._messageQueue)
+			{
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true));
+			}
+		}
+	}
+
 	private void SetOwnColor()
 	{
 		if (!ColorUtility.TryParseHtmlString(CurrentColor, out Color color)) return;
