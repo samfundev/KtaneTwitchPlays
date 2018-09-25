@@ -79,7 +79,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	private bool statusLightLeft = false;
 	private bool statusLightDown = false;
 	private Vector3 originalIDPosition = Vector3.zero;
-	private bool anarchyMode = TwitchPlaySettings.data.AnarchyMode;
+	private bool anarchyMode;
 	#endregion
 
 	#region Private Statics
@@ -134,6 +134,8 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	private void Start()
 	{
+		anarchyMode = TwitchPlaySettings.data.AnarchyMode;
+
 		IDTextMultiDecker.text = Code;
 
 		CanvasGroupMultiDecker.alpha = 1.0f;
