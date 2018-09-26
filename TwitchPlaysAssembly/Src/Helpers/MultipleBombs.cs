@@ -6,18 +6,15 @@ public class MultipleBombs
 {
 	private static GameObject _gameObject;
 
-	private static IDictionary<string, object> Properties
-	{
-		get
-		{
-			return _gameObject?.GetComponent<IDictionary<string, object>>();
-		}
-	}
+	private static IDictionary<string, object> Properties =>
+#pragma warning disable IDE0031 // Use null propagation
+		_gameObject != null ? _gameObject.GetComponent<IDictionary<string, object>>() : null;
+#pragma warning restore IDE0031 // Use null propagation
 
 	public static IEnumerator Refresh()
 	{
 		_gameObject = GameObject.Find("MultipleBombs_Info");
-		for (var i = 0; i < 120 && _gameObject == null; i++)
+		for (int i = 0; i < 120 && _gameObject == null; i++)
 		{
 			yield return null;
 			_gameObject = GameObject.Find("MultipleBombs_Info");

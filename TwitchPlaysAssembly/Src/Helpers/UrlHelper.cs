@@ -23,7 +23,7 @@ public class UrlHelper : MonoBehaviour
 		return TwitchPlaySettings.data.LogUploaderShortUrls;
 	}
 
-	private string Escape(string toEscape)
+	private static string Escape(string toEscape)
 	{
 		return Regex.Replace(toEscape, @"[^\w%]", m => "%" + ((int)m.Value[0]).ToString("X2"));
 	}

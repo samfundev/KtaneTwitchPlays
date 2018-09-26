@@ -10,14 +10,8 @@ static class ProfileHelper
 
 	public static List<string> Profiles
 	{
-		get
-		{
-			return JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(modSelectorConfig));
-		}
-		set
-		{
-			File.WriteAllText(modSelectorConfig, JsonConvert.SerializeObject(value));
-		}
+		get => JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(modSelectorConfig));
+		set => File.WriteAllText(modSelectorConfig, JsonConvert.SerializeObject(value));
 	}
 
 	public static string GetProperProfileName(string profile)
@@ -32,7 +26,7 @@ static class ProfileHelper
 
 	public static bool Add(string profile)
 	{
-		var temp = Profiles;
+		List<string> temp = Profiles;
 		if (temp.Contains(profile)) return false;
 		temp.Add(profile);
 		Profiles = temp;
@@ -42,7 +36,7 @@ static class ProfileHelper
 
 	public static bool Remove(string profile)
 	{
-		var temp = Profiles;
+		List<string> temp = Profiles;
 		if (!temp.Remove(profile)) return false;
 		Profiles = temp;
 

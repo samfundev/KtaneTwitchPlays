@@ -17,12 +17,12 @@ class SettingsConverter
 	}
 }
 
-class ColorConverter : JsonConverter
+internal class ColorConverter : JsonConverter
 {
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
 		Color color = (Color) value;
-		string format = string.Format("{0}, {1}, {2}", (int) (color.r * 255), (int) (color.g * 255), (int) (color.b * 255));
+		string format = $"{(int) (color.r * 255)}, {(int) (color.g * 255)}, {(int) (color.b * 255)}";
 		if (color.a != 1) format += ", " + (int) (color.a * 255);
 
 		writer.WriteValue(format);

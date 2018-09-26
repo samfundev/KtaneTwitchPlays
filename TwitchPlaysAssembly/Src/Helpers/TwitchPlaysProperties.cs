@@ -12,11 +12,9 @@
 
 	private static void SetTimeModeTimeLimit(object timeLimit)
 	{
-		if (timeLimit is int intTimeLimit)
-		{
-			TwitchPlaySettings.data.TimeModeStartingTime = intTimeLimit;
-			TwitchPlaySettings.WriteDataToFile();
-		}
+		if (!(timeLimit is int intTimeLimit)) return;
+		TwitchPlaySettings.data.TimeModeStartingTime = intTimeLimit;
+		TwitchPlaySettings.WriteDataToFile();
 	}
 
 	private static void CauseFakeStrike(object kmBombModule)

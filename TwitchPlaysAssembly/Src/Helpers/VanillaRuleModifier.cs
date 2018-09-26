@@ -6,18 +6,14 @@ public class VanillaRuleModifier
 {
 	private static GameObject _gameObject;
 
-	private static IDictionary<string, object> Properties
-	{
-		get
-		{
-			return _gameObject?.GetComponent<IDictionary<string, object>>();
-		}
-	}
+#pragma warning disable IDE0031 // Use null propagation
+	private static IDictionary<string, object> Properties => _gameObject != null ? _gameObject.GetComponent<IDictionary<string, object>>() : null;
+#pragma warning restore IDE0031 // Use null propagation
 
 	public static IEnumerator Refresh()
 	{
 		_gameObject = GameObject.Find("VanillaRuleModifierProperties");
-		for (var i = 0; i < 120 && _gameObject == null; i++)
+		for (int i = 0; i < 120 && _gameObject == null; i++)
 		{
 			yield return null;
 			_gameObject = GameObject.Find("VanillaRuleModifierProperties");
@@ -62,7 +58,7 @@ public class VanillaRuleModifier
 	public static int GetModuleRuleSeed(string moduleType)
 	{
 		object value = 1;
-		var result = (Properties != null && Properties.TryGetValue($"RuleSeedModifier_{moduleType}", out value));
+		bool result = (Properties != null && Properties.TryGetValue($"RuleSeedModifier_{moduleType}", out value));
 		return result ? (int)value : 1;
 	}
 

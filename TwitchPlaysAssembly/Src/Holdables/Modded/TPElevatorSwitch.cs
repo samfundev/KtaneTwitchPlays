@@ -122,19 +122,13 @@ public class TPElevatorSwitch : MonoBehaviour
 	private bool OnInteract()
 	{
 		if (IsON)
-		{
 			StartCoroutine(FlipSwitch(false));
-		}
 		else
 		{
 			if (IRCConnection.Instance.State == IRCConnectionState.Connected)
-			{
 				StartCoroutine(FlipSwitch(true));
-			}
 			else
-			{
 				Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, transform);
-			}
 		}
 
 		return false;
@@ -185,13 +179,10 @@ public class TPElevatorSwitch : MonoBehaviour
 		yield return new WaitForSeconds(0.5f);
 		DebugHelper.Log("Elevator Switch Toggled");
 		if (elevatorState != elevatorSwitch.On())
-		{
 			elevatorSwitch.Switch.Toggle();
-		}
 		else
-		{
 			ReportState();
-		}
+
 		yield return new WaitForSeconds(0.5f);
 
 		initialTime = Time.time;
@@ -219,28 +210,31 @@ public class TPElevatorSwitch : MonoBehaviour
 		IEnumerator toggleSwitch = null;
 		if (split[0] == "elevator")
 		{
-			if (split.Length == 2)
+			switch (split.Length)
 			{
-				switch (split[1])
-				{
-					case "on" when !IsON:
-					case "off" when IsON:
-					case "toggle":
-					case "switch":
-					case "press":
-					case "push":
-					case "flip":
-						toggleSwitch = ToggleSetupRoomElevatorSwitch(!IsON);
-						break;
-					case "on":
-					case "off":
-						toggleSwitch = ToggleSetupRoomElevatorSwitch(IsON);
-						break;
-				}
-			}
-			else if (split.Length == 1)
-			{
-				toggleSwitch = ToggleSetupRoomElevatorSwitch(IsON);
+				case 2:
+					// ReSharper disable once SwitchStatementMissingSomeCases
+					switch (split[1])
+					{
+						case "on" when !IsON:
+						case "off" when IsON:
+						case "toggle":
+						case "switch":
+						case "press":
+						case "push":
+						case "flip":
+							toggleSwitch = ToggleSetupRoomElevatorSwitch(!IsON);
+							break;
+						case "on":
+						case "off":
+							toggleSwitch = ToggleSetupRoomElevatorSwitch(IsON);
+							break;
+					}
+
+					break;
+				case 1:
+					toggleSwitch = ToggleSetupRoomElevatorSwitch(IsON);
+					break;
 			}
 		}
 		while (toggleSwitch != null && toggleSwitch.MoveNext())

@@ -57,18 +57,14 @@ public class PropertiesBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public object this[string key]
 	{
-		get { return _properties[key].Get(); }
+		get => _properties[key].Get();
 		set
 		{
 			if (!_properties.ContainsKey(key))
-			{
-				throw new NotImplementedException("You can't add items to this Dictionary.");
-			}
+				throw new NotSupportedException("You can't add items to this Dictionary.");
 			Property property = _properties[key];
 			if (!property.CanSet())
-			{
 				throw new Exception("The key \"" + key + "\" cannot be set (it is read-only).");
-			}
 			property.Set(value);
 		}
 	}
@@ -79,10 +75,7 @@ public class PropertiesBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public ICollection<string> Keys => _properties.Keys.ToList();
 
-	public ICollection<object> Values
-	{
-		get { throw new NotSupportedException("The Values property is not supported in this Dictionary."); }
-	}
+	public ICollection<object> Values => throw new NotSupportedException("The Values property is not supported in this Dictionary.");
 
 	public void Add(KeyValuePair<string, object> item)
 	{

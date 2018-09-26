@@ -20,7 +20,8 @@ public abstract class HoldableHandler
 	private void OnStrike(string message)
 	{
 		StrikeCount++;
-		BombMessageResponder.moduleCameras?.UpdateStrikes();
+		if (BombMessageResponder.moduleCameras != null)
+			BombMessageResponder.moduleCameras.UpdateStrikes();
 		if (DisableOnStrike) return;
 		if (_delegatedStrikeUserNickName != null)
 		{
@@ -36,7 +37,7 @@ public abstract class HoldableHandler
 
 	private void AwardStrikes(string userNickName, int strikeCount)
 	{
-		BombCommander BombCommander = BombMessageResponder.Instance.BombCommanders[0];
+		BombCommander bombCommander = BombMessageResponder.Instance.BombCommanders[0];
 		int strikePenalty = -5;
 		strikePenalty = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? (strikeCount * strikePenalty) : (Math.Min(strikePenalty, strikeCount * strikePenalty));
 
@@ -70,21 +71,22 @@ public abstract class HoldableHandler
 			{
 				tempMessage = $"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
 			}
-			if (BombCommander.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
+			if (bombCommander.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
 			{
-				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
+				bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
 				tempMessage = tempMessage + $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
 			}
 			else
 			{
-				float timeReducer = BombCommander.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
+				float timeReducer = bombCommander.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
 				double easyText = Math.Round(timeReducer, 1);
-				BombCommander.timerComponent.TimeRemaining = BombCommander.CurrentTimer - timeReducer;
+				bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer - timeReducer;
 				tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
 			IRCConnection.SendMessage(tempMessage);
-			BombCommander.StrikeCount = 0;
-			BombMessageResponder.moduleCameras?.UpdateStrikes();
+			bombCommander.StrikeCount = 0;
+			if (BombMessageResponder.moduleCameras != null)
+				BombMessageResponder.moduleCameras.UpdateStrikes();
 		}
 
 		Leaderboard.Instance?.AddScore(userNickName, strikePenalty);
@@ -92,7 +94,7 @@ public abstract class HoldableHandler
 		StrikeMessage = string.Empty;
 	}
 
-	private IEnumerator FirstItem(object item)
+	private static IEnumerator FirstItem(object item)
 	{
 		yield return item;
 	}
@@ -112,9 +114,7 @@ public abstract class HoldableHandler
 		{
 			IEnumerator holdCoroutine = HoldableCommander.Hold();
 			while (holdCoroutine.MoveNext() && !Strike)
-			{
 				yield return holdCoroutine.Current;
-			}
 		}
 
 		IEnumerator processCommand = RespondToCommandCommon(message);
@@ -128,10 +128,8 @@ public abstract class HoldableHandler
 
 			if (processCommand == null || !processCommand.MoveNext())
 			{
-				if(!Strike)
-				{
+				if (!Strike)
 					SendToChat(null, userNickName, isWhisper, ref parseError);
-				}
 			}
 			else
 			{
@@ -154,9 +152,7 @@ public abstract class HoldableHandler
 								processIEnumerators.Push(processCommand);
 						}
 						else
-						{
 							break;
-						}
 					}
 					if (Strike)
 						DebugHelper.Log("A strike was caused by the command. Invocation will not continue.");
@@ -190,7 +186,6 @@ public abstract class HoldableHandler
 
 					case KMSelectable[] kmSelectables:
 						foreach (KMSelectable selectable in kmSelectables)
-						{
 							if (selectable != null)
 							{
 								yield return DoInteractionClick(selectable);
@@ -200,7 +195,7 @@ public abstract class HoldableHandler
 							{
 								yield return new WaitForSeconds(0.1f);
 							}
-						}
+
 						break;
 
 					case Quaternion quaternion:
@@ -217,9 +212,7 @@ public abstract class HoldableHandler
 						else if (currentString.ToLowerInvariant().EqualsAny("elevator music", "hold music", "waiting music"))
 						{
 							if (_musicPlayer == null)
-							{
 								_musicPlayer = MusicPlayer.StartRandomMusic();
-							}
 						}
 						else if (currentString.ToLowerInvariant().Equals("cancelled") && cancelling)
 						{
@@ -227,61 +220,56 @@ public abstract class HoldableHandler
 							CoroutineCanceller.ResetCancel();
 							cancelled = true;
 						}
-						else if (currentString.StartsWith("strikemessage ", StringComparison.InvariantCultureIgnoreCase) &&
-								 currentString.Substring(14).Trim() != string.Empty)
-						{
+						else if (currentString.StartsWith("strikemessage ",
+							         StringComparison.InvariantCultureIgnoreCase) &&
+						         currentString.Substring(14).Trim() != string.Empty)
 							StrikeMessage = currentString.Substring(14);
-						}
 						else if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
-						{
 							_delegatedStrikeUserNickName = _currentUserNickName;
-						}
 						else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
-						{
 							DisableOnStrike = true;
-						}
-						else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode") && BombMessageResponder.BombActive)
+						else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode") &&
+						         BombMessageResponder.BombActive)
 						{
-							BombCommander BombCommander = BombMessageResponder.Instance.BombCommanders[0];
-							AwardStrikes(_currentUserNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
-							BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, HoldableCommander.ID);
+							BombCommander bombCommander = BombMessageResponder.Instance.BombCommanders[0];
+							AwardStrikes(_currentUserNickName, bombCommander.StrikeLimit - bombCommander.StrikeCount);
+							bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
+								HoldableCommander.ID);
 							Strike = true;
 						}
 						else if (currentString.ToLowerInvariant().Equals("show front"))
-						{
-							processIEnumerators.Push(HoldableCommander.Hold(true));
-						}
+							processIEnumerators.Push(HoldableCommander.Hold());
 						else if (currentString.ToLowerInvariant().Equals("show back"))
-						{
 							processIEnumerators.Push(HoldableCommander.Hold(false));
-						}
 						else
-						{
 							SendToChat(currentString, userNickName, isWhisper, ref parseError);
-						}
+
 						break;
 					case string[] currentStrings:
 						if (currentStrings.Length >= 1)
-						{
-							if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode") && BombMessageResponder.BombActive)
+							if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode") &&
+							    BombMessageResponder.BombActive)
 							{
-								BombCommander BombCommander = BombMessageResponder.Instance.BombCommanders[0];
-								AwardStrikes(_currentUserNickName, BombCommander.StrikeLimit - BombCommander.StrikeCount);
+								BombCommander bombCommander = BombMessageResponder.Instance.BombCommanders[0];
+								AwardStrikes(_currentUserNickName,
+									bombCommander.StrikeLimit - bombCommander.StrikeCount);
 								switch (currentStrings.Length)
 								{
 									case 2:
-										BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], HoldableCommander.ID);
+										bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1],
+											HoldableCommander.ID);
 										break;
 									case 3:
-										BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1], currentStrings[2]);
+										bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1],
+											currentStrings[2]);
 										break;
 									default:
-										BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, HoldableCommander.ID);
+										bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
+											HoldableCommander.ID);
 										break;
 								}
-								break;
 							}
-						}
+
 						break;
 					case Dictionary<string, bool> permissions:
 						foreach (KeyValuePair<string, bool> pair in permissions)
@@ -296,13 +284,13 @@ public abstract class HoldableHandler
 						break;
 					case object[] objects:
 						if (objects == null) break;
+						// ReSharper disable once SwitchStatementMissingSomeCases
 						switch (objects.Length)
 						{
 							case 3 when objects[0] is string objstr:
 								if (IsAskingPermission(objstr, userNickName, out bool permissionGranted))
 								{
 									if (permissionGranted)
-									{
 										switch (objects[1])
 										{
 											case Action actionTrue:
@@ -313,9 +301,7 @@ public abstract class HoldableHandler
 												yield return null;
 												continue;
 										}
-									}
 									else
-									{
 										switch (objects[2])
 										{
 											case Action actionFalse:
@@ -329,13 +315,9 @@ public abstract class HoldableHandler
 												yield return null;
 												continue;
 										}
-									}
 								}
 								break;
 						}
-						break;
-
-					default:
 						break;
 				}
 				
@@ -356,25 +338,20 @@ public abstract class HoldableHandler
 			}
 
 			if (DisableOnStrike)
-			{
 				AwardStrikes(userNickName, StrikeCount);
-			}
 			DebugHelper.Log("RespondToCommandInternal() Complete");
 		}
 		else
 		{	// running RespondToCommandCommon()	
 			DebugHelper.Log("Running RespondToCommandCommon()");
 			do
-			{
 				yield return processCommand.Current;
-			} while (processCommand.MoveNext());
+			while (processCommand.MoveNext());
 			DebugHelper.Log("RespondToCommandCommon() complete");
 		}
-
-		yield break;
 	}
 
-	private bool IsAskingPermission(string permission, string userNickName, out bool permissionGranted)
+	private static bool IsAskingPermission(string permission, string userNickName, out bool permissionGranted)
 	{
 		permissionGranted = false;
 		switch (permission)
@@ -462,9 +439,7 @@ public abstract class HoldableHandler
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, string strikeMessage = null, float delay = 0.1f)
 	{
 		if (strikeMessage != null)
-		{
 			StrikeMessage = strikeMessage;
-		}
 
 		DoInteractionStart(interactable);
 		DoInteractionEnd(interactable);

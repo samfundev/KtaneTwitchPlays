@@ -68,6 +68,7 @@ public static class HoldableFactory
 		{
 			bool helpResult = FindHelpMessage(holdable, commandComponentType, out string helpText);
 			FindCancelBool(holdable, commandComponentType, out FieldInfo cancelField);
+			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (commandType)
 			{
 				case ModCommandType.Simple when helpResult:
@@ -131,10 +132,10 @@ public static class HoldableFactory
 		return true;
 	}
 
-	private static bool FindCancelBool(FloatingHoldable holdable, Type holdableType, out FieldInfo CancelField)
+	private static bool FindCancelBool(FloatingHoldable holdable, Type holdableType, out FieldInfo cancelField)
 	{
-		CancelField = holdableType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		return CancelField?.GetValue(holdable.GetComponent(holdableType)) is bool;
+		cancelField = holdableType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		return cancelField?.GetValue(holdable.GetComponent(holdableType)) is bool;
 	}
 
 	private static MethodInfo FindProcessCommandMethod(MonoBehaviour floadingHoldable, out ModCommandType commandType, out Type commandComponentType)
@@ -166,7 +167,7 @@ public static class HoldableFactory
 		commandType = ModCommandType.Unsupported;
 
 		ParameterInfo[] parameters = candidateMethod.GetParameters();
-		if (parameters == null || parameters.Length == 0)
+		if (parameters.Length == 0)
 		{
 			DebugLog("Found a potential candidate ProcessCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
 			return false;

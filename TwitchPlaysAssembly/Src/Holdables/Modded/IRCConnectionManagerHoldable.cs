@@ -12,7 +12,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 		_connectButton = holdable.GetComponent<IRCConnectionManagerHoldable>().ConnectButton;
 		_elevatorSwitch = TPElevatorSwitch.Instance;
 		HelpMessage = "Disconnect the IRC from twitch plays with !{0} disconnect. For obvious reasons, only the streamer may do this.";
-		if (_elevatorSwitch?.gameObject.activeInHierarchy ?? false)
+		if (_elevatorSwitch != null && _elevatorSwitch.gameObject.activeInHierarchy)
 		{
 			HelpMessage += " Turn the elevator on with !{0} elevator on. Turn the Elevator off with !{0} elevator off. Flip the elevator on/off with !{0} elevator toggle";
 		}
@@ -26,37 +26,40 @@ public class IRCConnectionManagerHandler : HoldableHandler
 		DebugHelper.Log($"Received: !ircmanager {command}");
 		
 		string[] split = command.ToLowerInvariant().Trim().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+		// ReSharper disable SwitchStatementMissingSomeCases
 		switch (split[0])
 		{
-			case "elevator" when _elevatorSwitch?.gameObject.activeInHierarchy ?? false:
-				if (split.Length == 1)
+			case "elevator" when _elevatorSwitch != null && _elevatorSwitch.gameObject.activeInHierarchy:
+				switch (split.Length)
 				{
-					yield return null;
-					TPElevatorSwitch.Instance.ReportState();
-					yield return null;
-				}
-				else if (split.Length == 2)
-				{
-					switch (split[1])
-					{
-						case "on" when !TPElevatorSwitch.IsON:
-						case "off" when TPElevatorSwitch.IsON:
-						case "flip":
-						case "toggle":
-						case "switch":
-						case "press":
-						case "push":
-							yield return null;
-							_elevatorSwitch.ElevatorSwitch.OnInteract();
-							yield return new WaitForSeconds(0.1f);
-							break;
-						case "on":
-						case "off":
-							yield return null;
-							TPElevatorSwitch.Instance.ReportState();
-							yield return null;
-							break;
-					}
+					case 1:
+						yield return null;
+						TPElevatorSwitch.Instance.ReportState();
+						yield return null;
+						break;
+					case 2:
+						switch (split[1])
+						{
+							case "on" when !TPElevatorSwitch.IsON:
+							case "off" when TPElevatorSwitch.IsON:
+							case "flip":
+							case "toggle":
+							case "switch":
+							case "press":
+							case "push":
+								yield return null;
+								_elevatorSwitch.ElevatorSwitch.OnInteract();
+								yield return new WaitForSeconds(0.1f);
+								break;
+							case "on":
+							case "off":
+								yield return null;
+								TPElevatorSwitch.Instance.ReportState();
+								yield return null;
+								break;
+						}
+
+						break;
 				}
 				
 				break;
@@ -78,6 +81,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 				yield return "sendtochaterror only the streamer may use the IRC disconnect button.";
 				break;
 		}
+		// ReSharper restore SwitchStatementMissingSomeCases
 	}
 
 	public static IRCConnectionManagerHandler Instance;
@@ -121,13 +125,10 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 		if (IRCConnection.Instance == null) return false;
 
 		if (IRCConnection.Instance.State == IRCConnectionState.Disconnected)
-		{
 			IRCConnection.Connect();
-		}
 		else
-		{
 			IRCConnection.Disconnect();
-		}
+
 		return false;
 	}
 
@@ -140,20 +141,24 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 		IRCText.color = TwitchPlaySettings.data.IRCManagerTextColor;
 		try
 		{
-			MeshRenderer background = _newImageGameObject?.GetComponent<MeshRenderer>();
+#pragma warning disable IDE0031 // Use null propagation
+			MeshRenderer background = _newImageGameObject != null? _newImageGameObject.GetComponent<MeshRenderer>() : null;
+#pragma warning restore IDE0031 // Use null propagation
 			//Image loading at runtime found at https://forum.unity.com/threads/solved-apply-image-to-plane-primitive.320489/
 			if (background == null || !File.Exists(TwitchPlaySettings.data.IRCManagerBackgroundImage))
 			{
 				_originalImageGameObject.SetActive(true);
-				_newImageGameObject?.SetActive(false);
+				if (_newImageGameObject != null)
+					_newImageGameObject.SetActive(false);
 				yield break;
 			}
 			
 			_originalImageGameObject.SetActive(false);
-			_newImageGameObject?.SetActive(true);
+			if (_newImageGameObject != null)
+				_newImageGameObject.SetActive(true);
 
-			var bytes = File.ReadAllBytes(TwitchPlaySettings.data.IRCManagerBackgroundImage);
-			var tex = new Texture2D(1, 1);
+			byte[] bytes = File.ReadAllBytes(TwitchPlaySettings.data.IRCManagerBackgroundImage);
+			Texture2D tex = new Texture2D(1, 1);
 			tex.LoadImage(bytes);
 			background.material.mainTexture = tex;
 		}
@@ -163,7 +168,8 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 			_imageLoadingDisabled = true;
 			TwitchPlaySettings.WriteDataToFile();
 			_originalImageGameObject.SetActive(true);
-			_newImageGameObject?.SetActive(false);
+			if (_newImageGameObject != null)
+				_newImageGameObject.SetActive(false);
 		}
 	}
 

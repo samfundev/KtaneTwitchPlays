@@ -120,11 +120,9 @@ public static class UserAccess
 		UserAccessData.Instance.UserAccessLevel = UserAccessData.Instance.UserAccessLevel.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 		UserAccessData.Instance.Bans = UserAccessData.Instance.Bans.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 
-		foreach (string username in UserAccessData.Instance.UserAccessLevel.Keys.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
-		{
+		foreach (string username in UserAccessData.Instance.UserAccessLevel.Keys
+			.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
 			IsBanned(username);
-		}
-
 	}
 	public static string usersSavePath = "AccessLevels.json";
 
@@ -133,31 +131,22 @@ public static class UserAccess
 	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
 	{
 		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername || userNickName == "Bomb Factory")
-		{
 			return true;
-		}
-		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
-		{
+		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
+			out AccessLevel userAccessLevel))
 			return accessLevel == AccessLevel.User;
-		}
 		if (userAccessLevel == accessLevel)
-		{
 			return true;
-		}
 
 		do
 		{
-			if ((accessLevel & userAccessLevel) == accessLevel && (ModeratorsEnabled || accessLevel < (AccessLevel)0x2000 || accessLevel == AccessLevel.Streamer))
-			{
+			if ((accessLevel & userAccessLevel) == accessLevel &&
+			    (ModeratorsEnabled || accessLevel < (AccessLevel) 0x2000 || accessLevel == AccessLevel.Streamer))
 				return true;
-			}
 			userAccessLevel = (AccessLevel) ((int) userAccessLevel >> 1);
 		} while (userAccessLevel != AccessLevel.User && orHigher);
 
-		if (TwitchPlaySettings.data.AnarchyMode && userAccessLevel == AccessLevel.Defuser)
-			return true;
-
-		return false;
+		return TwitchPlaySettings.data.AnarchyMode && userAccessLevel == AccessLevel.Defuser;
 	}
 
 	public static AccessLevel HighestAccessLevel(string userNickName)
@@ -166,20 +155,15 @@ public static class UserAccess
 
 		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Any(x => x.bombName == userNickName)) return AccessLevel.Streamer;
 
-		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(), out AccessLevel userAccessLevel))
-		{
+		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
+			out AccessLevel userAccessLevel))
 			return AccessLevel.User;
-		}
 		if(IsBanned(userNickName) != null)
 			return AccessLevel.Banned;
-		for (AccessLevel level = (AccessLevel)0x40000000; level > 0; level = (AccessLevel)((int)level >> 1))
-		{
+		for (AccessLevel level = (AccessLevel) 0x40000000; level > 0; level = (AccessLevel) ((int) level >> 1))
 			if ((userAccessLevel & level) == level)
 				return level;
-		}
-		if (TwitchPlaySettings.data.AnarchyMode)
-			return AccessLevel.Defuser;
-		return AccessLevel.User;
+		return TwitchPlaySettings.data.AnarchyMode ? AccessLevel.Defuser : AccessLevel.User;
 	}
 
 	public static void TimeoutUser(string userNickName, string moderator, string reason, int timeout, bool isWhisper)
@@ -222,7 +206,7 @@ public static class UserAccess
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true))
 		{
-			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
 			return;
 		}
 		if (HasAccess(userNickName, AccessLevel.Streamer))
@@ -261,7 +245,7 @@ public static class UserAccess
 	{
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true))
 		{
-			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient priveleges for this command.", moderator, !isWhisper);
+			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
 			return;
 		}
 		UnbanUser(userNickName);
@@ -270,13 +254,13 @@ public static class UserAccess
 			IRCConnection.SendMessage($"You were unbanned from Twitch Plays by {moderator}.", userNickName, false);
 	}
 
-	public static BanData IsBanned(string usernickname)
+	public static BanData IsBanned(string userNickName)
 	{
-		if (!UserAccessData.Instance.Bans.TryGetValue(usernickname.ToLowerInvariant(), out BanData ban) || !HasAccess(usernickname, AccessLevel.Banned))
+		if (!UserAccessData.Instance.Bans.TryGetValue(userNickName.ToLowerInvariant(), out BanData ban) || !HasAccess(userNickName, AccessLevel.Banned))
 		{
 			bool rewrite = ban != null;
-			rewrite |= HasAccess(usernickname, AccessLevel.Banned);
-			UnbanUser(usernickname, rewrite);
+			rewrite |= HasAccess(userNickName, AccessLevel.Banned);
+			UnbanUser(userNickName, rewrite);
 			return null;
 		}
 
@@ -286,23 +270,23 @@ public static class UserAccess
 			if (double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForBanCommand))
 			{
 				unban = true;
-				IRCConnection.SendMessage($"User {usernickname} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
+				IRCConnection.SendMessage($"User {userNickName} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
 				if (TwitchPlaySettings.data.EnableWhispers)
-					IRCConnection.SendMessage($"You are no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.", usernickname, false);
+					IRCConnection.SendMessage($"You are no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.", userNickName, false);
 			}
 			if (!double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
 			{
 				unban = true;
-				IRCConnection.SendMessage($"User {usernickname} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
+				IRCConnection.SendMessage($"User {userNickName} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
 				if (TwitchPlaySettings.data.EnableWhispers)
-					IRCConnection.SendMessage($"You are no longer timed out from twitch plays because {ban.BannedBy} no longer has the pwoer to issue time outs.", usernickname, false);
+					IRCConnection.SendMessage($"You are no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.", userNickName, false);
 			}
 		}
 		else if (!UserAccessData.Instance.StickyBans && !unban)
 		{
-			IRCConnection.SendMessage($"User {usernickname} is no longer banned from twitch plays, as there is no one to hold accountable for the ban.");
+			IRCConnection.SendMessage($"User {userNickName} is no longer banned from twitch plays, as there is no one to hold accountable for the ban.");
 			if (TwitchPlaySettings.data.EnableWhispers)
-				IRCConnection.SendMessage("You are no longer banned from twitch plays, as there is no one to hold accountable for the ban.", usernickname, false);
+				IRCConnection.SendMessage("You are no longer banned from twitch plays, as there is no one to hold accountable for the ban.", userNickName, false);
 			unban = true;
 		}
 		else
@@ -310,11 +294,11 @@ public static class UserAccess
 			ban.BannedBy = IRCConnection.Instance.ChannelName;
 		}
 
-		unban |= HasAccess(usernickname, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand)
-		              || usernickname.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant());
+		unban |= HasAccess(userNickName, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand)
+		              || userNickName.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant());
 
 		if (unban)
-			UnbanUser(usernickname);
+			UnbanUser(userNickName);
 
 		return TwitchPlaySettings.data.AnarchyMode || unban ? null : ban;
 	}

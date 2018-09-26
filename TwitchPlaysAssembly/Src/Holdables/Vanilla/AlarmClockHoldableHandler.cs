@@ -27,7 +27,7 @@ public class AlarmClockHoldableHandler : HoldableHandler
 		_alarmClockOnField = typeof(AlarmClock).GetField("isOn", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static FieldInfo _alarmClockOnField = null;
-	private AlarmClock clock;
+	private static readonly FieldInfo _alarmClockOnField = null;
+	private readonly AlarmClock clock;
 	public static AlarmClockHoldableHandler Instance = null;
 }
