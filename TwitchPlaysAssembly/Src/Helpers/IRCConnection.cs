@@ -178,7 +178,14 @@ public class IRCConnection : MonoBehaviour
 					}
 
 					coroutineQueue.queueModified = false;
-					OnMessageReceived.Invoke(message);
+					try
+					{
+						OnMessageReceived.Invoke(message);
+					}
+					catch (Exception exception)
+					{
+						DebugHelper.LogException(exception, "An exception has occured while invoking OnMessageRecieved:");
+					}
 
 					if (coroutineQueue.queueModified == false) Destroy(twitchMessage.gameObject);
 					else if (isCommand) TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
