@@ -469,6 +469,14 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, string> UnclaimModule(string userNickName, string targetModule)
 	{
+		if (PlayerName == null)
+		{
+			bool wasQueued = ClaimQueue.Any(x => x.First == userNickName);
+			if (wasQueued) RemoveFromClaimQueue(userNickName);
+
+			return new Tuple<bool, string>(false, !wasQueued ? string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, HeaderText) : null);
+		}
+
 		RemoveFromClaimQueue(userNickName);
 		if (PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
@@ -568,6 +576,10 @@ public class TwitchComponentHandle : MonoBehaviour
 						return null;
 					}
 					messageOut = UnclaimModule(userNickName, Code).Second;
+
+					// If UnclaimModule responds with a null message, someone tried to unclaim a module that no one has claimed but they were waiting to claim.
+					// It's valid command and they were removed from the queue but no message is sent.
+					if (messageOut == null) return null;
 				}
 				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cv", "vc",
 					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cvp", "vpc"))
@@ -597,6 +609,11 @@ public class TwitchComponentHandle : MonoBehaviour
 						return null;
 					}
 					Tuple<bool, string> response = UnclaimModule(userNickName, Code);
+
+					// If UnclaimModule responds with a null message, someone tried to unclaim a module that no one has claimed but they were waiting to claim.
+					// It's valid command and they were removed from the queue but no message is sent.
+					if (response.Second == null) return null;
+
 					if (response.First)
 					{
 						IRCConnection.SendMessage(response.Second);
