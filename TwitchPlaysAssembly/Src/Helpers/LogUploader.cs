@@ -124,7 +124,8 @@ public class LogUploader : MonoBehaviour
 			{
 				UnityWebRequest www = UnityWebRequest.Post(TwitchPlaySettings.data.RepositoryUrl + "/upload-log", new List<IMultipartFormSection> {
 					new MultipartFormFileSection("log", encodedData, null, "output_log.txt"),
-					new MultipartFormDataSection("noredirect", "1", Encoding.UTF8, "text/plain")
+					new MultipartFormDataSection("noredirect", "1", Encoding.UTF8, "text/plain"),
+					new MultipartFormDataSection("extrapadding", "1") // Ugly Hack: Unity doesn't seem to send the request properly and leaves out the last boundry. This adds an extra field to counter that.
 				});
 				
 				yield return www.Send();
