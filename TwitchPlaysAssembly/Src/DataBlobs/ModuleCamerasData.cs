@@ -11,6 +11,6 @@ public class ModuleCamerasData : MonoBehaviour
 	public Text confidencePrefab = null;
 	public Camera cameraPrefab = null;
 	public RectTransform bombStatus = null;
-	public int firstBackupCamera = 3;
+	public bool cameraWallEnabled = false;
 	public Text[] notesTexts = null;
 }

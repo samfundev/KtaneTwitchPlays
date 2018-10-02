@@ -118,18 +118,16 @@ public class Factory : GameRoom
 				InitializeGameModes(true);
 			}
 
-			bombHandle.bombName = $"Bomb {currentBombID}  of {(_infiniteMode ? "∞" : BombCount.ToString())}";
-			IRCConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++ , _infiniteMode ? "∞" : BombCount.ToString());
-			if (OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall)
+			bool enableCameraWall = OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall;
+			if (enableCameraWall != BombMessageResponder.moduleCameras.CameraWallEnabled)
 			{
-				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!enablecamerawall");
-				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
-				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!modules");
+				if (enableCameraWall)
+					BombMessageResponder.moduleCameras.EnableCameraWall();
+				else
+					BombMessageResponder.moduleCameras.DisableCameraWall();
 			}
-			else
-			{
-				BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
-			}
+			bombHandle.bombName = $"Bomb {currentBombID} of {(_infiniteMode ? "∞" : BombCount.ToString())}";
+			IRCConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++, _infiniteMode ? "∞" : BombCount.ToString());
 
 			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 			{
@@ -163,7 +161,7 @@ public class Factory : GameRoom
 			foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
 			{
 				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
-				BombMessageResponder.moduleCameras.DetachFromModule(handle.bombComponent);
+				BombMessageResponder.moduleCameras.UnviewModule(handle);
 			}
 
 			if (TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)

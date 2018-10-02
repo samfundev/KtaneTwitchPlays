@@ -8,24 +8,20 @@ using UnityEngine.UI;
 
 public class ModuleCameras : MonoBehaviour
 {
-	public const int CameraLayer = 11;
+	public const int CameraLayer = 8;
 
 	public class ModuleItem
 	{
 		public Dictionary<Transform, int> OriginalLayers = new Dictionary<Transform, int>();
 		public BombComponent Component;
 		public TwitchComponentHandle Handle;
-		public int Priority;
-		public int Index;
 		public int NonInteractiveCameraLayer = CameraLayer;
 		public bool EnableCamera;
 
-		public ModuleItem(BombComponent c, TwitchComponentHandle h, int p)
+		public ModuleItem(BombComponent c, TwitchComponentHandle h)
 		{
 			Component = c;
 			Handle = h;
-			Priority = p;
-
 			UpdateLayerData();
 		}
 
@@ -74,9 +70,7 @@ public class ModuleCameras : MonoBehaviour
 			{
 				try
 				{
-					kvp.Key.gameObject.layer = EnableCamera
-						? NonInteractiveCameraLayer
-						: kvp.Value;
+					kvp.Key.gameObject.layer = EnableCamera ? NonInteractiveCameraLayer : kvp.Value;
 				}
 				catch
 				{
@@ -98,8 +92,6 @@ public class ModuleCameras : MonoBehaviour
 	{
 		public Camera CameraInstance;
 		public int NonInteractiveCameraLayer;
-		public int Priority = CameraNotInUse;
-		public int Index;
 		public ModuleItem Module;
 		public bool LastInteractiveState;
 		public bool EscapePressed;
@@ -138,7 +130,7 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.rect = _zoomCameraLocation;
 		}
 
-		public IEnumerator UnZoomCamera(float duration = 1.0f)
+		public IEnumerator UnzoomCamera(float duration = 1.0f)
 		{
 			yield return null;
 			float initialTime = Time.time;
@@ -156,62 +148,35 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.depth = 99;
 		}
 
-		public void Refresh()
+		public void ViewModule(ModuleItem module)
 		{
 			Deactivate();
+			if (module == null)
+				return;
+			Module = module;
 
-			while (Module == null)
+			int layer = (LastInteractiveState ? CameraLayer : NonInteractiveCameraLayer);
+
+			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
+			Module.NonInteractiveCameraLayer = layer;
+			Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", Module.Component.gameObject.layer, layer);
+			Module.SetRenderLayer(true);
+			Transform t = Module.Component.transform.Find("TwitchPlayModuleCamera");
+			if (t == null)
 			{
-				Module = _parent.NextInStack;
-				if (Module == null)
-				{
-					/*
-					if (!TakeFromBackupCamera())
-					{
-						break;
-					}*/
-					break;
-				}
-				if (ModuleIsSolved)
-				{
-					Module = null;
-					continue;
-				}
-
-				if (Module.Index > 0)
-				{
-					Index = Module.Index;
-				}
-				else
-				{
-					Index = ++ModuleCameras.Index;
-					Module.Index = Index;
-				}
-				Priority = Module.Priority;
-
-				int layer = (LastInteractiveState ? CameraLayer : NonInteractiveCameraLayer);
-
-				CameraInstance.cullingMask = (1 << layer) | (1 << 31);
-				Module.NonInteractiveCameraLayer = layer;
-				Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", Module.Component.gameObject.layer, layer);
-				Module.SetRenderLayer(true);
-				Transform t = Module.Component.transform.Find("TwitchPlayModuleCamera");
-				if (t == null)
-				{
-					t = new GameObject().transform;
-					t.name = "TwitchPlayModuleCamera";
-					t.SetParent(Module.Component.transform, false);
-				}
-				CameraInstance.transform.SetParent(t, false);
-				CameraInstance.gameObject.SetActive(true);
-
-				Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1}", Module.Component.gameObject.layer, CameraInstance.cullingMask);
-
-				Vector3 lossyScale = CameraInstance.transform.lossyScale;
-				CameraInstance.nearClipPlane = 1.0f * lossyScale.y;
-				CameraInstance.farClipPlane = 3.0f * lossyScale.y;
-				Debug.LogFormat("[ModuleCameras] Camera's lossyScale is {0}; Setting near plane to {1}, far plane to {2}", lossyScale, CameraInstance.nearClipPlane, CameraInstance.farClipPlane);
+				t = new GameObject().transform;
+				t.name = "TwitchPlayModuleCamera";
+				t.SetParent(Module.Component.transform, false);
 			}
+			CameraInstance.transform.SetParent(t, false);
+			CameraInstance.gameObject.SetActive(true);
+
+			Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1}", Module.Component.gameObject.layer, CameraInstance.cullingMask);
+
+			Vector3 lossyScale = CameraInstance.transform.lossyScale;
+			CameraInstance.nearClipPlane = 1.0f * lossyScale.y;
+			CameraInstance.farClipPlane = 3.0f * lossyScale.y;
+			Debug.LogFormat("[ModuleCameras] Camera's lossyScale is {0}; Setting near plane to {1}, far plane to {2}", lossyScale, CameraInstance.nearClipPlane, CameraInstance.farClipPlane);
 		}
 
 		private void LateUpdate()
@@ -252,7 +217,6 @@ public class ModuleCameras : MonoBehaviour
 			}
 
 			Module = null;
-			Priority = CameraNotInUse;
 		}
 
 		private bool ModuleIsSolved => Module.Component.IsSolved;
@@ -267,20 +231,14 @@ public class ModuleCameras : MonoBehaviour
 	public Text ConfidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
 	public Camera CameraPrefab { get => _data.cameraPrefab; set => _data.cameraPrefab = value; }
 	public RectTransform BombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
-	public int FirstBackupCamera { get => _data.firstBackupCamera; set => _data.firstBackupCamera = value; }
+	public bool CameraWallEnabled { get => _data.cameraWallEnabled; set => _data.cameraWallEnabled = value; }
 	public Text[] NotesTexts { get => _data.notesTexts; set => _data.notesTexts = value; }
 	#endregion
 
 	#region Private Fields
 	private ModuleCamerasData _data;
 	private readonly Dictionary<BombComponent, ModuleItem> _moduleItems = new Dictionary<BombComponent, ModuleItem>();
-	private readonly Stack<ModuleItem>[] _stacks = new Stack<ModuleItem>[4];
-	private readonly Stack<ModuleItem> _moduleStack = new Stack<ModuleItem>();
-	private readonly Stack<ModuleItem> _claimedModuleStack = new Stack<ModuleItem>();
-	private readonly Stack<ModuleItem> _priorityModuleStack = new Stack<ModuleItem>();
-	private readonly Stack<ModuleItem> _pinnedModuleStack = new Stack<ModuleItem>();
 	private readonly List<ModuleCamera> _cameras = new List<ModuleCamera>();
-	private readonly List<ModuleCamera> _camerasQueue = new List<ModuleCamera>();
 	private BombCommander _currentBomb;
 
 	private int _currentSolves;
@@ -298,7 +256,7 @@ public class ModuleCameras : MonoBehaviour
 		new Rect(0.0000000f, 0.28f, 0.1666667f, 0.28f),
 		new Rect(0.0000000f, 0.56f, 0.1666667f, 0.28f),
 
-		//Wall of Cameras
+		// Camera wall
 		new Rect(0.1666667f, 0.651f, 0.1666667f, 0.27f),
 		new Rect(0.3333333f, 0.651f, 0.1666667f, 0.27f),
 		new Rect(0.5000000f, 0.651f, 0.1666667f, 0.27f),
@@ -316,14 +274,6 @@ public class ModuleCameras : MonoBehaviour
 	};
 
 	//private float currentSuccess;
-	#endregion
-
-	#region Public Constants
-	public const int CameraNotInUse = 0;
-	public const int CameraInUse = 1;
-	public const int CameraClaimed = 2;
-	public const int CameraPrioritised = 3;
-	public const int CameraPinned = 4;
 	#endregion
 
 	#region Public Statics
@@ -347,23 +297,20 @@ public class ModuleCameras : MonoBehaviour
 		instantiatedCamera.rect = _cameraLocations[layer];
 		instantiatedCamera.aspect = 1f;
 		instantiatedCamera.depth = 99;
-		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, 8 + layer);
+
+		// The weird formula here ensures that the 18 module cameras will use layers 17–30 and then 9–12.
+		// This is because layer 13 is used by KTANE for mouse rendering and 14–15 for VR.
+		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, (layer + 8) % 22 + 9);
+
 		_cameras.Add(cam);
-		_camerasQueue.Add(cam);
 	}
 
 	private void Start()
 	{
 		for (int i = 0; i < 6; i++)
-		{
 			InstantiateCamera(i);
-		}
-		_stacks[0] = _pinnedModuleStack;
-		_stacks[1] = _priorityModuleStack;
-		_stacks[2] = _claimedModuleStack;
-		_stacks[3] = _moduleStack;
 	}
-	
+
 	private void LateUpdate()
 	{
 		if (_currentBomb == null) return;
@@ -392,65 +339,60 @@ public class ModuleCameras : MonoBehaviour
 		if (existingCamera > -1)
 		{
 			ModuleCamera cam = _cameras[existingCamera];
-			return cam.UnZoomCamera(delay);
+			return cam.UnzoomCamera(delay);
 		}
 		return null;
 	}
 
-	public void AttachToModule(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
+	public bool TryViewModule(TwitchComponentHandle handle)
 	{
-		if ( handle != null && (handle.Claimed) && (priority == CameraClaimed) )
-		{
-			priority = CameraClaimed;
-		}
-		int existingCamera = CurrentModulesContains(component);
+		if (handle == null)
+			return false;
+
+		var item = EnsureModuleItem(handle);
+		handle.LastUsed = DateTime.UtcNow;
+
+		// Is the module already viewed?
+		int existingCamera = CurrentModulesContains(handle.bombComponent);
 		if (existingCamera > -1)
-		{
-			ModuleCamera cam = _cameras[existingCamera];
-			if (cam.Priority < priority)
-			{
-				cam.Priority = priority;
-				cam.Module.Priority = priority;
-			}
-			cam.Index = ++Index;
-			cam.Module.Index = cam.Index;
-			return;
-		}
-		ModuleCamera camera = AvailableCamera(priority);
-		try
-		{
-			// If the camera is in use, return its module to the appropriate stack
-			if ((camera.Priority > CameraNotInUse) && (camera.Module.Component != null))
-			{
-				camera.Module.Index = camera.Index;
-				AddModuleToStack(camera.Module.Component, camera.Module.Handle, camera.Priority);
-				camera.Priority = CameraNotInUse;
-			}
+			return false;
 
-			// Add the new module to the stack
-			AddModuleToStack(component, handle, priority);
+		// Find a camera
+		var camera = AvailableCamera(handle.CameraPriority);
+		if (camera == null)
+			return false;
 
-			// Refresh the camera
-			camera.Refresh();
-			
-		}
-		catch (Exception e)
+		// If we can replace a LOWER-priority camera (or an unused slot), do so before enabling the camera wall.
+		if (camera.Module == null || camera.Module.Handle.CameraPriority < handle.CameraPriority)
+			camera.ViewModule(item);
+		// If we can and should enable the camera wall, enable it and then view the module.
+		else if (AutomaticCameraWallEnabled && !CameraWallEnabled && _cameras.Where(cam => cam.Module != null && cam.Module.Handle.Claimed).Select(cam => cam.Module.Handle.PlayerName).Distinct().Count() >= 6)
 		{
-			Debug.Log(LogPrefix + "Error: " + e.Message);
+			EnableCameraWall();
+			TryViewModule(handle);
 		}
+		// If the camera is already enabled, replace a suitable SAME-priority camera.
+		else
+			camera.ViewModule(item);
+		return true;
 	}
 
-	public void AttachToModules(List<TwitchComponentHandle> handles, int priority = CameraInUse)
+	public ModuleItem EnsureModuleItem(TwitchComponentHandle handle)
 	{
-		foreach (TwitchComponentHandle handle in Enumerable.Reverse(handles))
+		if (!_moduleItems.TryGetValue(handle.bombComponent, out var item))
 		{
-			AddModuleToStack(handle.bombComponent, handle, priority);
+			item = new ModuleItem(handle.bombComponent, handle);
+			_moduleItems.Add(handle.bombComponent, item);
 		}
-		foreach (ModuleCamera camera in AvailableCameras(priority - 1))
-		{
-			camera.Refresh();
-		}
+		return item;
 	}
+
+	private ModuleCamera AvailableCamera(CameraPriority maxPriority) => _cameras
+				.Where(c => c.Module == null || (c.Module.Handle != null && c.Module.Handle.CameraPriority <= maxPriority))
+				.OrderBy(c => c.Module != null)
+				.ThenByDescending(c => c.Module?.Handle.CameraPriority)
+				.ThenBy(c => c.Module?.Handle.LastUsed)
+				.FirstOrDefault();
 
 	public void SetNotes(int noteIndex, string noteText)
 	{
@@ -464,9 +406,10 @@ public class ModuleCameras : MonoBehaviour
 		NotesTexts[noteIndex].text += " " + noteText;
 	}
 
-	public void DetachFromModule(MonoBehaviour component, bool delay = false)
+	public void UnviewModule(TwitchComponentHandle handle)
 	{
-		StartCoroutine(DetachFromModuleCoroutine(component, delay));
+		handle.CameraPriority = handle.Solved ? CameraPriority.Unviewed : handle.Claimed ? CameraPriority.Claimed : CameraPriority.Unviewed;
+		StartCoroutine(UnviewModuleCoroutine(handle));
 	}
 
 	public void Hide()
@@ -543,65 +486,63 @@ public class ModuleCameras : MonoBehaviour
 		else
 		{
 			ConfidencePrefab.color = Color.yellow;
-			string pts = "+" + $"{TwitchPlaySettings.GetRewardBonus():0}";
+			string pts = $"+{TwitchPlaySettings.GetRewardBonus():0}";
 			ConfidencePrefab.text = pts;
 		}
 	}
 
-	public void EnableWallOfCameras()
+	public void EnableCameraWall()
 	{
-		DebugHelper.Log("Enabling Wall of Cameras");
-		if (FirstBackupCamera == 6)
+		if (CameraWallEnabled)
 		{
-			DebugHelper.Log("Wall of Cameras Already enabled");
+			DebugHelper.Log("Camera Wall already enabled");
 			return;
 		}
-		FirstBackupCamera = 6;
+		DebugHelper.Log("Enabling Camera Wall");
+		CameraWallEnabled = true;
+		GameRoom.HideCamera();
+
 		for (int i = 6; i < _cameraLocations.Length; i++)
-		{
 			InstantiateCamera(i);
-			_cameras[i].Refresh();
+		while (HasEmptySlot)
+		{
+			var preferredToView = PreferredToView;
+			if (!TryViewModule(preferredToView?.Handle))
+				break;
 		}
-		DebugHelper.Log("Wall of Cameras Enabled");
+
+		DebugHelper.Log("Camera Wall enabled");
 	}
 
-	public void DisableWallOfCameras()
+	public void DisableCameraWall()
 	{
-		DebugHelper.Log("Disabling Wall of Cameras");
-		if (FirstBackupCamera == 3)
+		if (!CameraWallEnabled)
 		{
-			DebugHelper.Log("Wall of Cameras already disabled");
+			DebugHelper.Log("Camera Wall already disabled");
 			return;
 		}
-		FirstBackupCamera = 3;
+		DebugHelper.Log("Disabling Camera Wall");
+		CameraWallEnabled = false;
+		GameRoom.ShowCamera();
+
 		while (_cameras.Count > 6)
 		{
 			ModuleCamera camera = _cameras[6];
 			_cameras.RemoveAt(6);
-			_camerasQueue.Remove(camera);
-			
-			if (camera.Module != null)	//Return the module back to the appropriate stack if applicable.
-				AddModuleToStack(camera.Module.Component, camera.Module.Handle, camera.Module.Priority);
+
 			camera.Deactivate();
 			Destroy(camera.CameraInstance);
 			Destroy(camera.gameObject);
 		}
 		for (int i = 0; i < 6; i++)
-		{
-			//Now, just in case there were any active view pins on the camera wall, refresh the side cameras so that the view pins remain.
-			if (_cameras[i].Module != null)
-			{
-				AddModuleToStack(_cameras[i].Module.Component, _cameras[i].Module.Handle, _cameras[i].Module.Priority);
-			}
-			_cameras[i].Refresh();
-		}
+			TryViewModule(PreferredToView?.Handle);
 
-		DebugHelper.Log("Wall of Cameras Disabled");
+		DebugHelper.Log("Camera Wall disabled");
 	}
 
 	public void ChangeBomb(BombCommander bomb)
 	{
-		Debug.Log(LogPrefix + "Switching bomb");
+		DebugHelper.Log("Switching bomb");
 		_currentBomb = bomb;
 		UpdateHeader();
 		UpdateStrikes();
@@ -627,98 +568,28 @@ public class ModuleCameras : MonoBehaviour
 		StrikesPrefab.text = $"{strikesText}<size=25>/{_currentTotalStrikes}</size>";
 	}
 
-	private void AddModuleToStack(BombComponent component, TwitchComponentHandle handle, int priority = CameraInUse)
+	private IEnumerator UnviewModuleCoroutine(TwitchComponentHandle handle)
 	{
-		if (component == null || handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID))
-		{
-			return;
-		}
+		var camera = _cameras.FirstOrDefault(c => c.Module != null && c.Module.Handle == handle);
+		if (camera == null)
+			yield break;
 
-		if (!_moduleItems.TryGetValue(component, out ModuleItem item))
-		{
-			item = new ModuleItem(component, handle, priority);
-			_moduleItems.Add(component, item);
-		}
-		else
-		{
-			item.Priority = priority;
-		}
+		// Delayed by 1 second when a module is solved
+		if (handle.Solved)
+			yield return new WaitForSeconds(1.0f);
 
-		if (priority >= CameraPinned)
-		{
-			_pinnedModuleStack.Push(item);
-		}
-		else if (priority >= CameraPrioritised)
-		{
-			_priorityModuleStack.Push(item);
-		}
-		else
-		{
-			_moduleStack.Push(item);
-		}
-	}
+		// This second check is necessary in case another module has moved in during the delay.
+		// As long as the delay ends before the current move does, this won't be an issue for most modules
+		// But some modules with delayed solves would fall foul of it
+		if (camera.Module != null && ReferenceEquals(camera.Module.Handle, handle))
+			camera.ViewModule(PreferredToView);
 
-	private IEnumerator DetachFromModuleCoroutine(MonoBehaviour component, bool delay)
-	{
-		foreach (ModuleCamera camera in _cameras)
-		{
-			if ((camera.Module == null) || (!ReferenceEquals(camera.Module.Component, component))) continue;
-			if (delay)
-			{
-				yield return new WaitForSeconds(1.0f);
-			}
-			// This second check is necessary, in case another module has moved in during the delay
-			// As long as the delay ends before the current move does, this won't be an issue for most modules
-			// But some modules with delayed solves would fall foul of it
-			if ((camera.Module != null) &&
-				(ReferenceEquals(camera.Module.Component, component)))
-			{
-				camera.Refresh();
-			}
-		}
-	}
+		// Make sure camera wall is supposed to be automatic
+		if (!AutomaticCameraWallEnabled) yield break;
 
-	private ModuleCamera AvailableCamera(int priority = CameraInUse)
-	{
-		ModuleCamera bestCamera = null;
-		int minPriority = CameraPinned + 1;
-
-		ModuleCamera initialCamera = _camerasQueue.First();
-		do
-		{
-			ModuleCamera cam = _camerasQueue.First();
-			_camerasQueue.RemoveAt(0);
-			_camerasQueue.Add(cam);
-
-			if (cam.Priority == CameraNotInUse)
-			{
-				return cam;
-				// And we're done!
-			}
-
-			//Find the lowest priority in use camera slot who's current module priority is lower than or equal
-			//to the requested priority level.
-			if (cam.Priority >= minPriority || cam.Priority > priority) continue;
-			minPriority = cam.Priority;
-			bestCamera = cam;
-		} while (initialCamera != _camerasQueue.First());
-
-		if (bestCamera == null) return null;
-
-		//Advance the queue so that the next request to view at the same priority level doesn't cause the next
-		//view to occupy the exact same camera slot.
-		while (_camerasQueue.IndexOf(bestCamera) != _camerasQueue.Count - 1)
-		{
-			_camerasQueue.Add(_camerasQueue.First());
-			_camerasQueue.RemoveAt(0);
-		}
-
-		return bestCamera;
-	}
-
-	private IEnumerable<ModuleCamera> AvailableCameras(int priority = CameraInUse)
-	{
-		return _cameras.Where(c => c.Priority <= priority);
+		// If there are now 6 or fewer claimed modules, disengage the camera wall
+		if (CameraWallEnabled && _cameras.Count(c => c.Module != null && !c.Module.Handle.Solved && c.Module.Handle.CameraPriority >= CameraPriority.Claimed) <= 6)
+			DisableCameraWall();
 	}
 
 	private int CurrentModulesContains(MonoBehaviour component)
@@ -726,8 +597,8 @@ public class ModuleCameras : MonoBehaviour
 		int i = 0;
 		foreach (ModuleCamera camera in _cameras)
 		{
-			if ( (camera.Module != null) &&
-				(ReferenceEquals(camera.Module.Component, component)) )
+			if ((camera.Module != null) &&
+				(ReferenceEquals(camera.Module.Component, component)))
 			{
 				return i;
 			}
@@ -739,69 +610,20 @@ public class ModuleCameras : MonoBehaviour
 	private void SetCameraVisibility(bool visible)
 	{
 		foreach (ModuleCamera camera in _cameras)
-		{
-			if (camera.Priority > CameraNotInUse)
-			{
+			if (!visible || camera.Module.Handle.CameraPriority > CameraPriority.Unviewed)
 				camera.CameraInstance.gameObject.SetActive(visible);
-			}
-		}
 	}
 	#endregion
 
 	#region Properties
-	private ModuleItem NextInStack
-	{
-		get
-		{
-			foreach (Stack<ModuleItem> stack in _stacks)
-			{
-				while (stack.Count > 0)
-				{
-					ModuleItem module = stack.Pop();
-					int existing = CurrentModulesContains(module.Component);
-					if (existing > -1)
-					{
-						_cameras[existing].Index = ++Index;
-					}
-					else
-					{
-						return module;
-					}
-				}
-			}
-		   
-			/*
-			while (priorityModuleStack.Count > 0)
-			{
-				ModuleItem module = priorityModuleStack.Pop();
-				int existing = CurrentModulesContains(module.component);
-				if (existing > -1)
-				{
-					cameras[existing].index = ++index;
-				}
-				else
-				{
-					return module;
-				}
-			}
-			while (moduleStack.Count > 0)
-			{
-				ModuleItem module = moduleStack.Pop();
-				int existing = CurrentModulesContains(module.component);
-				if (existing > -1)
-				{
-					cameras[existing].index = ++index;
-				}
-				else
-				{
-					return module;
-				}
-			}
-			*/
+	private ModuleItem PreferredToView => _moduleItems.Values
+				.Where(modInf => CurrentModulesContains(modInf.Component) == -1 && !modInf.Component.IsSolved)
+				.OrderByDescending(modInf => modInf.Handle.CameraPriority).ThenBy(modinf => modinf.Handle.LastUsed)
+				.FirstOrDefault();
 
-			return null;
-		}
-	}
+	public bool HasEmptySlot => _cameras.Any(c => c.Module == null);
 
+	// Make sure automatic camera wall is enabled and respect EnableFactoryZenModeCameraWall
+	private bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryZenModeCameraWall && OtherModes.ZenModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
 	#endregion
 }

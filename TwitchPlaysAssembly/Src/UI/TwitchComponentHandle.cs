@@ -46,7 +46,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public int bombID;
 
 	[HideInInspector]
-	public bool Solved { get; private set; } = false;
+	public bool Solved => bombComponent.IsSolved;
 
 	[HideInInspector]
 	public bool Unsupported = false;
@@ -56,6 +56,20 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public string Code { get; set; } = null;
 	public bool IsKey { get; set; } = false;
+	public CameraPriority CameraPriority
+	{
+		get => _cameraPriority;
+		set
+		{
+			if (_cameraPriority != value)
+			{
+				_cameraPriority = value;
+				BombMessageResponder.moduleCameras.TryViewModule(this);
+			}
+		}
+	}
+	public DateTime LastUsed;   // when the module was last viewed or received a command
+	private CameraPriority _cameraPriority = CameraPriority.Unviewed;
 
 	public ComponentSolver Solver { get; private set; } = null;
 
@@ -196,7 +210,7 @@ public class TwitchComponentHandle : MonoBehaviour
 						bombCommander.bombSolvedModules++;
 						BombMessageResponder.moduleCameras?.UpdateSolves();
 						OnPass(null);
-						BombMessageResponder.moduleCameras?.DetachFromModule(bombComponent);
+						BombMessageResponder.moduleCameras?.UnviewModule(this);
 						return false;
 					};
 
@@ -287,7 +301,6 @@ public class TwitchComponentHandle : MonoBehaviour
 	public void OnPass(string userNickname)
 	{
 		CanvasGroupMultiDecker.alpha = TwitchPlaySettings.data.AnarchyMode ? 0.5f : 0.0f;
-		Solved = true;
 		if (PlayerName != null)
 		{
 			ClaimedList.Remove(PlayerName);
@@ -463,6 +476,8 @@ public class TwitchComponentHandle : MonoBehaviour
 			ClaimedList.Add(userNickName);
 			SetBannerColor(ClaimedBackgroundColour);
 			PlayerName = userNickName;
+			if (CameraPriority < CameraPriority.Claimed)
+				CameraPriority = CameraPriority.Claimed;
 			return new Tuple<bool, string>(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, PlayerName, HeaderText));
 		}
 	}
@@ -489,7 +504,8 @@ public class TwitchComponentHandle : MonoBehaviour
 			SetBannerColor(unclaimedBackgroundColor);
 			string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, PlayerName, HeaderText);
 			PlayerName = null;
-
+			if (CameraPriority > CameraPriority.Interacted)
+				CameraPriority = CameraPriority.Interacted;
 			return new Tuple<bool, string>(true, messageOut);
 		}
 		else

@@ -60,6 +60,8 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 			float lerp = (Time.time - currentTime) / duration;
 			_messageBackground.color = Color.Lerp(initialColor, targetColor, lerp);
 			yield return null;
+			if (_messageBackground == null)
+				yield break;
 		}
 
 		_messageBackground.color = targetColor;

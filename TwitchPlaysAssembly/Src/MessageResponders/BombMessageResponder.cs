@@ -285,6 +285,16 @@ public class BombMessageResponder : MessageResponder
 		yield return new WaitUntil(() => (SceneManager.Instance.GameplayState.Bombs != null && SceneManager.Instance.GameplayState.Bombs.Count > 0));
 		List<Bomb> bombs = SceneManager.Instance.GameplayState.Bombs;
 
+		try
+		{
+			moduleCameras = Instantiate(moduleCamerasPrefab);
+		}
+		catch (Exception ex)
+		{
+			DebugHelper.LogException(ex, "Failed to Instantiate the module camera system due to an exception:");
+			moduleCameras = null;
+		}
+
 		for (int i = 0; i < GameRoom.GameRoomTypes.Length; i++)
 		{
 			if (GameRoom.GameRoomTypes[i]() != null && GameRoom.CreateRooms[i](FindObjectsOfType(GameRoom.GameRoomTypes[i]()), out GameRoom.Instance))
@@ -293,7 +303,8 @@ public class BombMessageResponder : MessageResponder
 				break;
 			}
 		}
-		
+		moduleCameras?.ChangeBomb(BombCommanders[0]);
+
 		try
 		{
 			GameRoom.Instance.InitializeBombNames();
@@ -313,17 +324,6 @@ public class BombMessageResponder : MessageResponder
 		{
 			DebugHelper.LogException(ex, "An exception has occured attempting to hold the bomb.");
 		}
-
-		try
-		{
-			moduleCameras = Instantiate(moduleCamerasPrefab);
-		}
-		catch (Exception ex)
-		{
-			DebugHelper.LogException(ex, "Failed to Instantiate the module camera system due to an exception:");
-			moduleCameras = null;
-		}
-		moduleCameras?.ChangeBomb(BombCommanders[0]);
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -520,12 +520,6 @@ public class BombMessageResponder : MessageResponder
 				if (GameRoom.Instance is ElevatorGameRoom) return; //There is no alarm clock in the elevator room.
 				DropCurrentBomb();
 				_coroutineQueue.AddToQueue(AlarmClockHoldableHandler.Instance.RespondToCommand(userNickName, "alarmclock snooze", isWhisper));
-				return;
-			}
-
-			if (text.ToLowerInvariant().EqualsAny("modules", "view all", "viewall"))
-			{
-				moduleCameras?.AttachToModules(ComponentHandles);
 				return;
 			}
 
@@ -835,14 +829,24 @@ public class BombMessageResponder : MessageResponder
 
 		if ((text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablemodulewall", StringComparison.InvariantCultureIgnoreCase)) && TwitchPlaySettings.data.AnarchyMode)
 		{
-			GameRoom.HideCamera();
-			moduleCameras.EnableWallOfCameras();
+			if (TwitchPlaySettings.data.EnableAutomaticCameraWall)
+			{
+				IRCConnection.SendChatMessage("The camera wall is being controlled automatically and cannot be enabled.");
+				return;
+			}
+
+			moduleCameras.EnableCameraWall();
 		}
 
 		if ((text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablemodulewall", StringComparison.InvariantCultureIgnoreCase)) && TwitchPlaySettings.data.AnarchyMode)
 		{
-			GameRoom.ShowCamera();
-			moduleCameras.DisableWallOfCameras();
+			if (TwitchPlaySettings.data.EnableAutomaticCameraWall)
+			{
+				IRCConnection.SendChatMessage("The camera wall is being controlled automatically and cannot be disabled.");
+				return;
+			}
+
+			moduleCameras.DisableCameraWall();
 		}
 
 		switch (UserAccess.HighestAccessLevel(userNickName))
@@ -874,14 +878,12 @@ public class BombMessageResponder : MessageResponder
 			case AccessLevel.Admin:
 				if (text.Equals("enablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("enablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
-					GameRoom.HideCamera();
-					moduleCameras.EnableWallOfCameras();
+					moduleCameras.EnableCameraWall();
 				}
 
 				if (text.Equals("disablecamerawall", StringComparison.InvariantCultureIgnoreCase) || text.Equals("disablemodulewall", StringComparison.InvariantCultureIgnoreCase))
 				{
-					GameRoom.ShowCamera();
-					moduleCameras.DisableWallOfCameras();
+					moduleCameras.DisableCameraWall();
 				}
 
 				if (text.Equals("enableclaims", StringComparison.InvariantCultureIgnoreCase))
@@ -1076,7 +1078,19 @@ public class BombMessageResponder : MessageResponder
 			ComponentHandles.Add(handle);
 		}
 
+		StartCoroutine(ShowInitialModules());
+
 		return foundComponents;
+	}
+
+	private IEnumerator ShowInitialModules()
+	{
+		yield return null;
+		foreach (var comp in ComponentHandles)
+			moduleCameras.EnsureModuleItem(comp);
+
+		for (int i = 0; i < ComponentHandles.Count && moduleCameras.HasEmptySlot; i++)
+			ComponentHandles[i].CameraPriority = CameraPriority.Interacted;
 	}
 
 	private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)

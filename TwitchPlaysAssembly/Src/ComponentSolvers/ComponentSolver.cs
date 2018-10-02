@@ -25,9 +25,22 @@ public abstract class ComponentSolver
 	{
 		DisableAnarchyStrike = TwitchPlaySettings.data.AnarchyMode;
 		IEnumerator respondToCommand = RespondToCommandInternal(userNickName, message);
-		while (respondToCommand.MoveNext())
+		while (moveNextWrapped(respondToCommand))
 			yield return respondToCommand.Current;
 		DisableAnarchyStrike = false;
+	}
+
+	private static bool moveNextWrapped(IEnumerator respondToCommand)
+	{
+		try
+		{
+			return respondToCommand.MoveNext();
+		}
+		catch (Exception e)
+		{
+			DebugHelper.LogException(e);
+			return false;
+		}
 	}
 
 	private int _beforeStrikeCount;
@@ -659,7 +672,7 @@ public abstract class ComponentSolver
 			_turnQueued = false;
 		}
 
-		BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent, true);
+		BombMessageResponder.moduleCameras?.UnviewModule(ComponentHandle);
 		CommonReflectedTypeInfo.UpdateTimerDisplayMethod.Invoke(BombCommander.timerComponent, null);
 
 		if (BombCommander.bombSolvableModules - BombCommander.bombSolvedModules == 6) //6 solvable modules left
@@ -1132,8 +1145,7 @@ public abstract class ComponentSolver
 		inputCommand = inputCommand.Trim();
 		if (inputCommand.Equals("unview", StringComparison.InvariantCultureIgnoreCase))
 		{
-			cameraPriority = ModuleCameras.CameraNotInUse;
-			BombMessageResponder.moduleCameras?.DetachFromModule(BombComponent);
+			BombMessageResponder.moduleCameras?.UnviewModule(ComponentHandle);
 			_responded = true;
 		}
 		else
@@ -1141,12 +1153,13 @@ public abstract class ComponentSolver
 			if (inputCommand.StartsWith("view", StringComparison.InvariantCultureIgnoreCase))
 			{
 				_responded = true;
-				bool pinAllowed = inputCommand.ToLowerInvariant().EqualsAny("view pin", "viewpin") &&
-								  (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode);
-
-				cameraPriority = pinAllowed ? ModuleCameras.CameraPinned : ModuleCameras.CameraPrioritised;
+				ComponentHandle.CameraPriority =
+					inputCommand.ToLowerInvariant().EqualsAny("view pin", "viewpin") && (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || modInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode)
+						? CameraPriority.Pinned
+						: CameraPriority.Viewed;
 			}
-			BombMessageResponder.moduleCameras?.AttachToModule(BombComponent, ComponentHandle, Math.Max(cameraPriority, ModuleCameras.CameraInUse));
+			else
+				ComponentHandle.CameraPriority = ComponentHandle.CameraPriority > CameraPriority.Interacted ? ComponentHandle.CameraPriority : CameraPriority.Interacted;
 
 			if (inputCommand.RegexMatch(out Match match, "^zoom(?: ([0-9]+(?:\\.[0-9])?))?$"))
 			{
@@ -1194,7 +1207,6 @@ public abstract class ComponentSolver
 	#endregion
 
 	public ModuleInformation modInfo = null;
-	public int cameraPriority = ModuleCameras.CameraNotInUse;
 
 	public bool _turnQueued = false;
 	private bool _readyToTurn = false;

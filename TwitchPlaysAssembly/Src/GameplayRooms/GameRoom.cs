@@ -155,13 +155,19 @@ public abstract class GameRoom
 		GameObject customMover = new GameObject("CustomCameraMover");
 		customMover.transform.SetParent(Camera.main.transform.parent.parent);
 		_mainCamera = Camera.main;
+
+		// This enables the layer used by KTANE’s “MouseCam”
 		_mainCamera.cullingMask |= 0x00002000;
+
+		// This enables the layers used by the camera slots for modules (9–12 and 17–30)
+		_mainCamera.cullingMask |= 0x7FFE1E00;
+
 		SecondaryCamera = Object.Instantiate(_mainCamera, Vector3.zero, Quaternion.identity, customMover.transform);
+
 		for (int i = 0; i < SecondaryCamera.transform.childCount; i++)
 			Object.DestroyImmediate(SecondaryCamera.transform.GetChild(i).gameObject);
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 		SecondaryCamera.gameObject.SetActive(false);
-		DebugHelper.Log($"Main Camera Culling mask = {_mainCamera.cullingMask:X8}\nSecondary Camera Culling mask = {SecondaryCamera.cullingMask:X8}");
 
 		MainCameraCullingMask = _mainCamera.cullingMask;
 		SecondaryCameraCullingMask = SecondaryCamera.cullingMask;

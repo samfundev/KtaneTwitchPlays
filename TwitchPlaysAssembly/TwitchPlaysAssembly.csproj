@@ -166,6 +166,7 @@
     <Compile Include="Src\OtherModes.cs" />
     <Compile Include="Src\TwitchPlaySettings.cs" />
     <Compile Include="Src\TwitchPlaysService.cs" />
+    <Compile Include="Src\UI\CameraPriority.cs" />
     <Compile Include="Src\UI\ModuleCameras.cs" />
     <Compile Include="Src\UI\TwitchBombHandle.cs" />
     <Compile Include="Src\UI\TwitchComponentHandle.cs" />
