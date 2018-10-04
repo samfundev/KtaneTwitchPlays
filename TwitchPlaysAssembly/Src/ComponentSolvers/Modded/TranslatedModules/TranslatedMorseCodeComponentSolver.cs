@@ -17,9 +17,9 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, _component, _morseCodeComponentType);
 		if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
-		modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, _component, _morseCodeComponentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 

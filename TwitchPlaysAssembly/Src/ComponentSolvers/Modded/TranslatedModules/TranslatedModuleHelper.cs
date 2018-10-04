@@ -19,6 +19,7 @@ public static class TranslatedModuleHelper
 		{"ko", "%20translated%20full%20(%ED%95%9C%EA%B5%AD%EC%96%B4)" },
 		{"it", "%20translated%20full%20(Italiano)" },
 		{"nl", "%20translated%20full%20(Nederlands)" },
+		{"no", "%20translated%20full%20(Norsk)" },
 		{"jp", "%20translated%20full%20(%E6%97%A5%E6%9C%AC%E8%AA%9E)" },
 		{"pl", "%20translated%20full%20(Polski)" },
 		{"pt-br", "%20translated%20full%20(Portugu%C3%AAs%20do%20Brasil)" },
@@ -44,6 +45,7 @@ public static class TranslatedModuleHelper
 		{"ko", " (한국어)" },
 		{"it", " (Italiano)" },
 		{"nl", " (Nederlands)" },
+		{"no", " (Norsk)" },
 		{"jp", " (日本語)" },
 		{"pl", " (Polski)" },
 		{"pt-br", " (Português do Brasil)" },
@@ -54,14 +56,17 @@ public static class TranslatedModuleHelper
 		{"zh-cn", " (简体中文)" },
 	};
 
-	public static string GetModuleDisplayNameAddon(BombComponent bombComponent)
+	public static string GetModuleDisplayNameAddon(BombComponent bombComponent, UnityEngine.Component component, Type componentType)
 	{
 		try
 		{
-			if (bombComponent == null || bombComponent.GetComponent<KMModSettings>() == null || !InitialializeSettings()) return " (Unknown)";
-			string[] languages = (string[])_getAllCurrentLanguagesMethod.Invoke(null, new object[] { bombComponent.GetComponent<KMModSettings>(), null });
-			if (languages == null || languages.Length == 0 || languages[0].Length == 0 || !DisplayNameAddons.TryGetValue(languages[0].ToLowerInvariant(), out string addon)) return " (Unknown)";
-			return addon;
+			FieldInfo langField = componentType.GetField("lang", BindingFlags.NonPublic | BindingFlags.Instance);
+			object langObject = langField?.GetValue(component);
+			FieldInfo languageField = langObject?.GetType().GetField("languageId", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			string languageCode = (string)languageField?.GetValue(langObject);
+			if (languageCode == null || !DisplayNameAddons.TryGetValue(languageCode, out string code))
+				return "";
+			return code;
 		}
 		catch (Exception ex)
 		{
@@ -70,14 +75,17 @@ public static class TranslatedModuleHelper
 		}
 	}
 
-	public static string GetManualCodeAddOn(BombComponent bombComponent)
+	public static string GetManualCodeAddOn(BombComponent bombComponent, UnityEngine.Component component, Type componentType)
 	{
 		try
 		{
-			if (bombComponent == null || bombComponent.GetComponent<KMModSettings>() == null || !InitialializeSettings()) return "";
-			string[] languages = (string[]) _getAllCurrentLanguagesMethod.Invoke(null, new object[] {bombComponent.GetComponent<KMModSettings>(), null });
-			if (languages == null || languages.Length == 0 || languages[0].Length == 0 || !ManualCodeAddons.TryGetValue(languages[0].ToLowerInvariant(), out string addon)) return "";
-			return addon;
+			FieldInfo langField = componentType.GetField("lang", BindingFlags.NonPublic | BindingFlags.Instance);
+			object langObject = langField?.GetValue(component);
+			FieldInfo languageField = langObject?.GetType().GetField("languageId", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			string languageCode = (string)languageField?.GetValue(langObject);
+			if (languageCode == null || !ManualCodeAddons.TryGetValue(languageCode, out string code))
+				return "";
+			return code;
 		}
 		catch (Exception ex)
 		{
@@ -85,16 +93,4 @@ public static class TranslatedModuleHelper
 			return "";
 		}
 	}
-
-	private static bool InitialializeSettings()
-	{
-		if (_getAllCurrentLanguagesMethod != null) return true;
-		_translatedModulesSettingsType = ReflectionHelper.FindType("TranslatedModulesSettings");
-		if (_translatedModulesSettingsType == null) return false;
-		_getAllCurrentLanguagesMethod = _translatedModulesSettingsType.GetMethod("GetAllCurrentLangIds", BindingFlags.Public | BindingFlags.Static);
-		return _getAllCurrentLanguagesMethod != null;
-	}
-
-	private static Type _translatedModulesSettingsType = null;
-	private static MethodInfo _getAllCurrentLanguagesMethod = null;
 }

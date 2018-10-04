@@ -15,9 +15,9 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, _component, _componentType);
 		if (language != null) modInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
-		modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, _component, _componentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
@@ -57,6 +57,6 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 	private static Type _componentType = null;
 	private static FieldInfo _buttonsField = null;
 
-	private readonly object _component = null;
+	private readonly Component _component = null;
 	private KMSelectable[] _buttons = null;
 }

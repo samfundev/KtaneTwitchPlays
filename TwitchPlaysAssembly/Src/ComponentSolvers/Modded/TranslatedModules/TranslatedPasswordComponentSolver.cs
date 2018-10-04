@@ -16,9 +16,9 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(_passwordComponentType), _passwordComponentType);
 		if (language != null) modInfo.manualCode = $"Password{language}";
-		modInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		modInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(_passwordComponentType), _passwordComponentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 

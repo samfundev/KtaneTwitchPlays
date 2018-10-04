@@ -13,10 +13,10 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(_needyVentComponentSolverType), _needyVentComponentSolverType);
 		if (language != null) modInfo.manualCode = "Venting%20Gas";
 		//if (language != null) modInfo.manualCode = $"Venting%20Gas{language}";
-		modInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent)}";
+		modInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(_needyVentComponentSolverType), _needyVentComponentSolverType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
