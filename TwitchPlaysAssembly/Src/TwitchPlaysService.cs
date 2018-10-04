@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Missions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Missions;
 using TwitchPlaysAssembly.Helpers;
 using UnityEngine;
 
@@ -86,11 +86,7 @@ public class TwitchPlaysService : MonoBehaviour
 		StopAllCoroutines();
 	}
 
-	private void OnEnable()
-	{
-		OnStateChange(KMGameInfo.State.Setup);
-	}
-	
+	private void OnEnable() => OnStateChange(KMGameInfo.State.Setup);
 
 	private void Update()
 	{
@@ -126,7 +122,7 @@ public class TwitchPlaysService : MonoBehaviour
 	{
 		if (!TwitchPlaySettings.data.TwitchPlaysDebugEnabled) return;
 
-		GUILayout.BeginArea(new Rect(50, Screen.height - 75, (Screen.width - 50)*0.2f, 25));
+		GUILayout.BeginArea(new Rect(50, Screen.height - 75, (Screen.width - 50) * 0.2f, 25));
 		GUILayout.BeginHorizontal();
 		inputCommand = GUILayout.TextField(inputCommand, GUILayout.MinWidth(50));
 		if ((GUILayout.Button("Send") || Event.current.keyCode == KeyCode.Return) && inputCommand.Length != 0)
@@ -180,7 +176,6 @@ public class TwitchPlaysService : MonoBehaviour
 		StopAllCoroutines();
 		while (_coroutinesToStart.Count > 0)
 			StartCoroutine(_coroutinesToStart.Dequeue());
-
 	}
 
 	private void SetupResponder(MessageResponder responder)

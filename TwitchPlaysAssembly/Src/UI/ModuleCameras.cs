@@ -112,7 +112,7 @@ public class ModuleCameras : MonoBehaviour
 			return moduleCamera;
 		}
 
-		public IEnumerator ZoomCamera(float duration=1.0f)
+		public IEnumerator ZoomCamera(float duration = 1.0f)
 		{
 			CameraInstance.depth = 100;
 			yield return null;
@@ -212,7 +212,7 @@ public class ModuleCameras : MonoBehaviour
 			if (CameraInstance != null)
 			{
 				CameraInstance.gameObject.SetActive(false);
-				if(CameraInstance.transform != null)
+				if (CameraInstance.transform != null)
 					CameraInstance.transform.SetParent(transform, false);
 			}
 
@@ -246,7 +246,7 @@ public class ModuleCameras : MonoBehaviour
 	private int _currentTotalModules;
 	private int _currentTotalStrikes;
 
-	private readonly Rect[] _cameraLocations = 
+	private readonly Rect[] _cameraLocations =
 	{
 		new Rect(0.8333333f, 0.56f, 0.1666667f, 0.28f),
 		new Rect(0.8333333f, 0.28f, 0.1666667f, 0.28f),
@@ -286,10 +286,7 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Unity Lifecycle
-	private void Awake()
-	{
-		_data = GetComponent<ModuleCamerasData>();
-	}
+	private void Awake() => _data = GetComponent<ModuleCamerasData>();
 
 	private void InstantiateCamera(int layer)
 	{
@@ -412,35 +409,17 @@ public class ModuleCameras : MonoBehaviour
 		StartCoroutine(UnviewModuleCoroutine(handle));
 	}
 
-	public void Hide()
-	{
-		SetCameraVisibility(false);
-	}
+	public void Hide() => SetCameraVisibility(false);
 
-	public void Show()
-	{
-		SetCameraVisibility(true);
-	}
+	public void Show() => SetCameraVisibility(true);
 
-	public void HideHud()
-	{
-		BombStatus.localScale = Vector3.zero;
-	}
+	public void HideHud() => BombStatus.localScale = Vector3.zero;
 
-	public void ShowHud()
-	{
-		BombStatus.localScale = HudScale;
-	}
+	public void ShowHud() => BombStatus.localScale = HudScale;
 
-	public void UpdateHeader()
-	{
-		HeaderPrefab.text = _currentBomb.twitchBombHandle.bombName;
-	}
+	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.twitchBombHandle.bombName;
 
-	public void UpdateStrikes(bool delay = false)
-	{
-		StartCoroutine(UpdateStrikesCoroutine(delay));
-	}
+	public void UpdateStrikes(bool delay = false) => StartCoroutine(UpdateStrikesCoroutine(delay));
 
 	public void UpdateSolves()
 	{
@@ -470,10 +449,9 @@ public class ModuleCameras : MonoBehaviour
 			string pts = "+" + $"{TwitchPlaySettings.GetRewardBonus():0}";
 			ConfidencePrefab.text = pts;
 			StrikesPrefab.color = Color.red;
-			if(_currentBomb != null)
+			if (_currentBomb != null)
 				StrikesPrefab.text = _currentBomb.StrikeCount.ToString();
 		}
-
 		else if (OtherModes.VSModeOn)
 		{
 			int bossHealth = OtherModes.GetBossHealth();

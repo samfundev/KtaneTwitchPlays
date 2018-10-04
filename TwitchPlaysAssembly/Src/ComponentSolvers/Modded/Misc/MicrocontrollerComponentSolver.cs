@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 public class MicrocontrollerComponentSolver : ComponentSolver
@@ -28,7 +28,8 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 				{
 					yield return null;
 
-					while (currentIndex != colorIndex) {
+					while (currentIndex != colorIndex)
+					{
 						DoInteractionClick(_buttonUp);
 						currentIndex = (currentIndex + 1) % 6;
 

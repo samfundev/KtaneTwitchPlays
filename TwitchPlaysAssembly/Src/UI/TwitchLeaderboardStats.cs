@@ -16,7 +16,7 @@ public class TwitchLeaderboardStats : MonoBehaviour
 	[Header("Values")]
 	public bool defaultToRight = true;
 	public int entriesLess = 5;
-	
+
 	private void Start()
 	{
 		if (Leaderboard.Instance == null)
@@ -28,10 +28,10 @@ public class TwitchLeaderboardStats : MonoBehaviour
 		int totalSolveScore = 0;
 		Leaderboard.Instance.GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int SolveScore);
 
-			totalSolveScore = SolveScore;
+		totalSolveScore = SolveScore;
 
 		int sessionSolveScore = 0;
-			sessionSolveScore = SolveScore - Leaderboard.Instance.OldScore;
+		sessionSolveScore = SolveScore - Leaderboard.Instance.OldScore;
 
 		totalBombCountText.text = bombCount.ToString();
 		totalSolveCountText.text = solveCount.ToString();

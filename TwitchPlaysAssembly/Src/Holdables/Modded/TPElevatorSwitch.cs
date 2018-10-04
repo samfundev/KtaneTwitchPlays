@@ -13,10 +13,7 @@ public class TPElevatorSwitch : MonoBehaviour
 
 	public static TPElevatorSwitch Instance;
 
-	private void Awake()
-	{
-		Instance = this;
-	}
+	private void Awake() => Instance = this;
 
 	private void Start()
 	{
@@ -42,7 +39,7 @@ public class TPElevatorSwitch : MonoBehaviour
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex,"Can't load the Elevator room prefab.");
+			DebugHelper.LogException(ex, "Can't load the Elevator room prefab.");
 			gameObject.SetActive(false);
 			yield break;
 		}
@@ -55,7 +52,6 @@ public class TPElevatorSwitch : MonoBehaviour
 			yield break;
 		}
 
-		
 		ElevatorSwitch elevatorSwitch = setupRoom.ElevatorSwitch;
 		DebugHelper.Log("Found an Elevator switch, Activating it now");
 		try
@@ -92,10 +88,7 @@ public class TPElevatorSwitch : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 
-	public void ReportState()
-	{
-		IRCConnection.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (ElevatorRoomGameObject == null ? "not loaded" : "off") : "on");
-	}
+	public void ReportState() => IRCConnection.SendMessage("Elevator is {0}", GameplayState.GameplayRoomPrefabOverride == null ? (ElevatorRoomGameObject == null ? "not loaded" : "off") : "on");
 
 	private IEnumerator FlipSwitch(bool on)
 	{

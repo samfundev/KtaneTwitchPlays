@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+using UnityEngine;
 
 static class ProfileHelper
 {
@@ -14,15 +14,9 @@ static class ProfileHelper
 		set => File.WriteAllText(modSelectorConfig, JsonConvert.SerializeObject(value));
 	}
 
-	public static string GetProperProfileName(string profile)
-	{
-		return TwitchPlaySettings.data.ProfileWhitelist.FirstOrDefault(str => str.ToLowerInvariant() == profile);
-	}
+	public static string GetProperProfileName(string profile) => TwitchPlaySettings.data.ProfileWhitelist.FirstOrDefault(str => str.ToLowerInvariant() == profile);
 
-	public static string GetProfileFileName(string profile)
-	{
-		return GetProperProfileName(profile).Replace(' ', '_');
-	}
+	public static string GetProfileFileName(string profile) => GetProperProfileName(profile).Replace(' ', '_');
 
 	public static bool Add(string profile)
 	{

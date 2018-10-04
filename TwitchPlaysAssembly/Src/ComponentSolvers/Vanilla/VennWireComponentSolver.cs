@@ -1,8 +1,8 @@
 ﻿using Assets.Scripts.Components.VennWire;
+using Assets.Scripts.Rules;
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Rules;
 
 public class VennWireComponentSolver : ComponentSolver
 {

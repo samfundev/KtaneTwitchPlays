@@ -13,7 +13,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
-	{     
+	{
 		inputCommand = inputCommand.Trim();
 		if (!inputCommand.StartsWith("move ", StringComparison.InvariantCultureIgnoreCase))
 			yield break;
@@ -28,7 +28,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 
 		foreach (Match move in matches)
 		{
-			KeypadButton button = _buttons[ buttonIndex[ move.Value.ToLowerInvariant() ] ];
+			KeypadButton button = _buttons[buttonIndex[move.Value.ToLowerInvariant()]];
 
 			if (button == null) continue;
 			yield return move.Value;
@@ -36,16 +36,13 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 			yield return DoInteractionClick(button);
 		}
 	}
-	
+
 	private static readonly Dictionary<string, int> buttonIndex = new Dictionary<string, int>
 	{
 		{"u", 0}, {"l", 1}, {"r", 2}, {"d", 3}
 	};
 
-	private static int GetLocationFromCell(MazeCell cell)
-	{
-		return cell.Y * 10 + cell.X;
-	}
+	private static int GetLocationFromCell(MazeCell cell) => cell.Y * 10 + cell.X;
 
 	private readonly Stack<int> _mazeStack = new Stack<int>();
 	private bool[] _explored;
@@ -57,7 +54,6 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 			startXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).CurrentCell);
 		}
 		int endXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).GoalCell);
-
 
 		int x = startXY % 10;
 		int y = startXY / 10;

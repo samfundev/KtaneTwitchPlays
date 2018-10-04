@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class TwitchBombHandle : MonoBehaviour
 {
@@ -33,10 +33,7 @@ public class TwitchBombHandle : MonoBehaviour
 	private string _bombName = null;
 	public string bombName
 	{
-		get
-		{
-			return _bombName;
-		}
+		get => _bombName;
 		set
 		{
 			_bombName = value;
@@ -59,7 +56,7 @@ public class TwitchBombHandle : MonoBehaviour
 			_code = "bomb" + (bombID + 1);
 			_edgeworkCode = "edgework" + (bombID + 1);
 		}
-		
+
 		edgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
 		edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
@@ -71,10 +68,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 	}
 
-	private void OnDestroy()
-	{
-		StopAllCoroutines();
-	}
+	private void OnDestroy() => StopAllCoroutines();
 	#endregion
 
 	#region Message Interface
@@ -111,7 +105,7 @@ public class TwitchBombHandle : MonoBehaviour
 		if (internalCommandLower.EqualsAny("timestamp", "date"))
 		{
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
-			
+
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp), userNickName, !isWhisper);
 		}
 		else if (internalCommandLower.Equals("help"))
@@ -230,7 +224,7 @@ public class TwitchBombHandle : MonoBehaviour
 						else
 							bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
 
-						if(originalTime < bombCommander.timerComponent.TimeRemaining)
+						if (originalTime < bombCommander.timerComponent.TimeRemaining)
 							OtherModes.DisableLeaderboard(true);
 
 						if (direct)
@@ -334,17 +328,11 @@ public class TwitchBombHandle : MonoBehaviour
 		yield return null;
 	}
 
-	public void CauseExplosionByModuleCommand(string message, string reason)
-	{
-		StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
-	}
+	public void CauseExplosionByModuleCommand(string message, string reason) => StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
 	#endregion
 
 	#region Private Methods
-	private bool IsAuthorizedDefuser(string userNickName, bool isWhisper)
-	{
-		return MessageResponder.IsAuthorizedDefuser(userNickName, isWhisper);
-	}
+	private bool IsAuthorizedDefuser(string userNickName, bool isWhisper) => MessageResponder.IsAuthorizedDefuser(userNickName, isWhisper);
 
 	private IEnumerator DelayBombExplosionCoroutine()
 	{
@@ -367,7 +355,7 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			if (commandResponseCoroutine.Current is string chatmessage)
 			{
-				if(chatmessage.StartsWith("sendtochat "))
+				if (chatmessage.StartsWith("sendtochat "))
 				{
 					IRCConnection.SendMessage(chatmessage.Substring(11));
 				}
@@ -376,5 +364,5 @@ public class TwitchBombHandle : MonoBehaviour
 			yield return commandResponseCoroutine.Current;
 		}
 	}
-	#endregion    
+	#endregion
 }

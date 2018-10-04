@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CoroutineHoldableHandler : HoldableHandler
 {
-	public CoroutineHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, Component commandComponent, MethodInfo handler, string helpMessage, FieldInfo cancelbool) 
+	public CoroutineHoldableHandler(KMHoldableCommander commander, FloatingHoldable holdable, Component commandComponent, MethodInfo handler, string helpMessage, FieldInfo cancelbool)
 		: base(commander, holdable)
 	{
 		CommandComponent = commandComponent;
@@ -15,12 +15,11 @@ public class CoroutineHoldableHandler : HoldableHandler
 
 	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
-		IEnumerator handler = (IEnumerator) HandlerMethod.Invoke(CommandComponent, new object[] {command});
+		IEnumerator handler = (IEnumerator) HandlerMethod.Invoke(CommandComponent, new object[] { command });
 		CancelBool?.SetValue(CommandComponent, false);
 		while (handler.MoveNext())
 		{
 			yield return handler.Current;
-			
 		}
 	}
 }

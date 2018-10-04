@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 public class ResistorsComponentSolver : ComponentSolver
@@ -45,7 +45,7 @@ public class ResistorsComponentSolver : ComponentSolver
 				return null;
 		}
 	}
-	
+
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -81,7 +81,6 @@ public class ResistorsComponentSolver : ComponentSolver
 			yield return null;
 			yield return DoInteractionClick(_checkButton);
 		}
-
 		else if (commands[0].EqualsAny("clear", "reset"))
 		{
 			yield return null;

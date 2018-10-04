@@ -2,15 +2,9 @@
 
 public static class CoroutineCanceller
 {
-	public static void SetCancel()
-	{
-		ShouldCancel = true;
-	}
+	public static void SetCancel() => ShouldCancel = true;
 
-	public static void ResetCancel()
-	{
-		ShouldCancel = false;
-	}
+	public static void ResetCancel() => ShouldCancel = false;
 
 	public static bool ShouldCancel
 	{
@@ -21,7 +15,7 @@ public static class CoroutineCanceller
 
 public class WaitForSecondsWithCancel : CustomYieldInstruction
 {
-	public WaitForSecondsWithCancel(float seconds, bool resetCancel=true, ComponentSolver solver=null)
+	public WaitForSecondsWithCancel(float seconds, bool resetCancel = true, ComponentSolver solver = null)
 	{
 		_seconds = seconds;
 		_startingTime = Time.time;
@@ -37,7 +31,7 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
 			if (!CoroutineCanceller.ShouldCancel && !(_solver?.Solved ?? false) && (_solver?.StrikeCount ?? 0) == _startingStrikes)
 				return (Time.time - _startingTime) < _seconds;
 
-			if(CoroutineCanceller.ShouldCancel && _resetCancel)
+			if (CoroutineCanceller.ShouldCancel && _resetCancel)
 				CoroutineCanceller.ResetCancel();
 
 			return false;

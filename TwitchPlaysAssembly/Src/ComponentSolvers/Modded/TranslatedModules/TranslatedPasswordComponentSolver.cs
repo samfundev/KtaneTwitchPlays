@@ -11,7 +11,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_downButtons = (KMSelectable[]) _downButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
-		_submitButton = (MonoBehaviour)_submitButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
+		_submitButton = (MonoBehaviour) _submitButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
 		_display = (TextMesh[]) _displayField.GetValue(bombComponent.GetComponent(_passwordComponentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]");
 
@@ -45,7 +45,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 				if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _downButtons.Length)
 					continue;
 
-				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(spinnerIndex-1);
+				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(spinnerIndex - 1);
 				while (spinnerCoroutine.MoveNext())
 				{
 					yield return spinnerCoroutine.Current;

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Assets.Scripts.Missions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Missions;
 using UnityEngine;
 
 public class BombBinderCommander : ICommandResponder
@@ -56,8 +56,8 @@ public class BombBinderCommander : ICommandResponder
 			{
 				string[] commandParts = message.Split(' ');
 				IEnumerator selectCoroutine;
-				if ( commandParts.Length == 2 &&
-					int.TryParse(commandParts[1], out int index) )
+				if (commandParts.Length == 2 &&
+					int.TryParse(commandParts[1], out int index))
 				{
 					selectCoroutine = SelectOnPage(index);
 				}
@@ -122,7 +122,7 @@ public class BombBinderCommander : ICommandResponder
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
-	
+
 	private void InitialisePage()
 	{
 		Selectable currentPage = Selectable.GetComponentsInChildren<Selectable>(false).FirstOrDefault(x => x != Selectable);
@@ -191,9 +191,9 @@ public class BombBinderCommander : ICommandResponder
 
 	private IEnumerator SelectOnPage(int index = 0, IList<string> search = null)
 	{
-		if ( index > 0 || search != null )
+		if (index > 0 || search != null)
 		{
-			if ( (_currentSelectables == null) || (index > _currentSelectables.Length) )
+			if ((_currentSelectables == null) || (index > _currentSelectables.Length))
 			{
 				yield break;
 			}
@@ -286,10 +286,7 @@ public class BombBinderCommander : ICommandResponder
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject()
-	{
-		SelectableManager.HandleCancel();
-	}
+	private void DeselectObject() => SelectableManager.HandleCancel();
 
 	private IEnumerator ForceHeldRotation(float duration)
 	{

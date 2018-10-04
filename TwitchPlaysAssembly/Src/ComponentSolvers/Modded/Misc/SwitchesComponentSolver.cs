@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 public class SwitchesComponentSolver : ComponentSolver
 {
@@ -12,7 +12,7 @@ public class SwitchesComponentSolver : ComponentSolver
 		_component = bombComponent.GetComponent(_componentType);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip switches using !{0} flip 1 5 3 2.");
 	}
-	
+
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);

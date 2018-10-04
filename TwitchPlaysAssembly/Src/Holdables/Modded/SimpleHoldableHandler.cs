@@ -14,7 +14,7 @@ public class SimpleHoldableHandler : HoldableHandler
 
 	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
-		KMSelectable[] selectables = (KMSelectable[]) HandlerMethod.Invoke(CommandComponent, new object[] {command});
+		KMSelectable[] selectables = (KMSelectable[]) HandlerMethod.Invoke(CommandComponent, new object[] { command });
 		if (selectables == null)
 			yield break;
 		yield return null;

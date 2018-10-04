@@ -8,7 +8,7 @@ public class NeedyMathComponentSolver : ComponentSolver
 		: base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[])_buttonsField.GetValue(_component);
+		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer with !{0} submit -47.");
 	}
 

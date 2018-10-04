@@ -8,7 +8,7 @@ using UnityEngine;
 public class KnowYourWayComponentSolver : ComponentSolver
 {
 	public KnowYourWayComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
-		: base (bombCommander, bombComponent)
+		: base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
 		_buttons = _buttonFields.Select(field => (KMSelectable) field.GetValue(_component)).ToArray();

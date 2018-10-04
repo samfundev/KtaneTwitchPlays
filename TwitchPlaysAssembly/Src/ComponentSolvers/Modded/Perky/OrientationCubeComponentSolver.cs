@@ -10,11 +10,11 @@ public class OrientationCubeComponentSolver : ComponentSolver
 	public OrientationCubeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_submit = (MonoBehaviour)_submitField.GetValue(bombComponent.GetComponent(_componentType));
-		_left = (MonoBehaviour)_leftField.GetValue(bombComponent.GetComponent(_componentType));
-		_right = (MonoBehaviour)_rightField.GetValue(bombComponent.GetComponent(_componentType));
-		_ccw = (MonoBehaviour)_ccwField.GetValue(bombComponent.GetComponent(_componentType));
-		_cw = (MonoBehaviour)_cwField.GetValue(bombComponent.GetComponent(_componentType));
+		_submit = (MonoBehaviour) _submitField.GetValue(bombComponent.GetComponent(_componentType));
+		_left = (MonoBehaviour) _leftField.GetValue(bombComponent.GetComponent(_componentType));
+		_right = (MonoBehaviour) _rightField.GetValue(bombComponent.GetComponent(_componentType));
+		_ccw = (MonoBehaviour) _ccwField.GetValue(bombComponent.GetComponent(_componentType));
+		_cw = (MonoBehaviour) _cwField.GetValue(bombComponent.GetComponent(_componentType));
 		//virtualAngleEmulator = (float)_virtualField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Move the cube with !{0} press cw l set. The buttons are l, r, cw, ccw, set.");
 	}
@@ -33,7 +33,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		foreach(string cmd in split.Skip(1))
+		foreach (string cmd in split.Skip(1))
 		{
 			switch (cmd)
 			{
@@ -41,12 +41,16 @@ public class OrientationCubeComponentSolver : ComponentSolver
 
 				case "right": case "r": buttons.Add(_right); interaction.Add("Right rotation"); break;
 
-				case "counterclockwise": case "counter-clockwise": case "ccw":
-				case "anticlockwise": case "anti-clockwise": case "acw": buttons.Add(_ccw); interaction.Add("Counterclockwise rotation"); break;
+				case "counterclockwise":
+				case "counter-clockwise":
+				case "ccw":
+				case "anticlockwise":
+				case "anti-clockwise":
+				case "acw": buttons.Add(_ccw); interaction.Add("Counterclockwise rotation"); break;
 
 				case "clockwise": case "cw": buttons.Add(_cw); interaction.Add("Clockwise rotation"); break;
 
-				case "set": case "submit":buttons.Add(_submit); interaction.Add("submit"); break;
+				case "set": case "submit": buttons.Add(_submit); interaction.Add("submit"); break;
 
 				default: yield break;
 			} //Check for any invalid commands.  Abort entire sequence if any invalid commands are present.

@@ -31,7 +31,6 @@ public class PostGameMessageResponder : MessageResponder
 	#region Protected/Private Methods
 	protected override void OnMessageReceived(Message message)
 	{
-		
 		if (_postGameCommander != null)
 		{
 			_coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(message, null));

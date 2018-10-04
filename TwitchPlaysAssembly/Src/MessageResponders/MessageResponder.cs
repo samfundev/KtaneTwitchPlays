@@ -6,10 +6,7 @@ public abstract class MessageResponder : MonoBehaviour
 {
 	protected CoroutineQueue _coroutineQueue = null;
 
-	private void OnDestroy()
-	{
-		IRCConnection.Instance?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
-	}
+	private void OnDestroy() => IRCConnection.Instance?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
 
 	public void SetupResponder(CoroutineQueue coroutineQueue)
 	{
@@ -33,7 +30,7 @@ public abstract class MessageResponder : MonoBehaviour
 			}
 			else
 			{
-				int secondsRemaining = (int)(ban.BanExpiry - DateTime.Now.TotalSeconds());
+				int secondsRemaining = (int) (ban.BanExpiry - DateTime.Now.TotalSeconds());
 
 				int daysRemaining = secondsRemaining / 86400; secondsRemaining %= 86400;
 				int hoursRemaining = secondsRemaining / 3600; secondsRemaining %= 3600;

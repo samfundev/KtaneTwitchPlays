@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Pacing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Pacing;
 using UnityEngine;
 
 public class PortalRoom : GameRoom
@@ -29,8 +29,8 @@ public class PortalRoom : GameRoom
 			room = null;
 			return false;
 		}
-		
-		room = new PortalRoom((MonoBehaviour)roomObjects[0]);
+
+		room = new PortalRoom((MonoBehaviour) roomObjects[0]);
 		return true;
 	}
 
@@ -51,7 +51,7 @@ public class PortalRoom : GameRoom
 		_roomLight = (GameObject) _roomLightField.GetValue(_room);
 
 		PaceMaker paceMaker = SceneManager.Instance.GameplayState.GetPaceMaker();
-		List<PacingAction> actions =  (List<PacingAction>) typeof(PaceMaker).GetField("actions", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(paceMaker);
+		List<PacingAction> actions = (List<PacingAction>) typeof(PaceMaker).GetField("actions", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(paceMaker);
 		actions?.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
 
 		while (bombHandles.TrueForAll(handle => !handle.bombCommander.Bomb.HasDetonated))
@@ -77,7 +77,7 @@ public class PortalRoom : GameRoom
 		}
 		else
 		{
-			_emergencyLightsRoutine = (IEnumerator)_redLightsMethod.Invoke(_room, null);
+			_emergencyLightsRoutine = (IEnumerator) _redLightsMethod.Invoke(_room, null);
 			handle.StartCoroutine(_emergencyLightsRoutine);
 		}
 	}

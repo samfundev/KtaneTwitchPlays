@@ -8,8 +8,8 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 	public TranslatedNeedyVentComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_yesButton = (MonoBehaviour)_yesButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
-		_noButton = (MonoBehaviour)_noButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
+		_yesButton = (MonoBehaviour) _yesButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
+		_noButton = (MonoBehaviour) _noButtonField.GetValue(bombComponent.GetComponent(_needyVentComponentSolverType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 
 		if (bombCommander == null) return;

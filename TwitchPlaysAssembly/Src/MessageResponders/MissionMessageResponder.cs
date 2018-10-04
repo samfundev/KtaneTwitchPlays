@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
+using System.Linq;
 
 public class MissionMessageResponder : MessageResponder
 {
@@ -8,12 +8,10 @@ public class MissionMessageResponder : MessageResponder
 	private FreeplayCommander _freeplayCommander = null;
 
 	#region Unity Lifecycle
-	private void OnEnable()
-	{
+	private void OnEnable() =>
 		// InputInterceptor.DisableInput();
 
 		StartCoroutine(CheckForBombBinderAndFreeplayDevice());
-	}
 
 	private void OnDisable()
 	{
@@ -29,12 +27,10 @@ public class MissionMessageResponder : MessageResponder
 	{
 		yield return null;
 
-		SetupRoom setupRoom = (SetupRoom)SceneManager.Instance.CurrentRoom;
+		SetupRoom setupRoom = (SetupRoom) SceneManager.Instance.CurrentRoom;
 		_bombBinderCommander = new BombBinderCommander(setupRoom.BombBinder);
 		_freeplayCommander = new FreeplayCommander(setupRoom.FreeplayDevice);
 	}
-
-	
 
 	protected override void OnMessageReceived(Message message)
 	{
@@ -42,7 +38,7 @@ public class MissionMessageResponder : MessageResponder
 		{
 			return;
 		}
-		
+
 		string text = message.Text;
 		bool isWhisper = message.IsWhisper;
 		string userNickName = message.UserNickName;
@@ -65,7 +61,7 @@ public class MissionMessageResponder : MessageResponder
 				}
 				break;
 			case "freeplay":
-				if((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
+				if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 				{
 					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
 				}

@@ -36,7 +36,7 @@ public class TwitchLeaderboard : MonoBehaviour
 			runTransform.gameObject.SetActive(false);
 
 		statsTable = Instantiate(twitchLeaderboardStatsPrefab);
-		
+
 		if (Leaderboard.Instance.Count > 0)
 		{
 			mainTable = Instantiate(twitchLeaderboardTablePrefab);
@@ -82,7 +82,7 @@ public class TwitchLeaderboard : MonoBehaviour
 
 			mainTable.transform.SetParent(mainTableTransform, false);
 		}
-		
+
 		StartCoroutine(DelayPrompt(10.0f));
 	}
 

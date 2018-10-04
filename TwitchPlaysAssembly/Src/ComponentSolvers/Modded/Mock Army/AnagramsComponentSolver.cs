@@ -1,6 +1,6 @@
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AnagramsComponentSolver : ComponentSolver
@@ -59,7 +59,6 @@ public class AnagramsComponentSolver : ComponentSolver
 			yield return DoInteractionClick(b);
 		}
 		yield return DoInteractionClick(_buttons[7]);
-
 	}
 
 	private KMSelectable[] _buttons = null;

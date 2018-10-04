@@ -43,15 +43,9 @@ public abstract class GameRoom
 
 	public int BombID { get; protected set; }
 
-	public virtual void RefreshBombID(ref int bombID)
-	{
-		BombID = bombID;
-	}
+	public virtual void RefreshBombID(ref int bombID) => BombID = bombID;
 
-	public virtual bool IsCurrentBomb(int bombIndex)
-	{
-		return true;
-	}
+	public virtual bool IsCurrentBomb(int bombIndex) => true;
 
 	public virtual void InitializeBombs(List<Bomb> bombs)
 	{
@@ -149,9 +143,8 @@ public abstract class GameRoom
 	public static int SecondaryCameraCullingMask;
 	public static void InitializeSecondaryCamera()
 	{
-		
 		if (SecondaryCamera != null) return;
-		
+
 		GameObject customMover = new GameObject("CustomCameraMover");
 		customMover.transform.SetParent(Camera.main.transform.parent.parent);
 		_mainCamera = Camera.main;
@@ -183,14 +176,14 @@ public abstract class GameRoom
 	public static void HideCamera()
 	{
 		_mainCamera.cullingMask = 0;
-		if(SecondaryCamera != null)
+		if (SecondaryCamera != null)
 			SecondaryCamera.cullingMask = 0;
 	}
 
 	public static void ShowCamera()
 	{
 		_mainCamera.cullingMask = MainCameraCullingMask;
-		if(SecondaryCamera != null)
+		if (SecondaryCamera != null)
 			SecondaryCamera.cullingMask = SecondaryCameraCullingMask;
 	}
 
@@ -285,8 +278,5 @@ public abstract class GameRoom
 		yield return true;
 	}
 
-	public virtual bool BombCommanderRotateByLocalQuaternion(Bomb bomb, Quaternion localQuaternion)
-	{
-		return true;
-	}
+	public virtual bool BombCommanderRotateByLocalQuaternion(Bomb bomb, Quaternion localQuaternion) => true;
 }

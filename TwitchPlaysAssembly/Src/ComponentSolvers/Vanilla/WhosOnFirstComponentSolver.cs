@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Assets.Scripts.Rules;
+using System;
 using System.Collections;
-using Assets.Scripts.Rules;
+using System.Linq;
 using UnityEngine;
 
 public class WhosOnFirstComponentSolver : ComponentSolver
@@ -45,7 +45,7 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 			yield return true;
 		while (!BombComponent.IsSolved)
 		{
-			while (!((WhosOnFirstComponent) BombComponent).ButtonsEmerged || ((WhosOnFirstComponent)BombComponent).CurrentDisplayWordIndex < 0)
+			while (!((WhosOnFirstComponent) BombComponent).ButtonsEmerged || ((WhosOnFirstComponent) BombComponent).CurrentDisplayWordIndex < 0)
 				yield return true;
 			string displayText = ((WhosOnFirstComponent) BombComponent).DisplayText.text;
 			var buttonText = _buttons.Select(x => x.GetText()).ToList();

@@ -10,8 +10,8 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	public TurnTheKeyAdvancedComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_leftKey = (MonoBehaviour)_leftKeyField.GetValue(bombComponent.GetComponent(_componentType));
-		_rightKey = (MonoBehaviour)_rightKeyField.GetValue(bombComponent.GetComponent(_componentType));
+		_leftKey = (MonoBehaviour) _leftKeyField.GetValue(bombComponent.GetComponent(_componentType));
+		_rightKey = (MonoBehaviour) _rightKeyField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the left key with !{0} turn left. Turn the right key with !{0} turn right.");
 
 		((KMSelectable) _leftKey).OnInteract = () => HandleKey(LeftBeforeA, LeftAfterA, _leftKeyTurnedField, _rightKeyTurnedField, _beforeLeftKeyField, _onLeftKeyTurnMethod, _leftKeyAnimatorField);
@@ -60,7 +60,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	{
 		yield return null;
 		Component self = BombComponent.GetComponent(_componentType);
-		Animator leftKeyAnimator = (Animator)_leftKeyAnimatorField.GetValue(self);
+		Animator leftKeyAnimator = (Animator) _leftKeyAnimatorField.GetValue(self);
 		Animator rightKeyAnimator = (Animator) _rightKeyAnimatorField.GetValue(self);
 
 		_leftKeyTurnedField.SetValue(self, true);
@@ -74,10 +74,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		BombComponent.GetComponent<KMBombModule>().HandlePass();
 	}
 
-	private bool GetValue(FieldInfo field)
-	{
-		return (bool) field.GetValue(BombComponent.GetComponent(_componentType));
-	}
+	private bool GetValue(FieldInfo field) => (bool) field.GetValue(BombComponent.GetComponent(_componentType));
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
@@ -89,10 +86,12 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		MonoBehaviour Key;
 		switch (commands[1])
 		{
-			case "l": case "left":
+			case "l":
+			case "left":
 				Key = _leftKey;
 				break;
-			case "r": case "right":
+			case "r":
+			case "right":
 				Key = _rightKey;
 				break;
 			default:

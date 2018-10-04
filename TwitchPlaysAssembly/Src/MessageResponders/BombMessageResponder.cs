@@ -1,11 +1,11 @@
+using Assets.Scripts.Missions;
+using Assets.Scripts.Props;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Missions;
-using Assets.Scripts.Props;
 using UnityEngine;
 
 public class BombMessageResponder : MessageResponder
@@ -178,11 +178,11 @@ public class BombMessageResponder : MessageResponder
 						//Still record solo information, should the defuser be the only one to actually defuse a 11 * bomb-count bomb, but display normal leaderboards instead if
 						//solo play is disabled.
 						TimeSpan elapsedTimeSpan = TimeSpan.FromSeconds(elapsedTime);
-						string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, Leaderboard.Instance.SoloSolver.UserName, (int)elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
+						string soloMessage = string.Format(TwitchPlaySettings.data.BombSoloDefusalMessage, Leaderboard.Instance.SoloSolver.UserName, (int) elapsedTimeSpan.TotalMinutes, elapsedTimeSpan.Seconds);
 						if (elapsedTime < previousRecord)
 						{
 							TimeSpan previousTimeSpan = TimeSpan.FromSeconds(previousRecord);
-							soloMessage += string.Format(TwitchPlaySettings.data.BombSoloDefusalNewRecordMessage, (int)previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
+							soloMessage += string.Format(TwitchPlaySettings.data.BombSoloDefusalNewRecordMessage, (int) previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
 						}
 						soloMessage += TwitchPlaySettings.data.BombSoloDefusalFooter;
 						parentService.StartCoroutine(SendDelayedMessage(1.0f, soloMessage));
@@ -225,7 +225,7 @@ public class BombMessageResponder : MessageResponder
 		parentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
 		if (!ClaimsEnabled)
 			parentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
-		
+
 		moduleCameras?.gameObject.SetActive(false);
 
 		foreach (TwitchBombHandle handle in BombHandles)
@@ -463,10 +463,7 @@ public class BombMessageResponder : MessageResponder
 		CreateComponentHandlesForBomb(bomb);
 	}
 
-	public void OnMessageReceived(string userNickName, string text, bool isWhisper = false)
-	{
-		OnMessageReceived(new Message(userNickName, null, text, isWhisper));
-	}
+	public void OnMessageReceived(string userNickName, string text, bool isWhisper = false) => OnMessageReceived(new Message(userNickName, null, text, isWhisper));
 
 	protected override void OnMessageReceived(Message message)
 	{
@@ -559,7 +556,6 @@ public class BombMessageResponder : MessageResponder
 					IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NoOwnedModules, userNickName), userNickName, !isWhisper);
 				return;
 			}
-
 
 			if (text.RegexMatch("^(?:claim ?|view ?|all ?){2,3}$"))
 			{
@@ -929,7 +925,6 @@ public class BombMessageResponder : MessageResponder
 					return;
 				}
 				break;
-
 		}
 
 		GameRoom.Instance.RefreshBombID(ref _currentBomb);
@@ -956,7 +951,7 @@ public class BombMessageResponder : MessageResponder
 				}
 			}
 		}
-		
+
 		foreach (TwitchBombHandle handle in BombHandles)
 		{
 			if (handle == null) continue;
@@ -1037,7 +1032,7 @@ public class BombMessageResponder : MessageResponder
 					continue;
 
 				case ComponentTypeEnum.Timer:
-					BombCommanders[BombCommanders.Count - 1].timerComponent = (TimerComponent)bombComponent;
+					BombCommanders[BombCommanders.Count - 1].timerComponent = (TimerComponent) bombComponent;
 					continue;
 
 				case ComponentTypeEnum.NeedyCapacitor:

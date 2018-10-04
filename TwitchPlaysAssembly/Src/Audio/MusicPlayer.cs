@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Linq;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class MusicPlayer : MonoBehaviour
 {
@@ -12,16 +12,10 @@ public class MusicPlayer : MonoBehaviour
 	public AudioSource endInterruptSound = null;
 
 	private Coroutine _currentCoroutine;
-	
-	private void Awake()
-	{
-		_musicPlayers[name] = this;
-	}
 
-	public static MusicPlayer GetMusicPlayer(string name)
-	{
-		return _musicPlayers[name];
-	}
+	private void Awake() => _musicPlayers[name] = this;
+
+	public static MusicPlayer GetMusicPlayer(string name) => _musicPlayers[name];
 
 	public static MusicPlayer StartRandomMusic()
 	{

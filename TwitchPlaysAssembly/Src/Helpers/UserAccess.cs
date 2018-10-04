@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using UnityEngine;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -14,7 +14,7 @@ public enum AccessLevel
 	SuperUser = 0x8000,
 	Admin = 0x4000,
 	Mod = 0x2000,
-	
+
 	Defuser = 0x0004,
 	Banned = 0x0002,
 	NoPoints = 0x0001,
@@ -29,7 +29,7 @@ public class BanData
 }
 
 public static class UserAccess
-{ 
+{
 	private class UserAccessData
 	{
 		public bool StickyBans = false;
@@ -39,7 +39,7 @@ public static class UserAccess
 		public Dictionary<string, AccessLevel> UserAccessLevel = new Dictionary<string, AccessLevel>();
 
 		public Dictionary<string, BanData> Bans = new Dictionary<string, BanData>();
-		
+
 		public static UserAccessData Instance
 		{
 			get => _instance ?? (_instance = new UserAccessData());
@@ -99,7 +99,6 @@ public static class UserAccess
 		}
 		catch (Exception ex)
 		{
-			
 			try
 			{
 				UserAccessData.Instance = JsonConvert.DeserializeObject<UserAccessData>(File.ReadAllText(path), new StringEnumConverter());
@@ -141,7 +140,7 @@ public static class UserAccess
 		do
 		{
 			if ((accessLevel & userAccessLevel) == accessLevel &&
-			    (ModeratorsEnabled || accessLevel < (AccessLevel) 0x2000 || accessLevel == AccessLevel.Streamer))
+				(ModeratorsEnabled || accessLevel < (AccessLevel) 0x2000 || accessLevel == AccessLevel.Streamer))
 				return true;
 			userAccessLevel = (AccessLevel) ((int) userAccessLevel >> 1);
 		} while (userAccessLevel != AccessLevel.User && orHigher);
@@ -158,7 +157,7 @@ public static class UserAccess
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
 			out AccessLevel userAccessLevel))
 			return AccessLevel.User;
-		if(IsBanned(userNickName) != null)
+		if (IsBanned(userNickName) != null)
 			return AccessLevel.Banned;
 		for (AccessLevel level = (AccessLevel) 0x40000000; level > 0; level = (AccessLevel) ((int) level >> 1))
 			if ((userAccessLevel & level) == level)
@@ -232,12 +231,12 @@ public static class UserAccess
 			IRCConnection.SendMessage($"You were banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
 	}
 
-	private static void UnbanUser(string userNickName, bool rewrite=true)
+	private static void UnbanUser(string userNickName, bool rewrite = true)
 	{
 		RemoveUser(userNickName, AccessLevel.Banned);
 		if (UserAccessData.Instance.Bans.ContainsKey(userNickName.ToLowerInvariant()))
 			UserAccessData.Instance.Bans.Remove(userNickName.ToLowerInvariant());
-		if(rewrite)
+		if (rewrite)
 			WriteAccessList();
 	}
 
@@ -295,7 +294,7 @@ public static class UserAccess
 		}
 
 		unban |= HasAccess(userNickName, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand)
-		              || userNickName.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant());
+					  || userNickName.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant());
 
 		if (unban)
 			UnbanUser(userNickName);
@@ -317,15 +316,9 @@ public static class UserAccess
 		UserAccessData.Instance.UserAccessLevel[userNickName.ToLowerInvariant()] = userAccessLevel;
 	}
 
-	public static Dictionary<string, AccessLevel> GetUsers()
-	{
-		return UserAccessData.Instance.UserAccessLevel;
-	}
+	public static Dictionary<string, AccessLevel> GetUsers() => UserAccessData.Instance.UserAccessLevel;
 
-	public static Dictionary<string, BanData> GetBans()
-	{
-		return UserAccessData.Instance.Bans;
-	}
+	public static Dictionary<string, BanData> GetBans() => UserAccessData.Instance.Bans;
 
 	public static string LevelToString(AccessLevel level)
 	{

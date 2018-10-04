@@ -17,10 +17,7 @@ public class InterruptMusic : MonoBehaviour
 		_volumeLevelOtherField = typeof(MusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private void Awake()
-	{
-		Instance = this;
-	}
+	private void Awake() => Instance = this;
 
 	public void SetMusicInterrupt(bool enableInterrupt)
 	{
@@ -30,8 +27,8 @@ public class InterruptMusic : MonoBehaviour
 			int musicControllerInstanceID = musicController.GetInstanceID();
 			if (enableInterrupt)
 			{
-				if(!_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
-					_oldVolumesGameplay[musicControllerInstanceID] = (float)_volumeLevelGameplayField.GetValue(musicController);
+				if (!_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
+					_oldVolumesGameplay[musicControllerInstanceID] = (float) _volumeLevelGameplayField.GetValue(musicController);
 				musicController.SetVolume(0.0f, true);
 			}
 			else
@@ -49,8 +46,8 @@ public class InterruptMusic : MonoBehaviour
 				int musicControllerInstanceID = musicController.GetInstanceID();
 				if (enableInterrupt)
 				{
-					if(!_oldVolumesOther.ContainsKey(musicControllerInstanceID))
-						_oldVolumesOther[musicControllerInstanceID] = (float)_volumeLevelOtherField.GetValue(musicController);
+					if (!_oldVolumesOther.ContainsKey(musicControllerInstanceID))
+						_oldVolumesOther[musicControllerInstanceID] = (float) _volumeLevelOtherField.GetValue(musicController);
 					musicController.SetVolume(0.0f, true);
 				}
 				else
@@ -59,7 +56,6 @@ public class InterruptMusic : MonoBehaviour
 					{
 						musicController.SetVolume(_oldVolumesOther[musicControllerInstanceID], true);
 						_oldVolumesOther.Remove(musicControllerInstanceID);
-
 					}
 				}
 			}

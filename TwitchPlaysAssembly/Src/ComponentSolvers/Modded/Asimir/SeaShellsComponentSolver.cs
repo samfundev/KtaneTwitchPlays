@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 public class SeaShellsComponentSolver : ComponentSolver
@@ -37,21 +37,22 @@ public class SeaShellsComponentSolver : ComponentSolver
 				{
 					fixedLabels.Add(text);
 				}
-				else switch (matchedCount)
-				{
-					case 1:
-						fixedLabels.Add(matchingLabels.First());
-						break;
-					case 0:
-						yield return $"sendtochaterror There isn't any label that contains \"{text}\".";
-						yield break;
-					default:
-						yield return
-							$"sendtochaterror There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
-						yield break;
-				}
+				else
+					switch (matchedCount)
+					{
+						case 1:
+							fixedLabels.Add(matchingLabels.First());
+							break;
+						case 0:
+							yield return $"sendtochaterror There isn't any label that contains \"{text}\".";
+							yield break;
+						default:
+							yield return
+								$"sendtochaterror There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
+							yield break;
+					}
 			}
-				
+
 			int startingStage = (int) _stageField.GetValue(_component);
 			foreach (string fixedLabel in fixedLabels)
 			{

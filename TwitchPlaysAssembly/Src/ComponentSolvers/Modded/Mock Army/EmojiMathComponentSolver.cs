@@ -1,7 +1,7 @@
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 public class EmojiMathComponentSolver : ComponentSolver
 {
@@ -41,7 +41,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 
 			index++;
 		}
-			
+
 		if (negative != negativeActive)
 		{
 			yield return DoInteractionClick(_buttons[10]);
@@ -49,7 +49,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 		}
 
 		foreach (int ind in buttonIndexes) yield return DoInteractionClick(_buttons[ind]);
-				
+
 		yield return DoInteractionClick(_buttons[11]);
 	}
 

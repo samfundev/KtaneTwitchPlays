@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 public class TranslatedButtonComponentSolver : ComponentSolver
@@ -58,7 +58,6 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 				yield return releaseCoroutine.Current;
 			}
 		}
-
 	}
 
 	private IEnumerator ReleaseCoroutine(int second)

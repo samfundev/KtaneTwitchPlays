@@ -10,7 +10,7 @@ public class CryptographyComponentSolver : ComponentSolver
 	public CryptographyComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_buttons = (KMSelectable[])_keysField.GetValue(bombComponent.GetComponent(_componentType));
+		_buttons = (KMSelectable[]) _keysField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
 	}
 

@@ -31,7 +31,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 			DebugHelper.LogError("A declared TwitchPlays CoroutineModComponentSolver process method is <null>, yet a component solver has been created; command invokation will not continue.");
 			yield break;
 		}
-		
+
 		IEnumerator responseCoroutine = null;
 
 		bool RegexValid = modInfo.validCommands == null;
@@ -51,7 +51,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 
 		try
 		{
-			responseCoroutine = (IEnumerator)ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
+			responseCoroutine = (IEnumerator) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
 			if (responseCoroutine == null)
 			{
 				yield break;
@@ -99,10 +99,10 @@ public class CoroutineModComponentSolver : ComponentSolver
 						goto loop;
 				}
 			}
-			if(result)
+			if (result)
 				yield return responseCoroutine.Current;
 			else if (exception != null)
 				yield return $"sendtochaterror {exception}";
-		} 
+		}
 	}
 }

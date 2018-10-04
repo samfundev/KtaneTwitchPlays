@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Assets.Scripts.Input;
+using Assets.Scripts.Records;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Input;
-using Assets.Scripts.Records;
 using UnityEngine;
 
 public class BombCommander
@@ -31,12 +31,12 @@ public class BombCommander
 		bombSolvedModules = 0;
 		SolvedModules = new Dictionary<string, List<TwitchComponentHandle>>();
 	}
-	
+
 	public IEnumerator RespondToCommand(Message messageObj)
 	{
 		string message = messageObj.Text.ToLowerInvariant().Trim();
 
-		if(message.EqualsAny("hold", "pick up"))
+		if (message.EqualsAny("hold", "pick up"))
 		{
 			IEnumerator holdCoroutine = HoldBomb(_heldFrontFace);
 			while (holdCoroutine.MoveNext())
@@ -194,7 +194,7 @@ public class BombCommander
 			yield return holdCoroutine.Current;
 		}
 		IEnumerator returnToFace;
-		float offset = edge.EqualsAny("45","-45") ? 0.0f : 45.0f;
+		float offset = edge.EqualsAny("45", "-45") ? 0.0f : 45.0f;
 
 		if (edge.EqualsAny(allEdges, "right", "r", "45", "-45"))
 		{
@@ -208,7 +208,7 @@ public class BombCommander
 
 		if (edge.EqualsAny("bottom right", "right bottom", "br", "rb", "45", "-45"))
 		{
-			IEnumerator firstSecondEdge = edge.EqualsAny(allEdges,"45","-45")
+			IEnumerator firstSecondEdge = edge.EqualsAny(allEdges, "45", "-45")
 				? DoFreeYRotate(90.0f, 90.0f, 45.0f, 90.0f, 0.3f)
 				: DoFreeYRotate(0.0f, 0.0f, 45.0f, 90.0f, 0.3f);
 			while (firstSecondEdge.MoveNext())
@@ -220,7 +220,6 @@ public class BombCommander
 
 		if (edge.EqualsAny(allEdges, "bottom", "b", "45", "-45"))
 		{
-
 			IEnumerator secondEdge = edge.EqualsAny(allEdges, "45", "-45")
 				? DoFreeYRotate(45.0f + offset, 90.0f, 0.0f, 90.0f, 0.3f)
 				: DoFreeYRotate(0.0f, 0.0f, 0.0f, 90.0f, 0.3f);
@@ -331,7 +330,7 @@ public class BombCommander
 				returnToFace = DoFreeYRotate(-225.0f + offset, 90.0f, 0.0f, 0.0f, 0.3f);
 				break;
 		}
-		
+
 		while (returnToFace.MoveNext())
 		{
 			yield return returnToFace.Current;
@@ -340,10 +339,7 @@ public class BombCommander
 		BombMessageResponder.moduleCameras?.Show();
 	}
 
-	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null)
-	{
-		return widgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>);
-	}
+	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => widgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>);
 
 	public void FillEdgework(bool silent = false)
 	{
@@ -357,11 +353,10 @@ public class BombCommander
 		};
 
 		var batteries = QueryWidgets<int>(KMBombInfo.QUERYKEY_GET_BATTERIES).ToList();
-		edgework.Add(batteries.All(x => new[] {1, 2}.Contains(x["numbatteries"]))
+		edgework.Add(batteries.All(x => new[] { 1, 2 }.Contains(x["numbatteries"]))
 			? $"{batteries.Sum(x => x["numbatteries"])}B {batteries.Count}H"
 			: batteries.OrderBy(x => x["numbatteries"]).Select(x => x["numbatteries"]).Distinct()
 				.Select(holder => batteries.Count(x => x["numbatteries"] == holder) + "x[" + (holder == 0 ? "Empty" : holder.ToString()) + "]").Join());
-
 
 		var indicators = QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_INDICATOR).OrderBy(x => x["label"]).ToList();
 		var colorindicators = QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_INDICATOR + "Color").OrderBy(x => x["label"]).ToList();
@@ -389,20 +384,20 @@ public class BombCommander
 		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
 
 		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x == "" ? "Empty" : x).Select(x => "[" + x + "]").Join(" "));
-		
+
 		edgework.Add(QueryWidgets<int>(KMBombInfoExtensions.WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
 
 		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
-		
+
 		string edgeworkString = edgework.Where(str => str != "").Join(" // ");
 		if (twitchBombHandle.edgeworkText.text == edgeworkString) return;
 
 		twitchBombHandle.edgeworkText.text = edgeworkString;
 
-		if(!silent)
+		if (!silent)
 			IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
 	}
-	
+
 	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
 	{
 		IEnumerator gameRoomFocus = GameRoom.Instance?.BombCommanderFocus(Bomb, selectable, focusDistance, frontFace);
@@ -516,10 +511,7 @@ public class BombCommander
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject()
-	{
-		_selectableManager.HandleCancel();
-	}
+	private void DeselectObject() => _selectableManager.HandleCancel();
 
 	private IEnumerator ForceHeldRotation(bool frontFace, float duration)
 	{

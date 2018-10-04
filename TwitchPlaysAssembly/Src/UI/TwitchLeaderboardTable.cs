@@ -43,7 +43,7 @@ public class TwitchLeaderboardTable : MonoBehaviour
 
 	private void OnDisable()
 	{
-		foreach(TwitchLeaderboardRow row in _instancedRows)
+		foreach (TwitchLeaderboardRow row in _instancedRows)
 		{
 			DestroyObject(row);
 		}

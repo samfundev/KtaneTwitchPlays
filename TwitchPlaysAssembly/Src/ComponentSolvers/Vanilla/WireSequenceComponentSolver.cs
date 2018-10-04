@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Rules;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class WireSequenceComponentSolver : ComponentSolver
@@ -25,8 +25,8 @@ public class WireSequenceComponentSolver : ComponentSolver
 		if (inputCommand.Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield return null;
-			int page = (int)_currentPageField.GetValue(BombComponent);
-			for (int i = page-1; i >= 0; i--)
+			int page = (int) _currentPageField.GetValue(BombComponent);
+			for (int i = page - 1; i >= 0; i--)
 			{
 				IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i + 1, i);
 				while (changePage.MoveNext())
@@ -90,7 +90,6 @@ public class WireSequenceComponentSolver : ComponentSolver
 			{
 				yield return "trycancel";
 				yield return DoInteractionClick(button.Key, button.Value);
-
 			}
 		}
 	}
@@ -98,13 +97,10 @@ public class WireSequenceComponentSolver : ComponentSolver
 	private bool CanInteractWithWire(int wireIndex)
 	{
 		int wirePageIndex = wireIndex / 3;
-		return wirePageIndex == (int)_currentPageField.GetValue(BombComponent);
+		return wirePageIndex == (int) _currentPageField.GetValue(BombComponent);
 	}
 
-	private WireSequenceWire GetWire(int wireIndex)
-	{
-		return _wireSequence[wireIndex].Wire;
-	}
+	private WireSequenceWire GetWire(int wireIndex) => _wireSequence[wireIndex].Wire;
 
 	static WireSequenceComponentSolver()
 	{
@@ -121,7 +117,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 		while (!BombComponent.IsActive)
 			yield return true;
 		yield return null;
-		
+
 		for (int i = 0; i < 4; i++)
 		{
 			while (((WireSequenceComponent) BombComponent).IsChangingPage)
@@ -130,12 +126,11 @@ public class WireSequenceComponentSolver : ComponentSolver
 			if (!CanInteractWithWire(i * 3)) continue;
 			for (int j = 0; j < 3; j++)
 			{
-				var wire = _wireSequence[i*3+j];
+				var wire = _wireSequence[i * 3 + j];
 				if (wire.NoWire || !RuleManager.Instance.WireSequenceRuleSet.ShouldBeSnipped(wire.Color, wire.Number, wire.To) || wire.IsSnipped) continue;
 				yield return DoInteractionClick(wire.Wire);
 			}
 			DoInteractionClick(_downButton);
-			
 		}
 	}
 

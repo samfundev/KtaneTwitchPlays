@@ -30,7 +30,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 		yield return null;
 		int currentIndex = (int) _indexField.GetValue(_englishTestComponent);
 
-		while ((int)_indexField.GetValue(_englishTestComponent) != desiredIndex)
+		while ((int) _indexField.GetValue(_englishTestComponent) != desiredIndex)
 		{
 			yield return DoInteractionClick(selectButton);
 			if ((int) _indexField.GetValue(_englishTestComponent) != currentIndex) continue;
@@ -62,7 +62,7 @@ public class EnglishTestComponentSolver : ComponentSolver
 
 	private static Type _componentType = null;
 	private static FieldInfo _indexField = null;
-	
+
 	private readonly Component _englishTestComponent;
 	private readonly KMSelectable selectButton;
 	private readonly KMSelectable submitButton;

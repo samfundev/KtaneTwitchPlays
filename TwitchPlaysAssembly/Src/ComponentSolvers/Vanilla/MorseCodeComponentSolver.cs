@@ -42,7 +42,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 		}
 		else
 			yield return "unsubmittablepenalty";
-	}    
+	}
 
 	private int CurrentFrequency => ((MorseCodeComponent) BombComponent).CurrentFrequency;
 

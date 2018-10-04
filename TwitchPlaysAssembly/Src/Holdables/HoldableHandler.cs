@@ -41,12 +41,12 @@ public abstract class HoldableHandler
 		int strikePenalty = -5;
 		strikePenalty = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? (strikeCount * strikePenalty) : (Math.Min(strikePenalty, strikeCount * strikePenalty));
 
-		IRCConnection.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike, 
-			HoldableCommander.ID, 
-			strikeCount == 1 ? "a" : strikeCount.ToString(), 
+		IRCConnection.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike,
+			HoldableCommander.ID,
+			strikeCount == 1 ? "a" : strikeCount.ToString(),
 			strikeCount == 1 ? "" : "s",
-			strikePenalty, 
-			userNickName, 
+			strikePenalty,
+			userNickName,
 			string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage);
 		if (strikeCount <= 0) return;
 
@@ -56,7 +56,7 @@ public abstract class HoldableHandler
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
 		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
 		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
-		if(currentReward != originalReward)
+		if (currentReward != originalReward)
 			IRCConnection.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 		if (OtherModes.TimeModeOn)
 		{
@@ -98,7 +98,7 @@ public abstract class HoldableHandler
 	{
 		yield return item;
 	}
-	
+
 	public IEnumerator RespondToCommand(string userNickName, string message, bool isWhisper)
 	{
 		DisableOnStrike = false;
@@ -109,7 +109,7 @@ public abstract class HoldableHandler
 		FloatingHoldable.HoldStateEnum holdState = Holdable.HoldState;
 
 		if (holdState == FloatingHoldable.HoldStateEnum.Held)
-		{}
+		{ }
 		else
 		{
 			IEnumerator holdCoroutine = HoldableCommander.Hold();
@@ -119,7 +119,7 @@ public abstract class HoldableHandler
 
 		IEnumerator processCommand = RespondToCommandCommon(message);
 		if (processCommand == null || !processCommand.MoveNext())
-		{	
+		{
 			DebugHelper.Log("Running RespondToCommandInternal()");
 			processCommand = RespondToCommandInternal(message, isWhisper);
 			bool cancelled = false;
@@ -157,7 +157,6 @@ public abstract class HoldableHandler
 					if (Strike)
 						DebugHelper.Log("A strike was caused by the command. Invocation will not continue.");
 					if (!result || Strike) break;
-
 				}
 				catch (Exception ex)
 				{
@@ -221,15 +220,15 @@ public abstract class HoldableHandler
 							cancelled = true;
 						}
 						else if (currentString.StartsWith("strikemessage ",
-							         StringComparison.InvariantCultureIgnoreCase) &&
-						         currentString.Substring(14).Trim() != string.Empty)
+									 StringComparison.InvariantCultureIgnoreCase) &&
+								 currentString.Substring(14).Trim() != string.Empty)
 							StrikeMessage = currentString.Substring(14);
 						else if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
 							_delegatedStrikeUserNickName = _currentUserNickName;
 						else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 							DisableOnStrike = true;
 						else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode") &&
-						         BombMessageResponder.BombActive)
+								 BombMessageResponder.BombActive)
 						{
 							BombCommander bombCommander = BombMessageResponder.Instance.BombCommanders[0];
 							AwardStrikes(_currentUserNickName, bombCommander.StrikeLimit - bombCommander.StrikeCount);
@@ -248,7 +247,7 @@ public abstract class HoldableHandler
 					case string[] currentStrings:
 						if (currentStrings.Length >= 1)
 							if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode") &&
-							    BombMessageResponder.BombActive)
+								BombMessageResponder.BombActive)
 							{
 								BombCommander bombCommander = BombMessageResponder.Instance.BombCommanders[0];
 								AwardStrikes(_currentUserNickName,
@@ -320,7 +319,7 @@ public abstract class HoldableHandler
 						}
 						break;
 				}
-				
+
 				yield return processCommand.Current;
 
 				if (CoroutineCanceller.ShouldCancel && !cancelling && CommandComponent != null)
@@ -328,7 +327,7 @@ public abstract class HoldableHandler
 					CancelBool?.SetValue(CommandComponent, true);
 					cancelling = CancelBool != null;
 				}
-				
+
 			} while (processIEnumerators.Count > 0 && !parseError && !cancelled && !Strike);
 			processIEnumerators.Clear();
 			if (_musicPlayer != null)
@@ -342,7 +341,7 @@ public abstract class HoldableHandler
 			DebugHelper.Log("RespondToCommandInternal() Complete");
 		}
 		else
-		{	// running RespondToCommandCommon()	
+		{   // running RespondToCommandCommon()	
 			DebugHelper.Log("Running RespondToCommandCommon()");
 			do
 				yield return processCommand.Current;
@@ -422,10 +421,7 @@ public abstract class HoldableHandler
 		yield break;
 	}
 
-	protected void DoInteractionStart(MonoBehaviour interactable)
-	{
-		interactable.GetComponent<Selectable>().HandleInteract();
-	}
+	protected void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
 
 	protected void DoInteractionEnd(MonoBehaviour interactable)
 	{

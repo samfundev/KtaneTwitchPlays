@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Assets.Scripts.Pacing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Pacing;
 
 public class Facility : GameRoom
 {
-	public static Type RoomType()
-	{
-		return typeof(FacilityRoom);
-	}
+	public static Type RoomType() => typeof(FacilityRoom);
 
 	public static bool TryCreateFacility(UnityEngine.Object[] roomObjects, out GameRoom room)
 	{
@@ -57,8 +54,6 @@ public class Facility : GameRoom
 		MethodInfo method = on ? _turnOnEmergencyLightsMethod : _turnOffEmergencyLightsMethod;
 		method.Invoke(_facilityRoom, null);
 	}
-
-	
 
 	static Facility()
 	{

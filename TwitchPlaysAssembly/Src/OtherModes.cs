@@ -13,9 +13,9 @@ public static class OtherModes
 	public static TwitchPlaysMode currentMode = TwitchPlaysMode.Normal;
 	public static TwitchPlaysMode nextMode = TwitchPlaysMode.Normal;
 
-	public static string GetName(TwitchPlaysMode mode) { return Enum.GetName(typeof(TwitchPlaysMode), mode); }
+	public static string GetName(TwitchPlaysMode mode) => Enum.GetName(typeof(TwitchPlaysMode), mode);
 
-	public static bool InMode(TwitchPlaysMode mode) { return currentMode == mode; }
+	public static bool InMode(TwitchPlaysMode mode) => currentMode == mode;
 
 	private static KMGameInfo.State _state = KMGameInfo.State.Transitioning;
 
@@ -34,37 +34,28 @@ public static class OtherModes
 		return true;
 	}
 
-	public static void Toggle(TwitchPlaysMode mode)
-	{
-		Set(mode, nextMode != mode);
-	}
+	public static void Toggle(TwitchPlaysMode mode) => Set(mode, nextMode != mode);
 
-	public static void DisableLeaderboard(bool force=false)
+	public static void DisableLeaderboard(bool force = false)
 	{
 		if (Assets.Scripts.Records.RecordManager.Instance != null)
 			Assets.Scripts.Records.RecordManager.Instance.DisableBestRecords = currentMode != TwitchPlaysMode.Normal || force || _disableBestRecords;
 
-		if(Assets.Scripts.Stats.StatsManager.Instance != null)
+		if (Assets.Scripts.Stats.StatsManager.Instance != null)
 			Assets.Scripts.Stats.StatsManager.Instance.DisableStatChanges = currentMode != TwitchPlaysMode.Normal || force || _disableStats;
 	}
 
-	public static bool TimeModeOn { get { return InMode(TwitchPlaysMode.Time); } set { Set(TwitchPlaysMode.Time, value); } }
-	public static bool VSModeOn { get { return InMode(TwitchPlaysMode.VS); } set { Set(TwitchPlaysMode.VS, value); } }
-	public static bool ZenModeOn { get { return InMode(TwitchPlaysMode.Zen); } set { Set(TwitchPlaysMode.Zen, value); } }
+	public static bool TimeModeOn { get => InMode(TwitchPlaysMode.Time); set => Set(TwitchPlaysMode.Time, value); }
+	public static bool VSModeOn { get => InMode(TwitchPlaysMode.VS); set => Set(TwitchPlaysMode.VS, value); }
+	public static bool ZenModeOn { get => InMode(TwitchPlaysMode.Zen); set => Set(TwitchPlaysMode.Zen, value); }
 
 	public static float timedMultiplier = 9;
 	public static int teamHealth = 0;
 	public static int bossHealth = 0;
 
-	public static int GetTeamHealth()
-	{
-		return teamHealth;
-	}
+	public static int GetTeamHealth() => teamHealth;
 
-	public static int GetBossHealth()
-	{
-		return bossHealth;
-	}
+	public static int GetBossHealth() => bossHealth;
 
 	public static int SubtractBossHealth(int damage)
 	{
@@ -96,15 +87,9 @@ public static class OtherModes
 		IRCConnection.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
 	}
 
-	public static float GetMultiplier()
-	{
-		return timedMultiplier;
-	}
+	public static float GetMultiplier() => timedMultiplier;
 
-	public static float GetAdjustedMultiplier()
-	{
-		return Math.Min(timedMultiplier, TwitchPlaySettings.data.TimeModeMaxMultiplier);
-	}
+	public static float GetAdjustedMultiplier() => Math.Min(timedMultiplier, TwitchPlaySettings.data.TimeModeMaxMultiplier);
 
 	public static bool DropMultiplier()
 	{
@@ -120,8 +105,5 @@ public static class OtherModes
 		}
 	}
 
-	public static void SetMultiplier(float newMultiplier)
-	{
-		timedMultiplier = newMultiplier;
-	}
+	public static void SetMultiplier(float newMultiplier) => timedMultiplier = newMultiplier;
 }

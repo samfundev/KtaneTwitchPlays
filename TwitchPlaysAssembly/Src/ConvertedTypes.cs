@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using Assets.Scripts.Records;
+﻿using Assets.Scripts.Records;
+using System.Reflection;
 
 public static class CommonReflectedTypeInfo
 {
@@ -23,7 +23,7 @@ public static class CommonReflectedTypeInfo
 		get;
 		private set;
 	}
-   
+
 	public static FieldInfo GameRecordCurrentStrikeIndexField
 	{
 		get;

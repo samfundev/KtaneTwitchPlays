@@ -102,7 +102,7 @@ public class PasswordComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		while (!BombComponent.IsActive) yield return true;
-		IEnumerator solve = RespondToCommandInternal(((PasswordComponent)BombComponent).CorrectWord);
+		IEnumerator solve = RespondToCommandInternal(((PasswordComponent) BombComponent).CorrectWord);
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 

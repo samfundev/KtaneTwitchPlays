@@ -21,24 +21,15 @@ public class MultipleBombs
 		}
 	}
 
-	public static bool Installed()
-	{
-		return _gameObject != null;
-	}
+	public static bool Installed() => _gameObject != null;
 
-	public static int GetMaximumBombCount()
-	{
-		return (Properties != null && Properties.TryGetValue(MaxBombCount, out object count))
+	public static int GetMaximumBombCount() => (Properties != null && Properties.TryGetValue(MaxBombCount, out object count))
 			? (int) count
 			: 1;
-	}
 
-	public static int GetFreePlayBombCount()
-	{
-		return (Properties != null && Properties.TryGetValue(BombCount, out object count))
+	public static int GetFreePlayBombCount() => (Properties != null && Properties.TryGetValue(BombCount, out object count))
 			? (int) count
 			: 2;
-	}
 
 	private const string MaxBombCount = "CurrentMaximumBombCount";
 	private const string BombCount = "CurrentFreePlayBombCount";

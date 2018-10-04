@@ -63,7 +63,7 @@ public static class TranslatedModuleHelper
 			FieldInfo langField = componentType.GetField("lang", BindingFlags.NonPublic | BindingFlags.Instance);
 			object langObject = langField?.GetValue(component);
 			FieldInfo languageField = langObject?.GetType().GetField("languageId", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-			string languageCode = (string)languageField?.GetValue(langObject);
+			string languageCode = (string) languageField?.GetValue(langObject);
 			if (languageCode == null || !DisplayNameAddons.TryGetValue(languageCode, out string code))
 				return "";
 			return code;
@@ -82,7 +82,7 @@ public static class TranslatedModuleHelper
 			FieldInfo langField = componentType.GetField("lang", BindingFlags.NonPublic | BindingFlags.Instance);
 			object langObject = langField?.GetValue(component);
 			FieldInfo languageField = langObject?.GetType().GetField("languageId", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-			string languageCode = (string)languageField?.GetValue(langObject);
+			string languageCode = (string) languageField?.GetValue(langObject);
 			if (languageCode == null || !ManualCodeAddons.TryGetValue(languageCode, out string code))
 				return "";
 			return code;

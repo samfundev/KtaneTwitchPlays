@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using UnityEngine;
 
 public class ModuleInformation
 {
@@ -35,11 +35,11 @@ public class ModuleInformation
 
 	public Color unclaimedColor;
 
-	public bool ShouldSerializeunclaimedColor() { return unclaimedColor != new Color(); }
-	public bool ShouldSerializebuiltIntoTwitchPlays() {return false;}
-	public bool ShouldSerializevalidCommands() { return !builtIntoTwitchPlays; }
-	public bool ShouldSerializeDoesTheRightThing() { return !builtIntoTwitchPlays; }
-	public bool ShouldSerializevalidCommandsOverride() { return !builtIntoTwitchPlays; }
+	public bool ShouldSerializeunclaimedColor() => unclaimedColor != new Color();
+	public bool ShouldSerializebuiltIntoTwitchPlays() => false;
+	public bool ShouldSerializevalidCommands() => !builtIntoTwitchPlays;
+	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
+	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
 }
 
 public static class ModuleData
@@ -95,7 +95,7 @@ public static class ModuleData
 
 		foreach (ModuleInformation info in modInfo)
 		{
-		   ComponentSolverFactory.AddModuleInformation(info);
+			ComponentSolverFactory.AddModuleInformation(info);
 		}
 		return true;
 	}

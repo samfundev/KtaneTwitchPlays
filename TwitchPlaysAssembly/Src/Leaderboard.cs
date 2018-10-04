@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
+using UnityEngine;
 
 public class Leaderboard
 {
@@ -88,32 +88,16 @@ public class Leaderboard
 			}
 		}
 
-		public void AddSolve(int num = 1)
-		{
-			SolveCount += num;
-		}
+		public void AddSolve(int num = 1) => SolveCount += num;
 
-		public void AddStrike(int num = 1)
-		{
-			StrikeCount += num;
-		}
+		public void AddStrike(int num = 1) => StrikeCount += num;
 
-		public void AddScore(int num)
-		{
-			SolveScore += num;
-		}
-
+		public void AddScore(int num) => SolveScore += num;
 	}
 
-	private Color SafeGetColor(string userName)
-	{
-		return IRCConnection.GetUserColor(userName);
-	}
+	private Color SafeGetColor(string userName) => IRCConnection.GetUserColor(userName);
 
-	private bool GetEntry(string UserName, out LeaderboardEntry entry)
-	{
-		return _entryDictionary.TryGetValue(UserName.ToLowerInvariant(), out entry);
-	}
+	private bool GetEntry(string UserName, out LeaderboardEntry entry) => _entryDictionary.TryGetValue(UserName.ToLowerInvariant(), out entry);
 
 	private LeaderboardEntry GetEntry(string userName)
 	{
@@ -158,10 +142,7 @@ public class Leaderboard
 		return entry;
 	}
 
-	public void AddSolve(string userName, int numSolve = 1)
-	{
-		AddSolve(userName, SafeGetColor(userName), numSolve);
-	}
+	public void AddSolve(string userName, int numSolve = 1) => AddSolve(userName, SafeGetColor(userName), numSolve);
 	public void AddSolve(string userName, Color userColor, int numSolve = 1)
 	{
 		LeaderboardEntry entry = GetEntry(userName, userColor);
@@ -173,10 +154,7 @@ public class Leaderboard
 		string name = userName.ToLowerInvariant();
 		CurrentSolvers[name] = CurrentSolvers.TryGetValue(name, out int value) ? value + numSolve : numSolve;
 	}
-	public void AddStrike(string userName, int numStrikes = 1)
-	{
-		AddStrike(userName, SafeGetColor(userName), numStrikes);
-	}
+	public void AddStrike(string userName, int numStrikes = 1) => AddStrike(userName, SafeGetColor(userName), numStrikes);
 
 	public void AddStrike(string userName, Color userColor, int numStrikes = 1)
 	{
@@ -187,10 +165,7 @@ public class Leaderboard
 		ResetSortFlag();
 	}
 
-	public void AddScore(string userName, int numScore)
-	{
-		AddScore(userName, SafeGetColor(userName), numScore);
-	}
+	public void AddScore(string userName, int numScore) => AddScore(userName, SafeGetColor(userName), numScore);
 
 	public void AddScore(string userName, Color userColor, int numScore)
 	{
@@ -356,25 +331,13 @@ public class Leaderboard
 		_entryList.Remove(user);
 	}
 
-	public void DeleteEntry(string userNickName)
-	{
-		DeleteEntry(GetEntry(userNickName));
-	}
+	public void DeleteEntry(string userNickName) => DeleteEntry(GetEntry(userNickName));
 
-	public void DeleteSoloEntry(LeaderboardEntry user)
-	{
-		_entryListSolo.Remove(user);
-	}
+	public void DeleteSoloEntry(LeaderboardEntry user) => _entryListSolo.Remove(user);
 
-	public void DeleteSoloEntry(string userNickName)
-	{
-		DeleteSoloEntry(_entryListSolo.Where(x => x.UserName == userNickName).First());
-	}
+	public void DeleteSoloEntry(string userNickName) => DeleteSoloEntry(_entryListSolo.Where(x => x.UserName == userNickName).First());
 
-	private void ResetSortFlag()
-	{
-		_sorted = false;
-	}
+	private void ResetSortFlag() => _sorted = false;
 
 	private void CheckAndSort()
 	{
@@ -420,10 +383,7 @@ public class Leaderboard
 		return rhs.SolveScore.CompareTo(lhs.SolveScore);
 	}
 
-	private static int CompareSoloTimes(LeaderboardEntry lhs, LeaderboardEntry rhs)
-	{
-		return lhs.RecordSoloTime.CompareTo(rhs.RecordSoloTime);
-	}
+	private static int CompareSoloTimes(LeaderboardEntry lhs, LeaderboardEntry rhs) => lhs.RecordSoloTime.CompareTo(rhs.RecordSoloTime);
 
 	public void ClearSolo()
 	{

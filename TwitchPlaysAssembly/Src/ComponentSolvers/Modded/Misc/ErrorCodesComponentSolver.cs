@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 
 public class ErrorCodesComponentSolver : ComponentSolver
 {
@@ -8,8 +8,8 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		   base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[])_buttonsField.GetValue(_component);
-		submit = (KMSelectable)_sendField.GetValue(_component);
+		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
+		submit = (KMSelectable) _sendField.GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
 	}
 

@@ -24,8 +24,8 @@ public class IRCConnectionManagerHandler : HoldableHandler
 	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
 	{
 		DebugHelper.Log($"Received: !ircmanager {command}");
-		
-		string[] split = command.ToLowerInvariant().Trim().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+
+		string[] split = command.ToLowerInvariant().Trim().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 		// ReSharper disable SwitchStatementMissingSomeCases
 		switch (split[0])
 		{
@@ -61,7 +61,7 @@ public class IRCConnectionManagerHandler : HoldableHandler
 
 						break;
 				}
-				
+
 				break;
 			case "disconnect":
 				bool allowed = false;
@@ -106,7 +106,6 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 	public static bool TwitchPlaysDataRefreshed = false;
 
 	private TPElevatorSwitch _elevatorSwitch;
-	
 
 	private void Start()
 	{
@@ -142,7 +141,7 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 		try
 		{
 #pragma warning disable IDE0031 // Use null propagation
-			MeshRenderer background = _newImageGameObject != null? _newImageGameObject.GetComponent<MeshRenderer>() : null;
+			MeshRenderer background = _newImageGameObject != null ? _newImageGameObject.GetComponent<MeshRenderer>() : null;
 #pragma warning restore IDE0031 // Use null propagation
 			//Image loading at runtime found at https://forum.unity.com/threads/solved-apply-image-to-plane-primitive.320489/
 			if (background == null || !File.Exists(TwitchPlaySettings.data.IRCManagerBackgroundImage))
@@ -152,7 +151,7 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 					_newImageGameObject.SetActive(false);
 				yield break;
 			}
-			
+
 			_originalImageGameObject.SetActive(false);
 			if (_newImageGameObject != null)
 				_newImageGameObject.SetActive(true);
@@ -177,7 +176,7 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 	{
 		if (IRCConnection.Instance.State != IRCConnectionState.Connected && TPElevatorSwitch.IsON)
 		{
-			if(_elevatorSwitch.gameObject.activeSelf)
+			if (_elevatorSwitch.gameObject.activeSelf)
 				_elevatorSwitch.ElevatorSwitch.OnInteract();
 			else if (SceneManager.Instance.CurrentRoom is SetupRoom setupRoom && setupRoom.ElevatorSwitch != null)
 				setupRoom.ElevatorSwitch.Switch.Toggle();

@@ -11,9 +11,9 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_component = bombComponent.GetComponent(_morseCodeComponentType);
-		_upButton = (MonoBehaviour)_upButtonField.GetValue(_component);
-		_downButton = (MonoBehaviour)_downButtonField.GetValue(_component);
-		_transmitButton = (MonoBehaviour)_transmitButtonField.GetValue(_component);
+		_upButton = (MonoBehaviour) _upButtonField.GetValue(_component);
+		_downButton = (MonoBehaviour) _downButtonField.GetValue(_component);
+		_transmitButton = (MonoBehaviour) _transmitButtonField.GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 
 		if (bombCommander == null) return;
@@ -31,7 +31,7 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (!inputCommand.Trim().RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)( ?mhz)?$") 
+		if (!inputCommand.Trim().RegexMatch(out Match match, "^(?:tx|trans(?:mit)?|submit|xmit) (?:3.)?(5[0-9][25]|600)( ?mhz)?$")
 				|| !int.TryParse(match.Groups[1].Value, out int targetFrequency)
 				|| !Frequencies.Contains(targetFrequency))
 		{
@@ -53,9 +53,9 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 			yield return "transmit";
 			yield return DoInteractionClick(_transmitButton);
 		}
-	}    
+	}
 
-	private int CurrentFrequency => Frequencies[(int)_currentFrqIndexField.GetValue(_component)];
+	private int CurrentFrequency => Frequencies[(int) _currentFrqIndexField.GetValue(_component)];
 
 	static TranslatedMorseCodeComponentSolver()
 	{
@@ -64,8 +64,6 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		_downButtonField = _morseCodeComponentType.GetField("ButtonLeft", BindingFlags.Public | BindingFlags.Instance);
 		_transmitButtonField = _morseCodeComponentType.GetField("ButtonTX", BindingFlags.Public | BindingFlags.Instance);
 		_currentFrqIndexField = _morseCodeComponentType.GetField("currentFrqIndex", BindingFlags.NonPublic | BindingFlags.Instance);
-
-		
 	}
 
 	private static readonly int[] Frequencies = {
@@ -86,8 +84,6 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		595,
 		600
 	};
-
-	
 
 	private static Type _morseCodeComponentType = null;
 	private static FieldInfo _upButtonField = null;

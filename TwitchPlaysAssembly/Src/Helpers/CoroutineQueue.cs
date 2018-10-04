@@ -9,7 +9,7 @@ public class CoroutineQueue : MonoBehaviour
 		_coroutineQueue = new Queue<IEnumerator>();
 		_forceSolveQueue = new Queue<IEnumerator>();
 		_bombIDProcessed = new Queue<int>();
-	}  
+	}
 
 	private void Update()
 	{
@@ -24,10 +24,7 @@ public class CoroutineQueue : MonoBehaviour
 		_activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
 	}
 
-	public static void AddForcedSolve(IEnumerator subcoroutine)
-	{
-		_forceSolveQueue.Enqueue(subcoroutine);
-	}
+	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.Enqueue(subcoroutine);
 
 	public void AddToQueue(IEnumerator subcoroutine)
 	{
@@ -134,7 +131,7 @@ public class CoroutineQueue : MonoBehaviour
 						yield return coroutine.Current;
 						break;
 				}
-			} 
+			}
 		}
 
 		_processingForcedSolve = false;

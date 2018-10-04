@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Assets.Scripts.Rules;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Scripts.Rules;
 
 public class WireSetComponentSolver : ComponentSolver
 {

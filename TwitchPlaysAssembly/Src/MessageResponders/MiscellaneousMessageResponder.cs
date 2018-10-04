@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using Assets.Scripts.Missions;
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Missions;
-using Newtonsoft.Json;
 using TwitchPlaysAssembly.Helpers;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -82,10 +82,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
-	int GetMaximumModules(int maxAllowed = int.MaxValue)
-	{
-		return Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(), maxAllowed);
-	}
+	int GetMaximumModules(int maxAllowed = int.MaxValue) => Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(), maxAllowed);
 
 	string ResolveMissionID(string targetID, out string failureMessage)
 	{
@@ -792,7 +789,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 						level |= (stepdown || UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) ? AccessLevel.SuperUser : AccessLevel.User;
 						break;
 
-
 					case "defuser":
 						level |= AccessLevel.Defuser;
 						break;
@@ -1306,7 +1302,6 @@ public class MiscellaneousMessageResponder : MessageResponder
 		if (TwitchComponentHandle.UnsupportedModulesPresent())
 			IRCConnection.SendChatMessage("There are some remaining modules that can still be solved using !<id> solve.");
 	}
-
 }
 
 public class ModuleDistributions

@@ -33,11 +33,11 @@ public class ListeningComponentSolver : ComponentSolver
 		}
 
 		_buttons = new MonoBehaviour[4];
-		_play = (MonoBehaviour)playField.GetValue(component);
-		_buttons[0] = (MonoBehaviour)dollarField.GetValue(component);
-		_buttons[1] = (MonoBehaviour)poundField.GetValue(component);
-		_buttons[2] = (MonoBehaviour)starField.GetValue(component);
-		_buttons[3] = (MonoBehaviour)ampersandField.GetValue(component);
+		_play = (MonoBehaviour) playField.GetValue(component);
+		_buttons[0] = (MonoBehaviour) dollarField.GetValue(component);
+		_buttons[1] = (MonoBehaviour) poundField.GetValue(component);
+		_buttons[2] = (MonoBehaviour) starField.GetValue(component);
+		_buttons[3] = (MonoBehaviour) ampersandField.GetValue(component);
 		if (_play == null || _buttons.Any(x => x == null))
 		{
 			throw new NotSupportedException("Component had null KMSelectables.");

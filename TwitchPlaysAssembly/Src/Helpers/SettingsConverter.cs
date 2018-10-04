@@ -6,15 +6,9 @@ using UnityEngine;
 
 class SettingsConverter
 {
-	public static string Serialize(object obj)
-	{
-		return JsonConvert.SerializeObject(obj, Formatting.Indented, new ColorConverter());
-	}
+	public static string Serialize(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented, new ColorConverter());
 
-	public static T Deserialize<T>(string json)
-	{
-		return JsonConvert.DeserializeObject<T>(json, new ColorConverter());
-	}
+	public static T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, new ColorConverter());
 }
 
 internal class ColorConverter : JsonConverter
@@ -45,8 +39,5 @@ internal class ColorConverter : JsonConverter
 		}
 	}
 
-	public override bool CanConvert(Type objectType)
-	{
-		return typeof(Color) == objectType;
-	}
+	public override bool CanConvert(Type objectType) => typeof(Color) == objectType;
 }

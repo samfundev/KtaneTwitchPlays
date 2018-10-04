@@ -1,9 +1,9 @@
+using Assets.Scripts.Missions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Missions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,7 +40,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	public CoroutineQueue coroutineQueue = null;
 
 	[HideInInspector]
-	public bool Claimed => (PlayerName != null);
+	public bool Claimed => PlayerName != null;
 
 	[HideInInspector]
 	public int bombID;
@@ -120,7 +120,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 
 		if (originalIDPosition == Vector3.zero) return;
-		if ((Solver.modInfo.statusLightLeft != statusLightLeft || Solver.modInfo.statusLightDown != statusLightDown))
+		if (Solver.modInfo.statusLightLeft != statusLightLeft || Solver.modInfo.statusLightDown != statusLightDown)
 		{
 			Vector3 pos = originalIDPosition;
 			CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.modInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.modInfo.statusLightDown ? -pos.z : pos.z);
@@ -141,10 +141,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	private void Awake()
-	{
-		_data = GetComponent<TwitchComponentHandleData>();
-	}
+	private void Awake() => _data = GetComponent<TwitchComponentHandleData>();
 
 	private void Start()
 	{
@@ -229,7 +226,6 @@ public class TwitchComponentHandle : MonoBehaviour
 					};
 				}
 			}
-
 		}
 
 		SetBannerColor(unclaimedBackgroundColor);
@@ -250,10 +246,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		needyModule.WarnAtFiveSeconds = false;
 	}
 
-	public static bool UnsupportedModulesPresent()
-	{
-		return _unsupportedComponents.Any(x => x.Solver == null || !x.Solved);
-	}
+	public static bool UnsupportedModulesPresent() => _unsupportedComponents.Any(x => x.Solver == null || !x.Solved);
 
 	public static bool SolveUnsupportedModules(bool bombStartup = false)
 	{
@@ -287,10 +280,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	public void SolveSilently()
-	{
-		Solver.SolveSilently();
-	}
+	public void SolveSilently() => Solver.SolveSilently();
 
 	public static void ClearUnsupportedModules()
 	{
@@ -328,10 +318,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	private void OnDestroy()
-	{
-		StopAllCoroutines();
-	}
+	private void OnDestroy() => StopAllCoroutines();
 	#endregion
 
 	public IEnumerator TakeModule(string userNickName, string targetModule)
@@ -372,7 +359,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force = false)
 	{
-		if(TwitchPlaySettings.data.AnarchyMode) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
+		if (TwitchPlaySettings.data.AnarchyMode) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
 
 		if (string.IsNullOrEmpty(userNickName)) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
 
@@ -411,10 +398,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		ClaimQueue.Add(new Tuple<string, double, bool, bool>(userNickname, seconds, viewRequested, viewPinRequested));
 	}
 
-	public void RemoveFromClaimQueue(string userNickname)
-	{
-		ClaimQueue.RemoveAll(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
-	}
+	public void RemoveFromClaimQueue(string userNickname) => ClaimQueue.RemoveAll(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
 
 	public IEnumerator AutoAssignModule()
 	{
@@ -514,15 +498,9 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	public void CommandError(string userNickName, string message)
-	{
-		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message));
-	}
+	public void CommandError(string userNickName, string message) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message));
 
-	public void CommandInvalid(string userNickName)
-	{
-		IRCConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
-	}
+	public void CommandInvalid(string userNickName) => IRCConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
 
 	public IEnumerator TakeInProgress = null;
 	public static List<string> ClaimedList = new List<string>();
@@ -608,7 +586,6 @@ public class TwitchComponentHandle : MonoBehaviour
 					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, internalCommand.Contains("p"));
 					if (response.First)
 					{
-
 						IRCConnection.SendMessage(response.Second);
 						internalCommand = internalCommand.Contains("p") ? "view pin" : "view";
 					}
@@ -822,10 +799,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#endregion
 
 	#region Private Methods
-	private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true)
-	{
-		return MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
-	}
+	private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true) => MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
 
 	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)
 	{

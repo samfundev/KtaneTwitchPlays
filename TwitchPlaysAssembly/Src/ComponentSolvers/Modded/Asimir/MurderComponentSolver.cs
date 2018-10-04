@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -90,7 +90,7 @@ public class MurderComponentSolver : ComponentSolver
 		}
 		if (misspelled) yield break;
 
-		for(int i = 0; i < catIndexes.Length; i++)
+		for (int i = 0; i < catIndexes.Length; i++)
 		{
 			int catIndex = catIndexes[i];
 			string value = values[i];
@@ -168,18 +168,18 @@ public class MurderComponentSolver : ComponentSolver
 
 	private static readonly string[] People = { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
 	private static readonly string[] Weapons = { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };
-	private static readonly string[] Rooms = { "Ballroom", "Billiard Room", "Conservatory", "Dining Room", "Hall", "Kitchen", "Library", "Lounge", "Study"};
+	private static readonly string[] Rooms = { "Ballroom", "Billiard Room", "Conservatory", "Dining Room", "Hall", "Kitchen", "Library", "Lounge", "Study" };
 
 	private static readonly string[] Commands = { "it was", "with the", "in the" };
 	private static readonly string[] NameTypes = { "people", "weapons", "rooms" };
 	private static readonly string[][] NameSpellings = { People, Weapons, Rooms };
-	private static readonly string[] NameMisspelled = {"Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}."};
+	private static readonly string[] NameMisspelled = { "Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}." };
 
 	private readonly object _component = null;
 	private readonly KMSelectable[] _buttons = null;
 	private readonly TextMesh[] _display = null;
 
-	private int[] _displayValue => (int[])_displayValueField.GetValue(_component);
-	private int[] _solutionValue => (int[])_solutionValueField.GetValue(_component);
+	private int[] _displayValue => (int[]) _displayValueField.GetValue(_component);
+	private int[] _solutionValue => (int[]) _solutionValueField.GetValue(_component);
 	private bool _isActivated => (bool) _isActivatedField.GetValue(_component);
 }

@@ -460,7 +460,6 @@ public abstract class ComponentSolver
 				AwardStrikes(_currentUserNickName, StrikeCount - _beforeStrikeCount);
 		}
 
-
 		if (!parseError)
 			yield return new WaitForSeconds(0.5f);
 
@@ -542,10 +541,7 @@ public abstract class ComponentSolver
 		BombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty, modInfo.moduleDisplayName);
 	}
 
-	protected void DoInteractionStart(MonoBehaviour interactable)
-	{
-		interactable.GetComponent<Selectable>().HandleInteract();
-	}
+	protected void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
 
 	protected void DoInteractionEnd(MonoBehaviour interactable)
 	{
@@ -562,7 +558,7 @@ public abstract class ComponentSolver
 		KMNeedyModule needyModule = BombComponent.GetComponent<KMNeedyModule>();
 		return needyModule?.ModuleType;
 	}
-	
+
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, float delay) => DoInteractionClick(interactable, null, delay);
 
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, string strikeMessage = null, float delay = 0.1f)
@@ -622,11 +618,11 @@ public abstract class ComponentSolver
 						switch (modInfo.moduleID) //handle it on a module by module basis, this is to allow for FE to gain 3 times as many points
 						{
 							case "HexiEvilFMN":
-								moduleScore = (int)(BombCommander.bombSolvableModules * 3 * TwitchPlaySettings.data.DynamicScorePercentage);
+								moduleScore = (int) (BombCommander.bombSolvableModules * 3 * TwitchPlaySettings.data.DynamicScorePercentage);
 								break;
 
 							default: //default for forget me not
-								moduleScore = (int)(BombCommander.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
+								moduleScore = (int) (BombCommander.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 								break;
 						}
 						break;
@@ -886,7 +882,7 @@ public abstract class ComponentSolver
 
 	private void AwardSolve(string userNickName, int componentValue)
 	{
-		if (OtherModes.ZenModeOn) componentValue = (int)Math.Ceiling(componentValue * 0.20f);
+		if (OtherModes.ZenModeOn) componentValue = (int) Math.Ceiling(componentValue * 0.20f);
 		if (userNickName == null)
 			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
@@ -921,16 +917,13 @@ public abstract class ComponentSolver
 		OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 	}
 
-	private void AwardStrikes(int strikeCount)
-	{
-		AwardStrikes(null, strikeCount);
-	}
+	private void AwardStrikes(int strikeCount) => AwardStrikes(null, strikeCount);
 
 	private void AwardStrikes(string userNickName, int strikeCount)
 	{
 		string headerText = UnsupportedModule ? modInfo.moduleDisplayName : BombComponent.GetModuleDisplayName();
 		int strikePenalty = modInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
-		if (OtherModes.ZenModeOn) strikePenalty = (int)(strikePenalty * 0.20f);
+		if (OtherModes.ZenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
 		if (!string.IsNullOrEmpty(userNickName))
 			IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
 		else
@@ -1051,7 +1044,7 @@ public abstract class ComponentSolver
 		{
 			if (!(SkipTimeField?.GetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return _skipTimeAllowed;
-			return (bool)SkipTimeField.GetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) SkipTimeField.GetValue(SkipTimeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		protected set
 		{
@@ -1068,7 +1061,7 @@ public abstract class ComponentSolver
 		{
 			if (!(AbandonModuleField?.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is List<KMBombModule>))
 				return null;
-			return (List<KMBombModule>)AbandonModuleField.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (List<KMBombModule>) AbandonModuleField.GetValue(AbandonModuleField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
@@ -1084,7 +1077,7 @@ public abstract class ComponentSolver
 		{
 			if (!(TryCancelField?.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return false;
-			return (bool)TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) TryCancelField.GetValue(TryCancelField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
@@ -1099,7 +1092,7 @@ public abstract class ComponentSolver
 		{
 			if (!(ZenModeField?.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return OtherModes.ZenModeOn;
-			return (bool)ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) ZenModeField.GetValue(ZenModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
@@ -1114,7 +1107,7 @@ public abstract class ComponentSolver
 		{
 			if (!(TimeModeField?.GetValue(TimeModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return OtherModes.TimeModeOn;
-			return (bool)TimeModeField.GetValue(TimeModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) TimeModeField.GetValue(TimeModeField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
@@ -1129,7 +1122,7 @@ public abstract class ComponentSolver
 		{
 			if (!(TwitchPlaysField?.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType())) is bool))
 				return false;
-			return (bool)TwitchPlaysField.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
+			return (bool) TwitchPlaysField.GetValue(TwitchPlaysField.IsStatic ? null : BombComponent.GetComponent(CommandComponent.GetType()));
 		}
 		set
 		{
@@ -1221,5 +1214,4 @@ public abstract class ComponentSolver
 	protected MethodInfo ProcessMethod = null;
 	public MethodInfo ForcedSolveMethod = null;
 	public Component CommandComponent = null;
-
 }

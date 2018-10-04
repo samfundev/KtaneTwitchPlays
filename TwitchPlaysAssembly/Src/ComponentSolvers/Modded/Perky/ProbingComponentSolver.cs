@@ -8,7 +8,7 @@ public class ProbingComponentSolver : ComponentSolver
 	public ProbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_wires = (MonoBehaviour[])_wiresField.GetValue(bombComponent.GetComponent(_componentType));
+		_wires = (MonoBehaviour[]) _wiresField.GetValue(bombComponent.GetComponent(_componentType));
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
 	}
 
@@ -41,7 +41,7 @@ public class ProbingComponentSolver : ComponentSolver
 			yield break;
 
 		yield return "Probing Solve Attempt";
-		yield return EnsureWiresConnected(red-1, blue-1);
+		yield return EnsureWiresConnected(red - 1, blue - 1);
 
 		//Because a strike elsewhere on the bomb may cause this module to strike,
 		//about 20% of the time.

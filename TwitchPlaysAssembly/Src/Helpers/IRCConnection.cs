@@ -76,10 +76,7 @@ public class IRCConnection : MonoBehaviour
 			return UserColors.TryGetValue(color, out string hexcolor) ? hexcolor : color;
 		}
 
-		public bool CommandIsColor()
-		{
-			return GetColor() != null;
-		}
+		public bool CommandIsColor() => GetColor() != null;
 
 		private static Dictionary<string, string> UserColors = new Dictionary<string, string>
 		{
@@ -120,7 +117,6 @@ public class IRCConnection : MonoBehaviour
 			if (LogLine)
 				UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
 			return true;
-
 		}
 
 		public readonly bool LogLine;
@@ -219,10 +215,7 @@ public class IRCConnection : MonoBehaviour
 		yield break;
 	}
 
-	private void FixedUpdate()
-	{
-		highlightGroup.alpha = Mathf.Max(highlightGroup.alpha - 0.01f, 0);
-	}
+	private void FixedUpdate() => highlightGroup.alpha = Mathf.Max(highlightGroup.alpha - 0.01f, 0);
 
 	private bool _justDisabled = false;
 	private void OnDisable()
@@ -234,10 +227,7 @@ public class IRCConnection : MonoBehaviour
 		_state = _state == IRCConnectionState.Connected ? IRCConnectionState.Disconnecting : IRCConnectionState.Disconnected;
 	}
 
-	private void OnEnable()
-	{
-		StartCoroutine(CheckDisabledState());
-	}
+	private void OnEnable() => StartCoroutine(CheckDisabledState());
 
 	private IEnumerator CheckDisabledState()
 	{
@@ -354,15 +344,9 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	private static bool IsUsernameValid(string username)
-	{
-		return !string.IsNullOrEmpty(username) && Regex.IsMatch(username, "^(#)?[a-z0-9][a-z0-9_]{2,24}$");
-	}
+	private static bool IsUsernameValid(string username) => !string.IsNullOrEmpty(username) && Regex.IsMatch(username, "^(#)?[a-z0-9][a-z0-9_]{2,24}$");
 
-	private static bool IsAuthTokenValid(string authtoken)
-	{
-		return !string.IsNullOrEmpty(authtoken) && Regex.IsMatch(authtoken, "^oauth:[a-z0-9]{30}$");
-	}
+	private static bool IsAuthTokenValid(string authtoken) => !string.IsNullOrEmpty(authtoken) && Regex.IsMatch(authtoken, "^oauth:[a-z0-9]{30}$");
 
 	public static void Connect()
 	{
@@ -591,35 +575,21 @@ public class IRCConnection : MonoBehaviour
 			default:
 				Instance._state = IRCConnectionState.Disconnected;
 				break;
-
 		}
 	}
 
 	[StringFormatMethod("message")]
-	public static void SendChatMessage(string message, params object[] args)
-	{
-		SendMessage(message, args);
-	}
+	public static void SendChatMessage(string message, params object[] args) => SendMessage(message, args);
 
 	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
 	[StringFormatMethod("message")]
-	public static void SendWhisper(string userNickName, string message, params object[] args)
-	{
-
-		SendMessage(message, userNickName, false, args);
-	}
+	public static void SendWhisper(string userNickName, string message, params object[] args) => SendMessage(message, userNickName, false, args);
 
 	[StringFormatMethod("message")]
-	public static void SendMessage(string message, params object[] args)
-	{
-		SendMessage(string.Format(message, args));
-	}
+	public static void SendMessage(string message, params object[] args) => SendMessage(string.Format(message, args));
 
 	[StringFormatMethod("message")]
-	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args)
-	{
-		SendMessage(string.Format(message, args), userNickName, sendToChat);
-	}
+	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args) => SendMessage(string.Format(message, args), userNickName, sendToChat);
 
 	public static void ToggleSilenceMode()
 	{
@@ -784,7 +754,6 @@ public class IRCConnection : MonoBehaviour
 
 				_messageDelay = _isModerator ? MessageDelayMod : MessageDelayUser;
 				_messageDelay += (command.CommandIsColor() && _isModerator) ? 700 : 0;
-
 			}
 			catch
 			{

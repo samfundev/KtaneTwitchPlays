@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Props;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Props;
 using UnityEngine;
 
 public static class HoldableFactory
@@ -45,7 +45,6 @@ public static class HoldableFactory
 
 	private static HoldableHandler CreateModComponentSolver(KMHoldableCommander commander, FloatingHoldable holdable)
 	{
-
 		DebugLog("Attempting to find a valid process command method to respond with on holdable {0}...", holdable.name);
 
 		ModHoldableHandlerDelegate modComponentSolverCreator = GenerateModComponentSolverCreator(holdable, out Type holdableType);
@@ -62,7 +61,6 @@ public static class HoldableFactory
 	{
 		MethodInfo method = FindProcessCommandMethod(holdable, out ModCommandType commandType, out Type commandComponentType);
 		holdableType = commandComponentType;
-		
 
 		if (method != null)
 		{
@@ -85,15 +83,9 @@ public static class HoldableFactory
 		return null;
 	}
 
-	private static ModHoldableHandlerDelegate SimpleHandlerDelegate(MethodInfo method, Component component, string helpText)
-	{
-		return (commander, flholdable) => new SimpleHoldableHandler(commander, flholdable, component, method, helpText);
-	}
+	private static ModHoldableHandlerDelegate SimpleHandlerDelegate(MethodInfo method, Component component, string helpText) => (commander, flholdable) => new SimpleHoldableHandler(commander, flholdable, component, method, helpText);
 
-	private static ModHoldableHandlerDelegate CoroutineHandlerDelegate(MethodInfo method, Component component, string helpText, FieldInfo cancelBool)
-	{
-		return (commander, flholdable) => new CoroutineHoldableHandler(commander, flholdable, component, method, helpText, cancelBool);
-	}
+	private static ModHoldableHandlerDelegate CoroutineHandlerDelegate(MethodInfo method, Component component, string helpText, FieldInfo cancelBool) => (commander, flholdable) => new CoroutineHoldableHandler(commander, flholdable, component, method, helpText, cancelBool);
 
 	private static readonly List<string> FullNamesLogged = new List<string>();
 	private static void LogAllComponentTypes(MonoBehaviour holdable)
@@ -128,7 +120,7 @@ public static class HoldableFactory
 			helpText = null;
 			return false;
 		}
-		helpText = (string)candidateString.GetValue(holdable.GetComponent(holdableType));
+		helpText = (string) candidateString.GetValue(holdable.GetComponent(holdableType));
 		return true;
 	}
 

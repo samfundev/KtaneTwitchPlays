@@ -1,8 +1,8 @@
+using Assets.Scripts.Settings;
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Settings;
 using UnityEngine;
 
 public class FreeplayCommander : ICommandResponder
@@ -304,7 +304,6 @@ public class FreeplayCommander : ICommandResponder
 		{
 			StartBomb();
 		}
-
 	}
 	#endregion
 
@@ -325,8 +324,8 @@ public class FreeplayCommander : ICommandResponder
 		}
 
 		int seconds = 0;
-		if (!string.IsNullOrEmpty(secs) && 
-			(!int.TryParse(secs, out seconds) || seconds >= 60) )
+		if (!string.IsNullOrEmpty(secs) &&
+			(!int.TryParse(secs, out seconds) || seconds >= 60))
 		{
 			yield break;
 		}
@@ -335,7 +334,7 @@ public class FreeplayCommander : ICommandResponder
 		DebugHelper.Log("Freeplay time doubling section");
 		//Double the available free play time. (The doubling stacks with the Multiple bombs module installed)
 		float originalMaxTime = FreeplayDevice.MAX_SECONDS_TO_SOLVE;
-		int maxModules = (int)_maxModuleField.GetValue(FreeplayDevice);
+		int maxModules = (int) _maxModuleField.GetValue(FreeplayDevice);
 		int multiplier = MultipleBombs.Installed() ? (MultipleBombs.GetMaximumBombCount() * 2) - 1 : 1;
 		float newMaxTime = 600f + (maxModules - 1) * multiplier * 60;
 		FreeplayDevice.MAX_SECONDS_TO_SOLVE = newMaxTime;
@@ -412,14 +411,14 @@ public class FreeplayCommander : ICommandResponder
 	{
 		if (HasNeedy == on) return;
 		ToggleSwitch needyToggle = FreeplayDevice.NeedyToggle;
-		SelectObject( needyToggle.GetComponent<Selectable>() );
+		SelectObject(needyToggle.GetComponent<Selectable>());
 	}
 
 	private void SetHardcore(bool on = true)
 	{
 		if (IsHardcore == on) return;
 		ToggleSwitch hardcoreToggle = FreeplayDevice.HardcoreToggle;
-		SelectObject( hardcoreToggle.GetComponent<Selectable>() );
+		SelectObject(hardcoreToggle.GetComponent<Selectable>());
 	}
 
 	private void SetModsOnly(bool on = true)
@@ -428,7 +427,7 @@ public class FreeplayCommander : ICommandResponder
 		bool onlyMods = currentSettings.OnlyMods;
 		if (onlyMods == on) return;
 		ToggleSwitch modsToggle = FreeplayDevice.ModsOnly;
-		SelectObject( modsToggle.GetComponent<Selectable>());
+		SelectObject(modsToggle.GetComponent<Selectable>());
 	}
 
 	private void StartBomb()
@@ -471,10 +470,7 @@ public class FreeplayCommander : ICommandResponder
 		selectable.OnInteractEnded();
 	}
 
-	private void DeselectObject()
-	{
-		SelectableManager.HandleCancel();
-	}
+	private void DeselectObject() => SelectableManager.HandleCancel();
 
 	private IEnumerator ForceHeldRotation(float duration)
 	{
@@ -504,8 +500,8 @@ public class FreeplayCommander : ICommandResponder
 	private readonly Selectable[] SelectableChildren = null;
 	private readonly FloatingHoldable FloatingHoldable = null;
 	private readonly SelectableManager SelectableManager = null;
-	private bool HasNeedy { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.HasNeedy; }}
-	private bool IsHardcore { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.IsHardCore; }}
+	private bool HasNeedy { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.HasNeedy; } }
+	private bool IsHardcore { get { FreeplaySettings currentSettings = FreeplayDevice.CurrentSettings; return currentSettings.IsHardCore; } }
 	#endregion
 
 	#region Private Static Fields

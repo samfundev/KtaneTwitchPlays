@@ -23,10 +23,7 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 		_messageBackground.color = normalColor;
 	}
 
-	public void SetMessage(string text)
-	{
-		_messageText.text = text;
-	}
+	public void SetMessage(string text) => _messageText.text = text;
 
 	public void ProcessResponse(CommandResponse response, int value)
 	{
@@ -67,8 +64,5 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 		_messageBackground.color = targetColor;
 	}
 
-	public void RemoveMessage()
-	{
-		IRCConnection.Instance.scrollOutStartTime[this] = Time.time;
-	}
+	public void RemoveMessage() => IRCConnection.Instance.scrollOutStartTime[this] = Time.time;
 }

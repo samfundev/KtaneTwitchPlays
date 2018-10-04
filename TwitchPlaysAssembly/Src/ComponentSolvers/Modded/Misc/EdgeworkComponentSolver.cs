@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 public class EdgeworkComponentSolver : ComponentSolver
@@ -36,7 +36,7 @@ public class EdgeworkComponentSolver : ComponentSolver
 				return null;
 		}
 	}
-	
+
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -51,7 +51,7 @@ public class EdgeworkComponentSolver : ComponentSolver
 
 		int? buttonIndex = ButtonToIndex(commands[1]);
 		if (buttonIndex == null) yield break;
-			
+
 		yield return null;
 
 		_buttons[(int) buttonIndex].OnInteract();

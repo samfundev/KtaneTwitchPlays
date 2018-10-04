@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 using UnityEngine;
 
 public class TwitchPlaySettingsData
@@ -116,7 +116,7 @@ public class TwitchPlaySettingsData
 		{ "extraheavy", new ModuleDistributions { Vanilla = 0.1f, Modded = 0.9f, DisplayName = "Extra Heavy", MinModules = 1, MaxModules = 101 } },
 		{ "extralight", new ModuleDistributions { Vanilla = 0.9f, Modded = 0.1f, DisplayName = "Extra Light", MinModules = 1, MaxModules = 101 } },
 	};
-	
+
 	public string TwitchBotColorOnQuit = string.Empty;
 
 	public bool AllowSnoozeOnly = false;
@@ -237,7 +237,7 @@ public class TwitchPlaySettingsData
 	private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
 	{
 		MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
-		int count = matches.Count > 0 
+		int count = matches.Count > 0
 				? matches.Cast<Match>().Max(m => int.Parse(m.Groups[1].Value)) + 1
 				: 0;
 
@@ -275,7 +275,7 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
-	private bool ValidateDictionaryEntry(string key, ref Dictionary<string, string> input, Dictionary<string, string> def, bool forceUpdate=false)
+	private bool ValidateDictionaryEntry(string key, ref Dictionary<string, string> input, Dictionary<string, string> def, bool forceUpdate = false)
 	{
 		if (!input.ContainsKey(key) || forceUpdate)
 		{
@@ -314,7 +314,7 @@ public class TwitchPlaySettingsData
 			result = false;
 			foreach (string key in invalidKeys)
 			{
-				distributions[key.ToLowerInvariant().Replace(" ","")] = distributions[key];
+				distributions[key.ToLowerInvariant().Replace(" ", "")] = distributions[key];
 				distributions.Remove(key);
 			}
 		}
@@ -524,7 +524,7 @@ public static class TwitchPlaySettings
 		}
 	}
 
-	public static void AppendToSolveStrikeLog(string RecordMessageTone, int copies=1)
+	public static void AppendToSolveStrikeLog(string RecordMessageTone, int copies = 1)
 	{
 		if (!CreateSharedDirectory() || string.IsNullOrEmpty(data.TPSolveStrikeLog))
 		{
@@ -576,11 +576,8 @@ public static class TwitchPlaySettings
 		ClearPlayerLog();
 		return message;
 	}
-	
-	public static void AddRewardBonus(int bonus)
-	{
-		ClearReward += bonus;
-	}
+
+	public static void AddRewardBonus(int bonus) => ClearReward += bonus;
 
 	public static void SetRewardBonus(int moduleCountBonus)
 	{
@@ -588,15 +585,9 @@ public static class TwitchPlaySettings
 		RetryReward = moduleCountBonus;
 	}
 
-	public static int GetRewardBonus()
-	{
-		return ClearReward;
-	}
+	public static int GetRewardBonus() => ClearReward;
 
-	public static void SetRetryReward()
-	{
-		ClearReward = RetryReward;
-	}
+	public static void SetRetryReward() => ClearReward = RetryReward;
 
 	public static Tuple<bool, string> ResetSettingToDefault(string setting)
 	{
@@ -677,20 +668,20 @@ public static class TwitchPlaySettings
 				IEnumerable<int?> parts = settingValue.Split(',').Select(str => str.Trim().TryParseInt());
 				if (parts.Any(x => x == null)) return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
 
-				float[] values = parts.Select(i => (int)i / 255f).ToArray();
+				float[] values = parts.Select(i => (int) i / 255f).ToArray();
 				switch (values.Count())
 				{
 					case 3:
 						settingField.SetValue(data, new Color(values[0], values[1], values[2]));
-						return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}) to Color({settingValue})");
+						return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from Color({(int) (settingColor.r * 255)}, {(int) (settingColor.g * 255)}, {(int) (settingColor.b * 255)}) to Color({settingValue})");
 					case 4:
 						settingField.SetValue(data, new Color(values[0], values[1], values[2], values[3]));
-						return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}, {(int)(settingColor.a * 255)}) to Color({settingValue})");
+						return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from Color({(int) (settingColor.r * 255)}, {(int) (settingColor.g * 255)}, {(int) (settingColor.b * 255)}, {(int) (settingColor.a * 255)}) to Color({settingValue})");
 					default:
 						return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
 				}
 			case string settingString:
-				settingField.SetValue(data, settingValue.Replace("\\n","\n"));
+				settingField.SetValue(data, settingValue.Replace("\\n", "\n"));
 				if (!data.ValidateStrings())
 				{
 					settingField.SetValue(data, originalValue);
@@ -698,7 +689,7 @@ public static class TwitchPlaySettings
 				}
 				return new Tuple<bool, string>(true, $"Setting {settingField.Name} changed from {settingString} to {settingValue}");
 			case List<string> settingListString:
-				
+
 				switch (split.Length)
 				{
 					case 2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count:
@@ -715,9 +706,9 @@ public static class TwitchPlaySettings
 				{
 					case 2 when !string.IsNullOrEmpty(split[1]):
 						bool settingDssResult = settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString);
-						settingsDictionaryStringString[split[1]] = settingValue.Replace("\\n","\n");
-						return settingDssResult 
-							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {settingsDssString} to {settingValue}") 
+						settingsDictionaryStringString[split[1]] = settingValue.Replace("\\n", "\n");
+						return settingDssResult
+							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {settingsDssString} to {settingValue}")
 							: new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] set to {settingValue}");
 					case 2:
 						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
@@ -765,7 +756,7 @@ public static class TwitchPlaySettings
 						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
 				}
 			default:
-				return  new Tuple<bool, string>(false, $"Setting {setting} was found, but I don't know how change its value to {settingValue}");
+				return new Tuple<bool, string>(false, $"Setting {setting} was found, but I don't know how change its value to {settingValue}");
 		}
 	}
 
@@ -775,7 +766,7 @@ public static class TwitchPlaySettings
 		var split = setting.Split('.');
 		Type tpdata = typeof(TwitchPlaySettingsData);
 		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
-		
+
 		DebugHelper.Log($"Found {settingFields.Count} settings");
 		if (!settingFields.Any())
 		{
@@ -786,10 +777,10 @@ public static class TwitchPlaySettings
 		if (settingFields.Count > 1)
 		{
 			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
-			if(settingField == null)
+			if (settingField == null)
 				return $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}";
 		}
-		
+
 		var settingValue = settingField.GetValue(data);
 		DebugHelper.Log($"Found exactly one. Settings name is {settingField.Name}, Settings type is {settingValue.GetType().Name}");
 		switch (settingValue)
@@ -801,9 +792,9 @@ public static class TwitchPlaySettings
 			case bool settingBool:
 				return $"Setting {settingField.Name}: {settingBool}";
 			case Color settingColor:
-				return $"Setting {settingField.Name}: Color({(int)(settingColor.r * 255)}, {(int)(settingColor.g * 255)}, {(int)(settingColor.b * 255)}, {(int)(settingColor.a * 255)})";
+				return $"Setting {settingField.Name}: Color({(int) (settingColor.r * 255)}, {(int) (settingColor.g * 255)}, {(int) (settingColor.b * 255)}, {(int) (settingColor.a * 255)})";
 			case string settingString:
-				return $"Setting {settingField.Name}: {settingString.Replace("\n","\\n")}";
+				return $"Setting {settingField.Name}: {settingString.Replace("\n", "\\n")}";
 			case List<string> settingListString:
 				switch (split.Length)
 				{
@@ -818,7 +809,7 @@ public static class TwitchPlaySettings
 				switch (split.Length)
 				{
 					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString):
-						return $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n","\\n")}";
+						return $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n", "\\n")}";
 					case 2 when !string.IsNullOrEmpty(split[1]):
 						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
 					case 2:

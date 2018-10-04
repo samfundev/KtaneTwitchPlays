@@ -21,16 +21,10 @@ namespace TwitchPlaysAssembly.Helpers
 			}
 		}
 
-		public static bool Installed()
-		{
-			return _gameObject != null;
-		}
+		public static bool Installed() => _gameObject != null;
 
-		public static List<string> GetFactoryModes()
-		{
-			return Properties == null || !Properties.ContainsKey("SupportedModes") || Properties["SupportedModes"] == null
+		public static List<string> GetFactoryModes() => Properties == null || !Properties.ContainsKey("SupportedModes") || Properties["SupportedModes"] == null
 				? null
 				: ((string[]) Properties["SupportedModes"]).ToList();
-		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 public class ShapeShiftComponentSolver : ComponentSolver
@@ -12,7 +12,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.");
 
-		if(bombComponent.gameObject.activeInHierarchy)
+		if (bombComponent.gameObject.activeInHierarchy)
 			bombComponent.StartCoroutine(GetDisplay(_component));
 	}
 
@@ -54,7 +54,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 			_displayL = (_displayL + 1) % 4;
 			yield return new WaitForSeconds(0.1f);
 		}
-		
+
 		while (_displayR != displayIndexR)
 		{
 			DoInteractionClick(_buttons[2]);

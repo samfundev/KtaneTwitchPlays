@@ -27,15 +27,15 @@ public class TwoBitsComponentSolver : ComponentSolver
 	{
 		c = bombComponent.GetComponent(_componentSolverType);
 
-		_submit = (MonoBehaviour)_submitButtonField.GetValue(c);
-		_query = (MonoBehaviour)_queryButtonField.GetValue(c);
-		_buttons = (MonoBehaviour[])_buttonsField.GetValue(c);
+		_submit = (MonoBehaviour) _submitButtonField.GetValue(c);
+		_query = (MonoBehaviour) _queryButtonField.GetValue(c);
+		_buttons = (MonoBehaviour[]) _buttonsField.GetValue(c);
 		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var split = inputCommand.ToLowerInvariant().Trim().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+		var split = inputCommand.ToLowerInvariant().Trim().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (split.Length < 2 || split[0] != "press")
 			yield break;
@@ -98,8 +98,8 @@ public class TwoBitsComponentSolver : ComponentSolver
 		}
 	}
 
-	private string CorrectResponse => ((string)_calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
-	private string CurrentQuery => ((string)_getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
+	private string CorrectResponse => ((string) _calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
+	private string CurrentQuery => ((string) _getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
 	private TwoBitsState State => (TwoBitsState) _stateField.GetValue(c);
 
 	static TwoBitsComponentSolver()
@@ -126,5 +126,4 @@ public class TwoBitsComponentSolver : ComponentSolver
 	private readonly MonoBehaviour[] _buttons = null;
 	private readonly MonoBehaviour _query = null;
 	private readonly MonoBehaviour _submit = null;
-	
 }

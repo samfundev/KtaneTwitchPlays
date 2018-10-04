@@ -1,6 +1,6 @@
+using Assets.Scripts.Rules;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Scripts.Rules;
 
 public class MemoryComponentSolver : ComponentSolver
 {
@@ -26,12 +26,12 @@ public class MemoryComponentSolver : ComponentSolver
 		if (commandParts[0].EqualsAny("position", "pos", "p"))
 		{
 			yield return "position";
-				
+
 			yield return DoInteractionClick(_buttons[buttonNumber - 1]);
 		}
 		else if (commandParts[0].EqualsAny("label", "lab", "l"))
 		{
-			foreach(KeypadButton button in _buttons)
+			foreach (KeypadButton button in _buttons)
 			{
 				if (!button.GetText().Equals(buttonNumber.ToString())) continue;
 				yield return "label";

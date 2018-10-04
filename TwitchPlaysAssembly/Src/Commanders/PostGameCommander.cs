@@ -57,10 +57,7 @@ public class PostGameCommander : ICommandResponder
 	#endregion
 
 	#region Private Methods
-	private static void DoInteractionStart(Selectable selectable)
-	{
-		selectable.HandleInteract();
-	}
+	private static void DoInteractionStart(Selectable selectable) => selectable.HandleInteract();
 
 	private static void DoInteractionEnd(Selectable selectable)
 	{

@@ -13,15 +13,9 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 			modInfo = _unshimmed.modInfo;
 		}
 
-		protected sealed override IEnumerator ForcedSolveIEnumerator()
-		{
-			return TwitchPlaySettings.data.EnableTwitchPlayShims ? ForcedSolveIEnumratorShimmed() : ForcedSolveIEnumeratorUnshimmed();
-		}
+		protected sealed override IEnumerator ForcedSolveIEnumerator() => TwitchPlaySettings.data.EnableTwitchPlayShims ? ForcedSolveIEnumratorShimmed() : ForcedSolveIEnumeratorUnshimmed();
 
-		protected virtual IEnumerator ForcedSolveIEnumratorShimmed()
-		{
-			return ForcedSolveIEnumeratorUnshimmed();
-		}
+		protected virtual IEnumerator ForcedSolveIEnumratorShimmed() => ForcedSolveIEnumeratorUnshimmed();
 
 		protected IEnumerator ForcedSolveIEnumeratorUnshimmed()
 		{
@@ -38,12 +32,8 @@ namespace TwitchPlaysAssembly.ComponentSolvers.Modded.Shims
 				yield return null;
 			}
 		}
-		
 
-		protected internal sealed override IEnumerator RespondToCommandInternal(string inputCommand)
-		{
-			return TwitchPlaySettings.data.EnableTwitchPlayShims ? RespondToCommandShimmed(inputCommand) : RespondToCommandUnshimmed(inputCommand);
-		}
+		protected internal sealed override IEnumerator RespondToCommandInternal(string inputCommand) => TwitchPlaySettings.data.EnableTwitchPlayShims ? RespondToCommandShimmed(inputCommand) : RespondToCommandUnshimmed(inputCommand);
 
 		protected abstract IEnumerator RespondToCommandShimmed(string inputCommand);
 

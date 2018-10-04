@@ -1,8 +1,8 @@
+using Assets.Scripts.Rules;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
@@ -26,7 +26,6 @@ public class ButtonComponentSolver : ComponentSolver
 		{
 			yield return "tap";
 			yield return DoInteractionClick(_button);
-
 		}
 		if (!_held && (inputCommand.StartsWith("tap ") ||
 					   inputCommand.StartsWith("click ")))
@@ -168,7 +167,7 @@ public class ButtonComponentSolver : ComponentSolver
 		while (result.All(x => x != target))
 		{
 			yield return $"trycancel The button was not {(_held ? "released" : "tapped")} due to a request to cancel.";
-			target = (int)(timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
+			target = (int) (timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
 			if (!minutes) target %= 60;
 		}
 

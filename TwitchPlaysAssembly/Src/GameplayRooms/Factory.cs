@@ -8,7 +8,7 @@ public class Factory : GameRoom
 {
 	private readonly bool _finiteMode = false;
 	private readonly bool _infiniteMode = false;
-	private readonly bool _zenMode = false;	//For future use.
+	private readonly bool _zenMode = false; //For future use.
 
 	public static Type FactoryType()
 	{
@@ -24,7 +24,7 @@ public class Factory : GameRoom
 
 		_factoryModeType = ReflectionHelper.FindType("FactoryAssembly.FactoryGameMode");
 		_destroyBombMethod = _factoryModeType.GetMethod("DestroyBomb", BindingFlags.NonPublic | BindingFlags.Instance);
-		
+
 		_factoryStaticModeType = ReflectionHelper.FindType("FactoryAssembly.StaticMode");
 		_factoryFiniteModeType = ReflectionHelper.FindType("FactoryAssembly.FiniteSequenceMode");
 		_factoryInfiniteModeType = ReflectionHelper.FindType("FactoryAssembly.InfiniteSequenceMode");
@@ -43,7 +43,6 @@ public class Factory : GameRoom
 			return false;
 		}
 
-		
 		room = new Factory(factoryObject[0]);
 		return true;
 	}
@@ -52,7 +51,7 @@ public class Factory : GameRoom
 	{
 		DebugHelper.Log("Found gameplay room of type Factory Room");
 		_factory = roomObject;
-		_gameroom = _gameModeProperty.GetValue(_factory, new object[] {});
+		_gameroom = _gameModeProperty.GetValue(_factory, new object[] { });
 		if (_gameroom.GetType() == _factoryStaticModeType) return;
 
 		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
@@ -61,7 +60,7 @@ public class Factory : GameRoom
 		HoldBomb = false;
 	}
 
-	private UnityEngine.Object GetBomb => _finiteMode || _infiniteMode  ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
+	private UnityEngine.Object GetBomb => _finiteMode || _infiniteMode ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
 
 	public override void InitializeBombs(List<Bomb> bombs)
 	{
@@ -82,7 +81,7 @@ public class Factory : GameRoom
 		yield return new WaitUntil(() => _infiniteMode || bomb == null || _internalBombProperty.GetValue(bomb, null) == null || (bool) _bombEndedProperty.GetValue(bomb, null));
 		yield return new WaitForSeconds(0.1f);
 		if (_infiniteMode || bomb == null || _internalBombProperty.GetValue(bomb, null) == null) yield break;
-		_destroyBombMethod.Invoke(_gameroom, new object[] {bomb});
+		_destroyBombMethod.Invoke(_gameroom, new object[] { bomb });
 	}
 
 	public override IEnumerator ReportBombStatus()
@@ -94,10 +93,9 @@ public class Factory : GameRoom
 			yield break;
 		}
 		InitializeOnLightsOn = false;
-		
 
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
-		
+
 		bombHandle.bombName = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
 
 		yield return new WaitUntil(() => GetBomb != null || bombHandle.bombCommander.Bomb.HasDetonated);
@@ -111,7 +109,7 @@ public class Factory : GameRoom
 
 			TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
 			yield return new WaitUntil(() => timerComponent.IsActive);
-			
+
 			if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f)
 			{
 				yield return null;
@@ -137,16 +135,16 @@ public class Factory : GameRoom
 			{
 				bombHandle.edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 			}
-			if(OtherModes.ZenModeOn)
+			if (OtherModes.ZenModeOn)
 				bombHandle.bombCommander.StrikeLimit += bombHandle.bombCommander.StrikeCount;
-			
+
 			IEnumerator bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb hold"));
 			while (bombHold.MoveNext())
 			{
 				yield return bombHold.Current;
 			}
 
-			Bomb bomb1 = (Bomb)_internalBombProperty.GetValue(currentBomb, null);
+			Bomb bomb1 = (Bomb) _internalBombProperty.GetValue(currentBomb, null);
 			yield return new WaitUntil(() =>
 			{
 				bool result = bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive;
@@ -187,7 +185,7 @@ public class Factory : GameRoom
 			bombHandle.StartCoroutine(DestroyBomb(currentBomb));
 
 			if (GetBomb == null) continue;
-			Bomb bomb = (Bomb)_internalBombProperty.GetValue(GetBomb, null);
+			Bomb bomb = (Bomb) _internalBombProperty.GetValue(GetBomb, null);
 			InitializeBomb(bomb);
 		}
 	}

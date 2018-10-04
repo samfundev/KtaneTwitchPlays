@@ -60,10 +60,7 @@ public class LogUploader : MonoBehaviour
 		{ "hastebin.com", 400000 }
 	};
 
-	public void Awake()
-	{
-		Instance = this;
-	}
+	public void Awake() => Instance = this;
 
 	public void OnEnable()
 	{
@@ -71,15 +68,9 @@ public class LogUploader : MonoBehaviour
 		Application.logMessageReceived += HandleLog;
 	}
 
-	public void OnDisable()
-	{
-		Application.logMessageReceived -= HandleLog;
-	}
+	public void OnDisable() => Application.logMessageReceived -= HandleLog;
 
-	public void Clear()
-	{
-		Log = "";
-	}
+	public void Clear() => Log = "";
 
 	public string Flush()
 	{
@@ -92,7 +83,7 @@ public class LogUploader : MonoBehaviour
 	{
 		analysisUrl = null;
 		postOnComplete = false;
-		StartCoroutine( DoPost(Log, postToChat) );
+		StartCoroutine(DoPost(Log, postToChat));
 	}
 
 	private IEnumerator DoPost(string data, bool postToChat)
@@ -104,11 +95,11 @@ public class LogUploader : MonoBehaviour
 		int dataLength = encodedData.Length;
 
 		bool tooLong = false;
-		
+
 		foreach (DictionaryEntry domain in domainNames)
 		{
-			string domainName = (string)domain.Key;
-			int maxLength = (int)domain.Value;
+			string domainName = (string) domain.Key;
+			int maxLength = (int) domain.Value;
 
 			tooLong = false;
 			if (dataLength >= maxLength)
@@ -127,7 +118,7 @@ public class LogUploader : MonoBehaviour
 					new MultipartFormDataSection("noredirect", "1", Encoding.UTF8, "text/plain"),
 					new MultipartFormDataSection("extrapadding", "1") // Ugly Hack: Unity doesn't seem to send the request properly and leaves out the last boundry. This adds an extra field to counter that.
 				});
-				
+
 				yield return www.Send();
 
 				if (!www.isNetworkError && !www.isHttpError)
@@ -177,7 +168,6 @@ public class LogUploader : MonoBehaviour
 
 				Debug.Log(LOGPREFIX + "Error: " + www.error);
 			}
-
 		}
 
 		if (tooLong)
@@ -193,7 +183,7 @@ public class LogUploader : MonoBehaviour
 			File.WriteAllText(Path.Combine(TwitchPlaySettings.data.TPSharedFolder, "Previous Bomb.txt"), data);
 		}
 		catch
-		{ 
+		{
 			//
 		}
 	}
@@ -219,5 +209,4 @@ public class LogUploader : MonoBehaviour
 		if (type == LogType.Exception && !string.IsNullOrEmpty(stackTrace))
 			Log += stackTrace + "\n";
 	}
-
 }

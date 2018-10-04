@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 public static class GeneralExtensions
 {
-	public static bool EqualsAny(this object obj, params object[] targets)
-	{
-		return targets.Contains(obj);
-	}
+	public static bool EqualsAny(this object obj, params object[] targets) => targets.Contains(obj);
 
-	public static bool InRange(this int num, int min, int max)
-	{
-		return min <= num && num <= max;
-	}
+	public static bool InRange(this int num, int min, int max) => min <= num && num <= max;
 
 	public static string FormatTime(this float seconds)
 	{
@@ -56,10 +50,7 @@ public static class GeneralExtensions
 		return stringBuilder.ToString();
 	}
 
-	public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
-	{
-		return source.OrderBy(x => UnityEngine.Random.value);
-	}
+	public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.OrderBy(x => UnityEngine.Random.value);
 
 	//String wrapping code from http://www.java2s.com/Code/CSharp/Data-Types/ForcesthestringtowordwrapsothateachlinedoesntexceedthemaxLineLength.htm
 
@@ -105,20 +96,11 @@ public static class GeneralExtensions
 		return str.Substring(0, maxLength);
 	}
 
-	public static int? TryParseInt(this string number)
-	{
-		return int.TryParse(number, out int i) ? (int?) i : null;
-	}
+	public static int? TryParseInt(this string number) => int.TryParse(number, out int i) ? (int?) i : null;
 
-	public static bool ContainsIgnoreCase(this string str, string value)
-	{
-		return str.ToLowerInvariant().Contains(value.ToLowerInvariant());
-	}
+	public static bool ContainsIgnoreCase(this string str, string value) => str.ToLowerInvariant().Contains(value.ToLowerInvariant());
 
-	public static bool EqualsIgnoreCase(this string str, string value)
-	{
-		return str.Equals(value, StringComparison.InvariantCultureIgnoreCase);
-	}
+	public static bool EqualsIgnoreCase(this string str, string value) => str.Equals(value, StringComparison.InvariantCultureIgnoreCase);
 
 	public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int N)
 	{
@@ -126,10 +108,7 @@ public static class GeneralExtensions
 		return enumerable.Skip(Math.Max(0, enumerable.Count() - N));
 	}
 
-	public static bool RegexMatch(this string str, params string[] patterns)
-	{
-		return str.RegexMatch(out _, patterns);
-	}
+	public static bool RegexMatch(this string str, params string[] patterns) => str.RegexMatch(out _, patterns);
 
 	public static bool RegexMatch(this string str, out Match match, params string[] patterns)
 	{
@@ -152,10 +131,7 @@ public static class GeneralExtensions
 		return false;
 	}
 
-	public static double TotalSeconds(this DateTime datetime)
-	{
-		return TimeSpan.FromTicks(datetime.Ticks).TotalSeconds;
-	}
+	public static double TotalSeconds(this DateTime datetime) => TimeSpan.FromTicks(datetime.Ticks).TotalSeconds;
 
 	public static bool TryEquals(this string str, string value)
 	{
@@ -197,9 +173,9 @@ public static class GeneralExtensions
 
 	public static bool TryParseTime(this string timeString, out float time)
 	{
-		int[] multiplier = {0, 1, 60, 3600, 86400};
+		int[] multiplier = { 0, 1, 60, 3600, 86400 };
 
-		string[] split = timeString.Split(new[] {':'}, StringSplitOptions.None);
+		string[] split = timeString.Split(new[] { ':' }, StringSplitOptions.None);
 		float[] splitFloat = split.Where(x => float.TryParse(x, out _)).Select(float.Parse).ToArray();
 
 		if (split.Length != splitFloat.Length)
