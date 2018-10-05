@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class ModuleCameras : MonoBehaviour
 {
-	public const int CameraLayer = 8;
+	public const int CameraLayer = 11;
 
 	public class ModuleItem
 	{
