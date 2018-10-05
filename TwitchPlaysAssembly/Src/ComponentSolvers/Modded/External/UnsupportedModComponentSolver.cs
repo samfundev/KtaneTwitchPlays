@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 public class UnsupportedModComponentSolver : ComponentSolver
 {
-	public UnsupportedModComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
+	public UnsupportedModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentSolverFields componentSolverFields = null) 
 		: base(bombCommander, bombComponent)
 	{
-		bombModule = bombComponent.GetComponent<KMBombModule>();
-		needyModule = bombComponent.GetComponent<KMNeedyModule>();
-
-		modInfo = new ModuleInformation { moduleScore = 0, builtIntoTwitchPlays = true, DoesTheRightThing = true, helpText = $"Solve this {(bombModule != null ? "module" : "needy")} with !{{0}} solve", moduleDisplayName = $"Unsupported Twitchplays Module  ({bombComponent.GetModuleDisplayName()})", moduleID = "UnsupportedTwitchPlaysModule" };
+		_bombModule = bombComponent.GetComponent<KMBombModule>();
+		_needyModule = bombComponent.GetComponent<KMNeedyModule>();
+		
+		modInfo = new ModuleInformation { moduleScore = 0, builtIntoTwitchPlays = true, DoesTheRightThing = true, helpText = $"Solve this {(_bombModule != null ? "module" : "needy")} with !{{0}} solve", moduleDisplayName = $"Unsupported Twitchplays Module  ({bombComponent.GetModuleDisplayName()})", moduleID = "UnsupportedTwitchPlaysModule" };
 
 		UnsupportedModule = true;
 
@@ -18,8 +18,12 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		Selectable[] selectables = bombComponent.GetComponentsInChildren<Selectable>();
 		HashSet<Selectable> selectableHashSet = new HashSet<Selectable>(selectables) { selectable };
 
-		selectable.OnInteract += () => { ComponentHandle?.CanvasGroupUnsupported?.gameObject.SetActive(false); return true; };
-		selectable.OnDeselect += (x) => { ComponentHandle?.CanvasGroupUnsupported?.gameObject.SetActive(x == null || !selectableHashSet.Contains(x)); };
+		selectable.OnInteract += () => { if(ComponentHandle != null && ComponentHandle.CanvasGroupUnsupported != null) ComponentHandle.CanvasGroupUnsupported.gameObject.SetActive(false); return true; };
+		selectable.OnDeselect += (x) => { if (ComponentHandle != null && ComponentHandle.CanvasGroupUnsupported != null) ComponentHandle.CanvasGroupUnsupported.gameObject.SetActive(x == null || !selectableHashSet.Contains(x)); };
+
+		if (componentSolverFields == null) return;
+		CommandComponent = componentSolverFields.CommandComponent;
+		ForcedSolveMethod = componentSolverFields.ForcedSolveMethod;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -27,17 +31,18 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		if (!inputCommand.Trim().Equals("solve", StringComparison.InvariantCultureIgnoreCase)) yield break;
 		yield return null;
 		yield return null;
-		if (bombModule != null)
+		if (_bombModule != null)
 		{
-			bombModule.HandlePass();
+			if(ForcedSolveMethod == null)
+				_bombModule.HandlePass();
 			SolveSilently();
 		}
-		else if (needyModule != null)
+		else if (_needyModule != null)
 		{
-			needyModule.HandlePass();
+			_needyModule.HandlePass();
 		}
 	}
 
-	private KMBombModule bombModule = null;
-	private KMNeedyModule needyModule = null;
+	private readonly KMBombModule _bombModule;
+	private readonly KMNeedyModule _needyModule;
 }

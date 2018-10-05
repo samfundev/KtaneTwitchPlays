@@ -782,7 +782,7 @@ public static class ComponentSolverFactory
 	public static ComponentSolver CreateDefaultModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
 	{
 		MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
-		MethodInfo forcedSolved = FindSolveMethod(commandComponentType);
+		MethodInfo forcedSolved = FindSolveMethod(bombComponent, ref commandComponentType);
 
 		ModuleInformation info = GetModuleInfo(moduleType);
 		if (FindHelpMessage(bombComponent, commandComponentType, out string help) && !info.helpTextOverride)
@@ -851,31 +851,37 @@ public static class ComponentSolverFactory
 
 		AddDefaultModuleInformation(moduleType, displayName, help, manual, statusLeft, statusBottom, regexList);
 
-		if (method == null) return null;
-		FieldInfo zenModeField = FindZenModeBool(commandComponentType);
-		FieldInfo timeModeField = FindTimeModeBool(commandComponentType);
-		FieldInfo abandonModuleField = FindAbandonModuleList(commandComponentType);
-		FieldInfo twitchPlaysField = FindTwitchPlaysBool(commandComponentType);
-		FieldInfo twitchPlaysSkipTimeField = FindTwitchPlaysSkipTimeBool(commandComponentType);
+		if (commandComponentType == null) return null;
+		ComponentSolverFields componentSolverFields = new ComponentSolverFields
+		{
+			CommandComponent = bombComponent.GetComponentInChildren(commandComponentType),
+			Method = method,
+			ForcedSolveMethod = forcedSolved,
+			ModuleInformation = info,
+
+			ZenModeField = FindZenModeBool(commandComponentType),
+			TimeModeField = FindTimeModeBool(commandComponentType),
+			AbandonModuleField = FindAbandonModuleList(commandComponentType),
+			TwitchPlaysField = FindTwitchPlaysBool(commandComponentType),
+			TwitchPlaysSkipTimeField = FindTwitchPlaysSkipTimeBool(commandComponentType),
+			CancelField = FindCancelBool(commandComponentType)
+		};
 
 		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (commandType)
 		{
 			case ModCommandType.Simple:
 			{
-				Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-				return new SimpleModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, zenModeField, timeModeField, abandonModuleField, twitchPlaysField);
+				return new SimpleModComponentSolver(bombCommander, bombComponent, componentSolverFields);
 			}
 			case ModCommandType.Coroutine:
 			{
-				FieldInfo cancelfield = FindCancelBool(commandComponentType);
-				Component commandComponent = bombComponent.GetComponentInChildren(commandComponentType);
-				return new CoroutineModComponentSolver(bombCommander, bombComponent, method, forcedSolved, commandComponent, cancelfield, zenModeField, timeModeField, abandonModuleField, twitchPlaysField, twitchPlaysSkipTimeField);
+				return new CoroutineModComponentSolver(bombCommander, bombComponent, componentSolverFields);
 			}
 			case ModCommandType.Unsupported:
 			{
 				DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
-				return new UnsupportedModComponentSolver(bombCommander, bombComponent);
+				return new UnsupportedModComponentSolver(bombCommander, bombComponent, componentSolverFields);
 			}
 		}
 
@@ -1048,8 +1054,25 @@ public static class ComponentSolverFactory
 		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 
-	private static MethodInfo FindSolveMethod(Type commandComponentType)
+	private static MethodInfo FindSolveMethod(Component bombComponent, ref Type commandComponentType)
 	{
+		if (commandComponentType == null)
+		{
+			Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
+			foreach (Component component in allComponents)
+			{
+				Type type = component.GetType();
+				MethodInfo candidateMethod = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+					.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
+				if (candidateMethod == null) continue;
+
+				commandComponentType = type;
+				return candidateMethod;
+			}
+
+			return null;
+		}
+
 		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 			.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 		return solveHandler;

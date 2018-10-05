@@ -68,6 +68,7 @@
     <Compile Include="Src\Commanders\PostGameCommander.cs" />
     <Compile Include="Src\ComponentSolvers\ComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Helpers\ComponentSolverFactory.cs" />
+    <Compile Include="Src\ComponentSolvers\Helpers\ComponentSolverFields.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Asimir\MurderComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Asimir\SeaShellsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Asimir\ShapeShiftComponentSolver.cs" />

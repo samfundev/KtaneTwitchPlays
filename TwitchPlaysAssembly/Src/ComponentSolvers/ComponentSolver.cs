@@ -783,7 +783,11 @@ public abstract class ComponentSolver
 	{
 		try
 		{
-			KMBombModule module = handle?.bombComponent.GetComponent<KMBombModule>();
+			BombComponent bombComponent = handle == null ? null : handle.bombComponent;
+			ComponentSolver solver = handle == null ? null : handle.Solver;
+
+
+			KMBombModule module = bombComponent == null ? null : bombComponent.GetComponent<KMBombModule>();
 			if (module != null)
 			{
 				foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombCommander == handle.bombCommander))
@@ -792,12 +796,12 @@ public abstract class ComponentSolver
 				}
 			}
 
-			if (!(handle?.Solver?.AttemptedForcedSolve ?? false) && (handle?.Solver?.HandleForcedSolve() ?? false))
+			if (!(solver?.AttemptedForcedSolve ?? false) && (solver?.HandleForcedSolve() ?? false))
 			{
-				handle.Solver.AttemptedForcedSolve = true;
+				solver.AttemptedForcedSolve = true;
 				return;
 			}
-			if (!(handle?.Solver?.AttemptedForcedSolve ?? false) && handle?.Solver?.ForcedSolveMethod != null)
+			if (!(solver?.AttemptedForcedSolve ?? false) && solver?.ForcedSolveMethod != null)
 			{
 				handle.Solver.AttemptedForcedSolve = true;
 				handle.Solver._delegatedSolveUserNickName = null;
@@ -819,11 +823,11 @@ public abstract class ComponentSolver
 					}
 				}
 			}
-			else if (handle?.Solver != null)
+			else if (solver != null)
 			{
-				handle.Solver._delegatedSolveUserNickName = null;
-				handle.Solver._currentUserNickName = null;
-				handle.Solver._silentlySolve = true;
+				solver._delegatedSolveUserNickName = null;
+				solver._currentUserNickName = null;
+				solver._silentlySolve = true;
 				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.bombComponent, null);
 				foreach (MonoBehaviour behavior in handle.bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 				{

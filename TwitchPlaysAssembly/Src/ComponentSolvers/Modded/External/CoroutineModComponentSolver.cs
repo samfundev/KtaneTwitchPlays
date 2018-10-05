@@ -6,18 +6,18 @@ using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo cancelField, FieldInfo zenModeField, FieldInfo timeModeField, FieldInfo abandonModuleField, FieldInfo twitchPlaysField, FieldInfo twitchPlaysSkipTimeField) :
+	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentSolverFields componentSolverFields) :
 		base(bombCommander, bombComponent)
 	{
-		ProcessMethod = processMethod;
-		ForcedSolveMethod = forcedSolveMethod;
-		CommandComponent = commandComponent;
-		TryCancelField = cancelField;
-		ZenModeField = zenModeField;
-		TimeModeField = timeModeField;
-		AbandonModuleField = abandonModuleField;
-		TwitchPlaysField = twitchPlaysField;
-		SkipTimeField = twitchPlaysSkipTimeField;
+		ProcessMethod = componentSolverFields.Method;
+		ForcedSolveMethod = componentSolverFields.ForcedSolveMethod;
+		CommandComponent = componentSolverFields.CommandComponent;
+		TryCancelField = componentSolverFields.CancelField;
+		ZenModeField = componentSolverFields.ZenModeField;
+		TimeModeField = componentSolverFields.TimeModeField;
+		AbandonModuleField = componentSolverFields.AbandonModuleField;
+		TwitchPlaysField = componentSolverFields.TwitchPlaysField;
+		SkipTimeField = componentSolverFields.TwitchPlaysSkipTimeField;
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		TimeMode = OtherModes.TimeModeOn;

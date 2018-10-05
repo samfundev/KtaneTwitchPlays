@@ -8,16 +8,16 @@ using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-	public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, MethodInfo processMethod, MethodInfo forcedSolveMethod, Component commandComponent, FieldInfo zenModeField, FieldInfo timeModeField, FieldInfo abandonModuleField, FieldInfo twitchPlaysField) :
+	public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentSolverFields componentSolverFields) :
 		base(bombCommander, bombComponent)
 	{
-		ProcessMethod = processMethod;
-		ForcedSolveMethod = forcedSolveMethod;
-		CommandComponent = commandComponent;
-		ZenModeField = zenModeField;
-		TimeModeField = timeModeField;
-		AbandonModuleField = abandonModuleField;
-		TwitchPlaysField = twitchPlaysField;
+		ProcessMethod = componentSolverFields.Method;
+		ForcedSolveMethod = componentSolverFields.ForcedSolveMethod;
+		CommandComponent = componentSolverFields.CommandComponent;
+		ZenModeField = componentSolverFields.ZenModeField;
+		TimeModeField = componentSolverFields.TimeModeField;
+		AbandonModuleField = componentSolverFields.AbandonModuleField;
+		TwitchPlaysField = componentSolverFields.TwitchPlaysField;
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		TimeMode = OtherModes.TimeModeOn;
