@@ -288,16 +288,19 @@ public class ModuleCameras : MonoBehaviour
 	#region Unity Lifecycle
 	private void Awake() => _data = GetComponent<ModuleCamerasData>();
 
-	private void InstantiateCamera(int layer)
+	// These are the layers used by the 18 module cameras.
+	// Layer 11 is the interactive layer (highlightables).
+	// Layer 13 is used by KTANE for mouse rendering and 14â€“15 for VR.
+	private static readonly int[] _cameraLayers = { 8, 9, 10, 12, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+
+	private void InstantiateCamera(int cameraIx)
 	{
 		Camera instantiatedCamera = Instantiate(CameraPrefab);
-		instantiatedCamera.rect = _cameraLocations[layer];
+		instantiatedCamera.rect = _cameraLocations[cameraIx];
 		instantiatedCamera.aspect = 1f;
 		instantiatedCamera.depth = 99;
 
-		// The weird formula here ensures that the 18 module cameras will use layers 17–30 and then 9–12.
-		// This is because layer 13 is used by KTANE for mouse rendering and 14–15 for VR.
-		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, (layer + 8) % 22 + 9);
+		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, _cameraLayers[cameraIx]);
 
 		_cameras.Add(cam);
 	}
