@@ -28,17 +28,27 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
 	}
 
+	private static string DeconstructHangulSyllableToJamos(char c)
+	{
+		int num = (c - '가') / 0x24C;
+		int num2 = (c - '가') % 0x24C / 0x1C;
+		int num3 = (c - '가') % 0x24C % 0x1C;
+		char c2 = (char) (Convert.ToUInt16('ᄀ') + num);
+		char c3 = (char) (Convert.ToUInt16('ᅡ') + num2);
+		char c4 = (char) (Convert.ToUInt16('ᆨ') + num3 - 1);
+		string text = c2.ToString() + c3.ToString() + ((num3 <= 0) ? string.Empty : c4.ToString());
+		return text.Replace("ᅬ", "ᅩᅵ");
+	}
+
+	private static readonly Dictionary<char, char> _similarJamos = @"ᄀᆨ,ᄁᆩ,ᄂᆫ,ᄃᆮ,ᄅᆯ,ᄆᆷ,ᄇᆸ,ᄉᆺ,ᄊᆻ,ᄋᆼ,ᄌᆽ,ᄎᆾ,ᄏᆿ,ᄐᇀ,ᄑᇁ,ᄒᇂ".Split(',').ToDictionary(str => str[0], str => str[1]);
+
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
 		HashSet<int> alreadyCycled = new HashSet<int>();
 		string[] commandParts = inputCommand.Split(' ');
-		if (commandParts[0].Length != 5)
-		{
-			yield break;
-		}
 
-		if (commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
+		if (commandParts.Length > 0 && commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
 		{
 			foreach (string cycle in commandParts.Skip(1))
 			{
@@ -54,9 +64,17 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 			yield break;
 		}
 
+		// Special case for Korean (convert Hangul to Jamos)
+		var lettersToSubmit = commandParts[0].Length > 0 && commandParts[0][0] >= '가' && commandParts[0][0] <= '힣'
+			? commandParts[0].SelectMany(ch => DeconstructHangulSyllableToJamos(ch)).Select(ch => _similarJamos.ContainsKey(ch) ? _similarJamos[ch] : ch).Join("")
+			: commandParts[0];
+
+		if (lettersToSubmit.Length != 5)
+			yield break;
+
 		yield return "password";
 
-		IEnumerator solveCoroutine = SolveCoroutine(inputCommand);
+		IEnumerator solveCoroutine = SolveCoroutine(lettersToSubmit);
 		while (solveCoroutine.MoveNext())
 		{
 			yield return solveCoroutine.Current;
@@ -76,20 +94,17 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		}
 	}
 
-	private IEnumerator SolveCoroutine(string word)
+	private IEnumerator SolveCoroutine(string characters)
 	{
-		char[] characters = word.ToCharArray();
 		for (int characterIndex = 0; characterIndex < characters.Length; ++characterIndex)
 		{
-			IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(characterIndex, characters[characterIndex].ToString());
+			IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(characterIndex, characters.Substring(characterIndex, 1));
 			while (subcoroutine.MoveNext())
-			{
 				yield return subcoroutine.Current;
-			}
 
 			//Break out of the sequence if a column spinner doesn't have a matching character
-			if (_display[characterIndex].text.Equals(characters[characterIndex].ToString(),
-				StringComparison.InvariantCultureIgnoreCase)) continue;
+			if (_display[characterIndex].text.Equals(characters.Substring(characterIndex, 1), StringComparison.InvariantCultureIgnoreCase))
+				continue;
 			yield return "unsubmittablepenalty";
 			yield break;
 		}
