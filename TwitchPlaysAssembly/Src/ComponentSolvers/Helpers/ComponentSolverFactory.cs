@@ -591,9 +591,7 @@ public static class ComponentSolverFactory
 		}
 
 		if (writeData && !info.builtIntoTwitchPlays)
-		{
 			ModuleData.WriteDataToFile();
-		}
 
 		return ModComponentSolverInformation[moduleType];
 	}
@@ -770,13 +768,11 @@ public static class ComponentSolverFactory
 	}
 
 	/// <summary>Returns the solver for a specific module. If there is a shim or a built-in solver, it will return that.</summary>
-	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
-	{
-		if (ModComponentSolverCreators.TryGetValue(moduleType, out ModComponentSolverDelegate solverCreator))
-			return solverCreator(bombCommander, bombComponent);
-		return CreateDefaultModComponentSolver(bombCommander, bombComponent, moduleType, displayName)
-			?? throw new NotSupportedException($"Currently {bombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!");
-	}
+	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName) => ModComponentSolverCreators.TryGetValue(moduleType, out ModComponentSolverDelegate solverCreator)
+			? solverCreator(bombCommander, bombComponent)
+			: CreateDefaultModComponentSolver(bombCommander, bombComponent, moduleType, displayName)
+			  ?? throw new NotSupportedException(
+				  $"Currently {bombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!");
 
 	/// <summary>Returns a solver that relies on the module�s own implementation, bypassing built-in solvers and shims.</summary>
 	public static ComponentSolver CreateDefaultModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
