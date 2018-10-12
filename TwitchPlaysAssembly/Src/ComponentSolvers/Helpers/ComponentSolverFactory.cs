@@ -1,10 +1,10 @@
-using Assets.Scripts.Components.VennWire;
-using Assets.Scripts.Missions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Components.VennWire;
+using Assets.Scripts.Missions;
 using UnityEngine;
 
 public static class ComponentSolverFactory
@@ -686,10 +686,10 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentTypeEnum componentType)
+	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent)
 	{
 		// ReSharper disable once SwitchStatementMissingSomeCases
-		switch (componentType)
+		switch (bombComponent.ComponentType)
 		{
 			case ComponentTypeEnum.Wires:
 				return new WireSetComponentSolver(bombCommander, (WireSetComponent) bombComponent);

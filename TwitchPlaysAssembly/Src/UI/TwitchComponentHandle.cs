@@ -1,4 +1,3 @@
-using Assets.Scripts.Missions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,9 +25,6 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	[HideInInspector]
 	public BombComponent bombComponent = null;
-
-	[HideInInspector]
-	public ComponentTypeEnum componentType = ComponentTypeEnum.Empty;
 
 	[HideInInspector]
 	public Vector3 basePosition = Vector3.zero;
@@ -84,6 +80,8 @@ public class TwitchComponentHandle : MonoBehaviour
 		set => _headerText = value;
 	}
 
+	public IEnumerator TakeInProgress = null;
+	public static List<string> ClaimedList = new List<string>();
 	#endregion
 
 	#region Private Fields
@@ -94,6 +92,8 @@ public class TwitchComponentHandle : MonoBehaviour
 	private bool statusLightDown = false;
 	private Vector3 originalIDPosition = Vector3.zero;
 	private bool anarchyMode;
+	private Dictionary<Transform, int> originalLayers = new Dictionary<Transform, int>();
+	private int? currentLayer;
 	#endregion
 
 	#region Private Statics
@@ -155,7 +155,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 		try
 		{
-			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent, componentType);
+			Solver = ComponentSolverFactory.CreateSolver(bombCommander, bombComponent);
 			if (Solver != null)
 			{
 				if (Solver.modInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.modInfo.unclaimedColor;
@@ -321,6 +321,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	private void OnDestroy() => StopAllCoroutines();
 	#endregion
 
+	#region Public Methods
 	public IEnumerator TakeModule(string userNickName, string targetModule)
 	{
 		if (TakeModuleSound != null)
@@ -502,8 +503,66 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public void CommandInvalid(string userNickName) => IRCConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
 
-	public IEnumerator TakeInProgress = null;
-	public static List<string> ClaimedList = new List<string>();
+	public void UpdateLayerData()
+	{
+		foreach (var trans in bombComponent.gameObject.GetComponentsInChildren<Transform>(true))
+		{
+			if (originalLayers.ContainsKey(trans))
+				continue;
+			originalLayers.Add(trans, trans.gameObject.layer);
+			try
+			{
+				if (currentLayer != null)
+					trans.gameObject.layer = currentLayer.Value;
+			}
+			catch
+			{
+				//continue;
+			}
+		}
+
+		foreach (var trans in gameObject.GetComponentsInChildren<Transform>(true))
+		{
+			if (originalLayers.ContainsKey(trans))
+				continue;
+			originalLayers.Add(trans, trans.gameObject.layer);
+			try
+			{
+				if (currentLayer != null)
+					trans.gameObject.layer = currentLayer.Value;
+			}
+			catch
+			{
+				//continue;
+			}
+		}
+	}
+
+	public void SetRenderLayer(int? layer)
+	{
+		currentLayer = layer;
+		foreach (var kvp in originalLayers)
+		{
+			try
+			{
+				kvp.Key.gameObject.layer = currentLayer ?? kvp.Value;
+			}
+			catch
+			{
+				//continue;
+			}
+		}
+
+		Light[] lights = bombComponent.GetComponentsInChildren<Light>(true);
+		if (lights == null)
+			return;
+		foreach (var light in lights)
+		{
+			light.enabled = !light.enabled;
+			light.enabled = !light.enabled;
+		}
+	}
+	#endregion
 
 	#region Message Interface
 	public IEnumerator OnMessageReceived(Message message)

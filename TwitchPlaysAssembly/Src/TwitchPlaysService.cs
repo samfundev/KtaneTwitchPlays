@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Missions;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -248,7 +247,7 @@ public class TwitchPlaysService : MonoBehaviour
 				ComponentSolver solver = null;
 				try
 				{
-					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>(), ComponentTypeEnum.Mod);
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModBombComponent>());
 				}
 				catch (Exception e)
 				{
@@ -271,7 +270,7 @@ public class TwitchPlaysService : MonoBehaviour
 				ComponentSolver solver = null;
 				try
 				{
-					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>(), ComponentTypeEnum.NeedyMod);
+					solver = ComponentSolverFactory.CreateSolver(null, bombComponent.GetComponent<ModNeedyComponent>());
 				}
 				catch (Exception e)
 				{

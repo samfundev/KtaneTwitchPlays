@@ -1,11 +1,11 @@
-using Assets.Scripts.Missions;
-using Assets.Scripts.Props;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Missions;
+using Assets.Scripts.Props;
 using UnityEngine;
 
 public class BombMessageResponder : MessageResponder
@@ -361,7 +361,7 @@ public class BombMessageResponder : MessageResponder
 			var numeric = 0;
 			foreach (var handle in ComponentHandles)
 			{
-				if (handle.componentType == ComponentTypeEnum.Timer || handle.componentType == ComponentTypeEnum.Empty || handle.bombComponent == null)
+				if (handle.bombComponent == null || handle.bombComponent.ComponentType == ComponentTypeEnum.Timer || handle.bombComponent.ComponentType == ComponentTypeEnum.Empty)
 					continue;
 
 				var name = sanitizedName(handle);
@@ -1062,7 +1062,6 @@ public class BombMessageResponder : MessageResponder
 			TwitchComponentHandle handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
 			handle.bombCommander = bombCommander;
 			handle.bombComponent = bombComponent;
-			handle.componentType = componentType;
 			handle.coroutineQueue = _coroutineQueue;
 			handle.bombID = _currentBomb == -1 ? -1 : BombCommanders.Count - 1;
 			handle.IsKey = keyModule;
@@ -1081,9 +1080,6 @@ public class BombMessageResponder : MessageResponder
 	private IEnumerator ShowInitialModules()
 	{
 		yield return null;
-		foreach (var comp in ComponentHandles)
-			moduleCameras.EnsureModuleItem(comp);
-
 		for (int i = 0; i < ComponentHandles.Count && moduleCameras.HasEmptySlot; i++)
 			ComponentHandles[i].CameraPriority = CameraPriority.Interacted;
 	}
