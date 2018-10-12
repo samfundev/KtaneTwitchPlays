@@ -8,18 +8,24 @@ using UnityEngine.UI;
 
 public class ModuleCameras : MonoBehaviour
 {
-	public const int CameraLayer = 11;
+	/// <summary>
+	///     Camera layer used on all modules/cameras when interactive mode is enabled.</summary>
+	/// <remarks>
+	///     This needs to be 11 because that’s what KTANE expects for interactables.</remarks>
+	public const int DefaultCameraLayer = 11;
 
 	public class ModuleCamera : MonoBehaviour
 	{
+		public TwitchModule Module;
 		public Camera CameraInstance;
-		public int NonInteractiveCameraLayer;
-		public TwitchComponentHandle Module;
+
+		/// <summary>Camera layer used when interactive mode is NOT enabled.</summary>
+		public int CameraLayer;
+
 		public bool LastInteractiveState;
 		public bool EscapePressed;
 
-		private ModuleCameras _parent;
-		private readonly Rect _zoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
+		private static readonly Rect _zoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
 		private Rect _originalCameraRect;
 
 		public static ModuleCamera CreateModuleCamera(Camera instantiatedCamera, ModuleCameras parentInstance, int layer)
@@ -28,9 +34,8 @@ public class ModuleCameras : MonoBehaviour
 			moduleCamera.transform.parent = parentInstance.transform;
 
 			moduleCamera.CameraInstance = instantiatedCamera;
-			moduleCamera._parent = parentInstance;
 			moduleCamera._originalCameraRect = moduleCamera.CameraInstance.rect;
-			moduleCamera.NonInteractiveCameraLayer = layer;
+			moduleCamera.CameraLayer = layer;
 			return moduleCamera;
 		}
 
@@ -70,14 +75,14 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.depth = 99;
 		}
 
-		public void ViewModule(TwitchComponentHandle module)
+		public void ViewModule(TwitchModule module)
 		{
 			Deactivate();
 			if (module == null)
 				return;
 			Module = module;
 
-			int layer = (LastInteractiveState ? CameraLayer : NonInteractiveCameraLayer);
+			int layer = (LastInteractiveState ? DefaultCameraLayer : CameraLayer);
 
 			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
 			Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", Module.bombComponent.gameObject.layer, layer);
@@ -107,17 +112,17 @@ public class ModuleCameras : MonoBehaviour
 
 			if (Module != null) Module.UpdateLayerData();
 
-			bool currentInteraciveState = (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode);
-			currentInteraciveState |= IRCConnection.Instance.State != IRCConnectionState.Connected;
-			currentInteraciveState |= EscapePressed;
-			currentInteraciveState &= !(GameRoom.Instance is ElevatorGameRoom);
+			bool interactiveState = (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode);
+			interactiveState |= IRCConnection.Instance.State != IRCConnectionState.Connected;
+			interactiveState |= EscapePressed;
+			interactiveState &= !(GameRoom.Instance is ElevatorGameRoom);
 
-			if (LastInteractiveState != currentInteraciveState)
+			if (LastInteractiveState != interactiveState)
 			{
-				LastInteractiveState = currentInteraciveState;
+				LastInteractiveState = interactiveState;
 				if (Module != null)
 				{
-					int layer = LastInteractiveState ? CameraLayer : NonInteractiveCameraLayer;
+					int layer = interactiveState ? DefaultCameraLayer : CameraLayer;
 					CameraInstance.cullingMask = (1 << layer) | (1 << 31);
 					Module.SetRenderLayer(layer);
 				}
@@ -261,7 +266,7 @@ public class ModuleCameras : MonoBehaviour
 		return null;
 	}
 
-	public bool TryViewModule(TwitchComponentHandle module)
+	public bool TryViewModule(TwitchModule module)
 	{
 		if (module == null)
 			return false;
@@ -312,7 +317,7 @@ public class ModuleCameras : MonoBehaviour
 		NotesTexts[noteIndex].text += " " + noteText;
 	}
 
-	public void UnviewModule(TwitchComponentHandle handle)
+	public void UnviewModule(TwitchModule handle)
 	{
 		handle.CameraPriority = handle.Solved ? CameraPriority.Unviewed : handle.Claimed ? CameraPriority.Claimed : CameraPriority.Unviewed;
 		StartCoroutine(UnviewModuleCoroutine(handle));
@@ -455,7 +460,7 @@ public class ModuleCameras : MonoBehaviour
 		StrikesPrefab.text = $"{strikesText}<size=25>/{_currentTotalStrikes}</size>";
 	}
 
-	private IEnumerator UnviewModuleCoroutine(TwitchComponentHandle handle)
+	private IEnumerator UnviewModuleCoroutine(TwitchModule handle)
 	{
 		var camera = _cameras.FirstOrDefault(c => c.Module != null && c.Module == handle);
 		if (camera == null)
@@ -503,7 +508,7 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Properties
-	private TwitchComponentHandle PreferredToView => BombMessageResponder.Instance.ComponentHandles
+	private TwitchModule PreferredToView => BombMessageResponder.Instance.ComponentHandles
 				.Where(module => !module.Solved && !_cameras.Any(cam => cam.Module == module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();

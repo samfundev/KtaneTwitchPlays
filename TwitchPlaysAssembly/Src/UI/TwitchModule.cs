@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TwitchComponentHandle : MonoBehaviour
+public class TwitchModule : MonoBehaviour
 {
 	#region Public Fields
 	public CanvasGroup CanvasGroupMultiDecker { get => _data.canvasGroupMultiDecker; set => _data.canvasGroupMultiDecker = value; }
@@ -86,7 +86,7 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	#region Private Fields
 	private Color unclaimedBackgroundColor = new Color(0, 0, 0);
-	private TwitchComponentHandleData _data;
+	private TwitchModuleData _data;
 	private bool claimCooldown = true;
 	private bool statusLightLeft = false;
 	private bool statusLightDown = false;
@@ -97,7 +97,7 @@ public class TwitchComponentHandle : MonoBehaviour
 	#endregion
 
 	#region Private Statics
-	private static List<TwitchComponentHandle> _unsupportedComponents = new List<TwitchComponentHandle>();
+	private static List<TwitchModule> _unsupportedComponents = new List<TwitchModule>();
 	private static List<BombCommander> _bombCommanders = new List<BombCommander>();
 	#endregion
 
@@ -141,7 +141,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	private void Awake() => _data = GetComponent<TwitchComponentHandleData>();
+	private void Awake() => _data = GetComponent<TwitchModuleData>();
 
 	private void Start()
 	{
@@ -236,7 +236,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		}
 	}
 
-	public static void DeactivateNeedyModule(TwitchComponentHandle handle)
+	public static void DeactivateNeedyModule(TwitchModule handle)
 	{
 		IRCConnection.SendMessage(TwitchPlaySettings.data.UnsupportedNeedyWarning);
 		KMNeedyModule needyModule = handle.bombComponent.GetComponent<KMNeedyModule>();
@@ -250,13 +250,13 @@ public class TwitchComponentHandle : MonoBehaviour
 
 	public static bool SolveUnsupportedModules(bool bombStartup = false)
 	{
-		List<TwitchComponentHandle> componentsToRemove = bombStartup
+		List<TwitchModule> componentsToRemove = bombStartup
 			? _unsupportedComponents.Where(x => x.Solver == null).ToList()
 			: _unsupportedComponents.Where(x => x.Solver == null || !x.Solved).ToList();
 
 		if (componentsToRemove.Count == 0) return false;
 
-		foreach (TwitchComponentHandle handle in componentsToRemove)
+		foreach (TwitchModule handle in componentsToRemove)
 		{
 			if (handle.bombComponent.GetComponent<KMNeedyModule>() != null)
 			{
@@ -309,7 +309,7 @@ public class TwitchComponentHandle : MonoBehaviour
 		try
 		{
 			if (!bombCommander.SolvedModules.ContainsKey(Solver.modInfo.moduleDisplayName))
-				bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName] = new List<TwitchComponentHandle>();
+				bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName] = new List<TwitchModule>();
 			bombCommander.SolvedModules[Solver.modInfo.moduleDisplayName].Add(this);
 		}
 		catch (Exception ex)

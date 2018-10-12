@@ -33,7 +33,7 @@
 		}
 		if (component == null) return;
 
-		foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
+		foreach (TwitchModule handle in BombMessageResponder.Instance.ComponentHandles)
 		{
 			if (handle.bombComponent != component) continue;
 			handle.Solver.OnFakeStrike();

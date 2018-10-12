@@ -29,7 +29,7 @@ public class BombCommander
 		bombStartingTimer = CurrentTimer;
 		bombSolvableModules = 0;
 		bombSolvedModules = 0;
-		SolvedModules = new Dictionary<string, List<TwitchComponentHandle>>();
+		SolvedModules = new Dictionary<string, List<TwitchModule>>();
 	}
 
 	public IEnumerator RespondToCommand(Message messageObj)
@@ -657,7 +657,7 @@ public class BombCommander
 
 		foreach (KMBombModule module in Bomb.GetComponentsInChildren<KMBombModule>().Where(x => solveBased.Contains(x.ModuleType)))
 		{
-			TwitchComponentHandle handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
+			TwitchModule handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
 				.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == module);
 			if (handle != null)
 			{
@@ -675,7 +675,7 @@ public class BombCommander
 	private Selectable Selectable = null;
 	private FloatingHoldable FloatingHoldable = null;
 	public DateTime BombTimeStamp;
-	public Dictionary<string, List<TwitchComponentHandle>> SolvedModules;
+	public Dictionary<string, List<TwitchModule>> SolvedModules;
 
 	private SelectableManager _selectableManager = null;
 

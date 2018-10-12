@@ -587,7 +587,7 @@ public abstract class ComponentSolver
 		IRCConnection.SendMessage("{0}{1}", reason, removeSolveBasedModules ? " Some other modules may also be solved to prevent problems." : "");
 		SolveSilently();
 		if (removeSolveBasedModules)
-			TwitchComponentHandle.RemoveSolveBasedModules();
+			TwitchModule.RemoveSolveBasedModules();
 	}
 	#endregion
 
@@ -779,7 +779,7 @@ public abstract class ComponentSolver
 		return true;
 	}
 
-	private static void HandleForcedSolve(TwitchComponentHandle handle)
+	private static void HandleForcedSolve(TwitchModule handle)
 	{
 		try
 		{
@@ -790,7 +790,7 @@ public abstract class ComponentSolver
 			KMBombModule module = bombComponent == null ? null : bombComponent.GetComponent<KMBombModule>();
 			if (module != null)
 			{
-				foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombCommander == handle.bombCommander))
+				foreach (TwitchModule h in BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombCommander == handle.bombCommander))
 				{
 					h.Solver.AddAbandonedModule(module);
 				}
@@ -853,7 +853,7 @@ public abstract class ComponentSolver
 	{
 		try
 		{
-			TwitchComponentHandle handle = null;
+			TwitchModule handle = null;
 			KMBombModule module = bombComponent.GetComponent<KMBombModule>();
 			KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
 			if (module != null)
@@ -870,7 +870,7 @@ public abstract class ComponentSolver
 			else
 			{
 				if (module != null)
-					foreach (TwitchComponentHandle h in BombMessageResponder.Instance.ComponentHandles)
+					foreach (TwitchModule h in BombMessageResponder.Instance.ComponentHandles)
 						h.Solver.AddAbandonedModule(module);
 
 				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
@@ -1214,7 +1214,7 @@ public abstract class ComponentSolver
 	private bool _delayedExplosionPending = false;
 	private Coroutine _delayedExplosionCoroutine = null;
 
-	public TwitchComponentHandle ComponentHandle = null;
+	public TwitchModule ComponentHandle = null;
 	protected MethodInfo ProcessMethod = null;
 	public MethodInfo ForcedSolveMethod = null;
 	public Component CommandComponent = null;

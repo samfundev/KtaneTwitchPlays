@@ -1208,12 +1208,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 			else if (text.Equals("solveunsupportedmodules", StringComparison.InvariantCultureIgnoreCase))
 			{
 				IRCConnection.SendChatMessage("Solving unsupported modules.");
-				TwitchComponentHandle.SolveUnsupportedModules();
+				TwitchModule.SolveUnsupportedModules();
 			}
 			else if (text.Equals("removesolvebasedmodules", StringComparison.InvariantCultureIgnoreCase))
 			{
 				IRCConnection.SendChatMessage("Removing Solve based modules");
-				TwitchComponentHandle.RemoveSolveBasedModules();
+				TwitchModule.RemoveSolveBasedModules();
 			}
 			else if (text.Equals("silencemode", StringComparison.InvariantCultureIgnoreCase))
 			{
@@ -1296,10 +1296,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 	{
 		if (!BombMessageResponder.EnableDisableInput()) return;
 
-		if (TwitchComponentHandle.SolveUnsupportedModules(true))
+		if (TwitchModule.SolveUnsupportedModules(true))
 			IRCConnection.SendChatMessage("Some modules were automatically solved to prevent problems with defusing this bomb.");
 
-		if (TwitchComponentHandle.UnsupportedModulesPresent())
+		if (TwitchModule.UnsupportedModulesPresent())
 			IRCConnection.SendChatMessage("There are some remaining modules that can still be solved using !<id> solve.");
 	}
 }

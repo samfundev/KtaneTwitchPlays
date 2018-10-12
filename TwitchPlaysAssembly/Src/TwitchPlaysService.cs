@@ -44,7 +44,7 @@ public class TwitchPlaysService : MonoBehaviour
 		miscellaneousMessageResponder = GetComponentInChildren<MiscellaneousMessageResponder>(true);
 
 		bombMessageResponder.twitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
-		bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchComponentHandle>(true);
+		bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchModule>(true);
 		bombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
 
 		BombMessageResponder.Instance = bombMessageResponder;
@@ -162,7 +162,7 @@ public class TwitchPlaysService : MonoBehaviour
 		{
 			_activeMessageResponder.gameObject.SetActive(true);
 		}
-		TwitchComponentHandle.ClaimedList.Clear();
+		TwitchModule.ClaimedList.Clear();
 	}
 
 	private IEnumerator StopEveryCoroutine()

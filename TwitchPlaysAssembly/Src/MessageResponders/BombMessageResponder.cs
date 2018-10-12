@@ -11,14 +11,14 @@ using UnityEngine;
 public class BombMessageResponder : MessageResponder
 {
 	public TwitchBombHandle twitchBombHandlePrefab = null;
-	public TwitchComponentHandle twitchComponentHandlePrefab = null;
+	public TwitchModule twitchComponentHandlePrefab = null;
 	public ModuleCameras moduleCamerasPrefab = null;
 
 	public TwitchPlaysService parentService = null;
 
 	public List<BombCommander> BombCommanders = new List<BombCommander>();
 	public List<TwitchBombHandle> BombHandles = new List<TwitchBombHandle>();
-	public List<TwitchComponentHandle> ComponentHandles = new List<TwitchComponentHandle>();
+	public List<TwitchModule> ComponentHandles = new List<TwitchModule>();
 	private int _currentBomb = -1;
 	private Dictionary<int, string> _notesDictionary = new Dictionary<int, string>();
 
@@ -212,11 +212,11 @@ public class BombMessageResponder : MessageResponder
 		GameRoom.ShowCamera();
 		BombActive = false;
 		EnableDisableInput();
-		bool ClaimsEnabled = TwitchComponentHandle.ClaimsEnabled;
-		TwitchComponentHandle.ClaimedList.Clear();
-		TwitchComponentHandle.ClearUnsupportedModules();
+		bool ClaimsEnabled = TwitchModule.ClaimsEnabled;
+		TwitchModule.ClaimedList.Clear();
+		TwitchModule.ClearUnsupportedModules();
 		if (!ClaimsEnabled)
-			TwitchComponentHandle.ClaimsEnabled = true;
+			TwitchModule.ClaimsEnabled = true;
 		StopAllCoroutines();
 		Leaderboard.Instance.BombsAttempted++;
 		parentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
@@ -259,7 +259,7 @@ public class BombMessageResponder : MessageResponder
 	{
 		if (ComponentHandles == null) return;
 
-		foreach (TwitchComponentHandle handle in ComponentHandles)
+		foreach (TwitchModule handle in ComponentHandles)
 		{
 			Destroy(handle.gameObject, 2.0f);
 		}
@@ -333,7 +333,7 @@ public class BombMessageResponder : MessageResponder
 
 		if (EnableDisableInput())
 		{
-			TwitchComponentHandle.SolveUnsupportedModules(true);
+			TwitchModule.SolveUnsupportedModules(true);
 		}
 
 		while (OtherModes.ZenModeOn)
@@ -354,10 +354,10 @@ public class BombMessageResponder : MessageResponder
 		if (TwitchPlaySettings.data.EnableLetterCodes)
 		{
 			// Ignore initial “the” in module names
-			string sanitizedName(TwitchComponentHandle handle) => Regex.Replace(handle.bombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
+			string sanitizedName(TwitchModule handle) => Regex.Replace(handle.bombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
 
 			// First, assign codes “naively”
-			var dic1 = new Dictionary<string, List<TwitchComponentHandle>>();
+			var dic1 = new Dictionary<string, List<TwitchModule>>();
 			var numeric = 0;
 			foreach (var handle in ComponentHandles)
 			{
@@ -589,7 +589,7 @@ public class BombMessageResponder : MessageResponder
 				var split = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var claim in split.Skip(1))
 				{
-					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim, StringComparison.InvariantCultureIgnoreCase));
+					TwitchModule handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim, StringComparison.InvariantCultureIgnoreCase));
 					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 					handle.AddToClaimQueue(userNickName);
 				}
@@ -603,7 +603,7 @@ public class BombMessageResponder : MessageResponder
 					IRCConnection.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
 					return;
 				}
-				foreach (TwitchComponentHandle handle in ComponentHandles)
+				foreach (TwitchModule handle in ComponentHandles)
 				{
 					handle.RemoveFromClaimQueue(userNickName);
 				}
@@ -622,7 +622,7 @@ public class BombMessageResponder : MessageResponder
 				var split = match.Groups[1].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var claim in split)
 				{
-					TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+					TwitchModule handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 					if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 					handle.OnMessageReceived(message.Duplicate("unclaim"));
 				}
@@ -680,7 +680,7 @@ public class BombMessageResponder : MessageResponder
 				foreach (string query in queries)
 				{
 					string trimmed = query.Trim();
-					IEnumerable<TwitchComponentHandle> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
+					IEnumerable<TwitchModule> modules = ComponentHandles.Where(handle => handle.HeaderText.ContainsIgnoreCase(trimmed) && GameRoom.Instance.IsCurrentBomb(handle.bombID))
 						.OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed)).ThenBy(handle => handle.Solved).ToList();
 					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null).OrderByDescending(handle => handle.HeaderText.EqualsIgnoreCase(trimmed))
 						.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code}) - Claimed by {handle.PlayerName}")).ToList();
@@ -722,7 +722,7 @@ public class BombMessageResponder : MessageResponder
 				{
 					string trimmed = query.Trim();
 					IEnumerable<BombCommander> commanders = BombCommanders.Where(handle => handle.SolvedModules.Keys.ToArray().Any(x => x.ContainsIgnoreCase(trimmed))).ToList();
-					IEnumerable<TwitchComponentHandle> modules = commanders.SelectMany(x => x.SolvedModules.Where(y => y.Key.ContainsIgnoreCase(trimmed)))
+					IEnumerable<TwitchModule> modules = commanders.SelectMany(x => x.SolvedModules.Where(y => y.Key.ContainsIgnoreCase(trimmed)))
 						.OrderByDescending(x => x.Key.EqualsIgnoreCase(trimmed)).SelectMany(x => x.Value).ToList();
 					IEnumerable<string> playerModules = modules.Where(handle => handle.PlayerName != null)
 						.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code}) - Claimed by {handle.PlayerName}", handle.HeaderText, handle.Code, "Claimed by " + handle.PlayerName)).ToList();
@@ -765,7 +765,7 @@ public class BombMessageResponder : MessageResponder
 						if (!validAll) modules = modules.Take(1);
 						foreach (string module in modules)
 						{
-							TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(module));
+							TwitchModule handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(module));
 							if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 							handle.AddToClaimQueue(userNickName, validView);
 						}
@@ -884,13 +884,13 @@ public class BombMessageResponder : MessageResponder
 
 				if (text.Equals("enableclaims", StringComparison.InvariantCultureIgnoreCase))
 				{
-					TwitchComponentHandle.ClaimsEnabled = true;
+					TwitchModule.ClaimsEnabled = true;
 					IRCConnection.SendChatMessage("Claims have been enabled.");
 				}
 
 				if (text.Equals("disableclaims", StringComparison.InvariantCultureIgnoreCase))
 				{
-					TwitchComponentHandle.ClaimsEnabled = false;
+					TwitchModule.ClaimsEnabled = false;
 					IRCConnection.SendChatMessage("Claims have been disabled.");
 				}
 				goto case AccessLevel.Mod;
@@ -900,7 +900,7 @@ public class BombMessageResponder : MessageResponder
 					var split = match.Groups[2].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (var assign in split)
 					{
-						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
+						TwitchModule handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(assign));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 						handle.OnMessageReceived(message.Duplicate(string.Format("assign {0}", match.Groups[1].Value)));
 					}
@@ -910,7 +910,7 @@ public class BombMessageResponder : MessageResponder
 				if (text.RegexMatch("^bot ?unclaim( ?all)?$"))
 				{
 					userNickName = IRCConnection.Instance.UserNickName;
-					foreach (TwitchComponentHandle handle in ComponentHandles)
+					foreach (TwitchModule handle in ComponentHandles)
 					{
 						handle.RemoveFromClaimQueue(userNickName);
 					}
@@ -918,7 +918,7 @@ public class BombMessageResponder : MessageResponder
 						.Select(x => x.Code).ToArray();
 					foreach (var claim in moduleIDs)
 					{
-						TwitchComponentHandle handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
+						TwitchModule handle = ComponentHandles.FirstOrDefault(x => x.Code.Equals(claim));
 						if (handle == null || !GameRoom.Instance.IsCurrentBomb(handle.bombID)) continue;
 						handle.OnMessageReceived(new Message(userNickName, message.UserColorCode, "unclaim"));
 					}
@@ -975,7 +975,7 @@ public class BombMessageResponder : MessageResponder
 			_coroutineQueue.AddToQueue(onMessageReceived, handle.bombID);
 		}
 
-		foreach (TwitchComponentHandle componentHandle in ComponentHandles)
+		foreach (TwitchModule componentHandle in ComponentHandles)
 		{
 			if (!GameRoom.Instance.IsCurrentBomb(componentHandle.bombID)) continue;
 			if (!text.StartsWith(componentHandle.Code + " ", StringComparison.InvariantCultureIgnoreCase)) continue;
@@ -1057,9 +1057,9 @@ public class BombMessageResponder : MessageResponder
 			}
 
 			if (!bombCommander.SolvedModules.ContainsKey(moduleName))
-				bombCommander.SolvedModules[moduleName] = new List<TwitchComponentHandle>();
+				bombCommander.SolvedModules[moduleName] = new List<TwitchModule>();
 
-			TwitchComponentHandle handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
+			TwitchModule handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
 			handle.bombCommander = bombCommander;
 			handle.bombComponent = bombComponent;
 			handle.coroutineQueue = _coroutineQueue;

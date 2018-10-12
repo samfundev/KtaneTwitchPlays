@@ -156,7 +156,7 @@ public class Factory : GameRoom
 			IRCConnection.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRetryReward();
 
-			foreach (TwitchComponentHandle handle in BombMessageResponder.Instance.ComponentHandles)
+			foreach (TwitchModule handle in BombMessageResponder.Instance.ComponentHandles)
 			{
 				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
 				BombMessageResponder.moduleCameras.UnviewModule(handle);

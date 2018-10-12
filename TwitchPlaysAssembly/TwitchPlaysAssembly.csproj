@@ -172,7 +172,7 @@
     <Compile Include="Src\UI\CameraPriority.cs" />
     <Compile Include="Src\UI\ModuleCameras.cs" />
     <Compile Include="Src\UI\TwitchBombHandle.cs" />
-    <Compile Include="Src\UI\TwitchComponentHandle.cs" />
+    <Compile Include="Src\UI\TwitchModule.cs" />
     <Compile Include="Src\UI\TwitchLeaderboard.cs" />
     <Compile Include="Src\UI\TwitchLeaderboardRow.cs" />
     <Compile Include="Src\UI\TwitchLeaderboardSoloRow.cs" />

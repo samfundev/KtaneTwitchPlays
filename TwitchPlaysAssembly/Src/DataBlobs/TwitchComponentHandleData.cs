@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class TwitchComponentHandleData : MonoBehaviour
+public class TwitchModuleData : MonoBehaviour
 {
 	public TwitchMessage messagePrefab = null;
 
