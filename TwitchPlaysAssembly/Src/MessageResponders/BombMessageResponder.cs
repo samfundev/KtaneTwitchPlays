@@ -1072,16 +1072,7 @@ public class BombMessageResponder : MessageResponder
 			ComponentHandles.Add(handle);
 		}
 
-		StartCoroutine(ShowInitialModules());
-
 		return foundComponents;
-	}
-
-	private IEnumerator ShowInitialModules()
-	{
-		yield return null;
-		for (int i = 0; i < ComponentHandles.Count && moduleCameras.HasEmptySlot; i++)
-			ComponentHandles[i].CameraPriority = CameraPriority.Interacted;
 	}
 
 	private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
