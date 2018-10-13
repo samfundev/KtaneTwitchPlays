@@ -700,8 +700,11 @@ public class TwitchModule : MonoBehaviour
 						else
 						{
 							if (PlayerName != null)
-							{
 								ClaimedList.Remove(PlayerName);
+							if (TakeInProgress != null)
+							{
+								StopCoroutine(TakeInProgress);
+								TakeInProgress = null;
 							}
 
 							string newplayerName = unprocessedCommand.Remove(0, 7).Trim();
