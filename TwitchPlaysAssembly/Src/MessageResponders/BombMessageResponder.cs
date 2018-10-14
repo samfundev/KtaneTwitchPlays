@@ -924,6 +924,12 @@ public class BombMessageResponder : MessageResponder
 					}
 					return;
 				}
+
+				if (text.RegexMatch(@"^disableinteractive$"))
+				{
+					moduleCameras.DisableInteractive();
+					return;
+				}
 				break;
 		}
 

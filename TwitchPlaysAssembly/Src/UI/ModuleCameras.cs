@@ -441,6 +441,12 @@ public class ModuleCameras : MonoBehaviour
 		UpdateSolves();
 		UpdateConfidence();
 	}
+
+	public void DisableInteractive()
+	{
+		foreach (var camera in _cameras)
+			camera.EscapePressed = false;
+	}
 	#endregion
 
 	#region Private Methods
