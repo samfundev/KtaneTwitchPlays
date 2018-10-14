@@ -13,29 +13,29 @@ TagManager:
   - UI
   - 
   - 
-  - Camera1
-  - Camera2
-  - Camera3
-  - Camera4
-  - Camera5
-  - Camera6
+  - SideCamera1
+  - SideCamera2
+  - SideCamera3
+  - interactables
+  - SideCamera4
+  - KTANE UI
+  - KTANE VR
+  - KTANE VR
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - SideCamera5
+  - SideCamera6
+  - CameraWallCamera7
+  - CameraWallCamera8
+  - CameraWallCamera9
+  - CameraWallCamera10
+  - CameraWallCamera11
+  - CameraWallCamera12
+  - CameraWallCamera13
+  - CameraWallCamera14
+  - CameraWallCamera15
+  - CameraWallCamera16
+  - CameraWallCamera17
+  - CameraWallCamera18
   - 
   m_SortingLayers:
   - name: Default
