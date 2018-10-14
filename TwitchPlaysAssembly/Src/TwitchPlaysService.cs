@@ -44,7 +44,7 @@ public class TwitchPlaysService : MonoBehaviour
 		miscellaneousMessageResponder = GetComponentInChildren<MiscellaneousMessageResponder>(true);
 
 		bombMessageResponder.twitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
-		bombMessageResponder.twitchComponentHandlePrefab = GetComponentInChildren<TwitchModule>(true);
+		bombMessageResponder.twitchModulePrefab = GetComponentInChildren<TwitchModule>(true);
 		bombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
 
 		BombMessageResponder.Instance = bombMessageResponder;

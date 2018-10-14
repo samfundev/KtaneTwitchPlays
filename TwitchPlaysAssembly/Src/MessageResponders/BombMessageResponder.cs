@@ -11,7 +11,7 @@ using UnityEngine;
 public class BombMessageResponder : MessageResponder
 {
 	public TwitchBombHandle twitchBombHandlePrefab = null;
-	public TwitchModule twitchComponentHandlePrefab = null;
+	public TwitchModule twitchModulePrefab = null;
 	public ModuleCameras moduleCamerasPrefab = null;
 
 	public TwitchPlaysService parentService = null;
@@ -1065,7 +1065,7 @@ public class BombMessageResponder : MessageResponder
 			if (!bombCommander.SolvedModules.ContainsKey(moduleName))
 				bombCommander.SolvedModules[moduleName] = new List<TwitchModule>();
 
-			TwitchModule handle = Instantiate(twitchComponentHandlePrefab, bombComponent.transform, false);
+			TwitchModule handle = Instantiate(twitchModulePrefab, bombComponent.transform, false);
 			handle.bombCommander = bombCommander;
 			handle.bombComponent = bombComponent;
 			handle.coroutineQueue = _coroutineQueue;
