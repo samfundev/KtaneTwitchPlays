@@ -1110,7 +1110,7 @@ GameObject:
   - component: {fileID: 4915071136799948}
   - component: {fileID: 114835588933589194}
   - component: {fileID: 82416671267566430}
-  - component: {fileID: 114665192819678954}
+  - component: {fileID: 114398058272121720}
   m_Layer: 0
   m_Name: TwitchComponentHandle
   m_TagString: Untagged
@@ -2816,6 +2816,7 @@ MonoBehaviour:
   m_Script: {fileID: 602533217, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  queueModified: 0
   CurrentBombID: -1
 --- !u!114 &114000013614066598
 MonoBehaviour:
@@ -3072,7 +3073,7 @@ MonoBehaviour:
   confidencePrefab: {fileID: 114065151001614582}
   cameraPrefab: {fileID: 20934734821913038}
   bombStatus: {fileID: 224450783986421466}
-  firstBackupCamera: 3
+  cameraWallEnabled: 0
   notesTexts:
   - {fileID: 114395755530108092}
   - {fileID: 114443357932846720}
@@ -3859,6 +3860,28 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 5
+--- !u!114 &114398058272121720
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1788428918535644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1033608847, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messagePrefab: {fileID: 114000012089106560, guid: e10d34a7a56337b4ea2b48779d780807,
+    type: 2}
+  canvasGroupMultiDecker: {fileID: 225129366150916298}
+  canvasGroupUnsupported: {fileID: 225786798170740212}
+  idTextMultiDecker: {fileID: 114906445961636792}
+  idTextUnsupported: {fileID: 114124734569453512}
+  claimedUserMultiDecker: {fileID: 114879826322931700}
+  claimedBackgroundColour: {r: 255, g: 0, b: 0, a: 1}
+  solvedBackgroundColor: {r: 0, g: 128, b: 0, a: 1}
+  markedBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
+  takeModuleSound: {fileID: 82416671267566430}
 --- !u!114 &114399520217262482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4410,28 +4433,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114665192819678954
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1788428918535644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -738811412, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  messagePrefab: {fileID: 114000012089106560, guid: e10d34a7a56337b4ea2b48779d780807,
-    type: 2}
-  canvasGroupMultiDecker: {fileID: 225129366150916298}
-  canvasGroupUnsupported: {fileID: 225786798170740212}
-  idTextMultiDecker: {fileID: 114906445961636792}
-  idTextUnsupported: {fileID: 114124734569453512}
-  claimedUserMultiDecker: {fileID: 114879826322931700}
-  claimedBackgroundColour: {r: 255, g: 0, b: 0, a: 1}
-  solvedBackgroundColor: {r: 0, g: 128, b: 0, a: 1}
-  markedBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
-  takeModuleSound: {fileID: 82416671267566430}
 --- !u!114 &114698175389724306
 MonoBehaviour:
   m_ObjectHideFlags: 1

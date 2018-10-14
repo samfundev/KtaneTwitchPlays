@@ -124,7 +124,7 @@
     <Compile Include="Src\ComponentSolvers\Vanilla\WireSetComponentSolver.cs" />
     <Compile Include="Src\ConvertedTypes.cs" />
     <Compile Include="Src\DataBlobs\ModuleCamerasData.cs" />
-    <Compile Include="Src\DataBlobs\TwitchComponentHandleData.cs" />
+    <Compile Include="Src\DataBlobs\TwitchModuleData.cs" />
     <Compile Include="Src\Extensions\GeneralExtensions.cs" />
     <Compile Include="Src\Extensions\KMBombInfoExtensions.cs" />
     <Compile Include="Src\GameplayRooms\DefaultGameRoom.cs" />
