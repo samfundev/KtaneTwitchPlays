@@ -47,14 +47,14 @@ public class Message
 
 public class IRCConnection : MonoBehaviour
 {
-	public TwitchMessage messagePrefab;
+	public TwitchMessage MessagePrefab;
 
-	public CanvasGroup highlightGroup = null;
-	public ScrollRect messageScroll = null;
+	public CanvasGroup HighlightGroup;
+	public ScrollRect MessageScroll;
 
-	public GameObject messageScrollContents = null;
-	public RectTransform mainWindowTransform = null;
-	public RectTransform highlightTransform = null;
+	public GameObject MessageScrollContents;
+	public RectTransform MainWindowTransform;
+	public RectTransform HighlightTransform;
 
 	#region Nested Types
 	public class MessageEvent : UnityEvent<Message>
@@ -73,12 +73,12 @@ public class IRCConnection : MonoBehaviour
 			Match match = Regex.Match(Command, "[./]color ((>?#[0-9A-F]{6})|Blue|BlueViolet|CadetBlue|Chocolate|Coral|DodgerBlue|Firebrick|GoldenRod|Green|HotPink|OrangeRed|Red|SeaGreen|SpringGreen|YellowGreen)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 			if (!match.Success) return null;
 			string color = match.Groups[1].Value.ToLowerInvariant();
-			return UserColors.TryGetValue(color, out string hexcolor) ? hexcolor : color;
+			return UserColors.TryGetValue(color, out string hexColor) ? hexColor : color;
 		}
 
 		public bool CommandIsColor() => GetColor() != null;
 
-		private static Dictionary<string, string> UserColors = new Dictionary<string, string>
+		private static readonly Dictionary<string, string> UserColors = new Dictionary<string, string>
 		{
 			{"Blue".ToLowerInvariant(),       "#0000FF" },
 			{"BlueViolet".ToLowerInvariant(), "#8A2BE2" },
@@ -119,6 +119,7 @@ public class IRCConnection : MonoBehaviour
 			return true;
 		}
 
+		// ReSharper disable once MemberCanBePrivate.Local
 		public readonly bool LogLine;
 		private readonly Regex _matchingRegex;
 		private readonly Action<GroupCollection> _action;
@@ -136,10 +137,10 @@ public class IRCConnection : MonoBehaviour
 	{
 		Connect();
 
-		highlightGroup.alpha = 0.0f;
+		HighlightGroup.alpha = 0.0f;
 	}
 
-	public Dictionary<TwitchMessage, float> scrollOutStartTime = new Dictionary<TwitchMessage, float>();
+	public Dictionary<TwitchMessage, float> ScrollOutStartTime = new Dictionary<TwitchMessage, float>();
 	private void Update()
 	{
 		lock (_messageQueue)
@@ -151,20 +152,20 @@ public class IRCConnection : MonoBehaviour
 					bool isCommand = message.Text.StartsWith("!");
 
 					TwitchMessage twitchMessage = null;
-					CoroutineQueue coroutineQueue = TwitchPlaysService.Instance.coroutineQueue;
+					CoroutineQueue coroutineQueue = TwitchPlaysService.Instance.CoroutineQueue;
 					if (isCommand)
 					{
-						highlightGroup.alpha = 1;
+						HighlightGroup.alpha = 1;
 
-						twitchMessage = Instantiate(messagePrefab, messageScrollContents.transform, false);
+						twitchMessage = Instantiate(MessagePrefab, MessageScrollContents.transform, false);
 						twitchMessage.SetMessage(string.IsNullOrEmpty(message.UserColorCode)
 							? $"<b>{message.UserNickName}</b>: {message.Text}"
 							: $"<b><color={message.UserColorCode}>{message.UserNickName}</color></b>: {message.Text}");
 
-						TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HighlightMessage(twitchMessage));
+						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(HighlightMessage(twitchMessage));
 					}
 
-					coroutineQueue.queueModified = false;
+					coroutineQueue.QueueModified = false;
 					try
 					{
 						OnMessageReceived.Invoke(message);
@@ -174,18 +175,18 @@ public class IRCConnection : MonoBehaviour
 						DebugHelper.LogException(exception, "An exception has occured while invoking OnMessageRecieved:");
 					}
 
-					if (coroutineQueue.queueModified == false) Destroy(twitchMessage?.gameObject);
+					if (coroutineQueue.QueueModified == false && twitchMessage != null) Destroy(twitchMessage.gameObject);
 					else if (isCommand)
-						TwitchPlaysService.Instance.coroutineQueue.AddToQueue(HideMessage(twitchMessage));
+						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(HideMessage(twitchMessage));
 				}
 
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
 
-		if (scrollOutStartTime.Count <= 0) return;
+		if (ScrollOutStartTime.Count <= 0) return;
 		float vertScroll = 0;
 		List<TwitchMessage> finishedMessages = new List<TwitchMessage>();
-		foreach (var pair in scrollOutStartTime)
+		foreach (KeyValuePair<TwitchMessage, float> pair in ScrollOutStartTime)
 		{
 			float alpha = Mathf.Pow(Mathf.Min((Time.time - pair.Value) / 0.167f, 1), 4);
 			if (alpha < 1) vertScroll += alpha * pair.Key.GetComponent<RectTransform>().rect.height;
@@ -194,19 +195,21 @@ public class IRCConnection : MonoBehaviour
 
 		foreach (TwitchMessage twitchMessage in finishedMessages)
 		{
-			scrollOutStartTime.Remove(twitchMessage);
+			ScrollOutStartTime.Remove(twitchMessage);
 			Destroy(twitchMessage.gameObject);
 		}
 
-		Vector3 localPosition = messageScrollContents.transform.localPosition;
-		messageScrollContents.transform.localPosition = new Vector3(localPosition.x, vertScroll, localPosition.z);
+		// ReSharper disable InconsistentlySynchronizedField
+		Vector3 localPosition = MessageScrollContents.transform.localPosition;
+		MessageScrollContents.transform.localPosition = new Vector3(localPosition.x, vertScroll, localPosition.z);
+		// ReSharper restore InconsistentlySynchronizedField
 	}
 
 	IEnumerator HighlightMessage(TwitchMessage twitchMessage)
 	{
 		if (twitchMessage == null) yield break; // twitchMessage could be null if the original message never added any coroutines to the queue.
 
-		StartCoroutine(twitchMessage.DoBackgroundColorChange(twitchMessage.highlightColor));
+		StartCoroutine(twitchMessage.DoBackgroundColorChange(twitchMessage.HighlightColor));
 	}
 
 	IEnumerator HideMessage(TwitchMessage twitchMessage)
@@ -215,9 +218,9 @@ public class IRCConnection : MonoBehaviour
 		yield break;
 	}
 
-	private void FixedUpdate() => highlightGroup.alpha = Mathf.Max(highlightGroup.alpha - 0.01f, 0);
+	private void FixedUpdate() => HighlightGroup.alpha = Mathf.Max(HighlightGroup.alpha - 0.01f, 0);
 
-	private bool _justDisabled = false;
+	private bool _justDisabled;
 	private void OnDisable()
 	{
 		StopAllCoroutines();
@@ -583,6 +586,7 @@ public class IRCConnection : MonoBehaviour
 
 	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
 	[StringFormatMethod("message")]
+	// ReSharper disable once UnusedMember.Global
 	public static void SendWhisper(string userNickName, string message, params object[] args) => SendMessage(message, userNickName, false, args);
 
 	[StringFormatMethod("message")]
@@ -685,7 +689,7 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	private int _connectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
+	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
 	private void InputThreadMethod(TextReader input, NetworkStream networkStream)
 	{
 		Stopwatch stopwatch = new Stopwatch();
@@ -694,7 +698,7 @@ public class IRCConnection : MonoBehaviour
 			stopwatch.Start();
 			while (ThreadAlive)
 			{
-				if (stopwatch.ElapsedMilliseconds > _connectionTimeout)
+				if (stopwatch.ElapsedMilliseconds > ConnectionTimeout)
 				{
 					AddTextToHoldable("[IRC:Connect] Connection timed out.");
 					stopwatch.Reset();
@@ -908,11 +912,11 @@ public class IRCConnection : MonoBehaviour
 
 	#region Public Fields
 	public readonly MessageEvent OnMessageReceived = new MessageEvent();
-	public string ColorOnDisconnect = null;
+	public string ColorOnDisconnect;
 	public static IRCConnection Instance { get; private set; }
 	public IRCConnectionState State => gameObject.activeInHierarchy ? _state : IRCConnectionState.Disabled;
-	public string UserNickName { get; private set; } = null;
-	public string ChannelName { get; private set; } = null;
+	public string UserNickName { get; private set; }
+	public string ChannelName { get; private set; }
 	#endregion
 
 	#region Private Fields
@@ -924,17 +928,17 @@ public class IRCConnection : MonoBehaviour
 	private const int MessageDelayMod = 500;
 	private const int MaxMessageLength = 480;
 
-	private Thread _inputThread = null;
-	private Thread _outputThread = null;
-	private bool _isModerator = false;
+	private Thread _inputThread;
+	private Thread _outputThread;
+	private bool _isModerator;
 	private int _messageDelay = 2000;
-	private bool _silenceMode = false;
+	private bool _silenceMode;
 
 	public string CurrentColor { get; private set; } = string.Empty;
 
-	private Queue<Message> _messageQueue = new Queue<Message>();
-	private Queue<Commands> _commandQueue = new Queue<Commands>();
-	private Dictionary<string, Color> _userColors = new Dictionary<string, Color>();
+	private readonly Queue<Message> _messageQueue = new Queue<Message>();
+	private readonly Queue<Commands> _commandQueue = new Queue<Commands>();
+	private readonly Dictionary<string, Color> _userColors = new Dictionary<string, Color>();
 	private IRCConnectionState _onDisableState = IRCConnectionState.Disconnected;
 	private IEnumerator _keepConnectionAlive;
 	#endregion

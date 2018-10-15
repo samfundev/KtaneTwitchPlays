@@ -110,13 +110,13 @@ MonoBehaviour:
   m_Script: {fileID: 1652465903, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalColor: {r: 1, g: 1, b: 1, a: 0}
-  highlightColor: {r: 1, g: 0.8862745, b: 0, a: 0.39215687}
-  completeColor: {r: 0, g: 1, b: 0, a: 0.235}
-  errorColor: {r: 1, g: 0, b: 0, a: 0.354}
-  ignoreColor: {r: 0.23924091, g: 0.2764062, b: 0.43382353, a: 0.178}
-  userName: 
-  userColor: {r: 0, g: 0, b: 0, a: 1}
+  NormalColor: {r: 1, g: 1, b: 1, a: 0}
+  HighlightColor: {r: 1, g: 0.8862745, b: 0, a: 0.39215687}
+  CompleteColor: {r: 0, g: 1, b: 0, a: 0.235}
+  ErrorColor: {r: 1, g: 0, b: 0, a: 0.354}
+  IgnoreColor: {r: 0.23924091, g: 0.2764062, b: 0.43382353, a: 0.178}
+  UserName: 
+  UserColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &114000012481730220
 MonoBehaviour:
   m_ObjectHideFlags: 1

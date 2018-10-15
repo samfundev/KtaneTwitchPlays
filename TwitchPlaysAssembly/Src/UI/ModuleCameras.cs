@@ -515,7 +515,7 @@ public class ModuleCameras : MonoBehaviour
 
 	#region Properties
 	private TwitchModule PreferredToView => BombMessageResponder.Instance.ComponentHandles
-				.Where(module => !module.Solved && !_cameras.Any(cam => cam.Module == module))
+				.Where(module => !module.Solved && _cameras.All(cam => cam.Module != module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();
 

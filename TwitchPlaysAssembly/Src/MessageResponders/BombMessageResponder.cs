@@ -55,16 +55,17 @@ public class BombMessageResponder : MessageResponder
 		}
 	}
 
-	public void SetCurrentBomb()
+	public static void SetCurrentBomb()
 	{
-		if (!BombActive) return;
-		_currentBomb = _coroutineQueue.CurrentBombID;
+		if (!BombActive || Instance == null) return;
+
+		Instance._currentBomb = Instance._coroutineQueue.CurrentBombID;
 	}
 
-	public void DropCurrentBomb()
+	public static void DropCurrentBomb()
 	{
-		if (!BombActive) return;
-		_coroutineQueue.AddToQueue(BombCommanders[_currentBomb != -1 ? _currentBomb : 0].LetGoBomb(), _currentBomb);
+		if (!BombActive || Instance == null) return;
+		Instance._coroutineQueue.AddToQueue(Instance.BombCommanders[Instance._currentBomb != -1 ? Instance._currentBomb : 0].LetGoBomb(), Instance._currentBomb);
 	}
 
 	private bool _bombStarted;

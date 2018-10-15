@@ -14,25 +14,25 @@ using Random = UnityEngine.Random;
 public class MiscellaneousMessageResponder : MessageResponder
 {
 	[HideInInspector]
-	public int moduleCountBonus = 0;
+	public int ModuleCountBonus;
 
 	[HideInInspector]
-	public BombComponent bombComponent = null;
+	public BombComponent BombComponent;
 
 	public static MiscellaneousMessageResponder Instance;
 
-	private KMGameCommands GameCommands;
-	private KMGameInfo GameInfo;
-	private KMGameInfo.State CurrentState = KMGameInfo.State.Transitioning;
-	private static List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
+	private KMGameCommands _gameCommands;
+	private KMGameInfo _gameInfo;
+	private KMGameInfo.State _currentState = KMGameInfo.State.Transitioning;
+	private static readonly List<KMHoldableCommander> HoldableCommanders = new List<KMHoldableCommander>();
 
 	private void Start()
 	{
-		GameCommands = GetComponent<KMGameCommands>();
-		GameInfo = GetComponent<KMGameInfo>();
-		GameInfo.OnStateChange += delegate (KMGameInfo.State state)
+		_gameCommands = GetComponent<KMGameCommands>();
+		_gameInfo = GetComponent<KMGameInfo>();
+		_gameInfo.OnStateChange += delegate (KMGameInfo.State state)
 		{
-			CurrentState = state;
+			_currentState = state;
 			OtherModes.RefreshModes(state);
 		};
 		Instance = this;
@@ -82,7 +82,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			yield return drop.Current;
 	}
 
-	int GetMaximumModules(int maxAllowed = int.MaxValue) => Math.Min(TPElevatorSwitch.IsON ? 54 : GameInfo.GetMaximumBombModules(), maxAllowed);
+	int GetMaximumModules(int maxAllowed = int.MaxValue) => Math.Min(TPElevatorSwitch.IsON ? 54 : _gameInfo.GetMaximumBombModules(), maxAllowed);
 
 	string ResolveMissionID(string targetID, out string failureMessage)
 	{
@@ -97,7 +97,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			return null;
 		}
 
-		List<string> availableMods = GameInfo.GetAvailableModuleInfo().Where(x => x.IsMod).Select(y => y.ModuleId).ToList();
+		List<string> availableMods = _gameInfo.GetAvailableModuleInfo().Where(x => x.IsMod).Select(y => y.ModuleId).ToList();
 		if (MultipleBombs.Installed())
 			availableMods.Add("Multiple Bombs");
 		HashSet<string> missingMods = new HashSet<string>();
@@ -134,7 +134,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 	public void RunMission(KMMission mission)
 	{
-		if (CurrentState != KMGameInfo.State.Setup) return;
+		if (_currentState != KMGameInfo.State.Setup) return;
 		GetComponent<KMGameCommands>().StartMission(mission, $"{-1}");
 		OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 	}
@@ -159,29 +159,29 @@ public class MiscellaneousMessageResponder : MessageResponder
 			CoroutineCanceller.SetCancel();
 			return;
 		}
-		else if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
+		if (text.Equals("stop", StringComparison.InvariantCultureIgnoreCase))
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
 			CoroutineCanceller.SetCancel();
 			_coroutineQueue.CancelFutureSubcoroutines();
-			BombMessageResponder.Instance?.SetCurrentBomb();
+			BombMessageResponder.SetCurrentBomb();
 			return;
 		}
-		else if (text.Equals("manual", StringComparison.InvariantCultureIgnoreCase) ||
+		if (text.Equals("manual", StringComparison.InvariantCultureIgnoreCase) ||
 				 text.Equals("help", StringComparison.InvariantCultureIgnoreCase))
 		{
-			string[] Alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+			string[] alphabet = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 			string[] randomCodes =
 			{
-				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[Random.Range(0, Alphabet.Length)] + Alphabet[Random.Range(0, Alphabet.Length)] : Random.Range(1,100).ToString(),
-				TwitchPlaySettings.data.EnableLetterCodes ? Alphabet[Random.Range(0, Alphabet.Length)] + Alphabet[Random.Range(0, Alphabet.Length)] : Random.Range(1,100).ToString()
+				TwitchPlaySettings.data.EnableLetterCodes ? alphabet[Random.Range(0, alphabet.Length)] + alphabet[Random.Range(0, alphabet.Length)] : Random.Range(1,100).ToString(),
+				TwitchPlaySettings.data.EnableLetterCodes ? alphabet[Random.Range(0, alphabet.Length)] + alphabet[Random.Range(0, alphabet.Length)] : Random.Range(1,100).ToString()
 			};
 
 			IRCConnection.SendMessage(string.Format("!{0} manual [link to module {0}'s manual] | Go to {1} to get the vanilla manual for KTaNE", randomCodes[0], UrlHelper.Instance.VanillaManual), userNickName, !isWhisper);
 			IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", randomCodes[1], UrlHelper.Instance.CommandReference), userNickName, !isWhisper);
 			return;
 		}
-		else if (text.RegexMatch(@"^bonus(?:score|points) (\S+) (-?[0-9]+)$"))
+		if (text.RegexMatch(@"^bonus(?:score|points) (\S+) (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
 			string playerrewarded = split[1];
@@ -197,7 +197,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
-		else if (text.RegexMatch(@"^bonussolves? (\S+) (-?[0-9]+)$"))
+		if (text.RegexMatch(@"^bonussolves? (\S+) (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
 			string playerrewarded = split[1];
@@ -213,7 +213,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
-		else if (text.RegexMatch(@"^bonusstrikes? (\S+) (-?[0-9]+)$"))
+		if (text.RegexMatch(@"^bonusstrikes? (\S+) (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
 			string playerrewarded = split[1];
@@ -229,25 +229,25 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
-		else if (text.RegexMatch("^reward (-?[0-9]+)$"))
+		if (text.RegexMatch("^reward (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
-			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1], out moduleCountBonus))
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1], out ModuleCountBonus))
 			{
-				TwitchPlaySettings.SetRewardBonus(moduleCountBonus);
+				TwitchPlaySettings.SetRewardBonus(ModuleCountBonus);
 			}
 			return;
 		}
-		else if (text.RegexMatch("^bonusreward (-?[0-9]+)$"))
+		if (text.RegexMatch("^bonusreward (-?[0-9]+)$"))
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
-			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1], out moduleCountBonus))
+			if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && int.TryParse(split[1], out ModuleCountBonus))
 			{
-				TwitchPlaySettings.AddRewardBonus(moduleCountBonus);
+				TwitchPlaySettings.AddRewardBonus(ModuleCountBonus);
 			}
 			return;
 		}
-		else if (text.RegexMatch(out match, $"^timemode ?((?:on|off)?)$"))
+		if (text.RegexMatch(out match, $"^timemode ?((?:on|off)?)$"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone || TwitchPlaySettings.data.AnarchyMode)
 			{
@@ -264,7 +264,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						break;
 				}
 
-				IRCConnection.SendMessage(string.Format("{0} mode will be enabled next round.", OtherModes.GetName(OtherModes.nextMode)), userNickName, !isWhisper);
+				IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.nextMode)} mode will be enabled next round.", userNickName, !isWhisper);
 			}
 			else
 			{
@@ -288,7 +288,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 						break;
 				}
 
-				IRCConnection.SendMessage(string.Format("{0} mode will be enabled next round.", OtherModes.GetName(OtherModes.nextMode)), userNickName, !isWhisper);
+				IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.nextMode)} mode will be enabled next round.", userNickName, !isWhisper);
 			}
 			else
 			{
@@ -297,9 +297,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 		}
 		else if (text.RegexMatch(out match, $"^modes?"))
 		{
-			IRCConnection.SendMessage(string.Format("{0} mode is currently enabled. The next round is set to {1} mode.", OtherModes.GetName(OtherModes.currentMode), OtherModes.GetName(OtherModes.nextMode)), userNickName, !isWhisper);
+			IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.currentMode)} mode is currently enabled. The next round is set to {OtherModes.GetName(OtherModes.nextMode)} mode.", userNickName, !isWhisper);
 			if (TwitchPlaySettings.data.AnarchyMode)
-				IRCConnection.SendMessage(string.Format("We are currently in anarchy mode."), userNickName, !isWhisper);
+				IRCConnection.SendMessage("We are currently in anarchy mode.", userNickName, !isWhisper);
 		}
 		else if (text.RegexMatch(out match, "^resetusers? (.+)"))
 		{
@@ -313,8 +313,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					Leaderboard.Instance.GetSoloRank(trimmeduser, out Leaderboard.LeaderboardEntry soloEntry);
 					if (entry == null && soloEntry == null)
 					{
-						IRCConnection.SendMessage(string.Format("User {0} was not found or has already been reset", trimmeduser), userNickName, !isWhisper);
-						continue;
+						IRCConnection.SendMessage($"User {trimmeduser} was not found or has already been reset", userNickName, !isWhisper);
 					}
 					else
 					{
@@ -322,8 +321,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							Leaderboard.Instance.DeleteEntry(entry);
 						if (soloEntry != null)
 							Leaderboard.Instance.DeleteSoloEntry(soloEntry);
-						IRCConnection.SendMessage(string.Format("User {0} has been reset", trimmeduser), userNickName, !isWhisper);
-						continue;
+						IRCConnection.SendMessage($"User {trimmeduser} has been reset", userNickName, !isWhisper);
 					}
 				}
 			}
@@ -856,7 +854,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					string adjperson = person.Trim();
 					AccessLevel level = UserAccess.HighestAccessLevel(adjperson);
 					string stringLevel = UserAccess.LevelToString(level);
-					IRCConnection.SendMessage(string.Format("User {0}, Access Level: {1}", adjperson, stringLevel), userNickName, !isWhisper);
+					IRCConnection.SendMessage($"User {adjperson}, Access Level: {stringLevel}", userNickName, !isWhisper);
 				}
 			}
 		}
@@ -935,10 +933,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 					}
 					else
 					{
-						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
-						if (CurrentState != KMGameInfo.State.Setup) break;
+						if (_currentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
+						if (_currentState != KMGameInfo.State.Setup) break;
 
-						GameCommands.StartMission(missionID, "-1");
+						_gameCommands.StartMission(missionID, "-1");
 						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
 				}
@@ -985,8 +983,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 							break;
 						}
 
-						if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
-						if (CurrentState != KMGameInfo.State.Setup) break;
+						if (_currentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
+						if (_currentState != KMGameInfo.State.Setup) break;
 
 						int vanillaModules = Mathf.FloorToInt(modules * distribution.Vanilla);
 						int moddedModules = Mathf.FloorToInt(modules * distribution.Modded);
@@ -1049,29 +1047,29 @@ public class MiscellaneousMessageResponder : MessageResponder
 						int rewardPoints = (5 * modules) - (3 * vanillaModules);
 						TwitchPlaySettings.SetRewardBonus(rewardPoints);
 						IRCConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
-						GameCommands.StartMission(mission, "-1");
+						_gameCommands.StartMission(mission, "-1");
 						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
 				}
 				break;
 			case "runraw":
 				if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
-					if (CurrentState == KMGameInfo.State.Setup)
+					if (_currentState == KMGameInfo.State.Setup)
 					{
-						GameCommands.StartMission(textAfter, "-1");
+						_gameCommands.StartMission(textAfter, "-1");
 						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
-					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
+					else if (_currentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
 				break;
 			case "runrawseed":
 				if (UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
-					if (CurrentState == KMGameInfo.State.Setup)
+					if (_currentState == KMGameInfo.State.Setup)
 					{
 						string textAfter2 = split.Skip(2).Join();
-						GameCommands.StartMission(textAfter2, split[1]);
+						_gameCommands.StartMission(textAfter2, split[1]);
 						OtherModes.RefreshModes(KMGameInfo.State.Transitioning);
 					}
-					else if (CurrentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
+					else if (_currentState == KMGameInfo.State.PostGame) StartCoroutine(ReturnToSetup(userNickName, "!" + text, isWhisper));
 				break;
 			case "profile":
 			case "profiles":
@@ -1096,12 +1094,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 							string filename = profileString.Replace(' ', '_');
 							if (split[1].EqualsAny("enable", "add", "activate"))
 							{
-								if (ProfileHelper.Add(filename)) IRCConnection.SendMessage(string.Format("Enabled profile: {0}.", profileString), userNickName, !isWhisper);
+								if (ProfileHelper.Add(filename)) IRCConnection.SendMessage($"Enabled profile: {profileString}.", userNickName, !isWhisper);
 								else IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled"), userNickName, !isWhisper);
 							}
 							else
 							{
-								if (ProfileHelper.Remove(filename)) IRCConnection.SendMessage(string.Format("Disabled profile: {0}.", profileString), userNickName, !isWhisper);
+								if (ProfileHelper.Remove(filename)) IRCConnection.SendMessage($"Disabled profile: {profileString}.", userNickName, !isWhisper);
 								else IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled"), userNickName, !isWhisper);
 							}
 						}
@@ -1136,7 +1134,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				return;
 			}
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
-			BombMessageResponder.Instance?.DropCurrentBomb();
+			BombMessageResponder.DropCurrentBomb();
 			_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, isWhisper));
 		}
 
@@ -1288,7 +1286,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 	private IEnumerator ReturnToSetup(string userNickName, string text, bool isWhisper)
 	{
 		IRCConnection.Instance.OnMessageReceived.Invoke(new Message(userNickName, null, "!back", isWhisper));
-		yield return new WaitUntil(() => CurrentState == KMGameInfo.State.Setup);
+		yield return new WaitUntil(() => _currentState == KMGameInfo.State.Setup);
 		IRCConnection.Instance.OnMessageReceived.Invoke(new Message(userNickName, null, text, isWhisper));
 	}
 
@@ -1312,5 +1310,5 @@ public class ModuleDistributions
 	public int MinModules;
 	public int MaxModules;
 	public bool Enabled = true;
-	public bool Hidden = false;
+	public bool Hidden;
 }

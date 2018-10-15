@@ -5,28 +5,28 @@ using UnityEngine;
 
 public class MusicPlayer : MonoBehaviour
 {
-	private static Dictionary<string, MusicPlayer> _musicPlayers = new Dictionary<string, MusicPlayer>();
+	private static readonly Dictionary<string, MusicPlayer> MusicPlayers = new Dictionary<string, MusicPlayer>();
 
-	public AudioSource startInterruptSound = null;
-	public AudioSource musicLoopSound = null;
-	public AudioSource endInterruptSound = null;
+	public AudioSource StartInterruptSound;
+	public AudioSource MusicLoopSound;
+	public AudioSource EndInterruptSound;
 
 	private Coroutine _currentCoroutine;
 
-	private void Awake() => _musicPlayers[name] = this;
+	private void Awake() => MusicPlayers[name] = this;
 
-	public static MusicPlayer GetMusicPlayer(string name) => _musicPlayers[name];
+	public static MusicPlayer GetMusicPlayer(string name) => MusicPlayers[name];
 
 	public static MusicPlayer StartRandomMusic()
 	{
-		MusicPlayer player = _musicPlayers.Values.ElementAt(Random.Range(0, _musicPlayers.Values.Count));
+		MusicPlayer player = MusicPlayers.Values.ElementAt(Random.Range(0, MusicPlayers.Values.Count));
 		player.StartMusic();
 		return player;
 	}
 
 	public static void StopAllMusic()
 	{
-		foreach (MusicPlayer player in _musicPlayers.Values)
+		foreach (MusicPlayer player in MusicPlayers.Values)
 		{
 			player.StopMusic();
 		}
@@ -52,40 +52,40 @@ public class MusicPlayer : MonoBehaviour
 
 	private IEnumerator StartMusicCoroutine()
 	{
-		if (musicLoopSound == null || musicLoopSound.isPlaying)
+		if (MusicLoopSound == null || MusicLoopSound.isPlaying)
 		{
 			yield break;
 		}
 
 		InterruptMusic.Instance.SetMusicInterrupt(true);
 
-		if (startInterruptSound != null)
+		if (StartInterruptSound != null)
 		{
-			startInterruptSound.time = 0.0f;
-			startInterruptSound.Play();
-			yield return new WaitForSeconds(startInterruptSound.clip.length);
+			StartInterruptSound.time = 0.0f;
+			StartInterruptSound.Play();
+			yield return new WaitForSeconds(StartInterruptSound.clip.length);
 		}
 
-		musicLoopSound.time = 0.0f;
-		musicLoopSound.Play();
+		MusicLoopSound.time = 0.0f;
+		MusicLoopSound.Play();
 		_currentCoroutine = null;
 	}
 
 	private IEnumerator EndMusicCoroutine()
 	{
-		if (musicLoopSound == null)
+		if (MusicLoopSound == null)
 		{
 			yield break;
 		}
 
-		if (musicLoopSound.isPlaying)
+		if (MusicLoopSound.isPlaying)
 		{
-			musicLoopSound.Stop();
-			if (endInterruptSound != null)
+			MusicLoopSound.Stop();
+			if (EndInterruptSound != null)
 			{
-				endInterruptSound.time = 0.0f;
-				endInterruptSound.Play();
-				yield return new WaitForSeconds(endInterruptSound.clip.length);
+				EndInterruptSound.time = 0.0f;
+				EndInterruptSound.Play();
+				yield return new WaitForSeconds(EndInterruptSound.clip.length);
 			}
 		}
 

@@ -4,45 +4,43 @@ using UnityEngine.UI;
 
 public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 {
-	public Color normalColor = Color.white;
-	public Color highlightColor = Color.white;
-	public Color completeColor = Color.white;
-	public Color errorColor = Color.white;
-	public Color ignoreColor = Color.white;
+	public Color NormalColor = Color.white;
+	public Color HighlightColor = Color.white;
+	public Color CompleteColor = Color.white;
+	public Color ErrorColor = Color.white;
+	public Color IgnoreColor = Color.white;
 
-	public string userName = null;
-	public Color userColor = Color.black;
+	public string UserName;
+	public Color UserColor = Color.black;
 
-	private Image _messageBackground = null;
-	private Text _messageText = null;
+	private Image _messageBackground;
+	private Text _messageText;
 
 	private void Awake()
 	{
 		_messageBackground = GetComponent<Image>();
 		_messageText = GetComponentInChildren<Text>();
-		_messageBackground.color = normalColor;
+		_messageBackground.color = NormalColor;
 	}
 
 	public void SetMessage(string text) => _messageText.text = text;
 
 	public void ProcessResponse(CommandResponse response, int value)
 	{
+		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (response)
 		{
 			case CommandResponse.Start:
 				StopAllCoroutines();
-				StartCoroutine(DoBackgroundColorChange(highlightColor));
+				StartCoroutine(DoBackgroundColorChange(HighlightColor));
 				break;
 			case CommandResponse.EndNotComplete:
 				StopAllCoroutines();
-				StartCoroutine(DoBackgroundColorChange(normalColor));
+				StartCoroutine(DoBackgroundColorChange(NormalColor));
 				break;
 			case CommandResponse.NoResponse:
 				StopAllCoroutines();
-				StartCoroutine(DoBackgroundColorChange(ignoreColor));
-				break;
-
-			default:
+				StartCoroutine(DoBackgroundColorChange(IgnoreColor));
 				break;
 		}
 	}
@@ -64,5 +62,5 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 		_messageBackground.color = targetColor;
 	}
 
-	public void RemoveMessage() => IRCConnection.Instance.scrollOutStartTime[this] = Time.time;
+	public void RemoveMessage() => IRCConnection.Instance.ScrollOutStartTime[this] = Time.time;
 }

@@ -2647,9 +2647,9 @@ MonoBehaviour:
   m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startInterruptSound: {fileID: 82000011923926230}
-  musicLoopSound: {fileID: 82000012882585904}
-  endInterruptSound: {fileID: 82000011923926230}
+  StartInterruptSound: {fileID: 82000011923926230}
+  MusicLoopSound: {fileID: 82000012882585904}
+  EndInterruptSound: {fileID: 82000011923926230}
 --- !u!114 &114000011240893280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2720,9 +2720,9 @@ MonoBehaviour:
   m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startInterruptSound: {fileID: 82000014023970508}
-  musicLoopSound: {fileID: 82000013250671372}
-  endInterruptSound: {fileID: 82000014023970508}
+  StartInterruptSound: {fileID: 82000014023970508}
+  MusicLoopSound: {fileID: 82000013250671372}
+  EndInterruptSound: {fileID: 82000014023970508}
 --- !u!114 &114000012078340718
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2788,9 +2788,9 @@ MonoBehaviour:
   m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startInterruptSound: {fileID: 82000014121871414}
-  musicLoopSound: {fileID: 82000010634094186}
-  endInterruptSound: {fileID: 82000014121871414}
+  StartInterruptSound: {fileID: 82000014121871414}
+  MusicLoopSound: {fileID: 82000010634094186}
+  EndInterruptSound: {fileID: 82000014121871414}
 --- !u!114 &114000013095235912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2802,9 +2802,9 @@ MonoBehaviour:
   m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startInterruptSound: {fileID: 82000013589858194}
-  musicLoopSound: {fileID: 82000013744385456}
-  endInterruptSound: {fileID: 82000013589858194}
+  StartInterruptSound: {fileID: 82000013589858194}
+  MusicLoopSound: {fileID: 82000013744385456}
+  EndInterruptSound: {fileID: 82000013589858194}
 --- !u!114 &114000013407019822
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2816,7 +2816,7 @@ MonoBehaviour:
   m_Script: {fileID: 602533217, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  queueModified: 0
+  QueueModified: 0
   CurrentBombID: -1
 --- !u!114 &114000013614066598
 MonoBehaviour:
@@ -2829,9 +2829,9 @@ MonoBehaviour:
   m_Script: {fileID: -754607233, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startInterruptSound: {fileID: 82000012117545474}
-  musicLoopSound: {fileID: 82000011503487972}
-  endInterruptSound: {fileID: 82000012117545474}
+  StartInterruptSound: {fileID: 82000012117545474}
+  MusicLoopSound: {fileID: 82000011503487972}
+  EndInterruptSound: {fileID: 82000012117545474}
 --- !u!114 &114000013751686150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3409,13 +3409,13 @@ MonoBehaviour:
   m_Script: {fileID: 1585916340, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  messagePrefab: {fileID: 114000012089106560, guid: e10d34a7a56337b4ea2b48779d780807,
+  MessagePrefab: {fileID: 114000012089106560, guid: e10d34a7a56337b4ea2b48779d780807,
     type: 2}
-  highlightGroup: {fileID: 225486279343163890}
-  messageScroll: {fileID: 114228492410890800}
-  messageScrollContents: {fileID: 1171642883591608}
-  mainWindowTransform: {fileID: 224297855726343294}
-  highlightTransform: {fileID: 224903183452318136}
+  HighlightGroup: {fileID: 225486279343163890}
+  MessageScroll: {fileID: 114228492410890800}
+  MessageScrollContents: {fileID: 1171642883591608}
+  MainWindowTransform: {fileID: 224297855726343294}
+  HighlightTransform: {fileID: 224903183452318136}
   ColorOnDisconnect: 
 --- !u!114 &114222379700582844
 MonoBehaviour:

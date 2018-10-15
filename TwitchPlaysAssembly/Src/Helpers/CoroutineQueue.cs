@@ -29,7 +29,7 @@ public class CoroutineQueue : MonoBehaviour
 	public void AddToQueue(IEnumerator subcoroutine)
 	{
 		_coroutineQueue.Enqueue(subcoroutine);
-		queueModified = true;
+		QueueModified = true;
 	}
 
 	public void AddToQueue(IEnumerator subcoroutine, int bombID)
@@ -40,7 +40,7 @@ public class CoroutineQueue : MonoBehaviour
 
 	public void CancelFutureSubcoroutines()
 	{
-		foreach (TwitchMessage twitchMessage in IRCConnection.Instance.messageScrollContents
+		foreach (TwitchMessage twitchMessage in IRCConnection.Instance.MessageScrollContents
 			.GetComponentsInChildren<TwitchMessage>())
 			twitchMessage.RemoveMessage();
 
@@ -138,15 +138,15 @@ public class CoroutineQueue : MonoBehaviour
 		_activeForceSolveCoroutine = null;
 	}
 
-	private static Queue<IEnumerator> _forceSolveQueue = null;
-	private bool _processingForcedSolve = false;
-	private Coroutine _activeForceSolveCoroutine = null;
+	private static Queue<IEnumerator> _forceSolveQueue;
+	private bool _processingForcedSolve;
+	private Coroutine _activeForceSolveCoroutine;
 
-	public bool queueModified = false;
-	private Queue<IEnumerator> _coroutineQueue = null;
-	private bool _processing = false;
-	private Coroutine _activeCoroutine = null;
+	public bool QueueModified;
+	private Queue<IEnumerator> _coroutineQueue;
+	private bool _processing;
+	private Coroutine _activeCoroutine;
 
 	public int CurrentBombID = -1;
-	private Queue<int> _bombIDProcessed = null;
+	private Queue<int> _bombIDProcessed;
 }

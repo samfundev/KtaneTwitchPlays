@@ -314,8 +314,8 @@ public class TwitchBombHandle : MonoBehaviour
 	{
 		edgeworkWindowTransform.localScale = Vector3.zero;
 		edgeworkHighlightTransform.localScale = Vector3.zero;
-		IRCConnection.Instance.mainWindowTransform.localScale = Vector3.zero;
-		IRCConnection.Instance.highlightTransform.localScale = Vector3.zero;
+		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.zero;
+		IRCConnection.Instance.HighlightTransform.localScale = Vector3.zero;
 		yield return null;
 	}
 
@@ -323,8 +323,8 @@ public class TwitchBombHandle : MonoBehaviour
 	{
 		edgeworkWindowTransform.localScale = Vector3.one;
 		edgeworkHighlightTransform.localScale = Vector3.one;
-		IRCConnection.Instance.mainWindowTransform.localScale = Vector3.one;
-		IRCConnection.Instance.highlightTransform.localScale = Vector3.one;
+		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.one;
+		IRCConnection.Instance.HighlightTransform.localScale = Vector3.one;
 		yield return null;
 	}
 

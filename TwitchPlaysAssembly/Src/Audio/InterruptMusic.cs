@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class InterruptMusic : MonoBehaviour
 {
-	public static InterruptMusic Instance { get; private set; } = null;
+	public static InterruptMusic Instance { get; private set; }
 
-	private static FieldInfo _volumeLevelGameplayField = null;
-	private Dictionary<int, float> _oldVolumesGameplay = new Dictionary<int, float>();
-	private static FieldInfo _volumeLevelOtherField = null;
-	private Dictionary<int, float> _oldVolumesOther = new Dictionary<int, float>();
+	private static readonly FieldInfo VolumeLevelGameplayField;
+	private readonly Dictionary<int, float> _oldVolumesGameplay = new Dictionary<int, float>();
+	private static readonly FieldInfo VolumeLevelOtherField;
+	private readonly Dictionary<int, float> _oldVolumesOther = new Dictionary<int, float>();
 
 	static InterruptMusic()
 	{
-		_volumeLevelGameplayField = typeof(GameplayMusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
-		_volumeLevelOtherField = typeof(MusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
+		VolumeLevelGameplayField = typeof(GameplayMusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
+		VolumeLevelOtherField = typeof(MusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private void Awake() => Instance = this;
@@ -28,7 +28,7 @@ public class InterruptMusic : MonoBehaviour
 			if (enableInterrupt)
 			{
 				if (!_oldVolumesGameplay.ContainsKey(musicControllerInstanceID))
-					_oldVolumesGameplay[musicControllerInstanceID] = (float) _volumeLevelGameplayField.GetValue(musicController);
+					_oldVolumesGameplay[musicControllerInstanceID] = (float) VolumeLevelGameplayField.GetValue(musicController);
 				musicController.SetVolume(0.0f, true);
 			}
 			else
@@ -47,7 +47,7 @@ public class InterruptMusic : MonoBehaviour
 				if (enableInterrupt)
 				{
 					if (!_oldVolumesOther.ContainsKey(musicControllerInstanceID))
-						_oldVolumesOther[musicControllerInstanceID] = (float) _volumeLevelOtherField.GetValue(musicController);
+						_oldVolumesOther[musicControllerInstanceID] = (float) VolumeLevelOtherField.GetValue(musicController);
 					musicController.SetVolume(0.0f, true);
 				}
 				else
