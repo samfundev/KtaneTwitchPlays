@@ -162,13 +162,20 @@ public abstract class ComponentSolver
 		IEnumerator unzoom = null;
 		if (_zoom)
 		{
-			IEnumerator zoom = BombMessageResponder.moduleCameras?.ZoomCamera(BombComponent, 1);
-			unzoom = BombMessageResponder.moduleCameras?.UnzoomCamera(BombComponent, 1);
-			if (zoom == null || unzoom == null)
+			if (BombMessageResponder.moduleCameras == null)
+			{
 				_zoom = false;
+			}
 			else
-				while (zoom.MoveNext())
-					yield return zoom.Current;
+			{
+				IEnumerator zoom = BombMessageResponder.moduleCameras.ZoomCamera(ComponentHandle, 1);
+				unzoom = BombMessageResponder.moduleCameras.UnzoomCamera(ComponentHandle, 1);
+				if (zoom == null || unzoom == null)
+					_zoom = false;
+				else
+					while (zoom.MoveNext())
+						yield return zoom.Current;
+			}
 		}
 
 		bool parseError = false;

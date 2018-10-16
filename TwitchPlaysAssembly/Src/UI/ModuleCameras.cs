@@ -17,6 +17,7 @@ public class ModuleCameras : MonoBehaviour
 	public class ModuleCamera : MonoBehaviour
 	{
 		public TwitchModule Module;
+		public TwitchModule PreviousModule;
 		public Camera CameraInstance;
 
 		/// <summary>Camera layer used when interactive mode is NOT enabled.</summary>
@@ -73,6 +74,13 @@ public class ModuleCameras : MonoBehaviour
 			}
 			CameraInstance.rect = _originalCameraRect;
 			CameraInstance.depth = 99;
+
+			if (PreviousModule != null)
+			{
+				//Return the camera back to the component that WAS there.
+				ViewModule(PreviousModule);
+				PreviousModule = null;
+			}
 		}
 
 		public void ViewModule(TwitchModule module)
@@ -244,9 +252,10 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Public Methods
-	public IEnumerator ZoomCamera(BombComponent component, float delay)
+	public IEnumerator ZoomCamera(TwitchModule component, float delay)
 	{
 		int existingCamera = CurrentModulesContains(component);
+		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
 		{
 			ModuleCamera cam = _cameras[existingCamera];
@@ -255,9 +264,10 @@ public class ModuleCameras : MonoBehaviour
 		return null;
 	}
 
-	public IEnumerator UnzoomCamera(BombComponent component, float delay)
+	public IEnumerator UnzoomCamera(TwitchModule component, float delay)
 	{
 		int existingCamera = CurrentModulesContains(component);
+		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
 		{
 			ModuleCamera cam = _cameras[existingCamera];
@@ -274,7 +284,7 @@ public class ModuleCameras : MonoBehaviour
 		module.LastUsed = DateTime.UtcNow;
 
 		// Is the module already viewed?
-		int existingCamera = CurrentModulesContains(module.bombComponent);
+		int existingCamera = CurrentModulesContains(module);
 		if (existingCamera > -1)
 			return false;
 
@@ -490,18 +500,48 @@ public class ModuleCameras : MonoBehaviour
 			DisableCameraWall();
 	}
 
-	private int CurrentModulesContains(MonoBehaviour component)
+	private int CurrentModulesContains(TwitchModule component)
 	{
 		int i = 0;
 		foreach (ModuleCamera camera in _cameras)
 		{
 			if ((camera.Module != null) &&
-				(ReferenceEquals(camera.Module.bombComponent, component)))
+				(ReferenceEquals(camera.Module, component)))
 			{
 				return i;
 			}
+
+
 			i++;
 		}
+		return -1;
+	}
+
+	private int BorrowCameraForZoom(TwitchModule component)
+	{
+		int[] camerasIndexes = {11, 12, 7, 16, 15, 8, 10, 13, 9, 14, 17, 6, 5, 4, 3, 2, 1, 0};
+		for(int i = _cameras.Count > 6 ? 0 : 12; i < 18; i++)
+		{
+			var index = camerasIndexes[i];
+			var camera = _cameras[index];
+			
+			if ((camera.PreviousModule != null) &&
+			    (ReferenceEquals(camera.PreviousModule, component)))
+			{
+				//Already borrowed this camera, continue to use it.
+				return index;
+			}
+
+			if ((camera.Module != null) &&
+			    camera.Module.CameraPriority != CameraPriority.Pinned)
+			{
+				camera.PreviousModule = camera.Module;
+				camera.ViewModule(component);
+				return index;
+			}
+		}
+
+		//Could not even borrow an unpinned camera, to allow the requested zoom to happen.
 		return -1;
 	}
 
