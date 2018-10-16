@@ -812,7 +812,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224410962101721688}
   - component: {fileID: 114920560657127898}
-  - component: {fileID: 114100403078333124}
   m_Layer: 0
   m_Name: ModuleCameras
   m_TagString: Untagged
@@ -3054,31 +3053,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114100403078333124
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1447964943254096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1940867649, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  headerPrefab: {fileID: 114539387864190624}
-  timerPrefab: {fileID: 114856023003680104}
-  timerShadowPrefab: {fileID: 114222379700582844}
-  strikesPrefab: {fileID: 114355259703694948}
-  solvesPrefab: {fileID: 114910648592808902}
-  confidencePrefab: {fileID: 114065151001614582}
-  cameraPrefab: {fileID: 20934734821913038}
-  bombStatus: {fileID: 224450783986421466}
-  cameraWallEnabled: 0
-  notesTexts:
-  - {fileID: 114395755530108092}
-  - {fileID: 114443357932846720}
-  - {fileID: 114392112632624762}
-  - {fileID: 114999264070403536}
 --- !u!114 &114119224649166200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5003,6 +4977,20 @@ MonoBehaviour:
   m_Script: {fileID: -1923026728, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HeaderPrefab: {fileID: 114539387864190624}
+  TimerPrefab: {fileID: 114856023003680104}
+  TimerShadowPrefab: {fileID: 114222379700582844}
+  StrikesPrefab: {fileID: 114355259703694948}
+  SolvesPrefab: {fileID: 114910648592808902}
+  ConfidencePrefab: {fileID: 114065151001614582}
+  CameraPrefab: {fileID: 20934734821913038}
+  BombStatus: {fileID: 224450783986421466}
+  CameraWallEnabled: 0
+  NotesTexts:
+  - {fileID: 114395755530108092}
+  - {fileID: 114443357932846720}
+  - {fileID: 114392112632624762}
+  - {fileID: 114999264070403536}
 --- !u!114 &114946373812596920
 MonoBehaviour:
   m_ObjectHideFlags: 1

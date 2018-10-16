@@ -26,7 +26,7 @@ public class ModuleCameras : MonoBehaviour
 		public bool LastInteractiveState;
 		public bool EscapePressed;
 
-		private static readonly Rect _zoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
+		private static readonly Rect ZoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
 		private Rect _originalCameraRect;
 
 		public static ModuleCamera CreateModuleCamera(Camera instantiatedCamera, ModuleCameras parentInstance, int layer)
@@ -48,14 +48,14 @@ public class ModuleCameras : MonoBehaviour
 			while ((Time.time - initialTime) < duration)
 			{
 				float lerp = (Time.time - initialTime) / duration;
-				CameraInstance.rect = new Rect(Mathf.Lerp(_originalCameraRect.x, _zoomCameraLocation.x, lerp),
-					Mathf.Lerp(_originalCameraRect.y, _zoomCameraLocation.y, lerp),
-					Mathf.Lerp(_originalCameraRect.width, _zoomCameraLocation.width, lerp),
-					Mathf.Lerp(_originalCameraRect.height, _zoomCameraLocation.height, lerp));
+				CameraInstance.rect = new Rect(Mathf.Lerp(_originalCameraRect.x, ZoomCameraLocation.x, lerp),
+					Mathf.Lerp(_originalCameraRect.y, ZoomCameraLocation.y, lerp),
+					Mathf.Lerp(_originalCameraRect.width, ZoomCameraLocation.width, lerp),
+					Mathf.Lerp(_originalCameraRect.height, ZoomCameraLocation.height, lerp));
 
 				yield return null;
 			}
-			CameraInstance.rect = _zoomCameraLocation;
+			CameraInstance.rect = ZoomCameraLocation;
 		}
 
 		public IEnumerator UnzoomCamera(float duration = 1.0f)
@@ -65,10 +65,10 @@ public class ModuleCameras : MonoBehaviour
 			while ((Time.time - initialTime) < duration)
 			{
 				float lerp = (Time.time - initialTime) / duration;
-				CameraInstance.rect = new Rect(Mathf.Lerp(_zoomCameraLocation.x, _originalCameraRect.x, lerp),
-					Mathf.Lerp(_zoomCameraLocation.y, _originalCameraRect.y, lerp),
-					Mathf.Lerp(_zoomCameraLocation.width, _originalCameraRect.width, lerp),
-					Mathf.Lerp(_zoomCameraLocation.height, _originalCameraRect.height, lerp));
+				CameraInstance.rect = new Rect(Mathf.Lerp(ZoomCameraLocation.x, _originalCameraRect.x, lerp),
+					Mathf.Lerp(ZoomCameraLocation.y, _originalCameraRect.y, lerp),
+					Mathf.Lerp(ZoomCameraLocation.width, _originalCameraRect.width, lerp),
+					Mathf.Lerp(ZoomCameraLocation.height, _originalCameraRect.height, lerp));
 
 				yield return null;
 			}
@@ -149,25 +149,22 @@ public class ModuleCameras : MonoBehaviour
 
 			Module = null;
 		}
-
-		private bool ModuleIsSolved => Module.Solved;
 	}
 
 	#region Public Fields
-	public Text HeaderPrefab { get => _data.headerPrefab; set => _data.headerPrefab = value; }
-	public Text TimerPrefab { get => _data.timerPrefab; set => _data.timerPrefab = value; }
-	public Text TimerShadowPrefab { get => _data.timerShadowPrefab; set => _data.timerShadowPrefab = value; }
-	public Text StrikesPrefab { get => _data.strikesPrefab; set => _data.strikesPrefab = value; }
-	public Text SolvesPrefab { get => _data.solvesPrefab; set => _data.solvesPrefab = value; }
-	public Text ConfidencePrefab { get => _data.confidencePrefab; set => _data.confidencePrefab = value; }
-	public Camera CameraPrefab { get => _data.cameraPrefab; set => _data.cameraPrefab = value; }
-	public RectTransform BombStatus { get => _data.bombStatus; set => _data.bombStatus = value; }
-	public bool CameraWallEnabled { get => _data.cameraWallEnabled; set => _data.cameraWallEnabled = value; }
-	public Text[] NotesTexts { get => _data.notesTexts; set => _data.notesTexts = value; }
+	public Text HeaderPrefab;
+	public Text TimerPrefab;
+	public Text TimerShadowPrefab;
+	public Text StrikesPrefab;
+	public Text SolvesPrefab;
+	public Text ConfidencePrefab;
+	public Camera CameraPrefab;
+	public RectTransform BombStatus;
+	public bool CameraWallEnabled;
+	public Text[] NotesTexts;
 	#endregion
 
 	#region Private Fields
-	private ModuleCamerasData _data;
 	private readonly List<ModuleCamera> _cameras = new List<ModuleCamera>();
 	private BombCommander _currentBomb;
 
@@ -206,22 +203,16 @@ public class ModuleCameras : MonoBehaviour
 	//private float currentSuccess;
 	#endregion
 
-	#region Public Statics
-	public static int Index;
-	#endregion
-
 	#region Private Static Readonlys
 	private const string LogPrefix = "[ModuleCameras] ";
 	private static readonly Vector3 HudScale = new Vector3(0.7f, Mathf.Round(1), Mathf.Round(1));
 	#endregion
 
 	#region Unity Lifecycle
-	private void Awake() => _data = GetComponent<ModuleCamerasData>();
-
 	// These are the layers used by the 18 module cameras.
 	// Layer 11 is the interactive layer (highlightables).
 	// Layer 13 is used by KTANE for mouse rendering and 14–15 for VR.
-	private static readonly int[] _cameraLayers = { 8, 9, 10, 12, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+	private static readonly int[] CameraLayers = { 8, 9, 10, 12, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
 
 	private void InstantiateCamera(int cameraIx)
 	{
@@ -230,7 +221,7 @@ public class ModuleCameras : MonoBehaviour
 		instantiatedCamera.aspect = 1f;
 		instantiatedCamera.depth = 99;
 
-		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, _cameraLayers[cameraIx]);
+		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, CameraLayers[cameraIx]);
 
 		_cameras.Add(cam);
 	}
