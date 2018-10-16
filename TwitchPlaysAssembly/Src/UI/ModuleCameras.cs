@@ -522,8 +522,8 @@ public class ModuleCameras : MonoBehaviour
 		int[] camerasIndexes = {11, 12, 7, 16, 15, 8, 10, 13, 9, 14, 17, 6, 5, 4, 3, 2, 1, 0};
 		for(int i = _cameras.Count > 6 ? 0 : 12; i < 18; i++)
 		{
-			var index = camerasIndexes[i];
-			var camera = _cameras[index];
+			int index = camerasIndexes[i];
+			ModuleCamera camera = _cameras[index];
 			
 			if ((camera.PreviousModule != null) &&
 			    (ReferenceEquals(camera.PreviousModule, component)))
@@ -532,13 +532,12 @@ public class ModuleCameras : MonoBehaviour
 				return index;
 			}
 
-			if ((camera.Module != null) &&
-			    camera.Module.CameraPriority != CameraPriority.Pinned)
-			{
-				camera.PreviousModule = camera.Module;
-				camera.ViewModule(component);
-				return index;
-			}
+			if ((camera.Module == null) || camera.Module.CameraPriority == CameraPriority.Pinned)
+				continue;
+
+			camera.PreviousModule = camera.Module;
+			camera.ViewModule(component);
+			return index;
 		}
 
 		//Could not even borrow an unpinned camera, to allow the requested zoom to happen.
