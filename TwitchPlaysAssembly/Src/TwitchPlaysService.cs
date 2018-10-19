@@ -34,6 +34,14 @@ public class TwitchPlaysService : MonoBehaviour
 	private HashSet<Mod> _checkedMods;
 	private TwitchPlaysProperties _publicProperties;
 	private readonly Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
+	private TwitchPlaysServiceData _data;
+
+	public RectTransform BombHeader { get => _data.BombHeader; }
+
+	private void Awake()
+	{
+		_data = GetComponent<TwitchPlaysServiceData>();
+	}
 
 	private void Start()
 	{
@@ -74,7 +82,7 @@ public class TwitchPlaysService : MonoBehaviour
 		GameObject infoObject = new GameObject("TwitchPlays_Info");
 		infoObject.transform.parent = gameObject.transform;
 		_publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
-		_publicProperties.TwitchPlaysService = this;
+		_publicProperties.TwitchPlaysService = this; // Useless variable?
 		if (TwitchPlaySettings.data.SkipModManagerInstructionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
 			ModManagerManualInstructionScreen.HasShownOnce = true;
 	}
@@ -288,5 +296,25 @@ public class TwitchPlaysService : MonoBehaviour
 
 		ComponentSolverFactory.SilentMode = false;
 		ModuleData.WriteDataToFile();
+	}
+
+	public void SetHeaderVisbility(bool visible)
+	{
+		StartCoroutine(AnimateHeaderVisiblity(visible));
+	}
+
+	private IEnumerator AnimateHeaderVisiblity(bool visbile)
+	{
+		var startPosition = BombHeader.anchoredPosition;
+		var endPosition = new Vector2(0, visbile ? 0 : -24);
+		float startTime = Time.time;
+		float alpha = 0;
+
+		while (alpha < 1)
+		{
+			alpha = Mathf.Min((Time.time - startTime) / 0.75f, 1);
+			BombHeader.anchoredPosition = Vector2.Lerp(startPosition, endPosition, 1 + Mathf.Pow(alpha - 1, 5));
+			yield return null;
+		}
 	}
 }

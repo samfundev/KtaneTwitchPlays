@@ -79,6 +79,8 @@ public class BombMessageResponder : MessageResponder
 			System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
 		}
 
+		TwitchPlaysService.Instance.SetHeaderVisbility(true);
+
 		IRCConnection.SendMessage(BombCommanders.Count == 1
 			? TwitchPlaySettings.data.BombLiveMessage
 			: TwitchPlaySettings.data.MultiBombLiveMessage);
@@ -221,6 +223,7 @@ public class BombMessageResponder : MessageResponder
 		StopAllCoroutines();
 		Leaderboard.Instance.BombsAttempted++;
 		parentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
+		TwitchPlaysService.Instance.SetHeaderVisbility(false);
 
 		LogUploader.Instance.Post();
 		parentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
