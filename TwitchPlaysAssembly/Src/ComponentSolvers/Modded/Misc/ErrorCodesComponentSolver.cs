@@ -7,10 +7,10 @@ public class ErrorCodesComponentSolver : ComponentSolver
 	public ErrorCodesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		   base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		submit = (KMSelectable) _sendField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
+		object component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
+		_submit = (KMSelectable) SendField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -33,21 +33,20 @@ public class ErrorCodesComponentSolver : ComponentSolver
 			else yield break;
 		}
 		yield return null;
-		yield return DoInteractionClick(submit);
+		yield return DoInteractionClick(_submit);
 	}
 
 	static ErrorCodesComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("ErrorCodes");
-		_buttonsField = _componentType.GetField("numberButtons", BindingFlags.Public | BindingFlags.Instance);
-		_sendField = _componentType.GetField("sendButton", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("ErrorCodes");
+		ButtonsField = ComponentType.GetField("numberButtons", BindingFlags.Public | BindingFlags.Instance);
+		SendField = ComponentType.GetField("sendButton", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
-	private static FieldInfo _sendField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
+	private static readonly FieldInfo SendField;
 
-	private readonly object _component = null;
-	private readonly KMSelectable[] _buttons = null;
-	private readonly KMSelectable submit = null;
+	private readonly KMSelectable[] _buttons;
+	private readonly KMSelectable _submit;
 }

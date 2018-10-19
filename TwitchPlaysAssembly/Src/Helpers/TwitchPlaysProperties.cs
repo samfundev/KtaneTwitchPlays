@@ -35,7 +35,7 @@
 
 		foreach (TwitchModule handle in BombMessageResponder.Instance.ComponentHandles)
 		{
-			if (handle.bombComponent != component) continue;
+			if (handle.BombComponent != component) continue;
 			handle.Solver.OnFakeStrike();
 			break;
 		}

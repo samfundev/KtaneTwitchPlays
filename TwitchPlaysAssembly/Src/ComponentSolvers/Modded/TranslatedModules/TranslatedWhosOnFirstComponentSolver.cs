@@ -10,21 +10,21 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 	public TranslatedWhosOnFirstComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
+		Component component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, _component, _componentType);
-		if (language != null) modInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
-		modInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, _component, _componentType)}";
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, component, ComponentType);
+		if (language != null) ModInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
+		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, component, ComponentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
 		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
+		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -50,13 +50,12 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 
 	static TranslatedWhosOnFirstComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("WhosOnFirstTranslatedModule");
-		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("WhosOnFirstTranslatedModule");
+		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
 
-	private readonly Component _component = null;
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons;
 }

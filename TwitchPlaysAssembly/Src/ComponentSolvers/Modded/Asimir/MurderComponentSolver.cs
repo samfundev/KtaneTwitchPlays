@@ -11,10 +11,10 @@ public class MurderComponentSolver : ComponentSolver
 	public MurderComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		_display = (TextMesh[]) _displayField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.");
+		_component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
+		_display = (TextMesh[]) DisplayField.GetValue(_component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.");
 	}
 
 	private IEnumerable CycleThroughCategory(int index, string search = null)
@@ -129,17 +129,17 @@ public class MurderComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		while (!_isActivated)
+		while (!IsActivated)
 		{
 			yield return true;
 		}
 
-		DebugHelper.Log($"Display Values = {_displayValue[0]}, {_displayValue[1]}, {_displayValue[2]},  Solution values = {_solutionValue[0]}, {_solutionValue[1]}, {_solutionValue[2]}");
-		while (_displayValue[0] != _solutionValue[0] || _displayValue[1] != _solutionValue[1] || _displayValue[2] != _solutionValue[2])
+		DebugHelper.Log($"Display Values = {DisplayValue[0]}, {DisplayValue[1]}, {DisplayValue[2]},  Solution values = {SolutionValue[0]}, {SolutionValue[1]}, {SolutionValue[2]}");
+		while (DisplayValue[0] != SolutionValue[0] || DisplayValue[1] != SolutionValue[1] || DisplayValue[2] != SolutionValue[2])
 		{
-			if (_displayValue[0] != _solutionValue[0])
+			if (DisplayValue[0] != SolutionValue[0])
 				yield return DoInteractionClick(_buttons[1]);
-			else if (_displayValue[1] != _solutionValue[1])
+			else if (DisplayValue[1] != SolutionValue[1])
 				yield return DoInteractionClick(_buttons[3]);
 			else
 				yield return DoInteractionClick(_buttons[5]);
@@ -150,21 +150,21 @@ public class MurderComponentSolver : ComponentSolver
 
 	static MurderComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("MurderModule");
-		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		_displayField = _componentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("MurderModule");
+		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+		DisplayField = ComponentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
 
-		_displayValueField = _componentType.GetField("displayVal", BindingFlags.NonPublic | BindingFlags.Instance);
-		_solutionValueField = _componentType.GetField("solution", BindingFlags.NonPublic | BindingFlags.Instance);
-		_isActivatedField = _componentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
+		DisplayValueField = ComponentType.GetField("displayVal", BindingFlags.NonPublic | BindingFlags.Instance);
+		SolutionValueField = ComponentType.GetField("solution", BindingFlags.NonPublic | BindingFlags.Instance);
+		IsActivatedField = ComponentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
-	private static FieldInfo _displayField = null;
-	private static FieldInfo _displayValueField = null;
-	private static FieldInfo _solutionValueField = null;
-	private static FieldInfo _isActivatedField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
+	private static readonly FieldInfo DisplayField;
+	private static readonly FieldInfo DisplayValueField;
+	private static readonly FieldInfo SolutionValueField;
+	private static readonly FieldInfo IsActivatedField;
 
 	private static readonly string[] People = { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
 	private static readonly string[] Weapons = { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };
@@ -175,11 +175,11 @@ public class MurderComponentSolver : ComponentSolver
 	private static readonly string[][] NameSpellings = { People, Weapons, Rooms };
 	private static readonly string[] NameMisspelled = { "Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}." };
 
-	private readonly object _component = null;
-	private readonly KMSelectable[] _buttons = null;
-	private readonly TextMesh[] _display = null;
+	private readonly object _component;
+	private readonly KMSelectable[] _buttons;
+	private readonly TextMesh[] _display;
 
-	private int[] _displayValue => (int[]) _displayValueField.GetValue(_component);
-	private int[] _solutionValue => (int[]) _solutionValueField.GetValue(_component);
-	private bool _isActivated => (bool) _isActivatedField.GetValue(_component);
+	private int[] DisplayValue => (int[]) DisplayValueField.GetValue(_component);
+	private int[] SolutionValue => (int[]) SolutionValueField.GetValue(_component);
+	private bool IsActivated => (bool) IsActivatedField.GetValue(_component);
 }

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
 public class TwoBitsComponentSolver : ComponentSolver
 {
-	private readonly Component c;
+	private readonly Component _c;
 
+	[SuppressMessage("ReSharper", "UnusedMember.Local")]
+	[SuppressMessage("ReSharper", "UnusedMember.Global")]
 	private enum TwoBitsState
 	{
 		Inactive,
@@ -25,12 +28,12 @@ public class TwoBitsComponentSolver : ComponentSolver
 	public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		c = bombComponent.GetComponent(_componentSolverType);
+		_c = bombComponent.GetComponent(ComponentSolverType);
 
-		_submit = (MonoBehaviour) _submitButtonField.GetValue(c);
-		_query = (MonoBehaviour) _queryButtonField.GetValue(c);
-		_buttons = (MonoBehaviour[]) _buttonsField.GetValue(c);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.");
+		_submit = (MonoBehaviour) SubmitButtonField.GetValue(_c);
+		_query = (MonoBehaviour) QueryButtonField.GetValue(_c);
+		_buttons = (MonoBehaviour[]) ButtonsField.GetValue(_c);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Query the answer with !{0} press K T query. Submit the answer with !{0} press G Z submit.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -98,32 +101,32 @@ public class TwoBitsComponentSolver : ComponentSolver
 		}
 	}
 
-	private string CorrectResponse => ((string) _calculateCorrectSubmissionMethod.Invoke(c, null)).ToLowerInvariant();
-	private string CurrentQuery => ((string) _getCurrentQueryStringMethod.Invoke(c, null)).ToLowerInvariant();
-	private TwoBitsState State => (TwoBitsState) _stateField.GetValue(c);
+	private string CorrectResponse => ((string) CalculateCorrectSubmissionMethod.Invoke(_c, null)).ToLowerInvariant();
+	private string CurrentQuery => ((string) GetCurrentQueryStringMethod.Invoke(_c, null)).ToLowerInvariant();
+	private TwoBitsState State => (TwoBitsState) StateField.GetValue(_c);
 
 	static TwoBitsComponentSolver()
 	{
-		_componentSolverType = ReflectionHelper.FindType("TwoBitsModule");
-		_submitButtonField = _componentSolverType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
-		_queryButtonField = _componentSolverType.GetField("QueryButton", BindingFlags.Public | BindingFlags.Instance);
-		_buttonsField = _componentSolverType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-		_stateField = _componentSolverType.GetField("currentState", BindingFlags.NonPublic | BindingFlags.Instance);
-		_calculateCorrectSubmissionMethod = _componentSolverType.GetMethod("CalculateCorrectSubmission",
+		ComponentSolverType = ReflectionHelper.FindType("TwoBitsModule");
+		SubmitButtonField = ComponentSolverType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
+		QueryButtonField = ComponentSolverType.GetField("QueryButton", BindingFlags.Public | BindingFlags.Instance);
+		ButtonsField = ComponentSolverType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
+		StateField = ComponentSolverType.GetField("currentState", BindingFlags.NonPublic | BindingFlags.Instance);
+		CalculateCorrectSubmissionMethod = ComponentSolverType.GetMethod("CalculateCorrectSubmission",
 			BindingFlags.NonPublic | BindingFlags.Instance);
-		_getCurrentQueryStringMethod = _componentSolverType.GetMethod("GetCurrentQueryString",
+		GetCurrentQueryStringMethod = ComponentSolverType.GetMethod("GetCurrentQueryString",
 			BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentSolverType = null;
-	private static FieldInfo _submitButtonField = null;
-	private static FieldInfo _queryButtonField = null;
-	private static FieldInfo _buttonsField = null;
-	private static MethodInfo _calculateCorrectSubmissionMethod = null;
-	private static MethodInfo _getCurrentQueryStringMethod = null;
-	private static FieldInfo _stateField = null;
+	private static readonly Type ComponentSolverType;
+	private static readonly FieldInfo SubmitButtonField;
+	private static readonly FieldInfo QueryButtonField;
+	private static readonly FieldInfo ButtonsField;
+	private static readonly MethodInfo CalculateCorrectSubmissionMethod;
+	private static readonly MethodInfo GetCurrentQueryStringMethod;
+	private static readonly FieldInfo StateField;
 
-	private readonly MonoBehaviour[] _buttons = null;
-	private readonly MonoBehaviour _query = null;
-	private readonly MonoBehaviour _submit = null;
+	private readonly MonoBehaviour[] _buttons;
+	private readonly MonoBehaviour _query;
+	private readonly MonoBehaviour _submit;
 }

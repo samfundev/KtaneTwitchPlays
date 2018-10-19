@@ -8,7 +8,7 @@ public class LetterKeysComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Letter%20Keys");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Letter%20Keys");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -35,5 +35,5 @@ public class LetterKeysComponentSolver : ComponentSolver
 		}
 	}
 
-	private readonly KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons;
 }

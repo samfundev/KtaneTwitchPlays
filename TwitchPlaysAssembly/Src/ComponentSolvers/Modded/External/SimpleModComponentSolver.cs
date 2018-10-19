@@ -2,9 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
@@ -21,7 +19,7 @@ public class SimpleModComponentSolver : ComponentSolver
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		TimeMode = OtherModes.TimeModeOn;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -37,10 +35,10 @@ public class SimpleModComponentSolver : ComponentSolver
 		string exception = null;
 		try
 		{
-			bool regexValid = modInfo.validCommands == null;
+			bool regexValid = ModInfo.validCommands == null;
 			if (!regexValid)
 			{
-				foreach (string regex in modInfo.validCommands)
+				foreach (string regex in ModInfo.validCommands)
 				{
 					regexValid = Regex.IsMatch(inputCommand, regex, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 					if (regexValid)

@@ -10,15 +10,15 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.Buttons;
-		modInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
 	}
 
-	private static readonly string[] phrases = { "ready", "first", "no", "blank", "nothing", "yes", "what", "uhhh", "left", "right", "middle", "okay", "wait", "press", "you", "you are", "your", "you're", "ur", "u", "uh huh", "uh uh", "what?", "done", "next", "hold", "sure", "like" };
+	private static readonly string[] Phrases = { "ready", "first", "no", "blank", "nothing", "yes", "what", "uhhh", "left", "right", "middle", "okay", "wait", "press", "you", "you are", "your", "you're", "ur", "u", "uh huh", "uh uh", "what?", "done", "next", "hold", "sure", "like" };
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string word = inputCommand.ToLowerInvariant().Trim();
-		if (!phrases.Contains(word))
+		if (!Phrases.Contains(word))
 		{
 			yield return null;
 			yield return $"sendtochaterror The word \"{word}\" isn't a valid word.";
@@ -61,5 +61,5 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		}
 	}
 
-	private KeypadButton[] _buttons = null;
+	private readonly KeypadButton[] _buttons;
 }

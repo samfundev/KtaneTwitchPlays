@@ -6,7 +6,7 @@ public class ColorGeneratorShim : ComponentSolverShim
 	public ColorGeneratorShim(BombCommander bombCommander, BombComponent bombComponent)
 		: base(bombCommander, bombComponent, "Color Generator")
 	{
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)

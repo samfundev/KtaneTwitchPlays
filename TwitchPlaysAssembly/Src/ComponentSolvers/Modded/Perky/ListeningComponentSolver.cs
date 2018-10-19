@@ -43,7 +43,7 @@ public class ListeningComponentSolver : ComponentSolver
 			throw new NotSupportedException("Component had null KMSelectables.");
 		}
 
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Listen to the sound with !{0} press play. Enter the response with !{0} press $ & * * #.");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Listen to the sound with !{0} press play. Enter the response with !{0} press $ & * * #.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -70,6 +70,6 @@ public class ListeningComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[button]);
 	}
 
-	private readonly MonoBehaviour _play = null;
-	private MonoBehaviour[] _buttons = null;
+	private readonly MonoBehaviour _play;
+	private readonly MonoBehaviour[] _buttons;
 }

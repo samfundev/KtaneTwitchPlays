@@ -10,22 +10,22 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	public TranslatedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_downButtons = (KMSelectable[]) _downButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
-		_submitButton = (MonoBehaviour) _submitButtonField.GetValue(bombComponent.GetComponent(_passwordComponentType));
-		_display = (TextMesh[]) _displayField.GetValue(bombComponent.GetComponent(_passwordComponentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]");
+		_downButtons = (KMSelectable[]) DownButtonField.GetValue(bombComponent.GetComponent(PasswordComponentType));
+		_submitButton = (MonoBehaviour) SubmitButtonField.GetValue(bombComponent.GetComponent(PasswordComponentType));
+		_display = (TextMesh[]) DisplayField.GetValue(bombComponent.GetComponent(PasswordComponentType));
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(_passwordComponentType), _passwordComponentType);
-		if (language != null) modInfo.manualCode = $"Password{language}";
-		modInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(_passwordComponentType), _passwordComponentType)}";
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(PasswordComponentType), PasswordComponentType);
+		if (language != null) ModInfo.manualCode = $"Password{language}";
+		ModInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(PasswordComponentType), PasswordComponentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
 		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
+		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	private static string DeconstructHangulSyllableToJamos(char c)
@@ -40,7 +40,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		return text.Replace("ᅬ", "ᅩᅵ");
 	}
 
-	private static readonly Dictionary<char, char> _similarJamos = @"ᄀᆨ,ᄁᆩ,ᄂᆫ,ᄃᆮ,ᄅᆯ,ᄆᆷ,ᄇᆸ,ᄉᆺ,ᄊᆻ,ᄋᆼ,ᄌᆽ,ᄎᆾ,ᄏᆿ,ᄐᇀ,ᄑᇁ,ᄒᇂ".Split(',').ToDictionary(str => str[0], str => str[1]);
+	private static readonly Dictionary<char, char> SimilarJamos = @"ᄀᆨ,ᄁᆩ,ᄂᆫ,ᄃᆮ,ᄅᆯ,ᄆᆷ,ᄇᆸ,ᄉᆺ,ᄊᆻ,ᄋᆼ,ᄌᆽ,ᄎᆾ,ᄏᆿ,ᄐᇀ,ᄑᇁ,ᄒᇂ".Split(',').ToDictionary(str => str[0], str => str[1]);
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
@@ -65,8 +65,8 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		}
 
 		// Special case for Korean (convert Hangul to Jamos)
-		var lettersToSubmit = commandParts[0].Length > 0 && commandParts[0][0] >= '가' && commandParts[0][0] <= '힣'
-			? commandParts[0].SelectMany(ch => DeconstructHangulSyllableToJamos(ch)).Select(ch => _similarJamos.ContainsKey(ch) ? _similarJamos[ch] : ch).Join("")
+		string lettersToSubmit = commandParts[0].Length > 0 && commandParts[0][0] >= '가' && commandParts[0][0] <= '힣'
+			? commandParts[0].SelectMany(DeconstructHangulSyllableToJamos).Select(ch => SimilarJamos.ContainsKey(ch) ? SimilarJamos[ch] : ch).Join("")
 			: commandParts[0];
 
 		if (lettersToSubmit.Length != 5)
@@ -124,18 +124,18 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
 	static TranslatedPasswordComponentSolver()
 	{
-		_passwordComponentType = ReflectionHelper.FindType("PasswordsTranslatedModule");
-		_displayField = _passwordComponentType.GetField("DisplaySlots", BindingFlags.NonPublic | BindingFlags.Instance);
-		_downButtonField = _passwordComponentType.GetField("ButtonsDown", BindingFlags.Public | BindingFlags.Instance);
-		_submitButtonField = _passwordComponentType.GetField("ButtonSubmit", BindingFlags.Public | BindingFlags.Instance);
+		PasswordComponentType = ReflectionHelper.FindType("PasswordsTranslatedModule");
+		DisplayField = PasswordComponentType.GetField("DisplaySlots", BindingFlags.NonPublic | BindingFlags.Instance);
+		DownButtonField = PasswordComponentType.GetField("ButtonsDown", BindingFlags.Public | BindingFlags.Instance);
+		SubmitButtonField = PasswordComponentType.GetField("ButtonSubmit", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _passwordComponentType = null;
-	private static FieldInfo _displayField = null;
-	private static FieldInfo _submitButtonField = null;
-	private static FieldInfo _downButtonField = null;
+	private static readonly Type PasswordComponentType;
+	private static readonly FieldInfo DisplayField;
+	private static readonly FieldInfo SubmitButtonField;
+	private static readonly FieldInfo DownButtonField;
 
-	private readonly MonoBehaviour _submitButton = null;
-	private KMSelectable[] _downButtons = null;
-	private readonly TextMesh[] _display = null;
+	private readonly MonoBehaviour _submitButton;
+	private readonly KMSelectable[] _downButtons;
+	private readonly TextMesh[] _display;
 }

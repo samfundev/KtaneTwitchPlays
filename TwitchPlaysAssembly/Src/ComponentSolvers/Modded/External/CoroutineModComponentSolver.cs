@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
@@ -21,7 +19,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		TimeMode = OtherModes.TimeModeOn;
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -32,21 +30,21 @@ public class CoroutineModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		IEnumerator responseCoroutine = null;
+		IEnumerator responseCoroutine;
 
-		bool RegexValid = modInfo.validCommands == null;
-		if (!RegexValid)
+		bool regexValid = ModInfo.validCommands == null;
+		if (!regexValid)
 		{
-			foreach (string regex in modInfo.validCommands)
+			foreach (string regex in ModInfo.validCommands)
 			{
-				RegexValid = Regex.IsMatch(inputCommand, regex, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-				if (RegexValid)
+				regexValid = Regex.IsMatch(inputCommand, regex, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+				if (regexValid)
 				{
 					break;
 				}
 			}
 		}
-		if (!RegexValid)
+		if (!regexValid)
 			yield break;
 
 		try
@@ -65,12 +63,12 @@ public class CoroutineModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		//Previous changelists mentioned that people using the TPAPI were not following strict rules about how coroutine implementations should be done, w.r.t. required yield returning first before doing things.
+		//Previous change lists mentioned that people using the TPAPI were not following strict rules about how coroutine implementations should be done, w.r.t. required yield returning first before doing things.
 		//From the TPAPI side of things, this was *never* an explicit requirement. This yield return is here to explicitly follow the internal design for how component solvers are structured, so that external
 		//code would never be executed until absolutely necessary.
 		//There is the side-effect though that invalid commands sent to the module will appear as if they were 'correctly' processed, by executing the focus.
 		//I'd rather have interactions that are not broken by timing mismatches, even if the tradeoff is that it looks like it accepted invalid commands.
-		if (!modInfo.DoesTheRightThing)
+		if (!ModInfo.DoesTheRightThing)
 		{
 			yield return "modcoroutine";
 		}

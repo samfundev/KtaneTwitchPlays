@@ -10,10 +10,10 @@ public class KnowYourWayComponentSolver : ComponentSolver
 	public KnowYourWayComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
 		: base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = _buttonFields.Select(field => (KMSelectable) field.GetValue(_component)).ToArray();
-		_textMeshes = _textFields.Select(field => (TextMesh) field.GetValue(_component)).ToArray();
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press the buttons labeled UDLR with !{0} press UDLR.");
+		object component = bombComponent.GetComponent(ComponentType);
+		_buttons = ButtonFields.Select(field => (KMSelectable) field.GetValue(component)).ToArray();
+		_textMeshes = TextFields.Select(field => (TextMesh) field.GetValue(component)).ToArray();
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press the buttons labeled UDLR with !{0} press UDLR.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -28,7 +28,7 @@ public class KnowYourWayComponentSolver : ComponentSolver
 		foreach (char character in iterator)
 		{
 			yield return null;
-			for (int i = 0; i < _textFields.Length; i++)
+			for (int i = 0; i < TextFields.Length; i++)
 			{
 				if (_textMeshes[i].text.ToLower()[0] == character)
 				{
@@ -42,17 +42,16 @@ public class KnowYourWayComponentSolver : ComponentSolver
 
 	static KnowYourWayComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("KnowYourWay");
-		_buttonFields = _directions.Select(direction => _componentType.GetField(direction + "Button", BindingFlags.Public | BindingFlags.Instance)).ToArray();
-		_textFields = _directions.Select(direction => _componentType.GetField(direction + "Text", BindingFlags.Public | BindingFlags.Instance)).ToArray();
+		ComponentType = ReflectionHelper.FindType("KnowYourWay");
+		ButtonFields = Directions.Select(direction => ComponentType.GetField(direction + "Button", BindingFlags.Public | BindingFlags.Instance)).ToArray();
+		TextFields = Directions.Select(direction => ComponentType.GetField(direction + "Text", BindingFlags.Public | BindingFlags.Instance)).ToArray();
 	}
 
-	private static readonly Type _componentType = null;
-	private static readonly FieldInfo[] _buttonFields = null;
-	private static readonly FieldInfo[] _textFields = null;
-	private readonly KMSelectable[] _buttons = null;
-	private readonly TextMesh[] _textMeshes = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo[] ButtonFields;
+	private static readonly FieldInfo[] TextFields;
+	private readonly KMSelectable[] _buttons;
+	private readonly TextMesh[] _textMeshes;
 
-	private static readonly string[] _directions = { "Up", "Right", "Down", "Left" };
-	private readonly object _component = null;
+	private static readonly string[] Directions = { "Up", "Right", "Down", "Left" };
 }

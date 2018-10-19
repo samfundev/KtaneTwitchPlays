@@ -9,7 +9,7 @@ public class KeypadComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.buttons;
-		modInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver", "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", "Keypad");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver", "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", "Keypad");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -45,5 +45,5 @@ public class KeypadComponentSolver : ComponentSolver
 					_buttons)]);
 	}
 
-	private KeypadButton[] _buttons = null;
+	private readonly KeypadButton[] _buttons;
 }

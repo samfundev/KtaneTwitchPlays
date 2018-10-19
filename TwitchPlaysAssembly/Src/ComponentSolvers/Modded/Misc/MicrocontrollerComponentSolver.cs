@@ -8,10 +8,10 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 	public MicrocontrollerComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		object _component = bombComponent.GetComponent(_componentType);
-		_buttonOK = (KMSelectable) _buttonOKField.GetValue(_component);
-		_buttonUp = (KMSelectable) _buttonUpField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.");
+		object component = bombComponent.GetComponent(ComponentType);
+		_buttonOK = (KMSelectable) ButtonOKField.GetValue(component);
+		_buttonUp = (KMSelectable) ButtonUpField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -23,15 +23,15 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 		{
 			case 2 when commands[0].Equals("set"):
 			{
-				int colorIndex = Array.IndexOf(_colors, commands[1]);
+				int colorIndex = Array.IndexOf(Colors, commands[1]);
 				if (colorIndex > -1)
 				{
 					yield return null;
 
-					while (currentIndex != colorIndex)
+					while (_currentIndex != colorIndex)
 					{
 						DoInteractionClick(_buttonUp);
-						currentIndex = (currentIndex + 1) % 6;
+						_currentIndex = (_currentIndex + 1) % 6;
 
 						yield return new WaitForSeconds(0.1f);
 					}
@@ -43,7 +43,7 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 
 					if (lastStrikeCount == StrikeCount)
 					{
-						currentIndex = 0;
+						_currentIndex = 0;
 					}
 				}
 
@@ -66,18 +66,18 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 
 	static MicrocontrollerComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("Micro");
-		_buttonOKField = _componentType.GetField("buttonOK", BindingFlags.Public | BindingFlags.Instance);
-		_buttonUpField = _componentType.GetField("buttonUp", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("Micro");
+		ButtonOKField = ComponentType.GetField("buttonOK", BindingFlags.Public | BindingFlags.Instance);
+		ButtonUpField = ComponentType.GetField("buttonUp", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonOKField = null;
-	private static FieldInfo _buttonUpField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonOKField;
+	private static readonly FieldInfo ButtonUpField;
 
-	private static readonly string[] _colors = { "white", "red", "yellow", "magenta", "blue", "green" };
-	private int currentIndex = 0;
+	private static readonly string[] Colors = { "white", "red", "yellow", "magenta", "blue", "green" };
+	private int _currentIndex;
 
-	private readonly KMSelectable _buttonOK = null;
-	private readonly KMSelectable _buttonUp = null;
+	private readonly KMSelectable _buttonOK;
+	private readonly KMSelectable _buttonUp;
 }

@@ -7,9 +7,9 @@ public class NeedyMathComponentSolver : ComponentSolver
 	public NeedyMathComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
 		: base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer with !{0} submit -47.");
+		object component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer with !{0} submit -47.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -41,13 +41,12 @@ public class NeedyMathComponentSolver : ComponentSolver
 
 	static NeedyMathComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("NeedyMathModule");
-		_buttonsField = _componentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("NeedyMathModule");
+		ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
 
-	private readonly object _component = null;
-	private readonly KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons;
 }

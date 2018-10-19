@@ -11,10 +11,10 @@ public class WireSequenceComponentSolver : ComponentSolver
 	public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_wireSequence = (List<WireSequenceComponent.WireConfiguration>) _wireSequenceField.GetValue(bombComponent);
+		_wireSequence = (List<WireSequenceComponent.WireConfiguration>) WireSequenceField.GetValue(bombComponent);
 		_upButton = bombComponent.UpButton;
 		_downButton = bombComponent.DownButton;
-		modInfo = ComponentSolverFactory.GetModuleInfo("WireSequenceComponentSolver", "!{0} cut 7 [cut wire 7] | !{0} down, !{0} d [next stage] | !{0} up, !{0} u [previous stage] | !{0} cut 7 8 9 d [cut multiple wires and continue] | Use the numbers shown on the module", "Wire Sequence");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("WireSequenceComponentSolver", "!{0} cut 7 [cut wire 7] | !{0} down, !{0} d [next stage] | !{0} up, !{0} u [previous stage] | !{0} cut 7 8 9 d [cut multiple wires and continue] | Use the numbers shown on the module", "Wire Sequence");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -25,7 +25,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 		if (inputCommand.Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield return null;
-			int page = (int) _currentPageField.GetValue(BombComponent);
+			int page = (int) CurrentPageField.GetValue(BombComponent);
 			for (int i = page - 1; i >= 0; i--)
 			{
 				IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i + 1, i);
@@ -97,16 +97,16 @@ public class WireSequenceComponentSolver : ComponentSolver
 	private bool CanInteractWithWire(int wireIndex)
 	{
 		int wirePageIndex = wireIndex / 3;
-		return wirePageIndex == (int) _currentPageField.GetValue(BombComponent);
+		return wirePageIndex == (int) CurrentPageField.GetValue(BombComponent);
 	}
 
 	private WireSequenceWire GetWire(int wireIndex) => _wireSequence[wireIndex].Wire;
 
 	static WireSequenceComponentSolver()
 	{
-		_wireSequenceComponentType = typeof(WireSequenceComponent);
-		_wireSequenceField = _wireSequenceComponentType.GetField("wireSequence", BindingFlags.NonPublic | BindingFlags.Instance);
-		_currentPageField = _wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
+		Type wireSequenceComponentType = typeof(WireSequenceComponent);
+		WireSequenceField = wireSequenceComponentType.GetField("wireSequence", BindingFlags.NonPublic | BindingFlags.Instance);
+		CurrentPageField = wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
@@ -134,11 +134,10 @@ public class WireSequenceComponentSolver : ComponentSolver
 		}
 	}
 
-	private static Type _wireSequenceComponentType = null;
-	private static readonly FieldInfo _wireSequenceField = null;
-	private static readonly FieldInfo _currentPageField = null;
+	private static readonly FieldInfo WireSequenceField;
+	private static readonly FieldInfo CurrentPageField;
 
-	private readonly List<WireSequenceComponent.WireConfiguration> _wireSequence = null;
-	private readonly Selectable _upButton = null;
-	private readonly Selectable _downButton = null;
+	private readonly List<WireSequenceComponent.WireConfiguration> _wireSequence;
+	private readonly Selectable _upButton;
+	private readonly Selectable _downButton;
 }

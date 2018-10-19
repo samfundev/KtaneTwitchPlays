@@ -9,8 +9,8 @@ public class SwitchesComponentSolver : ComponentSolver
 	public SwitchesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip switches using !{0} flip 1 5 3 2.");
+		_component = bombComponent.GetComponent(ComponentType);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip switches using !{0} flip 1 5 3 2.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -31,19 +31,19 @@ public class SwitchesComponentSolver : ComponentSolver
 
 		foreach (int? switchIndex in switchIndices)
 		{
-			_OnToggleMethod.Invoke(_component, new object[] { switchIndex - 1 });
+			OnToggleMethod.Invoke(_component, new object[] { switchIndex - 1 });
 			yield return "trywaitcancel 0.1";
 		}
 	}
 
 	static SwitchesComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("SwitchModule");
-		_OnToggleMethod = _componentType.GetMethod("OnToggle", BindingFlags.NonPublic | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("SwitchModule");
+		OnToggleMethod = ComponentType.GetMethod("OnToggle", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static MethodInfo _OnToggleMethod = null;
+	private static readonly Type ComponentType;
+	private static readonly MethodInfo OnToggleMethod;
 
-	private readonly object _component = null;
+	private readonly object _component;
 }

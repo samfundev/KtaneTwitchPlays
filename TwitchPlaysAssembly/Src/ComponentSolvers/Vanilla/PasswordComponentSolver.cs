@@ -12,7 +12,7 @@ public class PasswordComponentSolver : ComponentSolver
 	{
 		_spinners = bombComponent.Spinners;
 		_submitButton = bombComponent.SubmitButton;
-		modInfo = ComponentSolverFactory.GetModuleInfo("PasswordComponentSolver", "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]", "Password");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("PasswordComponentSolver", "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]", "Password");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -106,6 +106,6 @@ public class PasswordComponentSolver : ComponentSolver
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 
-	private readonly List<CharSpinner> _spinners = null;
-	private readonly KeypadButton _submitButton = null;
+	private readonly List<CharSpinner> _spinners;
+	private readonly KeypadButton _submitButton;
 }

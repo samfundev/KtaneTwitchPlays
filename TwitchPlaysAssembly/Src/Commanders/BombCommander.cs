@@ -657,8 +657,8 @@ public class BombCommander
 
 		foreach (KMBombModule module in Bomb.GetComponentsInChildren<KMBombModule>().Where(x => solveBased.Contains(x.ModuleType)))
 		{
-			TwitchModule handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.bombComponent.GetComponent<KMBombModule>() != null)
-				.FirstOrDefault(x => x.bombComponent.GetComponent<KMBombModule>() == module);
+			TwitchModule handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.BombComponent.GetComponent<KMBombModule>() != null)
+				.FirstOrDefault(x => x.BombComponent.GetComponent<KMBombModule>() == module);
 			if (handle != null)
 			{
 				handle.Unsupported = true;

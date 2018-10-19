@@ -8,9 +8,9 @@ public class MotionSenseComponentSolver : ComponentSolver
 	public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_needy = (KMNeedyModule) _needyField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
+		_component = bombComponent.GetComponent(ComponentType);
+		_needy = (KMNeedyModule) NeedyField.GetValue(_component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
 		_needy.OnNeedyActivation += () =>
 		{
 			IRCConnection.SendMessage($"Motion Sense just activated: Active for {(int) _needy.GetNeedyTimeRemaining()} seconds.");
@@ -18,7 +18,7 @@ public class MotionSenseComponentSolver : ComponentSolver
 
 		_needy.OnTimerExpired += () =>
 		{
-			IRCConnection.SendMessage($"Motion Sense now Inactive.");
+			IRCConnection.SendMessage("Motion Sense now Inactive.");
 		};
 	}
 
@@ -28,21 +28,21 @@ public class MotionSenseComponentSolver : ComponentSolver
 		if (!inputCommand.Equals("status", StringComparison.InvariantCultureIgnoreCase))
 			yield break;
 
-		bool active = (bool) _activeField.GetValue(_component);
+		bool active = (bool) ActiveField.GetValue(_component);
 		IRCConnection.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int) _needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
 	}
 
 	static MotionSenseComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("MotionSenseModule");
-		_activeField = _componentType.GetField("_active", BindingFlags.NonPublic | BindingFlags.Instance);
-		_needyField = _componentType.GetField("NeedyModule", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("MotionSenseModule");
+		ActiveField = ComponentType.GetField("_active", BindingFlags.NonPublic | BindingFlags.Instance);
+		NeedyField = ComponentType.GetField("NeedyModule", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
+	private static readonly Type ComponentType;
 	private static Component _component;
-	private static FieldInfo _activeField = null;
-	private static FieldInfo _needyField = null;
+	private static readonly FieldInfo ActiveField;
+	private static readonly FieldInfo NeedyField;
 
-	private KMNeedyModule _needy = null;
+	private readonly KMNeedyModule _needy;
 }

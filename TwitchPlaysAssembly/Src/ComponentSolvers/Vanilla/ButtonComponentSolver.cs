@@ -15,7 +15,7 @@ public class ButtonComponentSolver : ComponentSolver
 
 		bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
 		_button = bombComponent.button;
-		modInfo = VanillaRuleModifier.IsSeedVanilla() ? buttonInfo : buttonInfoModified;
+		ModInfo = VanillaRuleModifier.IsSeedVanilla() ? buttonInfo : buttonInfoModified;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -218,6 +218,6 @@ public class ButtonComponentSolver : ComponentSolver
 		ruleset.RuleList.RemoveAt(0);
 	}
 
-	private readonly PressableButton _button = null;
-	private bool _held = false;
+	private readonly PressableButton _button;
+	private bool _held;
 }

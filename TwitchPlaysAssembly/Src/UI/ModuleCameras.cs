@@ -93,19 +93,19 @@ public class ModuleCameras : MonoBehaviour
 			int layer = (LastInteractiveState ? DefaultCameraLayer : CameraLayer);
 
 			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
-			Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", Module.bombComponent.gameObject.layer, layer);
+			Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", Module.BombComponent.gameObject.layer, layer);
 			Module.SetRenderLayer(layer);
-			Transform t = Module.bombComponent.transform.Find("TwitchPlayModuleCamera");
+			Transform t = Module.BombComponent.transform.Find("TwitchPlayModuleCamera");
 			if (t == null)
 			{
 				t = new GameObject().transform;
 				t.name = "TwitchPlayModuleCamera";
-				t.SetParent(Module.bombComponent.transform, false);
+				t.SetParent(Module.BombComponent.transform, false);
 			}
 			CameraInstance.transform.SetParent(t, false);
 			CameraInstance.gameObject.SetActive(true);
 
-			Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1}", Module.bombComponent.gameObject.layer, CameraInstance.cullingMask);
+			Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1}", Module.BombComponent.gameObject.layer, CameraInstance.cullingMask);
 
 			Vector3 lossyScale = CameraInstance.transform.lossyScale;
 			CameraInstance.nearClipPlane = 1.0f * lossyScale.y;

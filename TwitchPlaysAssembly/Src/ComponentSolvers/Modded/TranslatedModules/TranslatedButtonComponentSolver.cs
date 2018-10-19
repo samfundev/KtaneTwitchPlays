@@ -8,22 +8,22 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	public TranslatedButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_button = (KMSelectable) _buttonField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)");
+		_button = (KMSelectable) ButtonField.GetValue(bombComponent.GetComponent(ComponentType));
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)");
 		Selectable selectable = bombComponent.GetComponent<Selectable>();
-		selectable.OnCancel += () => { _selectedField.SetValue(bombComponent.GetComponent(_componentType), false); return true; };
+		selectable.OnCancel += () => { SelectedField.SetValue(bombComponent.GetComponent(ComponentType), false); return true; };
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(_componentType), _componentType);
-		if (language != null) modInfo.manualCode = $"The%20Button{language}";
-		modInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(_componentType), _componentType)}";
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(ComponentType), ComponentType);
+		if (language != null) ModInfo.manualCode = $"The%20Button{language}";
+		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(ComponentType), ComponentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
 		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
+		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -85,15 +85,15 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 
 	static TranslatedButtonComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
-		_buttonField = _componentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
-		_selectedField = _componentType.GetField("isSelected", BindingFlags.NonPublic | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
+		ButtonField = ComponentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
+		SelectedField = ComponentType.GetField("isSelected", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonField = null;
-	private static FieldInfo _selectedField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonField;
+	private static readonly FieldInfo SelectedField;
 
-	private readonly KMSelectable _button = null;
-	private bool _held = false;
+	private readonly KMSelectable _button;
+	private bool _held;
 }

@@ -10,7 +10,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 		_upButton = bombComponent.UpButton;
 		_downButton = bombComponent.DownButton;
 		_transmitButton = bombComponent.TransmitButton;
-		modInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver", "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver", "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -53,7 +53,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 
-	private readonly KeypadButton _upButton = null;
-	private readonly KeypadButton _downButton = null;
-	private readonly KeypadButton _transmitButton = null;
+	private readonly KeypadButton _upButton;
+	private readonly KeypadButton _downButton;
+	private readonly KeypadButton _transmitButton;
 }

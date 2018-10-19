@@ -10,10 +10,10 @@ public class ThirdBaseComponentSolver : ComponentSolver
 	public ThirdBaseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		_phrase = (string[]) _phraseField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive.", null, true, true);
+		object component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
+		_phrase = (string[]) PhraseField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive.", null, true, true);
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -46,16 +46,15 @@ public class ThirdBaseComponentSolver : ComponentSolver
 
 	static ThirdBaseComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("ThirdBaseModule");
-		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		_phraseField = _componentType.GetField("phrase", BindingFlags.NonPublic | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("ThirdBaseModule");
+		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+		PhraseField = ComponentType.GetField("phrase", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
-	private static FieldInfo _phraseField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
+	private static readonly FieldInfo PhraseField;
 
-	private readonly object _component = null;
-	private KMSelectable[] _buttons = null;
-	private string[] _phrase = null;
+	private readonly KMSelectable[] _buttons;
+	private readonly string[] _phrase;
 }

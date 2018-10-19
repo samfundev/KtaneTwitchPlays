@@ -9,7 +9,7 @@ public class WireSetComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_wires = bombComponent.wires;
-		modInfo = ComponentSolverFactory.GetModuleInfo("WireSetComponentSolver", "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("WireSetComponentSolver", "!{0} cut 3 [cut wire 3] | Wires are ordered from top to bottom | Empty spaces are not counted");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

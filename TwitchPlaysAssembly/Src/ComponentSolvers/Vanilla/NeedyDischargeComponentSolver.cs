@@ -7,7 +7,7 @@ public class NeedyDischargeComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_dischargeButton = bombComponent.DischargeButton;
-		modInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver", "!{0} hold 7 [hold the lever for 7 seconds]", "Capacitor Discharge");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver", "!{0} hold 7 [hold the lever for 7 seconds]", "Capacitor Discharge");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -28,5 +28,5 @@ public class NeedyDischargeComponentSolver : ComponentSolver
 		DoInteractionEnd(_dischargeButton);
 	}
 
-	private readonly SpringedSwitch _dischargeButton = null;
+	private readonly SpringedSwitch _dischargeButton;
 }

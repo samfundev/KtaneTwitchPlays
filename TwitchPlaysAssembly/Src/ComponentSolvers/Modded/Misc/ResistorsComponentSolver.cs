@@ -3,18 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 public class ResistorsComponentSolver : ComponentSolver
 {
 	public ResistorsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		object _component = bombComponent.GetComponent(_componentType);
-		_pins = (KMSelectable[]) _pinsField.GetValue(_component);
-		_checkButton = (KMSelectable) _checkButtonField.GetValue(_component);
-		_clearButton = (KMSelectable) _clearButtonField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.");
+		object component = bombComponent.GetComponent(ComponentType);
+		_pins = (KMSelectable[]) PinsField.GetValue(component);
+		_checkButton = (KMSelectable) CheckButtonField.GetValue(component);
+		_clearButton = (KMSelectable) ClearButtonField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Connect sets of two pins with !{0} connect a tl tr c. Use !{0} submit to submit and !{0} clear to clear. Valid pins: A B C D TL TR BL BR. Top and Bottom refer to the top and bottom resistor.");
 	}
 
 	private static int? PinToIndex(string pin)
@@ -50,25 +49,22 @@ public class ResistorsComponentSolver : ComponentSolver
 	{
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length >= 3 && commands.Length % 2 == 1 && commands[0].Equals("connect"))
+		if (commands[0].Equals("connect"))
 		{
-			IEnumerable<int?> pins = commands.Where((_, i) => i > 0).Select(PinToIndex);
+			IEnumerable<int?> pins = commands.Skip(1).Select(PinToIndex).ToArray();
 
-			IEnumerable<int?> pinIndices = pins as int?[] ?? pins.ToArray();
-			if (pinIndices.All(pinIndex => pinIndex != null))
-			{
-				yield return null;
-
-				foreach (int? pinIndex in pinIndices)
-				{
-					KMSelectable pinSelectable = _pins[(int) pinIndex];
-					DoInteractionClick(pinSelectable);
-
-					yield return new WaitForSeconds(0.1f);
-				}
-
+			if (!pins.Any() || pins.Any(x => x == null) || pins.Count() % 2 == 1)
 				yield break;
+
+			IEnumerable<KMSelectable> pinIndices = pins.Where(x => x != null).Select(x => _pins[x.Value]).ToArray();
+			
+			yield return null;
+			foreach (KMSelectable pinSelectable in pinIndices)
+			{
+				yield return DoInteractionClick(pinSelectable);
 			}
+
+			yield break;
 		}
 
 		if (commands.Length == 2 && commands[0].EqualsAny("hit", "press", "click"))
@@ -90,18 +86,18 @@ public class ResistorsComponentSolver : ComponentSolver
 
 	static ResistorsComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("ResistorsModule");
-		_pinsField = _componentType.GetField("pins", BindingFlags.Public | BindingFlags.Instance);
-		_checkButtonField = _componentType.GetField("checkButton", BindingFlags.Public | BindingFlags.Instance);
-		_clearButtonField = _componentType.GetField("clearButton", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("ResistorsModule");
+		PinsField = ComponentType.GetField("pins", BindingFlags.Public | BindingFlags.Instance);
+		CheckButtonField = ComponentType.GetField("checkButton", BindingFlags.Public | BindingFlags.Instance);
+		ClearButtonField = ComponentType.GetField("clearButton", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _pinsField = null;
-	private static FieldInfo _checkButtonField = null;
-	private static FieldInfo _clearButtonField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo PinsField;
+	private static readonly FieldInfo CheckButtonField;
+	private static readonly FieldInfo ClearButtonField;
 
-	private readonly KMSelectable[] _pins = null;
-	private readonly KMSelectable _checkButton = null;
-	private readonly KMSelectable _clearButton = null;
+	private readonly KMSelectable[] _pins;
+	private readonly KMSelectable _checkButton;
+	private readonly KMSelectable _clearButton;
 }

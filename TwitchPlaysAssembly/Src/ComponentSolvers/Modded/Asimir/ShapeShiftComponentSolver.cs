@@ -8,12 +8,12 @@ public class ShapeShiftComponentSolver : ComponentSolver
 	public ShapeShiftComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		object _component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.");
+		object component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.");
 
 		if (bombComponent.gameObject.activeInHierarchy)
-			bombComponent.StartCoroutine(GetDisplay(_component));
+			bombComponent.StartCoroutine(GetDisplay(component));
 	}
 
 	private int? ToShapeIndex(string shape)
@@ -38,12 +38,12 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		}
 	}
 
-	private IEnumerator GetDisplay(object _component)
+	private IEnumerator GetDisplay(object component)
 	{
-		yield return new WaitUntil(() => (bool) _isActivatedField.GetValue(_component));
+		yield return new WaitUntil(() => (bool) IsActivatedField.GetValue(component));
 
-		initialL = _displayL = (int) _displayLField.GetValue(_component);
-		initialR = _displayR = (int) _displayRField.GetValue(_component);
+		_initialL = _displayL = (int) DisplayLField.GetValue(component);
+		_initialR = _displayR = (int) DisplayRField.GetValue(component);
 	}
 
 	private IEnumerator SetDisplay(int displayIndexL, int displayIndexR)
@@ -87,29 +87,29 @@ public class ShapeShiftComponentSolver : ComponentSolver
 			}
 			case 1 when commands[0].Equals("reset"):
 				yield return null;
-				yield return SetDisplay(initialL, initialR);
+				yield return SetDisplay(_initialL, _initialR);
 				break;
 		}
 	}
 
 	static ShapeShiftComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("ShapeShiftModule");
-		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		_displayLField = _componentType.GetField("displayL", BindingFlags.NonPublic | BindingFlags.Instance);
-		_displayRField = _componentType.GetField("displayR", BindingFlags.NonPublic | BindingFlags.Instance);
-		_isActivatedField = _componentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("ShapeShiftModule");
+		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+		DisplayLField = ComponentType.GetField("displayL", BindingFlags.NonPublic | BindingFlags.Instance);
+		DisplayRField = ComponentType.GetField("displayR", BindingFlags.NonPublic | BindingFlags.Instance);
+		IsActivatedField = ComponentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
-	private static FieldInfo _displayLField = null;
-	private static FieldInfo _displayRField = null;
-	private static FieldInfo _isActivatedField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
+	private static readonly FieldInfo DisplayLField;
+	private static readonly FieldInfo DisplayRField;
+	private static readonly FieldInfo IsActivatedField;
 
-	private readonly KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons;
 	private int _displayL;
 	private int _displayR;
-	private int initialL;
-	private int initialR;
+	private int _initialL;
+	private int _initialR;
 }

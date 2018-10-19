@@ -7,7 +7,7 @@ public class NeedyVentComponentSolver : ComponentSolver
 	{
 		_yesButton = bombComponent.YesButton;
 		_noButton = bombComponent.NoButton;
-		modInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentComponentSolver", "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentComponentSolver", "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -25,6 +25,6 @@ public class NeedyVentComponentSolver : ComponentSolver
 		}
 	}
 
-	private readonly KeypadButton _yesButton = null;
-	private readonly KeypadButton _noButton = null;
+	private readonly KeypadButton _yesButton;
+	private readonly KeypadButton _noButton;
 }

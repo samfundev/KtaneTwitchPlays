@@ -9,7 +9,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer using !{0} submit -47.");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer using !{0} submit -47.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -42,10 +42,10 @@ public class EmojiMathComponentSolver : ComponentSolver
 			index++;
 		}
 
-		if (negative != negativeActive)
+		if (negative != _negativeActive)
 		{
 			yield return DoInteractionClick(_buttons[10]);
-			negativeActive = negative;
+			_negativeActive = negative;
 		}
 
 		foreach (int ind in buttonIndexes) yield return DoInteractionClick(_buttons[ind]);
@@ -59,9 +59,9 @@ public class EmojiMathComponentSolver : ComponentSolver
 		_buttonsField = _componentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
+	private static readonly Type _componentType;
+	private static readonly FieldInfo _buttonsField;
 
-	private readonly KMSelectable[] _buttons = null;
-	private bool negativeActive = false;
+	private readonly KMSelectable[] _buttons;
+	private bool _negativeActive;
 }

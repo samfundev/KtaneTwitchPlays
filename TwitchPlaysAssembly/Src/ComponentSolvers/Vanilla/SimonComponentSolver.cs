@@ -9,7 +9,7 @@ public class SimonComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.buttons;
-		modInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver", "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver", "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -22,7 +22,7 @@ public class SimonComponentSolver : ComponentSolver
 		string sequence = "pressing ";
 		foreach (Match move in Regex.Matches(inputCommand, @"(\b(red|blue|green|yellow)\b|[rbgy])", RegexOptions.IgnoreCase))
 		{
-			SimonButton button = _buttons[buttonIndex[move.Value.Substring(0, 1).ToLowerInvariant()]];
+			SimonButton button = _buttons[ButtonIndex[move.Value.Substring(0, 1).ToLowerInvariant()]];
 
 			if (button == null) continue;
 			yield return move.Value;
@@ -49,10 +49,10 @@ public class SimonComponentSolver : ComponentSolver
 		}
 	}
 
-	private static readonly Dictionary<string, int> buttonIndex = new Dictionary<string, int>
+	private static readonly Dictionary<string, int> ButtonIndex = new Dictionary<string, int>
 	{
 		{"r", 0}, {"b", 1}, {"g", 2}, {"y", 3}
 	};
 
-	private readonly SimonButton[] _buttons = null;
+	private readonly SimonButton[] _buttons;
 }

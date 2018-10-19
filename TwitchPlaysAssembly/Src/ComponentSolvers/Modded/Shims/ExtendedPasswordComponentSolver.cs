@@ -9,7 +9,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 	public ExtendedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent, "ExtendedPassword")
 	{
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]");
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)

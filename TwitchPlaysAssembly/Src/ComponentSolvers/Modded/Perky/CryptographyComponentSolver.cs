@@ -10,8 +10,8 @@ public class CryptographyComponentSolver : ComponentSolver
 	public CryptographyComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_buttons = (KMSelectable[]) _keysField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
+		_buttons = (KMSelectable[]) KeysField.GetValue(bombComponent.GetComponent(ComponentType));
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -31,12 +31,12 @@ public class CryptographyComponentSolver : ComponentSolver
 
 	static CryptographyComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("CryptMod");
-		_keysField = _componentType.GetField("Keys", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("CryptMod");
+		KeysField = ComponentType.GetField("Keys", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _keysField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo KeysField;
 
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons;
 }

@@ -8,10 +8,10 @@ public class EnglishTestComponentSolver : ComponentSolver
 	public EnglishTestComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_englishTestComponent = bombComponent.GetComponent(_componentType);
-		selectButton = FindChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
-		submitButton = FindChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)");
+		_englishTestComponent = bombComponent.GetComponent(ComponentType);
+		_selectButton = FindChildGameObjectByName(bombComponent.gameObject, "Left Button").GetComponent<KMSelectable>();
+		_submitButton = FindChildGameObjectByName(bombComponent.gameObject, "Submit Button").GetComponent<KMSelectable>();
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Answer the displayed question with !{0} submit 2 or !{0} answer 2. (Answers are numbered from 1-4 starting from left to right.)");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -28,17 +28,17 @@ public class EnglishTestComponentSolver : ComponentSolver
 		}
 		desiredIndex--;
 		yield return null;
-		int currentIndex = (int) _indexField.GetValue(_englishTestComponent);
+		int currentIndex = (int) IndexField.GetValue(_englishTestComponent);
 
-		while ((int) _indexField.GetValue(_englishTestComponent) != desiredIndex)
+		while ((int) IndexField.GetValue(_englishTestComponent) != desiredIndex)
 		{
-			yield return DoInteractionClick(selectButton);
-			if ((int) _indexField.GetValue(_englishTestComponent) != currentIndex) continue;
+			yield return DoInteractionClick(_selectButton);
+			if ((int) IndexField.GetValue(_englishTestComponent) != currentIndex) continue;
 			yield return
 				$"sendtochaterror I can't select answer #{desiredIndex + 1} because that answer doesn't exist.";
 			yield break;
 		}
-		yield return DoInteractionClick(submitButton);
+		yield return DoInteractionClick(_submitButton);
 	}
 
 	private static GameObject FindChildGameObjectByName(GameObject parent, string name)
@@ -56,14 +56,14 @@ public class EnglishTestComponentSolver : ComponentSolver
 
 	static EnglishTestComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("EnglishTestModule");
-		_indexField = _componentType.GetField("selectedAnswerIndex", BindingFlags.NonPublic | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("EnglishTestModule");
+		IndexField = ComponentType.GetField("selectedAnswerIndex", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _indexField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo IndexField;
 
 	private readonly Component _englishTestComponent;
-	private readonly KMSelectable selectButton;
-	private readonly KMSelectable submitButton;
+	private readonly KMSelectable _selectButton;
+	private readonly KMSelectable _submitButton;
 }

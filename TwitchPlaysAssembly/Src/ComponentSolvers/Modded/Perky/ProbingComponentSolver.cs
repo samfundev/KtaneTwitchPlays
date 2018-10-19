@@ -8,8 +8,8 @@ public class ProbingComponentSolver : ComponentSolver
 	public ProbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_wires = (MonoBehaviour[]) _wiresField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
+		_wires = (MonoBehaviour[]) WiresField.GetValue(bombComponent.GetComponent(ComponentType));
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -84,12 +84,12 @@ public class ProbingComponentSolver : ComponentSolver
 
 	static ProbingComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("ProbingModule");
-		_wiresField = _componentType.GetField("selectables", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("ProbingModule");
+		WiresField = ComponentType.GetField("selectables", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _wiresField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo WiresField;
 
-	private readonly MonoBehaviour[] _wires = null;
+	private readonly MonoBehaviour[] _wires;
 }

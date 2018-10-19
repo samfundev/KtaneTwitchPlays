@@ -10,7 +10,7 @@ public class UnsupportedModComponentSolver : ComponentSolver
 		_bombModule = bombComponent.GetComponent<KMBombModule>();
 		_needyModule = bombComponent.GetComponent<KMNeedyModule>();
 		
-		modInfo = new ModuleInformation { moduleScore = 0, builtIntoTwitchPlays = true, DoesTheRightThing = true, helpText = $"Solve this {(_bombModule != null ? "module" : "needy")} with !{{0}} solve", moduleDisplayName = $"Unsupported Twitchplays Module  ({bombComponent.GetModuleDisplayName()})", moduleID = "UnsupportedTwitchPlaysModule" };
+		ModInfo = new ModuleInformation { moduleScore = 0, builtIntoTwitchPlays = true, DoesTheRightThing = true, helpText = $"Solve this {(_bombModule != null ? "module" : "needy")} with !{{0}} solve", moduleDisplayName = $"Unsupported Twitchplays Module  ({bombComponent.GetModuleDisplayName()})", moduleID = "UnsupportedTwitchPlaysModule" };
 
 		UnsupportedModule = true;
 

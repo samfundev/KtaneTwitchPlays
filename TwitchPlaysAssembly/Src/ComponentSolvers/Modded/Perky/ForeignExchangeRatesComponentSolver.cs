@@ -10,8 +10,8 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 	public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_buttons = (MonoBehaviour[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
+		_buttons = (MonoBehaviour[]) ButtonsField.GetValue(bombComponent.GetComponent(ComponentType));
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -58,12 +58,12 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 
 	static ForeignExchangeRatesComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("ForeignExchangeRates");
-		_buttonsField = _componentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("ForeignExchangeRates");
+		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
 
-	private MonoBehaviour[] _buttons = null;
+	private readonly MonoBehaviour[] _buttons;
 }

@@ -10,7 +10,7 @@ public class AnagramsComponentSolver : ComponentSolver
 	{
 		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
 		string modType = GetModuleType();
-		modInfo = ComponentSolverFactory.GetModuleInfo(modType, "Submit your answer with !{0} submit poodle", null, modType.Equals("AnagramsModule"));
+		ModInfo = ComponentSolverFactory.GetModuleInfo(modType, "Submit your answer with !{0} submit poodle", null, modType.Equals("AnagramsModule"));
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -61,5 +61,5 @@ public class AnagramsComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_buttons[7]);
 	}
 
-	private KMSelectable[] _buttons = null;
+	private readonly KMSelectable[] _buttons;
 }

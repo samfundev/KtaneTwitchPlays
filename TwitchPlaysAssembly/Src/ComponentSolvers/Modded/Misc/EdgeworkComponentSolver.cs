@@ -8,9 +8,9 @@ public class EdgeworkComponentSolver : ComponentSolver
 	public EdgeworkComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_componentType);
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position.");
+		_component = bombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position.");
 	}
 
 	private static int? ButtonToIndex(string button)
@@ -42,7 +42,7 @@ public class EdgeworkComponentSolver : ComponentSolver
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length != 2 || !commands[0].EqualsAny("press", "submit", "click", "answer")) yield break;
-		if ((bool) _canPressButtonsField.GetValue(_component) == false)
+		if ((bool) CanPressButtonsField.GetValue(_component) == false)
 		{
 			yield return null;
 			yield return "sendtochaterror You can't interact with the module right now.";
@@ -60,15 +60,15 @@ public class EdgeworkComponentSolver : ComponentSolver
 
 	static EdgeworkComponentSolver()
 	{
-		_componentType = ReflectionHelper.FindType("EdgeworkModule");
-		_buttonsField = _componentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-		_canPressButtonsField = _componentType.GetField("canPressButtons", BindingFlags.NonPublic | BindingFlags.Instance);
+		ComponentType = ReflectionHelper.FindType("EdgeworkModule");
+		ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
+		CanPressButtonsField = ComponentType.GetField("canPressButtons", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static Type _componentType = null;
-	private static FieldInfo _buttonsField = null;
-	private static FieldInfo _canPressButtonsField = null;
+	private static readonly Type ComponentType;
+	private static readonly FieldInfo ButtonsField;
+	private static readonly FieldInfo CanPressButtonsField;
 
-	private readonly KMSelectable[] _buttons = null;
-	private readonly object _component = null;
+	private readonly KMSelectable[] _buttons;
+	private readonly object _component;
 }

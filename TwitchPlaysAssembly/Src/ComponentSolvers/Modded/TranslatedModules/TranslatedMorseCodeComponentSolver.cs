@@ -10,23 +10,23 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 	public TranslatedMorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
 		base(bombCommander, bombComponent)
 	{
-		_component = bombComponent.GetComponent(_morseCodeComponentType);
-		_upButton = (MonoBehaviour) _upButtonField.GetValue(_component);
-		_downButton = (MonoBehaviour) _downButtonField.GetValue(_component);
-		_transmitButton = (MonoBehaviour) _transmitButtonField.GetValue(_component);
-		modInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
+		_component = bombComponent.GetComponent(MorseCodeComponentType);
+		_upButton = (MonoBehaviour) UpButtonField.GetValue(_component);
+		_downButton = (MonoBehaviour) DownButtonField.GetValue(_component);
+		_transmitButton = (MonoBehaviour) TransmitButtonField.GetValue(_component);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 
 		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, _component, _morseCodeComponentType);
-		if (language != null) modInfo.manualCode = $"Morse%20Code{language}";
-		modInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, _component, _morseCodeComponentType)}";
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, _component, MorseCodeComponentType);
+		if (language != null) ModInfo.manualCode = $"Morse%20Code{language}";
+		ModInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, _component, MorseCodeComponentType)}";
 		bombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
 		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = modInfo.moduleDisplayName;
+		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -55,15 +55,15 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		}
 	}
 
-	private int CurrentFrequency => Frequencies[(int) _currentFrqIndexField.GetValue(_component)];
+	private int CurrentFrequency => Frequencies[(int) CurrentFrqIndexField.GetValue(_component)];
 
 	static TranslatedMorseCodeComponentSolver()
 	{
-		_morseCodeComponentType = ReflectionHelper.FindType("MorseCodeTranslatedModule");
-		_upButtonField = _morseCodeComponentType.GetField("ButtonRight", BindingFlags.Public | BindingFlags.Instance);
-		_downButtonField = _morseCodeComponentType.GetField("ButtonLeft", BindingFlags.Public | BindingFlags.Instance);
-		_transmitButtonField = _morseCodeComponentType.GetField("ButtonTX", BindingFlags.Public | BindingFlags.Instance);
-		_currentFrqIndexField = _morseCodeComponentType.GetField("currentFrqIndex", BindingFlags.NonPublic | BindingFlags.Instance);
+		MorseCodeComponentType = ReflectionHelper.FindType("MorseCodeTranslatedModule");
+		UpButtonField = MorseCodeComponentType.GetField("ButtonRight", BindingFlags.Public | BindingFlags.Instance);
+		DownButtonField = MorseCodeComponentType.GetField("ButtonLeft", BindingFlags.Public | BindingFlags.Instance);
+		TransmitButtonField = MorseCodeComponentType.GetField("ButtonTX", BindingFlags.Public | BindingFlags.Instance);
+		CurrentFrqIndexField = MorseCodeComponentType.GetField("currentFrqIndex", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private static readonly int[] Frequencies = {
@@ -85,14 +85,14 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		600
 	};
 
-	private static Type _morseCodeComponentType = null;
-	private static FieldInfo _upButtonField = null;
-	private static FieldInfo _downButtonField = null;
-	private static FieldInfo _transmitButtonField = null;
-	private static FieldInfo _currentFrqIndexField = null;
+	private static readonly Type MorseCodeComponentType;
+	private static readonly FieldInfo UpButtonField;
+	private static readonly FieldInfo DownButtonField;
+	private static readonly FieldInfo TransmitButtonField;
+	private static readonly FieldInfo CurrentFrqIndexField;
 
-	private readonly Component _component = null;
-	private readonly MonoBehaviour _upButton = null;
-	private readonly MonoBehaviour _downButton = null;
-	private readonly MonoBehaviour _transmitButton = null;
+	private readonly Component _component;
+	private readonly MonoBehaviour _upButton;
+	private readonly MonoBehaviour _downButton;
+	private readonly MonoBehaviour _transmitButton;
 }

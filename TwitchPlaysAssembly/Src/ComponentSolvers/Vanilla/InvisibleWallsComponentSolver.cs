@@ -9,7 +9,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 		base(bombCommander, bombComponent)
 	{
 		_buttons = bombComponent.Buttons;
-		modInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver", "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", "Maze");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver", "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", "Maze");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -28,7 +28,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 
 		foreach (Match move in matches)
 		{
-			KeypadButton button = _buttons[buttonIndex[move.Value.ToLowerInvariant()]];
+			KeypadButton button = _buttons[ButtonIndex[move.Value.ToLowerInvariant()]];
 
 			if (button == null) continue;
 			yield return move.Value;
@@ -37,7 +37,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 		}
 	}
 
-	private static readonly Dictionary<string, int> buttonIndex = new Dictionary<string, int>
+	private static readonly Dictionary<string, int> ButtonIndex = new Dictionary<string, int>
 	{
 		{"u", 0}, {"l", 1}, {"r", 2}, {"d", 3}
 	};
@@ -89,5 +89,5 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[_mazeStack.Pop()]);
 	}
 
-	private readonly List<KeypadButton> _buttons = null;
+	private readonly List<KeypadButton> _buttons;
 }
