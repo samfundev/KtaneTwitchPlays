@@ -2854,7 +2854,7 @@ MonoBehaviour:
   m_Script: {fileID: 660898418, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  twitchLeaderboardPrefab: {fileID: 114884447472921414, guid: 96028b4481f6de74dbbdede6307c450e,
+  TwitchLeaderboardPrefab: {fileID: 114884447472921414, guid: 96028b4481f6de74dbbdede6307c450e,
     type: 2}
 --- !u!114 &114000014271784596
 MonoBehaviour:
@@ -3616,13 +3616,13 @@ MonoBehaviour:
   m_Script: {fileID: 2048484367, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasGroup: {fileID: 225550263377277914}
-  edgeworkIDText: {fileID: 114788484533849390}
-  edgeworkText: {fileID: 114756238846964178}
-  edgeworkWindowTransform: {fileID: 224522128380578156}
-  edgeworkHighlightTransform: {fileID: 224578456146686952}
-  coroutineQueue: {fileID: 0}
-  bombID: -1
+  CanvasGroup: {fileID: 225550263377277914}
+  EdgeworkIDText: {fileID: 114788484533849390}
+  EdgeworkText: {fileID: 114756238846964178}
+  EdgeworkWindowTransform: {fileID: 224522128380578156}
+  EdgeworkHighlightTransform: {fileID: 224578456146686952}
+  CoroutineQueue: {fileID: 0}
+  BombID: -1
 --- !u!114 &114336819534813908
 MonoBehaviour:
   m_ObjectHideFlags: 1

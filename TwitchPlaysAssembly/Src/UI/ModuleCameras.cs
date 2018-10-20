@@ -332,15 +332,15 @@ public class ModuleCameras : MonoBehaviour
 
 	public void ShowHud() => BombStatus.localScale = HudScale;
 
-	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.twitchBombHandle.bombName;
+	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.TwitchBombHandle.BombName;
 
 	public void UpdateStrikes(bool delay = false) => StartCoroutine(UpdateStrikesCoroutine(delay));
 
 	public void UpdateSolves()
 	{
 		if (_currentBomb == null) return;
-		_currentSolves = _currentBomb.bombSolvedModules;
-		_currentTotalModules = _currentBomb.bombSolvableModules;
+		_currentSolves = _currentBomb.BombSolvedModules;
+		_currentTotalModules = _currentBomb.BombSolvableModules;
 		string solves = _currentSolves.ToString().PadLeft(_currentTotalModules.ToString().Length, char.Parse("0"));
 		Debug.Log(LogPrefix + "Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";

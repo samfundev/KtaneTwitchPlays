@@ -12,7 +12,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	{
 		_lock = (MonoBehaviour) LockField.GetValue(BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the key at specified time with !{0} turn 8:29");
-		bombCommander?.twitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
+		bombCommander?.TwitchBombHandle.StartCoroutine(ReWriteTurnTheKey());
 		bombComponent.GetComponent<KMBombModule>().OnActivate = OnActivate;
 		SkipTimeAllowed = true;
 	}
@@ -37,7 +37,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	private bool OnKeyTurn(int turnTime = -1)
 	{
 		bool result = CanTurnEarlyWithoutStrike(turnTime);
-		BombCommander.twitchBombHandle.StartCoroutine(DelayKeyTurn(!result));
+		BombCommander.TwitchBombHandle.StartCoroutine(DelayKeyTurn(!result));
 		return false;
 	}
 
@@ -49,10 +49,10 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 
 		if (!restoreBombTimer)
 		{
-			BombCommander.timerComponent.TimeRemaining = time + 0.5f + Time.deltaTime;
+			BombCommander.TimerComponent.TimeRemaining = time + 0.5f + Time.deltaTime;
 			yield return null;
 		}
-		else if (causeStrikeIfWrongTime && time != (int) Mathf.Floor(BombCommander.timerComponent.TimeRemaining))
+		else if (causeStrikeIfWrongTime && time != (int) Mathf.Floor(BombCommander.TimerComponent.TimeRemaining))
 		{
 			BombComponent.GetComponent<KMBombModule>().HandleStrike();
 			keyAnimator.SetTrigger("WrongTurn");

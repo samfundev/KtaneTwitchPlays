@@ -20,9 +20,9 @@ public abstract class HoldableHandler
 	private void OnStrike(string message)
 	{
 		StrikeCount++;
-		if (BombMessageResponder.moduleCameras != null)
-			BombMessageResponder.moduleCameras.UpdateStrikes();
-		if (DisableOnStrike) return;
+		if (BombMessageResponder.ModuleCameras != null)
+			BombMessageResponder.ModuleCameras.UpdateStrikes();
+		if (_disableOnStrike) return;
 		if (_delegatedStrikeUserNickName != null)
 		{
 			AwardStrikes(_delegatedStrikeUserNickName, 1);
@@ -50,8 +50,8 @@ public abstract class HoldableHandler
 			string.IsNullOrEmpty(StrikeMessage) ? "" : " caused by " + StrikeMessage);
 		if (strikeCount <= 0) return;
 
-		string RecordMessageTone = $"Holdable ID: {HoldableCommander.ID} | Player: {userNickName} | Strike";
-		TwitchPlaySettings.AppendToSolveStrikeLog(RecordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+		string recordMessageTone = $"Holdable ID: {HoldableCommander.ID} | Player: {userNickName} | Strike";
+		TwitchPlaySettings.AppendToSolveStrikeLog(recordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
 		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
@@ -73,20 +73,20 @@ public abstract class HoldableHandler
 			}
 			if (bombCommander.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
 			{
-				bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
+				bombCommander.TimerComponent.TimeRemaining = bombCommander.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
 				tempMessage = tempMessage + $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
 			}
 			else
 			{
 				float timeReducer = bombCommander.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
 				double easyText = Math.Round(timeReducer, 1);
-				bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer - timeReducer;
+				bombCommander.TimerComponent.TimeRemaining = bombCommander.CurrentTimer - timeReducer;
 				tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
 			IRCConnection.SendMessage(tempMessage);
 			bombCommander.StrikeCount = 0;
-			if (BombMessageResponder.moduleCameras != null)
-				BombMessageResponder.moduleCameras.UpdateStrikes();
+			if (BombMessageResponder.ModuleCameras != null)
+				BombMessageResponder.ModuleCameras.UpdateStrikes();
 		}
 
 		Leaderboard.Instance?.AddScore(userNickName, strikePenalty);
@@ -101,7 +101,7 @@ public abstract class HoldableHandler
 
 	public IEnumerator RespondToCommand(string userNickName, string message, bool isWhisper)
 	{
-		DisableOnStrike = false;
+		_disableOnStrike = false;
 		Strike = false;
 		StrikeCount = 0;
 		_currentUserNickName = userNickName;
@@ -133,8 +133,8 @@ public abstract class HoldableHandler
 			}
 			else
 			{
-				processIEnumerators.Push(processCommand);
-				processIEnumerators.Push(FirstItem(processCommand.Current));
+				ProcessIEnumerators.Push(processCommand);
+				ProcessIEnumerators.Push(FirstItem(processCommand.Current));
 			}
 
 			do
@@ -144,12 +144,12 @@ public abstract class HoldableHandler
 					bool result = false;
 					while (!result && !Strike)
 					{
-						if (processIEnumerators.Count > 0)
+						if (ProcessIEnumerators.Count > 0)
 						{
-							processCommand = processIEnumerators.Pop();
+							processCommand = ProcessIEnumerators.Pop();
 							result = processCommand.MoveNext();
 							if (result)
-								processIEnumerators.Push(processCommand);
+								ProcessIEnumerators.Push(processCommand);
 						}
 						else
 							break;
@@ -168,18 +168,18 @@ public abstract class HoldableHandler
 				{
 					case IEnumerator iEnumerator:
 						if (iEnumerator != null)
-							processIEnumerators.Push(iEnumerator);
+							ProcessIEnumerators.Push(iEnumerator);
 						continue;
 					case KMSelectable kmSelectable when kmSelectable != null:
-						if (heldSelectables.Contains(kmSelectable))
+						if (HeldSelectables.Contains(kmSelectable))
 						{
 							DoInteractionEnd(kmSelectable);
-							heldSelectables.Remove(kmSelectable);
+							HeldSelectables.Remove(kmSelectable);
 						}
 						else
 						{
 							DoInteractionStart(kmSelectable);
-							heldSelectables.Add(kmSelectable);
+							HeldSelectables.Add(kmSelectable);
 						}
 						break;
 
@@ -226,20 +226,20 @@ public abstract class HoldableHandler
 						else if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
 							_delegatedStrikeUserNickName = _currentUserNickName;
 						else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
-							DisableOnStrike = true;
+							_disableOnStrike = true;
 						else if (currentString.ToLowerInvariant().EqualsAny("detonate", "explode") &&
 								 BombMessageResponder.BombActive)
 						{
 							BombCommander bombCommander = BombMessageResponder.Instance.BombCommanders[0];
 							AwardStrikes(_currentUserNickName, bombCommander.StrikeLimit - bombCommander.StrikeCount);
-							bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
+							bombCommander.TwitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
 								HoldableCommander.ID);
 							Strike = true;
 						}
 						else if (currentString.ToLowerInvariant().Equals("show front"))
-							processIEnumerators.Push(HoldableCommander.Hold());
+							ProcessIEnumerators.Push(HoldableCommander.Hold());
 						else if (currentString.ToLowerInvariant().Equals("show back"))
-							processIEnumerators.Push(HoldableCommander.Hold(false));
+							ProcessIEnumerators.Push(HoldableCommander.Hold(false));
 						else
 							SendToChat(currentString, userNickName, isWhisper, ref parseError);
 
@@ -255,15 +255,15 @@ public abstract class HoldableHandler
 								switch (currentStrings.Length)
 								{
 									case 2:
-										bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1],
+										bombCommander.TwitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1],
 											HoldableCommander.ID);
 										break;
 									case 3:
-										bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1],
+										bombCommander.TwitchBombHandle.CauseExplosionByModuleCommand(currentStrings[1],
 											currentStrings[2]);
 										break;
 									default:
-										bombCommander.twitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
+										bombCommander.TwitchBombHandle.CauseExplosionByModuleCommand(string.Empty,
 											HoldableCommander.ID);
 										break;
 								}
@@ -296,7 +296,7 @@ public abstract class HoldableHandler
 												actionTrue.Invoke();
 												break;
 											case IEnumerator iEnumerator when iEnumerator != null:
-												processIEnumerators.Push(iEnumerator);
+												ProcessIEnumerators.Push(iEnumerator);
 												yield return null;
 												continue;
 										}
@@ -310,7 +310,7 @@ public abstract class HoldableHandler
 												SendToChat(objStr2, userNickName, isWhisper, ref parseError);
 												break;
 											case IEnumerator iEnumerator when iEnumerator != null:
-												processIEnumerators.Push(iEnumerator);
+												ProcessIEnumerators.Push(iEnumerator);
 												yield return null;
 												continue;
 										}
@@ -328,15 +328,15 @@ public abstract class HoldableHandler
 					cancelling = CancelBool != null;
 				}
 
-			} while (processIEnumerators.Count > 0 && !parseError && !cancelled && !Strike);
-			processIEnumerators.Clear();
+			} while (ProcessIEnumerators.Count > 0 && !parseError && !cancelled && !Strike);
+			ProcessIEnumerators.Clear();
 			if (_musicPlayer != null)
 			{
 				_musicPlayer.StopMusic();
 				_musicPlayer = null;
 			}
 
-			if (DisableOnStrike)
+			if (_disableOnStrike)
 				AwardStrikes(userNickName, StrikeCount);
 			DebugHelper.Log("RespondToCommandInternal() Complete");
 		}
@@ -430,6 +430,7 @@ public abstract class HoldableHandler
 		selectable.SetHighlight(false);
 	}
 
+	// ReSharper disable once UnusedMember.Global
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, float delay) => DoInteractionClick(interactable, null, delay);
 
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, string strikeMessage = null, float delay = 0.1f)
@@ -448,10 +449,10 @@ public abstract class HoldableHandler
 			IRCConnection.SendMessage(HelpMessage, HoldableCommander.ID);
 	}
 
-	private string _delegatedStrikeUserNickName = null;
-	private string _currentUserNickName = null;
+	private string _delegatedStrikeUserNickName;
+	private string _currentUserNickName;
 
-	private bool DisableOnStrike;
+	private bool _disableOnStrike;
 	protected bool Strike { get; private set; }
 	protected int StrikeCount { get; private set; }
 	protected string StrikeMessage { get; set; }
@@ -465,6 +466,6 @@ public abstract class HoldableHandler
 	public string HelpMessage;
 	public KMHoldableCommander HoldableCommander;
 	public FloatingHoldable Holdable;
-	protected HashSet<KMSelectable> heldSelectables = new HashSet<KMSelectable>();
-	protected Stack<IEnumerator> processIEnumerators = new Stack<IEnumerator>();
+	protected HashSet<KMSelectable> HeldSelectables = new HashSet<KMSelectable>();
+	protected Stack<IEnumerator> ProcessIEnumerators = new Stack<IEnumerator>();
 }

@@ -145,6 +145,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		bool isWhisper = message.IsWhisper;
 		string userNickName = message.UserNickName;
 
+		// ReSharper disable once InlineOutVariableDeclaration
 		Match match;
 
 		if ((!text.StartsWith("!") && !isWhisper) || text.Equals("!")) return;
@@ -163,7 +164,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
 			CoroutineCanceller.SetCancel();
-			_coroutineQueue.CancelFutureSubcoroutines();
+			CoroutineQueue.CancelFutureSubcoroutines();
 			BombMessageResponder.SetCurrentBomb();
 			return;
 		}
@@ -247,7 +248,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			return;
 		}
-		if (text.RegexMatch(out match, $"^timemode ?((?:on|off)?)$"))
+		if (text.RegexMatch(out match, "^timemode ?((?:on|off)?)$"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableTimeModeForEveryone || TwitchPlaySettings.data.AnarchyMode)
 			{
@@ -271,7 +272,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.TimeModeCommandDisabled, userNickName), userNickName, !isWhisper);
 			}
 		}
-		else if (text.RegexMatch(out match, $"^zenmode ?((?:on|off)?)$"))
+		else if (text.RegexMatch(out match, "^zenmode ?((?:on|off)?)$"))
 		{
 			if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true) || TwitchPlaySettings.data.EnableZenModeForEveryone || TwitchPlaySettings.data.AnarchyMode)
 			{
@@ -295,7 +296,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ZenModeCommandDisabled, userNickName), userNickName, !isWhisper);
 			}
 		}
-		else if (text.RegexMatch(out match, $"^modes?"))
+		else if (text.RegexMatch(out match, "^modes?"))
 		{
 			IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.currentMode)} mode is currently enabled. The next round is set to {OtherModes.GetName(OtherModes.nextMode)} mode.", userNickName, !isWhisper);
 			if (TwitchPlaySettings.data.AnarchyMode)
@@ -366,7 +367,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				}
 				if (entry != null)
 				{
-					var matchingEntries = new List<Leaderboard.LeaderboardEntry>() { entry };
+					List<Leaderboard.LeaderboardEntry> matchingEntries = new List<Leaderboard.LeaderboardEntry>() { entry };
 					if (Leaderboard.Instance.IsDuplicate(entry, out List<Leaderboard.LeaderboardEntry> duplicates) && int.TryParse(split[1], out _))
 						matchingEntries.AddRange(duplicates);
 					else if (Leaderboard.Instance.IsSoloDuplicate(entry, out List<Leaderboard.LeaderboardEntry> soloDuplicates) && int.TryParse(split[2], out _))
@@ -410,14 +411,14 @@ public class MiscellaneousMessageResponder : MessageResponder
 		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?settings? (\S+) (.+)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
-			var result = TwitchPlaySettings.ChangeSetting(match.Groups[1].Value, match.Groups[2].Value);
+			Tuple<bool, string> result = TwitchPlaySettings.ChangeSetting(match.Groups[1].Value, match.Groups[2].Value);
 			IRCConnection.SendMessage($"{result.Second}", userNickName, !isWhisper);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
 		else if (text.RegexMatch(out match, @"^read ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r|(?:valid ?)?commands) (.+)$"))
 		{
 			Match match1 = match;
-			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
+			List<ModuleInformation> modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(match1.Groups[2].Value.ToLowerInvariant())).ToList();
 			switch (modules.Count)
 			{
 				case 0:
@@ -425,7 +426,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					if (modules.Count == 1) goto case 1;
 					if (modules.Count > 1)
 					{
-						var onemoduleID = modules.Where(x => x.moduleID.Equals(match1.Groups[2].Value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+						List<ModuleInformation> onemoduleID = modules.Where(x => x.moduleID.Equals(match1.Groups[2].Value, StringComparison.InvariantCultureIgnoreCase)).ToList();
 						if (onemoduleID.Count == 1)
 						{
 							modules = onemoduleID;
@@ -437,7 +438,8 @@ public class MiscellaneousMessageResponder : MessageResponder
 					IRCConnection.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"", userNickName, !isWhisper);
 					break;
 				case 1:
-					var moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
+					string moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
+					// ReSharper disable once SwitchStatementMissingSomeCases
 					switch (match.Groups[1].Value)
 					{
 						case "help":
@@ -483,7 +485,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							break;
 						case "color":
 						case "colour":
-							var moduleColor = JsonConvert.SerializeObject(TwitchPlaySettings.data.UnclaimedColor, Formatting.None, new ColorConverter());
+							string moduleColor = JsonConvert.SerializeObject(TwitchPlaySettings.data.UnclaimedColor, Formatting.None, new ColorConverter());
 							if (modules[0].unclaimedColor != new Color())
 								moduleColor = JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter());
 							IRCConnection.SendMessage($"Module \"{moduleName}\" Unclaimed color: {moduleColor}", userNickName, !isWhisper);
@@ -497,10 +499,10 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 					break;
 				default:
-					var onemodule = modules.Where(x => x.moduleDisplayName.Equals(match1.Groups[2].Value)).ToList();
-					if (onemodule.Count == 1)
+					List<ModuleInformation> oneModule = modules.Where(x => x.moduleDisplayName.Equals(match1.Groups[2].Value)).ToList();
+					if (oneModule.Count == 1)
 					{
-						modules = onemodule;
+						modules = oneModule;
 						goto case 1;
 					}
 
@@ -511,9 +513,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 		else if (text.RegexMatch(out match, @"^(?:write|change|set) ?module ?(help(?: ?message)?|manual(?: ?code)?|score|points|statuslight|(?:camera ?|module ?)?pin ?allowed|strike(?: ?penalty)|colou?r) (.+);(.*)$"))
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.Admin, true)) return;
-			var search = match.Groups[2].Value.ToLowerInvariant().Trim();
-			var changeTo = match.Groups[3].Value.Trim();
-			var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(search)).ToList();
+			string search = match.Groups[2].Value.ToLowerInvariant().Trim();
+			string changeTo = match.Groups[3].Value.Trim();
+			List<ModuleInformation> modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ToLowerInvariant().Contains(search)).ToList();
 			switch (modules.Count)
 			{
 				case 0:
@@ -521,7 +523,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					if (modules.Count == 1) goto case 1;
 					if (modules.Count > 1)
 					{
-						var onemoduleID = modules.Where(x => x.moduleID.Equals(search, StringComparison.InvariantCultureIgnoreCase)).ToList();
+						List<ModuleInformation> onemoduleID = modules.Where(x => x.moduleID.Equals(search, StringComparison.InvariantCultureIgnoreCase)).ToList();
 						if (onemoduleID.Count == 1)
 						{
 							modules = onemoduleID;
@@ -533,9 +535,9 @@ public class MiscellaneousMessageResponder : MessageResponder
 					IRCConnection.SendMessage($"Sorry, there were no modules with the name \"{match.Groups[2].Value}\"", userNickName, !isWhisper);
 					break;
 				case 1:
-					var moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
-					var module = modules[0];
-					var defaultModule = ComponentSolverFactory.GetDefaultInformation(module.moduleID);
+					string moduleName = $"(\"{modules[0].moduleID}\":\"{modules[0].moduleDisplayName}\")";
+					ModuleInformation module = modules[0];
+					ModuleInformation defaultModule = ComponentSolverFactory.GetDefaultInformation(module.moduleID);
 					switch (match.Groups[1].Value)
 					{
 						case "help":
@@ -658,7 +660,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 							string moduleColor;
 							try
 							{
-								var newModuleColor = SettingsConverter.Deserialize<Color>(changeTo);
+								Color newModuleColor = SettingsConverter.Deserialize<Color>(changeTo);
 								moduleColor = newModuleColor == new Color()
 									? JsonConvert.SerializeObject(modules[0].unclaimedColor, Formatting.None, new ColorConverter())
 									: changeTo;
@@ -682,7 +684,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 					break;
 				default:
-					var onemodule = modules.Where(x => x.moduleDisplayName.Equals(search)).ToList();
+					List<ModuleInformation> onemodule = modules.Where(x => x.moduleDisplayName.Equals(search)).ToList();
 					if (onemodule.Count == 1)
 					{
 						modules = onemodule;
@@ -697,7 +699,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 		{
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
 
-			var result = TwitchPlaySettings.ResetSettingToDefault(match.Groups[1].Value);
+			Tuple<bool, string> result = TwitchPlaySettings.ResetSettingToDefault(match.Groups[1].Value);
 			IRCConnection.SendMessage($"{result.Second}", userNickName, !isWhisper);
 			if (result.First) TwitchPlaySettings.WriteDataToFile();
 		}
@@ -739,12 +741,12 @@ public class MiscellaneousMessageResponder : MessageResponder
 						bandata.TryGetValue(adjperson, out BanData value);
 						if (double.IsPositiveInfinity(value.BanExpiry))
 						{
-							IRCConnection.SendMessage($"User: {adjperson}, Banned by: {value.BannedBy}{(string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".")} This ban is permanant.", userNickName, !isWhisper);
+							IRCConnection.SendMessage($"User: {adjperson}, Banned by: {value.BannedBy}{(string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".")} This ban is permanent.", userNickName, !isWhisper);
 						}
 						else
 						{
-							double durationleft = value.BanExpiry - DateTime.Now.TotalSeconds();
-							IRCConnection.SendMessage($"User: {adjperson}, Banned by: {value.BannedBy}{(string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".")} Ban duration left: {durationleft}.", userNickName, !isWhisper);
+							double durationLeft = value.BanExpiry - DateTime.Now.TotalSeconds();
+							IRCConnection.SendMessage($"User: {adjperson}, Banned by: {value.BannedBy}{(string.IsNullOrEmpty(value.BannedReason) ? ", For the follow reason: " + value.BannedReason + "," : ".")} Ban duration left: {durationLeft}.", userNickName, !isWhisper);
 						}
 						found = true;
 					}
@@ -768,6 +770,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			AccessLevel level = AccessLevel.User;
 			foreach (string lvl in split.Skip(2))
 			{
+				// ReSharper disable once SwitchStatementMissingSomeCases
 				switch (lvl)
 				{
 					case "mod":
@@ -823,7 +826,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 				return;
 			}
 			KeyValuePair<string, AccessLevel>[] moderators = UserAccess.GetUsers().Where(x => !string.IsNullOrEmpty(x.Key) && x.Key != "_usernickname1" && x.Key != "_usernickname2" && x.Key != (TwitchPlaySettings.data.TwitchPlaysDebugUsername.StartsWith("_") ? TwitchPlaySettings.data.TwitchPlaysDebugUsername.ToLowerInvariant() : "_" + TwitchPlaySettings.data.TwitchPlaysDebugUsername.ToLowerInvariant())).ToArray();
-			string finalmessage = "Current moderators: ";
+			string finalMessage = "Current moderators: ";
 
 			string[] streamers = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Streamer).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
 			string[] superusers = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.SuperUser).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
@@ -831,15 +834,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 			string[] mods = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Mod).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
 
 			if (streamers.Any())
-				finalmessage += $"Streamers: {streamers.Join(", ")}{(superusers.Any() || administrators.Any() || mods.Any() ? " - " : "")}";
+				finalMessage += $"Streamers: {streamers.Join(", ")}{(superusers.Any() || administrators.Any() || mods.Any() ? " - " : "")}";
 			if (superusers.Any())
-				finalmessage += $"Super Users: {superusers.Join(", ")}{(administrators.Any() || mods.Any() ? " - " : "")}";
+				finalMessage += $"Super Users: {superusers.Join(", ")}{(administrators.Any() || mods.Any() ? " - " : "")}";
 			if (administrators.Any())
-				finalmessage += $"Administrators: {administrators.Join(", ")}{(mods.Any() ? " - " : "")}";
+				finalMessage += $"Administrators: {administrators.Join(", ")}{(mods.Any() ? " - " : "")}";
 			if (mods.Any())
-				finalmessage += $"Moderators: {mods.Join(", ")}";
+				finalMessage += $"Moderators: {mods.Join(", ")}";
 
-			IRCConnection.SendMessage(finalmessage, userNickName, !isWhisper);
+			IRCConnection.SendMessage(finalMessage, userNickName, !isWhisper);
 		}
 		else if (text.RegexMatch(@"^(getaccess|accessstats|accessdata) (\S+)"))
 		{
@@ -1080,6 +1083,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 					break;
 				}
 
+				// ReSharper disable once SwitchStatementMissingSomeCases
 				switch (split[1])
 				{
 					case "enable":
@@ -1094,13 +1098,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 							string filename = profileString.Replace(' ', '_');
 							if (split[1].EqualsAny("enable", "add", "activate"))
 							{
-								if (ProfileHelper.Add(filename)) IRCConnection.SendMessage($"Enabled profile: {profileString}.", userNickName, !isWhisper);
-								else IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled"), userNickName, !isWhisper);
+								IRCConnection.SendMessage(ProfileHelper.Add(filename) 
+									? $"Enabled profile: {profileString}." 
+									: string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled"), userNickName, !isWhisper);
 							}
 							else
 							{
-								if (ProfileHelper.Remove(filename)) IRCConnection.SendMessage($"Disabled profile: {profileString}.", userNickName, !isWhisper);
-								else IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled"), userNickName, !isWhisper);
+								IRCConnection.SendMessage(ProfileHelper.Remove(filename) 
+									? $"Disabled profile: {profileString}." 
+									: string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled"), userNickName, !isWhisper);
 							}
 						}
 						else
@@ -1135,7 +1141,7 @@ public class MiscellaneousMessageResponder : MessageResponder
 			}
 			if (!IsAuthorizedDefuser(userNickName, isWhisper)) return;
 			BombMessageResponder.DropCurrentBomb();
-			_coroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, isWhisper));
+			CoroutineQueue.AddToQueue(commander.RespondToCommand(userNickName, textAfter, isWhisper));
 		}
 
 		if (TwitchPlaySettings.data.GeneralCustomMessages.ContainsKey(text.ToLowerInvariant()))
@@ -1221,15 +1227,15 @@ public class MiscellaneousMessageResponder : MessageResponder
 
 		//As of now, Debugging commands are streamer only, apart from issue command as person, which is superuser and above.
 		if (!TwitchPlaySettings.data.EnableDebuggingCommands || !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true)) return;
-		if (text.RegexMatch(out Match sayasMatch, @"^(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)"))
+		if (text.RegexMatch(out Match sayAsMatch, @"^(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)"))
 		{
 			//Do not allow issuing commands as someone with higher access levels than yourself.
-			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayasMatch.Groups[2].Value))
-				IRCConnection.Instance.OnMessageReceived.Invoke(new Message(sayasMatch.Groups[1].Value, message.UserColorCode, sayasMatch.Groups[2].Value, isWhisper));
+			if (UserAccess.HighestAccessLevel(userNickName) >= UserAccess.HighestAccessLevel(sayAsMatch.Groups[2].Value))
+				IRCConnection.Instance.OnMessageReceived.Invoke(new Message(sayAsMatch.Groups[1].Value, message.UserColorCode, sayAsMatch.Groups[2].Value, isWhisper));
 		}
 		if (text.Equals("whispertest") && TwitchPlaySettings.data.EnableWhispers)
 		{
-			IRCConnection.SendMessage("Test succesful", userNickName, false);
+			IRCConnection.SendMessage("Test successful", userNickName, false);
 		}
 		if (!UserAccess.HasAccess(userNickName, AccessLevel.Streamer)) return;
 		if (text.Equals("secondary camera"))

@@ -1,18 +1,19 @@
 ﻿using System.Collections;
+using UnityEngine.Serialization;
 
 public class PostGameMessageResponder : MessageResponder
 {
-	public TwitchLeaderboard twitchLeaderboardPrefab = null;
+	[FormerlySerializedAs("twitchLeaderboardPrefab")] public TwitchLeaderboard TwitchLeaderboardPrefab;
 
-	private PostGameCommander _postGameCommander = null;
-	private TwitchLeaderboard _leaderboardDisplay = null;
+	private PostGameCommander _postGameCommander;
+	private TwitchLeaderboard _leaderboardDisplay;
 
 	#region Unity Lifecycle
 	private void OnEnable()
 	{
 		StartCoroutine(CheckForResultsPage());
 
-		_leaderboardDisplay = Instantiate(twitchLeaderboardPrefab);
+		_leaderboardDisplay = Instantiate(TwitchLeaderboardPrefab);
 
 		Leaderboard.Instance.SaveDataToFile();
 	}
@@ -33,7 +34,7 @@ public class PostGameMessageResponder : MessageResponder
 	{
 		if (_postGameCommander != null)
 		{
-			_coroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(message, null));
+			CoroutineQueue.AddToQueue(_postGameCommander.RespondToCommand(message, null));
 		}
 	}
 

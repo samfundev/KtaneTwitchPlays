@@ -58,7 +58,7 @@ public class TwitchModule : MonoBehaviour
 			if (_cameraPriority != value)
 			{
 				_cameraPriority = value;
-				BombMessageResponder.moduleCameras.TryViewModule(this);
+				BombMessageResponder.ModuleCameras.TryViewModule(this);
 			}
 		}
 	}
@@ -202,12 +202,12 @@ public class TwitchModule : MonoBehaviour
 					KMBombModule module = BombComponent.GetComponent<KMBombModule>();
 					module.OnPass += delegate
 					{
-						BombCommander.bombSolvedModules++;
-						if (BombMessageResponder.moduleCameras != null)
+						BombCommander.BombSolvedModules++;
+						if (BombMessageResponder.ModuleCameras != null)
 						{
-							BombMessageResponder.moduleCameras.UpdateSolves();
+							BombMessageResponder.ModuleCameras.UpdateSolves();
 							OnPass(null);
-							BombMessageResponder.moduleCameras.UnviewModule(this);
+							BombMessageResponder.ModuleCameras.UnviewModule(this);
 						}
 						else
 						{
@@ -218,8 +218,8 @@ public class TwitchModule : MonoBehaviour
 
 					module.OnStrike += delegate
 					{
-						if (BombMessageResponder.moduleCameras != null)
-							BombMessageResponder.moduleCameras.UpdateStrikes();
+						if (BombMessageResponder.ModuleCameras != null)
+							BombMessageResponder.ModuleCameras.UpdateStrikes();
 						return false;
 					};
 				}
@@ -227,8 +227,8 @@ public class TwitchModule : MonoBehaviour
 				{
 					BombComponent.GetComponent<KMNeedyModule>().OnStrike += delegate
 					{
-						if (BombMessageResponder.moduleCameras != null)
-							BombMessageResponder.moduleCameras.UpdateStrikes();
+						if (BombMessageResponder.ModuleCameras != null)
+							BombMessageResponder.ModuleCameras.UpdateStrikes();
 						return false;
 					};
 				}
@@ -713,8 +713,8 @@ public class TwitchModule : MonoBehaviour
 								TakeInProgress = null;
 							}
 
-							string newplayerName = unprocessedCommand.Remove(0, 7).Trim();
-							PlayerName = newplayerName;
+							string newPlayerName = unprocessedCommand.Remove(0, 7).Trim();
+							PlayerName = newPlayerName;
 							ClaimedList.Add(PlayerName);
 							RemoveFromClaimQueue(userNickName);
 							CanClaimNow(userNickName, true, true);

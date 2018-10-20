@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class Factory : GameRoom
 {
-	private readonly bool _finiteMode = false;
-	private readonly bool _infiniteMode = false;
+	private readonly bool _finiteMode;
+	private readonly bool _infiniteMode;
 	private readonly bool _zenMode = false; //For future use.
 
 	public static Type FactoryType()
@@ -35,7 +36,7 @@ public class Factory : GameRoom
 		return _factoryType;
 	}
 
-	public static bool TrySetupFactory(UnityEngine.Object[] factoryObject, out GameRoom room)
+	public static bool TrySetupFactory(Object[] factoryObject, out GameRoom room)
 	{
 		if (factoryObject == null || factoryObject.Length == 0)
 		{
@@ -47,11 +48,10 @@ public class Factory : GameRoom
 		return true;
 	}
 
-	private Factory(UnityEngine.Object roomObject)
+	private Factory(Object roomObject)
 	{
 		DebugHelper.Log("Found gameplay room of type Factory Room");
-		_factory = roomObject;
-		_gameroom = _gameModeProperty.GetValue(_factory, new object[] { });
+		_gameroom = _gameModeProperty.GetValue(roomObject, new object[] { });
 		if (_gameroom.GetType() == _factoryStaticModeType) return;
 
 		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
@@ -60,7 +60,7 @@ public class Factory : GameRoom
 		HoldBomb = false;
 	}
 
-	private UnityEngine.Object GetBomb => _finiteMode || _infiniteMode ? (UnityEngine.Object) _currentBombField.GetValue(_gameroom) : null;
+	private Object GetBomb => _finiteMode || _infiniteMode ? (Object) _currentBombField.GetValue(_gameroom) : null;
 
 	public override void InitializeBombs(List<Bomb> bombs)
 	{
@@ -76,7 +76,7 @@ public class Factory : GameRoom
 		BombCount = bombs.Count;
 	}
 
-	public IEnumerator DestroyBomb(UnityEngine.Object bomb)
+	public IEnumerator DestroyBomb(Object bomb)
 	{
 		yield return new WaitUntil(() => _infiniteMode || bomb == null || _internalBombProperty.GetValue(bomb, null) == null || (bool) _bombEndedProperty.GetValue(bomb, null));
 		yield return new WaitForSeconds(0.1f);
@@ -96,47 +96,47 @@ public class Factory : GameRoom
 
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
 
-		bombHandle.bombName = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
+		bombHandle.BombName = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
 
-		yield return new WaitUntil(() => GetBomb != null || bombHandle.bombCommander.Bomb.HasDetonated);
-		if (bombHandle.bombCommander.Bomb.HasDetonated && !_zenMode) yield break;
+		yield return new WaitUntil(() => GetBomb != null || bombHandle.BombCommander.Bomb.HasDetonated);
+		if (bombHandle.BombCommander.Bomb.HasDetonated && !_zenMode) yield break;
 
-		float currentBombTimer = bombHandle.bombCommander.timerComponent.TimeRemaining + 5;
+		float currentBombTimer = bombHandle.BombCommander.TimerComponent.TimeRemaining + 5;
 		int currentBombID = 1;
 		while (GetBomb != null)
 		{
-			UnityEngine.Object currentBomb = GetBomb;
+			Object currentBomb = GetBomb;
 
-			TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
+			TimerComponent timerComponent = bombHandle.BombCommander.TimerComponent;
 			yield return new WaitUntil(() => timerComponent.IsActive);
 
-			if (Math.Abs(currentBombTimer - bombHandle.bombCommander.timerComponent.TimeRemaining) > 1f)
+			if (Math.Abs(currentBombTimer - bombHandle.BombCommander.TimerComponent.TimeRemaining) > 1f)
 			{
 				yield return null;
 				InitializeGameModes(true);
 			}
 
 			bool enableCameraWall = OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall;
-			if (enableCameraWall != BombMessageResponder.moduleCameras.CameraWallEnabled)
+			if (enableCameraWall != BombMessageResponder.ModuleCameras.CameraWallEnabled)
 			{
 				if (enableCameraWall)
-					BombMessageResponder.moduleCameras.EnableCameraWall();
+					BombMessageResponder.ModuleCameras.EnableCameraWall();
 				else
-					BombMessageResponder.moduleCameras.DisableCameraWall();
+					BombMessageResponder.ModuleCameras.DisableCameraWall();
 			}
-			bombHandle.bombName = $"Bomb {currentBombID} of {(_infiniteMode ? "∞" : BombCount.ToString())}";
+			bombHandle.BombName = $"Bomb {currentBombID} of {(_infiniteMode ? "∞" : BombCount.ToString())}";
 			IRCConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++, _infiniteMode ? "∞" : BombCount.ToString());
 
 			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 			{
-				bombHandle.bombCommander.FillEdgework();
+				bombHandle.BombCommander.FillEdgework();
 			}
 			else
 			{
-				bombHandle.edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
+				bombHandle.EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 			}
 			if (OtherModes.ZenModeOn)
-				bombHandle.bombCommander.StrikeLimit += bombHandle.bombCommander.StrikeCount;
+				bombHandle.BombCommander.StrikeLimit += bombHandle.BombCommander.StrikeCount;
 
 			IEnumerator bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb hold"));
 			while (bombHold.MoveNext())
@@ -159,7 +159,7 @@ public class Factory : GameRoom
 			foreach (TwitchModule handle in BombMessageResponder.Instance.ComponentHandles)
 			{
 				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
-				BombMessageResponder.moduleCameras.UnviewModule(handle);
+				BombMessageResponder.ModuleCameras.UnviewModule(handle);
 			}
 
 			if (TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
@@ -190,21 +190,20 @@ public class Factory : GameRoom
 		}
 	}
 
-	private static Type _factoryBombType = null;
-	private static PropertyInfo _internalBombProperty = null;
-	private static PropertyInfo _bombEndedProperty = null;
+	private static Type _factoryBombType;
+	private static PropertyInfo _internalBombProperty;
+	private static PropertyInfo _bombEndedProperty;
 
-	private static Type _factoryType = null;
-	private static Type _factoryModeType = null;
-	private static MethodInfo _destroyBombMethod = null;
+	private static Type _factoryType;
+	private static Type _factoryModeType;
+	private static MethodInfo _destroyBombMethod;
 
-	private static Type _factoryStaticModeType = null;
-	private static Type _factoryFiniteModeType = null;
-	private static Type _factoryInfiniteModeType = null;
+	private static Type _factoryStaticModeType;
+	private static Type _factoryFiniteModeType;
+	private static Type _factoryInfiniteModeType;
 
-	private static PropertyInfo _gameModeProperty = null;
-	private static FieldInfo _currentBombField = null;
+	private static PropertyInfo _gameModeProperty;
+	private static FieldInfo _currentBombField;
 
-	private readonly object _factory = null;
-	private readonly object _gameroom = null;
+	private readonly object _gameroom;
 }

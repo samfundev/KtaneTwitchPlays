@@ -1,16 +1,17 @@
-﻿using Assets.Scripts.Pacing;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Pacing;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = System.Random;
 
 public class ElevatorGameRoom : GameRoom
 {
 	public static Type RoomType() => typeof(ElevatorRoom);
 
-	public static bool TryCreateElevatorRoom(UnityEngine.Object[] roomObjects, out GameRoom room)
+	public static bool TryCreateElevatorRoom(Object[] roomObjects, out GameRoom room)
 	{
 		if (roomObjects == null || roomObjects.Length == 0)
 		{
@@ -22,7 +23,7 @@ public class ElevatorGameRoom : GameRoom
 		return true;
 	}
 
-	private ElevatorGameRoom(UnityEngine.Object roomObjects)
+	private ElevatorGameRoom(Object roomObjects)
 	{
 		DebugHelper.Log("Found gameplay room of type Gameplay Room");
 		_elevatorRoom = (ElevatorRoom) roomObjects;
@@ -58,7 +59,7 @@ public class ElevatorGameRoom : GameRoom
 		if (!(rand.NextDouble() < specialNameProbability)) return;
 		foreach (TwitchBombHandle handle in bombHandles)
 		{
-			handle.bombName = singleNames[rand.Next(0, singleNames.Length - 1)];
+			handle.BombName = singleNames[rand.Next(0, singleNames.Length - 1)];
 		}
 	}
 
@@ -68,29 +69,29 @@ public class ElevatorGameRoom : GameRoom
 		while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
 		ValidEdgeworkRegex = new[] { "^edgework((?: right| left| back| r| l| b)?)$" };
 		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
-		TimerComponent timerComponent = bombHandle.bombCommander.timerComponent;
+		TimerComponent timerComponent = bombHandle.BombCommander.TimerComponent;
 		yield return new WaitUntil(() => timerComponent.IsActive);
 		BombMessageResponder.Instance.OnLightsChange(true);
 
 		_elevatorRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
-		while (!bombHandle.bombCommander.Bomb.HasDetonated)
+		while (!bombHandle.BombCommander.Bomb.HasDetonated)
 		{
 			if (Input.GetKey(KeyCode.Escape))
 			{
-				IEnumerator bombDrop = bombHandle.OnMessageReceived(new Message(bombHandle.bombName, "red", "bomb drop"));
+				IEnumerator bombDrop = bombHandle.OnMessageReceived(new Message(bombHandle.BombName, "red", "bomb drop"));
 				while (bombDrop.MoveNext())
 					yield return bombDrop.Current;
 			}
 
-			if (bombHandle.bombCommander.Bomb.IsSolved())
+			if (bombHandle.BombCommander.Bomb.IsSolved())
 				yield break;
 			ToggleEmergencyLights(SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled &&
-				bombHandle.bombCommander.CurrentTimer < 60f && !bombHandle.bombCommander.Bomb.IsSolved());
+				bombHandle.BombCommander.CurrentTimer < 60f && !bombHandle.BombCommander.Bomb.IsSolved());
 			yield return null;
 		}
 	}
 
-	public bool EmergencyLightsState = false;
+	public bool EmergencyLightsState;
 	public void ToggleEmergencyLights(bool on)
 	{
 		if (EmergencyLightsState == on) return;
@@ -249,10 +250,10 @@ public class ElevatorGameRoom : GameRoom
 		if (currentWall == CurrentElevatorWall.Dropped && newWall != CurrentElevatorWall.Dropped)
 			ToggleCamera(false);
 		float initialTime = Time.time;
-		Vector3 currentWallPosition = fromEdgework ? ElevatorEdgeworkCameraPositions[(int) currentWall] : ElevatorCameraPositions[(int) currentWall];
-		Vector3 currentWallRotation = fromEdgework ? ElevatorEdgeworkCameraRotations[(int) currentWall] : ElevatorCameraRotations[(int) currentWall];
-		Vector3 newWallPosition = toEdgework ? ElevatorEdgeworkCameraPositions[(int) newWall] : ElevatorCameraPositions[(int) newWall];
-		Vector3 newWallRotation = toEdgework ? ElevatorEdgeworkCameraRotations[(int) newWall] : ElevatorCameraRotations[(int) newWall];
+		Vector3 currentWallPosition = fromEdgework ? _elevatorEdgeworkCameraPositions[(int) currentWall] : _elevatorCameraPositions[(int) currentWall];
+		Vector3 currentWallRotation = fromEdgework ? _elevatorEdgeworkCameraRotations[(int) currentWall] : _elevatorCameraRotations[(int) currentWall];
+		Vector3 newWallPosition = toEdgework ? _elevatorEdgeworkCameraPositions[(int) newWall] : _elevatorCameraPositions[(int) newWall];
+		Vector3 newWallRotation = toEdgework ? _elevatorEdgeworkCameraRotations[(int) newWall] : _elevatorCameraRotations[(int) newWall];
 		Transform camera = SecondaryCamera.transform;
 		while (Time.time - initialTime < duration)
 		{
@@ -279,7 +280,7 @@ public class ElevatorGameRoom : GameRoom
 		Dropped
 	}
 
-	private readonly Vector3[] ElevatorCameraRotations =
+	private readonly Vector3[] _elevatorCameraRotations =
 	{
 		new Vector3(0, -90, 0),
 		Vector3.zero,
@@ -288,7 +289,7 @@ public class ElevatorGameRoom : GameRoom
 		new Vector3(26.39f, 0, 0)
 	};
 
-	private readonly Vector3[] ElevatorEdgeworkCameraRotations =
+	private readonly Vector3[] _elevatorEdgeworkCameraRotations =
 	{
 		new Vector3(20, -90, 0),
 		new Vector3(20, 0, 0),
@@ -296,7 +297,7 @@ public class ElevatorGameRoom : GameRoom
 		new Vector3(26.39f, 0, 0)
 	};
 
-	private readonly Vector3[] ElevatorCameraPositions =
+	private readonly Vector3[] _elevatorCameraPositions =
 	{
 		new Vector3(0.625f, 0.125f, 1.425f),
 		new Vector3(-0.125f, 0.125f, 0.8f),
@@ -304,7 +305,7 @@ public class ElevatorGameRoom : GameRoom
 		Vector3.zero
 	};
 
-	private readonly Vector3[] ElevatorEdgeworkCameraPositions =
+	private readonly Vector3[] _elevatorEdgeworkCameraPositions =
 	{
 		new Vector3(0.625f, 0.125f, 1.425f),
 		new Vector3(-0.125f, 0.125f, 0.8f),

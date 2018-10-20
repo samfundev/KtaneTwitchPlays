@@ -9,35 +9,35 @@ using UnityEngine.UI;
 public class TwitchBombHandle : MonoBehaviour
 {
 	#region Public Fields
-	public CanvasGroup canvasGroup = null;
+	public CanvasGroup CanvasGroup;
 
-	public Text edgeworkIDText = null;
-	public Text edgeworkText = null;
-	public RectTransform edgeworkWindowTransform = null;
-	public RectTransform edgeworkHighlightTransform = null;
-
-	[HideInInspector]
-	public BombCommander bombCommander = null;
+	public Text EdgeworkIDText;
+	public Text EdgeworkText;
+	public RectTransform EdgeworkWindowTransform;
+	public RectTransform EdgeworkHighlightTransform;
 
 	[HideInInspector]
-	public CoroutineQueue coroutineQueue = null;
+	public BombCommander BombCommander;
 
 	[HideInInspector]
-	public int bombID = -1;
+	public CoroutineQueue CoroutineQueue;
+
+	[HideInInspector]
+	public int BombID = -1;
 	#endregion
 
 	#region Private Fields
-	private string _code = null;
-	private string _edgeworkCode = null;
+	private string _code;
+	private string _edgeworkCode;
 
-	private string _bombName = null;
-	public string bombName
+	private string _bombName;
+	public string BombName
 	{
 		get => _bombName;
 		set
 		{
 			_bombName = value;
-			if (BombMessageResponder.moduleCameras != null) BombMessageResponder.moduleCameras.UpdateHeader();
+			if (BombMessageResponder.ModuleCameras != null) BombMessageResponder.ModuleCameras.UpdateHeader();
 		}
 	}
 	#endregion
@@ -51,20 +51,20 @@ public class TwitchBombHandle : MonoBehaviour
 
 	private void Start()
 	{
-		if (bombID > -1)
+		if (BombID > -1)
 		{
-			_code = "bomb" + (bombID + 1);
-			_edgeworkCode = "edgework" + (bombID + 1);
+			_code = "bomb" + (BombID + 1);
+			_edgeworkCode = "edgework" + (BombID + 1);
 		}
 
-		edgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
-		edgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
+		EdgeworkIDText.text = $"!{_edgeworkCode}";
+		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
-		canvasGroup.alpha = 1.0f;
-		if (bombID > 0)
+		CanvasGroup.alpha = 1.0f;
+		if (BombID > 0)
 		{
-			edgeworkWindowTransform.localScale = Vector3.zero;
-			edgeworkHighlightTransform.localScale = Vector3.zero;
+			EdgeworkWindowTransform.localScale = Vector3.zero;
+			EdgeworkHighlightTransform.localScale = Vector3.zero;
 		}
 	}
 
@@ -79,19 +79,19 @@ public class TwitchBombHandle : MonoBehaviour
 		bool isWhisper = message.IsWhisper;
 
 		string internalCommand;
-		Match match = Regex.Match(text, string.Format("^{0} (.+)", _code), RegexOptions.IgnoreCase);
+		Match match = Regex.Match(text, $"^{_code} (.+)", RegexOptions.IgnoreCase);
 		if (!match.Success)
 		{
-			match = Regex.Match(text, string.Format("^{0}(?> (.+))?", _edgeworkCode), RegexOptions.IgnoreCase);
+			match = Regex.Match(text, $"^{_edgeworkCode}(?> (.+))?", RegexOptions.IgnoreCase);
 			if (match.Success)
 			{
 				internalCommand = match.Groups[1].Value;
 				if (!string.IsNullOrEmpty(internalCommand) && (TwitchPlaySettings.data.EnableEdgeworkCommand || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true)))
 				{
 					if (!IsAuthorizedDefuser(userNickName, isWhisper)) return null;
-					edgeworkText.text = internalCommand;
+					EdgeworkText.text = internalCommand;
 				}
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, edgeworkText.text), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, EdgeworkText.text), userNickName, !isWhisper);
 			}
 			return null;
 		}
@@ -106,7 +106,7 @@ public class TwitchBombHandle : MonoBehaviour
 		{
 			//Some modules depend on the date/time the bomb, and therefore that Module instance has spawned, in the bomb defusers timezone.
 
-			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bombCommander.BombTimeStamp), userNickName, !isWhisper);
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, BombCommander.BombTimeStamp), userNickName, !isWhisper);
 		}
 		else if (internalCommandLower.Equals("help"))
 		{
@@ -114,7 +114,7 @@ public class TwitchBombHandle : MonoBehaviour
 		}
 		else if (internalCommandLower.EqualsAny("time", "timer", "clock"))
 		{
-			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime), userNickName, !isWhisper);
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, BombCommander.GetFullFormattedTime, BombCommander.GetFullStartingTime), userNickName, !isWhisper);
 		}
 		else if (internalCommandLower.EqualsAny("explode", "detonate", "endzenmode"))
 		{
@@ -151,32 +151,32 @@ public class TwitchBombHandle : MonoBehaviour
 			int currentReward = TwitchPlaySettings.GetRewardBonus();
 			if (OtherModes.TimeModeOn)
 			{
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusTimeMode, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
-					OtherModes.GetAdjustedMultiplier(), bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusTimeMode, BombCommander.GetFullFormattedTime, BombCommander.GetFullStartingTime,
+					OtherModes.GetAdjustedMultiplier(), BombCommander.BombSolvedModules, BombCommander.BombSolvableModules, currentReward), userNickName, !isWhisper);
 			}
 			else if (OtherModes.VSModeOn)
 			{
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusVsMode, bombCommander.GetFullFormattedTime,
-					bombCommander.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusVsMode, BombCommander.GetFullFormattedTime,
+					BombCommander.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward), userNickName, !isWhisper);
 			}
 			else
 			{
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatus, bombCommander.GetFullFormattedTime, bombCommander.GetFullStartingTime,
-					bombCommander.StrikeCount, bombCommander.StrikeLimit, bombCommander.bombSolvedModules, bombCommander.bombSolvableModules, currentReward), userNickName, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatus, BombCommander.GetFullFormattedTime, BombCommander.GetFullStartingTime,
+					BombCommander.StrikeCount, BombCommander.StrikeLimit, BombCommander.BombSolvedModules, BombCommander.BombSolvableModules, currentReward), userNickName, !isWhisper);
 			}
 		}
 		else if (internalCommandLower.Equals("pause") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 		{
-			if (!bombCommander.timerComponent.IsUpdating)
+			if (!BombCommander.TimerComponent.IsUpdating)
 				return null;
 
 			OtherModes.DisableLeaderboard();
-			bombCommander.timerComponent.StopTimer();
+			BombCommander.TimerComponent.StopTimer();
 		}
 		else if (internalCommandLower.Equals("unpause") && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 		{
-			if (!bombCommander.timerComponent.IsUpdating)
-				bombCommander.timerComponent.StartTimer();
+			if (!BombCommander.TimerComponent.IsUpdating)
+				BombCommander.TimerComponent.StartTimer();
 		}
 		else if (split[0].EqualsAny("add", "increase", "change", "subtract", "decrease", "remove", "set"))
 		{
@@ -189,7 +189,7 @@ public class TwitchBombHandle : MonoBehaviour
 					case "time":
 					case "t":
 						float time = 0;
-						float originalTime = bombCommander.timerComponent.TimeRemaining;
+						float originalTime = BombCommander.TimerComponent.TimeRemaining;
 						Dictionary<string, float> timeLengths = new Dictionary<string, float>()
 						{
 							{ "ms", 0.001f },
@@ -216,52 +216,50 @@ public class TwitchBombHandle : MonoBehaviour
 						}
 
 						time = (float) Math.Round((decimal) time, 2, MidpointRounding.AwayFromZero);
-						if (!direct && Math.Abs(time) == 0) break;
+						if (!direct && Math.Abs(time) < 0.01f) break;
 						if (negative) time = -time;
 
 						if (direct)
-							bombCommander.timerComponent.TimeRemaining = time;
+							BombCommander.TimerComponent.TimeRemaining = time;
 						else
-							bombCommander.timerComponent.TimeRemaining = bombCommander.CurrentTimer + time;
+							BombCommander.TimerComponent.TimeRemaining = BombCommander.CurrentTimer + time;
 
-						if (originalTime < bombCommander.timerComponent.TimeRemaining)
+						if (originalTime < BombCommander.TimerComponent.TimeRemaining)
 							OtherModes.DisableLeaderboard(true);
 
-						if (direct)
-							IRCConnection.SendMessage(string.Format("Set the bomb's timer to {0}.", Math.Abs(time < 0 ? 0 : time).FormatTime()), userNickName, !isWhisper);
-						else
-							IRCConnection.SendMessage(string.Format("{0} {1} {2} the timer.", time > 0 ? "Added" : "Subtracted", Math.Abs(time).FormatTime(), time > 0 ? "to" : "from"), userNickName, !isWhisper);
+						IRCConnection.SendMessage(direct 
+							? $"Set the bomb's timer to {Math.Abs(time < 0 ? 0 : time).FormatTime()}." 
+							: $"{(time > 0 ? "Added" : "Subtracted")} {Math.Abs(time).FormatTime()} {(time > 0 ? "to" : "from")} the timer.", userNickName, !isWhisper);
 						break;
 					case "strikes":
 					case "strike":
 					case "s":
 						if (int.TryParse(split[2], out int strikes) && (strikes != 0 || direct))
 						{
-							int originalStrikes = bombCommander.StrikeCount;
+							int originalStrikes = BombCommander.StrikeCount;
 							if (negative) strikes = -strikes;
 
 							if (direct && strikes < 0)
 							{
 								strikes = 0;
 							}
-							else if (!direct && (bombCommander.StrikeCount + strikes) < 0)
+							else if (!direct && (BombCommander.StrikeCount + strikes) < 0)
 							{
-								strikes = -bombCommander.StrikeCount; //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
+								strikes = -BombCommander.StrikeCount; //Minimum of zero strikes. (Simon says is unsolvable with negative strikes.)
 							}
 
 							if (direct)
-								bombCommander.StrikeCount = strikes;
+								BombCommander.StrikeCount = strikes;
 							else
-								bombCommander.StrikeCount += strikes;
+								BombCommander.StrikeCount += strikes;
 
-							if (bombCommander.StrikeCount < originalStrikes)
+							if (BombCommander.StrikeCount < originalStrikes)
 								OtherModes.DisableLeaderboard(true);
 
-							if (direct)
-								IRCConnection.SendMessage(string.Format("Set the bomb's strike count to {0} {1}.", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
-							else
-								IRCConnection.SendMessage(string.Format("{0} {1} {2} {3} the bomb.", strikes > 0 ? "Added" : "Subtracted", Math.Abs(strikes), Math.Abs(strikes) != 1 ? "strikes" : "strike", strikes > 0 ? "to" : "from"), userNickName, !isWhisper);
-							BombMessageResponder.moduleCameras.UpdateStrikes();
+							IRCConnection.SendMessage(direct 
+								? $"Set the bomb's strike count to {Math.Abs(strikes)} {(Math.Abs(strikes) != 1 ? "strikes" : "strike")}." 
+								: $"{(strikes > 0 ? "Added" : "Subtracted")} {Math.Abs(strikes)} {(Math.Abs(strikes) != 1 ? "strikes" : "strike")} {(strikes > 0 ? "to" : "from")} the bomb.", userNickName, !isWhisper);
+							BombMessageResponder.ModuleCameras.UpdateStrikes();
 						}
 						break;
 					case "strikelimit":
@@ -270,27 +268,26 @@ public class TwitchBombHandle : MonoBehaviour
 					case "ms":
 						if (int.TryParse(split[2], out int maxStrikes) && (maxStrikes != 0 || direct))
 						{
-							int originalStrikeLimit = bombCommander.StrikeLimit;
+							int originalStrikeLimit = BombCommander.StrikeLimit;
 							if (negative) maxStrikes = -maxStrikes;
 
 							if (direct && maxStrikes < 0)
 								maxStrikes = 0;
-							else if (!direct && (bombCommander.StrikeLimit + maxStrikes) < 0)
-								maxStrikes = -bombCommander.StrikeLimit;
+							else if (!direct && (BombCommander.StrikeLimit + maxStrikes) < 0)
+								maxStrikes = -BombCommander.StrikeLimit;
 
 							if (direct)
-								bombCommander.StrikeLimit = maxStrikes;
+								BombCommander.StrikeLimit = maxStrikes;
 							else
-								bombCommander.StrikeLimit += maxStrikes;
+								BombCommander.StrikeLimit += maxStrikes;
 
-							if (originalStrikeLimit < bombCommander.StrikeLimit)
+							if (originalStrikeLimit < BombCommander.StrikeLimit)
 								OtherModes.DisableLeaderboard(true);
 
-							if (direct)
-								IRCConnection.SendMessage(string.Format("Set the bomb's strike limit to {0} {1}.", Math.Abs(maxStrikes), Math.Abs(maxStrikes) != 1 ? "strikes" : "strike"), userNickName, !isWhisper);
-							else
-								IRCConnection.SendMessage(string.Format("{0} {1} {2} {3} the strike limit.", maxStrikes > 0 ? "Added" : "Subtracted", Math.Abs(maxStrikes), Math.Abs(maxStrikes) > 1 ? "strikes" : "strike", maxStrikes > 0 ? "to" : "from"), userNickName, !isWhisper);
-							BombMessageResponder.moduleCameras.UpdateStrikes();
+							IRCConnection.SendMessage(direct 
+								? $"Set the bomb's strike limit to {Math.Abs(maxStrikes)} {(Math.Abs(maxStrikes) != 1 ? "strikes" : "strike")}." 
+								: $"{(maxStrikes > 0 ? "Added" : "Subtracted")} {Math.Abs(maxStrikes)} {(Math.Abs(maxStrikes) > 1 ? "strikes" : "strike")} {(maxStrikes > 0 ? "to" : "from")} the strike limit.", userNickName, !isWhisper);
+							BombMessageResponder.ModuleCameras.UpdateStrikes();
 						}
 						break;
 				}
@@ -312,8 +309,8 @@ public class TwitchBombHandle : MonoBehaviour
 
 	public IEnumerator HideMainUIWindow()
 	{
-		edgeworkWindowTransform.localScale = Vector3.zero;
-		edgeworkHighlightTransform.localScale = Vector3.zero;
+		EdgeworkWindowTransform.localScale = Vector3.zero;
+		EdgeworkHighlightTransform.localScale = Vector3.zero;
 		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.zero;
 		IRCConnection.Instance.HighlightTransform.localScale = Vector3.zero;
 		yield return null;
@@ -321,8 +318,8 @@ public class TwitchBombHandle : MonoBehaviour
 
 	public IEnumerator ShowMainUIWindow()
 	{
-		edgeworkWindowTransform.localScale = Vector3.one;
-		edgeworkHighlightTransform.localScale = Vector3.one;
+		EdgeworkWindowTransform.localScale = Vector3.one;
+		EdgeworkHighlightTransform.localScale = Vector3.one;
 		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.one;
 		IRCConnection.Instance.HighlightTransform.localScale = Vector3.one;
 		yield return null;
@@ -341,23 +338,24 @@ public class TwitchBombHandle : MonoBehaviour
 
 	private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
 	{
-		bombCommander.StrikeCount = bombCommander.StrikeLimit - 1;
+		BombCommander.StrikeCount = BombCommander.StrikeLimit - 1;
 		if (!string.IsNullOrEmpty(message))
 			IRCConnection.SendMessage(message);
 		yield return new WaitForSeconds(delay);
-		bombCommander.CauseStrikesToExplosion(reason);
+		BombCommander.CauseStrikesToExplosion(reason);
 	}
 
+	// ReSharper disable once UnusedParameter.Local
 	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, bool isWhisper, float fadeDuration = 0.1f)
 	{
-		IEnumerator commandResponseCoroutine = bombCommander.RespondToCommand(new Message(userNickName, null, internalCommand, isWhisper));
+		IEnumerator commandResponseCoroutine = BombCommander.RespondToCommand(new Message(userNickName, null, internalCommand, isWhisper));
 		while (commandResponseCoroutine.MoveNext())
 		{
-			if (commandResponseCoroutine.Current is string chatmessage)
+			if (commandResponseCoroutine.Current is string chatMessage)
 			{
-				if (chatmessage.StartsWith("sendtochat "))
+				if (chatMessage.StartsWith("sendtochat "))
 				{
-					IRCConnection.SendMessage(chatmessage.Substring(11));
+					IRCConnection.SendMessage(chatMessage.Substring(11));
 				}
 			}
 

@@ -49,12 +49,12 @@ public abstract class GameRoom
 
 	public virtual void InitializeBombs(List<Bomb> bombs)
 	{
-		int _currentBomb = bombs.Count == 1 ? -1 : 0;
+		int currentBomb = bombs.Count == 1 ? -1 : 0;
 		for (int i = 0; i < bombs.Count; i++)
 		{
-			BombMessageResponder.Instance.SetBomb(bombs[i], _currentBomb == -1 ? -1 : i);
+			BombMessageResponder.Instance.SetBomb(bombs[i], currentBomb == -1 ? -1 : i);
 		}
-		BombCount = _currentBomb == -1 ? -1 : bombs.Count;
+		BombCount = currentBomb == -1 ? -1 : bombs.Count;
 		BombMessageResponder.Instance.InitializeModuleCodes();
 	}
 
@@ -63,7 +63,7 @@ public abstract class GameRoom
 		if (ReuseBombCommander)
 		{
 			//Destroy existing component handles, and instantiate a new set.
-			BombMessageResponder.Instance.BombHandles[0].bombCommander.ReuseBombCommander(bomb);
+			BombMessageResponder.Instance.BombHandles[0].BombCommander.ReuseBombCommander(bomb);
 			BombMessageResponder.Instance.DestroyComponentHandles();
 			BombMessageResponder.Instance.CreateComponentHandlesForBomb(bomb);
 			BombMessageResponder.Instance.InitializeModuleCodes();
@@ -118,15 +118,15 @@ public abstract class GameRoom
 				{
 					string nameText = doubleNames[nameIndex, i];
 					if (nameText != null)
-						bombHandles[i].bombName = nameText;
+						bombHandles[i].BombName = nameText;
 				}
 				break;
 			case 2:
-				bombHandles[1].bombName = "The Other Bomb";
+				bombHandles[1].BombName = "The Other Bomb";
 				break;
 			default:
 				foreach (TwitchBombHandle handle in bombHandles)
-					handle.bombName = singleNames[rand.Next(0, singleNames.Length)];
+					handle.BombName = singleNames[rand.Next(0, singleNames.Length)];
 				break;
 		}
 	}
@@ -146,6 +146,12 @@ public abstract class GameRoom
 		if (SecondaryCamera != null) return;
 
 		GameObject customMover = new GameObject("CustomCameraMover");
+		if (Camera.main == null)
+		{
+			DebugHelper.Log("Could not Initialize the secondary camera, because the main camera is not available");
+			return;
+		}
+
 		customMover.transform.SetParent(Camera.main.transform.parent.parent);
 		_mainCamera = Camera.main;
 
@@ -193,12 +199,14 @@ public abstract class GameRoom
 		SecondaryCamera.transform.localEulerAngles = new Vector3(26.39f, 0, 0);
 	}
 
+	// ReSharper disable once UnusedMember.Global
 	public static void SetCameraPosition(Vector3 movement)
 	{
 		if (IsMainCamera) return;
 		SecondaryCamera.transform.localPosition = movement;
 	}
 
+	// ReSharper disable once UnusedMember.Global
 	public static void SetCameraRotation(Vector3 rotation)
 	{
 		if (IsMainCamera) return;
@@ -233,9 +241,9 @@ public abstract class GameRoom
 		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
 		foreach (TwitchBombHandle handle in bombHandles)
 			if (OtherModes.TimeModeOn)
-				handle.bombCommander.timerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
+				handle.BombCommander.TimerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
 			else if (OtherModes.ZenModeOn)
-				handle.bombCommander.timerComponent.TimeRemaining = 1;
+				handle.BombCommander.TimerComponent.TimeRemaining = 1;
 	}
 
 	public virtual IEnumerator ReportBombStatus()

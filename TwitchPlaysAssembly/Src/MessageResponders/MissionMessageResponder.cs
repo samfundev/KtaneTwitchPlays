@@ -4,8 +4,8 @@ using System.Linq;
 
 public class MissionMessageResponder : MessageResponder
 {
-	private BombBinderCommander _bombBinderCommander = null;
-	private FreeplayCommander _freeplayCommander = null;
+	private BombBinderCommander _bombBinderCommander;
+	private FreeplayCommander _freeplayCommander;
 
 	#region Unity Lifecycle
 	private void OnEnable() =>
@@ -53,7 +53,7 @@ public class MissionMessageResponder : MessageResponder
 			case "binder":
 				if ((TwitchPlaySettings.data.EnableMissionBinder && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 				{
-					_coroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
+					CoroutineQueue.AddToQueue(_bombBinderCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
 				}
 				else
 				{
@@ -63,7 +63,7 @@ public class MissionMessageResponder : MessageResponder
 			case "freeplay":
 				if ((TwitchPlaySettings.data.EnableFreeplayBriefcase && TwitchPlaySettings.data.EnableTwitchPlaysMode) || UserAccess.HasAccess(userNickName, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 				{
-					_coroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
+					CoroutineQueue.AddToQueue(_freeplayCommander.RespondToCommand(new Message(userNickName, null, textAfter, isWhisper), null));
 				}
 				else
 				{
@@ -71,7 +71,7 @@ public class MissionMessageResponder : MessageResponder
 				}
 				break;
 			default:
-				_coroutineQueue.AddToQueue(TPElevatorSwitch.Instance.ProcessElevatorCommand(split));
+				CoroutineQueue.AddToQueue(TPElevatorSwitch.Instance.ProcessElevatorCommand(split));
 				break;
 		}
 	}

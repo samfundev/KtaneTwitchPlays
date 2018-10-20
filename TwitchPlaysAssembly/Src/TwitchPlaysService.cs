@@ -36,7 +36,7 @@ public class TwitchPlaysService : MonoBehaviour
 	private readonly Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
 	private TwitchPlaysServiceData _data;
 
-	public RectTransform BombHeader { get => _data.BombHeader; }
+	public RectTransform BombHeader => _data.BombHeader;
 
 	private void Awake()
 	{
@@ -53,9 +53,9 @@ public class TwitchPlaysService : MonoBehaviour
 		MissionMessageResponder = GetComponentInChildren<MissionMessageResponder>(true);
 		MiscellaneousMessageResponder = GetComponentInChildren<MiscellaneousMessageResponder>(true);
 
-		BombMessageResponder.twitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
-		BombMessageResponder.twitchModulePrefab = GetComponentInChildren<TwitchModule>(true);
-		BombMessageResponder.moduleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
+		BombMessageResponder.TwitchBombHandlePrefab = GetComponentInChildren<TwitchBombHandle>(true);
+		BombMessageResponder.TwitchModulePrefab = GetComponentInChildren<TwitchModule>(true);
+		BombMessageResponder.ModuleCamerasPrefab = GetComponentInChildren<ModuleCameras>(true);
 
 		BombMessageResponder.Instance = BombMessageResponder;
 
@@ -77,7 +77,7 @@ public class TwitchPlaysService : MonoBehaviour
 		SetupResponder(MissionMessageResponder);
 		SetupResponder(MiscellaneousMessageResponder);
 
-		BombMessageResponder.parentService = this;
+		BombMessageResponder.ParentService = this;
 
 		GameObject infoObject = new GameObject("TwitchPlays_Info");
 		infoObject.transform.parent = gameObject.transform;

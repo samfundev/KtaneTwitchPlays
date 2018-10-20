@@ -1,15 +1,16 @@
-﻿using Assets.Scripts.Pacing;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Pacing;
+using Object = UnityEngine.Object;
 
 public class Facility : GameRoom
 {
 	public static Type RoomType() => typeof(FacilityRoom);
 
-	public static bool TryCreateFacility(UnityEngine.Object[] roomObjects, out GameRoom room)
+	public static bool TryCreateFacility(Object[] roomObjects, out GameRoom room)
 	{
 		if (roomObjects == null || roomObjects.Length == 0)
 		{
@@ -37,32 +38,32 @@ public class Facility : GameRoom
 			yield break;
 
 		_facilityRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
-		while (bombHandles.TrueForAll(handle => !handle.bombCommander.Bomb.HasDetonated))
+		while (bombHandles.TrueForAll(handle => !handle.BombCommander.Bomb.HasDetonated))
 		{
-			if (bombHandles.TrueForAll(handle => handle.bombCommander.Bomb.IsSolved()))
+			if (bombHandles.TrueForAll(handle => handle.BombCommander.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(handle => handle.bombCommander.CurrentTimer < 60f && !handle.bombCommander.Bomb.IsSolved()));
+			ToggleEmergencyLights(bombHandles.Any(handle => handle.BombCommander.CurrentTimer < 60f && !handle.BombCommander.Bomb.IsSolved()));
 			yield return null;
 		}
 	}
 
-	public bool EmergencyLightsState = false;
+	public bool EmergencyLightsState;
 	public void ToggleEmergencyLights(bool on)
 	{
 		if (EmergencyLightsState == on) return;
 		EmergencyLightsState = on;
-		MethodInfo method = on ? _turnOnEmergencyLightsMethod : _turnOffEmergencyLightsMethod;
+		MethodInfo method = on ? TurnOnEmergencyLightsMethod : TurnOffEmergencyLightsMethod;
 		method.Invoke(_facilityRoom, null);
 	}
 
 	static Facility()
 	{
-		_turnOffEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOffEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
-		_turnOnEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOnEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
+		TurnOffEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOffEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
+		TurnOnEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOnEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private static readonly MethodInfo _turnOffEmergencyLightsMethod = null;
-	private static readonly MethodInfo _turnOnEmergencyLightsMethod = null;
+	private static readonly MethodInfo TurnOffEmergencyLightsMethod;
+	private static readonly MethodInfo TurnOnEmergencyLightsMethod;
 
-	private readonly FacilityRoom _facilityRoom = null;
+	private readonly FacilityRoom _facilityRoom;
 }

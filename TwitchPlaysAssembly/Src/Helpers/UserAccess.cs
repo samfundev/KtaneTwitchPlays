@@ -67,7 +67,7 @@ public static class UserAccess
 
 	public static void WriteAccessList()
 	{
-		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
+		string path = Path.Combine(Application.persistentDataPath, UsersSavePath);
 		try
 		{
 			DebugHelper.Log("UserAccess: Writing User Access information data to file: {0}", path);
@@ -81,7 +81,7 @@ public static class UserAccess
 
 	public static void LoadAccessList()
 	{
-		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
+		string path = Path.Combine(Application.persistentDataPath, UsersSavePath);
 		//Try to read old format first.
 		try
 		{
@@ -123,7 +123,7 @@ public static class UserAccess
 			.Where(x => HasAccess(x, AccessLevel.Banned)).ToArray())
 			IsBanned(username);
 	}
-	public static string usersSavePath = "AccessLevels.json";
+	public static string UsersSavePath = "AccessLevels.json";
 
 	public static bool ModeratorsEnabled = true;
 
@@ -152,7 +152,7 @@ public static class UserAccess
 	{
 		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername) return AccessLevel.Streamer;
 
-		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Any(x => x.bombName == userNickName)) return AccessLevel.Streamer;
+		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Any(x => x.BombName == userNickName)) return AccessLevel.Streamer;
 
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
 			out AccessLevel userAccessLevel))

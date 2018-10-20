@@ -1,10 +1,11 @@
-﻿using Assets.Scripts.Pacing;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Pacing;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class PortalRoom : GameRoom
 {
@@ -22,7 +23,7 @@ public class PortalRoom : GameRoom
 		return _portalRoomType;
 	}
 
-	public static bool TryCreatePortalRoom(UnityEngine.Object[] roomObjects, out GameRoom room)
+	public static bool TryCreatePortalRoom(Object[] roomObjects, out GameRoom room)
 	{
 		if (roomObjects == null || roomObjects.Length == 0 || PortalRoomType() == null)
 		{
@@ -34,7 +35,7 @@ public class PortalRoom : GameRoom
 		return true;
 	}
 
-	private PortalRoom(UnityEngine.Object room)
+	private PortalRoom(Object room)
 	{
 		DebugHelper.Log("Portal Room created");
 		_room = room;
@@ -54,17 +55,17 @@ public class PortalRoom : GameRoom
 		List<PacingAction> actions = (List<PacingAction>) typeof(PaceMaker).GetField("actions", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(paceMaker);
 		actions?.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
 
-		while (bombHandles.TrueForAll(handle => !handle.bombCommander.Bomb.HasDetonated))
+		while (bombHandles.TrueForAll(handle => !handle.BombCommander.Bomb.HasDetonated))
 		{
-			if (bombHandles.TrueForAll(handle => handle.bombCommander.Bomb.IsSolved()))
+			if (bombHandles.TrueForAll(handle => handle.BombCommander.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(handle => handle.bombCommander.CurrentTimer < 60f && !handle.bombCommander.Bomb.IsSolved()), bombHandles[0]);
+			ToggleEmergencyLights(bombHandles.Any(handle => handle.BombCommander.CurrentTimer < 60f && !handle.BombCommander.Bomb.IsSolved()), bombHandles[0]);
 			yield return null;
 		}
 	}
 
-	private bool _emergencyLightsState = false;
-	private IEnumerator _emergencyLightsRoutine = null;
+	private bool _emergencyLightsState;
+	private IEnumerator _emergencyLightsRoutine;
 	private void ToggleEmergencyLights(bool on, TwitchBombHandle handle)
 	{
 		if (_emergencyLightsState == on) return;
@@ -82,9 +83,9 @@ public class PortalRoom : GameRoom
 		}
 	}
 
-	private static Type _portalRoomType = null;
-	private static MethodInfo _redLightsMethod = null;
-	private static FieldInfo _roomLightField = null;
-	private readonly UnityEngine.Object _room = null;
-	private GameObject _roomLight = null;
+	private static Type _portalRoomType;
+	private static MethodInfo _redLightsMethod;
+	private static FieldInfo _roomLightField;
+	private readonly Object _room;
+	private GameObject _roomLight;
 }

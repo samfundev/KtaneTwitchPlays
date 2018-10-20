@@ -4,20 +4,24 @@ using UnityEngine;
 
 public abstract class MessageResponder : MonoBehaviour
 {
-	protected CoroutineQueue _coroutineQueue = null;
+	protected CoroutineQueue CoroutineQueue;
 
-	private void OnDestroy() => IRCConnection.Instance?.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
+	private void OnDestroy()
+	{
+		if (IRCConnection.Instance == null) return;
+		IRCConnection.Instance.OnMessageReceived.RemoveListener(OnInternalMessageReceived);
+	}
 
 	public void SetupResponder(CoroutineQueue coroutineQueue)
 	{
-		_coroutineQueue = coroutineQueue;
-
-		IRCConnection.Instance?.OnMessageReceived.AddListener(OnInternalMessageReceived);
+		CoroutineQueue = coroutineQueue;
+		if (IRCConnection.Instance == null) return;
+		IRCConnection.Instance.OnMessageReceived.AddListener(OnInternalMessageReceived);
 	}
 
 	public static bool IsAuthorizedDefuser(string userNickName, bool isWhisper, bool silent = false)
 	{
-		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || BombMessageResponder.Instance.BombHandles.Any(x => x.bombName == userNickName))
+		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || BombMessageResponder.Instance.BombHandles.Any(x => x.BombName == userNickName))
 			return true;
 		BanData ban = UserAccess.IsBanned(userNickName);
 		if (ban != null)
@@ -26,7 +30,7 @@ public abstract class MessageResponder : MonoBehaviour
 
 			if (double.IsPositiveInfinity(ban.BanExpiry))
 			{
-				IRCConnection.SendMessage(string.Format("Sorry @{0}, You were banned permanently from Twitch Plays by {1}{2}", userNickName, ban.BannedBy, string.IsNullOrEmpty(ban.BannedReason) ? "." : $", for the following reason: {ban.BannedReason}"), userNickName, !isWhisper);
+				IRCConnection.SendMessage($"Sorry @{userNickName}, You were banned permanently from Twitch Plays by {ban.BannedBy}{(string.IsNullOrEmpty(ban.BannedReason) ? "." : $", for the following reason: {ban.BannedReason}")}", userNickName, !isWhisper);
 			}
 			else
 			{
@@ -40,7 +44,7 @@ public abstract class MessageResponder : MonoBehaviour
 				else if (hoursRemaining > 0) timeRemaining = $"{hoursRemaining} hours, {minutesRemaining} minutes, {secondsRemaining} seconds.";
 				else if (minutesRemaining > 0) timeRemaining = $"{minutesRemaining} minutes, {secondsRemaining} seconds.";
 
-				IRCConnection.SendMessage(string.Format("Sorry @{0}, You were timed out from Twitch Plays by {1}{2} You can participate again in {3}", userNickName, ban.BannedBy, string.IsNullOrEmpty(ban.BannedReason) ? "." : $", For the following reason: {ban.BannedReason}", timeRemaining), userNickName, !isWhisper);
+				IRCConnection.SendMessage($"Sorry @{userNickName}, You were timed out from Twitch Plays by {ban.BannedBy}{(string.IsNullOrEmpty(ban.BannedReason) ? "." : $", For the following reason: {ban.BannedReason}")} You can participate again in {timeRemaining}", userNickName, !isWhisper);
 			}
 			return false;
 		}
