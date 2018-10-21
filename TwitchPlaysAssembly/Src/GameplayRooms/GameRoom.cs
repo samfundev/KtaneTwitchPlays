@@ -188,7 +188,8 @@ public abstract class GameRoom
 
 	public static void ShowCamera()
 	{
-		_mainCamera.cullingMask = MainCameraCullingMask;
+		if (_mainCamera != null)
+			_mainCamera.cullingMask = MainCameraCullingMask;
 		if (SecondaryCamera != null)
 			SecondaryCamera.cullingMask = SecondaryCameraCullingMask;
 	}

@@ -264,7 +264,8 @@ public class BombMessageResponder : MessageResponder
 
 		foreach (TwitchModule handle in ComponentHandles)
 		{
-			Destroy(handle.gameObject, 2.0f);
+			if (handle != null)
+				Destroy(handle.gameObject, 2.0f);
 		}
 		ComponentHandles.Clear();
 	}

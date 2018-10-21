@@ -13,7 +13,8 @@ public static class InputInterceptor
 		foreach (AbstractControls inputSystem in _inputSystems)
 			try
 			{
-				inputSystem.gameObject.SetActive(true);
+				if (inputSystem != null)
+					inputSystem.gameObject.SetActive(true);
 				Cursor.visible = true;
 			}
 			catch (Exception ex)
