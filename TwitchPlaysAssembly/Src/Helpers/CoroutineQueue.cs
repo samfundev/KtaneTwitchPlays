@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -88,8 +89,9 @@ public class CoroutineQueue : MonoBehaviour
 				{
 					result = coroutine.MoveNext();
 				}
-				catch
+				catch (Exception e)
 				{
+					DebugHelper.LogException(e, "An exception occurred while executing a queued coroutine:");
 					result = false;
 				}
 				if (result) yield return coroutine.Current;
@@ -114,8 +116,9 @@ public class CoroutineQueue : MonoBehaviour
 				{
 					result = coroutine.MoveNext();
 				}
-				catch
+				catch (Exception e)
 				{
+					DebugHelper.LogException(e, "An exception occurred while executing a force-solve coroutine:");
 					result = false;
 				}
 				if (!result) continue;

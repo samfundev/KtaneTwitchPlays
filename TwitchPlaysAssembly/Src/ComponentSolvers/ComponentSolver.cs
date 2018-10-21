@@ -25,22 +25,9 @@ public abstract class ComponentSolver
 	{
 		_disableAnarchyStrike = TwitchPlaySettings.data.AnarchyMode;
 		IEnumerator respondToCommand = RespondToCommandInternal(userNickName, message);
-		while (MoveNextWrapped(respondToCommand))
+		while (respondToCommand.MoveNext())
 			yield return respondToCommand.Current;
 		_disableAnarchyStrike = false;
-	}
-
-	private static bool MoveNextWrapped(IEnumerator respondToCommand)
-	{
-		try
-		{
-			return respondToCommand.MoveNext();
-		}
-		catch (Exception e)
-		{
-			DebugHelper.LogException(e);
-			return false;
-		}
 	}
 
 	private int _beforeStrikeCount;
