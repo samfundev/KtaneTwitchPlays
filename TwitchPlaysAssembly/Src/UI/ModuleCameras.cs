@@ -19,6 +19,7 @@ public class ModuleCameras : MonoBehaviour
 		public TwitchModule Module;
 		public TwitchModule PreviousModule;
 		public Camera CameraInstance;
+		public bool ZoomActive;
 
 		/// <summary>Camera layer used when interactive mode is NOT enabled.</summary>
 		public int CameraLayer;
@@ -43,6 +44,7 @@ public class ModuleCameras : MonoBehaviour
 		public IEnumerator ZoomCamera(float duration = 1.0f)
 		{
 			CameraInstance.depth = 100;
+			ZoomActive = true;
 			yield return null;
 			float initialTime = Time.time;
 			while ((Time.time - initialTime) < duration)
@@ -74,6 +76,7 @@ public class ModuleCameras : MonoBehaviour
 			}
 			CameraInstance.rect = _originalCameraRect;
 			CameraInstance.depth = 99;
+			ZoomActive = false;
 
 			if (PreviousModule != null)
 			{
@@ -300,7 +303,7 @@ public class ModuleCameras : MonoBehaviour
 	}
 
 	private ModuleCamera AvailableCamera(CameraPriority maxPriority) => _cameras
-				.Where(c => c.Module == null || (c.Module != null && c.Module.CameraPriority <= maxPriority))
+				.Where(c => c.Module == null || (c.Module != null && c.Module.CameraPriority <= maxPriority && !c.ZoomActive))
 				.OrderBy(c => c.Module != null)
 				.ThenByDescending(c => c.Module != null ? (CameraPriority?) c.Module.CameraPriority : null)
 				.ThenBy(c => c.Module != null ? (DateTime?) c.Module.LastUsed : null)
