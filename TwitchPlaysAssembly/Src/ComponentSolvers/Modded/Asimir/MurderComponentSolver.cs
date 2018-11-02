@@ -81,14 +81,17 @@ public class MurderComponentSolver : ComponentSolver
 
 			if (set[catIndex]) continue;
 
-			misspelled |= !NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase));
-			if (!misspelled) continue;
-
-			yield return null;
-			yield return $"sendtochat {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
+			if (!NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase)))
+			{
+				misspelled = true;
+				yield return null;
+				yield return $"sendtochat {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
+				continue;
+			}
 			set[catIndex] = true;
 		}
-		if (misspelled) yield break;
+		if (misspelled)
+			yield break;
 
 		for (int i = 0; i < catIndexes.Length; i++)
 		{
