@@ -13,7 +13,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		_downButtons = (KMSelectable[]) DownButtonField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
 		_submitButton = (MonoBehaviour) SubmitButtonField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
 		_display = (TextMesh[]) DisplayField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]");
 
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType);
 		if (language != null) ModInfo.manualCode = $"Password{language}";
@@ -44,11 +44,19 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
-		HashSet<int> alreadyCycled = new HashSet<int>();
 		string[] commandParts = inputCommand.Split(' ');
+
+		if (commandParts.Length == 1 && commandParts[0].Equals("toggle", StringComparison.InvariantCultureIgnoreCase))
+		{
+			yield return "password";
+			for (int i = 0; i < 5; i++)
+				yield return DoInteractionClick(_downButtons[i]);
+			yield break;
+		}
 
 		if (commandParts.Length > 0 && commandParts[0].Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
 		{
+			HashSet<int> alreadyCycled = new HashSet<int>();
 			foreach (string cycle in commandParts.Skip(1))
 			{
 				if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _downButtons.Length)
@@ -56,9 +64,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
 				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(spinnerIndex - 1);
 				while (spinnerCoroutine.MoveNext())
-				{
 					yield return spinnerCoroutine.Current;
-				}
 			}
 			yield break;
 		}
@@ -75,9 +81,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
 		IEnumerator solveCoroutine = SolveCoroutine(lettersToSubmit);
 		while (solveCoroutine.MoveNext())
-		{
 			yield return solveCoroutine.Current;
-		}
 	}
 
 	private IEnumerator CycleCharacterSpinnerCoroutine(int index)
