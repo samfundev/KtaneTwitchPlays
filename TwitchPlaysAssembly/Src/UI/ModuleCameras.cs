@@ -93,10 +93,9 @@ public class ModuleCameras : MonoBehaviour
 				return;
 			Module = module;
 
-			int layer = (LastInteractiveState ? DefaultCameraLayer : CameraLayer);
+			int layer = LastInteractiveState ? DefaultCameraLayer : CameraLayer;
 
 			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
-			Debug.LogFormat("[ModuleCameras] Switching component's layer from {0} to {1}", Module.BombComponent.gameObject.layer, layer);
 			Module.SetRenderLayer(layer);
 			Transform t = Module.BombComponent.transform.Find("TwitchPlayModuleCamera");
 			if (t == null)
@@ -108,7 +107,7 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.transform.SetParent(t, false);
 			CameraInstance.gameObject.SetActive(true);
 
-			Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1}", Module.BombComponent.gameObject.layer, CameraInstance.cullingMask);
+			Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1:X8}", Module.BombComponent.gameObject.layer, unchecked((uint) CameraInstance.cullingMask));
 
 			Vector3 lossyScale = CameraInstance.transform.lossyScale;
 			CameraInstance.nearClipPlane = 1.0f * lossyScale.y;
@@ -169,7 +168,7 @@ public class ModuleCameras : MonoBehaviour
 
 	#region Private Fields
 	private readonly List<ModuleCamera> _cameras = new List<ModuleCamera>();
-	private BombCommander _currentBomb;
+	private TwitchBomb _currentBomb;
 
 	private int _currentSolves;
 	private int _currentStrikes;
@@ -335,15 +334,15 @@ public class ModuleCameras : MonoBehaviour
 
 	public void ShowHud() => BombStatus.localScale = HudScale;
 
-	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.TwitchBombHandle.BombName;
+	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.BombName;
 
 	public void UpdateStrikes(bool delay = false) => StartCoroutine(UpdateStrikesCoroutine(delay));
 
 	public void UpdateSolves()
 	{
 		if (_currentBomb == null) return;
-		_currentSolves = _currentBomb.BombSolvedModules;
-		_currentTotalModules = _currentBomb.BombSolvableModules;
+		_currentSolves = _currentBomb.bombSolvedModules;
+		_currentTotalModules = _currentBomb.bombSolvableModules;
 		string solves = _currentSolves.ToString().PadLeft(_currentTotalModules.ToString().Length, char.Parse("0"));
 		Debug.Log(LogPrefix + "Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";
@@ -436,7 +435,7 @@ public class ModuleCameras : MonoBehaviour
 		DebugHelper.Log("Camera Wall disabled");
 	}
 
-	public void ChangeBomb(BombCommander bomb)
+	public void ChangeBomb(TwitchBomb bomb)
 	{
 		DebugHelper.Log("Switching bomb");
 		_currentBomb = bomb;
@@ -547,7 +546,7 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Properties
-	private TwitchModule PreferredToView => BombMessageResponder.Instance.ComponentHandles
+	private TwitchModule PreferredToView => TwitchGame.Instance.Modules
 				.Where(module => !module.Solved && _cameras.All(cam => cam.Module != module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();

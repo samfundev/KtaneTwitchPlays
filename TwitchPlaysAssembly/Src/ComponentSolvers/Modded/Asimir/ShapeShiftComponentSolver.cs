@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class ShapeShiftComponentSolver : ComponentSolver
 {
-	public ShapeShiftComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ShapeShiftComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		object component = bombComponent.GetComponent(ComponentType);
+		object component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.");
 
-		if (bombComponent.gameObject.activeInHierarchy)
-			bombComponent.StartCoroutine(GetDisplay(component));
+		if (module.BombComponent.gameObject.activeInHierarchy)
+			module.BombComponent.StartCoroutine(GetDisplay(component));
 	}
 
 	private int? ToShapeIndex(string shape)

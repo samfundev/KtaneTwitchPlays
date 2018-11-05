@@ -4,8 +4,8 @@ using System.Text.RegularExpressions;
 
 public class CoroutineModComponentSolver : ComponentSolver
 {
-	public CoroutineModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentSolverFields componentSolverFields) :
-		base(bombCommander, bombComponent)
+	public CoroutineModComponentSolver(TwitchModule module, ComponentSolverFields componentSolverFields) :
+		base(module)
 	{
 		ProcessMethod = componentSolverFields.Method;
 		ForcedSolveMethod = componentSolverFields.ForcedSolveMethod;

@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class ThirdBaseComponentSolver : ComponentSolver
 {
-	public ThirdBaseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ThirdBaseComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		object component = bombComponent.GetComponent(ComponentType);
+		object component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
 		_phrase = (string[]) PhraseField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a button with !{0} z0s8. Word must match the button as it would appear if the module was the right way up. Not case sensitive.", null, true, true);

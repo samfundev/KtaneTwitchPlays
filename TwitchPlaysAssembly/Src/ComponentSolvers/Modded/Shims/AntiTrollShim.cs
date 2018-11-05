@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class AntiTrollShim : ComponentSolverShim
 {
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, Dictionary<string, string> trollCommands)
-		: base(bombCommander, bombComponent, moduleType)
+	public AntiTrollShim(TwitchModule module, string moduleType, Dictionary<string, string> trollCommands)
+		: base(module, moduleType)
 	{
 		_trollCommands = trollCommands ?? new Dictionary<string, string>();
 	}
 
-	public AntiTrollShim(BombCommander bombCommander, BombComponent bombComponent, string moduleType, IEnumerable<string> commands, string response)
-		: base(bombCommander, bombComponent, moduleType)
+	public AntiTrollShim(TwitchModule module, string moduleType, IEnumerable<string> commands, string response)
+		: base(module, moduleType)
 	{
 		_trollCommands = new Dictionary<string, string>();
 		foreach (string command in commands)

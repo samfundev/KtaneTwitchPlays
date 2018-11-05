@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class MicrocontrollerComponentSolver : ComponentSolver
 {
-	public MicrocontrollerComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public MicrocontrollerComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		object component = bombComponent.GetComponent(ComponentType);
+		object component = module.BombComponent.GetComponent(ComponentType);
 		_buttonOK = (KMSelectable) ButtonOKField.GetValue(component);
 		_buttonUp = (KMSelectable) ButtonUpField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Set the current pin color with !{0} set red. Cycle the current pin !{0} cycle. Valid colors: white, red, yellow, magenta, blue, green.");

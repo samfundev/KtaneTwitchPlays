@@ -129,24 +129,18 @@ public class TPElevatorSwitch : MonoBehaviour
 
 	public IEnumerator ToggleSetupRoomElevatorSwitch(bool elevatorState)
 	{
-		ElevatorSwitch elevatorSwitch = null;
-		if (SceneManager.Instance.CurrentRoom is SetupRoom setupRoom) elevatorSwitch = setupRoom.ElevatorSwitch;
+		var setupRoom = SceneManager.Instance.CurrentRoom as SetupRoom;
+		if (setupRoom == null || setupRoom.ElevatorSwitch == null)
+			yield break;
+		var elevatorSwitch = setupRoom.ElevatorSwitch;
 
 		DebugHelper.Log("Setting Elevator state to {0}", elevatorState);
-		if (elevatorSwitch == null)
-		{
-			IEnumerator ircManager = IRCConnectionManagerHandler.Instance.RespondToCommand("Elevator Switch", elevatorState ? "elevator on" : "elevator off", false);
-			while (ircManager.MoveNext())
-				yield return ircManager.Current;
-			yield break;
-		}
-		else
-		{
-			IEnumerator dropHoldables = MiscellaneousMessageResponder.DropAllHoldables();
-			while (dropHoldables.MoveNext())
-				yield return dropHoldables.Current;
-			yield return new WaitForSeconds(0.25f);
-		}
+
+		IEnumerator dropHoldables = TwitchPlaysService.Instance.DropAllHoldables();
+		while (dropHoldables.MoveNext())
+			yield return dropHoldables.Current;
+		yield return new WaitForSeconds(0.25f);
+
 		float duration = 2f;
 		GameRoom.ToggleCamera(false);
 		yield return null;

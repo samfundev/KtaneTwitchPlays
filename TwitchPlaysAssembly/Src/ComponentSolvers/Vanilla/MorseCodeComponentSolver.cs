@@ -4,12 +4,13 @@ using System.Text.RegularExpressions;
 
 public class MorseCodeComponentSolver : ComponentSolver
 {
-	public MorseCodeComponentSolver(BombCommander bombCommander, MorseCodeComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public MorseCodeComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_upButton = bombComponent.UpButton;
-		_downButton = bombComponent.DownButton;
-		_transmitButton = bombComponent.TransmitButton;
+		var morseModule = (MorseCodeComponent) module.BombComponent;
+		_upButton = morseModule.UpButton;
+		_downButton = morseModule.DownButton;
+		_transmitButton = morseModule.TransmitButton;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver", "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 	}
 
@@ -44,12 +45,12 @@ public class MorseCodeComponentSolver : ComponentSolver
 			yield return "unsubmittablepenalty";
 	}
 
-	private int CurrentFrequency => ((MorseCodeComponent) BombComponent).CurrentFrequency;
+	private int CurrentFrequency => ((MorseCodeComponent) Module.BombComponent).CurrentFrequency;
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		while (!BombComponent.IsActive) yield return true;
-		IEnumerator solve = RespondToCommandInternal($"tx {((MorseCodeComponent) BombComponent).ChosenFrequency}");
+		while (!Module.BombComponent.IsActive) yield return true;
+		IEnumerator solve = RespondToCommandInternal($"tx {((MorseCodeComponent) Module.BombComponent).ChosenFrequency}");
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 

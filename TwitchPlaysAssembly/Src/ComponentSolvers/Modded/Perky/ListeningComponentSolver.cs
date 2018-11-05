@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class ListeningComponentSolver : ComponentSolver
 {
-	public ListeningComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ListeningComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		Component component = bombComponent.GetComponent("Listening");
+		Component component = module.BombComponent.GetComponent("Listening");
 		if (component == null)
 		{
 			throw new NotSupportedException("Could not get Listening Component from bombComponent");

@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class KnowYourWayComponentSolver : ComponentSolver
 {
-	public KnowYourWayComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
-		: base(bombCommander, bombComponent)
+	public KnowYourWayComponentSolver(TwitchModule module)
+		: base(module)
 	{
-		object component = bombComponent.GetComponent(ComponentType);
+		object component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = ButtonFields.Select(field => (KMSelectable) field.GetValue(component)).ToArray();
 		_textMeshes = TextFields.Select(field => (TextMesh) field.GetValue(component)).ToArray();
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press the buttons labeled UDLR with !{0} press UDLR.");

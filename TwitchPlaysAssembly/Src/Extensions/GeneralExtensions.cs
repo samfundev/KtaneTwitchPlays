@@ -98,7 +98,7 @@ public static class GeneralExtensions
 
 	public static int? TryParseInt(this string number) => int.TryParse(number, out int i) ? (int?) i : null;
 
-	public static bool ContainsIgnoreCase(this string str, string value) => str.ToLowerInvariant().Contains(value.ToLowerInvariant());
+	public static bool ContainsIgnoreCase(this string str, string value) => str.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) != -1;
 
 	public static bool EqualsIgnoreCase(this string str, string value) => str.Equals(value, StringComparison.InvariantCultureIgnoreCase);
 
@@ -148,8 +148,8 @@ public static class GeneralExtensions
 	}
 
 	/// <summary>
-	///     Adds an element to a List&lt;V&gt; stored in the current IDictionary&lt;K, List&lt;V&gt;&gt;. If the specified
-	///     key does not exist in the current IDictionary, a new List is created.</summary>
+	///     Adds an element to a List&lt;V&gt; stored in the current IDictionary&lt;K, List&lt;V&gt;&gt;. If the specified key
+	///     does not exist in the current IDictionary, a new List is created.</summary>
 	/// <typeparam name="K">
 	///     Type of the key of the IDictionary.</typeparam>
 	/// <typeparam name="V">
@@ -186,5 +186,32 @@ public static class GeneralExtensions
 
 		time = splitFloat.Select((t, i) => t * multiplier[split.Length - i]).Sum();
 		return true;
+	}
+
+	/// <summary>
+	///     Returns the index of the first element in this <paramref name="source"/> satisfying the specified <paramref
+	///     name="predicate"/>. If no such elements are found, returns <c>-1</c>.</summary>
+	public static int IndexOf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+	{
+		if (source == null)
+			throw new ArgumentNullException("source");
+		if (predicate == null)
+			throw new ArgumentNullException("predicate");
+		int index = 0;
+		foreach (var v in source)
+		{
+			if (predicate(v))
+				return index;
+			index++;
+		}
+		return -1;
+	}
+
+	public static void Trigger(this Selectable selectable)
+	{
+		selectable.HandleSelect(true);
+		KTInputManager.Instance.SelectableManager.Select(selectable, true);
+		KTInputManager.Instance.SelectableManager.HandleInteract();
+		selectable.OnInteractEnded();
 	}
 }

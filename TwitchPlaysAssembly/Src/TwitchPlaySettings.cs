@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class TwitchPlaySettingsData
@@ -177,7 +177,6 @@ public class TwitchPlaySettingsData
 	public string TakeInProgress = "Sorry @{0}, There is already a takeover attempt for Module {1} ({2}) in progress.";
 	public string ModuleAbandoned = "{1} has released Module {0} ({2}).";
 	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
-	public string NoTakes = "Sorry {0}, there are no takeover attempts on Module {1} ({2})";
 	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules. The claim has been queued.";
 	public string NoUnclaimed = "Sorry {0}, There are no more unclaimed modules.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
@@ -185,9 +184,11 @@ public class TwitchPlaySettingsData
 	public string AlreadySolved = "Sorry @{2}, Module {0} ({3}) has already been solved by {1}";
 	public string ClaimCooldown = "Sorry @{2}, Module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
 
-	public string OwnedModule = "({0} - \"{1}\")";
-	public string OwnedModuleList = "@{0}, your claimed modules are {1}";
-	public string NoOwnedModules = "Sorry @{0}, you have no claimed modules.";
+	public string OwnedModule = "“{1}” ({0})";
+	public string OwnedModuleList = "@{0}, your claimed modules are: {1}";
+	public string NoOwnedModules = "@{0}, you have no claimed modules.";
+	public string OwnedModuleListOther = "@{0}’s claimed modules are: {1}";
+	public string NoOwnedModulesOther = "@{0} has no claimed modules.";
 
 	public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
 	public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
@@ -375,7 +376,6 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref TakeInProgress, data.TakeInProgress, 3);
 		valid &= ValidateString(ref ModuleAbandoned, data.ModuleAbandoned, 3);
 		valid &= ValidateString(ref ModuleIsMine, data.ModuleIsMine, 3);
-		valid &= ValidateString(ref NoTakes, data.NoTakes, 3);
 		valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
 		valid &= ValidateString(ref NoUnclaimed, data.NoUnclaimed, 1);
 		valid &= ValidateString(ref ModulePlayer, data.ModulePlayer, 3);

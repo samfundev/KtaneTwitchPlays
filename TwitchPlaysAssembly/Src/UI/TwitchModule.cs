@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +20,7 @@ public class TwitchModule : MonoBehaviour
 	public AudioSource TakeModuleSound { get => _data.takeModuleSound; set => _data.takeModuleSound = value; }
 
 	[HideInInspector]
-	public BombCommander BombCommander;
+	public TwitchBomb Bomb;
 
 	[HideInInspector]
 	public BombComponent BombComponent;
@@ -33,8 +32,6 @@ public class TwitchModule : MonoBehaviour
 	public Vector3 IdealHandlePositionOffset = Vector3.zero;
 
 	[HideInInspector]
-	public CoroutineQueue CoroutineQueue;
-
 	public bool Claimed => PlayerName != null;
 
 	[HideInInspector]
@@ -58,14 +55,23 @@ public class TwitchModule : MonoBehaviour
 			if (_cameraPriority != value)
 			{
 				_cameraPriority = value;
-				BombMessageResponder.ModuleCameras.TryViewModule(this);
+				TwitchGame.ModuleCameras.TryViewModule(this);
 			}
 		}
 	}
 	public DateTime LastUsed;   // when the module was last viewed or received a command
 	private CameraPriority _cameraPriority = CameraPriority.Unviewed;
 
-	public ComponentSolver Solver { get; private set; }
+	public void ViewPin(string user, bool pin)
+	{
+		CameraPriority =
+			pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode)
+				? CameraPriority.Pinned
+				: CameraPriority.Viewed;
+		LastUsed = DateTime.UtcNow;
+	}
+
+	public ComponentSolver Solver { get; private set; } = null;
 
 	public bool IsMod => BombComponent is ModBombComponent || BombComponent is ModNeedyComponent;
 
@@ -83,7 +89,7 @@ public class TwitchModule : MonoBehaviour
 	#endregion
 
 	#region Private Fields
-	private Color _unclaimedBackgroundColor = new Color(0, 0, 0);
+	public Color unclaimedBackgroundColor = new Color(0, 0, 0);
 	private TwitchModuleData _data;
 	private bool _claimCooldown = true;
 	private bool _statusLightLeft;
@@ -96,7 +102,6 @@ public class TwitchModule : MonoBehaviour
 
 	#region Private Statics
 	private static readonly List<TwitchModule> UnsupportedComponents = new List<TwitchModule>();
-	private static readonly List<BombCommander> BombCommanders = new List<BombCommander>();
 	#endregion
 
 	#region Unity Lifecycle
@@ -108,12 +113,12 @@ public class TwitchModule : MonoBehaviour
 			if (_anarchyMode)
 			{
 				CanvasGroupMultiDecker.alpha = Solved ? 0.5f : 1.0f;
-				SetBannerColor(_unclaimedBackgroundColor);
+				SetBannerColor(unclaimedBackgroundColor);
 			}
 			else
 			{
 				CanvasGroupMultiDecker.alpha = Solved ? 0.0f : 1.0f;
-				SetBannerColor(Claimed && !Solved ? ClaimedBackgroundColour : _unclaimedBackgroundColor);
+				SetBannerColor(Claimed && !Solved ? ClaimedBackgroundColour : unclaimedBackgroundColor);
 			}
 		}
 
@@ -126,16 +131,16 @@ public class TwitchModule : MonoBehaviour
 			_statusLightDown = Solver.ModInfo.statusLightDown;
 		}
 
-		if (Solver.ModInfo.ShouldSerializeunclaimedColor() && _unclaimedBackgroundColor != Solver.ModInfo.unclaimedColor)
+		if (Solver.ModInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != Solver.ModInfo.unclaimedColor)
 		{
-			_unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
-			if (!Claimed || Solved) SetBannerColor(_unclaimedBackgroundColor);
+			unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
+			if (!Claimed || Solved) SetBannerColor(unclaimedBackgroundColor);
 		}
 
-		if (!Solver.ModInfo.ShouldSerializeunclaimedColor() && _unclaimedBackgroundColor != TwitchPlaySettings.data.UnclaimedColor)
+		if (!Solver.ModInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != TwitchPlaySettings.data.UnclaimedColor)
 		{
-			_unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
-			if (!Claimed || Solved) SetBannerColor(_unclaimedBackgroundColor);
+			unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
+			if (!Claimed || Solved) SetBannerColor(unclaimedBackgroundColor);
 		}
 	}
 
@@ -149,17 +154,16 @@ public class TwitchModule : MonoBehaviour
 
 		CanvasGroupMultiDecker.alpha = 1.0f;
 
-		_unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;//idBannerPrefab.GetComponent<Image>().color;
+		unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;//idBannerPrefab.GetComponent<Image>().color;
 
 		try
 		{
-			Solver = ComponentSolverFactory.CreateSolver(BombCommander, BombComponent);
+			Solver = ComponentSolverFactory.CreateSolver(this);
 			if (Solver != null)
 			{
-				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) _unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
+				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
 
 				Solver.Code = Code;
-				Solver.ComponentHandle = this;
 				Vector3 pos = CanvasGroupMultiDecker.transform.localPosition;
 				_originalIDPosition = pos;
 				CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.ModInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.ModInfo.statusLightDown ? -pos.z : pos.z);
@@ -202,24 +206,15 @@ public class TwitchModule : MonoBehaviour
 					KMBombModule module = BombComponent.GetComponent<KMBombModule>();
 					module.OnPass += delegate
 					{
-						BombCommander.BombSolvedModules++;
-						if (BombMessageResponder.ModuleCameras != null)
-						{
-							BombMessageResponder.ModuleCameras.UpdateSolves();
-							OnPass(null);
-							BombMessageResponder.ModuleCameras.UnviewModule(this);
-						}
-						else
-						{
-							OnPass(null);
-						}
+						TwitchGame.ModuleCameras?.UpdateSolves();
+						OnPass(null);
+						TwitchGame.ModuleCameras?.UnviewModule(this);
 						return false;
 					};
 
 					module.OnStrike += delegate
 					{
-						if (BombMessageResponder.ModuleCameras != null)
-							BombMessageResponder.ModuleCameras.UpdateStrikes();
+						TwitchGame.ModuleCameras?.UpdateStrikes();
 						return false;
 					};
 				}
@@ -227,20 +222,14 @@ public class TwitchModule : MonoBehaviour
 				{
 					BombComponent.GetComponent<KMNeedyModule>().OnStrike += delegate
 					{
-						if (BombMessageResponder.ModuleCameras != null)
-							BombMessageResponder.ModuleCameras.UpdateStrikes();
+						TwitchGame.ModuleCameras?.UpdateStrikes();
 						return false;
 					};
 				}
 			}
 		}
 
-		SetBannerColor(_unclaimedBackgroundColor);
-
-		if (!BombCommanders.Contains(BombCommander))
-		{
-			BombCommanders.Add(BombCommander);
-		}
+		SetBannerColor(unclaimedBackgroundColor);
 	}
 
 	public static void DeactivateNeedyModule(TwitchModule handle)
@@ -272,37 +261,22 @@ public class TwitchModule : MonoBehaviour
 			handle.SolveSilently();
 		}
 
-		if (componentsToRemove.Count > 1) //Forget Me Not and Forget Everything become unsolvable if MORE than one module is solved at once.
-			RemoveSolveBasedModules();
+		// Forget Me Not and Forget Everything become unsolvable if more than one module is solved at once.
+		if (componentsToRemove.Count > 1)
+			TwitchGame.Instance.RemoveSolveBasedModules();
 
 		UnsupportedComponents.Clear();
 		return true;
 	}
 
-	public static void RemoveSolveBasedModules()
-	{
-		foreach (BombCommander commander in BombCommanders)
-		{
-			commander.RemoveSolveBasedModules();
-		}
-	}
-
 	public void SolveSilently() => Solver.SolveSilently();
 
-	public static void ClearUnsupportedModules()
-	{
-		BombCommanders.Clear();
-		UnsupportedComponents.Clear();
-	}
+	public static void ClearUnsupportedModules() => UnsupportedComponents.Clear();
 
 	public void OnPass(string userNickname)
 	{
 		CanvasGroupMultiDecker.alpha = TwitchPlaySettings.data.AnarchyMode ? 0.5f : 0.0f;
-		if (PlayerName != null)
-		{
-			ClaimedList.Remove(PlayerName);
-		}
-		else
+		if (PlayerName == null)
 		{
 			PlayerName = userNickname;
 			CanClaimNow(userNickname, true, true);
@@ -313,16 +287,6 @@ public class TwitchModule : MonoBehaviour
 			TakeInProgress = null;
 		}
 		if (PlayerName == null) return;
-		try
-		{
-			if (!BombCommander.SolvedModules.ContainsKey(Solver.ModInfo.moduleDisplayName))
-				BombCommander.SolvedModules[Solver.ModInfo.moduleDisplayName] = new List<TwitchModule>();
-			BombCommander.SolvedModules[Solver.ModInfo.moduleDisplayName].Add(this);
-		}
-		catch (Exception ex)
-		{
-			DebugHelper.LogException(ex, "Could not add entry to solved modules list due to an exception:");
-		}
 	}
 
 	private void OnDestroy() => StopAllCoroutines();
@@ -337,11 +301,10 @@ public class TwitchModule : MonoBehaviour
 			TakeModuleSound.Play();
 		}
 		yield return new WaitForSecondsRealtime(60.0f);
-		SetBannerColor(_unclaimedBackgroundColor);
+		SetBannerColor(unclaimedBackgroundColor);
 		if (PlayerName != null)
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, PlayerName, HeaderText);
-			ClaimedList.Remove(PlayerName);
 			PlayerName = null;
 			TakeInProgress = null;
 		}
@@ -353,7 +316,6 @@ public class TwitchModule : MonoBehaviour
 		{
 			yield return new WaitForSeconds(TwitchPlaySettings.data.ClaimCooldownTime);
 		}
-		ClaimedList.Remove(player);
 	}
 
 	public IEnumerator EndClaimCooldown()
@@ -371,15 +333,15 @@ public class TwitchModule : MonoBehaviour
 
 		if (string.IsNullOrEmpty(userNickName)) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
 
-		if (BombMessageResponder.Instance.LastClaimedModule == null)
+		if (TwitchGame.Instance.LastClaimedModule == null)
 		{
-			BombMessageResponder.Instance.LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+			TwitchGame.Instance.LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 		}
 
-		if (!BombMessageResponder.Instance.LastClaimedModule.TryGetValue(Solver.ModInfo.moduleID, out Dictionary<string, double> value) || value == null)
+		if (!TwitchGame.Instance.LastClaimedModule.TryGetValue(Solver.ModInfo.moduleID, out Dictionary<string, double> value) || value == null)
 		{
 			value = new Dictionary<string, double>();
-			BombMessageResponder.Instance.LastClaimedModule[Solver.ModInfo.moduleID] = value;
+			TwitchGame.Instance.LastClaimedModule[Solver.ModInfo.moduleID] = value;
 		}
 		if (_claimCooldown && !force && value.TryGetValue(userNickName, out double seconds) &&
 			(DateTime.Now.TotalSeconds() - seconds) < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry)
@@ -418,21 +380,22 @@ public class TwitchModule : MonoBehaviour
 
 			for (int i = 0; i < ClaimQueue.Count; i++)
 			{
-				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, Code, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
+				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
 				if (!claim.First) continue;
 				IRCConnection.SendMessage(claim.Second);
-				if (ClaimQueue[i].Third) IRCConnection.Instance.OnMessageReceived.Invoke(new Message(ClaimQueue[i].First, null, $"!{Code} view{(ClaimQueue[i].Fourth ? " pin" : "")}"));
+				if (ClaimQueue[i].Third)
+					ViewPin(user: ClaimQueue[i].First, pin: ClaimQueue[i].Fourth);
 				ClaimQueue.RemoveAt(i);
 				break;
 			}
 		}
 	}
 
-	public Tuple<bool, string> ClaimModule(string userNickName, string targetModule, bool viewRequested = false, bool viewPinRequested = false)
+	public Tuple<bool, string> ClaimModule(string userNickName, bool viewRequested = false, bool viewPinRequested = false)
 	{
 		if (Solver.AttemptedForcedSolve)
 		{
-			return new Tuple<bool, string>(false, string.Format("Sorry @{1}, module ID {0} ({2}) is being solved automatically.", targetModule, userNickName, HeaderText));
+			return new Tuple<bool, string>(false, string.Format("Sorry @{1}, module ID {0} ({2}) is being solved automatically.", Code, userNickName, HeaderText));
 		}
 
 		if (TwitchPlaySettings.data.AnarchyMode)
@@ -449,9 +412,9 @@ public class TwitchModule : MonoBehaviour
 		{
 			if (!PlayerName.Equals(userNickName))
 				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, HeaderText));
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, HeaderText));
 		}
-		if (ClaimedList.Count(nick => nick.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
+		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
 			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
@@ -465,36 +428,36 @@ public class TwitchModule : MonoBehaviour
 				return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ClaimCooldown, Code, TwitchPlaySettings.data.InstantModuleClaimCooldown, userNickName, HeaderText));
 			}
 
-			ClaimedList.Add(userNickName);
 			SetBannerColor(ClaimedBackgroundColour);
 			PlayerName = userNickName;
 			if (CameraPriority < CameraPriority.Claimed)
 				CameraPriority = CameraPriority.Claimed;
-			return new Tuple<bool, string>(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, targetModule, PlayerName, HeaderText));
+			return new Tuple<bool, string>(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, Code, PlayerName, HeaderText));
 		}
 	}
 
-	public Tuple<bool, string> UnclaimModule(string userNickName, string targetModule)
+	public Tuple<bool, string> UnclaimModule(string userNickName)
 	{
 		if (PlayerName == null)
 		{
 			bool wasQueued = ClaimQueue.Any(x => x.First == userNickName);
 			if (wasQueued) RemoveFromClaimQueue(userNickName);
 
-			return new Tuple<bool, string>(false, !wasQueued ? string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, targetModule, HeaderText) : null);
+			return new Tuple<bool, string>(false, !wasQueued ? string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText) : null);
 		}
 
 		RemoveFromClaimQueue(userNickName);
 		if (PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
 		{
+			RemoveFromClaimQueue(PlayerName);
 			if (TakeInProgress != null)
 			{
 				StopCoroutine(TakeInProgress);
 				TakeInProgress = null;
 			}
 			StartCoroutine(ReleaseModule(PlayerName, userNickName));
-			SetBannerColor(_unclaimedBackgroundColor);
-			string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, targetModule, PlayerName, HeaderText);
+			SetBannerColor(unclaimedBackgroundColor);
+			string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, Code, PlayerName, HeaderText);
 			PlayerName = null;
 			if (CameraPriority > CameraPriority.Interacted)
 				CameraPriority = CameraPriority.Interacted;
@@ -502,7 +465,7 @@ public class TwitchModule : MonoBehaviour
 		}
 		else
 		{
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, targetModule, PlayerName, userNickName, HeaderText));
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText));
 		}
 	}
 
@@ -552,7 +515,9 @@ public class TwitchModule : MonoBehaviour
 		{
 			try
 			{
-				kvp.Key.gameObject.layer = _currentLayer ?? kvp.Value;
+				var setToLayer = _currentLayer ?? kvp.Value;
+				if (kvp.Key.gameObject.layer != setToLayer)
+					kvp.Key.gameObject.layer = setToLayer;
 			}
 			catch
 			{
@@ -571,317 +536,10 @@ public class TwitchModule : MonoBehaviour
 	}
 	#endregion
 
-	#region Message Interface
-	public IEnumerator OnMessageReceived(Message message)
-	{
-		string unprocessedCommand = message.Text.Trim();
-		string internalCommand = unprocessedCommand.ToLower().Trim();
-		string userNickName = message.UserNickName;
-		bool isWhisper = message.IsWhisper;
-
-		string messageOut = null;
-		if ((internalCommand.StartsWith("manual", StringComparison.InvariantCultureIgnoreCase)) || (internalCommand.Equals("help", StringComparison.InvariantCultureIgnoreCase)))
-		{
-			string manualType = "html";
-			if ((internalCommand.Length > 7) && (internalCommand.Substring(7) == "pdf"))
-			{
-				manualType = "pdf";
-			}
-
-			string manualText = string.IsNullOrEmpty(Solver.ModInfo.manualCode) ? HeaderText : Solver.ModInfo.manualCode;
-
-			if (manualText.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
-				manualText.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
-			{
-				messageOut = $"{HeaderText} : {Solver.ModInfo.helpText} : {manualText}";
-			}
-			else
-			{
-				messageOut = $"{HeaderText} : {Solver.ModInfo.helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(Solver.ModInfo.moduleID) != 1)}";
-			}
-		}
-		else if (!Solved)
-		{
-			if (IsAuthorizedDefuser(userNickName, false))
-			{
-				if (Regex.IsMatch(internalCommand, "^(bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
-				{
-					if (!Solver.TurnQueued)
-					{
-						Solver.TurnQueued = true;
-						StartCoroutine(Solver.TurnBombOnSolve());
-					}
-					messageOut = string.Format(TwitchPlaySettings.data.TurnBombOnSolve, Code, HeaderText);
-				}
-				else if (Regex.IsMatch(internalCommand, "^cancel (bomb|queue) (turn( a?round)?|flip|spin)$", RegexOptions.IgnoreCase))
-				{
-					Solver.TurnQueued = false;
-					messageOut = string.Format(TwitchPlaySettings.data.CancelBombTurn, Code, HeaderText);
-				}
-				else if (internalCommand.Equals("claim", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (isWhisper)
-					{
-						IRCConnection.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
-						return null;
-					}
-					messageOut = ClaimModule(userNickName, Code).Second;
-				}
-				else if (internalCommand.ToLowerInvariant().EqualsAny("release", "unclaim"))
-				{
-					if (isWhisper)
-					{
-						IRCConnection.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
-						return null;
-					}
-					messageOut = UnclaimModule(userNickName, Code).Second;
-
-					// If UnclaimModule responds with a null message, someone tried to unclaim a module that no one has claimed but they were waiting to claim.
-					// It's valid command and they were removed from the queue but no message is sent.
-					if (messageOut == null) return null;
-				}
-				else if (internalCommand.ToLowerInvariant().EqualsAny("claim view", "view claim", "claimview", "viewclaim", "cv", "vc",
-					"claim view pin", "view pin claim", "claimviewpin", "viewpinclaim", "cvp", "vpc"))
-				{
-					if (isWhisper)
-					{
-						IRCConnection.SendMessage($"Sorry {userNickName}, claiming modules is not allowed in whispers", userNickName, false);
-						return null;
-					}
-					Tuple<bool, string> response = ClaimModule(userNickName, Code, true, internalCommand.Contains("p"));
-					if (response.First)
-					{
-						IRCConnection.SendMessage(response.Second);
-						internalCommand = internalCommand.Contains("p") ? "view pin" : "view";
-					}
-					else
-					{
-						messageOut = response.Second;
-					}
-				}
-				else if (internalCommand.ToLowerInvariant().EqualsAny("unclaim unview", "unview unclaim", "unclaimview", "unviewclaim", "uncv", "unvc"))
-				{
-					if (isWhisper)
-					{
-						IRCConnection.SendMessage($"Sorry {userNickName}, unclaiming modules is not allowed in whispers", userNickName, false);
-						return null;
-					}
-					Tuple<bool, string> response = UnclaimModule(userNickName, Code);
-
-					// If UnclaimModule responds with a null message, someone tried to unclaim a module that no one has claimed but they were waiting to claim.
-					// It's valid command and they were removed from the queue but no message is sent.
-					if (response.Second == null) return null;
-
-					if (response.First)
-					{
-						IRCConnection.SendMessage(response.Second);
-						internalCommand = "unview";
-					}
-					else
-					{
-						messageOut = response.Second;
-					}
-				}
-				else if (internalCommand.Equals("solved", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-					{
-						SetBannerColor(SolvedBackgroundColor);
-						PlayerName = null;
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleReady, Code, userNickName, HeaderText);
-					}
-					else
-					{
-						return null;
-					}
-				}
-				else if (internalCommand.StartsWith("assign ", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-					{
-						if (TwitchPlaySettings.data.AnarchyMode)
-						{
-							messageOut = $"Sorry {userNickName}, assigning modules is not allowed in anarchy mode.";
-						}
-						else
-						{
-							if (PlayerName != null)
-								ClaimedList.Remove(PlayerName);
-							if (TakeInProgress != null)
-							{
-								StopCoroutine(TakeInProgress);
-								TakeInProgress = null;
-							}
-
-							string newPlayerName = unprocessedCommand.Remove(0, 7).Trim();
-							PlayerName = newPlayerName;
-							ClaimedList.Add(PlayerName);
-							RemoveFromClaimQueue(userNickName);
-							CanClaimNow(userNickName, true, true);
-							SetBannerColor(ClaimedBackgroundColour);
-							messageOut = string.Format(TwitchPlaySettings.data.AssignModule, Code, PlayerName, userNickName, HeaderText);
-						}
-					}
-					else
-					{
-						return null;
-					}
-				}
-				else if (internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (isWhisper)
-					{
-						IRCConnection.SendMessage($"Sorry {userNickName}, taking modules is not allowed in whispers", userNickName, false);
-						return null;
-					}
-					if (TwitchPlaySettings.data.AnarchyMode)
-					{
-						messageOut = $"Sorry {userNickName}, taking modules is not allowed in anarchy mode.";
-					}
-					else if (PlayerName != null && userNickName != PlayerName)
-					{
-						AddToClaimQueue(userNickName);
-						if (TakeInProgress == null)
-						{
-							messageOut = string.Format(TwitchPlaySettings.data.TakeModule, PlayerName, userNickName, Code, HeaderText);
-							TakeInProgress = TakeModule(userNickName, Code);
-							StartCoroutine(TakeInProgress);
-						}
-						else
-						{
-							messageOut = string.Format(TwitchPlaySettings.data.TakeInProgress, userNickName, Code, HeaderText);
-						}
-					}
-					else if (PlayerName != null)
-					{
-						if (!PlayerName.Equals(userNickName))
-							AddToClaimQueue(userNickName);
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, Code, HeaderText);
-					}
-					else
-					{
-						messageOut = ClaimModule(userNickName, Code).Second;
-					}
-				}
-				else if (internalCommand.Equals("mine", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (isWhisper)
-					{
-						IRCConnection.SendMessage($"Sorry {userNickName}, using mine on modules is not allowed in whispers", userNickName, false);
-						return null;
-					}
-					if (PlayerName == userNickName && TakeInProgress != null)
-					{
-						messageOut = string.Format(TwitchPlaySettings.data.ModuleIsMine, PlayerName, Code, HeaderText);
-						StopCoroutine(TakeInProgress);
-						TakeInProgress = null;
-					}
-					else if (PlayerName == null)
-					{
-						messageOut = ClaimModule(userNickName, Code).Second;
-					}
-					else if (PlayerName == userNickName)
-					{
-						messageOut = string.Format(TwitchPlaySettings.data.NoTakes, userNickName, Code, HeaderText);
-					}
-					else
-					{
-						messageOut = string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText);
-					}
-				}
-				else if (internalCommand.Equals("mark", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-					{
-						SetBannerColor(MarkedBackgroundColor);
-					}
-
-					return null;
-				}
-				else if (internalCommand.Equals("points", StringComparison.InvariantCultureIgnoreCase) || internalCommand.Equals("score", StringComparison.InvariantCultureIgnoreCase))
-				{
-					IRCConnection.SendMessage("{0} ({1}) Current score: {2}", HeaderText, Code, Solver.ModInfo.moduleScore);
-
-					return null;
-				}
-				else if (internalCommand.Equals("unmark", StringComparison.InvariantCultureIgnoreCase))
-				{
-					if (UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-					{
-						SetBannerColor(!Claimed ? _unclaimedBackgroundColor : ClaimedBackgroundColour);
-					}
-
-					return null;
-				}
-			}
-		}
-
-		if (internalCommand.Equals("player", StringComparison.InvariantCultureIgnoreCase))
-		{
-			messageOut = PlayerName != null
-				? string.Format(TwitchPlaySettings.data.ModulePlayer, Code, PlayerName, HeaderText)
-				: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText);
-		}
-
-		if (!string.IsNullOrEmpty(messageOut))
-		{
-			IRCConnection.SendMessage(messageOut, Code, HeaderText);
-			return null;
-		}
-
-		if (Solver != null)
-		{
-			if (!IsAuthorizedDefuser(userNickName, false)) return null;
-
-			if (Solved && !TwitchPlaySettings.data.AnarchyMode)
-			{
-				IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, HeaderText);
-				return null;
-			}
-
-			bool moduleAlreadyClaimed = BombCommander.CurrentTimer > TwitchPlaySettings.data.MinTimeLeftForClaims;
-			moduleAlreadyClaimed &= BombMessageResponder.Instance.ComponentHandles.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.BombID)) >= TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims;
-			moduleAlreadyClaimed &= PlayerName != null;
-			moduleAlreadyClaimed &= !TwitchPlaySettings.data.AnarchyMode;
-			moduleAlreadyClaimed &= PlayerName != userNickName;
-			moduleAlreadyClaimed &= !internalCommand.Equals("take", StringComparison.InvariantCultureIgnoreCase);
-			moduleAlreadyClaimed &= !(internalCommand.ToLowerInvariant().EqualsAny("viewpin", "view pin") && UserAccess.HasAccess(userNickName, AccessLevel.Mod, true));
-			moduleAlreadyClaimed &= !(internalCommand.Equals("solve", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.Admin, true));
-			if (moduleAlreadyClaimed)
-			{
-				IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText);
-				return null;
-			}
-
-			// Twitch allows newlines in messages, even though they show up in the chat window as spaces, so pretend they’re spaces
-			return RespondToCommandCoroutine(userNickName, internalCommand.Replace("\n", " ").Replace("\r", ""));
-		}
-		else
-		{
-			return null;
-		}
-	}
-	#endregion
-
 	#region Private Methods
-	private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true) => MessageResponder.IsAuthorizedDefuser(userNickName, !sendMessage);
+	private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true) => TwitchGame.IsAuthorizedDefuser(userNickName, !sendMessage);
 
-	// ReSharper disable once UnusedParameter.Local
-	private IEnumerator RespondToCommandCoroutine(string userNickName, string internalCommand, float fadeDuration = 0.1f)
-	{
-		yield return new WaitForSeconds(0.1f);
-		if (Solver != null)
-		{
-			IEnumerator commandResponseCoroutine = Solver.RespondToCommand(userNickName, internalCommand);
-			while (commandResponseCoroutine.MoveNext())
-			{
-				yield return commandResponseCoroutine.Current;
-			}
-		}
-		yield return new WaitForSeconds(0.1f);
-	}
-
-	private void SetBannerColor(Color color)
+	public void SetBannerColor(Color color)
 	{
 		CanvasGroupMultiDecker.GetComponent<Image>().color = color;
 		ClaimedUserMultiDecker.color = color;
@@ -892,7 +550,7 @@ public class TwitchModule : MonoBehaviour
 	private string _playerName;
 	public string PlayerName
 	{
-		private set
+		set
 		{
 			_playerName = value;
 

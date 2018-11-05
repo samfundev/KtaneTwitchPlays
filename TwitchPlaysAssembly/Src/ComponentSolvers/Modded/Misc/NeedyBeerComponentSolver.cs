@@ -3,8 +3,8 @@ using System.Linq;
 
 public class NeedyBeerComponentSolver : ComponentSolver
 {
-	public NeedyBeerComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
-		: base(bombCommander, bombComponent)
+	public NeedyBeerComponentSolver(TwitchModule module)
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Refill that beer with !{0} refill.");
 	}
@@ -14,7 +14,7 @@ public class NeedyBeerComponentSolver : ComponentSolver
 		if (inputCommand.ToLowerInvariant().Trim().EqualsAny("refill"))
 		{
 			yield return null;
-			yield return DoInteractionClick(BombComponent.GetComponentsInChildren<KMSelectable>().FirstOrDefault(x => x.name.Equals("Solve")));
+			yield return DoInteractionClick(Module.GetComponentsInChildren<KMSelectable>().FirstOrDefault(x => x.name.Equals("Solve")));
 		}
 	}
 }

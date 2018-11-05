@@ -2,10 +2,10 @@
 
 public class NeedyKnobComponentSolver : ComponentSolver
 {
-	public NeedyKnobComponentSolver(BombCommander bombCommander, NeedyKnobComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public NeedyKnobComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_pointingKnob = bombComponent.PointingKnob;
+		_pointingKnob = ((NeedyKnobComponent) module.BombComponent).PointingKnob;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("NeedyKnobComponentSolver", "!{0} rotate 3, !{0} turn 3 [rotate the knob 3 quarter-turns]", "Knob");
 	}
 

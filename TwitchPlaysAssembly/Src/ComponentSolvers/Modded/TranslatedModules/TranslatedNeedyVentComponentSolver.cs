@@ -5,25 +5,24 @@ using UnityEngine;
 
 public class TranslatedNeedyVentComponentSolver : ComponentSolver
 {
-	public TranslatedNeedyVentComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public TranslatedNeedyVentComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_yesButton = (MonoBehaviour) YesButtonField.GetValue(bombComponent.GetComponent(NeedyVentComponentSolverType));
-		_noButton = (MonoBehaviour) NoButtonField.GetValue(bombComponent.GetComponent(NeedyVentComponentSolverType));
+		_yesButton = (MonoBehaviour) YesButtonField.GetValue(module.BombComponent.GetComponent(NeedyVentComponentSolverType));
+		_noButton = (MonoBehaviour) NoButtonField.GetValue(module.BombComponent.GetComponent(NeedyVentComponentSolverType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 
-		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType);
 		if (language != null) ModInfo.manualCode = "Venting%20Gas";
 		//if (language != null) modInfo.manualCode = $"Venting%20Gas{language}";
-		ModInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType)}";
-		bombComponent.StartCoroutine(SetHeaderText());
+		ModInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType)}";
+		Module.Bomb.Bomb.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
-		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
+		yield return new WaitUntil(() => Module != null);
+		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

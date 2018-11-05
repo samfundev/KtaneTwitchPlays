@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +9,8 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -136,7 +136,6 @@ public class IRCConnection : MonoBehaviour
 	private void Start()
 	{
 		Connect();
-
 		HighlightGroup.alpha = 0.0f;
 	}
 
@@ -330,7 +329,8 @@ public class IRCConnection : MonoBehaviour
 				}
 			}
 			while (_state == IRCConnectionState.Connected) yield return new WaitForSeconds(0.1f);
-			if (BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
+			if (TwitchGame.BombActive && TwitchGame.ModuleCameras != null)
+				TwitchGame.ModuleCameras.DisableCameraWall();
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (_state)
 			{
@@ -560,7 +560,8 @@ public class IRCConnection : MonoBehaviour
 	{
 		if (Instance == null) return;
 		SetDebugUsername(true);
-		if (BombMessageResponder.BombActive) BombMessageResponder.Instance.OnMessageReceived("Bomb Factory", "!disablecamerawall");
+		if (TwitchGame.BombActive && TwitchGame.ModuleCameras != null)
+			TwitchGame.ModuleCameras.DisableCameraWall();
 		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (Instance._state)
 		{
@@ -669,11 +670,11 @@ public class IRCConnection : MonoBehaviour
 			SendMessage("Commands enabled.");
 			return;
 		}
-		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && (!TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled || !BombMessageResponder.BombActive)) return;
+		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && (!TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled || !TwitchGame.BombActive)) return;
 		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
-			if (TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && BombMessageResponder.BombActive)
+			if (TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && TwitchGame.BombActive)
 				SendMessage("Commands will be disabled once this bomb is completed or exploded.");
 			else
 				SendMessage("Commands disabled.");
@@ -765,7 +766,7 @@ public class IRCConnection : MonoBehaviour
 				_state = IRCConnectionState.Disconnected;
 			}
 		}
-		BombMessageResponder.EnableDisableInput();
+		TwitchGame.EnableDisableInput();
 
 		try
 		{
@@ -884,7 +885,7 @@ public class IRCConnection : MonoBehaviour
 			AddTextToHoldable(groups[0].Value);
 			Instance.SendCommand($"JOIN #{Instance._settings.channelName}");
 			Instance._state = IRCConnectionState.Connected;
-			BombMessageResponder.EnableDisableInput();
+			TwitchGame.EnableDisableInput();
 			UserAccess.AddUser(Instance._settings.userName, AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 			UserAccess.AddUser(Instance._settings.channelName.Replace("#", ""), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 			UserAccess.WriteAccessList();

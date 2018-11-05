@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class AnagramsComponentSolver : ComponentSolver
 {
-	public AnagramsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public AnagramsComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
+		_buttons = module.BombComponent.GetComponent<KMSelectable>().Children;
 		string modType = GetModuleType();
 		ModInfo = ComponentSolverFactory.GetModuleInfo(modType, "Submit your answer with !{0} submit poodle", null, modType.Equals("AnagramsModule"));
 	}

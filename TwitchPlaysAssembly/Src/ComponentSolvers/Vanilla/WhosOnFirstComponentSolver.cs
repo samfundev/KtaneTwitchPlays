@@ -1,15 +1,15 @@
-﻿using Assets.Scripts.Rules;
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
+using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class WhosOnFirstComponentSolver : ComponentSolver
 {
-	public WhosOnFirstComponentSolver(BombCommander bombCommander, WhosOnFirstComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public WhosOnFirstComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.Buttons;
+		_buttons = ((WhosOnFirstComponent) module.BombComponent).Buttons;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
 	}
 
@@ -41,13 +41,14 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		while (!BombComponent.IsActive)
+		while (!Module.BombComponent.IsActive)
 			yield return true;
-		while (!BombComponent.IsSolved)
+		var wof = (WhosOnFirstComponent) Module.BombComponent;
+		while (!Module.Solved)
 		{
-			while (!((WhosOnFirstComponent) BombComponent).ButtonsEmerged || ((WhosOnFirstComponent) BombComponent).CurrentDisplayWordIndex < 0)
+			while (!wof.ButtonsEmerged || wof.CurrentDisplayWordIndex < 0)
 				yield return true;
-			string displayText = ((WhosOnFirstComponent) BombComponent).DisplayText.text;
+			string displayText = wof.DisplayText.text;
 			var buttonText = _buttons.Select(x => x.GetText()).ToList();
 
 			var precedenceList = RuleManager.Instance.WhosOnFirstRuleSet.precedenceMap[buttonText[RuleManager.Instance.WhosOnFirstRuleSet.displayWordToButtonIndexMap[displayText]]];

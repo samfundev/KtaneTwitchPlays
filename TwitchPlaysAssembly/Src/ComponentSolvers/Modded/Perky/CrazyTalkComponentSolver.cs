@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class CrazyTalkComponentSolver : ComponentSolver
 {
-	public CrazyTalkComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public CrazyTalkComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_toggle = (MonoBehaviour) ToggleField.GetValue(bombComponent.GetComponent(ComponentType));
+		_toggle = (MonoBehaviour) ToggleField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Toggle the switch down and up with !{0} toggle 4 5. The order is down, then up.");
 	}
 
@@ -22,7 +22,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
 			yield break;
 
 		yield return "Crazy Talk Solve Attempt";
-		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
 		int timeRemaining = (int) timerComponent.TimeRemaining;
 
 		foreach (int time in commands.Skip(1).Select(int.Parse))

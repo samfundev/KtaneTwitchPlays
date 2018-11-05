@@ -8,10 +8,10 @@ using UnityEngine;
 
 public class MurderComponentSolver : ComponentSolver
 {
-	public MurderComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public MurderComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_component = bombComponent.GetComponent(ComponentType);
+		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
 		_display = (TextMesh[]) DisplayField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.");

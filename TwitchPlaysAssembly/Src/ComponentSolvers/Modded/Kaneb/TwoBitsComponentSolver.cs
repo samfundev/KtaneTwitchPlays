@@ -25,10 +25,10 @@ public class TwoBitsComponentSolver : ComponentSolver
 
 	private const string ButtonLabels = "bcdegkptvz";
 
-	public TwoBitsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public TwoBitsComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_c = bombComponent.GetComponent(ComponentSolverType);
+		_c = module.BombComponent.GetComponent(ComponentSolverType);
 
 		_submit = (MonoBehaviour) SubmitButtonField.GetValue(_c);
 		_query = (MonoBehaviour) QueryButtonField.GetValue(_c);

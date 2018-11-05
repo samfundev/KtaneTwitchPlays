@@ -7,26 +7,25 @@ using UnityEngine;
 
 public class TranslatedMorseCodeComponentSolver : ComponentSolver
 {
-	public TranslatedMorseCodeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public TranslatedMorseCodeComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_component = bombComponent.GetComponent(MorseCodeComponentType);
+		_component = module.BombComponent.GetComponent(MorseCodeComponentType);
 		_upButton = (MonoBehaviour) UpButtonField.GetValue(_component);
 		_downButton = (MonoBehaviour) DownButtonField.GetValue(_component);
 		_transmitButton = (MonoBehaviour) TransmitButtonField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 
-		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, _component, MorseCodeComponentType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, _component, MorseCodeComponentType);
 		if (language != null) ModInfo.manualCode = $"Morse%20Code{language}";
-		ModInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, _component, MorseCodeComponentType)}";
-		bombComponent.StartCoroutine(SetHeaderText());
+		ModInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, _component, MorseCodeComponentType)}";
+		module.BombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
-		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
+		yield return new WaitUntil(() => Module != null);
+		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

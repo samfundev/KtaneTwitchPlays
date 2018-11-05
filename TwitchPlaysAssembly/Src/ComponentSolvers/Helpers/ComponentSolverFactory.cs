@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Components.VennWire;
 using Assets.Scripts.Missions;
 using UnityEngine;
 
@@ -16,7 +15,7 @@ public static class ComponentSolverFactory
 		DebugHelper.Log(format, args);
 	}
 
-	private delegate ComponentSolver ModComponentSolverDelegate(BombCommander bombCommander, BombComponent bombComponent);
+	private delegate ComponentSolver ModComponentSolverDelegate(TwitchModule module);
 	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
 	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
 	private static readonly Dictionary<string, ModuleInformation> DefaultModComponentSolverInformation;
@@ -29,58 +28,58 @@ public static class ComponentSolverFactory
 		DefaultModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
 		//AT_Bash Modules
-		ModComponentSolverCreators["MotionSense"] = (bombCommander, bombComponent) => new MotionSenseComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["MotionSense"] = module => new MotionSenseComponentSolver(module);
 
 		//Perky Modules
-		ModComponentSolverCreators["CrazyTalk"] = (bombCommander, bombComponent) => new CrazyTalkComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["CryptModule"] = (bombCommander, bombComponent) => new CryptographyComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["ForeignExchangeRates"] = (bombCommander, bombComponent) => new ForeignExchangeRatesComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["Listening"] = (bombCommander, bombComponent) => new ListeningComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["OrientationCube"] = (bombCommander, bombComponent) => new OrientationCubeComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["Probing"] = (bombCommander, bombComponent) => new ProbingComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["TurnTheKey"] = (bombCommander, bombComponent) => new TurnTheKeyComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["TurnTheKeyAdvanced"] = (bombCommander, bombComponent) => new TurnTheKeyAdvancedComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["CrazyTalk"] = module => new CrazyTalkComponentSolver(module);
+		ModComponentSolverCreators["CryptModule"] = module => new CryptographyComponentSolver(module);
+		ModComponentSolverCreators["ForeignExchangeRates"] = module => new ForeignExchangeRatesComponentSolver(module);
+		ModComponentSolverCreators["Listening"] = module => new ListeningComponentSolver(module);
+		ModComponentSolverCreators["OrientationCube"] = module => new OrientationCubeComponentSolver(module);
+		ModComponentSolverCreators["Probing"] = module => new ProbingComponentSolver(module);
+		ModComponentSolverCreators["TurnTheKey"] = module => new TurnTheKeyComponentSolver(module);
+		ModComponentSolverCreators["TurnTheKeyAdvanced"] = module => new TurnTheKeyAdvancedComponentSolver(module);
 
 		//Kaneb Modules
-		ModComponentSolverCreators["TwoBits"] = (bombCommander, bombComponent) => new TwoBitsComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["TwoBits"] = module => new TwoBitsComponentSolver(module);
 
 		//Asimir Modules
-		ModComponentSolverCreators["murder"] = (bombCommander, bombComponent) => new MurderComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["SeaShells"] = (bombCommander, bombComponent) => new SeaShellsComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["shapeshift"] = (bombCommander, bombComponent) => new ShapeShiftComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["ThirdBase"] = (bombCommander, bombComponent) => new ThirdBaseComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["murder"] = module => new MurderComponentSolver(module);
+		ModComponentSolverCreators["SeaShells"] = module => new SeaShellsComponentSolver(module);
+		ModComponentSolverCreators["shapeshift"] = module => new ShapeShiftComponentSolver(module);
+		ModComponentSolverCreators["ThirdBase"] = module => new ThirdBaseComponentSolver(module);
 
 		//Mock Army Modules
-		ModComponentSolverCreators["AnagramsModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["Emoji Math"] = (bombCommander, bombComponent) => new EmojiMathComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["Needy Math"] = (bombCommander, bombComponent) => new NeedyMathComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["WordScrambleModule"] = (bombCommander, bombComponent) => new AnagramsComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["AnagramsModule"] = module => new AnagramsComponentSolver(module);
+		ModComponentSolverCreators["Emoji Math"] = module => new EmojiMathComponentSolver(module);
+		ModComponentSolverCreators["Needy Math"] = module => new NeedyMathComponentSolver(module);
+		ModComponentSolverCreators["WordScrambleModule"] = module => new AnagramsComponentSolver(module);
 
 		//Misc Modules
-		ModComponentSolverCreators["EnglishTest"] = (bombCommander, bombComponent) => new EnglishTestComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["KnowYourWay"] = (bombCommander, bombComponent) => new KnowYourWayComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["LetterKeys"] = (bombCommander, bombComponent) => new LetterKeysComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["Microcontroller"] = (bombCommander, bombComponent) => new MicrocontrollerComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["resistors"] = (bombCommander, bombComponent) => new ResistorsComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["switchModule"] = (bombCommander, bombComponent) => new SwitchesComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["EdgeworkModule"] = (bombCommander, bombComponent) => new EdgeworkComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["NeedyBeer"] = (bombCommander, bombComponent) => new NeedyBeerComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["errorCodes"] = (bombCommander, bombComponent) => new ErrorCodesComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
+		ModComponentSolverCreators["KnowYourWay"] = module => new KnowYourWayComponentSolver(module);
+		ModComponentSolverCreators["LetterKeys"] = module => new LetterKeysComponentSolver(module);
+		ModComponentSolverCreators["Microcontroller"] = module => new MicrocontrollerComponentSolver(module);
+		ModComponentSolverCreators["resistors"] = module => new ResistorsComponentSolver(module);
+		ModComponentSolverCreators["switchModule"] = module => new SwitchesComponentSolver(module);
+		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
+		ModComponentSolverCreators["NeedyBeer"] = module => new NeedyBeerComponentSolver(module);
+		ModComponentSolverCreators["errorCodes"] = module => new ErrorCodesComponentSolver(module);
 
 		//Translated Modules
-		ModComponentSolverCreators["BigButtonTranslated"] = (bombCommander, bombComponent) => new TranslatedButtonComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["MorseCodeTranslated"] = (bombCommander, bombComponent) => new TranslatedMorseCodeComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["PasswordsTranslated"] = (bombCommander, bombComponent) => new TranslatedPasswordComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["WhosOnFirstTranslated"] = (bombCommander, bombComponent) => new TranslatedWhosOnFirstComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["VentGasTranslated"] = (bombCommander, bombComponent) => new TranslatedNeedyVentComponentSolver(bombCommander, bombComponent);
+		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
+		ModComponentSolverCreators["MorseCodeTranslated"] = module => new TranslatedMorseCodeComponentSolver(module);
+		ModComponentSolverCreators["PasswordsTranslated"] = module => new TranslatedPasswordComponentSolver(module);
+		ModComponentSolverCreators["WhosOnFirstTranslated"] = module => new TranslatedWhosOnFirstComponentSolver(module);
+		ModComponentSolverCreators["VentGasTranslated"] = module => new TranslatedNeedyVentComponentSolver(module);
 
 		// SHIMS
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
-		ModComponentSolverCreators["ExtendedPassword"] = (bombCommander, bombComponent) => new ExtendedPasswordComponentSolver(bombCommander, bombComponent);
-		ModComponentSolverCreators["Color Generator"] = (bombCommander, bombComponent) => new ColorGeneratorShim(bombCommander, bombComponent);
+		ModComponentSolverCreators["ExtendedPassword"] = module => new ExtendedPasswordComponentSolver(module);
+		ModComponentSolverCreators["Color Generator"] = module => new ColorGeneratorShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
-		ModComponentSolverCreators["MazeV2"] = (bombCommander, bombComponent) => new AntiTrollShim(bombCommander, bombComponent, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
+		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
@@ -691,116 +690,114 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	public static ComponentSolver CreateSolver(BombCommander bombCommander, BombComponent bombComponent)
+	public static ComponentSolver CreateSolver(TwitchModule module)
 	{
 		// ReSharper disable once SwitchStatementMissingSomeCases
-		switch (bombComponent.ComponentType)
+		switch (module.BombComponent.ComponentType)
 		{
 			case ComponentTypeEnum.Wires:
-				return new WireSetComponentSolver(bombCommander, (WireSetComponent) bombComponent);
+				return new WireSetComponentSolver(module);
 
 			case ComponentTypeEnum.Keypad:
-				return new KeypadComponentSolver(bombCommander, (KeypadComponent) bombComponent);
+				return new KeypadComponentSolver(module);
 
 			case ComponentTypeEnum.BigButton:
-				return new ButtonComponentSolver(bombCommander, (ButtonComponent) bombComponent);
+				return new ButtonComponentSolver(module);
 
 			case ComponentTypeEnum.Memory:
-				return new MemoryComponentSolver(bombCommander, (MemoryComponent) bombComponent);
+				return new MemoryComponentSolver(module);
 
 			case ComponentTypeEnum.Simon:
-				return new SimonComponentSolver(bombCommander, (SimonComponent) bombComponent);
+				return new SimonComponentSolver(module);
 
 			case ComponentTypeEnum.Venn:
-				return new VennWireComponentSolver(bombCommander, (VennWireComponent) bombComponent);
+				return new VennWireComponentSolver(module);
 
 			case ComponentTypeEnum.Morse:
-				return new MorseCodeComponentSolver(bombCommander, (MorseCodeComponent) bombComponent);
+				return new MorseCodeComponentSolver(module);
 
 			case ComponentTypeEnum.WireSequence:
-				return new WireSequenceComponentSolver(bombCommander, (WireSequenceComponent) bombComponent);
+				return new WireSequenceComponentSolver(module);
 
 			case ComponentTypeEnum.Password:
-				return new PasswordComponentSolver(bombCommander, (PasswordComponent) bombComponent);
+				return new PasswordComponentSolver(module);
 
 			case ComponentTypeEnum.Maze:
-				return new InvisibleWallsComponentSolver(bombCommander, (InvisibleWallsComponent) bombComponent);
+				return new InvisibleWallsComponentSolver(module);
 
 			case ComponentTypeEnum.WhosOnFirst:
-				return new WhosOnFirstComponentSolver(bombCommander, (WhosOnFirstComponent) bombComponent);
+				return new WhosOnFirstComponentSolver(module);
 
 			case ComponentTypeEnum.NeedyVentGas:
-				return new NeedyVentComponentSolver(bombCommander, (NeedyVentComponent) bombComponent);
+				return new NeedyVentComponentSolver(module);
 
 			case ComponentTypeEnum.NeedyCapacitor:
-				return new NeedyDischargeComponentSolver(bombCommander, (NeedyDischargeComponent) bombComponent);
+				return new NeedyDischargeComponentSolver(module);
 
 			case ComponentTypeEnum.NeedyKnob:
-				return new NeedyKnobComponentSolver(bombCommander, (NeedyKnobComponent) bombComponent);
+				return new NeedyKnobComponentSolver(module);
 
 			case ComponentTypeEnum.Mod:
-				KMBombModule solvableModule = bombComponent.GetComponent<KMBombModule>();
+				KMBombModule solvableModule = module.BombComponent.GetComponent<KMBombModule>();
 				try
 				{
-					return CreateModComponentSolver(bombCommander, bombComponent, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
+					return CreateModComponentSolver(module, solvableModule.ModuleType, solvableModule.ModuleDisplayName);
 				}
-				catch
+				catch (Exception exc)
 				{
-					DebugLog("Failed to create a valid Component Solver for Bomb Module: {0}", solvableModule.ModuleDisplayName);
-					DebugLog("Using Fallback Component solver instead.");
+					DebugHelper.LogException(exc, string.Format("Failed to create a valid solver for regular module: {0}. Using fallback solver instead.", solvableModule.ModuleDisplayName));
 					LogAllComponentTypes(solvableModule);
 
-					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
+					return new UnsupportedModComponentSolver(module);
 				}
 
 			case ComponentTypeEnum.NeedyMod:
-				KMNeedyModule needyModule = bombComponent.GetComponent<KMNeedyModule>();
+				KMNeedyModule needyModule = module.BombComponent.GetComponent<KMNeedyModule>();
 				try
 				{
-					return CreateModComponentSolver(bombCommander, bombComponent, needyModule.ModuleType, needyModule.ModuleDisplayName);
+					return CreateModComponentSolver(module, needyModule.ModuleType, needyModule.ModuleDisplayName);
 				}
-				catch
+				catch (Exception exc)
 				{
-					DebugLog("Failed to create a valid Component Solver for Needy Module: {0}", needyModule.ModuleDisplayName);
-					DebugLog("Using Fallback Component solver instead.");
+					DebugHelper.LogException(exc, string.Format("Failed to create a valid solver for needy module: {0}. Using fallback solver instead.", needyModule.ModuleDisplayName));
 					LogAllComponentTypes(needyModule);
 
-					return new UnsupportedModComponentSolver(bombCommander, bombComponent);
+					return new UnsupportedModComponentSolver(module);
 				}
 
 			default:
-				LogAllComponentTypes(bombComponent);
-				throw new NotSupportedException($"Currently {bombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays'.");
+				LogAllComponentTypes(module.BombComponent);
+				throw new NotSupportedException($"Currently {module.BombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays'.");
 		}
 	}
 
 	/// <summary>Returns the solver for a specific module. If there is a shim or a built-in solver, it will return that.</summary>
-	private static ComponentSolver CreateModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName) => ModComponentSolverCreators.TryGetValue(moduleType, out ModComponentSolverDelegate solverCreator)
-			? solverCreator(bombCommander, bombComponent)
-			: CreateDefaultModComponentSolver(bombCommander, bombComponent, moduleType, displayName)
+	private static ComponentSolver CreateModComponentSolver(TwitchModule module, string moduleType, string displayName) => ModComponentSolverCreators.TryGetValue(moduleType, out ModComponentSolverDelegate solverCreator)
+			? solverCreator(module)
+			: CreateDefaultModComponentSolver(module, moduleType, displayName)
 			  ?? throw new NotSupportedException(
-				  $"Currently {bombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!");
+				  $"Currently {module.BombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!");
 
-	/// <summary>Returns a solver that relies on the module�s own implementation, bypassing built-in solvers and shims.</summary>
-	public static ComponentSolver CreateDefaultModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, string moduleType, string displayName)
+	/// <summary>Returns a solver that relies on the module’s own implementation, bypassing built-in solvers and shims.</summary>
+	public static ComponentSolver CreateDefaultModComponentSolver(TwitchModule module, string moduleType, string displayName)
 	{
-		MethodInfo method = FindProcessCommandMethod(bombComponent, out ModCommandType commandType, out Type commandComponentType);
-		MethodInfo forcedSolved = FindSolveMethod(bombComponent, ref commandComponentType);
+		MethodInfo method = FindProcessCommandMethod(module.BombComponent, out ModCommandType commandType, out Type commandComponentType);
+		MethodInfo forcedSolved = FindSolveMethod(module.BombComponent, ref commandComponentType);
 
 		ModuleInformation info = GetModuleInfo(moduleType);
-		if (FindHelpMessage(bombComponent, commandComponentType, out string help) && !info.helpTextOverride)
+		if (FindHelpMessage(module.BombComponent, commandComponentType, out string help) && !info.helpTextOverride)
 		{
 			ModuleData.DataHasChanged |= !help.TryEquals(info.helpText);
 			info.helpText = help;
 		}
 
-		if (FindManualCode(bombComponent, commandComponentType, out string manual) && !info.manualCodeOverride)
+		if (FindManualCode(module.BombComponent, commandComponentType, out string manual) && !info.manualCodeOverride)
 		{
 			ModuleData.DataHasChanged |= !manual.TryEquals(info.manualCode);
 			info.manualCode = manual;
 		}
 
-		if (FindStatusLightPosition(bombComponent, out bool statusLeft, out bool statusBottom) && !info.statusLightOverride)
+		if (FindStatusLightPosition(module.BombComponent, out bool statusLeft, out bool statusBottom) && !info.statusLightOverride)
 		{
 			ModuleData.DataHasChanged |= info.statusLightLeft != statusLeft;
 			ModuleData.DataHasChanged |= info.statusLightDown != statusBottom;
@@ -808,19 +805,19 @@ public static class ComponentSolverFactory
 			info.statusLightDown = statusBottom;
 		}
 
-		if (FindModuleScore(bombComponent, commandComponentType, out int score) && !info.moduleScoreOverride)
+		if (FindModuleScore(module.BombComponent, commandComponentType, out int score) && !info.moduleScoreOverride)
 		{
 			ModuleData.DataHasChanged |= !score.Equals(info.moduleScore);
 			info.moduleScore = score;
 		}
 
-		if (FindStrikePenalty(bombComponent, commandComponentType, out int penalty) && !info.strikePenaltyOverride)
+		if (FindStrikePenalty(module.BombComponent, commandComponentType, out int penalty) && !info.strikePenaltyOverride)
 		{
 			ModuleData.DataHasChanged |= !penalty.Equals(info.strikePenalty);
 			info.strikePenalty = penalty;
 		}
 
-		if (FindRegexList(bombComponent, commandComponentType, out string[] regexList) && !info.validCommandsOverride)
+		if (FindRegexList(module.BombComponent, commandComponentType, out string[] regexList) && !info.validCommandsOverride)
 		{
 			if (info.validCommands != null && regexList == null)
 				ModuleData.DataHasChanged = true;
@@ -857,7 +854,7 @@ public static class ComponentSolverFactory
 		if (commandComponentType == null) return null;
 		ComponentSolverFields componentSolverFields = new ComponentSolverFields
 		{
-			CommandComponent = bombComponent.GetComponentInChildren(commandComponentType),
+			CommandComponent = module.BombComponent.GetComponentInChildren(commandComponentType),
 			Method = method,
 			ForcedSolveMethod = forcedSolved,
 			ModuleInformation = info,
@@ -874,18 +871,14 @@ public static class ComponentSolverFactory
 		switch (commandType)
 		{
 			case ModCommandType.Simple:
-			{
-				return new SimpleModComponentSolver(bombCommander, bombComponent, componentSolverFields);
-			}
+				return new SimpleModComponentSolver(module, componentSolverFields);
+
 			case ModCommandType.Coroutine:
-			{
-				return new CoroutineModComponentSolver(bombCommander, bombComponent, componentSolverFields);
-			}
+				return new CoroutineModComponentSolver(module, componentSolverFields);
+
 			case ModCommandType.Unsupported:
-			{
 				DebugLog("No Valid Component Solver found. Falling back to unsupported component solver");
-				return new UnsupportedModComponentSolver(bombCommander, bombComponent, componentSolverFields);
-			}
+				return new UnsupportedModComponentSolver(module, componentSolverFields);
 		}
 
 		return null;

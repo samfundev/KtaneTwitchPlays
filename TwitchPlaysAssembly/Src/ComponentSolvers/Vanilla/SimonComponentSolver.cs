@@ -5,10 +5,10 @@ using System.Text.RegularExpressions;
 
 public class SimonComponentSolver : ComponentSolver
 {
-	public SimonComponentSolver(BombCommander bombCommander, SimonComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public SimonComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.buttons;
+		_buttons = ((SimonComponent) module.BombComponent).buttons;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("SimonComponentSolver", "!{0} press red green blue yellow, !{0} press rgby [press a sequence of colours] | You must include the input from any previous stages");
 	}
 
@@ -41,10 +41,10 @@ public class SimonComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		while (!BombComponent.IsActive) yield return true;
-		while (!BombComponent.IsSolved)
+		while (!Module.BombComponent.IsActive) yield return true;
+		while (!Module.Solved)
 		{
-			int index = ((SimonComponent) BombComponent).GetNextIndexToPress();
+			int index = ((SimonComponent) Module.BombComponent).GetNextIndexToPress();
 			yield return DoInteractionClick(_buttons[index]);
 		}
 	}

@@ -1,194 +1,219 @@
-﻿using Assets.Scripts.Input;
-using Assets.Scripts.Records;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
+using Assets.Scripts.Input;
+using Assets.Scripts.Records;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class BombCommander
+/// <summary>Encapsulates a bomb (of which there may be multiple in a game).</summary>
+public class TwitchBomb : MonoBehaviour
 {
-	#region Constructors
-	public BombCommander(Bomb bomb)
-	{
-		ReuseBombCommander(bomb);
-	}
+	#region Public Fields
+	public CanvasGroup CanvasGroup;
+	public Text EdgeworkIDText;
+	public Text EdgeworkText;
+	public RectTransform EdgeworkWindowTransform;
+	public RectTransform EdgeworkHighlightTransform;
+
+	[HideInInspector]
+	public Bomb Bomb;
+
+	[HideInInspector]
+	public int BombID = -1;
+
+	[HideInInspector]
+	public DateTime BombTimeStamp;
+
+	public string Code;
 	#endregion
 
-	#region Interface Implementation
-	public void ReuseBombCommander(Bomb bomb)
+	#region Private fields & properties
+	private string _edgeworkCode;
+
+	private string _bombName;
+	public string BombName
+	{
+		get => _bombName;
+		set
+		{
+			_bombName = value;
+			if (TwitchGame.ModuleCameras != null) TwitchGame.ModuleCameras.UpdateHeader();
+		}
+	}
+
+	private static bool HeldFrontFace => KTInputManager.Instance.SelectableManager.GetActiveFace() == FaceEnum.Front;
+	#endregion
+
+	#region Constructor
+	public TwitchBomb(Bomb bomb)
 	{
 		Bomb = bomb;
-		TimerComponent = Bomb.GetTimer();
-		_widgetManager = Bomb.WidgetManager;
-		_selectable = Bomb.GetComponent<Selectable>();
-		_floatingHoldable = Bomb.GetComponent<FloatingHoldable>();
-		_selectableManager = KTInputManager.Instance.SelectableManager;
 		BombTimeStamp = DateTime.Now;
 		BombStartingTimer = CurrentTimer;
-		BombSolvableModules = 0;
-		BombSolvedModules = 0;
-		SolvedModules = new Dictionary<string, List<TwitchModule>>();
-	}
-
-	public IEnumerator RespondToCommand(Message messageObj)
-	{
-		string message = messageObj.Text.ToLowerInvariant().Trim();
-
-		if (message.EqualsAny("hold", "pick up"))
-		{
-			IEnumerator holdCoroutine = HoldBomb(HeldFrontFace);
-			while (holdCoroutine.MoveNext())
-			{
-				yield return holdCoroutine.Current;
-			}
-		}
-		else if (message.EqualsAny("turn", "turn round", "turn around", "rotate", "flip", "spin"))
-		{
-			IEnumerator turnCoroutine = TurnBomb();
-			while (turnCoroutine.MoveNext())
-			{
-				yield return turnCoroutine.Current;
-			}
-		}
-		else if (message.EqualsAny("drop", "let go", "put down"))
-		{
-			IEnumerator letGoCoroutine = LetGoBomb();
-			while (letGoCoroutine.MoveNext())
-			{
-				yield return letGoCoroutine.Current;
-			}
-		}
-		else if (message.RegexMatch(out Match edgeworkMatch, GameRoom.Instance.ValidEdgeworkRegex))
-		{
-			if (!TwitchPlaySettings.data.EnableEdgeworkCommand && !TwitchPlaySettings.data.AnarchyMode)
-			{
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombEdgework, TwitchBombHandle.EdgeworkText.text), messageObj.UserNickName, !messageObj.IsWhisper);
-			}
-			else
-			{
-				IEnumerator edgeworkCoroutine = ShowEdgework(edgeworkMatch);
-				while (edgeworkCoroutine.MoveNext())
-				{
-					yield return edgeworkCoroutine.Current;
-				}
-			}
-		}
 	}
 	#endregion
 
-	#region Helper Methods
-
-	private IEnumerator HoldBomb(bool frontFace = true)
+	#region Unity Lifecycle
+	private void Awake()
 	{
-		IEnumerator gameRoomHoldBomb = GameRoom.Instance?.BombCommanderHoldBomb(Bomb, frontFace);
-		bool continueInvocation = true;
-		if (gameRoomHoldBomb != null && gameRoomHoldBomb.MoveNext() && gameRoomHoldBomb.Current is bool continueInvoke)
+		Code = "bomb";
+		_edgeworkCode = "edgework";
+
+		CanvasGroup = transform.Find("UI").GetComponent<CanvasGroup>();
+		EdgeworkWindowTransform = CanvasGroup.transform.Find("EdgeworkWindow").GetComponent<RectTransform>();
+		EdgeworkHighlightTransform = CanvasGroup.transform.Find("EdgeworkHighlight").GetComponent<RectTransform>();
+		EdgeworkText = EdgeworkWindowTransform.Find("Header").Find("HeaderText").GetComponent<Text>();
+		EdgeworkIDText = EdgeworkWindowTransform.Find("ID").Find("IDText").GetComponent<Text>();
+	}
+
+	private void Start()
+	{
+		if (BombID > -1)
 		{
-			continueInvocation = continueInvoke;
-			do
-			{
-				yield return gameRoomHoldBomb.Current;
-			} while (gameRoomHoldBomb.MoveNext());
+			Code = "bomb" + (BombID + 1);
+			_edgeworkCode = "edgework" + (BombID + 1);
 		}
 
-		if (!continueInvocation || _floatingHoldable == null) yield break;
-		FloatingHoldable.HoldStateEnum holdState = _floatingHoldable.HoldState;
+		EdgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
+		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
+
+		CanvasGroup.alpha = 1.0f;
+		if (BombID > 0)
+		{
+			EdgeworkWindowTransform.localScale = Vector3.zero;
+			EdgeworkHighlightTransform.localScale = Vector3.zero;
+		}
+	}
+
+	private void OnDestroy() => StopAllCoroutines();
+	#endregion
+
+	public IEnumerator HideMainUIWindow()
+	{
+		EdgeworkWindowTransform.localScale = Vector3.zero;
+		EdgeworkHighlightTransform.localScale = Vector3.zero;
+		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.zero;
+		IRCConnection.Instance.HighlightTransform.localScale = Vector3.zero;
+		yield return null;
+	}
+
+	public IEnumerator ShowMainUIWindow()
+	{
+		EdgeworkWindowTransform.localScale = Vector3.one;
+		EdgeworkHighlightTransform.localScale = Vector3.one;
+		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.one;
+		IRCConnection.Instance.HighlightTransform.localScale = Vector3.one;
+		yield return null;
+	}
+
+	public void CauseExplosionByModuleCommand(string message, string reason) => StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
+
+	public float CurrentTimer
+	{
+		get => Bomb.GetTimer().TimeRemaining;
+		set => Bomb.GetTimer().TimeRemaining = (value < 0) ? 0 : value;
+	}
+
+	#region Private Methods
+	private bool IsAuthorizedDefuser(string userNickName, bool isWhisper) => TwitchGame.IsAuthorizedDefuser(userNickName, isWhisper);
+
+	public IEnumerator DelayBombExplosionCoroutine()
+	{
+		yield return DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
+	}
+
+	private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)
+	{
+		StrikeCount = StrikeLimit - 1;
+		if (!string.IsNullOrEmpty(message))
+			IRCConnection.SendMessage(message);
+		yield return new WaitForSeconds(delay);
+		CauseStrikesToExplosion(reason);
+	}
+
+	public IEnumerator HoldBomb(bool frontFace = true)
+	{
+		var holdable = Bomb.GetComponent<FloatingHoldable>();
+
+		var gameRoomHoldBomb = GameRoom.Instance?.BombCommanderHoldBomb(Bomb, frontFace);
+		if (gameRoomHoldBomb != null && gameRoomHoldBomb.MoveNext() && gameRoomHoldBomb.Current is bool continueInvoke)
+		{
+			do
+				yield return gameRoomHoldBomb.Current;
+			while (gameRoomHoldBomb.MoveNext());
+			if (!continueInvoke || holdable == null)
+				yield break;
+		}
+
+		var holdState = holdable.HoldState;
 		bool doForceRotate = false;
 
 		if (holdState != FloatingHoldable.HoldStateEnum.Held)
 		{
-			SelectObject(_selectable);
+			Bomb.GetComponent<Selectable>().Trigger();
 			doForceRotate = true;
-
-			if (BombMessageResponder.ModuleCameras != null)
-				BombMessageResponder.ModuleCameras.ChangeBomb(this);
+			TwitchGame.ModuleCameras?.ChangeBomb(this);
 		}
 		else if (frontFace != HeldFrontFace)
 		{
 			doForceRotate = true;
 		}
 
-		if (!doForceRotate) yield break;
-		float holdTime = _floatingHoldable.PickupTime;
-		IEnumerator forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
+		if (!doForceRotate)
+			yield break;
+		float holdTime = holdable.PickupTime;
+		var forceRotationCoroutine = ForceHeldRotation(frontFace, holdTime);
 		while (forceRotationCoroutine.MoveNext())
-		{
 			yield return forceRotationCoroutine.Current;
-		}
-	}
-
-	public IEnumerator TurnBomb()
-	{
-		IEnumerator gameRoomTurnBomb = GameRoom.Instance?.BombCommanderTurnBomb(Bomb);
-		bool continueInvocation = true;
-		if (gameRoomTurnBomb != null && gameRoomTurnBomb.MoveNext() && gameRoomTurnBomb.Current is bool continueInvoke)
-		{
-			continueInvocation = continueInvoke;
-			do
-			{
-				yield return gameRoomTurnBomb.Current;
-			} while (gameRoomTurnBomb.MoveNext());
-		}
-
-		if (!continueInvocation) yield break;
-		IEnumerator holdBombCoroutine = HoldBomb(!HeldFrontFace);
-		while (holdBombCoroutine.MoveNext())
-		{
-			yield return holdBombCoroutine.Current;
-		}
 	}
 
 	public IEnumerator LetGoBomb()
 	{
+		var holdable = Bomb.GetComponent<FloatingHoldable>();
+
 		IEnumerator gameRoomDropBomb = GameRoom.Instance?.BombCommanderDropBomb(Bomb);
-		bool continueInvocation = true;
 		if (gameRoomDropBomb != null && gameRoomDropBomb.MoveNext() && gameRoomDropBomb.Current is bool continueInvoke)
 		{
-			continueInvocation = continueInvoke;
 			do
-			{
 				yield return gameRoomDropBomb.Current;
-			} while (gameRoomDropBomb.MoveNext());
+			while (gameRoomDropBomb.MoveNext());
+			if (!continueInvoke || holdable == null)
+				yield break;
 		}
 
-		if (!continueInvocation || _floatingHoldable == null) yield break;
-		if (_floatingHoldable.HoldState != FloatingHoldable.HoldStateEnum.Held) yield break;
+		if (holdable.HoldState != FloatingHoldable.HoldStateEnum.Held)
+			yield break;
 
-		IEnumerator turnBombCoroutine = HoldBomb();
+		var turnBombCoroutine = HoldBomb();
 		while (turnBombCoroutine.MoveNext())
-		{
 			yield return turnBombCoroutine.Current;
-		}
 
-		while (_floatingHoldable.HoldState == FloatingHoldable.HoldStateEnum.Held)
+		while (holdable.HoldState == FloatingHoldable.HoldStateEnum.Held)
 		{
-			DeselectObject();
+			KTInputManager.Instance.SelectableManager.HandleCancel();
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
 
-	private IEnumerator ShowEdgework(Match edgeworkMatch)
+	public IEnumerator ShowEdgework(string edge)
 	{
 		const string allEdges = "all edges";
-		IEnumerator gameRoomShowEdgework = GameRoom.Instance?.BombCommanderBombEdgework(Bomb, edgeworkMatch);
-		bool continueInvocation = true;
+		IEnumerator gameRoomShowEdgework = GameRoom.Instance?.BombCommanderBombEdgework(Bomb, edge);
 		if (gameRoomShowEdgework != null && gameRoomShowEdgework.MoveNext() && gameRoomShowEdgework.Current is bool continueInvoke)
 		{
-			continueInvocation = continueInvoke;
 			do
-			{
 				yield return gameRoomShowEdgework.Current;
-			} while (gameRoomShowEdgework.MoveNext());
+			while (gameRoomShowEdgework.MoveNext());
+			if (!continueInvoke)
+				yield break;
 		}
 
-		if (!continueInvocation || _floatingHoldable == null || edgeworkMatch == null || !edgeworkMatch.Success) yield break;
+		TwitchGame.ModuleCameras?.Hide();
 
-		if (BombMessageResponder.ModuleCameras != null)
-			BombMessageResponder.ModuleCameras.Hide();
-
-		string edge = edgeworkMatch.Groups[1].Value.ToLowerInvariant().Trim();
+		edge = edge.ToLowerInvariant().Trim();
 		if (string.IsNullOrEmpty(edge))
 			edge = allEdges;
 
@@ -340,16 +365,15 @@ public class BombCommander
 			yield return returnToFace.Current;
 		}
 
-		if (BombMessageResponder.ModuleCameras != null)
-			BombMessageResponder.ModuleCameras.Show();
+		TwitchGame.ModuleCameras?.Show();
 	}
 
-	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => _widgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, T>>);
+	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => Bomb.WidgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<Dictionary<string, T>>);
 
-	public void FillEdgework(bool silent = false)
+	public string FillEdgework()
 	{
-		List<string> edgework = new List<string>();
-		Dictionary<string, string> portNames = new Dictionary<string, string>
+		var edgework = new List<string>();
+		var portNames = new Dictionary<string, string>
 		{
 			{ "RJ45", "RJ" },
 			{ "StereoRCA", "RCA" },
@@ -395,36 +419,30 @@ public class BombCommander
 		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
 
 		string edgeworkString = edgework.Where(str => str != "").Join(" // ");
-		if (TwitchBombHandle.EdgeworkText.text == edgeworkString) return;
-
-		TwitchBombHandle.EdgeworkText.text = edgeworkString;
-
-		if (!silent)
-			IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, edgeworkString);
+		if (EdgeworkText.text != edgeworkString)
+			EdgeworkText.text = edgeworkString;
+		return edgeworkString;
 	}
 
 	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
 	{
 		IEnumerator gameRoomFocus = GameRoom.Instance?.BombCommanderFocus(Bomb, selectable, focusDistance, frontFace);
-		bool continueInvocation = true;
 		if (gameRoomFocus != null && gameRoomFocus.MoveNext() && gameRoomFocus.Current is bool continueInvoke)
 		{
-			continueInvocation = continueInvoke;
 			do
-			{
 				yield return gameRoomFocus.Current;
-			} while (gameRoomFocus.MoveNext());
+			while (gameRoomFocus.MoveNext());
+			if (!continueInvoke)
+				yield break;
 		}
 
-		if (!continueInvocation || _floatingHoldable == null) yield break;
 		IEnumerator holdCoroutine = HoldBomb(frontFace);
 		while (holdCoroutine.MoveNext())
-		{
 			yield return holdCoroutine.Current;
-		}
 
-		float focusTime = _floatingHoldable.FocusTime;
-		_floatingHoldable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+		var holdable = Bomb.GetComponent<FloatingHoldable>();
+		float focusTime = holdable.FocusTime;
+		holdable.Focus(selectable.transform, focusDistance, false, false, focusTime);
 
 		selectable.HandleSelect(false);
 		selectable.HandleInteract();
@@ -433,41 +451,37 @@ public class BombCommander
 	public IEnumerator Defocus(Selectable selectable, bool frontFace)
 	{
 		IEnumerator gameRoomDefocus = GameRoom.Instance?.BombCommanderDefocus(Bomb, selectable, frontFace);
-		bool continueInvocation = true;
 		if (gameRoomDefocus != null && gameRoomDefocus.MoveNext() && gameRoomDefocus.Current is bool continueInvoke)
 		{
-			continueInvocation = continueInvoke;
 			do
-			{
 				yield return gameRoomDefocus.Current;
-			} while (gameRoomDefocus.MoveNext());
+			while (gameRoomDefocus.MoveNext());
+			if (!continueInvoke)
+				yield break;
 		}
 
-		if (!continueInvocation || _floatingHoldable == null) yield break;
-
-		_floatingHoldable.Defocus(false, false);
+		Bomb.GetComponent<FloatingHoldable>().Defocus(false, false);
 		selectable.HandleCancel();
 		selectable.HandleDeselect();
 	}
 
 	public void RotateByLocalQuaternion(Quaternion localQuaternion)
 	{
-		if (!GameRoom.Instance.BombCommanderRotateByLocalQuaternion(Bomb, localQuaternion) || _floatingHoldable == null) return;
-		Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
+		if (!GameRoom.Instance.BombCommanderRotateByLocalQuaternion(Bomb, localQuaternion))
+			return;
+
+		Transform baseTransform = KTInputManager.Instance.SelectableManager.GetBaseHeldObjectTransform();
 
 		float currentZSpin = HeldFrontFace ? 0.0f : 180.0f;
 
-		_selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
-		_selectableManager.HandleFaceSelection();
+		KTInputManager.Instance.SelectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, currentZSpin) * localQuaternion);
+		KTInputManager.Instance.SelectableManager.HandleFaceSelection();
 	}
 
-	public void RotateCameraByLocalQuaternion(BombComponent bombComponent, Quaternion localQuaternion)
+	public void RotateCameraByLocalQuaternion(GameObject gameObj, Quaternion localQuaternion)
 	{
-		if (bombComponent == null) return;
-		Transform twitchPlaysCameraTransform = bombComponent.transform.Find("TwitchPlayModuleCamera");
-
-		if (twitchPlaysCameraTransform == null) return;
-		Camera cam = twitchPlaysCameraTransform.GetComponentInChildren<Camera>();
+		Transform twitchPlaysCameraTransform = gameObj?.transform.Find("TwitchPlayModuleCamera");
+		Camera cam = twitchPlaysCameraTransform?.GetComponentInChildren<Camera>();
 		if (cam == null) return;
 
 		int originalLayer = -1;
@@ -479,15 +493,13 @@ public class BombCommander
 
 		int layer = localQuaternion == Quaternion.identity ? originalLayer : 31;
 
-		foreach (Transform trans in bombComponent.gameObject.GetComponentsInChildren<Transform>(true))
-		{
+		foreach (Transform trans in gameObj.GetComponentsInChildren<Transform>(true))
 			trans.gameObject.layer = layer;
-		}
 
 		twitchPlaysCameraTransform.localRotation = Quaternion.Euler(HeldFrontFace ? -localQuaternion.eulerAngles : localQuaternion.eulerAngles);
 	}
 
-	public void CauseStrikesToExplosion(string reason)
+	private void CauseStrikesToExplosion(string reason)
 	{
 		for (int strikesToMake = StrikeLimit - StrikeCount; strikesToMake > 0; --strikesToMake)
 		{
@@ -511,22 +523,12 @@ public class BombCommander
 		Bomb.OnStrike(null);
 	}
 
-	private void SelectObject(Selectable selectable)
-	{
-		selectable.HandleSelect(true);
-		_selectableManager.Select(selectable, true);
-		_selectableManager.HandleInteract();
-		selectable.OnInteractEnded();
-	}
-
-	private void DeselectObject() => _selectableManager.HandleCancel();
-
 	private IEnumerator ForceHeldRotation(bool frontFace, float duration)
 	{
-		if (_floatingHoldable == null) yield break;
-		Transform baseTransform = _selectableManager.GetBaseHeldObjectTransform();
+		var sm = KTInputManager.Instance.SelectableManager;
+		var baseTransform = sm.GetBaseHeldObjectTransform();
 
-		float oldZSpin = _selectableManager.GetZSpin();
+		float oldZSpin = sm.GetZSpin();
 		float targetZSpin = frontFace ? 0.0f : 180.0f;
 
 		float initialTime = Time.time;
@@ -536,30 +538,32 @@ public class BombCommander
 			float currentZSpin = Mathf.SmoothStep(oldZSpin, targetZSpin, lerp);
 
 			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
-			Vector3 heldObjectTiltEulerAngles = _selectableManager.GetHeldObjectTiltEulerAngles();
+			Vector3 heldObjectTiltEulerAngles = sm.GetHeldObjectTiltEulerAngles();
 			heldObjectTiltEulerAngles.x = Mathf.Clamp(heldObjectTiltEulerAngles.x, -95f, 95f);
-			heldObjectTiltEulerAngles.z -= _selectableManager.GetZSpin() - currentZSpin;
+			heldObjectTiltEulerAngles.z -= sm.GetZSpin() - currentZSpin;
 
-			_selectableManager.SetZSpin(currentZSpin);
-			_selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
-			_selectableManager.SetHeldObjectTiltEulerAngles(heldObjectTiltEulerAngles);
-			_selectableManager.HandleFaceSelection();
+			sm.SetZSpin(currentZSpin);
+			sm.SetControlsRotation(baseTransform.rotation * currentRotation);
+			sm.SetHeldObjectTiltEulerAngles(heldObjectTiltEulerAngles);
+			sm.HandleFaceSelection();
 			yield return null;
 		}
 
-		Vector3 heldObjectTileEulerAnglesFinal = _selectableManager.GetHeldObjectTiltEulerAngles();
+		Vector3 heldObjectTileEulerAnglesFinal = sm.GetHeldObjectTiltEulerAngles();
 		heldObjectTileEulerAnglesFinal.x = Mathf.Clamp(heldObjectTileEulerAnglesFinal.x, -95f, 95f);
-		heldObjectTileEulerAnglesFinal.z -= _selectableManager.GetZSpin() - targetZSpin;
+		heldObjectTileEulerAnglesFinal.z -= sm.GetZSpin() - targetZSpin;
 
-		_selectableManager.SetZSpin(targetZSpin);
-		_selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
-		_selectableManager.SetHeldObjectTiltEulerAngles(heldObjectTileEulerAnglesFinal);
-		_selectableManager.HandleFaceSelection();
+		sm.SetZSpin(targetZSpin);
+		sm.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+		sm.SetHeldObjectTiltEulerAngles(heldObjectTileEulerAnglesFinal);
+		sm.HandleFaceSelection();
 	}
 
 	private IEnumerator DoFreeYRotate(float initialYSpin, float initialPitch, float targetYSpin, float targetPitch, float duration)
 	{
-		if (_floatingHoldable == null) yield break;
+		if (GetComponent<FloatingHoldable>() == null)
+			yield break;
+
 		if (!HeldFrontFace)
 		{
 			initialPitch *= -1;
@@ -588,14 +592,13 @@ public class BombCommander
 		int strikeLimit = StrikeLimit;
 		int strikeCount = Math.Min(StrikeCount, StrikeLimit);
 
-		RecordManager recordManager = RecordManager.Instance;
-		GameRecord gameRecord = recordManager.GetCurrentRecord();
-		StrikeSource[] strikes = gameRecord.Strikes;
+		GameRecord GameRecord = RecordManager.Instance.GetCurrentRecord();
+		StrikeSource[] strikes = GameRecord.Strikes;
 		if (strikes.Length != strikeLimit)
 		{
 			StrikeSource[] newStrikes = new StrikeSource[Math.Max(strikeLimit, 1)];
 			Array.Copy(strikes, newStrikes, Math.Min(strikes.Length, newStrikes.Length));
-			gameRecord.Strikes = newStrikes;
+			GameRecord.Strikes = newStrikes;
 		}
 
 		if (strikeCount == strikeLimit)
@@ -606,33 +609,43 @@ public class BombCommander
 				strikeLimit = 1;
 			}
 			Bomb.NumStrikes = strikeLimit - 1;
-			CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(gameRecord, strikeLimit - 1);
+			CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeLimit - 1);
 			CauseStrike("Strike count / limit changed.");
 		}
 		else
 		{
 			Debug.Log($"[Bomb] Strike from TwitchPlays! {StrikeCount} / {StrikeLimit} strikes");
-			CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(gameRecord, strikeCount);
+			CommonReflectedTypeInfo.GameRecordCurrentStrikeIndexField.SetValue(GameRecord, strikeCount);
 			float[] rates = { 1, 1.25f, 1.5f, 1.75f, 2 };
-			TimerComponent.SetRateModifier(rates[Math.Min(strikeCount, 4)]);
+			Bomb.GetTimer().SetRateModifier(rates[Math.Min(strikeCount, 4)]);
 			Bomb.StrikeIndicator.StrikeCount = strikeCount;
 		}
 	}
 
-	public bool IsSolved => Bomb.IsSolved();
-
-	private float CurrentTimerElapsed => TimerComponent.TimeElapsed;
-
-	public float CurrentTimer
+	public IEnumerator TurnBomb()
 	{
-		get => TimerComponent.TimeRemaining;
-		set => TimerComponent.TimeRemaining = (value < 0) ? 0 : value;
+		var gameRoomTurnBomb = GameRoom.Instance?.BombCommanderTurnBomb(Bomb);
+		if (gameRoomTurnBomb != null && gameRoomTurnBomb.MoveNext() && gameRoomTurnBomb.Current is bool continueInvoke)
+		{
+			do
+				yield return gameRoomTurnBomb.Current;
+			while (gameRoomTurnBomb.MoveNext());
+			if (!continueInvoke)
+				yield break;
+		}
+
+		var holdBombCoroutine = HoldBomb(KTInputManager.Instance.SelectableManager.GetActiveFace() != FaceEnum.Front);
+		while (holdBombCoroutine.MoveNext())
+			yield return holdBombCoroutine.Current;
 	}
 
-	public string CurrentTimerFormatted => TimerComponent.GetFormattedTime(CurrentTimer, true);
+	public bool IsSolved => Bomb.IsSolved();
 
-	// ReSharper disable once UnusedMember.Global
-	public string StartingTimerFormatted => TimerComponent.GetFormattedTime(BombStartingTimer, true);
+	private float CurrentTimerElapsed => Bomb.GetTimer().TimeElapsed;
+
+	public string CurrentTimerFormatted => Bomb.GetTimer().GetFormattedTime(CurrentTimer, true);
+
+	private string StartingTimerFormatted => Bomb.GetTimer().GetFormattedTime(BombStartingTimer, true);
 
 	public string GetFullFormattedTime => Math.Max(CurrentTimer, 0).FormatTime();
 
@@ -643,7 +656,9 @@ public class BombCommander
 		get => Bomb.NumStrikes;
 		set
 		{
-			if (value < 0) value = 0; //Simon says is unsolvable with less than zero strikes.
+			// Simon Says is unsolvable with less than zero strikes.
+			if (value < 0)
+				value = 0;
 			Bomb.NumStrikes = value;
 			HandleStrikeChanges();
 		}
@@ -655,46 +670,9 @@ public class BombCommander
 		set { Bomb.NumStrikesToLose = value; HandleStrikeChanges(); }
 	}
 
-	// ReSharper disable once UnusedMember.Global
-	public int NumberModules => BombSolvableModules;
+	public int bombSolvableModules => TwitchGame.Instance.Modules.Count(md => md.BombID == BombID && md.BombComponent.IsSolvable);
+	public int bombSolvedModules => TwitchGame.Instance.Modules.Count(md => md.BombID == BombID && md.Solved);
 
-	private static readonly string[] SolveBased = { "MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN" };
-	private bool _removedSolveBasedModules;
-	public void RemoveSolveBasedModules()
-	{
-		if (_removedSolveBasedModules) return;
-		_removedSolveBasedModules = true;
-
-		foreach (KMBombModule module in Bomb.GetComponentsInChildren<KMBombModule>().Where(x => SolveBased.Contains(x.ModuleType)))
-		{
-			TwitchModule handle = BombMessageResponder.Instance.ComponentHandles.Where(x => x.BombComponent.GetComponent<KMBombModule>() != null)
-				.FirstOrDefault(x => x.BombComponent.GetComponent<KMBombModule>() == module);
-			if (handle != null)
-			{
-				handle.Unsupported = true;
-				if (handle.Solver != null)
-					handle.Solver.UnsupportedModule = true;
-			}
-			else
-				ComponentSolver.HandleForcedSolve(module);
-		}
-	}
-	#endregion
-
-	public Bomb Bomb;
-	private Selectable _selectable;
-	private FloatingHoldable _floatingHoldable;
-	public DateTime BombTimeStamp;
-	public Dictionary<string, List<TwitchModule>> SolvedModules;
-
-	private SelectableManager _selectableManager;
-
-	public TwitchBombHandle TwitchBombHandle = null;
-	public TimerComponent TimerComponent;
-	private WidgetManager _widgetManager;
-	public int BombSolvableModules;
-	public int BombSolvedModules;
 	public float BombStartingTimer;
-
-	private bool HeldFrontFace => _selectableManager.GetActiveFace() == FaceEnum.Front;
+	#endregion
 }

@@ -32,17 +32,17 @@ public class Facility : GameRoom
 		IEnumerator baseIEnumerator = base.ReportBombStatus();
 		while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
 
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+		List<TwitchBomb> bombHandles = TwitchGame.Instance.Bombs;
 
 		if (!SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled)
 			yield break;
 
 		_facilityRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
-		while (bombHandles.TrueForAll(handle => !handle.BombCommander.Bomb.HasDetonated))
+		while (bombHandles.TrueForAll(bomb => !bomb.Bomb.HasDetonated))
 		{
-			if (bombHandles.TrueForAll(handle => handle.BombCommander.Bomb.IsSolved()))
+			if (bombHandles.TrueForAll(bomb => bomb.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(handle => handle.BombCommander.CurrentTimer < 60f && !handle.BombCommander.Bomb.IsSolved()));
+			ToggleEmergencyLights(bombHandles.Any(bomb => bomb.CurrentTimer < 60f && !bomb.IsSolved));
 			yield return null;
 		}
 	}

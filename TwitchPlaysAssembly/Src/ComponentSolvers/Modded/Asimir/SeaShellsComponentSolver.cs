@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class SeaShellsComponentSolver : ComponentSolver
 {
-	public SeaShellsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public SeaShellsComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_component = bombComponent.GetComponent(ComponentType);
+		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.");
 	}

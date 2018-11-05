@@ -70,9 +70,8 @@ public class Factory : GameRoom
 			return;
 		}
 
-		ReuseBombCommander = true;
-		BombMessageResponder.Instance.SetBomb(bombs[0], -1);
-		BombMessageResponder.Instance.InitializeModuleCodes();
+		TwitchGame.Instance.SetBomb(bombs[0], -1);
+		TwitchGame.Instance.InitializeModuleCodes();
 		BombCount = bombs.Count;
 	}
 
@@ -94,78 +93,77 @@ public class Factory : GameRoom
 		}
 		InitializeOnLightsOn = false;
 
-		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
+		TwitchBomb bombHandle = TwitchGame.Instance.Bombs[0];
 
 		bombHandle.BombName = _infiniteMode ? "Infinite bombs incoming" : $"{BombCount} bombs incoming";
 
-		yield return new WaitUntil(() => GetBomb != null || bombHandle.BombCommander.Bomb.HasDetonated);
-		if (bombHandle.BombCommander.Bomb.HasDetonated && !_zenMode) yield break;
+		yield return new WaitUntil(() => GetBomb != null || bombHandle.Bomb.HasDetonated);
+		if (bombHandle.Bomb.HasDetonated && !_zenMode) yield break;
 
-		float currentBombTimer = bombHandle.BombCommander.TimerComponent.TimeRemaining + 5;
+		float currentBombTimer = bombHandle.CurrentTimer + 5;
 		int currentBombID = 1;
 		while (GetBomb != null)
 		{
 			Object currentBomb = GetBomb;
 
-			TimerComponent timerComponent = bombHandle.BombCommander.TimerComponent;
+			TimerComponent timerComponent = bombHandle.Bomb.GetTimer();
 			yield return new WaitUntil(() => timerComponent.IsActive);
 
-			if (Math.Abs(currentBombTimer - bombHandle.BombCommander.TimerComponent.TimeRemaining) > 1f)
+			if (Math.Abs(currentBombTimer - bombHandle.CurrentTimer) > 1f)
 			{
 				yield return null;
 				InitializeGameModes(true);
 			}
 
 			bool enableCameraWall = OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall;
-			if (enableCameraWall != BombMessageResponder.ModuleCameras.CameraWallEnabled)
+			if (enableCameraWall != TwitchGame.ModuleCameras.CameraWallEnabled)
 			{
 				if (enableCameraWall)
-					BombMessageResponder.ModuleCameras.EnableCameraWall();
+					TwitchGame.ModuleCameras.EnableCameraWall();
 				else
-					BombMessageResponder.ModuleCameras.DisableCameraWall();
+					TwitchGame.ModuleCameras.DisableCameraWall();
 			}
 			bombHandle.BombName = $"Bomb {currentBombID} of {(_infiniteMode ? "∞" : BombCount.ToString())}";
 			IRCConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++, _infiniteMode ? "∞" : BombCount.ToString());
 
 			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 			{
-				bombHandle.BombCommander.FillEdgework();
+				bombHandle.FillEdgework();
 			}
 			else
 			{
 				bombHandle.EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 			}
 			if (OtherModes.ZenModeOn)
-				bombHandle.BombCommander.StrikeLimit += bombHandle.BombCommander.StrikeCount;
+				bombHandle.StrikeLimit += bombHandle.StrikeCount;
 
-			IEnumerator bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb hold"));
+			IEnumerator bombHold = bombHandle.HoldBomb();
 			while (bombHold.MoveNext())
-			{
 				yield return bombHold.Current;
-			}
 
 			Bomb bomb1 = (Bomb) _internalBombProperty.GetValue(currentBomb, null);
 			yield return new WaitUntil(() =>
 			{
-				bool result = bomb1.HasDetonated || bomb1.IsSolved() || !BombMessageResponder.BombActive;
+				bool result = bomb1.HasDetonated || bomb1.IsSolved() || !TwitchGame.BombActive;
 				if (!result || OtherModes.TimeModeOn) currentBombTimer = bomb1.GetTimer().TimeRemaining;
 				return result;
 			});
-			if (!BombMessageResponder.BombActive) yield break;
+			if (!TwitchGame.BombActive) yield break;
 
-			IRCConnection.SendMessage(BombMessageResponder.Instance.GetBombResult(false));
+			IRCConnection.SendMessage(TwitchGame.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRetryReward();
 
-			foreach (TwitchModule handle in BombMessageResponder.Instance.ComponentHandles)
+			foreach (TwitchModule handle in TwitchGame.Instance.Modules)
 			{
 				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
-				BombMessageResponder.ModuleCameras.UnviewModule(handle);
+				TwitchGame.ModuleCameras.UnviewModule(handle);
 			}
 
 			if (TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
 			{
-				bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb drop"));
-				while (bombHold.MoveNext()) yield return bombHold.Current;
+				bombHold = bombHandle.LetGoBomb();
+				while (bombHold.MoveNext())
+					yield return bombHold.Current;
 			}
 
 			while (currentBomb == GetBomb)
@@ -174,11 +172,11 @@ public class Factory : GameRoom
 				if (currentBomb != GetBomb || !TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
 					continue;
 
-				bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb hold"));
+				bombHold = bombHandle.HoldBomb();
 				while (bombHold.MoveNext()) yield return bombHold.Current;
 				yield return new WaitForSeconds(0.10f);
 
-				bombHold = bombHandle.OnMessageReceived(new Message("Bomb Factory", "red", "bomb drop"));
+				bombHold = bombHandle.LetGoBomb();
 				while (bombHold.MoveNext()) yield return bombHold.Current;
 			}
 

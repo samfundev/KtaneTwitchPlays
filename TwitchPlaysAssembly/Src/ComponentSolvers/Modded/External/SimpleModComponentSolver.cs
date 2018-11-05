@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 
 public class SimpleModComponentSolver : ComponentSolver
 {
-	public SimpleModComponentSolver(BombCommander bombCommander, BombComponent bombComponent, ComponentSolverFields componentSolverFields) :
-		base(bombCommander, bombComponent)
+	public SimpleModComponentSolver(TwitchModule module, ComponentSolverFields componentSolverFields) :
+		base(module)
 	{
 		ProcessMethod = componentSolverFields.Method;
 		ForcedSolveMethod = componentSolverFields.ForcedSolveMethod;

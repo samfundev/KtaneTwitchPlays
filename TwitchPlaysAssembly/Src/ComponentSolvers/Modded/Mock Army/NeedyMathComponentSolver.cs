@@ -4,10 +4,10 @@ using System.Reflection;
 
 public class NeedyMathComponentSolver : ComponentSolver
 {
-	public NeedyMathComponentSolver(BombCommander bombCommander, BombComponent bombComponent)
-		: base(bombCommander, bombComponent)
+	public NeedyMathComponentSolver(TwitchModule module)
+		: base(module)
 	{
-		object component = bombComponent.GetComponent(ComponentType);
+		object component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer with !{0} submit -47.");
 	}

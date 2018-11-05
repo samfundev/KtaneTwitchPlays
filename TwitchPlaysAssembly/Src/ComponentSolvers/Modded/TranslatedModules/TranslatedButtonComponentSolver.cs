@@ -5,25 +5,25 @@ using UnityEngine;
 
 public class TranslatedButtonComponentSolver : ComponentSolver
 {
-	public TranslatedButtonComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public TranslatedButtonComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_button = (KMSelectable) ButtonField.GetValue(bombComponent.GetComponent(ComponentType));
+		var component = module.BombComponent.GetComponent(ComponentType);
+		_button = (KMSelectable) ButtonField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)");
-		Selectable selectable = bombComponent.GetComponent<Selectable>();
-		selectable.OnCancel += () => { SelectedField.SetValue(bombComponent.GetComponent(ComponentType), false); return true; };
+		Selectable selectable = module.BombComponent.GetComponent<Selectable>();
+		selectable.OnCancel += () => { SelectedField.SetValue(component, false); return true; };
 
-		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, bombComponent.GetComponent(ComponentType), ComponentType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, component, ComponentType);
 		if (language != null) ModInfo.manualCode = $"The%20Button{language}";
-		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, bombComponent.GetComponent(ComponentType), ComponentType)}";
-		bombComponent.StartCoroutine(SetHeaderText());
+		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
+		module.BombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
-		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
+		yield return new WaitUntil(() => Module != null);
+		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -64,7 +64,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	{
 		yield return "release";
 
-		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
 
 		string secondString = second.ToString();
 
@@ -73,7 +73,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		{
 			timeRemaining = timerComponent.TimeRemaining;
 
-			if (BombCommander.CurrentTimerFormatted.Contains(secondString))
+			if (Module.Bomb.CurrentTimerFormatted.Contains(secondString))
 			{
 				DoInteractionEnd(_button);
 				_held = false;

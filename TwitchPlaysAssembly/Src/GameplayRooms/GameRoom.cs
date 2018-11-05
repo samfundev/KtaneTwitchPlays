@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
@@ -13,7 +12,6 @@ public abstract class GameRoom
 	public delegate Type GameRoomType();
 	public delegate bool CreateRoom(Object[] roomObjects, out GameRoom room);
 
-	protected bool ReuseBombCommander = false;
 	protected int BombCount;
 
 	public static readonly GameRoomType[] GameRoomTypes =
@@ -26,7 +24,7 @@ public abstract class GameRoom
 		Facility.RoomType,
 		ElevatorGameRoom.RoomType,
 
-		//Catch all for unknown room types in the vanilla game. (As of now, the only remaining GameplayRoom type in this catch-all is ElevatorRoom)
+		//Catch all for unknown room types in the vanilla game.
 		DefaultGameRoom.RoomType
 	};
 
@@ -52,32 +50,20 @@ public abstract class GameRoom
 		int currentBomb = bombs.Count == 1 ? -1 : 0;
 		for (int i = 0; i < bombs.Count; i++)
 		{
-			BombMessageResponder.Instance.SetBomb(bombs[i], currentBomb == -1 ? -1 : i);
+			TwitchGame.Instance.SetBomb(bombs[i], currentBomb == -1 ? -1 : i);
 		}
 		BombCount = currentBomb == -1 ? -1 : bombs.Count;
-		BombMessageResponder.Instance.InitializeModuleCodes();
+		TwitchGame.Instance.InitializeModuleCodes();
 	}
 
 	protected void InitializeBomb(Bomb bomb)
 	{
-		if (ReuseBombCommander)
-		{
-			//Destroy existing component handles, and instantiate a new set.
-			BombMessageResponder.Instance.BombHandles[0].BombCommander.ReuseBombCommander(bomb);
-			BombMessageResponder.Instance.DestroyComponentHandles();
-			BombMessageResponder.Instance.CreateComponentHandlesForBomb(bomb);
-			BombMessageResponder.Instance.InitializeModuleCodes();
-		}
-		else
-		{
-			//Set another bomb, and add it to the list.
-			BombMessageResponder.Instance.SetBomb(bomb, BombCount++);
-		}
+		TwitchGame.Instance.SetBomb(bomb, BombCount++);
 	}
 
 	public virtual void InitializeBombNames()
 	{
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+		List<TwitchBomb> bombHandles = TwitchGame.Instance.Bombs;
 
 		Random rand = new Random();
 		const float specialNameProbability = 1.25f;
@@ -125,7 +111,7 @@ public abstract class GameRoom
 				bombHandles[1].BombName = "The Other Bomb";
 				break;
 			default:
-				foreach (TwitchBombHandle handle in bombHandles)
+				foreach (TwitchBomb handle in bombHandles)
 					handle.BombName = singleNames[rand.Next(0, singleNames.Length)];
 				break;
 		}
@@ -239,23 +225,18 @@ public abstract class GameRoom
 		if (OtherModes.TimeModeOn)
 			OtherModes.SetMultiplier(TwitchPlaySettings.data.TimeModeStartingMultiplier);
 
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
-		foreach (TwitchBombHandle handle in bombHandles)
+		List<TwitchBomb> bombHandles = TwitchGame.Instance.Bombs;
+		foreach (TwitchBomb bomb in bombHandles)
 			if (OtherModes.TimeModeOn)
-				handle.BombCommander.TimerComponent.TimeRemaining = TwitchPlaySettings.data.TimeModeStartingTime * 60;
+				bomb.CurrentTimer = TwitchPlaySettings.data.TimeModeStartingTime * 60;
 			else if (OtherModes.ZenModeOn)
-				handle.BombCommander.TimerComponent.TimeRemaining = 1;
+				bomb.CurrentTimer = 1;
 	}
 
 	public virtual IEnumerator ReportBombStatus()
 	{
 		yield break;
 	}
-
-	public string[] ValidEdgeworkRegex =
-	{
-		"^edgework((?: 45|-45)|(?: top right| right top| right bottom| bottom right| bottom left| left bottom| left top| top left| left| top| right| bottom| tr| rt| tl| lt| br| rb| bl| lb| t| r| b| l))?$"
-	};
 
 	public virtual IEnumerator BombCommanderHoldBomb(Bomb bomb, bool frontFace = true)
 	{
@@ -272,7 +253,7 @@ public abstract class GameRoom
 		yield return true;
 	}
 
-	public virtual IEnumerator BombCommanderBombEdgework(Bomb bomb, Match edgeworkMatch)
+	public virtual IEnumerator BombCommanderBombEdgework(Bomb bomb, string edge)
 	{
 		yield return true;
 	}

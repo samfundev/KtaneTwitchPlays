@@ -5,90 +5,6 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class IRCConnectionManagerHandler : HoldableHandler
-{
-	public IRCConnectionManagerHandler(KMHoldableCommander commander, FloatingHoldable holdable) : base(commander, holdable)
-	{
-		_connectButton = holdable.GetComponent<IRCConnectionManagerHoldable>().ConnectButton;
-		_elevatorSwitch = TPElevatorSwitch.Instance;
-		HelpMessage = "Disconnect the IRC from twitch plays with !{0} disconnect. For obvious reasons, only the streamer may do this.";
-		if (_elevatorSwitch != null && _elevatorSwitch.gameObject.activeInHierarchy)
-		{
-			HelpMessage += " Turn the elevator on with !{0} elevator on. Turn the Elevator off with !{0} elevator off. Flip the elevator on/off with !{0} elevator toggle";
-		}
-		if (commander != null)
-			commander.ID = "ircmanager";
-		Instance = this;
-	}
-
-	protected override IEnumerator RespondToCommandInternal(string command, bool isWhisper)
-	{
-		DebugHelper.Log($"Received: !ircmanager {command}");
-
-		string[] split = command.ToLowerInvariant().Trim().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-		// ReSharper disable SwitchStatementMissingSomeCases
-		switch (split[0])
-		{
-			case "elevator" when _elevatorSwitch != null && _elevatorSwitch.gameObject.activeInHierarchy:
-				switch (split.Length)
-				{
-					case 1:
-						yield return null;
-						TPElevatorSwitch.Instance.ReportState();
-						yield return null;
-						break;
-					case 2:
-						switch (split[1])
-						{
-							case "on" when !TPElevatorSwitch.IsON:
-							case "off" when TPElevatorSwitch.IsON:
-							case "flip":
-							case "toggle":
-							case "switch":
-							case "press":
-							case "push":
-								yield return null;
-								_elevatorSwitch.ElevatorSwitch.OnInteract();
-								yield return new WaitForSeconds(0.1f);
-								break;
-							case "on":
-							case "off":
-								yield return null;
-								TPElevatorSwitch.Instance.ReportState();
-								yield return null;
-								break;
-						}
-
-						break;
-				}
-
-				break;
-			case "disconnect":
-				bool allowed = false;
-				yield return null;
-				yield return new object[]
-				{
-					"streamer",
-					new Action(() =>
-					{
-						allowed = true;
-						_connectButton.OnInteract();
-						_connectButton.OnInteractEnded();
-					}),
-					new Action(() => Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, Holdable.transform))
-				};
-				if (allowed) yield break;
-				yield return "sendtochaterror only the streamer may use the IRC disconnect button.";
-				break;
-		}
-		// ReSharper restore SwitchStatementMissingSomeCases
-	}
-
-	public static IRCConnectionManagerHandler Instance;
-	private readonly KMSelectable _connectButton;
-	private readonly TPElevatorSwitch _elevatorSwitch;
-}
-
 public class IRCConnectionManagerHoldable : MonoBehaviour
 {
 	public KMSelectable ConnectButton;
@@ -105,11 +21,11 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 	[HideInInspector]
 	public static bool TwitchPlaysDataRefreshed = false;
 
-	private TPElevatorSwitch _elevatorSwitch;
+	public TPElevatorSwitch ElevatorSwitch;
 
 	private void Start()
 	{
-		_elevatorSwitch = GetComponentInChildren<TPElevatorSwitch>(true);
+		ElevatorSwitch = GetComponentInChildren<TPElevatorSwitch>(true);
 		_originalImageGameObject = transform.Find("TPQuad").gameObject;
 		_newImageGameObject = Instantiate(_originalImageGameObject, transform);
 
@@ -176,8 +92,8 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 	{
 		if (IRCConnection.Instance.State != IRCConnectionState.Connected && TPElevatorSwitch.IsON)
 		{
-			if (_elevatorSwitch.gameObject.activeSelf)
-				_elevatorSwitch.ElevatorSwitch.OnInteract();
+			if (ElevatorSwitch.gameObject.activeSelf)
+				ElevatorSwitch.ElevatorSwitch.OnInteract();
 			else if (SceneManager.Instance.CurrentRoom is SetupRoom setupRoom && setupRoom.ElevatorSwitch != null)
 				setupRoom.ElevatorSwitch.Switch.Toggle();
 		}

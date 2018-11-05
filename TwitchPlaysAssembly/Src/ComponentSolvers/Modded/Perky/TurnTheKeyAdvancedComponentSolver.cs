@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 {
-	public TurnTheKeyAdvancedComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public TurnTheKeyAdvancedComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_leftKey = (MonoBehaviour) LeftKeyField.GetValue(bombComponent.GetComponent(ComponentType));
-		_rightKey = (MonoBehaviour) RightKeyField.GetValue(bombComponent.GetComponent(ComponentType));
+		_leftKey = (MonoBehaviour) LeftKeyField.GetValue(module.BombComponent.GetComponent(ComponentType));
+		_rightKey = (MonoBehaviour) RightKeyField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the left key with !{0} turn left. Turn the right key with !{0} turn right.");
 
 		((KMSelectable) _leftKey).OnInteract = () => HandleKey(LeftBeforeA, LeftAfterA, LeftKeyTurnedField, RightKeyTurnedField, BeforeLeftKeyField, OnLeftKeyTurnMethod, LeftKeyAnimatorField);
@@ -21,22 +21,22 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	private bool HandleKey(string[] modulesBefore, IEnumerable<string> modulesAfter, FieldInfo keyTurned, FieldInfo otherKeyTurned, FieldInfo beforeKeyField, MethodInfo onKeyTurn, FieldInfo animatorField)
 	{
 		if (!GetValue(ActivatedField) || GetValue(keyTurned)) return false;
-		KMBombInfo bombInfo = BombComponent.GetComponent<KMBombInfo>();
-		KMBombModule bombModule = BombComponent.GetComponent<KMBombModule>();
-		KMAudio bombAudio = BombComponent.GetComponent<KMAudio>();
-		Animator keyAnimator = (Animator) animatorField.GetValue(BombComponent.GetComponent(ComponentType));
+		KMBombInfo bombInfo = Module.GetComponent<KMBombInfo>();
+		KMBombModule bombModule = Module.GetComponent<KMBombModule>();
+		KMAudio bombAudio = Module.GetComponent<KMAudio>();
+		Animator keyAnimator = (Animator) animatorField.GetValue(Module.GetComponent(ComponentType));
 
 		if (TwitchPlaySettings.data.EnforceSolveAllBeforeTurningKeys &&
 			modulesAfter.Any(x => bombInfo.GetSolvedModuleNames().Count(x.Equals) != bombInfo.GetSolvableModuleNames().Count(x.Equals)))
 		{
 			keyAnimator.SetTrigger("WrongTurn");
-			bombAudio.PlaySoundAtTransform("WrongKeyTurnFK", BombComponent.transform);
+			bombAudio.PlaySoundAtTransform("WrongKeyTurnFK", Module.transform);
 			bombModule.HandleStrike();
 			return false;
 		}
 
 		beforeKeyField.SetValue(null, TwitchPlaySettings.data.DisableTurnTheKeysSoftLock ? new string[0] : modulesBefore);
-		onKeyTurn.Invoke(BombComponent.GetComponent(ComponentType), null);
+		onKeyTurn.Invoke(Module.GetComponent(ComponentType), null);
 		if (GetValue(keyTurned))
 		{
 			//Check to see if any forbidden modules for this key were solved.
@@ -51,7 +51,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 		else
 		{
 			keyAnimator.SetTrigger("WrongTurn");
-			bombAudio.PlaySoundAtTransform("WrongKeyTurnFK", BombComponent.transform);
+			bombAudio.PlaySoundAtTransform("WrongKeyTurnFK", Module.transform);
 		}
 		return false;
 	}
@@ -59,22 +59,22 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		Component self = BombComponent.GetComponent(ComponentType);
+		Component self = Module.GetComponent(ComponentType);
 		Animator leftKeyAnimator = (Animator) LeftKeyAnimatorField.GetValue(self);
 		Animator rightKeyAnimator = (Animator) RightKeyAnimatorField.GetValue(self);
 
 		LeftKeyTurnedField.SetValue(self, true);
 		RightKeyTurnedField.SetValue(self, true);
 		rightKeyAnimator.SetBool("IsUnlocked", true);
-		BombComponent.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", BombComponent.transform);
+		Module.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", Module.transform);
 		yield return new WaitForSeconds(0.1f);
 		leftKeyAnimator.SetBool("IsUnlocked", true);
-		BombComponent.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", BombComponent.transform);
+		Module.GetComponent<KMAudio>().PlaySoundAtTransform("TurnTheKeyFX", Module.transform);
 		yield return new WaitForSeconds(0.1f);
-		BombComponent.GetComponent<KMBombModule>().HandlePass();
+		Module.GetComponent<KMBombModule>().HandlePass();
 	}
 
-	private bool GetValue(FieldInfo field) => (bool) field.GetValue(BombComponent.GetComponent(ComponentType));
+	private bool GetValue(FieldInfo field) => (bool) field.GetValue(Module.GetComponent(ComponentType));
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{

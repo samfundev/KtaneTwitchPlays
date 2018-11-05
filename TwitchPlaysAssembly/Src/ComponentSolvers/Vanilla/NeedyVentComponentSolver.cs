@@ -2,11 +2,12 @@
 
 public class NeedyVentComponentSolver : ComponentSolver
 {
-	public NeedyVentComponentSolver(BombCommander bombCommander, NeedyVentComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public NeedyVentComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_yesButton = bombComponent.YesButton;
-		_noButton = bombComponent.NoButton;
+		var ventModule = (NeedyVentComponent) module.BombComponent;
+		_yesButton = ventModule.YesButton;
+		_noButton = ventModule.NoButton;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentComponentSolver", "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 	}
 

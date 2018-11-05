@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class ForeignExchangeRatesComponentSolver : ComponentSolver
 {
-	public ForeignExchangeRatesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ForeignExchangeRatesComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = (MonoBehaviour[]) ButtonsField.GetValue(bombComponent.GetComponent(ComponentType));
+		_buttons = (MonoBehaviour[]) ButtonsField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
 	}
 

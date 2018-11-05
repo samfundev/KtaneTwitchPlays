@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Assets.Scripts.Pacing;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -33,7 +32,7 @@ public class ElevatorGameRoom : GameRoom
 
 	public override void InitializeBombNames()
 	{
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+		List<TwitchBomb> bombHandles = TwitchGame.Instance.Bombs;
 
 		Random rand = new Random();
 		const float specialNameProbability = 0.25f;
@@ -57,7 +56,7 @@ public class ElevatorGameRoom : GameRoom
 			"Bomboleo "
 		};
 		if (!(rand.NextDouble() < specialNameProbability)) return;
-		foreach (TwitchBombHandle handle in bombHandles)
+		foreach (TwitchBomb handle in bombHandles)
 		{
 			handle.BombName = singleNames[rand.Next(0, singleNames.Length - 1)];
 		}
@@ -67,26 +66,25 @@ public class ElevatorGameRoom : GameRoom
 	{
 		IEnumerator baseIEnumerator = base.ReportBombStatus();
 		while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
-		ValidEdgeworkRegex = new[] { "^edgework((?: right| left| back| r| l| b)?)$" };
-		TwitchBombHandle bombHandle = BombMessageResponder.Instance.BombHandles[0];
-		TimerComponent timerComponent = bombHandle.BombCommander.TimerComponent;
+		TwitchBomb bombHandle = TwitchGame.Instance.Bombs[0];
+		TimerComponent timerComponent = bombHandle.Bomb.GetTimer();
 		yield return new WaitUntil(() => timerComponent.IsActive);
-		BombMessageResponder.Instance.OnLightsChange(true);
+		TwitchGame.Instance.OnLightsChange(true);
 
 		_elevatorRoom.PacingActions.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
-		while (!bombHandle.BombCommander.Bomb.HasDetonated)
+		while (!bombHandle.Bomb.HasDetonated)
 		{
 			if (Input.GetKey(KeyCode.Escape))
 			{
-				IEnumerator bombDrop = bombHandle.OnMessageReceived(new Message(bombHandle.BombName, "red", "bomb drop"));
+				IEnumerator bombDrop = bombHandle.LetGoBomb();
 				while (bombDrop.MoveNext())
 					yield return bombDrop.Current;
 			}
 
-			if (bombHandle.BombCommander.Bomb.IsSolved())
+			if (bombHandle.Bomb.IsSolved())
 				yield break;
 			ToggleEmergencyLights(SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled &&
-				bombHandle.BombCommander.CurrentTimer < 60f && !bombHandle.BombCommander.Bomb.IsSolved());
+				bombHandle.CurrentTimer < 60f && !bombHandle.Bomb.IsSolved());
 			yield return null;
 		}
 	}
@@ -108,7 +106,7 @@ public class ElevatorGameRoom : GameRoom
 		yield return false;
 		if (_currentWall != CurrentElevatorWall.Dropped) yield break;
 
-		IEnumerator dropAllHoldables = MiscellaneousMessageResponder.DropAllHoldables();
+		IEnumerator dropAllHoldables = TwitchPlaysService.Instance.DropAllHoldables();
 		while (dropAllHoldables.MoveNext())
 			yield return dropAllHoldables.Current;
 
@@ -131,7 +129,7 @@ public class ElevatorGameRoom : GameRoom
 	public override IEnumerator BombCommanderTurnBomb(Bomb bomb)
 	{
 		yield return false;
-		IEnumerator dropAllHoldables = MiscellaneousMessageResponder.DropAllHoldables();
+		IEnumerator dropAllHoldables = TwitchPlaysService.Instance.DropAllHoldables();
 		while (dropAllHoldables.MoveNext())
 			yield return dropAllHoldables.Current;
 		IEnumerator rotateCamera;
@@ -157,19 +155,15 @@ public class ElevatorGameRoom : GameRoom
 			yield return rotateCamera.Current;
 	}
 
-	public override IEnumerator BombCommanderBombEdgework(Bomb bomb, Match edgeworkMatch)
+	public override IEnumerator BombCommanderBombEdgework(Bomb bomb, string edge)
 	{
 		yield return false;
-		if (edgeworkMatch == null || !edgeworkMatch.Success) yield break;
 
-		for (int i = 0; i < edgeworkMatch.Groups.Count; i++)
-			DebugHelper.Log($"edgeworkMatch.Groups[{i}].Value = {edgeworkMatch.Groups[i].Value}");
-
-		string edge = edgeworkMatch.Groups[1].Value.ToLowerInvariant().Trim();
+		edge = edge.ToLowerInvariant().Trim();
 		if (string.IsNullOrEmpty(edge))
 			edge = "all edges";
 
-		IEnumerator showEdgework = MiscellaneousMessageResponder.DropAllHoldables();
+		IEnumerator showEdgework = TwitchPlaysService.Instance.DropAllHoldables();
 		while (showEdgework.MoveNext())
 			yield return showEdgework.Current;
 

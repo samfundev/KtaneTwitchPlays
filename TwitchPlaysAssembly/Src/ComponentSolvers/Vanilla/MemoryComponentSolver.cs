@@ -1,13 +1,13 @@
-using Assets.Scripts.Rules;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Rules;
 
 public class MemoryComponentSolver : ComponentSolver
 {
-	public MemoryComponentSolver(BombCommander bombCommander, MemoryComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public MemoryComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.Buttons;
+		_buttons = ((MemoryComponent) module.BombComponent).Buttons;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("MemoryComponentSolver", "!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]");
 	}
 
@@ -43,9 +43,9 @@ public class MemoryComponentSolver : ComponentSolver
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		MemoryComponent mc = (MemoryComponent) BombComponent;
-		while (!BombComponent.IsActive) yield return true;
-		while (!BombComponent.IsSolved)
+		MemoryComponent mc = (MemoryComponent) Module.BombComponent;
+		while (!Module.BombComponent.IsActive) yield return true;
+		while (!Module.Solved)
 		{
 			while (!mc.IsInputValid) yield return true;
 			List<Rule> ruleList = RuleManager.Instance.MemoryRuleSet.RulesDictionary[mc.CurrentStage];

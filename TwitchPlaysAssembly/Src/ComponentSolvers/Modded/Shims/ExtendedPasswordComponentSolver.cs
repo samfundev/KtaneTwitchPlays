@@ -2,12 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class ExtendedPasswordComponentSolver : ComponentSolverShim
 {
-	public ExtendedPasswordComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent, "ExtendedPassword")
+	public ExtendedPasswordComponentSolver(TwitchModule module) :
+		base(module, "ExtendedPassword")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} lambda [try to submit a word]");
 	}

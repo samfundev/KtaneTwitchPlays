@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using TwitchPlaysAssembly.ComponentSolvers.Modded.Shims;
 
 public class ColorGeneratorShim : ComponentSolverShim
 {
-	public ColorGeneratorShim(BombCommander bombCommander, BombComponent bombComponent)
-		: base(bombCommander, bombComponent, "Color Generator")
+	public ColorGeneratorShim(TwitchModule module)
+		: base(module, "Color Generator")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}

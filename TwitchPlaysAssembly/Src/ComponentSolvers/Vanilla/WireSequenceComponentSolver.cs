@@ -1,41 +1,43 @@
-﻿using Assets.Scripts.Rules;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class WireSequenceComponentSolver : ComponentSolver
 {
-	public WireSequenceComponentSolver(BombCommander bombCommander, WireSequenceComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public WireSequenceComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_wireSequence = (List<WireSequenceComponent.WireConfiguration>) WireSequenceField.GetValue(bombComponent);
-		_upButton = bombComponent.UpButton;
-		_downButton = bombComponent.DownButton;
+		var wireSeqModule = (WireSequenceComponent) module.BombComponent;
+		_wireSequence = (List<WireSequenceComponent.WireConfiguration>) WireSequenceField.GetValue(wireSeqModule);
+		_upButton = wireSeqModule.UpButton;
+		_downButton = wireSeqModule.DownButton;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("WireSequenceComponentSolver", "!{0} cut 7 [cut wire 7] | !{0} down, !{0} d [next stage] | !{0} up, !{0} u [previous stage] | !{0} cut 7 8 9 d [cut multiple wires and continue] | Use the numbers shown on the module", "Wire Sequence");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.ToLowerInvariant().Trim();
-		Dictionary<MonoBehaviour, string> buttons = new Dictionary<MonoBehaviour, string>();
+		var buttons = new Dictionary<MonoBehaviour, string>();
+		var wireSeq = (WireSequenceComponent) Module.BombComponent;
 
 		if (inputCommand.Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield return null;
-			int page = (int) CurrentPageField.GetValue(BombComponent);
+			int page = (int) CurrentPageField.GetValue(Module);
 			for (int i = page - 1; i >= 0; i--)
 			{
-				IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i + 1, i);
+				IEnumerator changePage = wireSeq.ChangePage(i + 1, i);
 				while (changePage.MoveNext())
 					yield return changePage.Current;
 			}
 			for (int i = 0; i < page; i++)
 			{
 				yield return new WaitForSecondsWithCancel(3.0f, false);
-				IEnumerator changePage = ((WireSequenceComponent) BombComponent).ChangePage(i, i + 1);
+				IEnumerator changePage = wireSeq.ChangePage(i, i + 1);
 				while (changePage.MoveNext())
 					yield return changePage.Current;
 			}
@@ -97,7 +99,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 	private bool CanInteractWithWire(int wireIndex)
 	{
 		int wirePageIndex = wireIndex / 3;
-		return wirePageIndex == (int) CurrentPageField.GetValue(BombComponent);
+		return wirePageIndex == (int) CurrentPageField.GetValue(Module);
 	}
 
 	private WireSequenceWire GetWire(int wireIndex) => _wireSequence[wireIndex].Wire;
@@ -112,15 +114,15 @@ public class WireSequenceComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		if (BombComponent.IsSolved) yield break;
+		if (Module.Solved) yield break;
 
-		while (!BombComponent.IsActive)
+		while (!Module.BombComponent.IsActive)
 			yield return true;
 		yield return null;
 
 		for (int i = 0; i < 4; i++)
 		{
-			while (((WireSequenceComponent) BombComponent).IsChangingPage)
+			while (((WireSequenceComponent) Module.BombComponent).IsChangingPage)
 				yield return true;
 
 			if (!CanInteractWithWire(i * 3)) continue;

@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class MotionSenseComponentSolver : ComponentSolver
 {
-	public MotionSenseComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public MotionSenseComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_component = bombComponent.GetComponent(ComponentType);
+		_component = module.BombComponent.GetComponent(ComponentType);
 		_needy = (KMNeedyModule) NeedyField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
 		_needy.OnNeedyActivation += () =>

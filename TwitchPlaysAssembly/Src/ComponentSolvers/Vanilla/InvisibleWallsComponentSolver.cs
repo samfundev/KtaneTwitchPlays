@@ -5,10 +5,10 @@ using System.Text.RegularExpressions;
 
 public class InvisibleWallsComponentSolver : ComponentSolver
 {
-	public InvisibleWallsComponentSolver(BombCommander bombCommander, InvisibleWallsComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public InvisibleWallsComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.Buttons;
+		_buttons = ((InvisibleWallsComponent) module.BombComponent).Buttons;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("InvisibleWallsComponentSolver", "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]", "Maze");
 	}
 
@@ -48,19 +48,20 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 	private bool[] _explored;
 	private bool GenerateMazeSolution(int startXY)
 	{
+		var component = (InvisibleWallsComponent) Module.BombComponent;
 		if (startXY == 77)
 		{
 			_explored = new bool[60];
-			startXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).CurrentCell);
+			startXY = GetLocationFromCell(component.CurrentCell);
 		}
-		int endXY = GetLocationFromCell(((InvisibleWallsComponent) BombComponent).GoalCell);
+		int endXY = GetLocationFromCell(component.GoalCell);
 
 		int x = startXY % 10;
 		int y = startXY / 10;
 
 		if (x > 5 || y > 5 || endXY == 66) return false;
 		//var directions = _mazes[maze, y, x];
-		MazeCell cell = ((InvisibleWallsComponent) BombComponent).Maze.GetCell(x, y);
+		MazeCell cell = component.Maze.GetCell(x, y);
 		bool[] directions = { cell.WallAbove, cell.WallBelow, cell.WallLeft, cell.WallRight };
 		if (startXY == endXY) return true;
 		_explored[startXY] = true;
@@ -82,8 +83,8 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		while (!BombComponent.IsActive) yield return true;
-		if (BombComponent.IsSolved) yield break;
+		while (!Module.BombComponent.IsActive) yield return true;
+		if (Module.Solved) yield break;
 		if (!GenerateMazeSolution(77)) yield break;
 		while (_mazeStack.Count > 0)
 			yield return DoInteractionClick(_buttons[_mazeStack.Pop()]);

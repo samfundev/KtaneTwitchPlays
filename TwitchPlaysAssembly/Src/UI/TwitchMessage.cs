@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
+public class TwitchMessage : MonoBehaviour
 {
 	public Color NormalColor = Color.white;
 	public Color HighlightColor = Color.white;
@@ -25,26 +25,7 @@ public class TwitchMessage : MonoBehaviour, ICommandResponseNotifier
 
 	public void SetMessage(string text) => _messageText.text = text;
 
-	public void ProcessResponse(CommandResponse response, int value)
-	{
 		// ReSharper disable once SwitchStatementMissingSomeCases
-		switch (response)
-		{
-			case CommandResponse.Start:
-				StopAllCoroutines();
-				StartCoroutine(DoBackgroundColorChange(HighlightColor));
-				break;
-			case CommandResponse.EndNotComplete:
-				StopAllCoroutines();
-				StartCoroutine(DoBackgroundColorChange(NormalColor));
-				break;
-			case CommandResponse.NoResponse:
-				StopAllCoroutines();
-				StartCoroutine(DoBackgroundColorChange(IgnoreColor));
-				break;
-		}
-	}
-
 	public IEnumerator DoBackgroundColorChange(Color targetColor, float duration = 0.2f)
 	{
 		Color initialColor = _messageBackground.color;

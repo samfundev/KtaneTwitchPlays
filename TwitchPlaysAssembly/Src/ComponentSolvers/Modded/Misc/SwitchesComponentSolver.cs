@@ -6,10 +6,10 @@ using System.Reflection;
 
 public class SwitchesComponentSolver : ComponentSolver
 {
-	public SwitchesComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public SwitchesComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_component = bombComponent.GetComponent(ComponentType);
+		_component = module.BombComponent.GetComponent(ComponentType);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip switches using !{0} flip 1 5 3 2.");
 	}
 

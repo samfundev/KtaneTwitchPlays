@@ -7,15 +7,15 @@ using UnityEngine;
 
 public class OrientationCubeComponentSolver : ComponentSolver
 {
-	public OrientationCubeComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public OrientationCubeComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_submit = (MonoBehaviour) SubmitField.GetValue(bombComponent.GetComponent(ComponentType));
-		_left = (MonoBehaviour) LeftField.GetValue(bombComponent.GetComponent(ComponentType));
-		_right = (MonoBehaviour) RightField.GetValue(bombComponent.GetComponent(ComponentType));
-		_ccw = (MonoBehaviour) CcwField.GetValue(bombComponent.GetComponent(ComponentType));
-		_cw = (MonoBehaviour) CwField.GetValue(bombComponent.GetComponent(ComponentType));
-		//virtualAngleEmulator = (float)_virtualField.GetValue(bombComponent.GetComponent(_componentType));
+		var component = module.BombComponent.GetComponent(ComponentType);
+		_submit = (MonoBehaviour) SubmitField.GetValue(component);
+		_left = (MonoBehaviour) LeftField.GetValue(component);
+		_right = (MonoBehaviour) RightField.GetValue(component);
+		_ccw = (MonoBehaviour) CcwField.GetValue(component);
+		_cw = (MonoBehaviour) CwField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Move the cube with !{0} press cw l set. The buttons are l, r, cw, ccw, set.");
 	}
 

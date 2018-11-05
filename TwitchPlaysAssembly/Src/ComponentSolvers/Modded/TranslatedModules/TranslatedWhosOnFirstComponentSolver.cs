@@ -7,24 +7,24 @@ using UnityEngine;
 
 public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 {
-	public TranslatedWhosOnFirstComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public TranslatedWhosOnFirstComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		Component component = bombComponent.GetComponent(ComponentType);
+		Component component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
 
-		if (bombCommander == null) return;
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(bombComponent, component, ComponentType);
-		if (language != null) ModInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
-		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(bombComponent, component, ComponentType)}";
-		bombComponent.StartCoroutine(SetHeaderText());
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, component, ComponentType);
+		if (language != null)
+			ModInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
+		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
+		module.BombComponent.StartCoroutine(SetHeaderText());
 	}
 
 	private IEnumerator SetHeaderText()
 	{
-		yield return new WaitUntil(() => ComponentHandle != null);
-		ComponentHandle.HeaderText = ModInfo.moduleDisplayName;
+		yield return new WaitUntil(() => Module != null);
+		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

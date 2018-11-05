@@ -1,15 +1,15 @@
-﻿using Assets.Scripts.Components.VennWire;
-using Assets.Scripts.Rules;
-using System;
+﻿using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Components.VennWire;
+using Assets.Scripts.Rules;
 
 public class VennWireComponentSolver : ComponentSolver
 {
-	public VennWireComponentSolver(BombCommander bombCommander, VennWireComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public VennWireComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_wires = bombComponent.ActiveWires;
+		_wires = ((VennWireComponent) module.BombComponent).ActiveWires;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver", "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted");
 	}
 
@@ -45,7 +45,7 @@ public class VennWireComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		VennWireComponent vwc = (VennWireComponent) BombComponent;
+		VennWireComponent vwc = (VennWireComponent) Module.BombComponent;
 		VennWireRuleSet ruleSet = RuleManager.Instance.VennWireRuleSet;
 		foreach (VennSnippableWire wire in _wires)
 		{

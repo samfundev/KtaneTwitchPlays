@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class ProbingComponentSolver : ComponentSolver
 {
-	public ProbingComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ProbingComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_wires = (MonoBehaviour[]) WiresField.GetValue(bombComponent.GetComponent(ComponentType));
+		_wires = (MonoBehaviour[]) WiresField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
 	}
 

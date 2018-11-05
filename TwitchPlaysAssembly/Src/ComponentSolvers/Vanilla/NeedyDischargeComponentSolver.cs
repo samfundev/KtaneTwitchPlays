@@ -3,10 +3,10 @@ using System.Collections;
 
 public class NeedyDischargeComponentSolver : ComponentSolver
 {
-	public NeedyDischargeComponentSolver(BombCommander bombCommander, NeedyDischargeComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public NeedyDischargeComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_dischargeButton = bombComponent.DischargeButton;
+		_dischargeButton = ((NeedyDischargeComponent) module.BombComponent).DischargeButton;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("NeedyDischargeComponentSolver", "!{0} hold 7 [hold the lever for 7 seconds]", "Capacitor Discharge");
 	}
 

@@ -5,10 +5,10 @@ using System.Reflection;
 
 public class EmojiMathComponentSolver : ComponentSolver
 {
-	public EmojiMathComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public EmojiMathComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = (KMSelectable[]) _buttonsField.GetValue(bombComponent.GetComponent(_componentType));
+		_buttons = (KMSelectable[]) _buttonsField.GetValue(module.BombComponent.GetComponent(_componentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer using !{0} submit -47.");
 	}
 

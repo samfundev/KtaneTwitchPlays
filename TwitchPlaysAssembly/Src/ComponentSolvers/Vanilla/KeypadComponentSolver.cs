@@ -1,14 +1,14 @@
-﻿using Assets.Scripts.Rules;
-using System;
+﻿using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Rules;
 
 public class KeypadComponentSolver : ComponentSolver
 {
-	public KeypadComponentSolver(BombCommander bombCommander, KeypadComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public KeypadComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.buttons;
+		_buttons = ((KeypadComponent) module.BombComponent).buttons;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("KeypadComponentSolver", "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR", "Keypad");
 	}
 
@@ -39,9 +39,9 @@ public class KeypadComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		while (!BombComponent.IsSolved)
+		while (!Module.Solved)
 			yield return DoInteractionClick(_buttons[
-				RuleManager.Instance.KeypadRuleSet.GetNextSolutionIndex(((KeypadComponent) BombComponent).pListIndex,
+				RuleManager.Instance.KeypadRuleSet.GetNextSolutionIndex(((KeypadComponent) Module.BombComponent).pListIndex,
 					_buttons)]);
 	}
 

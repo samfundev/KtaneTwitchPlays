@@ -1,20 +1,21 @@
-using Assets.Scripts.Rules;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Rules;
 using UnityEngine;
 
 public class ButtonComponentSolver : ComponentSolver
 {
-	public ButtonComponentSolver(BombCommander bombCommander, ButtonComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ButtonComponentSolver(TwitchModule module) :
+		base(module)
 	{
 		ModuleInformation buttonInfo = ComponentSolverFactory.GetModuleInfo("ButtonComponentSolver", "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]");
-		ModuleInformation buttonInfoModified = ComponentSolverFactory.GetModuleInfo("ButtonComponentModifiedSolver", "Click the button with !{0} tap. Click the button at time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.");
+		ModuleInformation buttonInfoModified = ComponentSolverFactory.GetModuleInfo("ButtonComponentModifiedSolver", "Click the button with !{0} tap. Click the button at a time with !{0} tap 8:55 8:44 8:33. Hold the button with !{0} hold. Release the button with !{0} release 9:58 9:49 9:30.");
 
-		bombComponent.GetComponent<Selectable>().OnCancel += bombComponent.OnButtonCancel;
-		_button = bombComponent.button;
+		var buttonModule = (ButtonComponent) module.BombComponent;
+		buttonModule.GetComponent<Selectable>().OnCancel += buttonModule.OnButtonCancel;
+		_button = buttonModule.button;
 		ModInfo = VanillaRuleModifier.IsSeedVanilla() ? buttonInfo : buttonInfoModified;
 	}
 
@@ -72,14 +73,14 @@ public class ButtonComponentSolver : ComponentSolver
 	private IEnumerator ReleaseCoroutineVanilla(int second)
 	{
 		yield return "release";
-		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
 		string secondString = second.ToString();
 		float timeRemaining = float.PositiveInfinity;
 		while (timeRemaining > 0.0f && _held)
 		{
 			timeRemaining = timerComponent.TimeRemaining;
 
-			if (BombCommander.CurrentTimerFormatted.Contains(secondString))
+			if (Module.Bomb.CurrentTimerFormatted.Contains(secondString))
 			{
 				DoInteractionEnd(_button);
 				_held = false;
@@ -91,7 +92,7 @@ public class ButtonComponentSolver : ComponentSolver
 
 	private IEnumerator ReleaseCoroutineModded(string second)
 	{
-		TimerComponent timerComponent = BombCommander.Bomb.GetTimer();
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
 		int target = Mathf.FloorToInt(timerComponent.TimeRemaining);
 		bool waitingMusic = true;
 

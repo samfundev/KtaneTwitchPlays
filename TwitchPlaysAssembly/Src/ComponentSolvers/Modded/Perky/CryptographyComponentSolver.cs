@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class CryptographyComponentSolver : ComponentSolver
 {
-	public CryptographyComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public CryptographyComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = (KMSelectable[]) KeysField.GetValue(bombComponent.GetComponent(ComponentType));
+		_buttons = (KMSelectable[]) KeysField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
 	}
 

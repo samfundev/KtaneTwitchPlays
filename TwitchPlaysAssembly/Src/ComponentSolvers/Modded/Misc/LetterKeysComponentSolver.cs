@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class LetterKeysComponentSolver : ComponentSolver
 {
-	public LetterKeysComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public LetterKeysComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_buttons = bombComponent.GetComponent<KMSelectable>().Children;
+		_buttons = module.BombComponent.GetComponent<KMSelectable>().Children;
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b", "Letter%20Keys");
 	}
 

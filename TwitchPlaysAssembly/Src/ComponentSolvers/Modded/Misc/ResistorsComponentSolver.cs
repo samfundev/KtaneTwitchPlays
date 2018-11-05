@@ -6,10 +6,10 @@ using System.Reflection;
 
 public class ResistorsComponentSolver : ComponentSolver
 {
-	public ResistorsComponentSolver(BombCommander bombCommander, BombComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public ResistorsComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		object component = bombComponent.GetComponent(ComponentType);
+		object component = module.BombComponent.GetComponent(ComponentType);
 		_pins = (KMSelectable[]) PinsField.GetValue(component);
 		_checkButton = (KMSelectable) CheckButtonField.GetValue(component);
 		_clearButton = (KMSelectable) ClearButtonField.GetValue(component);

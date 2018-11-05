@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine;
 using Formatting = Newtonsoft.Json.Formatting;
 
-[Flags()]
+[Flags]
 public enum AccessLevel
 {
 	Streamer = 0x10000,
@@ -152,7 +152,7 @@ public static class UserAccess
 	{
 		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername) return AccessLevel.Streamer;
 
-		if (userNickName.EqualsAny("Bomb Factory") || BombMessageResponder.Instance.BombHandles.Any(x => x.BombName == userNickName)) return AccessLevel.Streamer;
+		if (userNickName.EqualsAny("Bomb Factory") || TwitchGame.Instance.Bombs.Any(x => x.BombName == userNickName)) return AccessLevel.Streamer;
 
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
 			out AccessLevel userAccessLevel))

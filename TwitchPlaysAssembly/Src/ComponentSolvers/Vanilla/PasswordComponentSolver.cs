@@ -7,11 +7,12 @@ using UnityEngine;
 
 public class PasswordComponentSolver : ComponentSolver
 {
-	public PasswordComponentSolver(BombCommander bombCommander, PasswordComponent bombComponent) :
-		base(bombCommander, bombComponent)
+	public PasswordComponentSolver(TwitchModule module) :
+		base(module)
 	{
-		_spinners = bombComponent.Spinners;
-		_submitButton = bombComponent.SubmitButton;
+		var passwordModule = (PasswordComponent) module.BombComponent;
+		_spinners = passwordModule.Spinners;
+		_submitButton = passwordModule.SubmitButton;
 		ModInfo = ComponentSolverFactory.GetModuleInfo("PasswordComponentSolver", "!{0} cycle 3 [cycle through the letters in column 3] | !{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} world [try to submit a word]", "Password");
 	}
 
@@ -101,8 +102,8 @@ public class PasswordComponentSolver : ComponentSolver
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		while (!BombComponent.IsActive) yield return true;
-		IEnumerator solve = RespondToCommandInternal(((PasswordComponent) BombComponent).CorrectWord);
+		while (!Module.BombComponent.IsActive) yield return true;
+		IEnumerator solve = RespondToCommandInternal(((PasswordComponent) Module.BombComponent).CorrectWord);
 		while (solve.MoveNext()) yield return solve.Current;
 	}
 

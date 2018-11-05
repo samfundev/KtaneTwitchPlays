@@ -46,7 +46,7 @@ public class PortalRoom : GameRoom
 		IEnumerator baseIEnumerator = base.ReportBombStatus();
 		while (baseIEnumerator.MoveNext()) yield return baseIEnumerator.Current;
 
-		List<TwitchBombHandle> bombHandles = BombMessageResponder.Instance.BombHandles;
+		List<TwitchBomb> bombHandles = TwitchGame.Instance.Bombs;
 		yield return new WaitUntil(() => SceneManager.Instance.GameplayState.RoundStarted);
 		yield return new WaitForSeconds(0.1f);
 		_roomLight = (GameObject) _roomLightField.GetValue(_room);
@@ -55,18 +55,18 @@ public class PortalRoom : GameRoom
 		List<PacingAction> actions = (List<PacingAction>) typeof(PaceMaker).GetField("actions", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(paceMaker);
 		actions?.RemoveAll(action => action.EventType == PaceEvent.OneMinuteLeft);
 
-		while (bombHandles.TrueForAll(handle => !handle.BombCommander.Bomb.HasDetonated))
+		while (bombHandles.TrueForAll(handle => !handle.Bomb.HasDetonated))
 		{
-			if (bombHandles.TrueForAll(handle => handle.BombCommander.Bomb.IsSolved()))
+			if (bombHandles.TrueForAll(handle => handle.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(handle => handle.BombCommander.CurrentTimer < 60f && !handle.BombCommander.Bomb.IsSolved()), bombHandles[0]);
+			ToggleEmergencyLights(bombHandles.Any(handle => handle.CurrentTimer < 60f && !handle.Bomb.IsSolved()), bombHandles[0]);
 			yield return null;
 		}
 	}
 
 	private bool _emergencyLightsState;
 	private IEnumerator _emergencyLightsRoutine;
-	private void ToggleEmergencyLights(bool on, TwitchBombHandle handle)
+	private void ToggleEmergencyLights(bool on, TwitchBomb handle)
 	{
 		if (_emergencyLightsState == on) return;
 		_emergencyLightsState = on;
