@@ -1,7 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 /// <summary>Marks a method as a command understood by the Twitch Plays system.</summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+[MeansImplicitUse]
 sealed class CommandAttribute : Attribute
 {
 	/// <summary>
