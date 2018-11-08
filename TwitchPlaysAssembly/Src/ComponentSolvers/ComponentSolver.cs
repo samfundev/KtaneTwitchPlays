@@ -12,7 +12,6 @@ public abstract class ComponentSolver
 	protected ComponentSolver(TwitchModule module)
 	{
 		Module = module;
-		Selectable = module.BombComponent.GetComponent<Selectable>();
 
 		module.BombComponent.OnPass += OnPass;
 		module.BombComponent.OnStrike += OnStrike;
@@ -96,13 +95,13 @@ public abstract class ComponentSolver
 
 				if (!TwitchPlaySettings.data.AnarchyMode)
 				{
-					IEnumerator focusDefocus = Module.Bomb.Focus(Selectable, FocusDistance, FrontFace);
+					IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
 					while (focusDefocus.MoveNext())
 						yield return focusDefocus.Current;
 
 					yield return new WaitForSeconds(0.5f);
 
-					focusDefocus = Module.Bomb.Defocus(Selectable, FrontFace);
+					focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace);
 					while (focusDefocus.MoveNext())
 						yield return focusDefocus.Current;
 
@@ -124,7 +123,7 @@ public abstract class ComponentSolver
 			}
 		}
 
-		IEnumerator focusCoroutine = Module.Bomb.Focus(Selectable, FocusDistance, FrontFace);
+		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
@@ -436,7 +435,7 @@ public abstract class ComponentSolver
 			while (unzoomCoroutine.MoveNext())
 				yield return unzoomCoroutine.Current;
 
-		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Selectable, FrontFace);
+		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Module.Selectable, FrontFace);
 		while (defocusCoroutine.MoveNext())
 			yield return defocusCoroutine.Current;
 
@@ -540,12 +539,12 @@ public abstract class ComponentSolver
 	protected void HandleModuleException(Exception e)
 	{
 		DebugHelper.LogException(e, "While solving a module an exception has occurred! Here's the error:");
-		SolveModule("Looks like a module ran into a problem while running a command, automatically solving module.");
+		SolveModule($"Looks like {Module.BombComponent.GetModuleDisplayName()} ran into a problem while running a command, automatically solving module.");
 	}
 
 	public void SolveModule(string reason)
 	{
-		IRCConnection.SendMessage("{0}{1}", reason);
+		IRCConnection.SendMessage("{0}", reason);
 		SolveSilently();
 	}
 	#endregion
@@ -917,18 +916,9 @@ public abstract class ComponentSolver
 
 	public int StrikeCount { get; private set; }
 
-	protected float FocusDistance => Module.BombComponent.GetComponent<Selectable>().GetFocusDistance();
+	protected float FocusDistance => Module.FocusDistance;
 
-	protected bool FrontFace
-	{
-		get
-		{
-			Vector3 componentUp = Module.transform.up;
-			Vector3 bombUp = Module.Bomb.Bomb.transform.up;
-			float angleBetween = Vector3.Angle(componentUp, bombUp);
-			return angleBetween < 90.0f;
-		}
-	}
+	protected bool FrontFace => Module.FrontFace;
 
 	protected FieldInfo SkipTimeField { get; set; }
 	private bool _skipTimeAllowed;
@@ -1028,7 +1018,6 @@ public abstract class ComponentSolver
 
 	#region Fields
 	protected readonly TwitchModule Module = null;
-	protected readonly Selectable Selectable;
 	protected readonly HashSet<KMSelectable> HeldSelectables = new HashSet<KMSelectable>();
 
 	private string _delegatedStrikeUserNickName;

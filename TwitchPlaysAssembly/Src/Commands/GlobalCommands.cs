@@ -10,7 +10,6 @@ using Random = UnityEngine.Random;
 
 static class GlobalCommands
 {
-	#region Commands that work in any game state
 	[Command(@"(manual|help)")]
 	public static void Help(string user, bool isWhisper)
 	{
@@ -771,7 +770,6 @@ static class GlobalCommands
 		}
 		return false;
 	}
-	#endregion
 
 	#region Private methods
 	private static void SetGameMode(TwitchPlaysMode mode, bool toggle, bool on, string user, bool isWhisper, bool enabledForEveryone, string disabledMessage)

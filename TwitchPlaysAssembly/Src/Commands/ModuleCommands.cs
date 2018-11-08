@@ -55,10 +55,19 @@ static class ModuleCommands
 	public static void View(TwitchModule module, string user, [Group(1)] string cmd) => module.ViewPin(user, cmd.ContainsIgnoreCase("p"));
 
 	[Command("show")]
-	public static IEnumerator Show()
+	public static IEnumerator Show(TwitchModule module)
 	{
-		yield return "show";
-		yield return null;
+		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace);
+		while (focusCoroutine.MoveNext())
+			yield return focusCoroutine.Current;
+
+		yield return new WaitForSeconds(0.5f);
+
+		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace);
+		while (defocusCoroutine.MoveNext())
+			yield return defocusCoroutine.Current;
+
+		yield return new WaitForSeconds(0.5f);
 	}
 
 	[Command("solve")]

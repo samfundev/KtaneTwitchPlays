@@ -546,7 +546,7 @@ public class TwitchModule : MonoBehaviour
 	}
 	#endregion
 
-	#region Private Properties
+	#region Properties
 	private string _playerName;
 	public string PlayerName
 	{
@@ -560,5 +560,19 @@ public class TwitchModule : MonoBehaviour
 		}
 		get => _playerName;
 	}
+
+	public Selectable Selectable => BombComponent.GetComponent<Selectable>();
+	public float FocusDistance => Selectable.GetFocusDistance();
+	public bool FrontFace
+	{
+		get
+		{
+			Vector3 componentUp = transform.up;
+			Vector3 bombUp = Bomb.Bomb.transform.up;
+			float angleBetween = Vector3.Angle(componentUp, bombUp);
+			return angleBetween < 90.0f;
+		}
+	}
+
 	#endregion
 }
