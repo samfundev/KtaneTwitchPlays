@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -64,69 +63,43 @@ public class MurderComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		bool[] set = { false, false, false };
-		bool[] tried = { false, false, false };
-
-		List<Match> matches = Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)").Cast<Match>()
-			.Where(match => Array.IndexOf(Commands, match.Groups[1].ToString()) > -1).ToList();
-
-		int[] catIndexes = matches.Select(match => Array.IndexOf(Commands, match.Groups[1].ToString())).ToArray();
-		string[] values = matches.Select(match => match.Groups[2].ToString().Trim()).ToArray();
-
-		bool misspelled = false;
-		for (int i = 0; i < catIndexes.Length; i++)
+		var matches = Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)");
+		var anyMisspelling = false;
+		for (int i = 0; i < matches.Count; i++)
 		{
-			int catIndex = catIndexes[i];
-			string value = values[i];
-
-			if (set[catIndex]) continue;
+			int catIndex = Array.IndexOf(Commands, matches[i].Groups[1].ToString());
+			if (catIndex == -1)
+				continue;
+			string value = matches[i].Groups[2].ToString().Trim();
 
 			if (!NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase)))
 			{
-				misspelled = true;
+				anyMisspelling = true;
 				yield return null;
 				yield return $"sendtochat {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
 				continue;
 			}
-			set[catIndex] = true;
-		}
-		if (misspelled)
-			yield break;
 
-		for (int i = 0; i < catIndexes.Length; i++)
-		{
-			int catIndex = catIndexes[i];
-			string value = values[i];
-			if (set[catIndex]) continue;
-
-			tried[catIndex] = true;
-
+			yield return null;
+			var found = false;
 			foreach (object item in CycleThroughCategory(catIndex, value))
 			{
 				if (item is bool b && b)
 				{
-					yield return null;
-					yield return null;
-					set[catIndex] = true;
+					found = true;
 					break;
 				}
 				yield return DoInteractionClick((MonoBehaviour) item);
 			}
-		}
-
-		if (set[0] && set[1] && set[2])
-		{
-			yield return DoInteractionClick(_buttons[6]);
-		}
-		else
-		{
-			for (int i = 0; i < 3; i++)
+			if (!found)
 			{
-				if (!tried[i] || set[i]) continue;
 				yield return "unsubmittablepenalty";
 				yield break;
 			}
 		}
+
+		if (!anyMisspelling)
+			yield return DoInteractionClick(_buttons[6]);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
