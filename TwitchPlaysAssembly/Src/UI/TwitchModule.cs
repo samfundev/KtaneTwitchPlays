@@ -414,7 +414,7 @@ public class TwitchModule : MonoBehaviour
 				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, HeaderText));
 		}
-		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName)) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
+		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName) && !md.Solved) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
 			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
@@ -438,6 +438,9 @@ public class TwitchModule : MonoBehaviour
 
 	public Tuple<bool, string> UnclaimModule(string userNickName)
 	{
+		if (Solved)
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, BombComponent.GetModuleDisplayName()));
+
 		if (PlayerName == null)
 		{
 			bool wasQueued = ClaimQueue.Any(x => x.First == userNickName);
