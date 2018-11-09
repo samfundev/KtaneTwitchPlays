@@ -161,6 +161,8 @@ public class TwitchPlaysService : MonoBehaviour
 
 		twitchGame?.gameObject.SetActive(state == KMGameInfo.State.Gameplay);
 
+		OtherModes.RefreshModes(state);
+
 		switch (state)
 		{
 			case KMGameInfo.State.Gameplay:
