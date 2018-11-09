@@ -414,6 +414,9 @@ public class TwitchPlaysService : MonoBehaviour
 			else if (parameters[i].ParameterType.IsAssignableFrom(typeof(TObj)))
 				arguments[i] = extraObject;
 
+			else if (parameters[i].IsOptional)
+				arguments[i] = parameters[i].DefaultValue;
+
 			else
 			{
 				IRCConnection.SendMessage(@"@{0}, the “{1}” command has an unrecognized parameter “{2}”. This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name);
