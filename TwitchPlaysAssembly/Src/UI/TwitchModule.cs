@@ -310,14 +310,6 @@ public class TwitchModule : MonoBehaviour
 		}
 	}
 
-	public IEnumerator ReleaseModule(string player, string userNickName)
-	{
-		if (!UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
-		{
-			yield return new WaitForSeconds(TwitchPlaySettings.data.ClaimCooldownTime);
-		}
-	}
-
 	public IEnumerator EndClaimCooldown()
 	{
 		if (TwitchPlaySettings.data.InstantModuleClaimCooldown > 0)
@@ -458,7 +450,6 @@ public class TwitchModule : MonoBehaviour
 				StopCoroutine(TakeInProgress);
 				TakeInProgress = null;
 			}
-			StartCoroutine(ReleaseModule(PlayerName, userNickName));
 			SetBannerColor(unclaimedBackgroundColor);
 			string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, Code, PlayerName, HeaderText);
 			PlayerName = null;

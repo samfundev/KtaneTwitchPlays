@@ -51,9 +51,9 @@ static class GlobalCommands
 	[Command(@"bonusreward (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void AddReward([Group(1)] int reward) => TwitchPlaySettings.AddRewardBonus(reward);
 
-	[Command(@"timemode( +(on)| +off)?")]
+	[Command(@"timemode( *(on)| *off)?")]
 	public static void TimeMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Time, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableTimeModeForEveryone, TwitchPlaySettings.data.TimeModeCommandDisabled);
-	[Command(@"zenmode( +(on)| +off)?")]
+	[Command(@"zenmode( *(on)| *off)?")]
 	public static void ZenMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Zen, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableZenModeForEveryone, TwitchPlaySettings.data.ZenModeCommandDisabled);
 
 	[Command(@"modes?")]
@@ -774,16 +774,17 @@ static class GlobalCommands
 	#region Private methods
 	private static void SetGameMode(TwitchPlaysMode mode, bool toggle, bool on, string user, bool isWhisper, bool enabledForEveryone, string disabledMessage)
 	{
-		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true) || enabledForEveryone || TwitchPlaySettings.data.AnarchyMode)
-			IRCConnection.SendMessage(string.Format(disabledMessage, user), user, !isWhisper);
-		else
+		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true) && !enabledForEveryone && !TwitchPlaySettings.data.AnarchyMode)
 		{
-			if (toggle)
-				OtherModes.Toggle(mode);
-			else
-				OtherModes.Set(mode, on);
-			IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.nextMode)} mode will be enabled next round.", user, !isWhisper);
+			IRCConnection.SendMessage(string.Format(disabledMessage, user), user, !isWhisper);
+			return;
 		}
+
+		if (toggle)
+			OtherModes.Toggle(mode);
+		else
+			OtherModes.Set(mode, on);
+		IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.nextMode)} mode will be enabled next round.", user, !isWhisper);
 	}
 
 	private static void ShowRank(Leaderboard.LeaderboardEntry entry, string targetUser, string user, bool isWhisper, bool numeric = false) => ShowRank(entry == null ? null : new[] { entry }, targetUser, user, isWhisper, numeric);

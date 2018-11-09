@@ -5,7 +5,7 @@ public static class HoldableCommands
 {
 	#region Commands
 	[Command("(hold|pick up)")]
-	public static IEnumerator Hold(TwitchHoldable holdable, bool frontFace = true) => holdable.Hold();
+	public static IEnumerator Hold(TwitchHoldable holdable) => holdable.Hold();
 
 	[Command("(drop|let go|put down)")]
 	public static IEnumerator Drop(TwitchHoldable holdable) => holdable.Drop();

@@ -23,7 +23,6 @@ public class TwitchPlaysService : MonoBehaviour
 	public static TwitchPlaysService Instance;
 
 	public TwitchGame twitchGame = null;
-	public TwitchLeaderboard TwitchLeaderboardPrefab;
 	public CoroutineQueue CoroutineQueue = null;
 	public KMGameInfo.State CurrentState;
 
@@ -34,6 +33,7 @@ public class TwitchPlaysService : MonoBehaviour
 	private TwitchPlaysServiceData _data;
 
 	public RectTransform BombHeader => _data.BombHeader;
+	public TwitchLeaderboard TwitchLeaderboardPrefab => _data.TwitchLeaderboardPrefab;
 
 	private void Awake()
 	{

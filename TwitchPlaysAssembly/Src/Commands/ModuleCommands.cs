@@ -223,7 +223,7 @@ static class ModuleCommands
 	}
 
 	[Command(@"zoom +(?!\d*\.?\d+$)(?:send +to +module +)?(.*)")]
-	public static IEnumerator DefaultZoomCommand1(TwitchModule module, string user, [Group(1)] string cmd) => RunModuleCommand(module, user, cmd, zoom: true);
+	public static IEnumerator DefaultZoomCommand1(TwitchModule module, string user, [Group(1)] string zoomCmd) => RunModuleCommand(module, user, zoomCmd, zoom: true);
 
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, [Group(0)] string cmd) => RunModuleCommand(module, user, cmd, zoom: false);

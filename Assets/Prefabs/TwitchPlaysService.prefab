@@ -3332,6 +3332,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BombHeader: {fileID: 224678820531730840}
+  TwitchLeaderboardPrefab: {fileID: 114884447472921414, guid: 96028b4481f6de74dbbdede6307c450e,
+    type: 2}
 --- !u!114 &114263368688315326
 MonoBehaviour:
   m_ObjectHideFlags: 1
