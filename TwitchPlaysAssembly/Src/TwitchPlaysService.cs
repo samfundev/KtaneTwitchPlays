@@ -353,22 +353,8 @@ public class TwitchPlaysService : MonoBehaviour
 		var arguments = new object[parameters.Length];
 		for (int i = 0; i < parameters.Length; i++)
 		{
-			// Built-in parameter names
-			if (parameters[i].ParameterType == typeof(string) && parameters[i].Name == "user")
-				arguments[i] = msg.UserNickName;
-			else if (parameters[i].ParameterType == typeof(string) && parameters[i].Name == "cmd")
-				arguments[i] = cmdStr;
-			else if (parameters[i].ParameterType == typeof(bool) && parameters[i].Name == "isWhisper")
-				arguments[i] = msg.IsWhisper;
-			else if (parameters[i].ParameterType == typeof(Message))
-				arguments[i] = msg;
-			else if (parameters[i].ParameterType == typeof(KMGameInfo))
-				arguments[i] = GetComponent<KMGameInfo>();
-			else if (parameters[i].ParameterType == typeof(KMGameInfo.State))
-				arguments[i] = CurrentState;
-
 			// Capturing groups from the regular expression
-			else if (groupAttrs[i] != null && m != null)
+			if (groupAttrs[i] != null && m != null)
 			{
 				var group = m.Groups[groupAttrs[i].GroupIndex];
 				NumberParseResult result;
@@ -409,6 +395,20 @@ public class TwitchPlaysService : MonoBehaviour
 						return true;
 				}
 			}
+
+			// Built-in parameter names
+			else if (parameters[i].ParameterType == typeof(string) && parameters[i].Name == "user")
+				arguments[i] = msg.UserNickName;
+			else if (parameters[i].ParameterType == typeof(string) && parameters[i].Name == "cmd")
+				arguments[i] = cmdStr;
+			else if (parameters[i].ParameterType == typeof(bool) && parameters[i].Name == "isWhisper")
+				arguments[i] = msg.IsWhisper;
+			else if (parameters[i].ParameterType == typeof(Message))
+				arguments[i] = msg;
+			else if (parameters[i].ParameterType == typeof(KMGameInfo))
+				arguments[i] = GetComponent<KMGameInfo>();
+			else if (parameters[i].ParameterType == typeof(KMGameInfo.State))
+				arguments[i] = CurrentState;
 
 			// Object we passed in (module, bomb, holdable)
 			else if (parameters[i].ParameterType.IsAssignableFrom(typeof(TObj)))
