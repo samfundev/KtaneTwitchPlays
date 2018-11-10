@@ -128,7 +128,7 @@ static class ModuleCommands
 		IRCConnection.SendMessage(TwitchPlaySettings.data.AssignModule, module.Code, module.PlayerName, user, module.HeaderText);
 	}
 
-	[Command(@"take", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"take")]
 	public static void Take(TwitchModule module, string user, bool isWhisper)
 	{
 		if (isWhisper)
@@ -163,7 +163,7 @@ static class ModuleCommands
 			IRCConnection.SendMessage(module.ClaimModule(user).Second);
 	}
 
-	[Command(@"mine", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"mine", AccessLevel.User, AccessLevel.User)]
 	public static void Mine(TwitchModule module, string user, bool isWhisper)
 	{
 		if (isWhisper)
