@@ -341,6 +341,16 @@ public class TwitchPlaysService : MonoBehaviour
 		if (command.HasAttribute<ElevatorDisallowedAttribute>() && GameRoom.Instance is ElevatorGameRoom)
 			return false;
 
+		if (!UserAccess.HasAccess(msg.UserNickName, TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel, orHigher: true))
+		{
+			IRCConnection.SendMessage(@"@{0}, you need {1} access to use that command{2}.",
+				msg.UserNickName,
+				UserAccess.LevelToString(TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel),
+				TwitchPlaySettings.data.AnarchyMode ? " in anarchy mode" : "");
+			// Return true so that the command counts as processed
+			return true;
+		}
+
 		if (extraObject is TwitchModule mdl && mdl.Solved && !command.HasAttribute<SolvedAllowedAttribute>())
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadySolved, mdl.Code, mdl.PlayerName, msg.UserNickName, mdl.BombComponent.GetModuleDisplayName());
