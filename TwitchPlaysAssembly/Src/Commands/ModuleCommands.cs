@@ -163,7 +163,7 @@ static class ModuleCommands
 			IRCConnection.SendMessage(module.ClaimModule(user).Second);
 	}
 
-	[Command(@"mine", AccessLevel.User, AccessLevel.User)]
+	[Command(@"mine")]
 	public static void Mine(TwitchModule module, string user, bool isWhisper)
 	{
 		if (isWhisper)
