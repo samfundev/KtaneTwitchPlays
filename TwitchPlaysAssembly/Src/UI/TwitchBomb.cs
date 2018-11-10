@@ -47,15 +47,6 @@ public class TwitchBomb : MonoBehaviour
 	private static bool HeldFrontFace => KTInputManager.Instance.SelectableManager.GetActiveFace() == FaceEnum.Front;
 	#endregion
 
-	#region Constructor
-	public TwitchBomb(Bomb bomb)
-	{
-		Bomb = bomb;
-		BombTimeStamp = DateTime.Now;
-		BombStartingTimer = CurrentTimer;
-	}
-	#endregion
-
 	#region Unity Lifecycle
 	private void Awake()
 	{

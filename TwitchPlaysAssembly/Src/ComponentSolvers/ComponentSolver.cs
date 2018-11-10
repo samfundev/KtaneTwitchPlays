@@ -211,8 +211,7 @@ public abstract class ComponentSolver
 					{
 						CoroutineCanceller.ResetCancel();
 						if (!string.IsNullOrEmpty(match.Groups[2].Value))
-							IRCConnection.SendMessage(
-								$"Sorry @{userNickName}, {match.Groups[2].Value.Trim()}");
+							IRCConnection.SendMessage($"Sorry @{userNickName}, {match.Groups[2].Value.Trim()}");
 						break;
 					}
 				}

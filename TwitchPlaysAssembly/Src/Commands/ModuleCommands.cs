@@ -201,7 +201,7 @@ static class ModuleCommands
 	public static void Unmark(TwitchModule module) => module.SetBannerColor(module.Claimed ? module.ClaimedBackgroundColour : module.unclaimedBackgroundColor);
 
 	[Command(@"zoom(?: +(\d*\.?\d+))?")]
-	public static IEnumerator Zoom(TwitchModule module, [Group(1)] float? duration)
+	public static IEnumerator Zoom(TwitchModule module, string user, [Group(1)] float? duration)
 	{
 		var delay = duration ?? 2;
 		delay = Math.Max(2, delay);
@@ -214,7 +214,12 @@ static class ModuleCommands
 			while (zoomCoroutine.MoveNext())
 				yield return zoomCoroutine.Current;
 
-		yield return $"trywaitcancel {delay} Your request to hold up the bomb for {delay} seconds has been cut short.";
+		yield return new WaitForSecondsWithCancel(delay, false, module.Solver);
+		if (CoroutineCanceller.ShouldCancel)
+		{
+			CoroutineCanceller.ResetCancel();
+			IRCConnection.SendMessage($"Sorry @{user}, your request to hold up the bomb for {delay} seconds has been cut short.");
+		}
 
 		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, 1);
 		if (unzoomCoroutine != null)
@@ -226,7 +231,7 @@ static class ModuleCommands
 	public static IEnumerator DefaultZoomCommand1(TwitchModule module, string user, [Group(1)] string zoomCmd) => RunModuleCommand(module, user, zoomCmd, zoom: true);
 
 	[Command(null)]
-	public static IEnumerator DefaultCommand(TwitchModule module, string user, [Group(0)] string cmd) => RunModuleCommand(module, user, cmd, zoom: false);
+	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd) => RunModuleCommand(module, user, cmd, zoom: false);
 
 	private static IEnumerator RunModuleCommand(TwitchModule module, string user, string cmd, bool zoom)
 	{

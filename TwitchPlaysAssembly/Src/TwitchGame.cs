@@ -149,7 +149,7 @@ public class TwitchGame : MonoBehaviour
 
 			if (Leaderboard.Instance.CurrentSolvers.Count != 1)
 				return bombMessage;
-			
+
 			float elapsedTime = timeStarting - timeRemaining;
 			string userName = "";
 			foreach (string uName in Leaderboard.Instance.CurrentSolvers.Keys)
@@ -276,7 +276,7 @@ public class TwitchGame : MonoBehaviour
 			DebugHelper.LogException(ex, "Failed to instantiate the module camera system due to an exception:");
 			ModuleCameras = null;
 		}
-		
+
 		if (GameRoom.GameRoomTypes.Where((t, i) => t() != null && GameRoom.CreateRooms[i](FindObjectsOfType(t()), out GameRoom.Instance)).Any())
 		{
 			GameRoom.Instance.InitializeBombs(bombs);
@@ -444,12 +444,14 @@ public class TwitchGame : MonoBehaviour
 		Bombs.Add(tb);
 		CreateComponentHandlesForBomb(tb);
 	}
-	
+
 	private TwitchBomb CreateBombHandleForBomb(Bomb bomb, int id)
 	{
 		TwitchBomb twitchBomb = Instantiate(twitchBombPrefab);
 		twitchBomb.Bomb = bomb;
 		twitchBomb.BombID = id;
+		twitchBomb.BombTimeStamp = DateTime.Now;
+		twitchBomb.BombStartingTimer = bomb.GetTimer().TimeRemaining;
 		return twitchBomb;
 	}
 
