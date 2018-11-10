@@ -201,7 +201,7 @@ public class LogUploader : MonoBehaviour
 		return true;
 	}
 
-	private void HandleLog(string message, string stackTrace, LogType type)
+	internal void HandleLog(string message, string stackTrace, LogType type)
 	{
 		if (_blacklistedLogLines.Any(message.StartsWith)) return;
 		if (message.StartsWith("Function ") && message.Contains(" may only be called from main thread!")) return;

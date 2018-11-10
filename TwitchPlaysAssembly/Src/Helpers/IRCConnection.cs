@@ -114,8 +114,11 @@ public class IRCConnection : MonoBehaviour
 			Match match = _matchingRegex.Match(input);
 			if (!match.Success) return false;
 			_action(match.Groups);
-			if (LogLine)
-				UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
+			if (!LogLine) return true;
+			if (LogUploader.Instance != null)
+				LogUploader.Instance.HandleLog(input, null, LogType.Log);
+			UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
+
 			return true;
 		}
 
