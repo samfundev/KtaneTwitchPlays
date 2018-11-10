@@ -761,7 +761,7 @@ static class GlobalCommands
 	}
 
 	[Command(null)]
-	public static bool DefaultCommand([Group(0)] string cmd, string user, bool isWhisper)
+	public static bool DefaultCommand(string cmd, string user, bool isWhisper)
 	{
 		if (TwitchPlaySettings.data.GeneralCustomMessages.ContainsKey(cmd.ToLowerInvariant()))
 		{

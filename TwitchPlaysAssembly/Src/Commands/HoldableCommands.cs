@@ -11,6 +11,6 @@ public static class HoldableCommands
 	public static IEnumerator Drop(TwitchHoldable holdable) => holdable.Drop();
 
 	[Command(null)]
-	public static IEnumerator DefaultCommand(TwitchHoldable holdable, string user, bool isWhisper, [Group(0)] string cmd) => holdable.RespondToCommand(user, cmd, isWhisper);
+	public static IEnumerator DefaultCommand(TwitchHoldable holdable, string user, bool isWhisper, string cmd) => holdable.RespondToCommand(user, cmd, isWhisper);
 	#endregion
 }
