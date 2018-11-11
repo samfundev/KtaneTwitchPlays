@@ -203,13 +203,13 @@ public class TwitchPlaysService : MonoBehaviour
 			if (holdable.GetComponentInChildren<KMBomb>() != null)
 				continue;
 			else if (holdable.GetComponent<FreeplayDevice>() != null)
-				Holdables["freeplay"] = new TwitchHoldable(holdable);
+				Holdables["freeplay"] = new TwitchHoldable(holdable, commandType: typeof(FreeplayCommands));
 			else if (holdable.GetComponent<BombBinder>() != null)
-				Holdables["binder"] = new TwitchHoldable(holdable);
+				Holdables["binder"] = new TwitchHoldable(holdable, commandType: typeof(MissionBinderCommands));
 			else if (holdable.GetComponent<AlarmClock>() != null)
-				Holdables["alarm"] = new TwitchHoldable(holdable);
+				Holdables["alarm"] = new TwitchHoldable(holdable, commandType: typeof(AlarmClockCommands));
 			else if (holdable.GetComponent<IRCConnectionManagerHoldable>() != null)
-				Holdables["ircmanager"] = new TwitchHoldable(holdable);
+				Holdables["ircmanager"] = new TwitchHoldable(holdable, commandType: typeof(IRCConnectionManagerCommands));
 			else
 			{
 				var id = holdable.name.ToLowerInvariant().Replace("(clone)", "");
@@ -256,8 +256,10 @@ public class TwitchPlaysService : MonoBehaviour
 
 			// Commands for holdables (check for these after bombs and modules so modded holdables can’t override them)
 			else if (Holdables.TryGetValue(prefix, out var holdable))
-				InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands));
-
+			{
+				if (holdable.CommandType != null) InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands), holdable.CommandType);
+				else InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands));
+			}
 			else
 				processGlobalCommand(msg);
 		}
@@ -419,6 +421,8 @@ public class TwitchPlaysService : MonoBehaviour
 				arguments[i] = GetComponent<KMGameInfo>();
 			else if (parameters[i].ParameterType == typeof(KMGameInfo.State))
 				arguments[i] = CurrentState;
+			else if (parameters[i].ParameterType == typeof(FloatingHoldable) && extraObject is TwitchHoldable twitchHoldable)
+				arguments[i] = twitchHoldable.Holdable;
 
 			// Object we passed in (module, bomb, holdable)
 			else if (parameters[i].ParameterType.IsAssignableFrom(typeof(TObj)))

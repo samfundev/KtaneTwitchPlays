@@ -37,90 +37,84 @@ public abstract class ComponentSolver
 		Module.CameraPriority = Module.CameraPriority > CameraPriority.Interacted ? Module.CameraPriority : CameraPriority.Interacted;
 		_currentUserNickName = userNickName;
 		_beforeStrikeCount = StrikeCount;
-		var subcoroutine = RespondToCommandInternal(command);
+		IEnumerator subcoroutine;
 
-		if (subcoroutine == null || !subcoroutine.MoveNext())
+		try
 		{
-			if (_responded)
-				yield break;
+			subcoroutine = RespondToCommandInternal(command);
+		}
+		catch (Exception e)
+		{
+			HandleModuleException(e);
+			yield break;
+		}
 
+		bool moved = false;
+		bool solved = Solved;
+		if (subcoroutine != null)
+		{
 			try
 			{
-				subcoroutine = RespondToCommandInternal(command);
+				moved = subcoroutine.MoveNext();
+				if (moved && ModInfo.DoesTheRightThing)
+				{
+					//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here, as the solver will yield break if
+					//it is one of these API commands returned.
+					switch (subcoroutine.Current)
+					{
+						case string currentString:
+							if (SendToTwitchChat(currentString, userNickName) ==
+								SendToTwitchChatResponse.InstantResponse)
+								yield break;
+							break;
+					}
+					_responded = true;
+				}
 			}
 			catch (Exception e)
 			{
 				HandleModuleException(e);
 				yield break;
 			}
+		}
 
-			bool moved = false;
-			bool solved = Solved;
-			if (subcoroutine != null)
+		if (Solved != solved || _beforeStrikeCount != StrikeCount)
+		{
+			IRCConnection.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", Module.Code, Module.HeaderText);
+			if (ModInfo != null)
 			{
-				try
-				{
-					moved = subcoroutine.MoveNext();
-					if (moved && ModInfo.DoesTheRightThing)
-					{
-						//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here, as the solver will yield break if
-						//it is one of these API commands returned.
-						switch (subcoroutine.Current)
-						{
-							case string currentString:
-								if (SendToTwitchChat(currentString, userNickName) ==
-									SendToTwitchChatResponse.InstantResponse)
-									yield break;
-								break;
-						}
-						_responded = true;
-					}
-				}
-				catch (Exception e)
-				{
-					HandleModuleException(e);
-					yield break;
-				}
+				ModInfo.DoesTheRightThing = false;
+				ModuleData.DataHasChanged = true;
+				ModuleData.WriteDataToFile();
 			}
 
-			if (Solved != solved || _beforeStrikeCount != StrikeCount)
+			if (!TwitchPlaySettings.data.AnarchyMode)
 			{
-				IRCConnection.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", Module.Code, Module.HeaderText);
-				if (ModInfo != null)
-				{
-					ModInfo.DoesTheRightThing = false;
-					ModuleData.DataHasChanged = true;
-					ModuleData.WriteDataToFile();
-				}
+				IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
+				while (focusDefocus.MoveNext())
+					yield return focusDefocus.Current;
 
-				if (!TwitchPlaySettings.data.AnarchyMode)
-				{
-					IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
-					while (focusDefocus.MoveNext())
-						yield return focusDefocus.Current;
+				yield return new WaitForSeconds(0.5f);
 
-					yield return new WaitForSeconds(0.5f);
+				focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace);
+				while (focusDefocus.MoveNext())
+					yield return focusDefocus.Current;
 
-					focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace);
-					while (focusDefocus.MoveNext())
-						yield return focusDefocus.Current;
-
-					yield return new WaitForSeconds(0.5f);
-					_currentUserNickName = null;
-					_processingTwitchCommand = false;
-					yield break;
-				}
-			}
-
-			if (subcoroutine == null || !moved)
-			{
-				if (!_responded)
-					Module.CommandInvalid(userNickName);
-
+				yield return new WaitForSeconds(0.5f);
 				_currentUserNickName = null;
 				_processingTwitchCommand = false;
 				yield break;
 			}
+		}
+
+		if (subcoroutine == null || !moved)
+		{
+			if (!_responded)
+				Module.CommandInvalid(userNickName);
+
+			_currentUserNickName = null;
+			_processingTwitchCommand = false;
+			yield break;
 		}
 
 		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);

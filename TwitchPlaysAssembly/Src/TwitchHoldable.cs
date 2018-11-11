@@ -7,9 +7,10 @@ using UnityEngine;
 
 public class TwitchHoldable
 {
-	public TwitchHoldable(FloatingHoldable holdable, bool allowModded = false)
+	public TwitchHoldable(FloatingHoldable holdable, Type commandType = null, bool allowModded = false)
 	{
 		Holdable = holdable;
+		CommandType = commandType;
 		_defaultId = holdable.name.ToLowerInvariant().Replace("(clone)", "");
 
 		if (TwitchGame.BombActive)
@@ -655,6 +656,7 @@ public class TwitchHoldable
 	private MusicPlayer _musicPlayer;
 
 	public FloatingHoldable Holdable;
+	public Type CommandType;
 	protected HashSet<KMSelectable> HeldSelectables = new HashSet<KMSelectable>();
 	protected Stack<IEnumerator> ProcessIEnumerators = new Stack<IEnumerator>();
 }

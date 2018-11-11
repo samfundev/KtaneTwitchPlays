@@ -102,7 +102,7 @@ public static class BombCommands
 	}
 
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:time|t) +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
-	public static void ChangeTimer(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] bool isTime, [Group(4)] bool isStrikes, [Group(5)] string amount)
+	public static void ChangeTimer(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] string amount)
 	{
 		float time = 0;
 		float originalTime = bomb.Bomb.GetTimer().TimeRemaining;
