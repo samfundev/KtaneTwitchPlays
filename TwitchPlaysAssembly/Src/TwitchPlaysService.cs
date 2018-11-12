@@ -353,7 +353,7 @@ public class TwitchPlaysService : MonoBehaviour
 			return true;
 		}
 
-		if (extraObject is TwitchModule mdl && mdl.Solved && !command.HasAttribute<SolvedAllowedAttribute>())
+		if (extraObject is TwitchModule mdl && mdl.Solved && !command.HasAttribute<SolvedAllowedAttribute>() && !TwitchPlaySettings.data.AnarchyMode)
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadySolved, mdl.Code, mdl.PlayerName, msg.UserNickName, mdl.BombComponent.GetModuleDisplayName());
 			// Return true so that the command counts as processed (otherwise you get the above message multiple times)
