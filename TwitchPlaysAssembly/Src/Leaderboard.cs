@@ -245,7 +245,7 @@ public class Leaderboard
 
 	public int GetSoloRank(string userName, out LeaderboardEntry entry)
 	{
-		entry = _entryListSolo.Where(x => x.UserName == userName).FirstOrDefault();
+		entry = _entryListSolo.FirstOrDefault(x => string.Equals(x.UserName, userName, StringComparison.InvariantCultureIgnoreCase));
 		if (entry != null)
 			return _entryListSolo.IndexOf(entry);
 		else
@@ -327,7 +327,7 @@ public class Leaderboard
 
 	public void DeleteEntry(LeaderboardEntry user)
 	{
-		_entryDictionary.Remove(user.UserName);
+		_entryDictionary.Remove(user.UserName.ToLowerInvariant());
 		_entryList.Remove(user);
 	}
 
@@ -335,7 +335,7 @@ public class Leaderboard
 
 	public void DeleteSoloEntry(LeaderboardEntry user) => _entryListSolo.Remove(user);
 
-	public void DeleteSoloEntry(string userNickName) => DeleteSoloEntry(_entryListSolo.Where(x => x.UserName == userNickName).First());
+	public void DeleteSoloEntry(string userNickName) => DeleteSoloEntry(_entryListSolo.First(x => string.Equals(x.UserName, userNickName, StringComparison.InvariantCultureIgnoreCase)));
 
 	private void ResetSortFlag() => _sorted = false;
 
