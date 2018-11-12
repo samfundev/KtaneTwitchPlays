@@ -14,12 +14,12 @@ static class ModuleCommands
 		if (pdf)
 			manualType = "pdf";
 
-		manualText = string.IsNullOrEmpty(module.Solver.ModInfo.manualCode) ? module.HeaderText : module.Solver.ModInfo.manualCode;
-		var helpText = string.Format(module.Solver.ModInfo.helpText, module.Code, module.HeaderText);
+		manualText = string.IsNullOrEmpty(module.Solver.ManualCode) ? module.HeaderText : module.Solver.ManualCode;
+		var helpText = string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
 
 		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
-			? string.Format("{0} : {1} : {2}", module.HeaderText, helpText, manualText)
-			: string.Format("{0} : {1} : {2}", module.HeaderText, helpText, UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)));
+			? $"{module.HeaderText} : {helpText} : {manualText}"
+			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
 	}
 
 	[Command("player"), SolvedAllowed]
