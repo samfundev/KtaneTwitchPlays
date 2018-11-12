@@ -660,6 +660,7 @@ public class IRCConnection : MonoBehaviour
 
 	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
 	{
+		text = text.Replace("…", "...");
 		if (Instance == null) return;
 		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
