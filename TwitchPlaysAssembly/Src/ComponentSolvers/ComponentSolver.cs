@@ -377,7 +377,14 @@ public abstract class ComponentSolver
 			yield return currentValue;
 
 			if (CoroutineCanceller.ShouldCancel)
+			{
+				if (TwitchPlaySettings.data.AnarchyMode && Solved)
+				{
+					CoroutineCanceller.ResetCancel();
+					break;
+				}
 				TryCancel = true;
+			}
 
 			trycancelsequence = false;
 		}
