@@ -861,6 +861,8 @@ public static class ComponentSolverFactory
 			ForcedSolveMethod = forcedSolved,
 			ModuleInformation = info,
 
+			HelpMessageField = FindHelpMessage(commandComponentType),
+			ManualCodeField = FindManualCode(commandComponentType),
 			ZenModeField = FindZenModeBool(commandComponentType),
 			TimeModeField = FindTimeModeBool(commandComponentType),
 			AbandonModuleField = FindAbandonModuleList(commandComponentType),
@@ -954,7 +956,7 @@ public static class ComponentSolverFactory
 
 	private static bool FindManualCode(Component bombComponent, Type commandComponentType, out string manualCode)
 	{
-		FieldInfo candidateString = commandComponentType.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo candidateString = FindManualCode(commandComponentType);
 		if (candidateString == null)
 		{
 			manualCode = null;
@@ -1005,7 +1007,7 @@ public static class ComponentSolverFactory
 
 	private static bool FindHelpMessage(Component bombComponent, Type commandComponentType, out string helpText)
 	{
-		FieldInfo candidateString = commandComponentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo candidateString = FindHelpMessage(commandComponentType);
 		if (candidateString == null)
 		{
 			helpText = null;
@@ -1018,6 +1020,18 @@ public static class ComponentSolverFactory
 		}
 		helpText = (string) candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
 		return true;
+	}
+
+	private static FieldInfo FindHelpMessage(Type commandComponentType)
+	{
+		FieldInfo cancelField = commandComponentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return cancelField?.FieldType == typeof(string) ? cancelField : null;
+	}
+
+	private static FieldInfo FindManualCode(Type commandComponentType)
+	{
+		FieldInfo cancelField = commandComponentType.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		return cancelField?.FieldType == typeof(string) ? cancelField : null;
 	}
 
 	private static FieldInfo FindCancelBool(Type commandComponentType)

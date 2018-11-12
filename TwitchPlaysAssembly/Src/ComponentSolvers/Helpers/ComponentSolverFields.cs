@@ -8,6 +8,8 @@ public class ComponentSolverFields
 	public MethodInfo ForcedSolveMethod;
 	public ModuleInformation ModuleInformation;
 
+	public FieldInfo HelpMessageField;
+	public FieldInfo ManualCodeField;
 	public FieldInfo ZenModeField;
 	public FieldInfo TimeModeField;
 	public FieldInfo AbandonModuleField;

@@ -13,10 +13,10 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		_downButtons = (KMSelectable[]) DownButtonField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
 		_submitButton = (MonoBehaviour) SubmitButtonField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
 		_display = (TextMesh[]) DisplayField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]").Clone();
 
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType);
-		if (language != null) ModInfo.manualCode = $"Password{language}";
+		if (language != null) ManualCode = $"Password{language}";
 		ModInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType)}";
 		module.Bomb.Bomb.StartCoroutine(SetHeaderText());
 	}

@@ -10,12 +10,12 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	{
 		var component = module.BombComponent.GetComponent(ComponentType);
 		_button = (KMSelectable) ButtonField.GetValue(component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)").Clone();
 		Selectable selectable = module.BombComponent.GetComponent<Selectable>();
 		selectable.OnCancel += () => { SelectedField.SetValue(component, false); return true; };
 
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, component, ComponentType);
-		if (language != null) ModInfo.manualCode = $"The%20Button{language}";
+		if (language != null) ManualCode = $"The%20Button{language}";
 		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
 		module.BombComponent.StartCoroutine(SetHeaderText());
 	}

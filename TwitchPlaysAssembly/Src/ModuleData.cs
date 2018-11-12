@@ -40,6 +40,11 @@ public class ModuleInformation
 	public bool ShouldSerializevalidCommands() => !builtIntoTwitchPlays;
 	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
 	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
+
+	public ModuleInformation Clone()
+	{
+		return (ModuleInformation) MemberwiseClone();
+	}
 }
 
 public static class ModuleData

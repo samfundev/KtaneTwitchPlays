@@ -16,6 +16,8 @@ public class CoroutineModComponentSolver : ComponentSolver
 		AbandonModuleField = componentSolverFields.AbandonModuleField;
 		TwitchPlaysField = componentSolverFields.TwitchPlaysField;
 		SkipTimeField = componentSolverFields.TwitchPlaysSkipTimeField;
+		HelpMessageField = componentSolverFields.HelpMessageField;
+		ManualCodeField = componentSolverFields.ManualCodeField;
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		TimeMode = OtherModes.TimeModeOn;

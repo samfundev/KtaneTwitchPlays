@@ -16,6 +16,8 @@ public class SimpleModComponentSolver : ComponentSolver
 		TimeModeField = componentSolverFields.TimeModeField;
 		AbandonModuleField = componentSolverFields.AbandonModuleField;
 		TwitchPlaysField = componentSolverFields.TwitchPlaysField;
+		HelpMessageField = componentSolverFields.HelpMessageField;
+		ManualCodeField = componentSolverFields.ManualCodeField;
 		TwitchPlays = true;
 		ZenMode = OtherModes.ZenModeOn;
 		TimeMode = OtherModes.TimeModeOn;

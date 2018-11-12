@@ -12,11 +12,11 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 	{
 		Component component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"").Clone();
 
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, component, ComponentType);
 		if (language != null)
-			ModInfo.manualCode = $"Who%E2%80%99s%20on%20First{language}";
+			ManualCode = $"Who%E2%80%99s%20on%20First{language}";
 		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
 		module.BombComponent.StartCoroutine(SetHeaderText());
 	}
