@@ -164,21 +164,24 @@ public class Factory : GameRoom
 				bombHold = bombHandle.LetGoBomb();
 				while (bombHold.MoveNext())
 					yield return bombHold.Current;
+				yield return new WaitForSeconds(0.5f);
+
+				//If for some reason we are somehow still holding the bomb, then the Let go did not register.
+				//Try again exactly one more time.
+				if (currentBomb == GetBomb)
+				{
+					bombHold = bombHandle.HoldBomb();
+					while (bombHold.MoveNext()) yield return bombHold.Current;
+					yield return new WaitForSeconds(0.10f);
+
+					bombHold = bombHandle.LetGoBomb();
+					while (bombHold.MoveNext()) yield return bombHold.Current;
+				}
 			}
 
+			//If we are still holding the bomb, wait for it to actually be put down manually, or by a Twitch plays Drop bomb command.
 			while (currentBomb == GetBomb)
-			{
-				yield return new WaitForSeconds(0.10f);
-				if (currentBomb != GetBomb || !TwitchPlaySettings.data.EnableFactoryAutomaticNextBomb)
-					continue;
-
-				bombHold = bombHandle.HoldBomb();
-				while (bombHold.MoveNext()) yield return bombHold.Current;
-				yield return new WaitForSeconds(0.10f);
-
-				bombHold = bombHandle.LetGoBomb();
-				while (bombHold.MoveNext()) yield return bombHold.Current;
-			}
+				yield return new WaitForSeconds(0.1f);
 
 			bombHandle.StartCoroutine(DestroyBomb(currentBomb));
 
