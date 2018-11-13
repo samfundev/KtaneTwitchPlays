@@ -187,7 +187,7 @@ public class Factory : GameRoom
 
 			if (GetBomb == null) continue;
 			Bomb bomb = (Bomb) _internalBombProperty.GetValue(GetBomb, null);
-			InitializeBomb(bomb);
+			InitializeBomb(bomb, true);
 		}
 	}
 
