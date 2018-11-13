@@ -124,6 +124,9 @@ public class TwitchBomb : MonoBehaviour
 
 	public IEnumerator HoldBomb(bool frontFace = true)
 	{
+		SelectableArea area = Bomb.GetComponentInChildren<SelectableArea>();
+		if (area.gameObject.layer != 11) yield break;
+
 		var holdable = Bomb.GetComponent<FloatingHoldable>();
 
 		var gameRoomHoldBomb = GameRoom.Instance?.BombCommanderHoldBomb(Bomb, frontFace);
