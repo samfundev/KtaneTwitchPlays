@@ -34,6 +34,8 @@ public class TwitchHoldable
 					HandlerMethod = candidateMethod;
 					CommandComponent = component;
 
+					HelpMessageField = type.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
 					// Find a suitable TwitchShouldCancelCommand boolean field
 					FieldInfo f;
 					if ((f = type.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) != null && f.FieldType == typeof(bool))
@@ -431,7 +433,26 @@ public class TwitchHoldable
 		}
 	}
 
-	private void SendToChat(string message, string userNickname, bool isWhisper, ref bool parseerror)
+	internal bool PrintHelp(string userNickname, bool isWhisper)
+	{
+		if (CommandType == typeof(AlarmClockCommands))
+		{
+			HelpMessage = "Snooze the alarm clock with “!{0} snooze”.";
+			HelpMessage += (TwitchPlaySettings.data.AllowSnoozeOnly && !TwitchPlaySettings.data.AnarchyMode)
+				? " (Current settings forbid turning the alarm clock back on.)"
+				: " Alarm clock may also be turned back on with “!{0} snooze”.";
+		}
+		else if (CommandType == typeof(IRCConnectionManagerCommands))
+		{
+			HelpMessage = "sendtochat Disconnect the IRC from Twitch Plays with “!{0} disconnect”. For obvious reasons, only the streamer may do this.";
+		}
+
+		if (string.IsNullOrEmpty(HelpMessage)) return false;
+		IRCConnection.SendMessage(string.Format(HelpMessage, ID, userNickname), userNickname, isWhisper);
+		return true;
+	}
+
+	internal void SendToChat(string message, string userNickname, bool isWhisper, ref bool parseerror)
 	{
 		if (string.IsNullOrEmpty(message))
 		{
@@ -591,18 +612,6 @@ public class TwitchHoldable
 		}
 	}
 
-	private static bool FindHelpMessage(MonoBehaviour holdable, Type holdableType, out string helpText)
-	{
-		FieldInfo candidateString = holdableType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		if (!(candidateString?.GetValue(holdable.GetComponent(holdableType)) is string))
-		{
-			helpText = null;
-			return false;
-		}
-		helpText = (string) candidateString.GetValue(holdable.GetComponent(holdableType));
-		return true;
-	}
-
 	private static bool ValidateMethodCommandMethod(Type type, MethodInfo candidateMethod)
 	{
 		ParameterInfo[] parameters = candidateMethod.GetParameters();
@@ -650,6 +659,23 @@ public class TwitchHoldable
 	protected bool Strike { get; private set; }
 	protected int StrikeCount { get; private set; }
 	protected string StrikeMessage { get; set; }
+	protected FieldInfo HelpMessageField { get; set; }
+	private string _helpMessage = null;
+	public string HelpMessage
+	{
+		get
+		{
+			if (HelpMessageField?.GetValue(HelpMessageField.IsStatic ? null : CommandComponent) is string helpString)
+				_helpMessage = helpString;
+			return _helpMessage;
+		}
+		protected set
+		{
+			if (HelpMessageField?.GetValue(HelpMessageField.IsStatic ? null : CommandComponent) is string)
+				HelpMessageField.SetValue(HelpMessageField.IsStatic ? null : CommandComponent, value);
+			_helpMessage = value;
+		}
+	}
 
 	protected Component CommandComponent;
 	protected MethodInfo HandlerMethod;

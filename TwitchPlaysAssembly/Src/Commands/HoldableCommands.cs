@@ -4,6 +4,9 @@
 public static class HoldableCommands
 {
 	#region Commands
+	[Command("help")]
+	public static bool Help(TwitchHoldable holdable, string user, bool isWhisper) => holdable.PrintHelp(user, isWhisper);
+
 	[Command("(hold|pick up)")]
 	public static IEnumerator Hold(TwitchHoldable holdable) => holdable.Hold();
 
