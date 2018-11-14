@@ -517,6 +517,8 @@ public class TwitchHoldable
 		}
 	}
 
+	public IEnumerator Turn() => Hold(!_heldFrontFace);
+
 	private static IEnumerator ForceHeldRotation(bool frontFace, float duration)
 	{
 		var selectableManager = KTInputManager.Instance.SelectableManager;
