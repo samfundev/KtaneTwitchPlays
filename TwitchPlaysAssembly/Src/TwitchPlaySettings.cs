@@ -16,6 +16,7 @@ public class TwitchPlaySettingsData
 	public bool SkipModManagerInstructionScreen = false;
 	public bool EnableRewardMultipleStrikes = true;
 	public bool EnableWhispers = false;
+	public bool WhisperCommandsRequireExclaimationPoint = false;
 	public bool EnableMissionBinder = true;
 	public bool EnableFreeplayBriefcase = true;
 	public bool EnableFreeplayNeedy = true;

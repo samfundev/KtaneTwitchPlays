@@ -661,6 +661,8 @@ public class IRCConnection : MonoBehaviour
 	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
 	{
 		text = text.Replace("…", "...");
+		if (isWhisper && !text.StartsWith("!") && !TwitchPlaySettings.data.WhisperCommandsRequireExclaimationPoint)
+			text = $"!{text}";
 		if (Instance == null) return;
 		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
