@@ -702,11 +702,21 @@ static class GlobalCommands
 
 	//As of now, Debugging commands are streamer only, apart from issue command as person, which is superuser and above.
 	[Command(@"(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
-	public static void Mimic([Group(1)] string newMessage, [Group(2)] string targetPlayer, Message message)
+	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, Message message)
 	{
-		//Do not allow issuing commands as someone with higher access levels than yourself.
-		if (UserAccess.HighestAccessLevel(message.UserNickName) >= UserAccess.HighestAccessLevel(targetPlayer))
-			IRCConnection.Instance.OnMessageReceived.Invoke(new Message(targetPlayer, message.UserColorCode, newMessage, message.IsWhisper));
+		if (message.IsWhisper)
+		{
+			IRCConnection.SendMessage($"Sorry {message.UserNickName}, issuing commands as other users is not allowed in whispers", message.UserNickName, false);
+			return;
+		}
+
+		if (UserAccess.HighestAccessLevel(message.UserNickName) < UserAccess.HighestAccessLevel(targetPlayer))
+		{
+			IRCConnection.SendMessage($"Sorry {message.UserNickName}, you may not issue commands as {targetPlayer}");
+			return;
+		}
+		
+		IRCConnection.ReceiveMessage(targetPlayer, message.UserColorCode, newMessage);
 	}
 
 	[Command("whispertest", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
