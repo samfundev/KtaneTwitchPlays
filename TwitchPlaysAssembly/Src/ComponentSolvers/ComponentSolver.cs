@@ -926,16 +926,16 @@ public abstract class ComponentSolver
 	{
 		get
 		{
-			if (!(HelpMessageField?.GetValue(SkipTimeField.IsStatic ? null : CommandComponent) is string))
+			if (!(HelpMessageField?.GetValue(HelpMessageField.IsStatic ? null : CommandComponent) is string))
 				return _helpMessage ?? ModInfo.helpText;
 			return ModInfo.helpTextOverride
 				? ModInfo.helpText
-				: (string) HelpMessageField.GetValue(SkipTimeField.IsStatic ? null : CommandComponent);
+				: (string) HelpMessageField.GetValue(HelpMessageField.IsStatic ? null : CommandComponent);
 		}
 		protected set
 		{
-			if (HelpMessageField?.GetValue(SkipTimeField.IsStatic ? null : CommandComponent) is string)
-				HelpMessageField.SetValue(SkipTimeField.IsStatic ? null : CommandComponent, value);
+			if (HelpMessageField?.GetValue(HelpMessageField.IsStatic ? null : CommandComponent) is string)
+				HelpMessageField.SetValue(HelpMessageField.IsStatic ? null : CommandComponent, value);
 			else _helpMessage = value;
 		}
 	}
@@ -946,16 +946,16 @@ public abstract class ComponentSolver
 	{
 		get
 		{
-			if (!(ManualCodeField?.GetValue(SkipTimeField.IsStatic ? null : CommandComponent) is string))
+			if (!(ManualCodeField?.GetValue(ManualCodeField.IsStatic ? null : CommandComponent) is string))
 				return _manualCode ?? ModInfo.helpText;
 			return ModInfo.manualCodeOverride 
 				? ModInfo.manualCode 
-				: (string) ManualCodeField.GetValue(SkipTimeField.IsStatic ? null : CommandComponent);
+				: (string) ManualCodeField.GetValue(ManualCodeField.IsStatic ? null : CommandComponent);
 		}
 		protected set
 		{
-			if (ManualCodeField?.GetValue(SkipTimeField.IsStatic ? null : CommandComponent) is string)
-				ManualCodeField.SetValue(SkipTimeField.IsStatic ? null : CommandComponent, value);
+			if (ManualCodeField?.GetValue(ManualCodeField.IsStatic ? null : CommandComponent) is string)
+				ManualCodeField.SetValue(ManualCodeField.IsStatic ? null : CommandComponent, value);
 			else _manualCode = value;
 		}
 	}
