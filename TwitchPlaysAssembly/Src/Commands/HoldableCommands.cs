@@ -17,6 +17,17 @@ public static class HoldableCommands
 	public static IEnumerator Flip(TwitchHoldable holdable) => holdable.Turn();
 
 	[Command(null)]
-	public static IEnumerator DefaultCommand(TwitchHoldable holdable, string user, bool isWhisper, string cmd) => holdable.RespondToCommand(user, cmd, isWhisper);
+	public static IEnumerator DefaultCommand(TwitchHoldable holdable, string user, bool isWhisper, string cmd)
+	{
+		if (holdable.CommandType == typeof(AlarmClockCommands))
+			return AlarmClockCommands.Snooze(holdable, user, isWhisper);
+
+		if (holdable.CommandType == typeof(IRCConnectionManagerCommands) || 
+		    holdable.CommandType == typeof(MissionBinderCommands) || 
+		    holdable.CommandType == typeof(FreeplayCommands))
+			return holdable.RespondToCommand(user, isWhisper);
+
+		return holdable.RespondToCommand(user, cmd, isWhisper);
+	}
 	#endregion
 }
