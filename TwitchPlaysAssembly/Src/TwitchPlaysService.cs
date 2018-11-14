@@ -433,7 +433,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 			else
 			{
-				IRCConnection.SendMessage(@"@{0}, the “{1}” command has an unrecognized parameter “{2}”. This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name);
+				IRCConnection.SendMessage(@"@{0}, the “{1}” command has an unrecognized parameter “{2}”. It expects a type of “{3}”, and the extraObject is of type “{4}” This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name, parameters[i].ParameterType.Name, extraObject?.GetType().Name);
 				return true;
 			}
 		}
