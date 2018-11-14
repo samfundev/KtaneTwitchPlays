@@ -164,7 +164,7 @@ public class Factory : GameRoom
 				bombHold = bombHandle.LetGoBomb();
 				while (bombHold.MoveNext())
 					yield return bombHold.Current;
-				yield return new WaitForSeconds(0.5f);
+				yield return new WaitForSeconds(1.0f);
 
 				//If for some reason we are somehow still holding the bomb, then the Let go did not register.
 				//Try again exactly one more time.
