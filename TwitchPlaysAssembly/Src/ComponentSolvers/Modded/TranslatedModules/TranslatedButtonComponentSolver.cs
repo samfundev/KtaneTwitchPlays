@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class TranslatedButtonComponentSolver : ComponentSolver
 {
@@ -10,7 +11,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	{
 		var component = module.BombComponent.GetComponent(ComponentType);
 		_button = (KMSelectable) ButtonField.GetValue(component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7] | (Important - Take note of the strip color on hold, it will change as other translated buttons get held, and the answer retains original color.)").Clone();
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} tap [tap the button] | !{0} hold [hold the button] | !{0} release 7 [release when the digit shows 7]").Clone();
 		Selectable selectable = module.BombComponent.GetComponent<Selectable>();
 		selectable.OnCancel += () => { SelectedField.SetValue(component, false); return true; };
 
@@ -18,6 +19,9 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		if (language != null) ManualCode = $"The%20Button{language}";
 		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
 		module.BombComponent.StartCoroutine(SetHeaderText());
+
+		var mat = (Material) StripMaterialField.GetValue(component);
+		StripMaterialField.SetValue(component, Object.Instantiate(mat));
 	}
 
 	private IEnumerator SetHeaderText()
@@ -88,11 +92,13 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		ComponentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
 		ButtonField = ComponentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
 		SelectedField = ComponentType.GetField("isSelected", BindingFlags.NonPublic | BindingFlags.Instance);
+		StripMaterialField = ComponentType.GetField("StripMatColor", BindingFlags.Public | BindingFlags.Instance);
 	}
 
 	private static readonly Type ComponentType;
 	private static readonly FieldInfo ButtonField;
 	private static readonly FieldInfo SelectedField;
+	private static readonly FieldInfo StripMaterialField;
 
 	private readonly KMSelectable _button;
 	private bool _held;
