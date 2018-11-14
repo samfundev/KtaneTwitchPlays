@@ -5,7 +5,10 @@ using System.Collections;
 public static class IRCConnectionManagerCommands
 {
 	[Command(@"disconnect")]
-	public static IEnumerator Disconnect(IRCConnectionManagerHoldable holdable)
+	public static IEnumerator Disconnect(TwitchHoldable holdable, string user, bool isWhisper) => 
+		holdable.RespondToCommand(user, string.Empty, isWhisper, Disconnect(holdable.Holdable.GetComponent<IRCConnectionManagerHoldable>()));
+
+	private static IEnumerator Disconnect(IRCConnectionManagerHoldable holdable)
 	{
 		bool allowed = false;
 		yield return null;
