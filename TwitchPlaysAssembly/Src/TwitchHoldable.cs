@@ -134,9 +134,16 @@ public class TwitchHoldable
 		yield return item;
 	}
 
-	public IEnumerator RespondToCommand(string userNickName, string cmdStr, bool isWhisper)
+	private static IEnumerator BlankIEnumerator()
 	{
-		if (HandlerMethod == null)
+		yield break;
+	}
+
+	public IEnumerator RespondToCommand(string userNickName, bool isWhisper) => RespondToCommand(userNickName, "", isWhisper, BlankIEnumerator());
+
+	public IEnumerator RespondToCommand(string userNickName, string cmdStr, bool isWhisper, IEnumerator processCommand = null)
+	{
+		if (HandlerMethod == null && processCommand == null)
 		{
 			IRCConnection.SendMessage(@"Sorry @{0}, this holdable is not supported by Twitch Plays.", userNickName, !isWhisper, userNickName);
 			yield break;
@@ -157,7 +164,9 @@ public class TwitchHoldable
 		}
 
 		DebugHelper.Log("Running RespondToCommandInternal()");
-		var processCommand = MakeCoroutine(HandlerMethod.Invoke(CommandComponent, new object[] { cmdStr }));
+		if(HandlerMethod != null && processCommand == null)
+			processCommand = MakeCoroutine(HandlerMethod.Invoke(CommandComponent, new object[] {cmdStr}));
+
 		bool cancelled = false;
 		bool parseError = false;
 		bool cancelling = false;
