@@ -27,7 +27,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 		if (inputCommand.Equals("cycle", StringComparison.InvariantCultureIgnoreCase))
 		{
 			yield return null;
-			int page = (int) CurrentPageField.GetValue(Module);
+			int page = (int) CurrentPageField.GetValue(Module.BombComponent);
 			for (int i = page - 1; i >= 0; i--)
 			{
 				IEnumerator changePage = wireSeq.ChangePage(i + 1, i);
@@ -99,7 +99,7 @@ public class WireSequenceComponentSolver : ComponentSolver
 	private bool CanInteractWithWire(int wireIndex)
 	{
 		int wirePageIndex = wireIndex / 3;
-		return wirePageIndex == (int) CurrentPageField.GetValue(Module);
+		return wirePageIndex == (int) CurrentPageField.GetValue(Module.BombComponent);
 	}
 
 	private WireSequenceWire GetWire(int wireIndex) => _wireSequence[wireIndex].Wire;
