@@ -40,7 +40,7 @@ public class PasswordComponentSolver : ComponentSolver
 			var slots = new HashSet<int>();
 			foreach (var piece in m.Groups[1].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
 			{
-				if (!int.TryParse(piece, out var i))
+				if (!int.TryParse(piece, out var i) || i < 1 || i > 5)
 				{
 					yield return string.Format("sendtochaterror “{0}” is not a number from 1 to 5.", piece);
 					yield break;
@@ -52,7 +52,7 @@ public class PasswordComponentSolver : ComponentSolver
 				yield return "password";
 				foreach (var slot in slots)
 				{
-					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[slot]);
+					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[slot - 1]);
 					while (spinnerCoroutine.MoveNext())
 						yield return spinnerCoroutine.Current;
 				}
