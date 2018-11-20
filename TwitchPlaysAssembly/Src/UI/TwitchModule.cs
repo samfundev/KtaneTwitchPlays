@@ -404,7 +404,7 @@ public class TwitchModule : MonoBehaviour
 		{
 			if (!PlayerName.Equals(userNickName))
 				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, HeaderText));
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText));
 		}
 		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName) && !md.Solved) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{

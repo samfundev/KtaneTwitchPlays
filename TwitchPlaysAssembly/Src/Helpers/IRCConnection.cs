@@ -676,6 +676,11 @@ public class IRCConnection : MonoBehaviour
 			SendMessage("Commands enabled.");
 			return;
 		}
+		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		{
+			SendMessage("Commands are already enabled.");
+			return;
+		}
 		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && (!TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled || !TwitchGame.BombActive)) return;
 		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
