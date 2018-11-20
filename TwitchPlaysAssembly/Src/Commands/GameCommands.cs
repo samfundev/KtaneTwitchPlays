@@ -73,7 +73,7 @@ static class GameCommands
 		else if (isWhisper && TwitchPlaySettings.data.EnableWhispers)
 			IRCConnection.SendMessage("Checking other people's claims in whispers is not supported.", user, false);
 		else
-			ShowClaimsOfUser(targetUser, user, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.OwnedModuleListOther);
+			ShowClaimsOfUser(targetUser, user, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.NoOwnedModulesOther);
 	}
 
 	[Command(@"claims")]
@@ -82,7 +82,7 @@ static class GameCommands
 		if (TwitchPlaySettings.data.AnarchyMode)
 			IRCConnection.SendMessage($"Sorry {user}, claiming modules is not available in anarchy mode.", user, !isWhisper);
 		else
-			ShowClaimsOfUser(user, user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.OwnedModuleList);
+			ShowClaimsOfUser(user, user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.NoOwnedModules);
 	}
 
 	[Command(@"(?:claim *(view)?|(view) *claim) *all")]
