@@ -203,11 +203,12 @@ static class ModuleCommands
 	[Command(@"zoom(?: +(\d*\.?\d+))?")]
 	public static IEnumerator Zoom(TwitchModule module, string user, [Group(1)] float? duration)
 	{
+		MusicPlayer musicPlayer = null;
 		var delay = duration ?? 2;
 		delay = Math.Max(2, delay);
 		module.Solver._zoom = true;
 		if (delay >= 15)
-			yield return "elevator music";
+			musicPlayer = MusicPlayer.StartRandomMusic();
 
 		var zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(module, 1);
 		if (zoomCoroutine != null)
@@ -218,6 +219,11 @@ static class ModuleCommands
 		if (CoroutineCanceller.ShouldCancel)
 		{
 			CoroutineCanceller.ResetCancel();
+			if (musicPlayer != null)
+			{
+				musicPlayer.StopMusic();
+			}
+
 			IRCConnection.SendMessage($"Sorry @{user}, your request to hold up the bomb for {delay} seconds has been cut short.");
 		}
 
