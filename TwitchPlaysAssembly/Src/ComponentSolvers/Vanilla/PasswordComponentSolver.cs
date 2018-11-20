@@ -45,7 +45,7 @@ public class PasswordComponentSolver : ComponentSolver
 					yield return string.Format("sendtochaterror “{0}” is not a number from 1 to 5.", piece);
 					yield break;
 				}
-				slots.Add(i);
+				slots.Add(i - 1);
 			}
 			if (slots.Count > 0)
 			{
