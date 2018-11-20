@@ -947,7 +947,7 @@ public abstract class ComponentSolver
 		get
 		{
 			if (!(ManualCodeField?.GetValue(ManualCodeField.IsStatic ? null : CommandComponent) is string))
-				return _manualCode ?? ModInfo.helpText;
+				return _manualCode ?? ModInfo.manualCode;
 			return ModInfo.manualCodeOverride 
 				? ModInfo.manualCode 
 				: (string) ManualCodeField.GetValue(ManualCodeField.IsStatic ? null : CommandComponent);
