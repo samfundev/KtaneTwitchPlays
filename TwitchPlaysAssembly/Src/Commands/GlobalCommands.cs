@@ -700,7 +700,14 @@ static class GlobalCommands
 		return TPElevatorSwitch.Instance.ToggleSetupRoomElevatorSwitch(on);
 	}
 
-	//As of now, Debugging commands are streamer only, apart from issue command as person, which is superuser and above.
+	//As of now, Debugging commands are streamer only, apart from issue command as person, and reset leaderboard, which are superuser and above.
+	[Command(@"leaderboard reset", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
+	public static void ResetLeaderboard(string user, bool isWhisper)
+	{
+		Leaderboard.Instance.ResetLeaderboard();
+		IRCConnection.SendMessage("Leaderboard Reset.", user, !isWhisper);
+	}
+
 	[Command(@"(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
 	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, Message message)
 	{

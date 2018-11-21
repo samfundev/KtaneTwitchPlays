@@ -337,6 +337,23 @@ public class Leaderboard
 
 	public void DeleteSoloEntry(string userNickName) => DeleteSoloEntry(_entryListSolo.First(x => string.Equals(x.UserName, userNickName, StringComparison.InvariantCultureIgnoreCase)));
 
+	public void ResetLeaderboard()
+	{
+		_entryDictionary.Clear();
+		_entryList.Clear();
+		_entryListSolo.Clear();
+		CurrentSolvers.Clear();
+		BombsAttempted = 0;
+		BombsCleared = 0;
+		BombsExploded = 0;
+		OldBombsAttempted = 0;
+		OldBombsCleared = 0;
+		OldBombsExploded = 0;
+		OldScore = 0;
+		OldSolves = 0;
+		OldStrikes = 0;
+	}
+
 	private void ResetSortFlag() => _sorted = false;
 
 	private void CheckAndSort()
