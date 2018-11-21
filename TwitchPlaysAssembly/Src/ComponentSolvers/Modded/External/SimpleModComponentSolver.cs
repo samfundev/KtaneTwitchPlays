@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 public class SimpleModComponentSolver : ComponentSolver
 {
 	public SimpleModComponentSolver(TwitchModule module, ComponentSolverFields componentSolverFields) :
-		base(module)
+		base(module, componentSolverFields.HookUpEvents)
 	{
 		ProcessMethod = componentSolverFields.Method;
 		ForcedSolveMethod = componentSolverFields.ForcedSolveMethod;

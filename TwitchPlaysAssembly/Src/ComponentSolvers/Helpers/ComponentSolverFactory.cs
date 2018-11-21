@@ -786,7 +786,7 @@ public static class ComponentSolverFactory
 				  $"Currently {module.BombComponent.GetModuleDisplayName()} is not supported by 'Twitch Plays' - Could not generate a valid componentsolver for the mod component!");
 
 	/// <summary>Returns a solver that relies on the module’s own implementation, bypassing built-in solvers and shims.</summary>
-	public static ComponentSolver CreateDefaultModComponentSolver(TwitchModule module, string moduleType, string displayName)
+	public static ComponentSolver CreateDefaultModComponentSolver(TwitchModule module, string moduleType, string displayName, bool hookUpEvents = true)
 	{
 		MethodInfo method = FindProcessCommandMethod(module.BombComponent, out ModCommandType commandType, out Type commandComponentType);
 		MethodInfo forcedSolved = FindSolveMethod(module.BombComponent, ref commandComponentType);
@@ -873,7 +873,9 @@ public static class ComponentSolverFactory
 			AbandonModuleField = FindAbandonModuleList(commandComponentType),
 			TwitchPlaysField = FindTwitchPlaysBool(commandComponentType),
 			TwitchPlaysSkipTimeField = FindTwitchPlaysSkipTimeBool(commandComponentType),
-			CancelField = FindCancelBool(commandComponentType)
+			CancelField = FindCancelBool(commandComponentType),
+
+			HookUpEvents = hookUpEvents
 		};
 
 		// ReSharper disable once SwitchStatementMissingSomeCases

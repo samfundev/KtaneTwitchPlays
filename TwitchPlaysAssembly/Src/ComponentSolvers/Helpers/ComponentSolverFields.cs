@@ -16,4 +16,6 @@ public class ComponentSolverFields
 	public FieldInfo TwitchPlaysField;
 	public FieldInfo TwitchPlaysSkipTimeField;
 	public FieldInfo CancelField;
+
+	public bool HookUpEvents = true;
 }

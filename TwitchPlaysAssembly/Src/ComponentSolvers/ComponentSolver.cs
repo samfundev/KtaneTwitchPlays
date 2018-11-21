@@ -9,10 +9,11 @@ using UnityEngine;
 public abstract class ComponentSolver
 {
 	#region Constructors
-	protected ComponentSolver(TwitchModule module)
+	protected ComponentSolver(TwitchModule module, bool hookUpEvents = true)
 	{
 		Module = module;
 
+		if (!hookUpEvents) return;
 		module.BombComponent.OnPass += OnPass;
 		module.BombComponent.OnStrike += OnStrike;
 		var gameCommands = module.BombComponent.GetComponentInChildren<KMGameCommands>();
