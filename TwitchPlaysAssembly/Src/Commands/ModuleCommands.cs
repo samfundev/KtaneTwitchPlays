@@ -219,13 +219,11 @@ static class ModuleCommands
 		if (CoroutineCanceller.ShouldCancel)
 		{
 			CoroutineCanceller.ResetCancel();
-			if (musicPlayer != null)
-			{
-				musicPlayer.StopMusic();
-			}
-
 			IRCConnection.SendMessage($"Sorry @{user}, your request to hold up the bomb for {delay} seconds has been cut short.");
 		}
+
+		if (musicPlayer != null)
+			musicPlayer.StopMusic();
 
 		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, 1);
 		if (unzoomCoroutine != null)
