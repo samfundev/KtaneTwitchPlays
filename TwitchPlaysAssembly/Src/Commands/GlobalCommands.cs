@@ -542,7 +542,7 @@ static class GlobalCommands
 	}
 
 	[Command(@"(getaccess|accessstats|accessdata) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void GetAccess([Group(1)] string targetUsers, string user, bool isWhisper)
+	public static void GetAccess([Group(2)] string targetUsers, string user, bool isWhisper)
 	{
 		foreach (string person in targetUsers.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
 			IRCConnection.SendMessage(string.Format("User {0} access level: {1}", person, UserAccess.LevelToString(UserAccess.HighestAccessLevel(person))), user, !isWhisper);
