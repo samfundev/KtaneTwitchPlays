@@ -56,7 +56,7 @@ public class MurderComponentSolver : ComponentSolver
 				foreach (object item in CycleThroughCategory(i))
 				{
 					double j = i == 2 ? 0.8 : 1.5;
-					DoInteractionClick((MonoBehaviour) item);
+					yield return DoInteractionClick((MonoBehaviour) item);
 					yield return "trywaitcancel " + j + " The murder cycle command was cancelled";
 				}
 			}
@@ -98,6 +98,7 @@ public class MurderComponentSolver : ComponentSolver
 			}
 		}
 
+		yield return null;
 		if (!anyMisspelling)
 			yield return DoInteractionClick(_buttons[6]);
 	}
