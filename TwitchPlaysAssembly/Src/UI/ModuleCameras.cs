@@ -488,8 +488,8 @@ public class ModuleCameras : MonoBehaviour
 		// Make sure camera wall is supposed to be automatic
 		if (!AutomaticCameraWallEnabled) yield break;
 
-		// If there are now 6 or fewer claimed modules, disengage the camera wall
-		if (CameraWallEnabled && _cameras.Count(c => c.Module != null && !c.Module.Solved && c.Module.CameraPriority >= CameraPriority.Claimed) <= 6)
+		// If there are now 4 or fewer claimed modules, disengage the camera wall
+		if (CameraWallEnabled && _cameras.Count(c => c.Module != null && !c.Module.Solved && c.Module.CameraPriority >= CameraPriority.Claimed) <= 4)
 			DisableCameraWall();
 	}
 
