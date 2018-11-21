@@ -339,7 +339,7 @@ public abstract class ComponentSolver
 			{
 				Module.Bomb.RotateByLocalQuaternion(localQuaternion);
 				//Whitelist perspective pegs as it only returns Quaternion.Euler(x, 0, 0), which is compatible with the RotateCameraByQuaternion.
-				if (Module.GetComponent<KMBombModule>()?.ModuleType.Equals("spwizPerspectivePegs") ?? false)
+				if (Module.BombComponent.GetComponent<KMBombModule>()?.ModuleType.Equals("spwizPerspectivePegs") ?? false)
 					Module.Bomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, localQuaternion);
 				needQuaternionReset = true;
 			}
