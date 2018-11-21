@@ -279,7 +279,11 @@ static class GameCommands
 			return TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb].ShowEdgework(edge);
 		else
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, user, !isWhisper, TwitchGame.Instance.Bombs.Select(bomb => $"{bomb.BombID} = {bomb.EdgeworkText.text}").Join(" //// "));
+			string edgework = TwitchGame.Instance.Bombs.Count == 1 ?
+				TwitchGame.Instance.Bombs[0].EdgeworkText.text :
+				TwitchGame.Instance.Bombs.Select(bomb => $"{bomb.BombID} = {bomb.EdgeworkText.text}").Join(" //// ");
+
+			IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, user, !isWhisper, edgework);
 			return null;
 		}
 	}

@@ -661,8 +661,8 @@ public class TwitchBomb : MonoBehaviour
 		set { Bomb.NumStrikesToLose = value; HandleStrikeChanges(); }
 	}
 
-	public int bombSolvableModules => TwitchGame.Instance.Modules.Count(md => md.BombID == BombID && md.BombComponent.IsSolvable);
-	public int bombSolvedModules => TwitchGame.Instance.Modules.Count(md => md.BombID == BombID && md.Solved);
+	public int bombSolvableModules => Bomb.GetSolvableComponentCount();
+	public int bombSolvedModules => Bomb.GetSolvedComponentCount();
 
 	public float BombStartingTimer;
 	#endregion
