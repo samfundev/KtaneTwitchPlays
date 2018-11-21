@@ -552,7 +552,7 @@ public class TwitchBomb : MonoBehaviour
 
 	private IEnumerator DoFreeYRotate(float initialYSpin, float initialPitch, float targetYSpin, float targetPitch, float duration)
 	{
-		if (GetComponent<FloatingHoldable>() == null)
+		if (Bomb.GetComponent<FloatingHoldable>() == null)
 			yield break;
 
 		if (!HeldFrontFace)

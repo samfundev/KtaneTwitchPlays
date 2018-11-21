@@ -540,7 +540,7 @@ public class ModuleCameras : MonoBehaviour
 	private void SetCameraVisibility(bool visible)
 	{
 		foreach (ModuleCamera camera in _cameras)
-			if (!visible || camera.Module.CameraPriority > CameraPriority.Unviewed)
+			if (!visible || (camera.Module && camera.Module.CameraPriority > CameraPriority.Unviewed))
 				camera.CameraInstance.gameObject.SetActive(visible);
 	}
 	#endregion
