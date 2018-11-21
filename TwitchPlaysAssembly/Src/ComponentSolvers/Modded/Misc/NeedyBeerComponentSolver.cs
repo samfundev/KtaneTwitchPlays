@@ -14,7 +14,7 @@ public class NeedyBeerComponentSolver : ComponentSolver
 		if (inputCommand.ToLowerInvariant().Trim().EqualsAny("refill"))
 		{
 			yield return null;
-			yield return DoInteractionClick(Module.GetComponentsInChildren<KMSelectable>().FirstOrDefault(x => x.name.Equals("Solve")));
+			yield return DoInteractionClick(Module.BombComponent.GetComponentsInChildren<KMSelectable>().FirstOrDefault(x => x.name.Equals("Solve")));
 		}
 	}
 }
