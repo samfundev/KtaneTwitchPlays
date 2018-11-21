@@ -123,9 +123,9 @@ static class GameCommands
 	}
 
 	[Command(@"(?:unclaim|release) *all")]
-	public static void UnclaimAll(string user, bool isWhisper)
+	public static void UnclaimAll(string user)
 	{
-		foreach (var module in TwitchGame.Instance.Modules)
+		foreach (var module in TwitchGame.Instance.Modules.Where(module => module.PlayerName == user))
 			module.UnclaimModule(user);
 	}
 
