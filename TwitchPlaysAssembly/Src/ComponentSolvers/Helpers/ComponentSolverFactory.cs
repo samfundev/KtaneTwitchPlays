@@ -12,7 +12,7 @@ public static class ComponentSolverFactory
 	private static void DebugLog(string format, params object[] args)
 	{
 		if (SilentMode) return;
-		DebugHelper.Log(format, args);
+		DebugHelper.Log(string.Format(format, args));
 	}
 
 	private delegate ComponentSolver ModComponentSolverDelegate(TwitchModule module);

@@ -54,7 +54,7 @@ public static class ModuleData
 	{
 		if (!DataHasChanged || ComponentSolverFactory.SilentMode) return;
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
-		DebugHelper.Log("ModuleData: Writing file {0}", path);
+		DebugHelper.Log($"ModuleData: Writing file {path}");
 
 		try
 		{
@@ -65,7 +65,7 @@ public static class ModuleData
 		}
 		catch (FileNotFoundException)
 		{
-			DebugHelper.LogWarning("ModuleData: File {0} was not found.", path);
+			DebugHelper.LogWarning($"ModuleData: File {path} was not found.");
 			return;
 		}
 		catch (Exception ex)
@@ -75,7 +75,7 @@ public static class ModuleData
 		}
 
 		DataHasChanged = false;
-		DebugHelper.Log("ModuleData: Writing of file {0} completed successfully.", path);
+		DebugHelper.Log($"ModuleData: Writing of file {path} completed successfully.");
 	}
 
 	public static bool LoadDataFromFile()
@@ -84,12 +84,12 @@ public static class ModuleData
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		try
 		{
-			DebugHelper.Log("ModuleData: Loading Module information data from file: {0}", path);
+			DebugHelper.Log($"ModuleData: Loading Module information data from file: {path}");
 			modInfo = SettingsConverter.Deserialize<ModuleInformation[]>(File.ReadAllText(path));//JsonConvert.DeserializeObject<ModuleInformation[]>(File.ReadAllText(path));
 		}
 		catch (FileNotFoundException)
 		{
-			DebugHelper.LogWarning("ModuleData: File {0} was not found.", path);
+			DebugHelper.LogWarning($"ModuleData: File {path} was not found.");
 			return false;
 		}
 		catch (Exception ex)

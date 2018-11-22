@@ -245,7 +245,7 @@ public class TwitchPlaySettingsData
 
 		if (count != parameters || forceUpdate)
 		{
-			DebugHelper.Log("TwitchPlaySettings.ValidateString( {0}, {1}, {2} ) - {3}", input, def, parameters, forceUpdate ? "Updated because of version breaking changes" : "Updated because parameters didn't match expected count.");
+			DebugHelper.Log($"TwitchPlaySettings.ValidateString( {input}, {def}, {parameters} ) - {(forceUpdate ? "Updated because of version breaking changes" : "Updated because parameters didn't match expected count.")}");
 
 			input = def;
 			return false;
@@ -459,7 +459,7 @@ public static class TwitchPlaySettings
 	public static void WriteDataToFile()
 	{
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
-		DebugHelper.Log("TwitchPlayStrings: Writing file {0}", path);
+		DebugHelper.Log($"TwitchPlayStrings: Writing file {path}");
 		try
 		{
 			data.SettingsVersion = SettingsVersion;
@@ -467,7 +467,7 @@ public static class TwitchPlaySettings
 		}
 		catch (FileNotFoundException)
 		{
-			DebugHelper.LogWarning("TwitchPlayStrings: File {0} was not found.", path);
+			DebugHelper.LogWarning($"TwitchPlayStrings: File {path} was not found.");
 			return;
 		}
 		catch (Exception ex)
@@ -475,7 +475,7 @@ public static class TwitchPlaySettings
 			DebugHelper.LogException(ex);
 			return;
 		}
-		DebugHelper.Log("TwitchPlayStrings: Writing of file {0} completed successfully", path);
+		DebugHelper.Log($"TwitchPlayStrings: Writing of file {path} completed successfully");
 	}
 
 	public static bool LoadDataFromFile()
@@ -483,14 +483,14 @@ public static class TwitchPlaySettings
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		try
 		{
-			DebugHelper.Log("TwitchPlayStrings: Loading Custom strings data from file: {0}", path);
+			DebugHelper.Log($"TwitchPlayStrings: Loading Custom strings data from file: {path}");
 			data = SettingsConverter.Deserialize<TwitchPlaySettingsData>(File.ReadAllText(path));//JsonConvert.DeserializeObject<TwitchPlaySettingsData>(File.ReadAllText(path));
 			data.ValidateStrings();
 			WriteDataToFile();
 		}
 		catch (FileNotFoundException)
 		{
-			DebugHelper.LogWarning("TwitchPlayStrings: File {0} was not found.", path);
+			DebugHelper.LogWarning($"TwitchPlayStrings: File {path} was not found.");
 			data = new TwitchPlaySettingsData();
 			WriteDataToFile();
 			return false;

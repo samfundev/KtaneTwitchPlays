@@ -6,20 +6,11 @@ using UnityEngine;
 
 public static class DebugHelper
 {
-	public static void Log(params object[] args) => Log(string.Join(" ", args.Select(x => x.ToString()).ToArray()));
+	public static void Log(params object[] args) => Debug.Log("[TwitchPlays] " + args.Select(Convert.ToString).Join(" "));
 
-	[StringFormatMethod("format")]
-	public static void Log(string format, params object[] args) => Debug.LogFormat("[TwitchPlays] " + format, args);
+	public static void LogWarning(params object[] args) => Debug.LogWarning("[TwitchPlays] " + args.Select(Convert.ToString).Join(" "));
 
-	public static void LogWarning(params object[] args) => LogWarning(string.Join(" ", args.Select(x => x.ToString()).ToArray()));
-
-	[StringFormatMethod("format")]
-	public static void LogWarning(string format, params object[] args) => Debug.LogWarningFormat("[TwitchPlays] " + format, args);
-
-	public static void LogError(params object[] args) => LogError(string.Join(" ", args.Select(x => x.ToString()).ToArray()));
-
-	[StringFormatMethod("format")]
-	public static void LogError(string format, params object[] args) => Debug.LogErrorFormat("[TwitchPlays] " + format, args);
+	public static void LogError(params object[] args) => Debug.LogError("[TwitchPlays] " + args.Select(Convert.ToString).Join(" "));
 
 	public static void LogException(Exception ex, string message = "An exception has occurred:")
 	{

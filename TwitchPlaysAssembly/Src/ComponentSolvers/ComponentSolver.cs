@@ -602,7 +602,7 @@ public abstract class ComponentSolver
 
 		if (TurnQueued)
 		{
-			DebugHelper.Log("[ComponentSolver] Activating queued turn for completed module {0}.", Code);
+			DebugHelper.Log($"[ComponentSolver] Activating queued turn for completed module {Code}.");
 			_readyToTurn = true;
 			TurnQueued = false;
 		}

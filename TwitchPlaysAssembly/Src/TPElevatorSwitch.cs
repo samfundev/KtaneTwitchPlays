@@ -134,7 +134,7 @@ public class TPElevatorSwitch : MonoBehaviour
 			yield break;
 		var elevatorSwitch = setupRoom.ElevatorSwitch;
 
-		DebugHelper.Log("Setting Elevator state to {0}", elevatorState);
+		DebugHelper.Log($"Setting Elevator state to {elevatorState}");
 
 		IEnumerator dropHoldables = TwitchPlaysService.Instance.DropAllHoldables();
 		while (dropHoldables.MoveNext())
