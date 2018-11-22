@@ -17,7 +17,7 @@ public static class MissionBinderCommands
 	public static IEnumerator SelectSearch(FloatingHoldable holdable, [Group(1)] string search) => SelectOnPage(holdable, search: search.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
 
 	[Command(@"(up|u|down|d)(?: (\d+))?")]
-	public static IEnumerator Navigate(FloatingHoldable holdable, [Group(1)] string direction, [Group(2)] int? optAmount)
+	public static IEnumerator Navigate([Group(1)] string direction, [Group(2)] int? optAmount)
 	{
 		var amount = optAmount ?? 1;
 		var offset = direction.StartsWith("u", StringComparison.InvariantCultureIgnoreCase) ? -1 : 1;

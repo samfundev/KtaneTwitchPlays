@@ -50,7 +50,7 @@ public static class GeneralExtensions
 		return stringBuilder.ToString();
 	}
 
-	public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.OrderBy(x => UnityEngine.Random.value);
+	public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.OrderBy(_ => UnityEngine.Random.value);
 
 	//String wrapping code from http://www.java2s.com/Code/CSharp/Data-Types/ForcesthestringtowordwrapsothateachlinedoesntexceedthemaxLineLength.htm
 

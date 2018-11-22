@@ -62,7 +62,7 @@ public static class BombCommands
 	}
 
 	[Command(@"(explode|detonate)", AccessLevel.Mod, AccessLevel.Mod)]
-	public static IEnumerator Explode(TwitchBomb bomb, [Group(1)] string cmd, string user, bool isWhisper) => bomb.DelayBombExplosionCoroutine();
+	public static IEnumerator Explode(TwitchBomb bomb) => bomb.DelayBombExplosionCoroutine();
 
 	[Command(@"(status|info)")]
 	public static void Status(TwitchBomb bomb, string user, bool isWhisper)

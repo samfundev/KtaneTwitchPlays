@@ -7,9 +7,9 @@ public static class AlarmClockCommands
 {
 	[Command("snooze")]
 	public static IEnumerator Snooze(TwitchHoldable holdable, string user, bool isWhisper) =>
-		holdable.RespondToCommand(user, "", isWhisper, Snooze(holdable.Holdable.GetComponent<AlarmClock>(), user, isWhisper));
+		holdable.RespondToCommand(user, "", isWhisper, Snooze(holdable.Holdable.GetComponent<AlarmClock>()));
 
-	public static IEnumerator Snooze(AlarmClock clock, string user, bool isWhisper)
+	public static IEnumerator Snooze(AlarmClock clock)
 	{
 		var onField = typeof(AlarmClock).GetField("isOn", BindingFlags.NonPublic | BindingFlags.Instance);
 		if(onField == null) yield break;

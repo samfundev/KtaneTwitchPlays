@@ -15,9 +15,9 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		Selectable selectable = module.BombComponent.GetComponent<Selectable>();
 		selectable.OnCancel += () => { SelectedField.SetValue(component, false); return true; };
 
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, component, ComponentType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(component, ComponentType);
 		if (language != null) ManualCode = $"The%20Button{language}";
-		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
+		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(component, ComponentType)}";
 		module.BombComponent.StartCoroutine(SetHeaderText());
 
 		var mat = (Material) StripMaterialField.GetValue(component);

@@ -56,7 +56,7 @@ public static class TranslatedModuleHelper
 		{"zh-cn", " (简体中文)" },
 	};
 
-	public static string GetModuleDisplayNameAddon(BombComponent bombComponent, UnityEngine.Component component, Type componentType)
+	public static string GetModuleDisplayNameAddon(UnityEngine.Component component, Type componentType)
 	{
 		try
 		{
@@ -73,7 +73,7 @@ public static class TranslatedModuleHelper
 		}
 	}
 
-	public static string GetManualCodeAddOn(BombComponent bombComponent, UnityEngine.Component component, Type componentType)
+	public static string GetManualCodeAddOn(UnityEngine.Component component, Type componentType)
 	{
 		try
 		{

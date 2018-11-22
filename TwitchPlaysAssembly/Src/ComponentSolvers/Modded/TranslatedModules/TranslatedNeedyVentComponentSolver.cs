@@ -12,10 +12,10 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 		_noButton = (MonoBehaviour) NoButtonField.GetValue(module.BombComponent.GetComponent(NeedyVentComponentSolverType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]").Clone();
 
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType);
 		if (language != null) ManualCode = "Venting%20Gas";
 		//if (language != null) ManualCode = $"Venting%20Gas{language}";
-		ModInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType)}";
+		ModInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType)}";
 		Module.Bomb.Bomb.StartCoroutine(SetHeaderText());
 	}
 

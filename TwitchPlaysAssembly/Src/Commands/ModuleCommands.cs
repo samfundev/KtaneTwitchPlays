@@ -28,7 +28,7 @@ static class ModuleCommands
 			: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, user, module.Code, module.HeaderText));
 
 	[Command("(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)"), SolvedAllowed]
-	public static void BombTurnAround(TwitchModule module, string user)
+	public static void BombTurnAround(TwitchModule module)
 	{
 		if (!module.Solver.TurnQueued)
 		{
@@ -39,7 +39,7 @@ static class ModuleCommands
 	}
 
 	[Command("cancel +(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)"), SolvedAllowed]
-	public static void BombTurnAroundCancel(TwitchModule module, string user)
+	public static void BombTurnAroundCancel(TwitchModule module)
 	{
 		module.Solver.TurnQueued = false;
 		IRCConnection.SendMessage(TwitchPlaySettings.data.CancelBombTurn, module.Code, module.HeaderText);
@@ -51,7 +51,7 @@ static class ModuleCommands
 	[Command("unview")]
 	public static void Unview(TwitchModule module) => TwitchGame.ModuleCameras?.UnviewModule(module);
 
-	[Command("(view(?: +pin)?|pin +view)")]
+	[Command("(view(?: *pin)?|pin *view)")]
 	public static void View(TwitchModule module, string user, [Group(1)] string cmd) => module.ViewPin(user, cmd.ContainsIgnoreCase("p"));
 
 	[Command("show")]
@@ -86,7 +86,7 @@ static class ModuleCommands
 	public static void ClaimViewPin(TwitchModule module, string user, bool isWhisper, [Group(1)] string cmd) => ClaimViewOrPin(module, user, isWhisper, view: true, pin: cmd.Contains("p"));
 
 	[Command("(unclaim|release|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
-	public static void Unclaim(TwitchModule module, string user, bool isWhisper, [Group(1)] string cmd)
+	public static void Unclaim(TwitchModule module, string user, [Group(1)] string cmd)
 	{
 		var result = module.UnclaimModule(user);
 		// If UnclaimModule responds with a null message, someone tried to unclaim a module that no one has claimed but they were waiting to claim.
@@ -143,7 +143,7 @@ static class ModuleCommands
 			if (module.TakeInProgress == null)
 			{
 				IRCConnection.SendMessage(TwitchPlaySettings.data.TakeModule, module.PlayerName, user, module.Code, module.HeaderText);
-				module.TakeInProgress = module.TakeModule(user, module.Code);
+				module.TakeInProgress = module.TakeModule();
 				module.StartCoroutine(module.TakeInProgress);
 			}
 			else

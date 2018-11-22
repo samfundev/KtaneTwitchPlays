@@ -15,7 +15,7 @@ static class GameCommands
 	public static void Stop() => TwitchGame.Instance.StopCommands();
 
 	[Command(@"notes(-?\d+)")]
-	public static void ShowNotes([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper) =>
+	public static void ShowNotes([Group(1)] int index, string user, bool isWhisper) =>
 		IRCConnection.SendMessage(TwitchPlaySettings.data.Notes, user, !isWhisper, index, TwitchGame.Instance.NotesDictionary.TryGetValue(index - 1, out var note) ? note : TwitchPlaySettings.data.NotesSpaceFree);
 
 	[Command(@"notes(-?\d+) +(.+)")]
@@ -49,7 +49,7 @@ static class GameCommands
 	}
 
 	[Command(@"snooze")]
-	public static IEnumerator Snooze(string user, bool isWhisper)
+	public static IEnumerator Snooze()
 	{
 		if (GameRoom.Instance is ElevatorGameRoom)
 			yield break;
@@ -60,7 +60,7 @@ static class GameCommands
 		while (e.MoveNext())
 			yield return e.Current;
 
-		e = AlarmClockCommands.Snooze(alarmClock.Holdable.GetComponent<AlarmClock>(), user, isWhisper);
+		e = AlarmClockCommands.Snooze(alarmClock.Holdable.GetComponent<AlarmClock>());
 		while (e.MoveNext())
 			yield return e.Current;
 	}
@@ -208,7 +208,7 @@ static class GameCommands
 	}
 
 	[Command(@"(?:find *player|player *find|search *player|player *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
-	public static void FindPlayer([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
+	public static void FindPlayer([Group(2)] string queries, string user, bool isWhisper)
 	{
 		var modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
 			.Select(module => string.Format($"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}"))
@@ -217,7 +217,7 @@ static class GameCommands
 	}
 
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
-	public static void FindSolved([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
+	public static void FindSolved([Group(2)] string queries, string user, bool isWhisper)
 	{
 		var modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
 			.Select(module => string.Format($"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}"))
@@ -343,7 +343,7 @@ static class GameCommands
 	}
 
 	[Command(@"bot ?unclaim( ?all)?", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void BotUnclaim([Group(1)] bool all, string user)
+	public static void BotUnclaim(string user)
 	{
 		var modules = TwitchGame.Instance.Modules;
 		foreach (var module in modules)

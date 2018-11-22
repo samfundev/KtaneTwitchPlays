@@ -79,14 +79,14 @@ public class LogUploader : MonoBehaviour
 		return result;
 	}
 
-	public void Post(bool postToChat = true)
+	public void Post()
 	{
 		analysisUrl = null;
 		postOnComplete = false;
-		StartCoroutine(DoPost(Log, postToChat));
+		StartCoroutine(DoPost(Log));
 	}
 
-	private IEnumerator DoPost(string data, bool postToChat)
+	private IEnumerator DoPost(string data)
 	{
 		// This first line is necessary as the Log Analyser uses it as an identifier
 		data = "Initialize engine version: Twitch Plays\n" + data;

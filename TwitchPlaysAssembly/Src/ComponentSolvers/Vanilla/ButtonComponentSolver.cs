@@ -193,13 +193,13 @@ public class ButtonComponentSolver : ComponentSolver
 	{
 		Name = "forcesolve",
 		Text = "If the user with AccessLevel.Admin or higher has issued !# solve on this Big Button instance on Twitch Plays",
-		QueryFunc = ((comp, args) => true)
+		QueryFunc = ((_, __) => true)
 	};
 
 	private static readonly Solution ButtonForceSolveSolution = new Solution
 	{
 		Text = "Force solve The Button.",
-		SolutionMethod = (comp, args) => 0
+		SolutionMethod = (_, __) => 0
 	};
 
 	protected override IEnumerator ForcedSolveIEnumerator()

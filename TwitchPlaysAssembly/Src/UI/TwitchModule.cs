@@ -292,7 +292,7 @@ public class TwitchModule : MonoBehaviour
 	#endregion
 
 	#region Public Methods
-	public IEnumerator TakeModule(string userNickName, string targetModule)
+	public IEnumerator TakeModule()
 	{
 		if (TakeModuleSound != null)
 		{
@@ -303,7 +303,7 @@ public class TwitchModule : MonoBehaviour
 		SetBannerColor(unclaimedBackgroundColor);
 		if (PlayerName != null)
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, targetModule, PlayerName, HeaderText);
+			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, Code, PlayerName, HeaderText);
 			PlayerName = null;
 			TakeInProgress = null;
 		}

@@ -572,9 +572,9 @@ static class GlobalCommands
 	});
 
 	[Command(@"run +(.*) +(\d+)")]
-	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] string distributionName, [Group(2)] int modules, KMGameInfo inf, KMGameInfo.State currentState) => RunSpecific(user, isWhisper, modules, distributionName, inf, currentState);
+	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] string distributionName, [Group(2)] int modules, KMGameInfo inf) => RunSpecific(user, isWhisper, modules, distributionName, inf);
 	[Command(@"run +(\d+) +(.*)")]
-	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] int modules, [Group(2)] string distributionName, KMGameInfo inf, KMGameInfo.State currentState) => RunWrapper(user, isWhisper, () =>
+	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] int modules, [Group(2)] string distributionName, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
 		if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
 		{
@@ -585,7 +585,7 @@ static class GlobalCommands
 	});
 
 	[Command(@"run +(?!.* +\d+$|\d+ +.*$)(.+)")]
-	public static IEnumerator RunMission(string user, bool isWhisper, [Group(1)] string textAfter, KMGameInfo inf, KMGameInfo.State currentState) => RunWrapper(user, isWhisper, () =>
+	public static IEnumerator RunMission(string user, bool isWhisper, [Group(1)] string textAfter, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
 		string missionID = null;
 		string failureMessage = null;
@@ -671,10 +671,10 @@ static class GlobalCommands
 	public static void SilenceMode() => IRCConnection.ToggleSilenceMode();
 
 	[Command(@"elevator")]
-	public static void Elevator(string user, bool isWhisper) => TPElevatorSwitch.Instance?.ReportState();
+	public static void Elevator() => TPElevatorSwitch.Instance?.ReportState();
 
 	[Command(@"elevator (on|off|flip|toggle|switch|press|push)")]
-	public static IEnumerator Elevator([Group(1)] string command, string user, bool isWhisper)
+	public static IEnumerator Elevator([Group(1)] string command)
 	{
 		if (TPElevatorSwitch.Instance == null || TPElevatorSwitch.Instance.ElevatorSwitch == null || !TPElevatorSwitch.Instance.ElevatorSwitch.gameObject.activeInHierarchy)
 			return null;

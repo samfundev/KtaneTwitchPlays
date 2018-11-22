@@ -14,10 +14,10 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive| If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"").Clone();
 
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent, component, ComponentType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(component, ComponentType);
 		if (language != null)
 			ManualCode = $"Who%E2%80%99s%20on%20First{language}";
-		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent, component, ComponentType)}";
+		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(component, ComponentType)}";
 		module.BombComponent.StartCoroutine(SetHeaderText());
 	}
 
