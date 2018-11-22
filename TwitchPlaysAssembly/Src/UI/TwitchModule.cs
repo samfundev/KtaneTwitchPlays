@@ -52,11 +52,8 @@ public class TwitchModule : MonoBehaviour
 		get => _cameraPriority;
 		set
 		{
-			if (_cameraPriority != value)
-			{
-				_cameraPriority = value;
-				TwitchGame.ModuleCameras.TryViewModule(this);
-			}
+			_cameraPriority = value;
+			TwitchGame.ModuleCameras.TryViewModule(this);
 		}
 	}
 	public DateTime LastUsed;   // when the module was last viewed or received a command
@@ -64,6 +61,8 @@ public class TwitchModule : MonoBehaviour
 
 	public void ViewPin(string user, bool pin)
 	{
+		if (Solved && !TwitchPlaySettings.data.AnarchyMode) return;
+
 		CameraPriority =
 			pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode)
 				? CameraPriority.Pinned
