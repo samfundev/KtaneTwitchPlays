@@ -210,8 +210,8 @@ static class GameCommands
 	[Command(@"(?:find *player|player *find|search *player|player *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindPlayer([Group(2)] string queries, string user, bool isWhisper)
 	{
-		var modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
-			.Select(module => string.Format($"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}"))
+		List<string> modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
+			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
 			.ToList();
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such claimed/solved modules.", user, !isWhisper);
 	}
@@ -219,8 +219,8 @@ static class GameCommands
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindSolved([Group(2)] string queries, string user, bool isWhisper)
 	{
-		var modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
-			.Select(module => string.Format($"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}"))
+		List<string> modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
+			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
 			.ToList();
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such solved modules.", user, !isWhisper);
 	}
