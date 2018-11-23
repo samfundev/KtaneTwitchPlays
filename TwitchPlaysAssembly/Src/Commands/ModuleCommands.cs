@@ -191,6 +191,23 @@ static class ModuleCommands
 		// If the user has a claim on the module but there’s no takeover attempt, just ignore this command
 	}
 
+	[Command(@"canceltake", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void CancelTake(TwitchModule module, string user, bool isWhisper)
+	{
+		// cancel the takeover attempt if there is one
+		if (module.TakeInProgress != null)
+		{
+			IRCConnection.SendChatMessage(
+				$"The takeover attempt on module {module.Code} ({module.HeaderText}) was manually cancelled by {user}");
+			module.StopCoroutine(module.TakeInProgress);
+			module.TakeInProgress = null;
+		}
+		else
+			IRCConnection.SendMessage("There are no takeover attempts on this module", user, !isWhisper);
+
+		// If the user has a claim on the module but there’s no takeover attempt, just ignore this command
+	}
+
 	[Command(@"(points|score)")]
 	public static void Points(TwitchModule module) => IRCConnection.SendMessage("{0} ({1}) current score: {2}", module.HeaderText, module.Code, module.Solver.ModInfo.moduleScore);
 
