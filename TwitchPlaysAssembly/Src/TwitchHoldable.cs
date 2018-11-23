@@ -514,6 +514,9 @@ public class TwitchHoldable
 		{
 			Holdable.GetComponent<Selectable>().Trigger();
 			doForceRotate = true;
+
+			if (CommandType == typeof(MissionBinderCommands))
+				MissionBinderCommands.InitializePage(Holdable);
 		}
 		else if (frontFace != _heldFrontFace)
 		{

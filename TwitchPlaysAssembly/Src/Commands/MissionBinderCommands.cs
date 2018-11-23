@@ -28,8 +28,7 @@ public static class MissionBinderCommands
 		}
 	}
 
-	#region Private Methods
-	private static void InitializePage(FloatingHoldable holdable)
+	public static void InitializePage(FloatingHoldable holdable)
 	{
 		var currentPage = holdable.GetComponentsInChildren<Selectable>(false).FirstOrDefault(x => x != holdable);
 		_currentSelectable = currentPage?.GetCurrentChild();
@@ -38,6 +37,7 @@ public static class MissionBinderCommands
 		_currentSelectableIndex = _currentSelectables?.IndexOf(sel => sel == _currentSelectable) ?? -1;
 	}
 
+	#region Private Methods
 	private static void MoveOnPage(int offset)
 	{
 		if (_currentSelectableIndex == -1 || _currentSelectables == null || _currentSelectable == null)
@@ -65,6 +65,8 @@ public static class MissionBinderCommands
 			if ((_currentSelectables == null) || (index > _currentSelectables.Length))
 				yield break;
 
+			int oldSelectableIndex = _currentSelectableIndex;
+
 			int i = 0;
 			Selectable newSelectable = null;
 			for (_currentSelectableIndex = 0; _currentSelectableIndex < _currentSelectables.Length; ++_currentSelectableIndex)
@@ -86,8 +88,7 @@ public static class MissionBinderCommands
 				{
 					var mission = _currentSelectables[_currentSelectableIndex].GetComponent<MissionTableOfContentsMissionEntry>();
 
-					// Skip Previous/Next buttons and tutorials
-					if (mission == null || MissionManager.Instance.GetMission(mission.MissionID).IsTutorial)
+					if (mission == null)
 						continue;
 
 					string missionName = mission.EntryText.text.ToLowerInvariant();
@@ -104,7 +105,10 @@ public static class MissionBinderCommands
 			}
 
 			if (newSelectable == null)
+			{
+				_currentSelectableIndex = oldSelectableIndex;
 				yield break;
+			}
 
 			_currentSelectable.HandleDeselect();
 			_currentSelectable = newSelectable;
@@ -115,6 +119,16 @@ public static class MissionBinderCommands
 
 		_currentSelectable.HandleSelect(true);
 		KTInputManager.Instance.SelectableManager.Select(_currentSelectable, true);
+
+		// Prevent users from trying to start the tutorial missions, assuming they actually selected a mission.
+		var selectedMission = _currentSelectable.GetComponent<MissionTableOfContentsMissionEntry>();
+		if (selectedMission != null && MissionManager.Instance.GetMission(selectedMission.MissionID).IsTutorial)
+		{
+			Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, _currentSelectable.transform);
+			IRCConnection.SendMessage("The tutorial missions are currently unsupported and cannot be selected.");
+			yield break;
+		}
+
 		KTInputManager.Instance.SelectableManager.HandleInteract();
 		_currentSelectable.OnInteractEnded();
 
