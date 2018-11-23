@@ -279,6 +279,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Answering Questions" };
 		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Needy Rotary Phone" };
 
+		//JerryErris
+		ModComponentSolverInformation["qSchlagDenBomb"] = new ModuleInformation { DoesTheRightThing = false, moduleScore = 12 };
+		ModComponentSolverInformation["qSweedishMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
+
 		//JoketteWuzHere
 		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = false };
@@ -414,6 +418,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["GridlockModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["KudosudokuModule"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true };
 		ModComponentSolverInformation["lasers"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["LightCycleModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["LionsShareModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true, manualCode = "Lion%E2%80%99s%20Share" };
