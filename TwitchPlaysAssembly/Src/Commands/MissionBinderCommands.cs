@@ -30,7 +30,8 @@ public static class MissionBinderCommands
 
 	public static void InitializePage(FloatingHoldable holdable)
 	{
-		var currentPage = holdable.GetComponentsInChildren<Selectable>(false).FirstOrDefault(x => x != holdable);
+		Selectable holdableSelectable = holdable.GetComponent<Selectable>();
+		var currentPage = holdable.GetComponentsInChildren<Selectable>(false).FirstOrDefault(x => x != holdableSelectable);
 		_currentSelectable = currentPage?.GetCurrentChild();
 		_currentSelectable?.HandleSelect(true);
 		_currentSelectables = currentPage?.Children;
