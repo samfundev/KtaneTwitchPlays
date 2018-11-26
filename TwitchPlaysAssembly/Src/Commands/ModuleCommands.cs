@@ -204,8 +204,6 @@ static class ModuleCommands
 		}
 		else
 			IRCConnection.SendMessage("There are no takeover attempts on this module", user, !isWhisper);
-
-		// If the user has a claim on the module but there’s no takeover attempt, just ignore this command
 	}
 
 	[Command(@"(points|score)")]

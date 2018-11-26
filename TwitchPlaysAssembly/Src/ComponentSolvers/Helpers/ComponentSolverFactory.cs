@@ -297,6 +297,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["valves"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["visual_impairment"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 
+		//KingSlendy
+		ModComponentSolverInformation["ColorfulMadness"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["PartyTime"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+
 		//Kritzy
 		ModComponentSolverInformation["KritHomework"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["KritBlackjack"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -479,7 +483,6 @@ public static class ComponentSolverFactory
 		//Other modded Modules not built into Twitch Plays
 		ModComponentSolverInformation["BinaryLeds"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleScore = 5, moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20", DoesTheRightThing = true };
-		ModComponentSolverInformation["ColorfulMadness"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["EncryptedMorse"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["instructions"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
