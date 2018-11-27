@@ -208,7 +208,7 @@ static class GameCommands
 	}
 
 	[Command(@"(?:find *player|player *find|search *player|player *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
-	public static void FindPlayer([Group(2)] string queries, string user, bool isWhisper)
+	public static void FindPlayer([Group(1)] string queries, string user, bool isWhisper)
 	{
 		List<string> modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
@@ -217,7 +217,7 @@ static class GameCommands
 	}
 
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
-	public static void FindSolved([Group(2)] string queries, string user, bool isWhisper)
+	public static void FindSolved([Group(1)] string queries, string user, bool isWhisper)
 	{
 		List<string> modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
