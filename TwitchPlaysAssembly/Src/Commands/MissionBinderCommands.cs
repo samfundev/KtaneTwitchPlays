@@ -61,7 +61,7 @@ public static class MissionBinderCommands
 
 	private static IEnumerator SelectOnPage(FloatingHoldable holdable, int index = 0, IList<string> search = null)
 	{
-		if (index > 0 || search != null)
+		if (index > 0 || (search != null && search.Count > 0))
 		{
 			if ((_currentSelectables == null) || (index > _currentSelectables.Length))
 				yield break;
