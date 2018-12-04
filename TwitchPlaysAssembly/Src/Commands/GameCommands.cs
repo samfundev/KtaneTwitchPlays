@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Props;
-using UnityEngine;
 
 static class GameCommands
 {
@@ -125,8 +124,13 @@ static class GameCommands
 	[Command(@"(?:unclaim|release) *all")]
 	public static void UnclaimAll(string user)
 	{
-		foreach (var module in TwitchGame.Instance.Modules.Where(module => module.PlayerName == user))
-			module.UnclaimModule(user);
+		foreach (var module in TwitchGame.Instance.Modules)
+		{
+			module.RemoveFromClaimQueue(user);
+			// Only unclaim the player’s own modules. Avoid releasing other people’s modules if the user is a moderator.
+			if (user.Equals(module.PlayerName, StringComparison.InvariantCultureIgnoreCase))
+				module.UnclaimModule(user);
+		}
 	}
 
 	[Command(@"(?:unclaim|release) +(.+)")]
