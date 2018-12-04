@@ -64,7 +64,7 @@ public class MurderComponentSolver : ComponentSolver
 		}
 
 		var matches = Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)");
-		var anyMisspelling = false;
+		var present = new bool[3];
 		for (int i = 0; i < matches.Count; i++)
 		{
 			int catIndex = Array.IndexOf(Commands, matches[i].Groups[1].ToString());
@@ -72,15 +72,13 @@ public class MurderComponentSolver : ComponentSolver
 				continue;
 			string value = matches[i].Groups[2].ToString().Trim();
 
+			yield return null;
 			if (!NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase)))
 			{
-				anyMisspelling = true;
-				yield return null;
 				yield return $"sendtochat {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
 				continue;
 			}
 
-			yield return null;
 			var found = false;
 			foreach (object item in CycleThroughCategory(catIndex, value))
 			{
@@ -96,11 +94,12 @@ public class MurderComponentSolver : ComponentSolver
 				yield return "unsubmittablepenalty";
 				yield break;
 			}
+			present[catIndex] = true;
 		}
 
-		yield return null;
-		if (!anyMisspelling)
-			yield return DoInteractionClick(_buttons[6]);
+		yield return present.All(b => b)
+			? DoInteractionClick(_buttons[6])   // In this case, yield return null already happened.
+			: (object) "sendtochaterror Command not recognized. Make sure you supply all three values and separate them by commas (“It was [suspect], with the [weapon], in the [location]”).";
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
