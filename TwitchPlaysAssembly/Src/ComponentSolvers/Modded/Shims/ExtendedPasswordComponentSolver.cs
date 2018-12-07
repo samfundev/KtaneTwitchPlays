@@ -61,7 +61,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 
 	static ExtendedPasswordComponentSolver()
 	{
-		ComponentType = ReflectionHelper.FindType("ExtendedPassword");
+		ComponentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");
 		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 	}
 
