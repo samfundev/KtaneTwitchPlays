@@ -107,6 +107,8 @@ public class TwitchGame : MonoBehaviour
 
 		foreach (TwitchBomb bomb in Bombs)
 		{
+			if (bomb == null) continue;
+
 			hasDetonated |= bomb.Bomb.HasDetonated;
 			hasBeenSolved &= bomb.IsSolved;
 			if (timeRemaining > bomb.CurrentTimer)
