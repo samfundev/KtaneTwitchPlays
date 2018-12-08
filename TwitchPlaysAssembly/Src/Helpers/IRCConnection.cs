@@ -186,19 +186,24 @@ public class IRCConnection : MonoBehaviour
 			}
 
 		if (ScrollOutStartTime.Count <= 0) return;
-		float vertScroll = 0;
-		List<TwitchMessage> finishedMessages = new List<TwitchMessage>();
-		foreach (KeyValuePair<TwitchMessage, float> pair in ScrollOutStartTime)
-		{
-			float alpha = Mathf.Pow(Mathf.Min((Time.time - pair.Value) / 0.167f, 1), 4);
-			if (alpha < 1) vertScroll += alpha * pair.Key.GetComponent<RectTransform>().rect.height;
-			else finishedMessages.Add(pair.Key);
-		}
 
-		foreach (TwitchMessage twitchMessage in finishedMessages)
+		float vertScroll = 0;
+		foreach (KeyValuePair<TwitchMessage, float> pair in ScrollOutStartTime.ToArray())
 		{
-			ScrollOutStartTime.Remove(twitchMessage);
-			Destroy(twitchMessage.gameObject);
+			TwitchMessage twitchMessage = pair.Key;
+			if (twitchMessage == null)
+			{
+				ScrollOutStartTime.Remove(twitchMessage);
+				continue;
+			}
+
+			float alpha = Mathf.Pow(Mathf.Min((Time.time - pair.Value) / 0.167f, 1), 4);
+			if (alpha < 1) vertScroll += alpha * twitchMessage.GetComponent<RectTransform>().rect.height;
+			else
+			{
+				ScrollOutStartTime.Remove(twitchMessage);
+				Destroy(twitchMessage.gameObject);
+			}
 		}
 
 		// ReSharper disable InconsistentlySynchronizedField
