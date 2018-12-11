@@ -216,6 +216,14 @@ public class ModuleCameras : MonoBehaviour
 	// Layer 13 is used by KTANE for mouse rendering and 14–15 for VR.
 	private static readonly int[] CameraLayers = { 8, 9, 10, 12, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
 
+	private static readonly Dictionary<TwitchPlaysMode, Color> ModeColors = new Dictionary<TwitchPlaysMode, Color>
+	{
+		{ TwitchPlaysMode.Normal, Color.red },
+		{ TwitchPlaysMode.Time, new Color(1.0f, 0.5f, 0.0f) },
+		{ TwitchPlaysMode.VS, Color.red }, //setting to red until VS mode is implemented further
+		{ TwitchPlaysMode.Zen, Color.cyan }
+	};
+
 	private void InstantiateCamera(int cameraIx)
 	{
 		Camera instantiatedCamera = Instantiate(CameraPrefab);
@@ -232,6 +240,12 @@ public class ModuleCameras : MonoBehaviour
 	{
 		for (int i = 0; i < 6; i++)
 			InstantiateCamera(i);
+
+		TimerComponent timer = _currentBomb.Bomb.GetTimer();
+		Color modeColor = ModeColors[OtherModes.currentMode];
+		TimerPrefab.color = modeColor;
+		timer.text.color = modeColor;
+		timer.StrikeIndicator.RedColour = modeColor;
 	}
 
 	private void LateUpdate()

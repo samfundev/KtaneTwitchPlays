@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
@@ -71,6 +72,36 @@ public abstract class GameRoom
 		tb.BombStartingTimer = bomb.GetTimer().TimeRemaining;
 		TwitchGame.Instance.CreateComponentHandlesForBomb(tb);
 		TwitchGame.Instance.InitializeModuleCodes();
+	}
+
+	public virtual IEnumerator InterruptLights()
+	{
+		SceneManager.Instance.GameplayState.Room.PacingActions.RemoveAll(pacingAction =>
+			pacingAction.EventType == Assets.Scripts.Pacing.PaceEvent.OneMinuteLeft);
+		bool lastState = false;
+		while (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.Gameplay)
+		{
+			bool targetState = OtherModes.currentMode != TwitchPlaysMode.Zen &&
+			                   TwitchGame.Instance.Bombs.Any(bomb => !bomb.Bomb.IsSolved() && bomb.CurrentTimer < 60f);
+			if (targetState != lastState)
+			{
+				foreach (Assets.Scripts.Props.EmergencyLight emergencyLight in Object.FindObjectsOfType<Assets.Scripts.Props.EmergencyLight>())
+				{
+					if (targetState)
+					{
+						emergencyLight.Activate();
+					}
+					else
+					{
+						emergencyLight.Deactivate();
+					}
+				}
+
+				lastState = targetState;
+			}
+
+			yield return null;
+		}
 	}
 
 	public virtual void InitializeBombNames()

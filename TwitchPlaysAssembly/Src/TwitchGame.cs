@@ -292,6 +292,7 @@ public class TwitchGame : MonoBehaviour
 			DebugHelper.LogException(ex, "An exception has occured while setting the bomb names");
 		}
 		StartCoroutine(GameRoom.Instance.ReportBombStatus());
+		StartCoroutine(GameRoom.Instance.InterruptLights());
 
 		try
 		{

@@ -42,9 +42,15 @@ public class Facility : GameRoom
 		{
 			if (bombHandles.TrueForAll(bomb => bomb.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(bomb => bomb.CurrentTimer < 60f && !bomb.IsSolved));
+			ToggleEmergencyLights(bombHandles.Any(bomb => bomb.CurrentTimer < 60f && !bomb.IsSolved && !OtherModes.ZenModeOn));
 			yield return null;
 		}
+	}
+
+	public override IEnumerator InterruptLights()
+	{
+		//Already done
+		yield break;
 	}
 
 	public bool EmergencyLightsState;

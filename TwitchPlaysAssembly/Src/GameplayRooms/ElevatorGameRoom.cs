@@ -84,9 +84,15 @@ public class ElevatorGameRoom : GameRoom
 			if (bombHandle.Bomb.IsSolved())
 				yield break;
 			ToggleEmergencyLights(SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled &&
-				bombHandle.CurrentTimer < 60f && !bombHandle.Bomb.IsSolved());
+				bombHandle.CurrentTimer < 60f && !bombHandle.Bomb.IsSolved() && !OtherModes.ZenModeOn);
 			yield return null;
 		}
+	}
+
+	public override IEnumerator InterruptLights()
+	{
+		//Already done
+		yield break;
 	}
 
 	public bool EmergencyLightsState;

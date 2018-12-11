@@ -59,9 +59,15 @@ public class PortalRoom : GameRoom
 		{
 			if (bombHandles.TrueForAll(handle => handle.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(handle => handle.CurrentTimer < 60f && !handle.Bomb.IsSolved()), bombHandles[0]);
+			ToggleEmergencyLights(OtherModes.currentMode != TwitchPlaysMode.Zen && bombHandles.Any(handle => handle.CurrentTimer < 60f && !handle.Bomb.IsSolved()), bombHandles[0]);
 			yield return null;
 		}
+	}
+
+	public override IEnumerator InterruptLights()
+	{
+		//already done
+		yield break;
 	}
 
 	private bool _emergencyLightsState;

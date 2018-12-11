@@ -24,12 +24,14 @@ public class Factory : GameRoom
 		_bombEndedProperty = _factoryBombType.GetProperty("Ended", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		_factoryModeType = ReflectionHelper.FindType("FactoryAssembly.FactoryGameMode");
+		_factoryDataType = ReflectionHelper.FindType("FactoryAssembly.FactoryRoomData");
 		_destroyBombMethod = _factoryModeType.GetMethod("DestroyBomb", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		_factoryStaticModeType = ReflectionHelper.FindType("FactoryAssembly.StaticMode");
 		_factoryFiniteModeType = ReflectionHelper.FindType("FactoryAssembly.FiniteSequenceMode");
 		_factoryInfiniteModeType = ReflectionHelper.FindType("FactoryAssembly.InfiniteSequenceMode");
 		_currentBombField = _factoryFiniteModeType.GetField("_currentBomb", BindingFlags.NonPublic | BindingFlags.Instance);
+		_warningTimeField = _factoryDataType.GetField("WarningTime", BindingFlags.Public | BindingFlags.Instance);
 
 		_gameModeProperty = _factoryType.GetProperty("GameMode", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -52,6 +54,7 @@ public class Factory : GameRoom
 	{
 		DebugHelper.Log("Found gameplay room of type Factory Room");
 		_gameroom = _gameModeProperty.GetValue(roomObject, new object[] { });
+		_factoryRoom = Object.FindObjectOfType(_factoryType);
 		if (_gameroom.GetType() == _factoryStaticModeType) return;
 
 		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
@@ -73,6 +76,14 @@ public class Factory : GameRoom
 		TwitchGame.Instance.SetBomb(bombs[0], -1);
 		TwitchGame.Instance.InitializeModuleCodes();
 		BombCount = bombs.Count;
+	}
+
+	public override IEnumerator InterruptLights()
+	{
+		if (!_factoryRoom) yield break;
+		if (_factoryDataType == null || _warningTimeField == null) yield break;
+		Object roomData = Object.FindObjectOfType(_factoryDataType);
+		_warningTimeField.SetValue(roomData, OtherModes.currentMode == TwitchPlaysMode.Zen ? 0 : 60);
 	}
 
 	public IEnumerator DestroyBomb(Object bomb)
@@ -197,6 +208,7 @@ public class Factory : GameRoom
 
 	private static Type _factoryType;
 	private static Type _factoryModeType;
+	private static Type _factoryDataType;
 	private static MethodInfo _destroyBombMethod;
 
 	private static Type _factoryStaticModeType;
@@ -205,6 +217,8 @@ public class Factory : GameRoom
 
 	private static PropertyInfo _gameModeProperty;
 	private static FieldInfo _currentBombField;
+	private static FieldInfo _warningTimeField;
 
 	private readonly object _gameroom;
+	private readonly UnityEngine.Object _factoryRoom;
 }
