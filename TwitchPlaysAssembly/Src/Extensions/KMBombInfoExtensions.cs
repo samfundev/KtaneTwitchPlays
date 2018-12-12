@@ -12,7 +12,9 @@ public static class KMBombInfoExtensions
 	#region JSON Types
 
 	public static string WidgetQueryTwofactor = "twofactor";
-	public static string WidgetTwofactorKey = "twofactor_key";
+	public static string WidgetQueryManufacture = "manufacture";
+	public static string WidgetQueryDay = "day";
+	public static string WidgetQueryRandomTime = "time";
 
 	private class IndicatorJSON
 	{
@@ -45,6 +47,28 @@ public static class KMBombInfoExtensions
 	private class PortsJSON
 	{
 		public string[] presentPorts = null;
+	}
+
+	private class ManufactureJSON
+	{
+		public string month;
+		public int year;
+	}
+
+	private class DayJSON
+	{
+		public string day;
+		public string daycolor;
+		public int date;
+		public int month;
+		public DateColor monthcolor;
+	}
+
+	private class TimeJSON
+	{
+		public int[] time;
+		public bool am;
+		public bool pm;
 	}
 
 	private class SerialNumberJSON
@@ -111,6 +135,12 @@ public static class KMBombInfoExtensions
 		Yellow
 	}
 
+	public enum DateColor
+	{
+		Cyan,
+		Orange
+	}
+
 	private static IEnumerable<T> GetJSONEntries<T>(KMBombInfo bombInfo, string queryKey, string queryInfo) where T : new() => bombInfo.QueryWidgets(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<T>);
 
 	private static IEnumerable<IndicatorJSON> GetIndicatorEntries(KMBombInfo bombInfo) => GetJSONEntries<IndicatorJSON>(bombInfo, KMBombInfo.QUERYKEY_GET_INDICATOR, null);
@@ -125,6 +155,11 @@ public static class KMBombInfoExtensions
 
 	private static IEnumerable<TwoFactorJSON> GetTwoFactorEntries(KMBombInfo bombInfo) => GetJSONEntries<TwoFactorJSON>(bombInfo, WidgetQueryTwofactor, null);
 
+	private static IEnumerable<ManufactureJSON> GetManufactureEntries(KMBombInfo bombInfo) => GetJSONEntries<ManufactureJSON>(bombInfo, WidgetQueryManufacture, null);
+
+	private static IEnumerable<DayJSON> GetDayEntries(KMBombInfo bombInfo) => GetJSONEntries<DayJSON>(bombInfo, WidgetQueryDay, null);
+
+	private static IEnumerable<TimeJSON> GetTimeEntries(KMBombInfo bombInfo) => GetJSONEntries<TimeJSON>(bombInfo, WidgetQueryRandomTime, null);
 	#endregion
 
 	#region Public Extensions

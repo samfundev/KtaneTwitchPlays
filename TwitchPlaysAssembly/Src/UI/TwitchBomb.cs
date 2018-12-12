@@ -396,16 +396,29 @@ public class TwitchBomb : MonoBehaviour
 		foreach (Dictionary<string, string> indicator in indicators)
 		{
 			indicator["on"] = indicator["on"] == "True" ? "*" : "";
-
 			if (indicator.ContainsKey("display"))
-				indicator["label"] = indicator["display"] + "(" + indicator["color"] + ")";
+			{
+				indicator["label"] = indicator.ContainsKey("color") ? indicator["display"] + "(" + indicator["color"] + ")" : indicator["display"];
+			}
 		}
-
 		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
-
 		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x == "" ? "Empty" : x).Select(x => "[" + x + "]").Join());
-
 		edgework.Add(QueryWidgets<int>(KMBombInfoExtensions.WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
+		edgework.Add(QueryWidgets<string>(KMBombInfoExtensions.WidgetQueryManufacture).Select(x => x["month"] + " - " + x["year"]).Join());
+		edgework.Add(QueryWidgets<string>(KMBombInfoExtensions.WidgetQueryDay).Select(x => {
+			var enabled = x["colorenabled"] == "True";
+			var monthChar = enabled ? "(O)" : "(M)";
+			var dateChar = enabled ? "(C)" : "(D)";
+			return string.Format("{0}({1}) {2}", x["day"], x["daycolor"],
+			int.Parse(x["monthcolor"]).Equals(0) ? (x["month"] + monthChar + "-" + x["date"] + dateChar) : (x["date"] + dateChar + "-" + x["month"] + monthChar));
+		}).Join());
+		edgework.Add(QueryWidgets<string>(KMBombInfoExtensions.WidgetQueryRandomTime).Select(x => {
+			var str1 = x["time"].Substring(0, 2);
+			var str2 = x["time"].Substring(2, 2);
+			var str3 = x["am"] == "True" ? "am" : x["pm"] == "True" ? "pm" : "";
+			if ((str3 == "am" || str3 == "pm") && int.Parse(str1) < 10) str1 = str1.Substring(1, 1);
+			return str1 + ":" + str2 + str3;
+		}).Join(", "));
 
 		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
 
