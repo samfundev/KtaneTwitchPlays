@@ -12,6 +12,7 @@ public static class KMBombInfoExtensions
 	#region JSON Types
 
 	public static string WidgetQueryTwofactor = "twofactor";
+	public static string WidgetTwoFactorKey = "twofactor_key";
 	public static string WidgetQueryManufacture = "manufacture";
 	public static string WidgetQueryDay = "day";
 	public static string WidgetQueryRandomTime = "time";
