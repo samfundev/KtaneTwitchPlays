@@ -1,22 +1,36 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 static class ProfileHelper
 {
 	static readonly string modSelectorConfig = Path.Combine(Application.persistentDataPath, "modSelectorConfig.json");
 
+	static Type ProfileManagerType;
+	static MethodInfo ReloadActiveConfigurationMethod;
+
+	public static void ReloadActiveConfiguration()
+	{
+		ProfileManagerType = ProfileManagerType ?? ReflectionHelper.FindType("ProfileManager");
+		ReloadActiveConfigurationMethod = ReloadActiveConfigurationMethod ?? ProfileManagerType?.GetMethod("ReloadActiveConfiguration", BindingFlags.Public | BindingFlags.Static);
+		ReloadActiveConfigurationMethod?.Invoke(null, null);
+	}
+
 	public static List<string> Profiles
 	{
 		get => JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(modSelectorConfig));
-		set => File.WriteAllText(modSelectorConfig, JsonConvert.SerializeObject(value));
+		set
+		{
+			File.WriteAllText(modSelectorConfig, JsonConvert.SerializeObject(value));
+			ReloadActiveConfiguration();
+		}
 	}
 
-	public static string GetProperProfileName(string profile) => TwitchPlaySettings.data.ProfileWhitelist.FirstOrDefault(str => str.ToLowerInvariant() == profile);
-
-	public static string GetProfileFileName(string profile) => GetProperProfileName(profile).Replace(' ', '_');
+	public static string GetProperProfileName(string profile) => TwitchPlaySettings.data.ProfileWhitelist.FirstOrDefault(str => string.Equals(str, profile, StringComparison.InvariantCultureIgnoreCase));
 
 	public static bool Add(string profile)
 	{
