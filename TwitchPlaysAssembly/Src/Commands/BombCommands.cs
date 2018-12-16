@@ -90,7 +90,6 @@ public static class BombCommands
 	{
 		if (bomb.Bomb.GetTimer().IsUpdating)
 		{
-			OtherModes.DisableLeaderboard();
 			bomb.Bomb.GetTimer().StopTimer();
 		}
 	}
@@ -142,9 +141,6 @@ public static class BombCommands
 
 		bomb.CurrentTimer = direct ? time : negative ? bomb.CurrentTimer - time : bomb.CurrentTimer + time;
 
-		if (originalTime < bomb.CurrentTimer)
-			OtherModes.DisableLeaderboard(true);
-
 		IRCConnection.SendMessage(direct
 			? $"Set the bomb's timer to {Math.Abs(time < 0 ? 0 : time).FormatTime()}."
 			: $"{(time > 0 ? "Added" : "Subtracted")} {Math.Abs(time).FormatTime()} {(time > 0 ? "to" : "from")} the timer.", user, !isWhisper);
@@ -157,9 +153,6 @@ public static class BombCommands
 		{
 			// Don’t go below 0 strikes because Simon Says is unsolvable then.
 			var newAmount = set(Math.Max(0, direct ? amount : negative ? originalAmount - amount : originalAmount + amount));
-
-			if (newAmount < originalAmount)
-				OtherModes.DisableLeaderboard(true);
 
 			if (direct)
 				IRCConnection.SendMessage(string.Format("{2} set to {0} {1}.", newAmount, newAmount != 1 ? "strikes" : "strike", thing1), user, !isWhisper);

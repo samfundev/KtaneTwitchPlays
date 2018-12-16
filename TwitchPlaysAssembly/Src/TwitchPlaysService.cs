@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Props;
 using UnityEngine;
+using Assets.Scripts.Records;
+using Assets.Scripts.Stats;
 
 public class TwitchPlaysService : MonoBehaviour
 {
@@ -84,9 +86,16 @@ public class TwitchPlaysService : MonoBehaviour
 		CoroutineQueue.CancelFutureSubcoroutines();
 		CoroutineQueue.StopForcedSolve();
 		StopAllCoroutines();
+
+		LeaderboardsEnabled = true;
 	}
 
-	private void OnEnable() => OnStateChange(KMGameInfo.State.Setup);
+	private void OnEnable()
+	{
+		OnStateChange(KMGameInfo.State.Setup);
+
+		LeaderboardsEnabled = false;
+	}
 
 	private void Update()
 	{
@@ -546,6 +555,18 @@ public class TwitchPlaysService : MonoBehaviour
 			var drop = holdable.Drop();
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
+		}
+	}
+
+	private bool LeaderboardsEnabled
+	{
+		set
+		{
+			if (RecordManager.Instance != null)
+				RecordManager.Instance.DisableBestRecords = value;
+
+			if (StatsManager.Instance != null)
+				StatsManager.Instance.DisableStatChanges = value;
 		}
 	}
 }

@@ -690,7 +690,6 @@ public abstract class ComponentSolver
 		_currentUserNickName = null;
 		_silentlySolve = true;
 		HandleForcedSolve(Module);
-		OtherModes.DisableLeaderboard(true);
 	}
 
 	protected virtual IEnumerator ForcedSolveIEnumerator()

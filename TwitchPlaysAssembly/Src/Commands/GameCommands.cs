@@ -248,7 +248,6 @@ static class GameCommands
 			IRCConnection.SendMessage($"Sorry {user}, you don’t have enough points to use the newbomb command.");
 		else
 		{
-			OtherModes.DisableLeaderboard(true);
 			TwitchPlaySettings.AddRewardBonus(-TwitchPlaySettings.GetRewardBonus());
 
 			foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
@@ -316,7 +315,6 @@ static class GameCommands
 	[Command(@"solvebomb", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SolveBomb()
 	{
-		OtherModes.DisableLeaderboard();
 		foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
 			bomb.Bomb.GetTimer().StopTimer();
 		foreach (var module in TwitchGame.Instance.Modules.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
