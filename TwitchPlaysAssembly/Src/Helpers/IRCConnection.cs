@@ -56,6 +56,8 @@ public class IRCConnection : MonoBehaviour
 	public RectTransform MainWindowTransform;
 	public RectTransform HighlightTransform;
 
+	public GameObject ConnectionAlert;
+
 	#region Nested Types
 	public class MessageEvent : UnityEvent<Message>
 	{
@@ -293,9 +295,14 @@ public class IRCConnection : MonoBehaviour
 		Instance.CurrentColor = "#" + ColorUtility.ToHtmlStringRGB(TwitchPlaySettings.data.TwitchPlaysDebugUsernameColor);
 	}
 
+	bool everConnected = false; // Used to prevent the connection alert from flashing quickly when loading the game and it loads successfully.
 	public IEnumerator KeepConnectionAlive()
 	{
 		if (!gameObject.activeInHierarchy) yield break;
+
+		Text alertText = ConnectionAlert.transform.Find("Text").GetComponent<Text>();
+		Transform alertProgressBar = ConnectionAlert.transform.Find("ProgressBar");
+
 		AddTextToHoldable("[IRC:Connect] Connecting to IRC");
 		Stopwatch stopwatch = new Stopwatch();
 		int[] connectionRetryDelay = { 100, 1000, 2000, 5000, 10000, 20000, 30000, 40000, 50000, 60000 };
@@ -305,16 +312,26 @@ public class IRCConnection : MonoBehaviour
 
 			while (_state != IRCConnectionState.Connected)
 			{
+				ConnectionAlert.SetActive(everConnected);
+				everConnected = true;
+
 				stopwatch.Start();
 				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex])
 				{
-					yield return new WaitForSeconds(0.1f);
+					alertText.text = $"The bot is currently disconnected. Attempting to connect in {((connectionRetryDelay[connectionRetryIndex] - stopwatch.ElapsedMilliseconds) / 1000f).ToString("N1")}";
+					alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / (float) connectionRetryDelay[connectionRetryIndex], 1, 1);
+
+					yield return null;
 					if (_state != IRCConnectionState.DoNotRetry) continue;
 					_state = IRCConnectionState.Disconnected;
 					AddTextToHoldable("\nCancelled connection retry attempt");
+					ConnectionAlert.SetActive(false);
 					yield break;
 				}
 				stopwatch.Reset();
+
+				alertText.text = "Connecting...";
+				alertProgressBar.localScale = new Vector3(0, 1, 1);
 
 				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
 				Thread connectionAttempt = new Thread(ConnectToIRC);
@@ -326,6 +343,11 @@ public class IRCConnection : MonoBehaviour
 					case IRCConnectionState.DoNotRetry:
 						_state = IRCConnectionState.Disconnected;
 						AddTextToHoldable("[IRC:Connect] Aborted.");
+
+						alertText.text = "Unable to connect, aborting retry attempts.";
+						yield return new WaitForSeconds(1);
+						ConnectionAlert.SetActive(false);
+
 						yield break;
 					case IRCConnectionState.Connected:
 						AddTextToHoldable("[IRC:Connect] Successful.");
@@ -336,6 +358,8 @@ public class IRCConnection : MonoBehaviour
 						break;
 				}
 			}
+			ConnectionAlert.SetActive(false);
+
 			while (_state == IRCConnectionState.Connected) yield return new WaitForSeconds(0.1f);
 			if (TwitchGame.BombActive && TwitchGame.ModuleCameras != null)
 				TwitchGame.ModuleCameras.DisableCameraWall();
@@ -711,18 +735,40 @@ public class IRCConnection : MonoBehaviour
 	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
 	private void InputThreadMethod(TextReader input, NetworkStream networkStream)
 	{
+		Text alertText = ConnectionAlert.transform.Find("Text").GetComponent<Text>();
+		Transform alertProgressBar = ConnectionAlert.transform.Find("ProgressBar");
+
+		bool pingTimeoutTest = false; // Keeps track of if we are currently in a ping timeout test.
 		Stopwatch stopwatch = new Stopwatch();
 		try
 		{
 			stopwatch.Start();
 			while (ThreadAlive)
 			{
-				if (stopwatch.ElapsedMilliseconds > ConnectionTimeout)
+				if (_state == IRCConnectionState.Connected)
 				{
-					AddTextToHoldable("[IRC:Connect] Connection timed out.");
-					stopwatch.Reset();
-					_state = IRCConnectionState.Disconnected;
-					continue;
+					// If the server hasn't sent any data for 6 minutes then begin a ping timeout test.
+					if (stopwatch.ElapsedMilliseconds > 360000 && !pingTimeoutTest)
+					{
+						pingTimeoutTest = true;
+						stopwatch.Reset();
+						stopwatch.Start();
+						SendCommand("PING");
+						ConnectionAlert.SetActive(true);
+					}
+					else if (pingTimeoutTest)
+					{
+						alertText.text = $"The bot might be disconnected from the server. Timing out in {(10 - stopwatch.ElapsedMilliseconds / 1000f).ToString("N1")}";
+						alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / 10000f, 1, 1);
+
+						if (stopwatch.ElapsedMilliseconds > 10000) // Timeout if there hasn't been a response to the ping for 10s.
+						{
+							AddTextToHoldable("[IRC:Connect] Connection timed out.");
+							stopwatch.Reset();
+							_state = IRCConnectionState.Disconnected;
+							continue;
+						}
+					}
 				}
 
 				if (!networkStream.DataAvailable)
@@ -731,6 +777,8 @@ public class IRCConnection : MonoBehaviour
 					continue;
 				}
 
+				pingTimeoutTest = false;
+				ConnectionAlert.SetActive(false);
 				stopwatch.Reset();
 				stopwatch.Start();
 				string buffer = input.ReadLine();
