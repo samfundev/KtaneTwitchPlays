@@ -129,7 +129,6 @@
     <Compile Include="Src\DataBlobs\TwitchModuleData.cs" />
     <Compile Include="Src\DataBlobs\TwitchPlaysServiceData.cs" />
     <Compile Include="Src\Extensions\GeneralExtensions.cs" />
-    <Compile Include="Src\Extensions\KMBombInfoExtensions.cs" />
     <Compile Include="Src\GameplayRooms\DefaultGameRoom.cs" />
     <Compile Include="Src\GameplayRooms\ElevatorGameRoom.cs" />
     <Compile Include="Src\GameplayRooms\Facility.cs" />

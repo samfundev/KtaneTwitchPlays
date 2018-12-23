@@ -359,6 +359,11 @@ public class TwitchBomb : MonoBehaviour
 		TwitchGame.ModuleCameras?.Show();
 	}
 
+	const string WidgetQueryTwofactor = "twofactor";
+	const string WidgetQueryManufacture = "manufacture";
+	const string WidgetQueryDay = "day";
+	const string WidgetQueryRandomTime = "time";
+
 	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => Bomb.WidgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<Dictionary<string, T>>);
 
 	public string FillEdgework()
@@ -403,16 +408,16 @@ public class TwitchBomb : MonoBehaviour
 		}
 		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
 		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x == "" ? "Empty" : x).Select(x => "[" + x + "]").Join());
-		edgework.Add(QueryWidgets<int>(KMBombInfoExtensions.WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
-		edgework.Add(QueryWidgets<string>(KMBombInfoExtensions.WidgetQueryManufacture).Select(x => x["month"] + " - " + x["year"]).Join());
-		edgework.Add(QueryWidgets<string>(KMBombInfoExtensions.WidgetQueryDay).Select(x => {
+		edgework.Add(QueryWidgets<int>(WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
+		edgework.Add(QueryWidgets<string>(WidgetQueryManufacture).Select(x => x["month"] + " - " + x["year"]).Join());
+		edgework.Add(QueryWidgets<string>(WidgetQueryDay).Select(x => {
 			var enabled = x["colorenabled"] == "True";
 			var monthChar = enabled ? "(O)" : "(M)";
 			var dateChar = enabled ? "(C)" : "(D)";
 			return string.Format("{0}({1}) {2}", x["day"], x["daycolor"],
 			int.Parse(x["monthcolor"]).Equals(0) ? (x["month"] + monthChar + "-" + x["date"] + dateChar) : (x["date"] + dateChar + "-" + x["month"] + monthChar));
 		}).Join());
-		edgework.Add(QueryWidgets<string>(KMBombInfoExtensions.WidgetQueryRandomTime).Select(x => {
+		edgework.Add(QueryWidgets<string>(WidgetQueryRandomTime).Select(x => {
 			var str1 = x["time"].Substring(0, 2);
 			var str2 = x["time"].Substring(2, 2);
 			var str3 = x["am"] == "True" ? "am" : x["pm"] == "True" ? "pm" : "";
