@@ -27,7 +27,6 @@ public class LogUploader : MonoBehaviour
 
 	private string[] _blacklistedLogLines =
 	{
-		"[PaceMaker]",
 		"[ServicesSteam]",
 		"[BombGenerator] Instantiated EmptyComponent",
 		"[BombGenerator] Filling remaining spaces with empty components.",
@@ -54,7 +53,7 @@ public class LogUploader : MonoBehaviour
 
 	private readonly OrderedDictionary domainNames = new OrderedDictionary
 	{
-		// In order of preference (favourite first)
+		// In order of preference (favorite first)
 		// The integer value is the data size limit in bytes
 		{ "ktane.timwi.de", 25000000 },
 		{ "hastebin.com", 400000 }
@@ -88,7 +87,7 @@ public class LogUploader : MonoBehaviour
 
 	private IEnumerator DoPost(string data)
 	{
-		// This first line is necessary as the Log Analyser uses it as an identifier
+		// This first line is necessary as the Log Analyzer uses it as an identifier
 		data = "Initialize engine version: Twitch Plays\n" + data;
 
 		byte[] encodedData = Encoding.UTF8.GetBytes(data);
