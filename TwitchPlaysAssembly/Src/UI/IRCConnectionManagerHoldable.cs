@@ -21,6 +21,7 @@ public class IRCConnectionManagerHoldable : MonoBehaviour
 	[HideInInspector]
 	public static bool TwitchPlaysDataRefreshed = false;
 
+	[HideInInspector]
 	public TPElevatorSwitch ElevatorSwitch;
 
 	private void Start()
