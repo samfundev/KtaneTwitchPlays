@@ -10,32 +10,41 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		base(module)
 	{
 		_buttons = ((WhosOnFirstComponent) module.BombComponent).Buttons;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("WhosOnFirstComponentSolver", "!{0} what? [press the button that says \"WHAT?\"] | !{0} press 3 [press the third button in english reading order] | The phrase must match exactly | Not case sensitive", "Who%E2%80%99s on First");
 	}
 
 	private static readonly string[] Phrases = { "ready", "first", "no", "blank", "nothing", "yes", "what", "uhhh", "left", "right", "middle", "okay", "wait", "press", "you", "you are", "your", "you're", "ur", "u", "uh huh", "uh uh", "what?", "done", "next", "hold", "sure", "like" };
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string word = inputCommand.ToLowerInvariant().Trim();
-		if (!Phrases.Contains(word))
-		{
-			yield return null;
-			yield return $"sendtochaterror The word \"{word}\" isn't a valid word.";
-			yield break;
-		}
+		inputCommand = inputCommand.ToLowerInvariant().Trim();
 
-		foreach (KeypadButton button in _buttons)
+		string[] split = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+		if (split[0] == "press" && int.TryParse(split[1], out int buttonIndex) && buttonIndex > 0 && buttonIndex < 7)
 		{
-			if (!inputCommand.Equals(button.GetText(), StringComparison.InvariantCultureIgnoreCase)) continue;
-			yield return null;
-			button.Interact();
-			yield return new WaitForSeconds(0.1f);
-			yield break;
+			_buttons[buttonIndex - 1].Interact();
 		}
+		else
+		{
+			if (!Phrases.Contains(inputCommand))
+			{
+				yield return null;
+				yield return $"sendtochaterror The word \"{inputCommand}\" isn't a valid word.";
+				yield break;
+			}
 
-		yield return null;
-		yield return "unsubmittablepenalty";
+			foreach (KeypadButton button in _buttons)
+			{
+				if (!inputCommand.Equals(button.GetText(), StringComparison.InvariantCultureIgnoreCase)) continue;
+				yield return null;
+				button.Interact();
+				yield return new WaitForSeconds(0.1f);
+				yield break;
+			}
+
+			yield return null;
+			yield return "unsubmittablepenalty";
+		}
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
