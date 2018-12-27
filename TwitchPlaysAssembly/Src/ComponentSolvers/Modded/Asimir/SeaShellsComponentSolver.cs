@@ -12,7 +12,7 @@ public class SeaShellsComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press buttons by typing !{0} press alar llama. You can submit partial text as long it only matches one button. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press buttons by typing !{0} press alar llama 3. You can submit partial text as long it only matches one button. You can also use the button's position in english reading order. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -27,37 +27,46 @@ public class SeaShellsComponentSolver : ComponentSolver
 			yield return null;
 
 			IEnumerable<string> submittedText = commands.Skip(1);
-			List<string> fixedLabels = new List<string>();
+			List<KMSelectable> selectables = new List<KMSelectable>();
 			foreach (string text in submittedText)
 			{
 				IEnumerable<string> matchingLabels = buttonLabels.Where(label => label.Contains(text)).ToList();
 
 				int matchedCount = matchingLabels.Count();
-				if (buttonLabels.Contains(text))
+				if (int.TryParse(text, out int index))
 				{
-					fixedLabels.Add(text);
+					if (index < 1 || index > 5) yield break;
+
+					selectables.Add(_buttons[index - 1]);
 				}
 				else
-					switch (matchedCount)
+				{
+					string fixedText = text;
+					if (!buttonLabels.Contains(text))
 					{
-						case 1:
-							fixedLabels.Add(matchingLabels.First());
-							break;
-						case 0:
-							yield return $"sendtochaterror There isn't any label that contains \"{text}\".";
-							yield break;
-						default:
-							yield return
-								$"sendtochaterror There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
-							yield break;
+						switch (matchedCount)
+						{
+							case 1:
+								fixedText = matchingLabels.First();
+								break;
+							case 0:
+								yield return $"sendtochaterror There isn't any label that contains \"{text}\".";
+								yield break;
+							default:
+								yield return
+									$"sendtochaterror There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
+								yield break;
+						}
 					}
+
+					selectables.Add(_buttons[buttonLabels.IndexOf(label => label == fixedText)]);
+				}
 			}
 
 			int startingStage = (int) StageField.GetValue(_component);
-			foreach (string fixedLabel in fixedLabels)
+			foreach (KMSelectable selectable in selectables)
 			{
-				KMSelectable button = _buttons[buttonLabels.ToList().IndexOf(fixedLabel)];
-				DoInteractionClick(button);
+				DoInteractionClick(selectable);
 
 				yield return new WaitForSeconds(0.1f);
 
