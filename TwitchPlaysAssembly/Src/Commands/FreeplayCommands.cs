@@ -71,7 +71,7 @@ public static class FreeplayCommands
 			while (e.MoveNext())
 				yield return e.Current;
 		}
-		else if ((m = Regex.Match(parameters, "(\d{1,3}):(\d{2})")).Success)
+		else if ((m = Regex.Match(parameters, @"(\d{1,3}):(\d{2})")).Success)
 		{
 			var e = SetBombTimer(holdable, 0, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
 			while (e.MoveNext())
