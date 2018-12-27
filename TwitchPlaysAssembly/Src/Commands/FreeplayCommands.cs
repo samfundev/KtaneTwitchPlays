@@ -64,27 +64,26 @@ public static class FreeplayCommands
 	[Command(@"(set|start) +(.*)")]
 	public static IEnumerator StartAdvanced(FloatingHoldable holdable, [Group(1)] string command, [Group(2)] string parameters, string user, bool isWhisper)
 	{
-		Match m;
-		if ((m = Regex.Match(parameters, @"(\d):(\d{1,3}):(\d{2})")).Success)
+		if (parameters.RegexMatch(out Match m, @"(\d):(\d{1,3}):(\d{2})"))
 		{
 			var e = SetBombTimer(holdable, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value));
 			while (e.MoveNext())
 				yield return e.Current;
 		}
-		else if ((m = Regex.Match(parameters, @"(\d{1,3}):(\d{2})")).Success)
+		else if (parameters.RegexMatch(out m, @"(\d{1,3}):(\d{2})"))
 		{
 			var e = SetBombTimer(holdable, 0, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
 			while (e.MoveNext())
 				yield return e.Current;
 		}
 
-		if (MultipleBombs.Installed() && (m = Regex.Match(parameters, @"(\d+) +bombs")).Success)
+		if (MultipleBombs.Installed() && parameters.RegexMatch(out m, @"(\d+) +bombs"))
 		{
 			var e = ChangeBombCount(holdable, int.Parse(m.Groups[1].Value));
 			while (e.MoveNext())
 				yield return e.Current;
 		}
-		if ((m = Regex.Match(parameters, @"(\d+) +modules")).Success)
+		if (parameters.RegexMatch(out m, @"(\d+) +modules"))
 		{
 			var e = ChangeModuleCount(holdable, int.Parse(m.Groups[1].Value));
 			while (e.MoveNext())
