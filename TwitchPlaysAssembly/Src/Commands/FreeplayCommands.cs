@@ -16,9 +16,9 @@ public static class FreeplayCommands
 	[Command(@"mods ?only(?: +(on)| +off)", AccessLevel.Admin, accessLevelAnarchy: AccessLevel.Defuser)]
 	public static void ModsOnly(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.OnlyMods, s => s.ModsOnly, TwitchPlaySettings.data.EnableFreeplayModsOnly, TwitchPlaySettings.data.FreePlayModsOnlyDisabled);
 
-	[Command(@"timer? +(\d+):(\d{2}):(\d{2})")]
+	[Command(@"timer? +(\d+):(\d{1,3}):(\d{2})")]
 	public static IEnumerator ChangeTimerHours(FloatingHoldable holdable, [Group(1)] int hours, [Group(2)] int minutes, [Group(3)] int seconds) => SetBombTimer(holdable, hours, minutes, seconds);
-	[Command(@"timer? +(\d{2}):(\d{2})")]
+	[Command(@"timer? +(\d{1,3}):(\d{2})")]
 	public static IEnumerator ChangeTimer(FloatingHoldable holdable, [Group(1)] int minutes, [Group(2)] int seconds) => SetBombTimer(holdable, 0, minutes, seconds);
 
 	[Command(@"bombs +(\d+)")]
@@ -65,13 +65,13 @@ public static class FreeplayCommands
 	public static IEnumerator StartAdvanced(FloatingHoldable holdable, [Group(1)] string command, [Group(2)] string parameters, string user, bool isWhisper)
 	{
 		Match m;
-		if ((m = Regex.Match(parameters, @"(\d):(\d{2}):(\d{2})")).Success)
+		if ((m = Regex.Match(parameters, @"(\d):(\d{1,3}):(\d{2})")).Success)
 		{
 			var e = SetBombTimer(holdable, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value));
 			while (e.MoveNext())
 				yield return e.Current;
 		}
-		else if ((m = Regex.Match(parameters, "([0-9]+):([0-9]{2})")).Success)
+		else if ((m = Regex.Match(parameters, "(\d{1,3}):(\d{2})")).Success)
 		{
 			var e = SetBombTimer(holdable, 0, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
 			while (e.MoveNext())
