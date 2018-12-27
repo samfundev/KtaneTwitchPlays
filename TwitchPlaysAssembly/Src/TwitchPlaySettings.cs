@@ -101,6 +101,8 @@ public class TwitchPlaySettingsData
 		{"discord", "Join the KTaNE discord here: https://discord.gg/Fv7YEDj" }
 	};
 
+	public List<string> IgnoreCommands = new List<string>(); //Commands to ignore, if you have another bot for example
+
 	public Dictionary<string, bool> ModPermissions = new Dictionary<string, bool>();
 
 	public Dictionary<string, ModuleDistributions> ModDistributions = new Dictionary<string, ModuleDistributions>()

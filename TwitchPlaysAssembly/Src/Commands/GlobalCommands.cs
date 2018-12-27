@@ -780,12 +780,13 @@ static class GlobalCommands
 	[Command(null)]
 	public static bool DefaultCommand(string cmd, string user, bool isWhisper)
 	{
-		if (TwitchPlaySettings.data.GeneralCustomMessages.ContainsKey(cmd.ToLowerInvariant()))
-		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.GeneralCustomMessages[cmd.ToLowerInvariant()], user, !isWhisper);
-			return true;
-		}
-		return false;
+		if (!TwitchPlaySettings.data.GeneralCustomMessages.ContainsKey(cmd.ToLowerInvariant()))
+			return
+				TwitchPlaySettings.data.IgnoreCommands
+					.Contains(cmd.ToLowerInvariant()); //Ignore the command if it's in IgnoreCommands
+		IRCConnection.SendMessage(TwitchPlaySettings.data.GeneralCustomMessages[cmd.ToLowerInvariant()], user, !isWhisper);
+		return true;
+
 	}
 
 	#region Private methods
