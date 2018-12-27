@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Assets.Scripts.Mods;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -119,6 +121,17 @@ static class GlobalCommands
 
 	[Command(@"shorturl")]
 	public static void ShortURL(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs"), user, !isWhisper);
+
+	[Command(@"(?:builddate|version)")]
+	public static void BuildDate(string user, bool isWhisper)
+	{
+		string path = ModManager.Instance.GetEnabledModPaths(ModInfo.ModSourceEnum.Local)
+						.FirstOrDefault(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Any()) ??
+					ModManager.Instance.GetEnabledModPaths(ModInfo.ModSourceEnum.SteamWorkshop)
+						.First(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Any());
+		DateTime date = GetBuildDateTime(Path.Combine(path, "TwitchPlaysAssembly.dll"));
+		IRCConnection.SendMessage($"Date and time this version of TP was built: {date:yyyy-MM-dd HH:mm:ss} UTC", user, !isWhisper);
+	}
 
 	[Command(@"(?:read|write|change|set) *settings? +(\S+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void ReadSetting([Group(1)] string settingName, string user, bool isWhisper) => IRCConnection.SendMessage(TwitchPlaySettings.GetSetting(settingName), user, !isWhisper);
@@ -831,6 +844,25 @@ static class GlobalCommands
 	}
 
 	private static int GetMaximumModules(KMGameInfo inf, int maxAllowed = int.MaxValue) => Math.Min(TPElevatorSwitch.IsON ? 54 : inf.GetMaximumBombModules(), maxAllowed);
+
+	private static DateTime GetBuildDateTime(string path)
+	{
+		const int c_PeHeaderOffset = 60;
+		const int c_LinkerTimestampOffset = 8;
+
+		byte[] buffer = new byte[2048];
+
+		using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+			stream.Read(buffer, 0, 2048);
+
+		int offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+		int secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+		DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+		DateTime linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+
+		return linkTimeUtc;
+	}
 
 	private static string ResolveMissionID(KMGameInfo inf, string targetID, out string failureMessage)
 	{
