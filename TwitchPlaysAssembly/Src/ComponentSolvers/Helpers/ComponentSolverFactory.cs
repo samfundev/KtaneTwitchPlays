@@ -65,6 +65,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["NeedyBeer"] = module => new NeedyBeerComponentSolver(module);
 		ModComponentSolverCreators["errorCodes"] = module => new ErrorCodesComponentSolver(module);
+		ModComponentSolverCreators["blockbusters"] = module => new BlockbustersComponentSolver(module);
+		ModComponentSolverCreators["catchphrase"] = module => new CatchphraseComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -379,6 +381,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["taxReturns"] = new ModuleInformation { moduleScore = 17, DoesTheRightThing = true };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["wire"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
+		ModComponentSolverInformation["blockbusters"] = new ModuleInformation { moduleScore = 5, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["catchphrase"] = new ModuleInformation { moduleScore = 8, builtIntoTwitchPlays = true };
 
 		//samfun123
 		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
