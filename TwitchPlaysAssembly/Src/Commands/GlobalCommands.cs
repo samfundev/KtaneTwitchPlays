@@ -119,6 +119,13 @@ static class GlobalCommands
 	[Command(@"(log|analysis)")]
 	public static void Log() => LogUploader.Instance.PostToChat("Analysis for the previous bomb: {0}");
 
+	[Command("(log|analysis)now", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void LogNow()
+	{
+		LogUploader.Instance.Post();
+		LogUploader.Instance.postOnComplete = true;
+	}
+
 	[Command(@"shorturl")]
 	public static void ShortURL(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs"), user, !isWhisper);
 
