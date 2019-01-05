@@ -158,6 +158,8 @@ public class TwitchHoldable
 
 		if (holdState != FloatingHoldable.HoldStateEnum.Held)
 		{
+			if (TwitchGame.BombActive)
+				BombCommands.Drop(TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb]);
 			IEnumerator holdCoroutine = Hold();
 			while (holdCoroutine.MoveNext() && !Strike)
 				yield return holdCoroutine.Current;
