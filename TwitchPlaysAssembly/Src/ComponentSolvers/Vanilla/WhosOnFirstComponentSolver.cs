@@ -20,7 +20,7 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		inputCommand = inputCommand.ToLowerInvariant().Trim();
 
 		string[] split = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-		if (split[0] == "press" && int.TryParse(split[1], out int buttonIndex) && buttonIndex > 0 && buttonIndex < 7)
+		if (split.Length == 2 && split[0] == "press" && int.TryParse(split[1], out int buttonIndex) && buttonIndex > 0 && buttonIndex < 7)
 		{
 			_buttons[buttonIndex - 1].Interact();
 		}
