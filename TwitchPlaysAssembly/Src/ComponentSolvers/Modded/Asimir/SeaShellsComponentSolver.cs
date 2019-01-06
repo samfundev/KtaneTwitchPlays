@@ -73,9 +73,8 @@ public class SeaShellsComponentSolver : ComponentSolver
 		int startingStage = (int) StageField.GetValue(_component);
 		foreach (KMSelectable selectable in selectables)
 		{
-			DoInteractionClick(selectable);
-
-			yield return new WaitForSeconds(0.1f);
+			yield return null;
+			yield return DoInteractionClick(selectable);
 
 			if (startingStage != (int) StageField.GetValue(_component))
 				yield break;
