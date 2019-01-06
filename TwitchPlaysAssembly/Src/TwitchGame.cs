@@ -299,7 +299,7 @@ public class TwitchGame : MonoBehaviour
 		try
 		{
 			if (GameRoom.Instance.HoldBomb)
-				TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(Bombs[0].HoldBomb());
+				TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Hold(Bombs[0]));
 		}
 		catch (Exception ex)
 		{
