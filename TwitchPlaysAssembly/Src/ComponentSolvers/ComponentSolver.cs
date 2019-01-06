@@ -746,7 +746,7 @@ public abstract class ComponentSolver
 				}
 				catch (Exception ex)
 				{
-					DebugHelper.LogException(ex, "An exception occured while using the Forced Solve handler:");
+					DebugHelper.LogException(ex, "An exception occurred while using the Forced Solve handler:");
 					CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.Solver.Module, null);
 					foreach (MonoBehaviour behavior in handle.BombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 					{
@@ -776,7 +776,7 @@ public abstract class ComponentSolver
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "An exception occured while silently solving a module:");
+			DebugHelper.LogException(ex, "An exception occurred while silently solving a module:");
 		}
 	}
 

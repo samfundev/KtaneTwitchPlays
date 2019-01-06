@@ -176,7 +176,7 @@ public class IRCConnection : MonoBehaviour
 					}
 					catch (Exception exception)
 					{
-						DebugHelper.LogException(exception, "An exception has occured while invoking OnMessageRecieved:");
+						DebugHelper.LogException(exception, "An exception has occurred while invoking OnMessageRecieved:");
 					}
 
 					if (coroutineQueue.QueueModified == false && twitchMessage != null) Destroy(twitchMessage.gameObject);
@@ -518,7 +518,7 @@ public class IRCConnection : MonoBehaviour
 				AddTextToHoldable("[IRC:Connect] SSL connection failed, defaulting to insecure connection.");
 				if (_settings.serverPort == 6667)
 					AddTextToHoldable("[IRC:Connect] The configured port does not use SSL, please change it to 6697 if you wish to use SSL.");
-				DebugHelper.LogException(ex, "An Exception has occured when attempting to connect using SSL, using insecure stream instead:");
+				DebugHelper.LogException(ex, "An Exception has occurred when attempting to connect using SSL, using insecure stream instead:");
 				_settings.serverPort = 6667;
 				sock = new TcpClient(_settings.serverName, _settings.serverPort);
 				networkStream = sock.GetStream();

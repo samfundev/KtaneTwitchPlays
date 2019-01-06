@@ -291,7 +291,7 @@ public class TwitchGame : MonoBehaviour
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "An exception has occured while setting the bomb names");
+			DebugHelper.LogException(ex, "An exception has occurred while setting the bomb names");
 		}
 		StartCoroutine(GameRoom.Instance.ReportBombStatus());
 		StartCoroutine(GameRoom.Instance.InterruptLights());
@@ -303,7 +303,7 @@ public class TwitchGame : MonoBehaviour
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "An exception has occured attempting to hold the bomb.");
+			DebugHelper.LogException(ex, "An exception has occurred attempting to hold the bomb.");
 		}
 
 		for (int i = 0; i < 4; i++)
