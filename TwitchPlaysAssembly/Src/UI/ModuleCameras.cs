@@ -518,7 +518,6 @@ public class ModuleCameras : MonoBehaviour
 				return i;
 			}
 
-
 			i++;
 		}
 		return -1;
@@ -531,7 +530,7 @@ public class ModuleCameras : MonoBehaviour
 		{
 			int index = camerasIndexes[i];
 			ModuleCamera camera = _cameras[index];
-			
+
 			if ((camera.PreviousModule != null) &&
 			    (ReferenceEquals(camera.PreviousModule, component)))
 			{

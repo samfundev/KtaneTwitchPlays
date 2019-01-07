@@ -18,7 +18,7 @@ public abstract class ComponentSolver
 		module.BombComponent.OnStrike += OnStrike;
 		var gameCommands = module.BombComponent.GetComponentInChildren<KMGameCommands>();
 		if (gameCommands != null)
-			gameCommands.OnCauseStrike += x => { OnStrike(x); };
+			gameCommands.OnCauseStrike += x => OnStrike(x);
 	}
 	#endregion
 
@@ -273,7 +273,7 @@ public abstract class ComponentSolver
 							_musicPlayer == null)
 						_musicPlayer = MusicPlayer.StartRandomMusic();
 				}
-				else if (currentString.ToLowerInvariant().Equals("hide camera"))
+				else if (currentString.EqualsIgnoreCase("hide camera"))
 				{
 					if (!hideCamera)
 					{
@@ -717,7 +717,6 @@ public abstract class ComponentSolver
 			BombComponent bombComponent = handle == null ? null : handle.BombComponent;
 			ComponentSolver solver = handle == null ? null : handle.Solver;
 
-
 			KMBombModule module = bombComponent == null ? null : bombComponent.GetComponent<KMBombModule>();
 			if (module != null)
 			{
@@ -948,8 +947,8 @@ public abstract class ComponentSolver
 		{
 			if (!(ManualCodeField?.GetValue(ManualCodeField.IsStatic ? null : CommandComponent) is string))
 				return _manualCode ?? ModInfo.manualCode;
-			return ModInfo.manualCodeOverride 
-				? ModInfo.manualCode 
+			return ModInfo.manualCodeOverride
+				? ModInfo.manualCode
 				: (string) ManualCodeField.GetValue(ManualCodeField.IsStatic ? null : CommandComponent);
 		}
 		protected set

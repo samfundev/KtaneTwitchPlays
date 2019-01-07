@@ -57,7 +57,7 @@ public class ResistorsComponentSolver : ComponentSolver
 				yield break;
 
 			IEnumerable<KMSelectable> pinIndices = pins.Where(x => x != null).Select(x => _pins[x.Value]).ToArray();
-			
+
 			yield return null;
 			foreach (KMSelectable pinSelectable in pinIndices)
 			{

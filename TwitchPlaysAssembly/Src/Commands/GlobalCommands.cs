@@ -742,7 +742,7 @@ static class GlobalCommands
 			IRCConnection.SendMessage($"Sorry {message.UserNickName}, you may not issue commands as {targetPlayer}");
 			return;
 		}
-		
+
 		IRCConnection.ReceiveMessage(targetPlayer, message.UserColorCode, newMessage);
 	}
 
@@ -806,7 +806,6 @@ static class GlobalCommands
 					.Contains(cmd.ToLowerInvariant()); //Ignore the command if it's in IgnoreCommands
 		IRCConnection.SendMessage(TwitchPlaySettings.data.GeneralCustomMessages[cmd.ToLowerInvariant()], user, !isWhisper);
 		return true;
-
 	}
 
 	#region Private methods

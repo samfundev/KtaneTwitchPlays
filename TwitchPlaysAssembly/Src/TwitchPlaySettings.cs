@@ -283,7 +283,7 @@ public class TwitchPlaySettingsData
 	{
 		if (!input.ContainsKey(key) || forceUpdate)
 		{
-			DebugHelper.Log($@"TwitchPlaySettings.ValidateDictionaryEntry( {key}, {def[key]}, {(forceUpdate ? "Updated because of version breaking changes" : "Updated because key doesn't exist")}");
+			DebugHelper.Log($"TwitchPlaySettings.ValidateDictionaryEntry( {key}, {def[key]}, {(forceUpdate ? "Updated because of version breaking changes" : "Updated because key doesn't exist")}");
 			input[key] = def[key];
 			return false;
 		}
@@ -310,7 +310,7 @@ public class TwitchPlaySettingsData
 			result &= ValidateInt(ref distribution.MinModules, 1, 1);
 			result &= ValidateInt(ref distribution.MaxModules, Math.Max(distribution.MinModules, 101), distribution.MinModules);
 
-			if (!key.ToLowerInvariant().Equals(key) || key.Contains(" "))
+			if (!key.EqualsIgnoreCase(key) || key.Contains(" "))
 				invalidKeys.Add(key);
 		}
 		if (invalidKeys.Any())
@@ -672,7 +672,7 @@ public static class TwitchPlaySettings
 				if (parts.Any(x => x == null)) return new Tuple<bool, string>(false, $"Setting {settingField.Name} not changed. {settingValue} is not a valid value.");
 
 				float[] values = parts.Select(i => (int) i / 255f).ToArray();
-				switch (values.Count())
+				switch (values.Length)
 				{
 					case 3:
 						settingField.SetValue(data, new Color(values[0], values[1], values[2]));
@@ -814,9 +814,9 @@ public static class TwitchPlaySettings
 					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString):
 						return $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n", "\\n")}";
 					case 2 when !string.IsNullOrEmpty(split[1]):
-						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
+						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
 					case 2:
-						return $@"Setting {settingField.Name}: The second item cannot be empty or null";
+						return $"Setting {settingField.Name}: The second item cannot be empty or null";
 					default:
 						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}";
 				}
@@ -826,9 +826,9 @@ public static class TwitchPlaySettings
 					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDsbBool):
 						return $"Setting {settingField.Name}[{split[1]}]: {settingsDsbBool}";
 					case 2 when !string.IsNullOrEmpty(split[1]):
-						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
+						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
 					case 2:
-						return $@"Setting {settingField.Name}: The second item cannot be empty or null";
+						return $"Setting {settingField.Name}: The second item cannot be empty or null";
 					default:
 						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringBool.Count}";
 				}
@@ -837,11 +837,11 @@ public static class TwitchPlaySettings
 				{
 					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringModuleDistributions.TryGetValue(split[1], out ModuleDistributions settingsDsmModuleDistributions):
 						string moddistjson = JsonConvert.SerializeObject(settingsDsmModuleDistributions, Formatting.None);
-						return $@"Setting {settingField.Name}[{split[1]}]: {moddistjson}";
+						return $"Setting {settingField.Name}[{split[1]}]: {moddistjson}";
 					case 2 when !string.IsNullOrEmpty(split[1]):
-						return $@"Setting {settingField.Name}[{split[1]}]: does not exist";
+						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
 					case 2:
-						return $@"Setting {settingField.Name}: The second item cannot be empty or null";
+						return $"Setting {settingField.Name}: The second item cannot be empty or null";
 					default:
 						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringModuleDistributions.Count}";
 				}

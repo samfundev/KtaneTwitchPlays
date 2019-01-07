@@ -21,7 +21,7 @@ public static class OtherModes
 
 	public static bool Set(TwitchPlaysMode mode, bool state = true)
 	{
-		if (state == false) mode = TwitchPlaysMode.Normal;
+		if (!state) mode = TwitchPlaysMode.Normal;
 
 		nextMode = mode;
 		if (_state != KMGameInfo.State.PostGame && _state != KMGameInfo.State.Setup) return false;
@@ -46,13 +46,13 @@ public static class OtherModes
 
 	public static int SubtractBossHealth(int damage)
 	{
-		bossHealth = bossHealth - damage;
+		bossHealth -= damage;
 		return bossHealth;
 	}
 
 	public static int SubtractTeamHealth(int damage)
 	{
-		teamHealth = teamHealth - damage;
+		teamHealth -= damage;
 		return teamHealth;
 	}
 	public static void RefreshModes(KMGameInfo.State state)
@@ -73,7 +73,7 @@ public static class OtherModes
 	{
 		if (timedMultiplier > (TwitchPlaySettings.data.TimeModeMinMultiplier + TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty))
 		{
-			timedMultiplier = timedMultiplier - TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty;
+			timedMultiplier -= TwitchPlaySettings.data.TimeModeMultiplierStrikePenalty;
 			return true;
 		}
 		else

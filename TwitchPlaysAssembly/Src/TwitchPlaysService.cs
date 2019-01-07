@@ -270,13 +270,13 @@ public class TwitchPlaysService : MonoBehaviour
 				else InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands));
 			}
 			else
-				processGlobalCommand(msg);
+				ProcessGlobalCommand(msg);
 		}
 		else
-			processGlobalCommand(msg);
+			ProcessGlobalCommand(msg);
 	}
 
-	public void processGlobalCommand(Message msg)
+	public void ProcessGlobalCommand(Message msg)
 	{
 		var m = Regex.Match(msg.Text, @"^\s*!\s*(.+)$");
 		if (!m.Success)
@@ -301,8 +301,8 @@ public class TwitchPlaysService : MonoBehaviour
 
 	sealed class StaticCommand
 	{
-		public CommandAttribute Attr { get; private set; }
-		public MethodInfo Method { get; private set; }
+		public CommandAttribute Attr { get; }
+		public MethodInfo Method { get; }
 		public StaticCommand(CommandAttribute attr, MethodInfo method) { Attr = attr; Method = method; }
 
 		public bool HasAttribute<T>() => Method.GetCustomAttributes(typeof(T), false).Length != 0;
@@ -340,7 +340,7 @@ public class TwitchPlaysService : MonoBehaviour
 				if (AttemptInvokeCommand(cmd, msg, cmdStr, m, extraObject))
 					return;
 
-		IRCConnection.SendMessage(@"@{0}, I don’t recognize that command.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
+		IRCConnection.SendMessage("@{0}, I don’t recognize that command.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 	}
 
 	private bool AttemptInvokeCommand<TObj>(StaticCommand command, Message msg, string cmdStr, Match m, TObj extraObject)
@@ -354,7 +354,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 		if (!UserAccess.HasAccess(msg.UserNickName, TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel, orHigher: true))
 		{
-			IRCConnection.SendMessage(@"@{0}, you need {1} access to use that command{2}.",
+			IRCConnection.SendMessage("@{0}, you need {1} access to use that command{2}.",
 				msg.UserNickName,
 				UserAccess.LevelToString(TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel),
 				TwitchPlaySettings.data.AnarchyMode ? " in anarchy mode" : "");
@@ -418,7 +418,7 @@ public class TwitchPlaysService : MonoBehaviour
 					}
 					if (isNullable)
 						return NumberParseResult.Success;
-					IRCConnection.SendMessage(group.Success ? @"@{0}, “{1}” is not a valid number." : @"@{0}, the command could not be parsed.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, group.Success ? group.Value : null);
+					IRCConnection.SendMessage(group.Success ? "@{0}, “{1}” is not a valid number." : "@{0}, the command could not be parsed.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, group.Success ? group.Value : null);
 					return NumberParseResult.Error;
 				}
 
@@ -460,13 +460,11 @@ public class TwitchPlaysService : MonoBehaviour
 			// Object we passed in (module, bomb, holdable)
 			else if (parameters[i].ParameterType.IsAssignableFrom(typeof(TObj)))
 				arguments[i] = extraObject;
-
 			else if (parameters[i].IsOptional)
 				arguments[i] = parameters[i].DefaultValue;
-
 			else
 			{
-				IRCConnection.SendMessage(@"@{0}, the “{1}” command has an unrecognized parameter “{2}”. It expects a type of “{3}”, and the extraObject is of type “{4}” This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name, parameters[i].ParameterType.Name, extraObject?.GetType().Name);
+				IRCConnection.SendMessage("@{0}, the “{1}” command has an unrecognized parameter “{2}”. It expects a type of “{3}”, and the extraObject is of type “{4}” This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name, parameters[i].ParameterType.Name, extraObject?.GetType().Name);
 				return true;
 			}
 		}
@@ -477,7 +475,7 @@ public class TwitchPlaysService : MonoBehaviour
 		else if (invokeResult is IEnumerator coroutine)
 			ProcessCommandCoroutine(coroutine, extraObject);
 		else if (invokeResult != null)
-			IRCConnection.SendMessage(@"@{0}, the “{1}” command returned something unrecognized. This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name);
+			IRCConnection.SendMessage("@{0}, the “{1}” command returned something unrecognized. This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name);
 		return true;
 	}
 

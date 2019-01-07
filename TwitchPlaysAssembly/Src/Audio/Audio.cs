@@ -1,7 +1,7 @@
 ﻿using DarkTonic.MasterAudio;
 using UnityEngine;
 
-public class Audio
+public static class Audio
 {
 	public static void PlaySound(KMSoundOverride.SoundEffect effectOverride, Transform transform)
 	{

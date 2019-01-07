@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VanillaRuleModifier
+public static class VanillaRuleModifier
 {
 	private static GameObject _gameObject;
 

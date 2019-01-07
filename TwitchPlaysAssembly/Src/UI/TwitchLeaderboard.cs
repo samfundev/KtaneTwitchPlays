@@ -94,6 +94,5 @@ public class TwitchLeaderboard : MonoBehaviour
 
 	private void OnDisable()
 	{
-
 	}
 }

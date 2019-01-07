@@ -10,23 +10,9 @@ public static class CommonReflectedTypeInfo
 		UpdateTimerDisplayMethod = typeof(TimerComponent).GetMethod("UpdateDisplay", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	#region Bomb Component
-	public static MethodInfo HandlePassMethod
-	{
-		get;
-		private set;
-	}
-	#endregion
+	public static MethodInfo HandlePassMethod { get; }
 
-	public static MethodInfo UpdateTimerDisplayMethod
-	{
-		get;
-		private set;
-	}
+	public static MethodInfo UpdateTimerDisplayMethod { get; }
 
-	public static FieldInfo GameRecordCurrentStrikeIndexField
-	{
-		get;
-		private set;
-	}
+	public static FieldInfo GameRecordCurrentStrikeIndexField { get; }
 }

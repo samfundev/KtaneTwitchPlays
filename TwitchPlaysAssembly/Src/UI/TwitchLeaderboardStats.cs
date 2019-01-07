@@ -30,8 +30,7 @@ public class TwitchLeaderboardStats : MonoBehaviour
 
 		totalSolveScore = SolveScore;
 
-		int sessionSolveScore = 0;
-		sessionSolveScore = SolveScore - Leaderboard.Instance.OldScore;
+		int sessionSolveScore = SolveScore - Leaderboard.Instance.OldScore;
 
 		totalBombCountText.text = bombCount.ToString();
 		totalSolveCountText.text = solveCount.ToString();
@@ -46,6 +45,5 @@ public class TwitchLeaderboardStats : MonoBehaviour
 
 	private void OnDisable()
 	{
-
 	}
 }

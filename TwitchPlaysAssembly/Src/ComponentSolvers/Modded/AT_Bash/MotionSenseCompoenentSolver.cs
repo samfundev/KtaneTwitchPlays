@@ -11,15 +11,9 @@ public class MotionSenseComponentSolver : ComponentSolver
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_needy = (KMNeedyModule) NeedyField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "I am a passive module that awards strikes for motion while I am active. Use !{0} status to find out if I am active, and for how long.");
-		_needy.OnNeedyActivation += () =>
-		{
-			IRCConnection.SendMessage($"Motion Sense just activated: Active for {(int) _needy.GetNeedyTimeRemaining()} seconds.");
-		};
+		_needy.OnNeedyActivation += () => IRCConnection.SendMessage($"Motion Sense just activated: Active for {(int) _needy.GetNeedyTimeRemaining()} seconds.");
 
-		_needy.OnTimerExpired += () =>
-		{
-			IRCConnection.SendMessage("Motion Sense now Inactive.");
-		};
+		_needy.OnTimerExpired += () => IRCConnection.SendMessage("Motion Sense now Inactive.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

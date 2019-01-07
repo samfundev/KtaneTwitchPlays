@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FactoryRoomAPI
+public static class FactoryRoomAPI
 {
 	private static GameObject _gameObject;
 

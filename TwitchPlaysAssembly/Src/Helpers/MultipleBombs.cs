@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MultipleBombs
+public static class MultipleBombs
 {
 	private static GameObject _gameObject;
 

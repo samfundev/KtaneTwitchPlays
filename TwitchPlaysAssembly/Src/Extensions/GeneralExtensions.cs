@@ -194,9 +194,9 @@ public static class GeneralExtensions
 	public static int IndexOf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
 	{
 		if (source == null)
-			throw new ArgumentNullException("source");
+			throw new ArgumentNullException(nameof(source));
 		if (predicate == null)
-			throw new ArgumentNullException("predicate");
+			throw new ArgumentNullException(nameof(predicate));
 		int index = 0;
 		foreach (var v in source)
 		{

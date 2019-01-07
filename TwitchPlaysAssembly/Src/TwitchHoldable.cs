@@ -109,14 +109,14 @@ public class TwitchHoldable
 			if (bomb.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
 			{
 				bomb.Bomb.GetTimer().TimeRemaining = bomb.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
-				tempMessage = tempMessage + $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
+				tempMessage += $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
 			}
 			else
 			{
 				float timeReducer = bomb.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
 				double easyText = Math.Round(timeReducer, 1);
 				bomb.Bomb.GetTimer().TimeRemaining = bomb.CurrentTimer - timeReducer;
-				tempMessage = tempMessage + $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
+				tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
 			IRCConnection.SendMessage(tempMessage);
 			bomb.StrikeCount = 0;
@@ -145,7 +145,7 @@ public class TwitchHoldable
 	{
 		if (HandlerMethod == null && processCommand == null)
 		{
-			IRCConnection.SendMessage(@"Sorry @{0}, this holdable is not supported by Twitch Plays.", userNickName, !isWhisper, userNickName);
+			IRCConnection.SendMessage("Sorry @{0}, this holdable is not supported by Twitch Plays.", userNickName, !isWhisper, userNickName);
 			yield break;
 		}
 
@@ -260,7 +260,7 @@ public class TwitchHoldable
 						if (_musicPlayer == null)
 							_musicPlayer = MusicPlayer.StartRandomMusic();
 					}
-					else if (currentString.ToLowerInvariant().Equals("cancelled") && cancelling)
+					else if (currentString.EqualsIgnoreCase("cancelled") && cancelling)
 					{
 						CancelBool?.SetValue(CommandComponent, false);
 						CoroutineCanceller.ResetCancel();
@@ -282,9 +282,9 @@ public class TwitchHoldable
 							ID);
 						Strike = true;
 					}
-					else if (currentString.ToLowerInvariant().Equals("show front"))
+					else if (currentString.EqualsIgnoreCase("show front"))
 						ProcessIEnumerators.Push(Hold());
-					else if (currentString.ToLowerInvariant().Equals("show back"))
+					else if (currentString.EqualsIgnoreCase("show back"))
 						ProcessIEnumerators.Push(Hold(false));
 					else
 						SendToChat(currentString, userNickName, isWhisper, ref parseError);
@@ -369,7 +369,6 @@ public class TwitchHoldable
 				CancelBool?.SetValue(CommandComponent, true);
 				cancelling = CancelBool != null;
 			}
-
 		}
 		while (ProcessIEnumerators.Count > 0 && !parseError && !cancelled && !Strike);
 

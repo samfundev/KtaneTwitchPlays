@@ -39,7 +39,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		return text.Replace("ᅬ", "ᅩᅵ");
 	}
 
-	private static readonly Dictionary<char, char> SimilarJamos = @"ᄀᆨ,ᄁᆩ,ᄂᆫ,ᄃᆮ,ᄅᆯ,ᄆᆷ,ᄇᆸ,ᄉᆺ,ᄊᆻ,ᄋᆼ,ᄌᆽ,ᄎᆾ,ᄏᆿ,ᄐᇀ,ᄑᇁ,ᄒᇂ".Split(',').ToDictionary(str => str[0], str => str[1]);
+	private static readonly Dictionary<char, char> SimilarJamos = "ᄀᆨ,ᄁᆩ,ᄂᆫ,ᄃᆮ,ᄅᆯ,ᄆᆷ,ᄇᆸ,ᄉᆺ,ᄊᆻ,ᄋᆼ,ᄌᆽ,ᄎᆾ,ᄏᆿ,ᄐᇀ,ᄑᇁ,ᄒᇂ".Split(',').ToDictionary(str => str[0], str => str[1]);
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{

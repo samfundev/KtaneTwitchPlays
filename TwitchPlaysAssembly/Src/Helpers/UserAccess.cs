@@ -182,7 +182,7 @@ public static class UserAccess
 			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot timeout the streamer.", moderator, !isWhisper);
 			return;
 		}
-		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
+		if (userNickName.EqualsIgnoreCase(moderator.ToLowerInvariant()))
 		{
 			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot timeout yourself.", moderator, !isWhisper);
 			return;
@@ -213,7 +213,7 @@ public static class UserAccess
 			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot ban the streamer.", moderator, !isWhisper);
 			return;
 		}
-		if (userNickName.ToLowerInvariant().Equals(moderator.ToLowerInvariant()))
+		if (userNickName.EqualsIgnoreCase(moderator))
 		{
 			IRCConnection.SendMessage($"Sorry @{moderator}, you cannot ban yourself.", moderator, !isWhisper);
 			return;
@@ -294,7 +294,7 @@ public static class UserAccess
 		}
 
 		unban |= HasAccess(userNickName, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand)
-					  || userNickName.ToLowerInvariant().Equals(ban.BannedBy.ToLowerInvariant());
+					  || userNickName.EqualsIgnoreCase(ban.BannedBy);
 
 		if (unban)
 			UnbanUser(userNickName);

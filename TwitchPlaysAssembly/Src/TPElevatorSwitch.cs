@@ -98,7 +98,7 @@ public class TPElevatorSwitch : MonoBehaviour
 
 		Audio.PlaySound(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		float initialTime = Time.time;
-		float duration = 0.25f;
+		const float duration = 0.25f;
 		while ((Time.time - initialTime) < duration)
 		{
 			float lerp = (Time.time - initialTime) / duration;
@@ -141,7 +141,7 @@ public class TPElevatorSwitch : MonoBehaviour
 			yield return dropHoldables.Current;
 		yield return new WaitForSeconds(0.25f);
 
-		float duration = 2f;
+		const float duration = 2f;
 		GameRoom.ToggleCamera(false);
 		yield return null;
 		float initialTime = Time.time;

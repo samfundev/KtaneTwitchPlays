@@ -42,7 +42,7 @@ public class EdgeworkComponentSolver : ComponentSolver
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 		if (commands.Length != 2 || !commands[0].EqualsAny("press", "submit", "click", "answer")) yield break;
-		if ((bool) CanPressButtonsField.GetValue(_component) == false)
+		if (!(bool) CanPressButtonsField.GetValue(_component))
 		{
 			yield return null;
 			yield return "sendtochaterror You can't interact with the module right now.";

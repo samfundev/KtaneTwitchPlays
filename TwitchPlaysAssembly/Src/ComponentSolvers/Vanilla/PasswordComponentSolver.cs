@@ -15,17 +15,17 @@ public class PasswordComponentSolver : ComponentSolver
 		ModInfo = ComponentSolverFactory.GetModuleInfo("PasswordComponentSolver", "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]", "Password");
 	}
 
-	protected internal override IEnumerator RespondToCommandInternal(string cmd)
+	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		Match m;
 
-		if (Regex.IsMatch(cmd, @"^\s*toggle\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase))
+		if (Regex.IsMatch(inputCommand, @"^\s*toggle\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase))
 		{
 			yield return "password";
 			for (int i = 0; i < 5; i++)
 				yield return DoInteractionClick(_spinners[i].DownButton);
 		}
-		else if (Regex.IsMatch(cmd, @"^\s*cycle\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase))
+		else if (Regex.IsMatch(inputCommand, @"^\s*cycle\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase))
 		{
 			yield return "password";
 			for (int i = 0; i < 5; i++)
@@ -35,7 +35,7 @@ public class PasswordComponentSolver : ComponentSolver
 					yield return spinnerCoroutine.Current;
 			}
 		}
-		else if ((m = Regex.Match(cmd, @"^\s*cycle\s+([ \d]+)\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)).Success)
+		else if ((m = Regex.Match(inputCommand, @"^\s*cycle\s+([ \d]+)\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)).Success)
 		{
 			var slots = new HashSet<int>();
 			foreach (var piece in m.Groups[1].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
@@ -58,7 +58,7 @@ public class PasswordComponentSolver : ComponentSolver
 				}
 			}
 		}
-		else if ((m = Regex.Match(cmd, @"^\s*(\S{5})\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)).Success)
+		else if ((m = Regex.Match(inputCommand, @"^\s*(\S{5})\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)).Success)
 		{
 			yield return "password";
 

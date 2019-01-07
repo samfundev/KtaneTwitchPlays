@@ -28,7 +28,7 @@ public class NeedyKnobComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		totalTurnCount = totalTurnCount % 4;
+		totalTurnCount %= 4;
 
 		yield return "rotate";
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-class SettingsConverter
+static class SettingsConverter
 {
 	public static string Serialize(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented, new ColorConverter());
 
@@ -28,7 +28,7 @@ internal class ColorConverter : JsonConverter
 		if (parts.Any(x => x == null)) return existingValue;
 
 		float[] values = parts.Select(i => (int) i / 255f).ToArray();
-		switch (values.Count())
+		switch (values.Length)
 		{
 			case 3:
 				return new Color(values[0], values[1], values[2]);

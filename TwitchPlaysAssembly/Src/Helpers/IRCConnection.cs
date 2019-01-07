@@ -179,7 +179,7 @@ public class IRCConnection : MonoBehaviour
 						DebugHelper.LogException(exception, "An exception has occurred while invoking OnMessageRecieved:");
 					}
 
-					if (coroutineQueue.QueueModified == false && twitchMessage != null) Destroy(twitchMessage.gameObject);
+					if (!coroutineQueue.QueueModified && twitchMessage != null) Destroy(twitchMessage.gameObject);
 					else if (isCommand)
 						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(HideMessage(twitchMessage));
 				}
@@ -917,36 +917,30 @@ public class IRCConnection : MonoBehaviour
 	#region Static Fields/Consts
 	private static readonly ActionMap[] Actions =
 	{
-		new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+:(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
+		new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+:(\S+)!\S+ PRIVMSG #(\S+) :(.+)", (GroupCollection groups) =>
 		{
 			ReceiveMessage(!string.IsNullOrEmpty(groups[2].Value) ? groups[2].Value : groups[3].Value, groups[1].Value,
 				groups[5].Value);
 		}),
 
-		new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", delegate(GroupCollection groups)
+		new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", (GroupCollection groups) =>
 		{
 			Instance.CurrentColor = string.IsNullOrEmpty(groups[2].Value) ? string.Empty : groups[2].Value;
 			Instance.SetDelay(groups[1].Value, groups[3].Value, groups[4].Value);
 			Instance.SetOwnColor();
 		}, false),
 
-		new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", delegate(GroupCollection groups)
-		{
-			ReceiveMessage(groups[1].Value, null, groups[3].Value);
-		}),
+		new ActionMap(@":(\S+)!\S+ PRIVMSG #(\S+) :(.+)", (GroupCollection groups) => ReceiveMessage(groups[1].Value, null, groups[3].Value)),
 
-		new ActionMap(@":(\S+)!\S+ WHISPER (\S+) :(.+)", delegate(GroupCollection groups)
-		{
-			ReceiveMessage(groups[1].Value, null, groups[3].Value, true);
-		}),
+		new ActionMap(@":(\S+)!\S+ WHISPER (\S+) :(.+)", (GroupCollection groups) => ReceiveMessage(groups[1].Value, null, groups[3].Value, true)),
 
-		new ActionMap(@"PING (.+)", delegate(GroupCollection groups)
+		new ActionMap(@"PING (.+)", (GroupCollection groups) =>
 		{
 			AddTextToHoldable($"---PING--- ---PONG--- {groups[1].Value}");
 			Instance.SendCommand($"PONG {groups[1].Value}");
 		}, false),
 
-		new ActionMap(@"\S* 001.*", delegate(GroupCollection groups)
+		new ActionMap(@"\S* 001.*", (GroupCollection groups) =>
 		{
 			AddTextToHoldable(groups[0].Value);
 			Instance.SendCommand($"JOIN #{Instance._settings.channelName}");
@@ -957,22 +951,19 @@ public class IRCConnection : MonoBehaviour
 			UserAccess.WriteAccessList();
 		}, false),
 
-		new ActionMap(@"\S* NOTICE \* :Login authentication failed", delegate(GroupCollection groups)
+		new ActionMap(@"\S* NOTICE \* :Login authentication failed", (GroupCollection groups) =>
 		{
 			AddTextToHoldable(groups[0].Value);
 			Instance._state = IRCConnectionState.DoNotRetry;
 		}, false),
 
-		new ActionMap(@"\S* RECONNECT.*", delegate(GroupCollection groups)
+		new ActionMap(@"\S* RECONNECT.*", (GroupCollection groups) =>
 		{
 			AddTextToHoldable(groups[0].Value);
 			Instance._state = IRCConnectionState.Disconnected;
 		}, false),
 
-		new ActionMap(@".+", delegate(GroupCollection groups)
-		{
-			AddTextToHoldable(groups[0].Value);
-		}, false) //Log otherwise uncaptured lines.
+		new ActionMap(@".+", (GroupCollection groups) => AddTextToHoldable(groups[0].Value), false) //Log otherwise uncaptured lines.
 	};
 	public static bool CommandsEnabled = true;
 	#endregion

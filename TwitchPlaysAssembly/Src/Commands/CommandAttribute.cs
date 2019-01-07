@@ -9,13 +9,13 @@ sealed class CommandAttribute : Attribute
 	/// <summary>
 	///     A regular expression that matches all forms of the command. Note that which part of the command is matched against
 	///     this regex depends on what type of command it is (global, module, bomb, or holdable).</summary>
-	public string Regex { get; private set; }
+	public string Regex { get; }
 
 	/// <summary>Access level required to use this command.</summary>
-	public AccessLevel AccessLevel { get; private set; }
+	public AccessLevel AccessLevel { get; }
 
 	/// <summary>Access level required to use this command when anarchy mode is enabled.</summary>
-	public AccessLevel AccessLevelAnarchy { get; private set; }
+	public AccessLevel AccessLevelAnarchy { get; }
 
 	/// <summary>Constructor.</summary>
 	public CommandAttribute(string regex, AccessLevel accessLevel = AccessLevel.User, AccessLevel accessLevelAnarchy = AccessLevel.User, bool whisper = false)
@@ -44,6 +44,6 @@ sealed class DebuggingOnlyAttribute : Attribute { }
 [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
 sealed class GroupAttribute : Attribute
 {
-	public int GroupIndex { get; private set; }
+	public int GroupIndex { get; }
 	public GroupAttribute(int groupIndex) { GroupIndex = groupIndex; }
 }

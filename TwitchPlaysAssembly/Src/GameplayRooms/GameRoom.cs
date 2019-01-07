@@ -162,7 +162,6 @@ public abstract class GameRoom
 
 	public virtual void OnDisable()
 	{
-
 	}
 
 	private static Camera _mainCamera;
