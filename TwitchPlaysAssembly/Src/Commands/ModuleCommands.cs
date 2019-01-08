@@ -9,13 +9,10 @@ static class ModuleCommands
 	[Command(@"(?:help|manual)( +pdf)?"), SolvedAllowed]
 	public static void Help(TwitchModule module, [Group(1)] bool pdf)
 	{
-		string manualText = null;
-		string manualType = "html";
-		if (pdf)
-			manualType = "pdf";
+		string manualType = pdf ? "pdf" : "html";
 
-		manualText = string.IsNullOrEmpty(module.Solver.ManualCode) ? module.HeaderText : module.Solver.ManualCode;
-		var helpText = string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
+		string manualText = string.IsNullOrEmpty(module.Solver.ManualCode) ? module.HeaderText : module.Solver.ManualCode;
+		string helpText = string.IsNullOrEmpty(module.Solver.ManualCode) ? string.Empty : string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
 
 		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
 			? $"{module.HeaderText} : {helpText} : {manualText}"
