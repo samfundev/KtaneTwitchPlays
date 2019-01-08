@@ -625,10 +625,27 @@ public class IRCConnection : MonoBehaviour
 	[StringFormatMethod("message")]
 	public static void SendMessage(string message, params object[] args) => SendMessage(string.Format(message, args));
 
-	public new static void SendMessage(string message) => SendMessage(message, null, true);
-
 	[StringFormatMethod("message")]
 	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args) => SendMessage(string.Format(message, args), userNickName, sendToChat);
+
+	public static void SendMessage(string message, string userNickName = null, bool sendToChat = true)
+	{
+		if (Instance == null) return;
+
+		sendToChat |= !IsUsernameValid(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == Instance.UserNickName;
+		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
+		{
+			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
+				Instance.SendCommand(sendToChat
+					? $"PRIVMSG #{Instance._settings.channelName} :{line}"
+					: $"PRIVMSG #{Instance._settings.channelName} :.w {userNickName} {line}");
+			if (line.StartsWith(".") || line.StartsWith("/")) continue;
+			lock (Instance._messageQueue)
+			{
+				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true));
+			}
+		}
+	}
 
 	public static void ToggleSilenceMode()
 	{
@@ -657,25 +674,6 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Private Methods
-	private static void SendMessage(string message, string userNickName = null, bool sendToChat = true)
-	{
-		if (Instance == null) return;
-
-		sendToChat |= !IsUsernameValid(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == Instance.UserNickName;
-		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
-		{
-			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
-				Instance.SendCommand(sendToChat
-					? $"PRIVMSG #{Instance._settings.channelName} :{line}"
-					: $"PRIVMSG #{Instance._settings.channelName} :.w {userNickName} {line}");
-			if (line.StartsWith(".") || line.StartsWith("/")) continue;
-			lock (Instance._messageQueue)
-			{
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true));
-			}
-		}
-	}
-
 	private void SetOwnColor()
 	{
 		if (!ColorUtility.TryParseHtmlString(CurrentColor, out Color color)) return;
