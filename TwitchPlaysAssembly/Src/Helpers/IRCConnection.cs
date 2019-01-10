@@ -623,12 +623,12 @@ public class IRCConnection : MonoBehaviour
 	public static void SendWhisper(string userNickName, string message, params object[] args) => SendMessage(message, userNickName, false, args);
 
 	[StringFormatMethod("message")]
-	public static void SendMessage(string message, params object[] args) => SendMessage(string.Format(message, args));
+	public static void SendMessage(string message, params object[] args) => SendMessage(string.Format(message, args), null, true);
 
 	[StringFormatMethod("message")]
 	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args) => SendMessage(string.Format(message, args), userNickName, sendToChat);
 
-	public static void SendMessage(string message, string userNickName = null, bool sendToChat = true)
+	public static void SendMessage(string message, string userNickName, bool sendToChat)
 	{
 		if (Instance == null) return;
 
