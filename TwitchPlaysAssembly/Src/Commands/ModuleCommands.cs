@@ -12,7 +12,7 @@ static class ModuleCommands
 		string manualType = pdf ? "pdf" : "html";
 
 		string manualText = string.IsNullOrEmpty(module.Solver.ManualCode) ? module.HeaderText : module.Solver.ManualCode;
-		string helpText = string.IsNullOrEmpty(module.Solver.ManualCode) ? string.Empty : string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
+		string helpText = string.IsNullOrEmpty(module.Solver.HelpMessage) ? string.Empty : string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
 
 		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
 			? $"{module.HeaderText} : {helpText} : {manualText}"
