@@ -29,21 +29,21 @@ static class GlobalCommands
 	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendChatMessage(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
+		IRCConnection.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddScore(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
 	[Command(@"bonussolves? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusSolves([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendChatMessage(TwitchPlaySettings.data.GiveBonusSolves, targetPlayer, bonus, user);
+		IRCConnection.SendMessage(TwitchPlaySettings.data.GiveBonusSolves, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddSolve(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
 	[Command(@"bonusstrikes? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusStrikes([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendChatMessage(TwitchPlaySettings.data.GiveBonusStrikes, targetPlayer, bonus, user);
+		IRCConnection.SendMessage(TwitchPlaySettings.data.GiveBonusStrikes, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
@@ -659,13 +659,13 @@ static class GlobalCommands
 	public static void DisableModerators()
 	{
 		UserAccess.ModeratorsEnabled = false;
-		IRCConnection.SendChatMessage("All moderators temporarily disabled.");
+		IRCConnection.SendMessage("All moderators temporarily disabled.");
 	}
 	[Command(@"enablemods", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void EnableModerators()
 	{
 		UserAccess.ModeratorsEnabled = true;
-		IRCConnection.SendChatMessage("All moderators restored.");
+		IRCConnection.SendMessage("All moderators restored.");
 	}
 
 	[Command("reloaddata", AccessLevel.SuperUser, AccessLevel.SuperUser)]

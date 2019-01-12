@@ -508,7 +508,7 @@ public class TwitchGame : MonoBehaviour
 	private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
 	{
 		yield return new WaitForSeconds(delay);
-		IRCConnection.SendChatMessage(message);
+		IRCConnection.SendMessage(message);
 
 		callback?.Invoke();
 	}

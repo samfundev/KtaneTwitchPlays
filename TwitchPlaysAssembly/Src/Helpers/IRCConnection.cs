@@ -614,9 +614,6 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
-	[StringFormatMethod("message")]
-	public static void SendChatMessage(string message, params object[] args) => SendMessage(message, args);
-
 	//NOTE: whisper mode is not fully supported, as bots need to be registered with twitch to take advantage of it.
 	[StringFormatMethod("message")]
 	// ReSharper disable once UnusedMember.Global

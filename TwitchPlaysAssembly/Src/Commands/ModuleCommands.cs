@@ -194,7 +194,7 @@ static class ModuleCommands
 		// cancel the takeover attempt if there is one
 		if (module.TakeInProgress != null)
 		{
-			IRCConnection.SendChatMessage(
+			IRCConnection.SendMessage(
 				$"The takeover attempt on module {module.Code} ({module.HeaderText}) was manually cancelled by {user}");
 			module.StopCoroutine(module.TakeInProgress);
 			module.TakeInProgress = null;

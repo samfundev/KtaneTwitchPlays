@@ -295,7 +295,7 @@ static class GameCommands
 	public static void EnableCameraWall(string user)
 	{
 		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Admin, true))
-			IRCConnection.SendChatMessage("The camera wall is being controlled automatically and cannot be enabled.");
+			IRCConnection.SendMessage("The camera wall is being controlled automatically and cannot be enabled.");
 		else
 			TwitchGame.ModuleCameras.EnableCameraWall();
 	}
@@ -304,7 +304,7 @@ static class GameCommands
 	public static void DisableCameraWall(string user)
 	{
 		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Admin, true))
-			IRCConnection.SendChatMessage("The camera wall is being controlled automatically and cannot be disabled.");
+			IRCConnection.SendMessage("The camera wall is being controlled automatically and cannot be disabled.");
 		else
 			TwitchGame.ModuleCameras.DisableCameraWall();
 	}
@@ -326,14 +326,14 @@ static class GameCommands
 	public static void EnableClaims()
 	{
 		TwitchModule.ClaimsEnabled = true;
-		IRCConnection.SendChatMessage("Claims have been enabled.");
+		IRCConnection.SendMessage("Claims have been enabled.");
 	}
 
 	[Command(@"disableclaims", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void DisableClaims()
 	{
 		TwitchModule.ClaimsEnabled = false;
-		IRCConnection.SendChatMessage("Claims have been disabled.");
+		IRCConnection.SendMessage("Claims have been disabled.");
 	}
 
 	[Command(@"assign +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
@@ -363,7 +363,7 @@ static class GameCommands
 	[Command(@"enabletwitchplays", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void EnableTwitchPlays()
 	{
-		IRCConnection.SendChatMessage("Twitch Plays Enabled");
+		IRCConnection.SendMessage("Twitch Plays Enabled");
 		TwitchPlaySettings.data.EnableTwitchPlaysMode = true;
 		TwitchPlaySettings.WriteDataToFile();
 		TwitchGame.EnableDisableInput();
@@ -372,7 +372,7 @@ static class GameCommands
 	[Command(@"disabletwitchplays", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void DisableTwitchPlays()
 	{
-		IRCConnection.SendChatMessage("Twitch Plays Disabled");
+		IRCConnection.SendMessage("Twitch Plays Disabled");
 		TwitchPlaySettings.data.EnableTwitchPlaysMode = false;
 		TwitchPlaySettings.WriteDataToFile();
 		TwitchGame.EnableDisableInput();
@@ -381,7 +381,7 @@ static class GameCommands
 	[Command(@"enableinteractivemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void EnableInteractiveMode()
 	{
-		IRCConnection.SendChatMessage("Interactive Mode Enabled");
+		IRCConnection.SendMessage("Interactive Mode Enabled");
 		TwitchPlaySettings.data.EnableInteractiveMode = true;
 		TwitchPlaySettings.WriteDataToFile();
 		TwitchGame.EnableDisableInput();
@@ -390,7 +390,7 @@ static class GameCommands
 	[Command(@"disableinteractivemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void DisableInteractiveMode()
 	{
-		IRCConnection.SendChatMessage("Interactive Mode Disabled");
+		IRCConnection.SendMessage("Interactive Mode Disabled");
 		TwitchPlaySettings.data.EnableInteractiveMode = false;
 		TwitchPlaySettings.WriteDataToFile();
 		TwitchGame.EnableDisableInput();
@@ -399,14 +399,14 @@ static class GameCommands
 	[Command(@"solveunsupportedmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SolveUnsupportedModules()
 	{
-		IRCConnection.SendChatMessage("Solving unsupported modules.");
+		IRCConnection.SendMessage("Solving unsupported modules.");
 		TwitchModule.SolveUnsupportedModules();
 	}
 
 	[Command(@"removesolvebasedmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void RemoveSolveBasedModules()
 	{
-		IRCConnection.SendChatMessage("Removing solve based modules");
+		IRCConnection.SendMessage("Removing solve based modules");
 		TwitchGame.Instance.RemoveSolveBasedModules();
 	}
 
