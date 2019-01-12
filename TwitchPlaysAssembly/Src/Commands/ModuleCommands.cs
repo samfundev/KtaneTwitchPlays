@@ -16,7 +16,7 @@ static class ModuleCommands
 
 		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
 			? $"{module.HeaderText} : {helpText} : {manualText}"
-			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
+			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}", null, true);
 	}
 
 	[Command("player"), SolvedAllowed]
