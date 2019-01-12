@@ -159,6 +159,7 @@ public class ModuleCameras : MonoBehaviour
 	public Text TimerShadowPrefab;
 	public Text StrikesPrefab;
 	public Text SolvesPrefab;
+	public Text NeediesPrefab;
 	public Text ConfidencePrefab;
 	public Camera CameraPrefab;
 	public RectTransform BombStatus;
@@ -457,6 +458,10 @@ public class ModuleCameras : MonoBehaviour
 		UpdateStrikes();
 		UpdateSolves();
 		UpdateConfidence();
+
+		int needies = _currentBomb.Bomb.BombComponents.Count(bombComponent => bombComponent.GetComponent<NeedyComponent>() != null);
+		NeediesPrefab.gameObject.SetActive(needies > 0);
+		NeediesPrefab.text = needies.ToString();
 	}
 
 	public void DisableInteractive()
