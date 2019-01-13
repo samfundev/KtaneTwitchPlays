@@ -248,6 +248,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { moduleScore = 5, helpText = "", DoesTheRightThing = true };
 		ModComponentSolverInformation["poetry"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 
+		//DVD
+		ModComponentSolverInformation["Questionmark"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
+		ModComponentSolverInformation["unrelatedAnagrams"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+
 		//Eotall
 		ModComponentSolverInformation["GameOfLifeCruel"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["GameOfLifeSimple"] = new ModuleInformation { moduleScore = 15, manualCode = "Game%20of%20Life%20Simple", DoesTheRightThing = true };
@@ -309,6 +313,7 @@ public static class ComponentSolverFactory
 		//KingSlendy
 		ModComponentSolverInformation["ColorfulMadness"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["PartyTime"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["ShapesBombs"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["SueetWall"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["TenButtonColorCode"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 
@@ -434,6 +439,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["DecoloredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["DiscoloredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["DividedSquaresModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
@@ -467,6 +473,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SimonSendsModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonShrieksModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSingsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["SimonSpeaksModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpinsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
@@ -516,6 +523,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Signals"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
+		ModComponentSolverInformation["lgndZoni"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
 		{
