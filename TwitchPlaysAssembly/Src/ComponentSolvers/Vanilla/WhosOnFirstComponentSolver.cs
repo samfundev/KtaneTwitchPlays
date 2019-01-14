@@ -22,7 +22,8 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		string[] split = inputCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 		if (split.Length == 2 && split[0] == "press" && int.TryParse(split[1], out int buttonIndex) && buttonIndex > 0 && buttonIndex < 7)
 		{
-			_buttons[buttonIndex - 1].Interact();
+			yield return null;
+			yield return DoInteractionClick(_buttons[buttonIndex - 1]);
 		}
 		else
 		{
