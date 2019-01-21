@@ -791,8 +791,10 @@ public static class ComponentSolverFactory
 				}
 				catch (Exception exc)
 				{
-					DebugHelper.LogException(exc, string.Format("Failed to create a valid solver for regular module: {0}. Using fallback solver instead.", solvableModule.ModuleDisplayName));
-					LogAllComponentTypes(solvableModule);
+					if (!SilentMode) {
+						DebugHelper.LogException(exc, string.Format("Failed to create a valid solver for regular module: {0}. Using fallback solver instead.", solvableModule.ModuleDisplayName));
+						LogAllComponentTypes(solvableModule);
+					}
 
 					return new UnsupportedModComponentSolver(module);
 				}
@@ -805,8 +807,11 @@ public static class ComponentSolverFactory
 				}
 				catch (Exception exc)
 				{
-					DebugHelper.LogException(exc, string.Format("Failed to create a valid solver for needy module: {0}. Using fallback solver instead.", needyModule.ModuleDisplayName));
-					LogAllComponentTypes(needyModule);
+					if (!SilentMode)
+					{
+						DebugHelper.LogException(exc, string.Format("Failed to create a valid solver for needy module: {0}. Using fallback solver instead.", needyModule.ModuleDisplayName));
+						LogAllComponentTypes(needyModule);
+					}
 
 					return new UnsupportedModComponentSolver(module);
 				}

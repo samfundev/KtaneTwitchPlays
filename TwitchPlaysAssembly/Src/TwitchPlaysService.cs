@@ -8,6 +8,7 @@ using Assets.Scripts.Props;
 using UnityEngine;
 using Assets.Scripts.Records;
 using Assets.Scripts.Stats;
+using System.IO;
 
 public class TwitchPlaysService : MonoBehaviour
 {
@@ -92,8 +93,6 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private void OnEnable()
 	{
-		OnStateChange(KMGameInfo.State.Setup);
-
 		LeaderboardsEnabled = false;
 	}
 
@@ -183,7 +182,7 @@ public class TwitchPlaysService : MonoBehaviour
 				_coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
 				_coroutinesToStart.Enqueue(MultipleBombs.Refresh());
 				_coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
-				_coroutinesToStart.Enqueue(LogInstalledModdedModules());
+				_coroutinesToStart.Enqueue(FindSupportedModules());
 				break;
 
 			case KMGameInfo.State.PostGame:
@@ -510,20 +509,64 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 	}
 
-	private IEnumerator LogInstalledModdedModules()
+	private IEnumerator FindSupportedModules()
 	{
 		yield return null;
 
 		if (!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods))
 			yield break;
 
-		Mod[] mods = loadedMods.Values.ToArray();
-		KMBombModule[] bombModules = mods.SelectMany(x => x.GetModObjects<KMBombModule>()).ToArray();
-		KMNeedyModule[] needyModules = mods.SelectMany(x => x.GetModObjects<KMNeedyModule>()).ToArray();
-		DebugHelper.Log($"Found {bombModules.Length} solvable modules and {needyModules.Length} needy modules in {mods.Length} mods");
-		DebugHelper.Log($"Solvable Modules: {string.Join(", ", bombModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
-		DebugHelper.Log($"Needy Modules: {string.Join(", ", needyModules.Select(x => x.ModuleType).ToArray()).Wrap(80)}");
+		GameObject fakeModule = new GameObject();
+		TwitchModule module = fakeModule.AddComponent<TwitchModule>();
+		module.enabled = false;
+
+		List<string> unsupportedModules = new List<string>();
+		ComponentSolverFactory.SilentMode = true;
+
+		// Try to create a ComponentSolver for each module so we can see what modules are supported.
+		foreach (BombComponent bombComponent in loadedMods.Values.SelectMany(mod => mod.GetModObjects<BombComponent>()))
+		{
+			ComponentSolver solver = null;
+			try
+			{
+				module.BombComponent = bombComponent.GetComponent<BombComponent>();
+
+				solver = ComponentSolverFactory.CreateSolver(module);
+			}
+			catch (Exception e)
+			{
+				DebugHelper.LogException(e, "Couldn't create a component solver during startup for the following reason:");
+			}
+
+			ModuleData.DataHasChanged |= solver != null;
+
+			DebugHelper.Log(solver != null
+				? $"Found a solver of type \"{solver.GetType().FullName}\" for component \"{bombComponent.GetModuleDisplayName()}\". This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
+				: $"No solver found for component \"{bombComponent.GetModuleDisplayName()}\". This module is not supported by Twitch Plays.");
+
+			string moduleID = bombComponent.GetComponent<KMBombModule>()?.ModuleType ?? bombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
+			if (solver?.UnsupportedModule != false && moduleID != null)
+				unsupportedModules.Add(moduleID);
+
+			yield return null;
+		}
+
+		ComponentSolverFactory.SilentMode = false;
 		ModuleData.WriteDataToFile();
+		DestroyObject(fakeModule);
+
+		// Using the list of unsupported module IDs stored in unsupportedModules, make a Mod Selector profile.
+		string profilesPath = Path.Combine(Application.persistentDataPath, "ModProfiles");
+		if (Directory.Exists(profilesPath))
+		{
+			Dictionary<string, object> profileData = new Dictionary<string, object>()
+			{
+				{ "DisabledList", unsupportedModules },
+				{ "Operation", 1 }
+			};
+
+			File.WriteAllText(Path.Combine(profilesPath, "TP_Supported.json"), SettingsConverter.Serialize(profileData));
+		}
 	}
 
 	public void SetHeaderVisbility(bool visible)
