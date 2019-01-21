@@ -81,7 +81,7 @@ public abstract class ComponentSolver
 
 		if (Solved != solved || _beforeStrikeCount != StrikeCount)
 		{
-			IRCConnection.SendMessage("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", Module.Code, Module.HeaderText);
+			IRCConnection.SendMessageFormat("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve prematurely.", Module.Code, Module.HeaderText);
 			if (ModInfo != null)
 			{
 				ModInfo.DoesTheRightThing = false;
@@ -172,7 +172,7 @@ public abstract class ComponentSolver
 					int penalty =
 						Math.Max((int) (ModInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
-					IRCConnection.SendMessage(TwitchPlaySettings.data.UnsubmittableAnswerPenalty,
+					IRCConnection.SendMessageFormat(TwitchPlaySettings.data.UnsubmittableAnswerPenalty,
 						_currentUserNickName, Code, ModInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
 				}
 				else if (currentString.Equals("parseerror", StringComparison.InvariantCultureIgnoreCase))
@@ -545,7 +545,7 @@ public abstract class ComponentSolver
 
 	public void SolveModule(string reason)
 	{
-		IRCConnection.SendMessage("{0}", reason);
+		IRCConnection.SendMessageFormat("{0}", reason);
 		SolveSilently();
 	}
 	#endregion
@@ -787,7 +787,7 @@ public abstract class ComponentSolver
 		else
 		{
 			string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
 				headerText);
 			string recordMessageTone =
 				$"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
@@ -806,12 +806,12 @@ public abstract class ComponentSolver
 		if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
 		{
 			Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
-			IRCConnection.SendMessage("Bomb time increased by the minimum {0} seconds!", TwitchPlaySettings.data.TimeModeMinimumTimeGained);
+			IRCConnection.SendMessage($"Bomb time increased by the minimum {TwitchPlaySettings.data.TimeModeMinimumTimeGained} seconds!");
 		}
 		else
 		{
 			Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + time;
-			IRCConnection.SendMessage("Bomb time increased by {0} seconds!", Math.Round(time, 1));
+			IRCConnection.SendMessage($"Bomb time increased by {Math.Round(time, 1)} seconds!");
 		}
 		OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 	}
@@ -824,9 +824,9 @@ public abstract class ComponentSolver
 		int strikePenalty = ModInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		if (OtherModes.ZenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
 		if (!string.IsNullOrEmpty(userNickName))
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", 0, userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
 		else
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AwardRewardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardRewardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
 		if (strikeCount <= 0) return;
 
 		string recordMessageTone = !string.IsNullOrEmpty(userNickName) ? $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike" : $"Module ID: {Code} | Module Name: {headerText} | Strike";

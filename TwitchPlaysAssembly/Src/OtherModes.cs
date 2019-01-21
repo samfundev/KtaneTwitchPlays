@@ -62,7 +62,7 @@ public static class OtherModes
 		if ((_state != KMGameInfo.State.PostGame && _state != KMGameInfo.State.Setup) || currentMode == nextMode) return;
 
 		currentMode = nextMode;
-		IRCConnection.SendMessage("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
+		IRCConnection.SendMessageFormat("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
 	}
 
 	public static float GetMultiplier() => timedMultiplier;

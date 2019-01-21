@@ -303,7 +303,7 @@ public class TwitchModule : MonoBehaviour
 		SetBannerColor(unclaimedBackgroundColor);
 		if (PlayerName != null)
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleAbandoned, Code, PlayerName, HeaderText);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleAbandoned, Code, PlayerName, HeaderText);
 			PlayerName = null;
 			TakeInProgress = null;
 		}
@@ -462,9 +462,9 @@ public class TwitchModule : MonoBehaviour
 		}
 	}
 
-	public void CommandError(string userNickName, string message) => IRCConnection.SendMessage(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message);
+	public void CommandError(string userNickName, string message) => IRCConnection.SendMessageFormat(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message);
 
-	public void CommandInvalid(string userNickName) => IRCConnection.SendMessage(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
+	public void CommandInvalid(string userNickName) => IRCConnection.SendMessageFormat(TwitchPlaySettings.data.InvalidCommand, userNickName, Code, HeaderText);
 
 	public void UpdateLayerData()
 	{

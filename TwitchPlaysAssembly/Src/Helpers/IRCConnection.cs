@@ -619,8 +619,10 @@ public class IRCConnection : MonoBehaviour
 	// ReSharper disable once UnusedMember.Global
 	public static void SendWhisper(string userNickName, string message, params object[] args) => SendMessage(message, userNickName, false, args);
 
+	new public static void SendMessage(string message) => SendMessage(message, null, true);
+
 	[StringFormatMethod("message")]
-	public static void SendMessage(string message, params object[] args) => SendMessage(string.Format(message, args), null, true);
+	public static void SendMessageFormat(string message, params object[] args) => SendMessage(message, null, true, args);
 
 	[StringFormatMethod("message")]
 	public static void SendMessage(string message, string userNickName, bool sendToChat, params object[] args) => SendMessage(string.Format(message, args), userNickName, sendToChat);

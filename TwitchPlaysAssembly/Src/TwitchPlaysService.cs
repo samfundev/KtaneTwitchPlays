@@ -354,7 +354,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 		if (!UserAccess.HasAccess(msg.UserNickName, TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel, orHigher: true))
 		{
-			IRCConnection.SendMessage("@{0}, you need {1} access to use that command{2}.",
+			IRCConnection.SendMessageFormat("@{0}, you need {1} access to use that command{2}.",
 				msg.UserNickName,
 				UserAccess.LevelToString(TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel),
 				TwitchPlaySettings.data.AnarchyMode ? " in anarchy mode" : "");
@@ -364,7 +364,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 		if (extraObject is TwitchModule mdl && mdl.Solved && !command.HasAttribute<SolvedAllowedAttribute>() && !TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadySolved, mdl.Code, mdl.PlayerName, msg.UserNickName, mdl.BombComponent.GetModuleDisplayName());
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadySolved, mdl.Code, mdl.PlayerName, msg.UserNickName, mdl.BombComponent.GetModuleDisplayName());
 			// Return true so that the command counts as processed (otherwise you get the above message multiple times)
 			return true;
 		}

@@ -29,21 +29,21 @@ static class GlobalCommands
 	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendMessage(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddScore(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
 	[Command(@"bonussolves? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusSolves([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendMessage(TwitchPlaySettings.data.GiveBonusSolves, targetPlayer, bonus, user);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusSolves, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddSolve(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
 	[Command(@"bonusstrikes? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusStrikes([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendMessage(TwitchPlaySettings.data.GiveBonusStrikes, targetPlayer, bonus, user);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusStrikes, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
@@ -598,7 +598,7 @@ static class GlobalCommands
 	{
 		if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
 		{
-			IRCConnection.SendMessage("Sorry, there is no distribution called \"{0}\".", distributionName);
+			IRCConnection.SendMessageFormat($"Sorry, there is no distribution called \"{0}\".", distributionName);
 			return null;
 		}
 		return RunDistribution(user, modules, inf, distribution);
@@ -921,13 +921,13 @@ static class GlobalCommands
 	{
 		if (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.Gameplay)
 		{
-			IRCConnection.SendMessage(@"You can’t use the !run command while a bomb is in progress.", user);
+			IRCConnection.SendMessage("You can’t use the !run command while a bomb is in progress.");
 			return null;
 		}
 
 		if (!((TwitchPlaySettings.data.EnableRunCommand && (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(user, AccessLevel.Defuser, true))) || UserAccess.HasAccess(user, AccessLevel.Mod, true) || TwitchPlaySettings.data.AnarchyMode) || isWhisper)
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.RunCommandDisabled, user);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.RunCommandDisabled, user);
 			return null;
 		}
 		return action();
@@ -946,13 +946,13 @@ static class GlobalCommands
 	{
 		if (!distribution.Enabled && !UserAccess.HasAccess(user, AccessLevel.Mod) && !TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessage("Sorry, distribution \"{0}\" is disabled", distribution.DisplayName);
+			IRCConnection.SendMessageFormat("Sorry, distribution \"{0}\" is disabled", distribution.DisplayName);
 			return null;
 		}
 
 		if (modules < distribution.MinModules)
 		{
-			IRCConnection.SendMessage("Sorry, the minimum number of modules for \"{0}\" is {1}.", distribution.DisplayName, distribution.MinModules);
+			IRCConnection.SendMessage($"Sorry, the minimum number of modules for \"{distribution.DisplayName}\" is {distribution.MinModules}.");
 			return null;
 		}
 
@@ -960,9 +960,9 @@ static class GlobalCommands
 		if (modules > maxModules)
 		{
 			if (modules > distribution.MaxModules)
-				IRCConnection.SendMessage("Sorry, the maximum number of modules for {0} is {1}.", distribution.DisplayName, distribution.MaxModules);
+				IRCConnection.SendMessage($"Sorry, the maximum number of modules for {distribution.DisplayName} is {distribution.MaxModules}.");
 			else
-				IRCConnection.SendMessage("Sorry, the maximum number of modules is \"{0}\".", maxModules);
+				IRCConnection.SendMessage($"Sorry, the maximum number of modules is \"{maxModules}\".");
 			return null;
 		}
 

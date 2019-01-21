@@ -76,7 +76,7 @@ public class TwitchHoldable
 		int strikePenalty = -5;
 		strikePenalty = TwitchPlaySettings.data.EnableRewardMultipleStrikes ? (strikeCount * strikePenalty) : (Math.Min(strikePenalty, strikeCount * strikePenalty));
 
-		IRCConnection.SendMessage(TwitchPlaySettings.data.AwardHoldableStrike,
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardHoldableStrike,
 			ID,
 			strikeCount == 1 ? "a" : strikeCount.ToString(),
 			strikeCount == 1 ? "" : "s",

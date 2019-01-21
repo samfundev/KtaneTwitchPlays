@@ -16,7 +16,7 @@ static class ModuleCommands
 
 		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
 			? $"{module.HeaderText} : {helpText} : {manualText}"
-			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}", null, true);
+			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
 	}
 
 	[Command("player"), SolvedAllowed]
@@ -32,14 +32,14 @@ static class ModuleCommands
 			module.Solver.TurnQueued = true;
 			module.StartCoroutine(module.Solver.TurnBombOnSolve());
 		}
-		IRCConnection.SendMessage(TwitchPlaySettings.data.TurnBombOnSolve, module.Code, module.HeaderText);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TurnBombOnSolve, module.Code, module.HeaderText);
 	}
 
 	[Command("cancel +(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)"), SolvedAllowed]
 	public static void BombTurnAroundCancel(TwitchModule module)
 	{
 		module.Solver.TurnQueued = false;
-		IRCConnection.SendMessage(TwitchPlaySettings.data.CancelBombTurn, module.Code, module.HeaderText);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.CancelBombTurn, module.Code, module.HeaderText);
 	}
 
 	[Command("claim")]
@@ -100,7 +100,7 @@ static class ModuleCommands
 	{
 		module.SetBannerColor(module.SolvedBackgroundColor);
 		module.PlayerName = null;
-		IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleReady, module.Code, user, module.HeaderText);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleReady, module.Code, user, module.HeaderText);
 	}
 
 	[Command(@"assign +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
@@ -108,7 +108,7 @@ static class ModuleCommands
 	{
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessage("Sorry {0}, assigning modules is not allowed in anarchy mode.", user);
+			IRCConnection.SendMessageFormat("Sorry {0}, assigning modules is not allowed in anarchy mode.", user);
 			return;
 		}
 
@@ -122,16 +122,16 @@ static class ModuleCommands
 		module.RemoveFromClaimQueue(user);
 		module.CanClaimNow(user, true, true);
 		module.SetBannerColor(module.ClaimedBackgroundColour);
-		IRCConnection.SendMessage(TwitchPlaySettings.data.AssignModule, module.Code, module.PlayerName, user, module.HeaderText);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AssignModule, module.Code, module.PlayerName, user, module.HeaderText);
 	}
 
 	[Command(@"take")]
 	public static void Take(TwitchModule module, string user, bool isWhisper)
 	{
 		if (isWhisper)
-			IRCConnection.SendMessage("Sorry {0}, taking modules is not allowed in whispers.", user);
+			IRCConnection.SendMessageFormat("Sorry {0}, taking modules is not allowed in whispers.", user);
 		else if (TwitchPlaySettings.data.AnarchyMode)
-			IRCConnection.SendMessage("Sorry {0}, taking modules is not allowed in anarchy mode.", user);
+			IRCConnection.SendMessageFormat("Sorry {0}, taking modules is not allowed in anarchy mode.", user);
 
 		// Attempt to take over from another user
 		else if (module.PlayerName != null && user != module.PlayerName)
@@ -139,12 +139,12 @@ static class ModuleCommands
 			module.AddToClaimQueue(user);
 			if (module.TakeInProgress == null)
 			{
-				IRCConnection.SendMessage(TwitchPlaySettings.data.TakeModule, module.PlayerName, user, module.Code, module.HeaderText);
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeModule, module.PlayerName, user, module.Code, module.HeaderText);
 				module.TakeInProgress = module.TakeModule();
 				module.StartCoroutine(module.TakeInProgress);
 			}
 			else
-				IRCConnection.SendMessage(TwitchPlaySettings.data.TakeInProgress, user, module.Code, module.HeaderText);
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeInProgress, user, module.Code, module.HeaderText);
 		}
 
 		// Module is already claimed by the same user
@@ -152,7 +152,7 @@ static class ModuleCommands
 		{
 			if (!module.PlayerName.Equals(user))
 				module.AddToClaimQueue(user);
-			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleAlreadyOwned, user, module.Code, module.HeaderText);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleAlreadyOwned, user, module.Code, module.HeaderText);
 		}
 
 		// Module is not claimed at all: just claim it
@@ -172,7 +172,7 @@ static class ModuleCommands
 		// The module belongs to this user and there’s a takeover attempt in progress: cancel the takeover attempt
 		if (module.PlayerName == user && module.TakeInProgress != null)
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.ModuleIsMine, module.PlayerName, module.Code, module.HeaderText);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleIsMine, module.PlayerName, module.Code, module.HeaderText);
 			module.StopCoroutine(module.TakeInProgress);
 			module.TakeInProgress = null;
 		}
@@ -183,7 +183,7 @@ static class ModuleCommands
 
 		// Someone else has a claim on the module
 		else if (module.PlayerName != user)
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, module.Code, module.PlayerName, user, module.HeaderText);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadyClaimed, module.Code, module.PlayerName, user, module.HeaderText);
 
 		// If the user has a claim on the module but there’s no takeover attempt, just ignore this command
 	}
@@ -204,7 +204,7 @@ static class ModuleCommands
 	}
 
 	[Command(@"(points|score)")]
-	public static void Points(TwitchModule module) => IRCConnection.SendMessage("{0} ({1}) current score: {2}", module.HeaderText, module.Code, module.Solver.ModInfo.moduleScore);
+	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) current score: {module.Solver.ModInfo.moduleScore}");
 
 	[Command(@"mark", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Mark(TwitchModule module) => module.SetBannerColor(module.MarkedBackgroundColor);
@@ -256,7 +256,7 @@ static class ModuleCommands
 
 		if (module.Solved && !TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadySolved, module.Code, module.PlayerName, user, module.HeaderText);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadySolved, module.Code, module.PlayerName, user, module.HeaderText);
 			yield break;
 		}
 
@@ -281,7 +281,7 @@ static class ModuleCommands
 			yield return new WaitForSeconds(0.1f);
 		}
 		else
-			IRCConnection.SendMessage(TwitchPlaySettings.data.AlreadyClaimed, module.Code, module.PlayerName, user, module.HeaderText);
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadyClaimed, module.Code, module.PlayerName, user, module.HeaderText);
 	}
 
 	#region Private methods

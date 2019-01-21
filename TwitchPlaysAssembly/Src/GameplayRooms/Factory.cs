@@ -135,7 +135,7 @@ public class Factory : GameRoom
 					TwitchGame.ModuleCameras.DisableCameraWall();
 			}
 			bombHandle.BombName = $"Bomb {currentBombID} of {(_infiniteMode ? "∞" : BombCount.ToString())}";
-			IRCConnection.SendMessage("Bomb {0} of {1} is now live.", currentBombID++, _infiniteMode ? "∞" : BombCount.ToString());
+			IRCConnection.SendMessage($"Bomb {currentBombID++} of {(_infiniteMode ? "∞" : BombCount.ToString())} is now live.");
 
 			if (TwitchPlaySettings.data.EnableAutomaticEdgework)
 			{
