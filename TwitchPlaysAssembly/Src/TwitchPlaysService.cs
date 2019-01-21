@@ -134,7 +134,7 @@ public class TwitchPlaysService : MonoBehaviour
 		GUILayout.BeginArea(new Rect(50, Screen.height - 75, (Screen.width - 50) * 0.2f, 25));
 		GUILayout.BeginHorizontal();
 		_inputCommand = GUILayout.TextField(_inputCommand, GUILayout.MinWidth(50));
-		if ((GUILayout.Button("Send") || Event.current.keyCode == KeyCode.Return) && _inputCommand.Length != 0)
+		if ((GUILayout.Button("Send") || Event.current.keyCode == KeyCode.Return) && !string.IsNullOrEmpty(_inputCommand))
 		{
 			if (_inputCommand.Equals(DebugSequence))
 			{
