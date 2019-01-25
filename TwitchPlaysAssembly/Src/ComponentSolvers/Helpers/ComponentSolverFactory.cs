@@ -67,6 +67,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["errorCodes"] = module => new ErrorCodesComponentSolver(module);
 		ModComponentSolverCreators["blockbusters"] = module => new BlockbustersComponentSolver(module);
 		ModComponentSolverCreators["catchphrase"] = module => new CatchphraseComponentSolver(module);
+		ModComponentSolverCreators["JuckAlchemy"] = module => new AlchemyComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -177,6 +178,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3 };
+		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", moduleScore = 6 };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };

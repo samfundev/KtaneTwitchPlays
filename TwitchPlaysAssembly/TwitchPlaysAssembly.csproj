@@ -81,6 +81,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\External\SimpleModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\UnsupportedModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Kaneb\TwoBitsComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\AlchemyComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\CatchphraseComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\BlockbustersComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\EdgeworkComponentSolver.cs" />
