@@ -15,7 +15,7 @@ public class BlockbustersComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		inputCommand = Regex.Replace(inputCommand, @"(\W|_|^(press|submit|click|answer))", "");
+		inputCommand = Regex.Replace(inputCommand.ToLowerInvariant(), @"(\W|_|^(press|submit|click|answer))", "");
 		if (inputCommand.Length != 2) yield break;
 
 		int column = CharacterToIndex(inputCommand[0]);
