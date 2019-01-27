@@ -117,14 +117,10 @@ static class GlobalCommands
 	public static void RankByUser([Group(1)] string desiredUser, string user, bool isWhisper) { Leaderboard.Instance.GetRank(desiredUser, out var entry); ShowRank(entry, desiredUser, user, isWhisper); }
 
 	[Command(@"(log|analysis)")]
-	public static void Log() => LogUploader.Instance.PostToChat("Analysis for the previous bomb: {0}");
+	public static void Log() => LogUploader.Instance.PostToChat(LogUploader.Instance.previousUrl, "Analysis for the previous bomb: {0}");
 
 	[Command("(log|analysis)now", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void LogNow()
-	{
-		LogUploader.Instance.Post();
-		LogUploader.Instance.postOnComplete = true;
-	}
+	public static void LogNow(string user, bool isWhisper) => LogUploader.Instance.GetAnalyzerUrl(url => IRCConnection.SendMessage(url, user, !isWhisper));
 
 	[Command(@"shorturl")]
 	public static void ShortURL(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs"), user, !isWhisper);

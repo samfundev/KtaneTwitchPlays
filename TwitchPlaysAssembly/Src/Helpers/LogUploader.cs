@@ -15,7 +15,7 @@ public class LogUploader : MonoBehaviour
 	public string Log { get; private set; }
 
 	[HideInInspector]
-	public string analysisUrl = null;
+	public string previousUrl = null;
 
 	[HideInInspector]
 	public bool postOnComplete = false;
@@ -23,9 +23,7 @@ public class LogUploader : MonoBehaviour
 	[HideInInspector]
 	public string LOGPREFIX;
 
-	//private string output;
-
-	private string[] _blacklistedLogLines =
+	readonly private string[] _blacklistedLogLines =
 	{
 		"[ServicesSteam]",
 		"[BombGenerator] Instantiated EmptyComponent",
@@ -71,21 +69,9 @@ public class LogUploader : MonoBehaviour
 
 	public void Clear() => Log = "";
 
-	public string Flush()
-	{
-		string result = Log;
-		Log = "";
-		return result;
-	}
+	public void GetAnalyzerUrl(Action<string> callback) => StartCoroutine(GetAnalyzerUrl(Log, callback));
 
-	public void Post()
-	{
-		analysisUrl = null;
-		postOnComplete = false;
-		StartCoroutine(DoPost(Log));
-	}
-
-	private IEnumerator DoPost(string data)
+	public IEnumerator GetAnalyzerUrl(string data, Action<string> callback)
 	{
 		// This first line is necessary as the Log Analyzer uses it as an identifier
 		data = "Initialize engine version: Twitch Plays\n" + data;
@@ -122,13 +108,10 @@ public class LogUploader : MonoBehaviour
 
 				if (!www.isNetworkError && !www.isHttpError)
 				{
-					analysisUrl = www.downloadHandler.text;
+					string analysisUrl = www.downloadHandler.text;
 					Debug.Log(LOGPREFIX + "Logfile now available at " + analysisUrl);
 
-					if (postOnComplete)
-					{
-						PostToChat();
-					}
+					callback(analysisUrl);
 
 					break;
 				}
@@ -155,12 +138,7 @@ public class LogUploader : MonoBehaviour
 
 					Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
 
-					analysisUrl = UrlHelper.Instance.LogAnalyserFor(rawUrl);
-
-					if (postOnComplete)
-					{
-						PostToChat();
-					}
+					callback(UrlHelper.Instance.LogAnalyserFor(rawUrl));
 
 					break;
 				}
@@ -187,17 +165,18 @@ public class LogUploader : MonoBehaviour
 		}
 	}
 
-	public bool PostToChat(string format = "Analysis for this bomb: {0}", string emote = "copyThis")
+	public void PostToChat(string analysisUrl, string format = "Analysis for this bomb: {0}", string emote = "copyThis") =>
+		IRCConnection.SendMessageFormat($"{emote} {format}", analysisUrl);
+
+	public void GetBombUrl()
 	{
-		if (string.IsNullOrEmpty(analysisUrl))
+		previousUrl = null;
+		postOnComplete = false;
+		GetAnalyzerUrl(url =>
 		{
-			Debug.Log(LOGPREFIX + "No analysis URL available, can't post to chat");
-			return false;
-		}
-		Debug.Log(LOGPREFIX + "Posting analysis URL to chat");
-		emote = " " + emote + " ";
-		IRCConnection.SendMessageFormat(emote + format, analysisUrl);
-		return true;
+			previousUrl = url;
+			if (postOnComplete) PostToChat(url);
+		});
 	}
 
 	internal void HandleLog(string message, string stackTrace, LogType type)

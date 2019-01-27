@@ -210,7 +210,7 @@ public class TwitchGame : MonoBehaviour
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
 		TwitchPlaysService.Instance.SetHeaderVisbility(false);
 
-		LogUploader.Instance.Post();
+		LogUploader.Instance.GetBombUrl();
 		ParentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
 		if (!claimsEnabled)
 			ParentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
@@ -515,9 +515,10 @@ public class TwitchGame : MonoBehaviour
 
 	private void SendAnalysisLink()
 	{
-		if (LogUploader.Instance.PostToChat()) return;
-		Debug.Log("[BombMessageResponder] Analysis URL not found, instructing LogUploader to post when it's ready");
-		LogUploader.Instance.postOnComplete = true;
+		if (LogUploader.Instance.previousUrl != null)
+			LogUploader.Instance.PostToChat(LogUploader.Instance.previousUrl);
+		else
+			LogUploader.Instance.postOnComplete = true;
 	}
 
 	public static bool IsAuthorizedDefuser(string userNickName, bool isWhisper, bool silent = false)
