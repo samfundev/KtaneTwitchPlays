@@ -563,7 +563,7 @@ public abstract class ComponentSolver
 				switch (ModInfo.moduleID)
 				{
 					case "HexiEvilFMN": // Forget Everything
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 3 * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4 * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default: // Forget Me Not
