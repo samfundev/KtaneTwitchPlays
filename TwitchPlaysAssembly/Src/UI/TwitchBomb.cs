@@ -377,6 +377,10 @@ public class TwitchBomb : MonoBehaviour
 			{ "CompositeVideo", "Composite" }
 		};
 
+		Dictionary<string, string> ruleSeed = QueryWidgets<string>("RuleSeedModifier").FirstOrDefault();
+		if (ruleSeed?.ContainsKey("seed") ?? false)
+			edgework.Add($"RuleSeed:{ruleSeed["seed"]}");
+
 		List<Dictionary<string, int>> batteries = QueryWidgets<int>(KMBombInfo.QUERYKEY_GET_BATTERIES).ToList();
 		edgework.Add(batteries.All(x => new[] { 1, 2 }.Contains(x["numbatteries"]))
 			? $"{batteries.Sum(x => x["numbatteries"])}B {batteries.Count}H"
