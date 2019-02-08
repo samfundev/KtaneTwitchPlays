@@ -57,6 +57,7 @@ public static class ComponentSolverFactory
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
+		ModComponentSolverCreators["FlavorText"] = module => new FlavorTextComponentSolver(module);
 		ModComponentSolverCreators["KnowYourWay"] = module => new KnowYourWayComponentSolver(module);
 		ModComponentSolverCreators["LetterKeys"] = module => new LetterKeysComponentSolver(module);
 		ModComponentSolverCreators["Microcontroller"] = module => new MicrocontrollerComponentSolver(module);
@@ -168,6 +169,7 @@ public static class ComponentSolverFactory
 
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
+		ModComponentSolverInformation["FlavorText"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Flavor Text", moduleScore = 2 };
 		ModComponentSolverInformation["KnowYourWay"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Know Your Way", moduleScore = 10 };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
@@ -274,6 +276,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 8, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false, DoesTheRightThing = true };
 
 		//Goofy
+		ModComponentSolverInformation["leftandRight"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["melodySequencer"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["simonSounds"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 

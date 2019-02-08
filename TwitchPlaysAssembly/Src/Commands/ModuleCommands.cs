@@ -74,7 +74,7 @@ static class ModuleCommands
 			// Admins can always auto-solve a module.
 			UserAccess.HasAccess(user, AccessLevel.Admin, true) ||
 			// Unsupported modules can always be auto-solved
-			(module.Unsupported && module.Solver.GetType() == typeof(UnsupportedModComponentSolver))
+			(module.Unsupported || module.Solver.GetType() == typeof(UnsupportedModComponentSolver))
 		)
 			module.Solver.SolveModule($"A module ({module.HeaderText}) is being automatically solved.");
 	}
