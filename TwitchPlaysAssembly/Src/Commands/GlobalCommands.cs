@@ -1035,7 +1035,9 @@ static class GlobalCommands
 		if (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.PostGame)
 		{
 			// Press the “back” button
-			PostGameCommands.Continue();
+			var e = PostGameCommands.Continue();
+			while (e.MoveNext())
+				yield return e;
 
 			// Wait until we’re back in the setup room
 			yield return new WaitUntil(() => TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.Setup);
