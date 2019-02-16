@@ -365,6 +365,7 @@ public static class ComponentSolverFactory
 		//Riverbui
 		ModComponentSolverInformation["MazeScrambler"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["mineseeker"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["ModuleMaze"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["USA"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 
 		//Royal_Flu$h
