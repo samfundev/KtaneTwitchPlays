@@ -56,6 +56,8 @@ static class GlobalCommands
 
 	[Command(@"timemode( *(on)| *off)?")]
 	public static void TimeMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Time, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableTimeModeForEveryone, TwitchPlaySettings.data.TimeModeCommandDisabled);
+	[Command(@"vsmode( *(on)| *off)?", AccessLevel.Mod, AccessLevel.Mod), DebuggingOnly]
+	public static void VsMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.VS, !any, on, user, isWhisper, false, TwitchPlaySettings.data.VsModeCommandDisabled);
 	[Command(@"zenmode( *(on)| *off)?")]
 	public static void ZenMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Zen, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableZenModeForEveryone, TwitchPlaySettings.data.ZenModeCommandDisabled);
 
@@ -472,6 +474,20 @@ static class GlobalCommands
 			IRCConnection.SendMessage("The specified user has no ban data.", user, !isWhisper);
 	}
 
+	[Command(@"addgood (.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void AddTeam([Group(1)] string targetUser)
+	{
+		Leaderboard.Instance.MakeGood(targetUser);
+		IRCConnection.SendMessage($"User {targetUser} made Good");
+	}
+
+	[Command(@"addevil (.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void AddBoss([Group(1)] string targetUser)
+	{
+		Leaderboard.Instance.MakeEvil(targetUser);
+		IRCConnection.SendMessage($"User {targetUser} made Evil");
+	}
+
 	[Command(@"(add|remove) +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddRemoveRole([Group(1)] string command, [Group(2)] string targetUser, [Group(3)] string roles, string user, bool isWhisper)
 	{
@@ -588,6 +604,36 @@ static class GlobalCommands
 		return RunDistribution(user, zenModeDistribution.MaxModules, inf, zenModeDistribution);
 	});
 
+	[Command(@"run +(\d+) +(.*) +(\d+) +(\d+)")]
+	public static IEnumerator RunVSHP(string user, bool isWhisper, [Group(1)] int modules,
+		[Group(2)] string distributionName, [Group(3)] int GoodHP, [Group(4)] int EvilHP, KMGameInfo inf) => RunWrapper(
+		user, isWhisper,
+		() =>
+		{
+			if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
+			{
+				IRCConnection.SendMessageFormat("Sorry, there is no distribution called \"{0}\".", distributionName);
+				return null;
+			}
+
+			if (!Leaderboard.Instance.isAnyEvil())
+			{
+				IRCConnection.SendMessage("There are no evil players designated, the VS bomb cannot be run");
+				return null;
+			}
+
+			if (!Leaderboard.Instance.isAnyGood())
+			{
+				IRCConnection.SendMessage("There are no good players designated, the VS bomb cannot be run");
+				return null;
+			}
+
+			OtherModes.goodHealth = GoodHP;
+			OtherModes.evilHealth = EvilHP;
+
+			return RunDistribution(user, modules, inf, distribution);
+		}, true);
+
 	[Command(@"run +(.*) +(\d+)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] string distributionName, [Group(2)] int modules, KMGameInfo inf) => RunSpecific(user, isWhisper, modules, distributionName, inf);
 	[Command(@"run +(\d+) +(.*)")]
@@ -598,12 +644,25 @@ static class GlobalCommands
 			IRCConnection.SendMessageFormat($"Sorry, there is no distribution called \"{0}\".", distributionName);
 			return null;
 		}
+
+		if (OtherModes.VSModeOn)
+		{
+			IRCConnection.SendMessage("Sorry, you cannot use this format of run when VS mode is on");
+			return null;
+		}
 		return RunDistribution(user, modules, inf, distribution);
 	});
+
 
 	[Command(@"run +(?!.* +\d+$|\d+ +.*$)(.+)")]
 	public static IEnumerator RunMission(string user, bool isWhisper, [Group(1)] string textAfter, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
+		if (OtherModes.VSModeOn)
+		{
+			IRCConnection.SendMessage("You cannot run missions when VS mode is on");
+			return null;
+		}
+
 		string missionID = null;
 		string failureMessage = null;
 		if (UserAccess.HasAccess(user, AccessLevel.Mod, true))
@@ -950,11 +1009,17 @@ static class GlobalCommands
 		return mission.name;
 	}
 
-	private static IEnumerator RunWrapper(string user, bool isWhisper, Func<IEnumerator> action)
+	private static IEnumerator RunWrapper(string user, bool isWhisper, Func<IEnumerator> action, bool VSOnly = false)
 	{
 		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.PostGame && TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup)
 		{
 			IRCConnection.SendMessage("You can't use the !run command right now.");
+			return null;
+		}
+
+		if (VSOnly && !OtherModes.VSModeOn)
+		{
+			IRCConnection.SendMessage("That formatting can only be used in VS mode.");
 			return null;
 		}
 
@@ -1047,6 +1112,7 @@ static class GlobalCommands
 		int rewardPoints = (5 * modules) - (3 * vanillaModules);
 		TwitchPlaySettings.SetRewardBonus(rewardPoints);
 		IRCConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
+
 		return RunMissionCoroutine(mission);
 	}
 

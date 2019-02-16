@@ -19,6 +19,12 @@ public static class OtherModes
 
 	private static KMGameInfo.State _state = KMGameInfo.State.Transitioning;
 
+	public enum Team
+	{
+		Good,
+		Evil
+	}
+
 	public static bool Set(TwitchPlaysMode mode, bool state = true)
 	{
 		if (!state) mode = TwitchPlaysMode.Normal;
@@ -37,23 +43,23 @@ public static class OtherModes
 	public static bool ZenModeOn { get => InMode(TwitchPlaysMode.Zen); set => Set(TwitchPlaysMode.Zen, value); }
 
 	public static float timedMultiplier = 9;
-	public static int teamHealth = 0;
-	public static int bossHealth = 0;
+	public static int goodHealth = 0;
+	public static int evilHealth = 0;
 
-	public static int GetTeamHealth() => teamHealth;
+	public static int GetGoodHealth() => goodHealth;
 
-	public static int GetBossHealth() => bossHealth;
+	public static int GetEvilHealth() => evilHealth;
 
-	public static int SubtractBossHealth(int damage)
+	public static int SubtractEvilHealth(int damage)
 	{
-		bossHealth -= damage;
-		return bossHealth;
+		evilHealth -= damage;
+		return evilHealth;
 	}
 
-	public static int SubtractTeamHealth(int damage)
+	public static int SubtractGoodHealth(int damage)
 	{
-		teamHealth -= damage;
-		return teamHealth;
+		goodHealth -= damage;
+		return goodHealth;
 	}
 	public static void RefreshModes(KMGameInfo.State state)
 	{

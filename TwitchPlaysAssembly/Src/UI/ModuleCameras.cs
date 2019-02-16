@@ -234,7 +234,7 @@ public class ModuleCameras : MonoBehaviour
 	{
 		{ TwitchPlaysMode.Normal, Color.red },
 		{ TwitchPlaysMode.Time, new Color(1.0f, 0.5f, 0.0f) },
-		{ TwitchPlaysMode.VS, Color.red }, //setting to red until VS mode is implemented further
+		{ TwitchPlaysMode.VS, Color.green },
 		{ TwitchPlaysMode.Zen, Color.cyan }
 	};
 
@@ -401,8 +401,8 @@ public class ModuleCameras : MonoBehaviour
 		}
 		else if (OtherModes.VSModeOn)
 		{
-			int bossHealth = OtherModes.GetBossHealth();
-			int teamHealth = OtherModes.GetTeamHealth();
+			int bossHealth = OtherModes.GetEvilHealth();
+			int teamHealth = OtherModes.GetGoodHealth();
 			StrikesPrefab.color = Color.cyan;
 			ConfidencePrefab.color = Color.red;
 			StrikesPrefab.text = $"{teamHealth} HP";

@@ -52,7 +52,7 @@ public static class BombCommands
 		}
 
 		Leaderboard.Instance.GetRank(user, out var entry);
-		if (entry.SolveScore < TwitchPlaySettings.data.MinScoreForNewbomb && !UserAccess.HasAccess(user, AccessLevel.Defuser, true))
+		if (!UserAccess.HasAccess(user, AccessLevel.Defuser, true) && entry != null && entry.SolveScore < TwitchPlaySettings.data.MinScoreForNewbomb)
 		{
 			IRCConnection.SendMessage("Sorry, you don't have enough points to end Zen mode.");
 			return null;
@@ -76,7 +76,7 @@ public static class BombCommands
 		else if (OtherModes.VSModeOn)
 		{
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusVsMode, bomb.GetFullFormattedTime,
-				bomb.GetFullStartingTime, OtherModes.teamHealth, OtherModes.bossHealth, currentReward), user, !isWhisper);
+				bomb.GetFullStartingTime, OtherModes.goodHealth, OtherModes.evilHealth, currentReward), user, !isWhisper);
 		}
 		else
 		{

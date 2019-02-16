@@ -140,7 +140,19 @@ public class TwitchGame : MonoBehaviour
 		}
 		else if (hasBeenSolved)
 		{
-			bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedMessage, timeRemainingFormatted);
+			if (!OtherModes.VSModeOn)
+				bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedMessage, timeRemainingFormatted);
+			else
+			{
+				OtherModes.Team winner = OtherModes.Team.Good;
+				if (OtherModes.GetGoodHealth() == 0)
+					winner = OtherModes.Team.Evil;
+				else if (OtherModes.GetEvilHealth() == 0)
+					winner = OtherModes.Team.Good;
+				bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedVsMessage,
+					winner == OtherModes.Team.Good ? "good" : "evil", timeRemainingFormatted);
+			}
+
 			Leaderboard.Instance.BombsCleared += Bombs.Count;
 			bombMessage += TwitchPlaySettings.GiveBonusPoints();
 

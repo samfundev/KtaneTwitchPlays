@@ -136,7 +136,9 @@ public class TwitchPlaySettingsData
 	public string HoldableCommandError = "Sorry @{1}, Holdable !{0} responded with the following error: {2}";
 
 	public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
+	public string AwardVsSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. {4} HP from {5}. VoteYea";
 	public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
+	public string AwardVsStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} HP from {4}. {8} points from {9}{5} VoteNay";
 	public string AwardHoldableStrike = "VoteNay Holdable !{0} got {1} strike{2}! {3} points from {4}{5} VoteNay";
 	public string AwardRewardStrike = "VoteNay Module {0} ({3}) got {1} strike{2}{4}! VoteNay";
 
@@ -146,7 +148,11 @@ public class TwitchPlaySettingsData
 	public string BombExplodedMessage = "KAPOW KAPOW The bomb has exploded, with {0} remaining! KAPOW KAPOW";
 
 	public string BombDefusedMessage = "PraiseIt PraiseIt The bomb has been defused, with {0} remaining!";
+	public string BombDefusedVsMessage = "PraiseIt PraiseIt The {0} team has won! The bomb had {1} remaining!";
 	public string BombDefusedBonusMessage = " {0} reward points to everyone who helped with this success.";
+
+	public string BombDefusedVsBonusMessage =
+		" {0} reward points to everyone on the {1} team who helped with this success.";
 	public string BombDefusedFooter = " PraiseIt PraiseIt";
 
 	public string BombSoloDefusalMessage = "PraiseIt PraiseIt {0} completed a solo defusal in {1}:{2:00}!";
@@ -200,6 +206,7 @@ public class TwitchPlaySettingsData
 	public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
 	public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
 	public string TimeModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Time Mode";
+	public string VsModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable VS Mode";
 	public string ZenModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Zen Mode";
 	public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "Sorry @{0}, profile management is currently disabled.";
@@ -338,7 +345,9 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref HoldableCommandError, data.HoldableCommandError, 3);
 
 		valid &= ValidateString(ref AwardSolve, data.AwardSolve, 4);
+		valid &= ValidateString(ref AwardVsSolve, data.AwardVsSolve, 6);
 		valid &= ValidateString(ref AwardStrike, data.AwardStrike, 8);
+		valid &= ValidateString(ref AwardVsStrike, data.AwardVsStrike, 10);
 		valid &= ValidateString(ref AwardHoldableStrike, data.AwardHoldableStrike, 6);
 
 		valid &= ValidateString(ref BombLiveMessage, data.BombLiveMessage, 0);
@@ -347,7 +356,9 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref BombExplodedMessage, data.BombExplodedMessage, 1);
 
 		valid &= ValidateString(ref BombDefusedMessage, data.BombDefusedMessage, 1);
+		valid &= ValidateString(ref BombDefusedVsMessage, data.BombDefusedVsMessage, 2);
 		valid &= ValidateString(ref BombDefusedBonusMessage, data.BombDefusedBonusMessage, 1);
+		valid &= ValidateString(ref BombDefusedVsBonusMessage, data.BombDefusedVsBonusMessage, 2);
 		valid &= ValidateString(ref BombDefusedFooter, data.BombDefusedFooter, 0);
 
 		valid &= ValidateString(ref BombSoloDefusalMessage, data.BombSoloDefusalMessage, 3);
@@ -399,6 +410,7 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref FreePlayHardcoreDisabled, data.FreePlayHardcoreDisabled, 1);
 		valid &= ValidateString(ref FreePlayModsOnlyDisabled, data.FreePlayModsOnlyDisabled, 1);
 		valid &= ValidateString(ref TimeModeCommandDisabled, data.TimeModeCommandDisabled, 1);
+		valid &= ValidateString(ref VsModeCommandDisabled, data.VsModeCommandDisabled, 1);
 		valid &= ValidateString(ref ZenModeCommandDisabled, data.ZenModeCommandDisabled, 1);
 		valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
 
@@ -570,12 +582,37 @@ public static class TwitchPlaySettings
 		{
 			return data.BombDefusedFooter;
 		}
-		int ClearReward2 = Mathf.CeilToInt(ClearReward / (float) Players.Count);
-		string message = string.Format(data.BombDefusedBonusMessage, ClearReward2) + data.BombDefusedFooter;
-		foreach (string player in Players)
+
+		string message;
+
+		if (!OtherModes.VSModeOn)
 		{
-			Leaderboard.Instance.AddScore(player, ClearReward2);
+			int ClearReward2 = Mathf.CeilToInt(ClearReward / (float) Players.Count);
+			message = string.Format(data.BombDefusedBonusMessage, ClearReward2) + data.BombDefusedFooter;
+			foreach (string player in Players)
+			{
+				Leaderboard.Instance.AddScore(player, ClearReward2);
+			}
 		}
+		else
+		{
+			OtherModes.Team winner = OtherModes.Team.Good;
+			if (OtherModes.GetGoodHealth() == 0)
+				winner = OtherModes.Team.Evil;
+			else if (OtherModes.GetEvilHealth() == 0)
+				winner = OtherModes.Team.Good;
+
+			int ClearReward2 =
+				Mathf.CeilToInt(ClearReward / (float) Players.Count(x => Leaderboard.Instance.GetTeam(x) == winner));
+			message = string.Format(data.BombDefusedVsBonusMessage, ClearReward2,
+				winner == OtherModes.Team.Good ? "good" : "evil") + data.BombDefusedFooter;
+
+			foreach (string player in Players.Where(x => Leaderboard.Instance.GetTeam(x) == winner))
+			{
+				Leaderboard.Instance.AddScore(player, ClearReward2);
+			}
+		}
+
 		ClearPlayerLog();
 		return message;
 	}

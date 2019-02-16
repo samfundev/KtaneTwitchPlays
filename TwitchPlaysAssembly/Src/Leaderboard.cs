@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Newtonsoft.Json.Converters;
 using UnityEngine;
 
 public class Leaderboard
@@ -75,6 +76,9 @@ public class Leaderboard
 			get;
 			set;
 		}
+
+		[JsonConverter(typeof(StringEnumConverter))]
+		public OtherModes.Team Team { get; set; } = OtherModes.Team.Good;
 
 		public float TimePerSoloSolve
 		{
@@ -173,6 +177,42 @@ public class Leaderboard
 		entry.AddScore(numScore);
 		entry.LastAction = DateTime.Now;
 		ResetSortFlag();
+	}
+
+	public void MakeEvil(string userName) => MakeEvil(userName, SafeGetColor(userName));
+
+	public void MakeEvil(string userName, Color userColor)
+	{
+		LeaderboardEntry entry = GetEntry(userName, userColor);
+		entry.Team = OtherModes.Team.Evil;
+		entry.LastAction = DateTime.Now;
+	}
+
+	public void MakeGood(string userName) => MakeGood(userName, SafeGetColor(userName));
+
+	public void MakeGood(string userName, Color userColor)
+	{
+		LeaderboardEntry entry = GetEntry(userName, userColor);
+		entry.Team = OtherModes.Team.Good;
+		entry.LastAction = DateTime.Now;
+	}
+
+	public bool isAnyEvil()
+	{
+		return _entryList.Any(x => x.Team == OtherModes.Team.Evil);
+	}
+
+	public bool isAnyGood()
+	{
+		return _entryList.Any(x => x.Team == OtherModes.Team.Good);
+	}
+
+	public OtherModes.Team GetTeam(string userName) => GetTeam(userName, SafeGetColor(userName));
+
+	public OtherModes.Team GetTeam(string userName, Color userColor)
+	{
+		LeaderboardEntry entry = GetEntry(userName);
+		return entry.Team;
 	}
 
 	public IEnumerable<LeaderboardEntry> GetSortedEntries(int count)
@@ -308,6 +348,7 @@ public class Leaderboard
 		entry.SolveScore = user.SolveScore;
 		entry.LastAction = user.LastAction;
 		entry.RecordSoloTime = user.RecordSoloTime;
+		entry.Team = user.Team;
 		entry.TotalSoloTime = user.TotalSoloTime;
 		entry.TotalSoloClears = user.TotalSoloClears;
 
@@ -469,7 +510,7 @@ public class Leaderboard
 			};
 			string jsonOutput = JsonConvert.SerializeObject(stats, Formatting.Indented, new JsonSerializerSettings()
 			{
-				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
 			});
 			File.WriteAllText(path, jsonOutput);
 		}

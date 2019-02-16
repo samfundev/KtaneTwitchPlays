@@ -794,16 +794,81 @@ public abstract class ComponentSolver
 			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
 		{
+			int HPDamage = 0;
+			bool solve = false;
+			OtherModes.Team? team = null;
+			if (OtherModes.VSModeOn)
+			{
+				HPDamage = componentValue * 5;
+				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
+				team = entry == null ? OtherModes.Team.Good : entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good;
+				if (UnsupportedModule)
+					HPDamage = 0;
+
+				switch (team)
+				{
+					case OtherModes.Team.Evil:
+						if (OtherModes.GetEvilHealth() == 1)
+							solve = true;
+
+						if (OtherModes.GetGoodHealth() <= HPDamage && !solve)
+							HPDamage = OtherModes.GetGoodHealth() - 1;
+						break;
+					case OtherModes.Team.Good:
+						if (OtherModes.GetGoodHealth() == 1)
+							solve = true;
+
+						if (OtherModes.GetEvilHealth() <= HPDamage && !solve)
+							HPDamage = OtherModes.GetEvilHealth() - 1;
+						break;
+				}
+			}
 			string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
-			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
-				headerText);
+			if (OtherModes.VSModeOn && !UnsupportedModule)
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
+					componentValue, headerText, HPDamage,
+					team == OtherModes.Team.Evil ? "the evil team" : "the good team");
+			else
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
+					headerText);
 			string recordMessageTone =
 				$"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
 			Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 				Leaderboard.Instance?.AddScore(userNickName, componentValue);
-			else
-				TwitchPlaySettings.AddRewardBonus(componentValue);
+
+			TwitchPlaySettings.AddRewardBonus(componentValue);
+
+			if (OtherModes.VSModeOn)
+			{
+				if (!solve)
+				{
+					switch (team)
+					{
+						case OtherModes.Team.Good:
+							OtherModes.SubtractEvilHealth(HPDamage);
+							break;
+						case OtherModes.Team.Evil:
+							OtherModes.SubtractGoodHealth(HPDamage);
+							break;
+					}
+				}
+				else
+				{
+					switch (team)
+					{
+						case OtherModes.Team.Good:
+							OtherModes.evilHealth = 0;
+							break;
+						case OtherModes.Team.Evil:
+							OtherModes.goodHealth = 0;
+							break;
+					}
+					GameCommands.SolveBomb();
+				}
+				if (!solve)
+					TwitchGame.ModuleCameras.UpdateConfidence();
+			}
 
 			TwitchPlaySettings.AppendToSolveStrikeLog(recordMessageTone);
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
@@ -830,22 +895,66 @@ public abstract class ComponentSolver
 	{
 		string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
 		int strikePenalty = ModInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+		int hpPenalty = 0;
+		OtherModes.Team? team = null;
 		if (OtherModes.ZenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
-		if (!string.IsNullOrEmpty(userNickName))
-			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", userNickName, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, strikePenalty);
+		if (OtherModes.VSModeOn)
+		{
+			if (!string.IsNullOrEmpty(userNickName))
+			{
+				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
+				team = entry?.Team ?? OtherModes.Team.Good;
+				hpPenalty = team == OtherModes.Team.Good
+					? OtherModes.GetGoodHealth() > 30 ? 30 : OtherModes.GetGoodHealth() < 2 ? 0 : OtherModes.GetGoodHealth() - 1
+					: OtherModes.GetEvilHealth() > 30 ? 30 : OtherModes.GetEvilHealth() < 2 ? 0 : OtherModes.GetEvilHealth() - 1;
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardVsStrike, Code,
+					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", team == OtherModes.Team.Good ? "the good team" : "the bad team", string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, hpPenalty, strikePenalty, userNickName);
+			}
+		}
 		else
-			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardRewardStrike, Code, strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText, string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
+		{
+			if (!string.IsNullOrEmpty(userNickName))
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardStrike, Code,
+					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", userNickName,
+					string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage,
+					headerText, strikePenalty);
+			else
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardRewardStrike, Code,
+					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText,
+					string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
+		}
+
 		if (strikeCount <= 0) return;
 
 		string recordMessageTone = !string.IsNullOrEmpty(userNickName) ? $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Strike" : $"Module ID: {Code} | Module Name: {headerText} | Strike";
 
 		TwitchPlaySettings.AppendToSolveStrikeLog(recordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
-
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
 		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
 		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
 		if (currentReward != originalReward)
-			IRCConnection.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
+			IRCConnection.SendMessage(
+				$"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
+
+		if (OtherModes.VSModeOn)
+		{
+			if (userNickName != null)
+			{
+				if (hpPenalty != 0)
+				{
+					if (team == OtherModes.Team.Good)
+						OtherModes.SubtractGoodHealth(hpPenalty);
+					else
+						OtherModes.SubtractEvilHealth(hpPenalty);
+				}
+				else
+					GameCommands.SolveBomb();
+
+				Module.Bomb.StrikeCount = 0;
+				TwitchGame.ModuleCameras.UpdateConfidence();
+			}
+		}
+
 		if (OtherModes.TimeModeOn)
 		{
 			float originalMultiplier = OtherModes.GetAdjustedMultiplier();
