@@ -96,7 +96,6 @@ public class ModuleCameras : MonoBehaviour
 			int layer = LastInteractiveState ? DefaultCameraLayer : CameraLayer;
 
 			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
-			Module.SetRenderLayer(layer);
 			Transform t = Module.BombComponent.transform.Find("TwitchPlayModuleCamera");
 			if (t == null)
 			{
@@ -113,6 +112,16 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.nearClipPlane = 1.0f * lossyScale.y;
 			CameraInstance.farClipPlane = 3.0f * lossyScale.y;
 			Debug.LogFormat("[ModuleCameras] Camera's lossyScale is {0}; Setting near plane to {1}, far plane to {2}", lossyScale, CameraInstance.nearClipPlane, CameraInstance.farClipPlane);
+
+			// Light sources in modules don’t show in the camera if we change the layer immediately.
+			// Delaying that by 1 frame by using a coroutine seems to fix that.
+			StartCoroutine(SetModuleLayer(module, layer));
+		}
+
+		private IEnumerator SetModuleLayer(TwitchModule module, int layer)
+		{
+			yield return null;
+			Module.SetRenderLayer(layer);
 		}
 
 		private void LateUpdate()
