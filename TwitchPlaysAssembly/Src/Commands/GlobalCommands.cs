@@ -1,11 +1,12 @@
-﻿using System;
+﻿extern alias Newton;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Mods;
-using Newtonsoft.Json;
+using Newton::Newtonsoft.Json;
 using UnityEngine;
 
 using Random = UnityEngine.Random;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿extern alias Newton;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
+using Newton::Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

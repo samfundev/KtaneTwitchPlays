@@ -1,10 +1,11 @@
-﻿using System;
+﻿extern alias Newton;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+using Newton::Newtonsoft.Json;
 using UnityEngine;
 
 public class TwitchPlaySettingsData

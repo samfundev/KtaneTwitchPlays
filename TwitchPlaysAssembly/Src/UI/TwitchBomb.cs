@@ -1,10 +1,11 @@
-﻿using System;
+﻿extern alias Newton;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Input;
 using Assets.Scripts.Records;
-using Newtonsoft.Json;
+using Newton::Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿extern alias Newton;
+using Newton::Newtonsoft.Json;
+using Newton::Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using Formatting = Newtonsoft.Json.Formatting;
+using Formatting = Newton::Newtonsoft.Json.Formatting;
 
 [Flags]
 public enum AccessLevel

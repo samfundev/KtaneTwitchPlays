@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿extern alias Newton;
+using Newton::Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
