@@ -36,7 +36,7 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 
 			foreach (KeypadButton button in _buttons)
 			{
-				if (!inputCommand.Equals(button.GetText(), StringComparison.InvariantCultureIgnoreCase)) continue;
+				if (!inputCommand.Equals(button.Text.text, StringComparison.InvariantCultureIgnoreCase)) continue;
 				yield return null;
 				button.Interact();
 				yield return new WaitForSeconds(0.1f);
@@ -56,19 +56,19 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 		var wof = (WhosOnFirstComponent) Module.BombComponent;
 		while (!Module.Solved)
 		{
-			while (!wof.ButtonsEmerged || wof.CurrentDisplayWordIndex < 0)
+			while (!wof.ButtonsEmerged || wof.CurrentDisplayTermIndex < 0)
 				yield return true;
-			string displayText = wof.DisplayText.text;
-			var buttonText = _buttons.Select(x => x.GetText()).ToList();
+			string displayTerm = WhosOnFirstRuleSet.DisplayTerms[wof.CurrentDisplayTermIndex];
+			var buttonTerms = _buttons.Select(x => x.GetTerm()).ToList();
 
-			var precedenceList = RuleManager.Instance.WhosOnFirstRuleSet.precedenceMap[buttonText[RuleManager.Instance.WhosOnFirstRuleSet.displayWordToButtonIndexMap[displayText]]];
+			var precedenceList = RuleManager.Instance.WhosOnFirstRuleSet.TermsPrecedenceMap[buttonTerms[RuleManager.Instance.WhosOnFirstRuleSet.DisplayTermToButtonIndexMap[displayTerm]]];
 			int index = int.MaxValue;
 			for (int i = 0; i < 6; i++)
 			{
-				if (precedenceList.IndexOf(buttonText[i]) < index)
-					index = precedenceList.IndexOf(buttonText[i]);
+				if (precedenceList.IndexOf(buttonTerms[i]) < index)
+					index = precedenceList.IndexOf(buttonTerms[i]);
 			}
-			yield return DoInteractionClick(_buttons[buttonText.IndexOf(precedenceList[index])]);
+			yield return DoInteractionClick(_buttons[buttonTerms.IndexOf(precedenceList[index])]);
 		}
 	}
 

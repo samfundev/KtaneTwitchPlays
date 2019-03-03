@@ -163,20 +163,23 @@ public class ModuleCameras : MonoBehaviour
 	}
 
 	#region Public Fields
-	public Text HeaderPrefab;
-	public Text TimerPrefab;
-	public Text TimerShadowPrefab;
-	public Text StrikesPrefab;
-	public Text SolvesPrefab;
-	public Text NeediesPrefab;
-	public Text ConfidencePrefab;
-	public Camera CameraPrefab;
-	public RectTransform BombStatus;
+	public Text HeaderPrefab => _data.HeaderPrefab;
+	public Text TimerPrefab => _data.TimerPrefab;
+	public Text TimerShadowPrefab => _data.TimerShadowPrefab;
+	public Text StrikesPrefab => _data.StrikesPrefab;
+	public Text SolvesPrefab => _data.SolvesPrefab;
+	public Text NeediesPrefab => _data.NeediesPrefab;
+	public Text ConfidencePrefab => _data.ConfidencePrefab;
+	public Camera CameraPrefab => _data.CameraPrefab;
+	public RectTransform BombStatus => _data.BombStatus;
+	public Text[] NotesTexts => _data.NotesTexts;
+
+	[HideInInspector]
 	public bool CameraWallEnabled;
-	public Text[] NotesTexts;
 	#endregion
 
 	#region Private Fields
+	private ModuleCamerasData _data;
 	private readonly List<ModuleCamera> _cameras = new List<ModuleCamera>();
 	private TwitchBomb _currentBomb;
 
@@ -245,6 +248,8 @@ public class ModuleCameras : MonoBehaviour
 
 		_cameras.Add(cam);
 	}
+
+	private void Awake() => _data = GetComponent<ModuleCamerasData>();
 
 	private void Start()
 	{

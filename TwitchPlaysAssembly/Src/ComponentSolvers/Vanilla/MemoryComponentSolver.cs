@@ -33,7 +33,7 @@ public class MemoryComponentSolver : ComponentSolver
 		{
 			foreach (KeypadButton button in _buttons)
 			{
-				if (!button.GetText().Equals(buttonNumber.ToString())) continue;
+				if (!button.Text.text.Equals(buttonNumber.ToString())) continue;
 				yield return "label";
 				yield return DoInteractionClick(button);
 				break;
