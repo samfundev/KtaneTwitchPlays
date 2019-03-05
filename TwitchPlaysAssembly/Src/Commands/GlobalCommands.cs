@@ -626,6 +626,10 @@ static class GlobalCommands
 	[Command(@"runrawseed +(\d+) +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator RunRawSeed([Group(1)] string seed, [Group(2)] string missionName) => RunMissionCoroutine(missionName, seed);
 
+	[Command(@"profiles? help")]
+	public static void ProfileHelp(string user, bool isWhisper) =>
+		IRCConnection.SendMessage("Enable a profile using: !profile enable <name>. Disable a profile: !profile disable <name>. List the enabled profiles: !profile enabled. List all profiles: !profile list.", user, !isWhisper);
+
 	[Command(@"profiles? +(?:enable|add|activate) +(.+)")]
 	public static void ProfileEnable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
