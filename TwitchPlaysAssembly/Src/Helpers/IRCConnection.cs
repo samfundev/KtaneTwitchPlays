@@ -47,16 +47,16 @@ public class Message
 
 public class IRCConnection : MonoBehaviour
 {
-	public TwitchMessage MessagePrefab;
+	public TwitchMessage MessagePrefab => _data.MessagePrefab;
 
-	public CanvasGroup HighlightGroup;
-	public ScrollRect MessageScroll;
+	public CanvasGroup HighlightGroup => _data.HighlightGroup;
+	public ScrollRect MessageScroll => _data.MessageScroll;
 
-	public GameObject MessageScrollContents;
-	public RectTransform MainWindowTransform;
-	public RectTransform HighlightTransform;
+	public GameObject MessageScrollContents => _data.MessageScrollContents;
+	public RectTransform MainWindowTransform => _data.MainWindowTransform;
+	public RectTransform HighlightTransform => _data.HighlightTransform;
 
-	public GameObject ConnectionAlert;
+	public GameObject ConnectionAlert => _data.ConnectionAlert;
 
 	#region Nested Types
 	public class MessageEvent : UnityEvent<Message>
@@ -140,6 +140,8 @@ public class IRCConnection : MonoBehaviour
 
 	private void Start()
 	{
+		_data = GetComponent<IRCConnectionData>();
+
 		Connect();
 		HighlightGroup.alpha = 0.0f;
 	}
@@ -975,6 +977,7 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Private Fields
+	private IRCConnectionData _data;
 	private IRCConnectionState _state = IRCConnectionState.Disconnected;
 	private bool ThreadAlive => _state == IRCConnectionState.Connecting || _state == IRCConnectionState.Connected;
 	private KMModSettings _ircConnectionSettings;
