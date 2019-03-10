@@ -919,9 +919,9 @@ static class GlobalCommands
 
 	private static IEnumerator RunWrapper(string user, bool isWhisper, Func<IEnumerator> action)
 	{
-		if (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.Gameplay)
+		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.PostGame && TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup)
 		{
-			IRCConnection.SendMessage("You can’t use the !run command while a bomb is in progress.");
+			IRCConnection.SendMessage("You can't use the !run command right now.");
 			return null;
 		}
 
