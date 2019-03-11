@@ -570,6 +570,10 @@ public abstract class ComponentSolver
 						moduleScore = (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * 0.5f * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
 						break;
 
+					case "forgetThis": // Forget This
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 3f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+
 					default: // Forget Me Not
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
