@@ -463,7 +463,7 @@ public class TwitchGame : MonoBehaviour
 		string[] keyModules =
 		{
 			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced", "theSwan", "HexiEvilFMN", "taxReturns", "timeKeeper", "cookieJars",
-			"DividedSquaresModule"
+			"DividedSquaresModule", "forgetThis"
 		};
 
 		foreach (var component in bomb.Bomb.BombComponents)

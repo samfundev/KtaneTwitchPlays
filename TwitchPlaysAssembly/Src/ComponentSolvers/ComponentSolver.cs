@@ -566,6 +566,10 @@ public abstract class ComponentSolver
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4 * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
+					case "cookieJars": //cookie jars
+						moduleScore = (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * 0.5f * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
+						break;
+
 					default: // Forget Me Not
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
