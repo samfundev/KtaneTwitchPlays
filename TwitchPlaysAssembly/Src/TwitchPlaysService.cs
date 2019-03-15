@@ -67,6 +67,8 @@ public class TwitchPlaysService : MonoBehaviour
 		ModuleData.LoadDataFromFile();
 		ModuleData.WriteDataToFile();
 
+		AuditLog.SetupLog();
+
 		TwitchPlaySettings.LoadDataFromFile();
 
 		IRCConnection.Instance.OnMessageReceived.AddListener(OnMessageReceived);
@@ -475,6 +477,9 @@ public class TwitchPlaysService : MonoBehaviour
 			ProcessCommandCoroutine(coroutine, extraObject);
 		else if (invokeResult != null)
 			IRCConnection.SendMessage("@{0}, the “{1}” command returned something unrecognized. This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name);
+
+		if ((TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel) > AccessLevel.Defuser)
+			AuditLog.Log(msg.UserNickName, UserAccess.HighestAccessLevel(msg.UserNickName), msg.Text);
 		return true;
 	}
 

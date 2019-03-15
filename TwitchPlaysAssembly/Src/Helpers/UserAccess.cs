@@ -345,3 +345,18 @@ public static class UserAccess
 		}
 	}
 }
+
+public static class AuditLog
+{
+	private static StreamWriter Stream;
+
+	public static void SetupLog()
+	{
+		string path = Path.Combine(Application.persistentDataPath, SavePath);
+		Stream = !File.Exists(path) ? new StreamWriter(File.Create(path)) : new StreamWriter(File.OpenWrite(path));
+	}
+
+	public static void Log(string username, AccessLevel level, string command) => Stream.WriteLine($"{username} ({UserAccess.LevelToString(level)}): {command}");
+
+	public static string SavePath = "AuditLog.txt";
+}
