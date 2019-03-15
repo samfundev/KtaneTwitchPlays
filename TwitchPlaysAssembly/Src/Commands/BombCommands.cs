@@ -143,7 +143,7 @@ public static class BombCommands
 
 		IRCConnection.SendMessage(direct
 			? $"Set the bomb's timer to {Math.Abs(time < 0 ? 0 : time).FormatTime()}."
-			: $"{(negative ? "Added" : "Subtracted")} {Math.Abs(time).FormatTime()} {(negative ? "to" : "from")} the timer.", user, !isWhisper);
+			: $"{(negative ? "Subtracted" : "Added")} {Math.Abs(time).FormatTime()} {(negative ? "from" : "to")} the timer.", user, !isWhisper);
 	}
 
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:(strikes?|s)|strikelimit|sl|maxstrikes?|ms) +(-?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
