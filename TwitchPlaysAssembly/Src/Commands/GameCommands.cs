@@ -360,6 +360,9 @@ static class GameCommands
 	[Command(@"disableinteractive", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void DisableInteractive() => TwitchGame.ModuleCameras.DisableInteractive();
 
+	[Command(@"(?:returntosetup|leave|exit)(?:room)?|return", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void ReturnToSetup() => SceneManager.Instance.ReturnToSetupState();
+
 	[Command(@"enabletwitchplays", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void EnableTwitchPlays()
 	{

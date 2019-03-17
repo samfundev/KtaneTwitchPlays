@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -719,6 +720,38 @@ static class GlobalCommands
 
 		return TPElevatorSwitch.Instance.ToggleSetupRoomElevatorSwitch(on);
 	}
+
+	[Command("(?:restart|reboot)(?:game)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void RestartGame()
+	{
+		// WARNING: This code is a bit hacky, make sure to test this with and without the game running in Steam if you modify it.
+
+		if (SteamManager.Initialized) // If the game was launched through Steam, we have to relaunch it through Steam.
+		{
+			Process.Start("steam://rungameid/341800");
+			Process.GetCurrentProcess().Kill(); // HACK: Steam doesn't like two instances of the game running but using Kill() seems to be fast enough that Steam doesn't notice.
+		}
+		else
+		{
+			// The game can only normally have one instance open because the boot.config file has the single-instance argument in it.
+			// To get around that we'll remove the argument from the file and then replace the original contents after the second instance launches.
+
+			string bootConfigPath = Path.Combine(Application.dataPath, "boot.config");
+			string originalContents = File.ReadAllText(bootConfigPath);
+			File.WriteAllText(bootConfigPath, originalContents.Replace("single-instance=", ""));
+
+			Process
+				.Start(Process.GetCurrentProcess().MainModule.FileName)
+				.WaitForInputIdle(); // Wait until the game is accepting input so we don't put back the original contents too early.
+
+			File.WriteAllText(bootConfigPath, originalContents);
+
+			Application.Quit();
+		}
+	}
+
+	[Command("(?:quit|end)(?:game)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void QuitGame() => SceneManager.Instance.QuitGame();
 
 	//As of now, Debugging commands are streamer only, apart from issue command as person, and reset leaderboard, which are superuser and above.
 	[Command(@"leaderboard reset", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
