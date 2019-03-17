@@ -2601,9 +2601,6 @@ MonoBehaviour:
   m_Script: {fileID: 1542516859, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  twitchGame: {fileID: 0}
-  CoroutineQueue: {fileID: 114000013407019822}
-  CurrentState: 0
 --- !u!114 &114000011618767326
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2626,7 +2623,6 @@ MonoBehaviour:
   m_Script: {fileID: 967692534, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ModuleCountBonus: 0
 --- !u!114 &114000012005248468
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3323,15 +3319,6 @@ MonoBehaviour:
   m_Script: {fileID: 1585916340, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MessagePrefab: {fileID: 114000012089106560, guid: e10d34a7a56337b4ea2b48779d780807,
-    type: 2}
-  HighlightGroup: {fileID: 225486279343163890}
-  MessageScroll: {fileID: 114228492410890800}
-  MessageScrollContents: {fileID: 1171642883591608}
-  MainWindowTransform: {fileID: 224297855726343294}
-  HighlightTransform: {fileID: 224903183452318136}
-  ConnectionAlert: {fileID: 1303688525696138}
-  ColorOnDisconnect: 
 --- !u!114 &114222379700582844
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3547,13 +3534,6 @@ MonoBehaviour:
   m_Script: {fileID: -1578004862, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CanvasGroup: {fileID: 225550263377277914}
-  EdgeworkIDText: {fileID: 114788484533849390}
-  EdgeworkText: {fileID: 114756238846964178}
-  EdgeworkWindowTransform: {fileID: 224522128380578156}
-  EdgeworkHighlightTransform: {fileID: 224578456146686952}
-  CoroutineQueue: {fileID: 0}
-  BombID: -1
 --- !u!114 &114336819534813908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4985,21 +4965,6 @@ MonoBehaviour:
   m_Script: {fileID: -1923026728, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HeaderPrefab: {fileID: 114194237906478712}
-  TimerPrefab: {fileID: 114856023003680104}
-  TimerShadowPrefab: {fileID: 114222379700582844}
-  StrikesPrefab: {fileID: 114355259703694948}
-  SolvesPrefab: {fileID: 114971486704283748}
-  NeediesPrefab: {fileID: 114910648592808902}
-  ConfidencePrefab: {fileID: 114065151001614582}
-  CameraPrefab: {fileID: 20934734821913038}
-  BombStatus: {fileID: 224450783986421466}
-  CameraWallEnabled: 0
-  NotesTexts:
-  - {fileID: 114395755530108092}
-  - {fileID: 114443357932846720}
-  - {fileID: 114392112632624762}
-  - {fileID: 114999264070403536}
 --- !u!114 &114946373812596920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6572,7 +6537,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000034332275}
+  m_AnchoredPosition: {x: 0, y: 0.00002670288}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224785384932923080
