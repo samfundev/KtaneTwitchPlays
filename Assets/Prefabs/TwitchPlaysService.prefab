@@ -3180,7 +3180,7 @@ MonoBehaviour:
   m_Script: {fileID: 1940867649, guid: 366880d94a4406540983fc80e2e0edb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HeaderPrefab: {fileID: 114198177297873680}
+  HeaderPrefab: {fileID: 114194237906478712}
   TimerPrefab: {fileID: 114856023003680104}
   TimerShadowPrefab: {fileID: 114222379700582844}
   StrikesPrefab: {fileID: 114355259703694948}
