@@ -93,9 +93,6 @@ public class ModuleCameras : MonoBehaviour
 				return;
 			Module = module;
 
-			int layer = LastInteractiveState ? DefaultCameraLayer : CameraLayer;
-
-			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
 			Transform t = Module.BombComponent.transform.Find("TwitchPlayModuleCamera");
 			if (t == null)
 			{
@@ -115,12 +112,16 @@ public class ModuleCameras : MonoBehaviour
 
 			// Light sources in modules don’t show in the camera if we change the layer immediately.
 			// Delaying that by 1 frame by using a coroutine seems to fix that.
-			StartCoroutine(SetModuleLayer(module, layer));
+			StartCoroutine(SetModuleLayer(module));
 		}
 
-		private IEnumerator SetModuleLayer(TwitchModule module, int layer)
+		private IEnumerator SetModuleLayer(TwitchModule module)
 		{
 			yield return null;
+			// LastInteractiveState doesn't get updated until LateUpdate, so it can only be accurately used after that runs.
+			int layer = LastInteractiveState ? DefaultCameraLayer : CameraLayer;
+
+			CameraInstance.cullingMask = (1 << layer) | (1 << 31);
 			Module.SetRenderLayer(layer);
 		}
 
