@@ -353,7 +353,7 @@ public class ModuleCameras : MonoBehaviour
 	public void UnviewModule(TwitchModule handle)
 	{
 		handle.CameraPriority = handle.Solved ? CameraPriority.Unviewed : handle.Claimed ? CameraPriority.Claimed : CameraPriority.Unviewed;
-		StartCoroutine(UnviewModuleCoroutine(handle));
+		TwitchPlaysService.Instance.StartCoroutine(UnviewModuleCoroutine(handle));
 	}
 
 	public void Hide() => SetCameraVisibility(false);
