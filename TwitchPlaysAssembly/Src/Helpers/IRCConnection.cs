@@ -50,7 +50,6 @@ public class IRCConnection : MonoBehaviour
 	public TwitchMessage MessagePrefab => _data.MessagePrefab;
 
 	public CanvasGroup HighlightGroup => _data.HighlightGroup;
-	public ScrollRect MessageScroll => _data.MessageScroll;
 
 	public GameObject MessageScrollContents => _data.MessageScrollContents;
 	public RectTransform MainWindowTransform => _data.MainWindowTransform;

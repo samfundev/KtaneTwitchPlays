@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 class IRCConnectionData : MonoBehaviour
 {
@@ -7,7 +6,6 @@ class IRCConnectionData : MonoBehaviour
 	public TwitchMessage MessagePrefab;
 
 	public CanvasGroup HighlightGroup;
-	public ScrollRect MessageScroll;
 
 	public GameObject MessageScrollContents;
 	public RectTransform MainWindowTransform;
