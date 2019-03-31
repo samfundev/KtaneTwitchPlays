@@ -104,7 +104,7 @@ public class LogUploader : MonoBehaviour
 					new MultipartFormDataSection("extrapadding", "1") // Ugly Hack: Unity doesn't seem to send the request properly and leaves out the last boundry. This adds an extra field to counter that.
 				});
 
-				yield return www.Send();
+				yield return www.SendWebRequest();
 
 				if (!www.isNetworkError && !www.isHttpError)
 				{
