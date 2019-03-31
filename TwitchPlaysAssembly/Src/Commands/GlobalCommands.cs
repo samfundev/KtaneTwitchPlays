@@ -837,7 +837,7 @@ static class GlobalCommands
 		IRCConnection.ReceiveMessage(targetPlayer, message.UserColorCode, newMessage);
 	}
 
-	//As of now, Debugging commands are streamer only, apart from issue command as person, and reset leaderboard, which are superuser and above.
+	//As of now, Debugging commands are streamer only, apart from whispertest, which are superuser and above.
 	[Command("whispertest", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
 	public static void WhisperTest(string user)
 	{
