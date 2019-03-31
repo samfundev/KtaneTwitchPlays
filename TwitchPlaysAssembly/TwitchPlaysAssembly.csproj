@@ -189,6 +189,7 @@
     <Compile Include="Src\Helpers\InputInterceptor.cs" />
     <Compile Include="Src\Helpers\IRCConnection.cs" />
     <Compile Include="Src\Helpers\LogUploader.cs" />
+    <Compile Include="Src\Helpers\MainThreadQueue.cs" />
     <Compile Include="Src\Helpers\ModCommandType.cs" />
     <Compile Include="Src\Helpers\MultipleBombs.cs" />
     <Compile Include="Src\Helpers\ProfileHelper.cs" />

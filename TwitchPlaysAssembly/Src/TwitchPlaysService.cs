@@ -68,6 +68,7 @@ public class TwitchPlaysService : MonoBehaviour
 		ModuleData.WriteDataToFile();
 
 		AuditLog.SetupLog();
+		MainThreadQueue.Initialize();
 
 		TwitchPlaySettings.LoadDataFromFile();
 
@@ -100,6 +101,8 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private void Update()
 	{
+		MainThreadQueue.ProcessQueue();
+
 		if (Input.GetKey(KeyCode.Escape))
 		{
 			InputInterceptor.EnableInput();

@@ -56,6 +56,8 @@ public class IRCConnection : MonoBehaviour
 	public RectTransform HighlightTransform => _data.HighlightTransform;
 
 	public GameObject ConnectionAlert => _data.ConnectionAlert;
+	Text alertText;
+	Transform alertProgressBar;
 
 	#region Nested Types
 	public class MessageEvent : UnityEvent<Message>
@@ -140,6 +142,9 @@ public class IRCConnection : MonoBehaviour
 	private void Start()
 	{
 		_data = GetComponent<IRCConnectionData>();
+		
+		alertText = ConnectionAlert.transform.Find("Text").GetComponent<Text>();
+		alertProgressBar = ConnectionAlert.transform.Find("ProgressBar");
 
 		Connect();
 		HighlightGroup.alpha = 0.0f;
@@ -335,9 +340,18 @@ public class IRCConnection : MonoBehaviour
 				alertProgressBar.localScale = new Vector3(0, 1, 1);
 
 				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
-				Thread connectionAttempt = new Thread(ConnectToIRC);
-				connectionAttempt.Start();
-				while (connectionAttempt.IsAlive) yield return new WaitForSeconds(0.1f);
+
+				if (State != IRCConnectionState.Disabled)
+				{
+					Thread connectionAttempt = new Thread(ConnectToIRC);
+					connectionAttempt.Start();
+					while (connectionAttempt.IsAlive) yield return new WaitForSeconds(0.1f);
+				}
+				else
+				{
+					SetDebugUsername(true);
+				}
+
 				// ReSharper disable once SwitchStatementMissingSomeCases
 				switch (_state)
 				{
@@ -460,11 +474,6 @@ public class IRCConnection : MonoBehaviour
 
 	private void ConnectToIRC()
 	{
-		if (State == IRCConnectionState.Disabled)
-		{
-			SetDebugUsername(true);
-			return;
-		}
 		_state = IRCConnectionState.Connecting;
 		try
 		{
@@ -733,9 +742,6 @@ public class IRCConnection : MonoBehaviour
 	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
 	private void InputThreadMethod(TextReader input, NetworkStream networkStream)
 	{
-		Text alertText = ConnectionAlert.transform.Find("Text").GetComponent<Text>();
-		Transform alertProgressBar = ConnectionAlert.transform.Find("ProgressBar");
-
 		bool pingTimeoutTest = false; // Keeps track of if we are currently in a ping timeout test.
 		Stopwatch stopwatch = new Stopwatch();
 		try
@@ -752,7 +758,7 @@ public class IRCConnection : MonoBehaviour
 						stopwatch.Reset();
 						stopwatch.Start();
 						SendCommand("PING");
-						ConnectionAlert.SetActive(true);
+						MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(true));
 					}
 					else if (pingTimeoutTest)
 					{
@@ -776,13 +782,16 @@ public class IRCConnection : MonoBehaviour
 				}
 
 				pingTimeoutTest = false;
-				ConnectionAlert.SetActive(false);
+				MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(false));
 				stopwatch.Reset();
 				stopwatch.Start();
 				string buffer = input.ReadLine();
-				foreach (ActionMap action in Actions)
-					if (action.TryMatch(buffer))
-						break;
+				MainThreadQueue.Enqueue(() =>
+				{
+					foreach (ActionMap action in Actions)
+						if (action.TryMatch(buffer))
+							break;
+				});
 			}
 		}
 		catch
@@ -830,7 +839,7 @@ public class IRCConnection : MonoBehaviour
 				_state = IRCConnectionState.Disconnected;
 			}
 		}
-		TwitchGame.EnableDisableInput();
+		MainThreadQueue.Enqueue(() => TwitchGame.EnableDisableInput());
 
 		try
 		{
@@ -861,8 +870,11 @@ public class IRCConnection : MonoBehaviour
 		{
 			_state = IRCConnectionState.Disconnected;
 		}
-		if (!gameObject.activeInHierarchy)
-			AddTextToHoldable("[IRC:Disconnect] Twitch Plays disabled.");
+		MainThreadQueue.Enqueue(() =>
+		{
+			if (!gameObject.activeInHierarchy)
+				AddTextToHoldable("[IRC:Disconnect] Twitch Plays disabled.");
+		});
 	}
 
 	private void SetDelay(string badges, string nickname, string channel)
