@@ -198,10 +198,12 @@
     <Compile Include="Src\Helpers\SettingsConverter.cs" />
     <Compile Include="Src\Helpers\Tuple.cs" />
     <Compile Include="Src\Helpers\TwitchPlaysProperties.cs" />
+    <Compile Include="Src\Helpers\Updater.cs" />
     <Compile Include="Src\Helpers\UrlHelper.cs" />
     <Compile Include="Src\Helpers\UserAccess.cs" />
     <Compile Include="Src\Helpers\VanillaRuleModifier.cs" />
     <Compile Include="Src\Helpers\WaitForSecondsWithCancel.cs" />
+    <Compile Include="Src\Helpers\ZipStorer.cs" />
     <Compile Include="Src\TwitchHoldable.cs" />
     <Compile Include="Src\UI\IRCConnectionManagerHoldable.cs" />
     <Compile Include="Src\TPElevatorSwitch.cs" />

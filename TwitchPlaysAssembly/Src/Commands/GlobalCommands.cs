@@ -131,11 +131,7 @@ static class GlobalCommands
 	[Command(@"(?:builddate|version)")]
 	public static void BuildDate(string user, bool isWhisper)
 	{
-		string path = ModManager.Instance.GetEnabledModPaths(ModInfo.ModSourceEnum.Local)
-						.FirstOrDefault(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Any()) ??
-					ModManager.Instance.GetEnabledModPaths(ModInfo.ModSourceEnum.SteamWorkshop)
-						.First(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Any());
-		DateTime date = GetBuildDateTime(Path.Combine(path, "TwitchPlaysAssembly.dll"));
+		DateTime date = Updater.GetCurrentBuildDateTime();
 		IRCConnection.SendMessage($"Date and time this version of TP was built: {date:yyyy-MM-dd HH:mm:ss} UTC", user, !isWhisper);
 	}
 
@@ -812,6 +808,17 @@ static class GlobalCommands
 	[Command("(?:quit|end)(?:game)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void QuitGame() => SceneManager.Instance.QuitGame();
 
+	[Command("(?:checkforupdates?|cfu)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static IEnumerator CheckForUpdates()
+	{
+		yield return Updater.CheckForUpdates();
+
+		IRCConnection.SendMessage(Updater.UpdateAvailable ? "There is a new update to Twitch Plays!" : "Twitch Plays is up-to-date.");
+	}
+
+	[Command("update(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static IEnumerator Update() => Updater.Update();
+
 	[Command(@"leaderboard reset", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetLeaderboard(string user, bool isWhisper)
 	{
@@ -942,25 +949,6 @@ static class GlobalCommands
 	}
 
 	private static int GetMaximumModules(KMGameInfo inf, int maxAllowed = int.MaxValue) => Math.Min(TPElevatorSwitch.IsON ? 54 : inf.GetMaximumBombModules(), maxAllowed);
-
-	private static DateTime GetBuildDateTime(string path)
-	{
-		const int c_PeHeaderOffset = 60;
-		const int c_LinkerTimestampOffset = 8;
-
-		byte[] buffer = new byte[2048];
-
-		using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-			stream.Read(buffer, 0, 2048);
-
-		int offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
-		int secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
-		DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-		DateTime linkTimeUtc = epoch.AddSeconds(secondsSince1970);
-
-		return linkTimeUtc;
-	}
 
 	private static string ResolveMissionID(KMGameInfo inf, string targetID, out string failureMessage)
 	{

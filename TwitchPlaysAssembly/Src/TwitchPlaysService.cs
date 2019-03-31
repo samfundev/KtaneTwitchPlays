@@ -176,6 +176,13 @@ public class TwitchPlaysService : MonoBehaviour
 
 		OtherModes.RefreshModes(state);
 
+		// Automatically check for updates after a round is finished or when entering the setup state but never more than once per hour.
+		bool hourPassed = DateTime.Now.Subtract(Updater.LastCheck).TotalHours >= 1;
+		if ((state == KMGameInfo.State.PostGame || state == KMGameInfo.State.Setup) && hourPassed && !Updater.UpdateAvailable)
+		{
+			_coroutinesToStart.Enqueue(AutomaticUpdateCheck());
+		}
+
 		switch (state)
 		{
 			case KMGameInfo.State.Gameplay:
@@ -616,6 +623,16 @@ public class TwitchPlaysService : MonoBehaviour
 
 			if (StatsManager.Instance != null)
 				StatsManager.Instance.DisableStatChanges = value;
+		}
+	}
+
+	private IEnumerator AutomaticUpdateCheck()
+	{
+		yield return Updater.CheckForUpdates();
+
+		if (Updater.UpdateAvailable)
+		{
+			IRCConnection.SendMessage("There is a new update to Twitch Plays!");
 		}
 	}
 }
