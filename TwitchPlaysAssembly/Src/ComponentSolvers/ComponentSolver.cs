@@ -801,21 +801,21 @@ public abstract class ComponentSolver
 			{
 				HPDamage = componentValue * 5;
 				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
-				team = entry == null ? OtherModes.Team.Good : entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good;
+				team = entry == null ? OtherModes.Team.Evil : entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good;
 				if (UnsupportedModule)
 					HPDamage = 0;
 
 				switch (team)
 				{
 					case OtherModes.Team.Evil:
-						if (OtherModes.GetEvilHealth() == 1)
+						if (OtherModes.GetEvilHealth() <= 1)
 							solve = true;
 
 						if (OtherModes.GetGoodHealth() <= HPDamage && !solve)
 							HPDamage = OtherModes.GetGoodHealth() - 1;
 						break;
 					case OtherModes.Team.Good:
-						if (OtherModes.GetGoodHealth() == 1)
+						if (OtherModes.GetGoodHealth() <= 1)
 							solve = true;
 
 						if (OtherModes.GetEvilHealth() <= HPDamage && !solve)
@@ -864,7 +864,13 @@ public abstract class ComponentSolver
 							OtherModes.goodHealth = 0;
 							break;
 					}
-					GameCommands.SolveBomb();
+					if (OtherModes.GetEvilHealth() <= 0)
+						GameCommands.SolveBomb();
+					else
+					{
+						TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
+						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Explode(TwitchGame.Instance.Bombs[0]));
+					}
 				}
 				if (!solve)
 					TwitchGame.ModuleCameras.UpdateConfidence();
@@ -908,7 +914,8 @@ public abstract class ComponentSolver
 					? OtherModes.GetGoodHealth() > 30 ? 30 : OtherModes.GetGoodHealth() < 2 ? 0 : OtherModes.GetGoodHealth() - 1
 					: OtherModes.GetEvilHealth() > 30 ? 30 : OtherModes.GetEvilHealth() < 2 ? 0 : OtherModes.GetEvilHealth() - 1;
 				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardVsStrike, Code,
-					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", team == OtherModes.Team.Good ? "the good team" : "the bad team", string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, hpPenalty, strikePenalty, userNickName);
+					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", team == OtherModes.Team.Good ? "the good team" : "the evil team", string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText,
+					hpPenalty == 0 ? team == OtherModes.Team.Good ? OtherModes.GetGoodHealth() : OtherModes.GetEvilHealth() : hpPenalty, strikePenalty, userNickName);
 			}
 		}
 		else
@@ -948,10 +955,19 @@ public abstract class ComponentSolver
 						OtherModes.SubtractEvilHealth(hpPenalty);
 				}
 				else
-					GameCommands.SolveBomb();
+				{
+					if (team == OtherModes.Team.Evil)
+						GameCommands.SolveBomb();
+					else
+					{
+						TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
+						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Explode(TwitchGame.Instance.Bombs[0]));
+					}
+				}
 
 				Module.Bomb.StrikeCount = 0;
-				TwitchGame.ModuleCameras.UpdateConfidence();
+				if (hpPenalty != 0)
+					TwitchGame.ModuleCameras.UpdateConfidence();
 			}
 		}
 
