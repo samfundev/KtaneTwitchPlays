@@ -348,18 +348,20 @@ public static class UserAccess
 
 public static class AuditLog
 {
-	private static StreamWriter Stream;
-
 	public static void SetupLog()
 	{
 		string path = Path.Combine(Application.persistentDataPath, SavePath);
-		Stream = !File.Exists(path) ? new StreamWriter(File.Create(path)) : new StreamWriter(File.OpenWrite(path));
+		if (!File.Exists(path))
+			File.Create(path);
 	}
 
 	public static void Log(string username, AccessLevel level, string command)
 	{
+		StreamWriter Stream = new StreamWriter(File.OpenWrite(Path.Combine(Application.persistentDataPath, SavePath)));
 		Stream.WriteLine($"{username} ({UserAccess.LevelToString(level)}): {command}");
 		Stream.Flush();
+		Stream.Dispose();
+		Stream.Close();
 	}
 
 	public static string SavePath = "AuditLog.txt";
