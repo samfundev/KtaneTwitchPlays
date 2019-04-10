@@ -135,6 +135,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\MicrocontrollerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NeedyBeerComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ResistorsComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\SpeakEnglishComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\SwitchesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Mock Army\AnagramsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Mock Army\EmojiMathComponentSolver.cs" />

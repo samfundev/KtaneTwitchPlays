@@ -62,6 +62,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["LetterKeys"] = module => new LetterKeysComponentSolver(module);
 		ModComponentSolverCreators["Microcontroller"] = module => new MicrocontrollerComponentSolver(module);
 		ModComponentSolverCreators["resistors"] = module => new ResistorsComponentSolver(module);
+		ModComponentSolverCreators["speakEnglish"] = module => new SpeakEnglishComponentSolver(module);
 		ModComponentSolverCreators["switchModule"] = module => new SwitchesComponentSolver(module);
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["NeedyBeer"] = module => new NeedyBeerComponentSolver(module);
@@ -174,6 +175,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 10 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", moduleScore = 6 };
+		ModComponentSolverInformation["speakEnglish"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Speak English", moduleScore = 3 };
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", moduleScore = 3 };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
@@ -557,6 +559,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["sevenWires"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["Signals"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["thewitness"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
