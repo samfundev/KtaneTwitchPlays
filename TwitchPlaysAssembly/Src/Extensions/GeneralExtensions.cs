@@ -108,6 +108,11 @@ public static class GeneralExtensions
 		return enumerable.Skip(Math.Max(0, enumerable.Count() - N));
 	}
 
+	public static void AddAny<T>(this List<T> source, params T[] items)
+	{
+		source.AddRange(items);
+	}
+	
 	public static bool RegexMatch(this string str, params string[] patterns) => str.RegexMatch(out _, patterns);
 
 	public static bool RegexMatch(this string str, out Match match, params string[] patterns)

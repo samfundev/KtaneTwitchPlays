@@ -68,6 +68,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["NeedyBeer"] = module => new NeedyBeerComponentSolver(module);
 		ModComponentSolverCreators["errorCodes"] = module => new ErrorCodesComponentSolver(module);
 		ModComponentSolverCreators["JuckAlchemy"] = module => new AlchemyComponentSolver(module);
+		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
+		ModComponentSolverCreators["boolMaze"] = module => new BooleanMazeComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -181,6 +183,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 3 };
 		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", moduleScore = 6 };
+		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { moduleScore = 12, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { moduleScore = 8, builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };

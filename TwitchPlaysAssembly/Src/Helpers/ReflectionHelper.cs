@@ -24,4 +24,31 @@ public static class ReflectionHelper
 			return new List<Type>();
 		}
 	}
+
+	static readonly Dictionary<string, MemberInfo> MemberCache = new Dictionary<string, MemberInfo>();
+	public static T GetCachedMember<T>(this Type type, string member) where T : MemberInfo
+	{
+		if (MemberCache.ContainsKey(member)) return (T) MemberCache[member];
+
+		MemberInfo memberInfo = type.GetMember(member, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance).FirstOrDefault();
+		MemberCache[member] = memberInfo;
+
+		return (T) memberInfo;
+	}
+
+	public static T GetValue<T>(this Type type, string member, object target = null) =>
+		(T) (type.GetCachedMember<FieldInfo>(member)?.GetValue(target) ?? type.GetCachedMember<PropertyInfo>(member)?.GetValue(target, null));
+
+	public static void SetValue<T>(this Type type, string member, object value, object target = null)
+	{
+		type.GetCachedMember<FieldInfo>(member)?.SetValue(target, value);
+		type.GetCachedMember<PropertyInfo>(member)?.SetValue(target, value, null);
+	}
+
+	public static T CallMethod<T>(this Type type, string method, object target = null, params object[] arguments) =>
+		(T) type.GetCachedMember<MethodInfo>(method)?.Invoke(target, arguments);
+
+	public static T GetValue<T>(this object @object, string member) => @object.GetType().GetValue<T>(member, @object);
+	public static void SetValue<T>(this object @object, string member, object value) => @object.GetType().SetValue<T>(member, @object, value);
+	public static T CallMethod<T>(this object @object, string member, params object[] arguments) => @object.GetType().CallMethod<T>(member, @object, arguments);
 }
