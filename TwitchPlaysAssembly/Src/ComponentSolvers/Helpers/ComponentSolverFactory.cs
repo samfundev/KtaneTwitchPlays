@@ -70,6 +70,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["JuckAlchemy"] = module => new AlchemyComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
 		ModComponentSolverCreators["boolMaze"] = module => new BooleanMazeComponentSolver(module);
+		ModComponentSolverCreators["MorseWar"] = module => new MorseWarComponentSolver(module);
+		ModComponentSolverCreators["necronomicon"] = module => new NecronomiconComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -185,6 +187,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", moduleScore = 6 };
 		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { moduleScore = 12, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { moduleScore = 8, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { moduleScore = 6, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 17, builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
