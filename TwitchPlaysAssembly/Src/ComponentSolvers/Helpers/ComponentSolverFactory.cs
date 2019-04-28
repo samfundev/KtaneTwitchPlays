@@ -188,7 +188,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { moduleScore = 12, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { moduleScore = 8, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { moduleScore = 6, builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 17, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 10, builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
