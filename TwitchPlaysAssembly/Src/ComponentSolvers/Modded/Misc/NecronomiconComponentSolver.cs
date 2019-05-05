@@ -7,6 +7,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 	public NecronomiconComponentSolver(TwitchModule module) :
 		base(module)
 	{
+		_component = Module.BombComponent.GetComponent(ComponentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle all the pages using !{0} cycle. Submit a specific page using !{0} page 3.");
 	}
@@ -24,6 +25,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 
 			for (int i = 0; i < 8; i++)
 			{
+				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
 				yield return new WaitForSeconds(2.25f);
 				yield return DoInteractionClick(selectables[1]);
 			}
@@ -36,7 +38,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 
 			for (int i = 1; i < pageNumber; i++)
 			{
-				yield return new WaitForSeconds(0.3f);
+				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
 				yield return DoInteractionClick(selectables[1]);
 			}
 
@@ -47,14 +49,18 @@ public class NecronomiconComponentSolver : ComponentSolver
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		Type necronomiconScriptType = ReflectionHelper.FindType("necronomiconScript");
-		if (necronomiconScriptType == null) yield break;
-
-		object component = Module.BombComponent.GetComponent(necronomiconScriptType);
-
 		yield return null;
-		yield return RespondToCommandInternal("page " + component.GetValue<int>("correctPage"));
+		yield return RespondToCommandInternal("page " + _component.GetValue<int>("correctPage"));
 	}
 
+
+	static NecronomiconComponentSolver()
+	{
+		ComponentType = ReflectionHelper.FindType("necronomiconScript");
+	}
+
+	private static readonly Type ComponentType;
+
+	private readonly object _component;
 	private readonly KMSelectable[] selectables;
 }
