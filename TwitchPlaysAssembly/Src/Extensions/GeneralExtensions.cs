@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -218,5 +219,20 @@ public static class GeneralExtensions
 		KTInputManager.Instance.SelectableManager.Select(selectable, true);
 		KTInputManager.Instance.SelectableManager.HandleInteract();
 		selectable.OnInteractEnded();
+	}
+
+	public static void CopyTo(this DirectoryInfo source, DirectoryInfo target)
+	{
+		Directory.CreateDirectory(target.FullName);
+
+		foreach (FileInfo file in source.GetFiles())
+		{
+			file.CopyTo(Path.Combine(target.FullName, file.Name));
+		}
+
+		foreach (DirectoryInfo directory in source.GetDirectories())
+		{
+			directory.CopyTo(new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+		}
 	}
 }

@@ -42,6 +42,9 @@ static class Updater
 
 		// Check to see if the build is actually newer (and if the dll actually exists).
 		UpdateAvailable = File.Exists(dllPath) && GetBuildDateTime(dllPath) > GetCurrentBuildDateTime();
+
+		// Delete the build if it's old, so we don't just leave stuff around in the temporary directory.
+		if (!UpdateAvailable) buildFolder.Delete(true);
 	}
 
 	public static IEnumerator Update()
@@ -60,8 +63,11 @@ static class Updater
 		DirectoryInfo modFolder = new DirectoryInfo(GetModFolder());
 		modFolder.Delete(true);
 
-		// Copy the one that CheckForUpdates() downloaded to where the current one was
-		new DirectoryInfo(Path.Combine(BuildStorage, "Twitch Plays")).MoveTo(modFolder.FullName);
+		// Copy the build that CheckForUpdates() downloaded to where the current one was.
+		// Note: .MoveTo(desDirName) was intentionally not used as it doesn't work across drives.
+		DirectoryInfo buildFolder = new DirectoryInfo(Path.Combine(BuildStorage, "Twitch Plays"));
+		buildFolder.CopyTo(modFolder);
+		buildFolder.Delete(true);
 
 		GlobalCommands.RestartGame();
 	}
