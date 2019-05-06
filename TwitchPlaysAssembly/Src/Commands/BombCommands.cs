@@ -141,9 +141,12 @@ public static class BombCommands
 
 		bomb.CurrentTimer = direct ? time : negative ? bomb.CurrentTimer - time : bomb.CurrentTimer + time;
 
+		// If the time requested was negative, we need to flip the message.
+		bool negativeTime = time < 0 ? !negative : negative;
+
 		IRCConnection.SendMessage(direct
 			? $"Set the bomb's timer to {Math.Abs(time < 0 ? 0 : time).FormatTime()}."
-			: $"{(negative ? "Subtracted" : "Added")} {Math.Abs(time).FormatTime()} {(negative ? "from" : "to")} the timer.", user, !isWhisper);
+			: $"{(negativeTime ? "Subtracted" : "Added")} {Math.Abs(time).FormatTime()} {(negativeTime ? "from" : "to")} the timer.", user, !isWhisper);
 	}
 
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:(strikes?|s)|strikelimit|sl|maxstrikes?|ms) +(-?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
