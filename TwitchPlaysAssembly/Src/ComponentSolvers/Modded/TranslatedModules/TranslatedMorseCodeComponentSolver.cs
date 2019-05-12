@@ -19,12 +19,6 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(_component, MorseCodeComponentType);
 		if (language != null) ManualCode = $"Morse%20Code{language}";
 		ModInfo.moduleDisplayName = $"Morse Code Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(_component, MorseCodeComponentType)}";
-		module.BombComponent.StartCoroutine(SetHeaderText());
-	}
-
-	private IEnumerator SetHeaderText()
-	{
-		yield return new WaitUntil(() => Module != null);
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 

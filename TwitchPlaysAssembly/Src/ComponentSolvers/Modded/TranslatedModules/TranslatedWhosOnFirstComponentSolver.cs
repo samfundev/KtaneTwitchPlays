@@ -18,12 +18,6 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		if (language != null)
 			ManualCode = $"Who%E2%80%99s%20on%20First{language}";
 		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(component, ComponentType)}";
-		module.BombComponent.StartCoroutine(SetHeaderText());
-	}
-
-	private IEnumerator SetHeaderText()
-	{
-		yield return new WaitUntil(() => Module != null);
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 

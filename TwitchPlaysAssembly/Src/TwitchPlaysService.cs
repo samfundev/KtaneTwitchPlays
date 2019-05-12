@@ -547,6 +547,8 @@ public class TwitchPlaysService : MonoBehaviour
 				module.BombComponent = bombComponent.GetComponent<BombComponent>();
 
 				solver = ComponentSolverFactory.CreateSolver(module);
+
+				module.StopAllCoroutines(); // Stop any coroutines to prevent any exceptions or from affecting the next module.
 			}
 			catch (Exception e)
 			{

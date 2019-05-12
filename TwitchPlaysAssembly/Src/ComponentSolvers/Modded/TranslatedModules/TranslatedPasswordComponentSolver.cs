@@ -18,12 +18,6 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType);
 		if (language != null) ManualCode = $"Password{language}";
 		ModInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType)}";
-		module.Bomb.Bomb.StartCoroutine(SetHeaderText());
-	}
-
-	private IEnumerator SetHeaderText()
-	{
-		yield return new WaitUntil(() => Module != null);
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 

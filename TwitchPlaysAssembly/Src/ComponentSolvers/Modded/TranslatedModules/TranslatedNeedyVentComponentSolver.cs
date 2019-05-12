@@ -16,12 +16,6 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 		if (language != null) ManualCode = "Venting%20Gas";
 		//if (language != null) ManualCode = $"Venting%20Gas{language}";
 		ModInfo.moduleDisplayName = $"Needy Vent Gas Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent.GetComponent(NeedyVentComponentSolverType), NeedyVentComponentSolverType)}";
-		Module.Bomb.Bomb.StartCoroutine(SetHeaderText());
-	}
-
-	private IEnumerator SetHeaderText()
-	{
-		yield return new WaitUntil(() => Module != null);
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 

@@ -18,16 +18,10 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(component, ComponentType);
 		if (language != null) ManualCode = $"The%20Button{language}";
 		ModInfo.moduleDisplayName = $"Big Button Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(component, ComponentType)}";
-		module.BombComponent.StartCoroutine(SetHeaderText());
+		Module.HeaderText = ModInfo.moduleDisplayName;
 
 		var mat = (Material) StripMaterialField.GetValue(component);
 		StripMaterialField.SetValue(component, Object.Instantiate(mat));
-	}
-
-	private IEnumerator SetHeaderText()
-	{
-		yield return new WaitUntil(() => Module != null);
-		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
