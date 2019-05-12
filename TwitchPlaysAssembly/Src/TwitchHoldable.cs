@@ -507,7 +507,7 @@ public class TwitchHoldable
 		return new WaitForSeconds(delay);
 	}
 
-	public IEnumerator Hold(bool frontFace = true)
+	public IEnumerator Hold(bool? frontFace = null)
 	{
 		bool doForceRotate = false;
 
@@ -524,7 +524,8 @@ public class TwitchHoldable
 			doForceRotate = true;
 		}
 
-		_heldFrontFace = frontFace;
+		if (frontFace != null)
+			_heldFrontFace = (bool) frontFace;
 
 		if (doForceRotate)
 		{
@@ -540,7 +541,7 @@ public class TwitchHoldable
 			yield break;
 		yield return null;
 
-		var turnCoroutine = Hold();
+		var turnCoroutine = Hold(true);
 		while (turnCoroutine.MoveNext())
 			yield return turnCoroutine.Current;
 
@@ -553,13 +554,13 @@ public class TwitchHoldable
 
 	public IEnumerator Turn() => Hold(!_heldFrontFace);
 
-	private static IEnumerator ForceHeldRotation(bool frontFace, float duration)
+	private static IEnumerator ForceHeldRotation(bool? frontFace, float duration)
 	{
 		var selectableManager = KTInputManager.Instance.SelectableManager;
 		var baseTransform = selectableManager.GetBaseHeldObjectTransform();
 
 		float oldZSpin = selectableManager.GetZSpin();
-		float targetZSpin = frontFace ? 0.0f : 180.0f;
+		float targetZSpin = frontFace != null ? ((bool) frontFace ? 0.0f : 180.0f) : oldZSpin;
 
 		float initialTime = Time.time;
 		while (Time.time - initialTime < duration)
@@ -567,13 +568,12 @@ public class TwitchHoldable
 			float lerp = (Time.time - initialTime) / duration;
 			float currentZSpin = Mathf.SmoothStep(oldZSpin, targetZSpin, lerp);
 
-			var currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 			var HeldObjectTiltEulerAngles = selectableManager.GetHeldObjectTiltEulerAngles();
 			HeldObjectTiltEulerAngles.x = Mathf.Clamp(HeldObjectTiltEulerAngles.x, -95f, 95f);
 			HeldObjectTiltEulerAngles.z -= selectableManager.GetZSpin() - currentZSpin;
 
 			selectableManager.SetZSpin(currentZSpin);
-			selectableManager.SetControlsRotation(baseTransform.rotation * currentRotation);
+			selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(HeldObjectTiltEulerAngles));
 			selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTiltEulerAngles);
 			selectableManager.HandleFaceSelection();
 			yield return null;
@@ -584,7 +584,7 @@ public class TwitchHoldable
 		HeldObjectTileEulerAnglesFinal.z -= selectableManager.GetZSpin() - targetZSpin;
 
 		selectableManager.SetZSpin(targetZSpin);
-		selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+		selectableManager.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(HeldObjectTileEulerAnglesFinal));
 		selectableManager.SetHeldObjectTiltEulerAngles(HeldObjectTileEulerAnglesFinal);
 		selectableManager.HandleFaceSelection();
 	}
@@ -664,7 +664,7 @@ public class TwitchHoldable
 	private readonly string _defaultId;
 	public virtual string ID => _defaultId;
 
-	private bool _heldFrontFace;
+	private bool _heldFrontFace = true;
 	private string _delegatedStrikeUserNickName;
 	private string _currentUserNickName;
 

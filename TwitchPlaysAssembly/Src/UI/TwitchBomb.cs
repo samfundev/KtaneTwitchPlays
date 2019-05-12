@@ -122,7 +122,7 @@ public class TwitchBomb : MonoBehaviour
 		CauseStrikesToExplosion(reason);
 	}
 
-	public IEnumerator HoldBomb(bool frontFace = true)
+	public IEnumerator HoldBomb(bool? frontFace = null)
 	{
 		SelectableArea area = Bomb.GetComponentInChildren<SelectableArea>();
 		if (area.gameObject.layer != 11) yield break;
@@ -174,13 +174,6 @@ public class TwitchBomb : MonoBehaviour
 			if (!continueInvoke || holdable == null)
 				yield break;
 		}
-
-		if (holdable.HoldState != FloatingHoldable.HoldStateEnum.Held)
-			yield break;
-
-		var turnBombCoroutine = HoldBomb();
-		while (turnBombCoroutine.MoveNext())
-			yield return turnBombCoroutine.Current;
 
 		while (holdable.HoldState == FloatingHoldable.HoldStateEnum.Held)
 		{
@@ -437,7 +430,7 @@ public class TwitchBomb : MonoBehaviour
 		return edgeworkString;
 	}
 
-	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace)
+	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace, bool select = true)
 	{
 		IEnumerator gameRoomFocus = GameRoom.Instance?.BombCommanderFocus(Bomb, selectable, focusDistance, frontFace);
 		if (gameRoomFocus != null && gameRoomFocus.MoveNext() && gameRoomFocus.Current is bool continueInvoke)
@@ -457,11 +450,11 @@ public class TwitchBomb : MonoBehaviour
 		float focusTime = holdable.FocusTime;
 		holdable.Focus(selectable.transform, focusDistance, false, false, focusTime);
 
-		selectable.HandleSelect(false);
+		if (select) selectable.HandleSelect(false);
 		selectable.HandleInteract();
 	}
 
-	public IEnumerator Defocus(Selectable selectable, bool frontFace)
+	public IEnumerator Defocus(Selectable selectable, bool frontFace, bool deselect = true)
 	{
 		IEnumerator gameRoomDefocus = GameRoom.Instance?.BombCommanderDefocus(Bomb, selectable, frontFace);
 		if (gameRoomDefocus != null && gameRoomDefocus.MoveNext() && gameRoomDefocus.Current is bool continueInvoke)
@@ -474,8 +467,8 @@ public class TwitchBomb : MonoBehaviour
 		}
 
 		Bomb.GetComponent<FloatingHoldable>().Defocus(false, false);
+		if (deselect) selectable.HandleDeselect();
 		selectable.HandleCancel();
-		selectable.HandleDeselect();
 	}
 
 	public void RotateByLocalQuaternion(Quaternion localQuaternion)
@@ -536,13 +529,13 @@ public class TwitchBomb : MonoBehaviour
 		Bomb.OnStrike(null);
 	}
 
-	private IEnumerator ForceHeldRotation(bool frontFace, float duration)
+	private IEnumerator ForceHeldRotation(bool? frontFace, float duration)
 	{
 		var sm = KTInputManager.Instance.SelectableManager;
 		var baseTransform = sm.GetBaseHeldObjectTransform();
 
 		float oldZSpin = sm.GetZSpin();
-		float targetZSpin = frontFace ? 0.0f : 180.0f;
+		float targetZSpin = frontFace != null ? ((bool) frontFace ? 0.0f : 180.0f) : oldZSpin;
 
 		float initialTime = Time.time;
 		while (Time.time - initialTime < duration)
@@ -550,13 +543,12 @@ public class TwitchBomb : MonoBehaviour
 			float lerp = (Time.time - initialTime) / duration;
 			float currentZSpin = Mathf.SmoothStep(oldZSpin, targetZSpin, lerp);
 
-			Quaternion currentRotation = Quaternion.Euler(0.0f, 0.0f, currentZSpin);
 			Vector3 heldObjectTiltEulerAngles = sm.GetHeldObjectTiltEulerAngles();
 			heldObjectTiltEulerAngles.x = Mathf.Clamp(heldObjectTiltEulerAngles.x, -95f, 95f);
 			heldObjectTiltEulerAngles.z -= sm.GetZSpin() - currentZSpin;
 
 			sm.SetZSpin(currentZSpin);
-			sm.SetControlsRotation(baseTransform.rotation * currentRotation);
+			sm.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(heldObjectTiltEulerAngles));
 			sm.SetHeldObjectTiltEulerAngles(heldObjectTiltEulerAngles);
 			sm.HandleFaceSelection();
 			yield return null;
@@ -567,7 +559,7 @@ public class TwitchBomb : MonoBehaviour
 		heldObjectTileEulerAnglesFinal.z -= sm.GetZSpin() - targetZSpin;
 
 		sm.SetZSpin(targetZSpin);
-		sm.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(0.0f, 0.0f, targetZSpin));
+		sm.SetControlsRotation(baseTransform.rotation * Quaternion.Euler(heldObjectTileEulerAnglesFinal));
 		sm.SetHeldObjectTiltEulerAngles(heldObjectTileEulerAnglesFinal);
 		sm.HandleFaceSelection();
 	}

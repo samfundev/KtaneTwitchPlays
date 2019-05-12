@@ -107,7 +107,7 @@ public class ElevatorGameRoom : GameRoom
 	}
 
 	#region Bomb Commander Overrides
-	public override IEnumerator BombCommanderHoldBomb(Bomb bomb, bool frontFace = true)
+	public override IEnumerator BombCommanderHoldBomb(Bomb bomb, bool? frontFace = null)
 	{
 		yield return false;
 		if (_currentWall != CurrentElevatorWall.Dropped) yield break;

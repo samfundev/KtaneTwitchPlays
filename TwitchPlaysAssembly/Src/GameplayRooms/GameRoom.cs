@@ -280,7 +280,7 @@ public abstract class GameRoom
 		yield break;
 	}
 
-	public virtual IEnumerator BombCommanderHoldBomb(Bomb bomb, bool frontFace = true)
+	public virtual IEnumerator BombCommanderHoldBomb(Bomb bomb, bool? frontFace = null)
 	{
 		yield return true;
 	}

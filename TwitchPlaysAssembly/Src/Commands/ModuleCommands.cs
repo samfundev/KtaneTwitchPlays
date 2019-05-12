@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -245,6 +246,86 @@ static class ModuleCommands
 
 	[Command(@"zoom +(?!\d*\.?\d+$)(?:send +to +module +)?(.*)")]
 	public static IEnumerator DefaultZoomCommand1(TwitchModule module, string user, [Group(1)] string zoomCmd) => RunModuleCommand(module, user, zoomCmd, zoom: true);
+
+	[Command(@"tilt *([a-z]+|-?\d+)?")]
+	public static IEnumerator Tilt(TwitchModule module, [Group(1)] string direction)
+	{
+		float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
+
+		IEnumerable TimedAnimation(float length)
+		{
+			float startTime = Time.time;
+			float alpha = 0;
+			while (alpha < 1)
+			{
+				alpha = Mathf.Min((Time.time - startTime) / length, 1);
+				yield return alpha;
+			}
+		}
+
+		Dictionary<string[], int> directionNames = new Dictionary<string[], int>()
+		{
+			{ new[] { "up", "u", "top", "t" }, 0 },
+			{ new[] { "upright", "rightup", "ur", "ru", "topright", "righttop", "tr", "rt" }, 45 },
+			{ new[] { "right", "r" }, 90 },
+			{ new[] { "downright", "rightdown", "dr", "rd", "bottomright", "rightbottom", "br", "rb" }, 135 },
+			{ new[] { "down", "d", "bottom", "b" }, 180 },
+			{ new[] { "downleft", "leftdown", "dl", "ld", "bottomleft", "leftbottom", "bl", "lb" }, 255 },
+			{ new[] { "left", "l" }, 270 },
+			{ new[] { "upleft", "leftup", "ul", "lu", "topleft", "lefttop", "tl", "lt" }, 315 },
+		};
+
+		var targetRotation = 180;
+		if (!string.IsNullOrEmpty(direction))
+		{
+			var nameAngle = directionNames.Where(pair => pair.Key.Contains(direction)).Select(pair => pair.Value);
+			if (nameAngle.Any())
+			{
+				targetRotation = nameAngle.First();
+			}
+			else if (int.TryParse(direction, out int directionAngle))
+			{
+				targetRotation = directionAngle;
+			}
+			else
+			{
+				yield break;
+			}
+		}
+
+		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace, false);
+		while (focusCoroutine.MoveNext())
+			yield return focusCoroutine.Current;
+
+		yield return new WaitForSeconds(0.5f);
+
+		var targetAngle = Quaternion.Euler(new Vector3(-Mathf.Cos(targetRotation * Mathf.Deg2Rad), 0, Mathf.Sin(targetRotation * Mathf.Deg2Rad)) * (module.FrontFace ? 60 : -60));
+		foreach (float alpha in TimedAnimation(1f))
+		{
+			var lerp = Quaternion.Lerp(Quaternion.identity, targetAngle, easeCubic(alpha));
+			var bombLerp = module.FrontFace ? lerp : Quaternion.Euler(Vector3.Scale(lerp.eulerAngles, new Vector3(1, 1, -1)));
+			module.Bomb.RotateByLocalQuaternion(bombLerp);
+			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
+			yield return null;
+		}
+
+		yield return new WaitForSeconds(2.5f);
+
+		foreach (float alpha in TimedAnimation(1f))
+		{
+			var lerp = Quaternion.Lerp(targetAngle, Quaternion.identity, easeCubic(alpha));
+			var bombLerp = module.FrontFace ? lerp : Quaternion.Euler(Vector3.Scale(lerp.eulerAngles, new Vector3(1, 1, -1)));
+			module.Bomb.RotateByLocalQuaternion(bombLerp);
+			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
+			yield return null;
+		}
+
+		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace, false);
+		while (defocusCoroutine.MoveNext())
+			yield return defocusCoroutine.Current;
+
+		yield return new WaitForSeconds(0.5f);
+	}
 
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd) => RunModuleCommand(module, user, cmd, zoom: false);
