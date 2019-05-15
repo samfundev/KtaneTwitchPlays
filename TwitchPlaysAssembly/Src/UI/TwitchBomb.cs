@@ -644,6 +644,17 @@ public class TwitchBomb : MonoBehaviour
 			yield return holdBombCoroutine.Current;
 	}
 
+	public IEnumerator KeepAlive()
+	{
+		while (!IsSolved)
+		{
+			if (CurrentTimer <= 60)
+				CurrentTimer = BombStartingTimer;
+
+			yield return new WaitForSeconds(0.1f);
+		}
+	}
+
 	public bool IsSolved => Bomb.IsSolved();
 
 	private float CurrentTimerElapsed => Bomb.GetTimer().TimeElapsed;

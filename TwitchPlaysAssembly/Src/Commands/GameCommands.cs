@@ -316,7 +316,7 @@ static class GameCommands
 	public static void SolveBomb()
 	{
 		foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
-			bomb.Bomb.GetTimer().StopTimer();
+			bomb.StartCoroutine(bomb.KeepAlive());
 		foreach (var module in TwitchGame.Instance.Modules.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
 			if (!module.Solved)
 				module.SolveSilently();
