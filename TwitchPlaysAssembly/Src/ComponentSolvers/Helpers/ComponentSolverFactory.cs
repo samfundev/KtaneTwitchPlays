@@ -55,6 +55,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["Needy Math"] = module => new NeedyMathComponentSolver(module);
 		ModComponentSolverCreators["WordScrambleModule"] = module => new AnagramsComponentSolver(module);
 
+		//Royal_Flu$h Modules
+		ModComponentSolverCreators["festiveJukebox"] = module => new FestiveJukeboxComponentSolver(module);
+		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
+		ModComponentSolverCreators["hangover"] = module => new HangoverComponentSolver(module);
+
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
 		ModComponentSolverCreators["FlavorText"] = module => new FlavorTextComponentSolver(module);
@@ -171,6 +176,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math" };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 2 };
+
+		//Royal_Flu$h
+		ModComponentSolverInformation["festiveJukebox"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 3 };
+		ModComponentSolverInformation["labyrinth"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 3 };
+		ModComponentSolverInformation["hangover"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 3 };
 
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 4 };
