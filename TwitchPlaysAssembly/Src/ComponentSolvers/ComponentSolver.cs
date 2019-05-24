@@ -563,7 +563,7 @@ public abstract class ComponentSolver
 				switch (ModInfo.moduleID)
 				{
 					case "HexiEvilFMN": // Forget Everything
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4 * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 4 * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					case "cookieJars": //cookie jars
