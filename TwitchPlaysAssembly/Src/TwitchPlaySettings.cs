@@ -633,7 +633,7 @@ public static class TwitchPlaySettings
 	{
 		var split = setting.Split('.');
 		Type tpdata = typeof(TwitchPlaySettingsData);
-		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
+		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.IndexOf(split[0], StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
 
 		DebugHelper.Log($"Found {settingFields.Count} settings");
 		if (!settingFields.Any())
@@ -660,7 +660,7 @@ public static class TwitchPlaySettings
 	{
 		var split = setting.Split('.');
 		Type tpdata = typeof(TwitchPlaySettingsData);
-		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
+		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.IndexOf(split[0], StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
 
 		DebugHelper.Log($"Found {settingFields.Count} settings");
 		if (!settingFields.Any())
@@ -805,7 +805,7 @@ public static class TwitchPlaySettings
 		DebugHelper.Log($"Attempting to read settings {setting}");
 		var split = setting.Split('.');
 		Type tpdata = typeof(TwitchPlaySettingsData);
-		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.ToLowerInvariant().Contains(split[0].ToLowerInvariant())).ToList();
+		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.IndexOf(split[0], StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
 
 		DebugHelper.Log($"Found {settingFields.Count} settings");
 		if (!settingFields.Any())

@@ -33,11 +33,11 @@ namespace System.IO.Compression
         /// <summary>
         /// Compression method enumeration
         /// </summary>
-        public enum Compression : ushort { 
+        public enum Compression : ushort {
             /// <summary>Uncompressed storage</summary> 
-            Store = 0, 
+            Store = 0,
             /// <summary>Deflate compression method</summary>
-            Deflate = 8 
+            Deflate = 8
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace System.IO.Compression
         public struct ZipFileEntry
         {
             /// <summary>Compression method</summary>
-            public Compression Method; 
+            public Compression Method;
             /// <summary>Full path and filename as stored in Zip</summary>
             public string FilenameInZip;
             /// <summary>Original file size</summary>
@@ -192,11 +192,11 @@ namespace System.IO.Compression
 
             if (zip.ReadFileInfo())
                 return zip;
-            
+
             /* prevent files/streams to be opened unused*/
             if(!_leaveOpen)
                 zip.Close();
-            
+
             throw new System.IO.InvalidDataException();
         }
         /// <summary>
@@ -361,13 +361,13 @@ namespace System.IO.Compression
             {
                 result = ExtractFile(_zfe, output);
             }
-                
+
             if (result)
             {
                 File.SetCreationTime(_filename, _zfe.ModifyTime);
                 File.SetLastWriteTime(_filename, _zfe.ModifyTime);
             }
-            
+
             return result;
         }
         /// <summary>
@@ -494,7 +494,6 @@ namespace System.IO.Compression
         {
             if (!(_zip.ZipFileStream is FileStream))
                 throw new InvalidOperationException("RemoveEntries is allowed just over streams of type FileStream");
-
 
             //Get full list of entries
             var fullList = _zip.ReadCentralDir();
@@ -682,7 +681,7 @@ namespace System.IO.Compression
                 outStream = new DeflateStream(ZipFileStream, CompressionMode.Compress, true);
 
             _zfe.Crc32 = 0 ^ 0xffffffff;
-            
+
             do
             {
                 bytesRead = _source.Read(buffer, 0, buffer.Length);
@@ -730,7 +729,7 @@ namespace System.IO.Compression
         private uint DateTimeToDosTime(DateTime _dt)
         {
             return (uint)(
-                (_dt.Second / 2) | (_dt.Minute << 5) | (_dt.Hour << 11) | 
+                (_dt.Second / 2) | (_dt.Minute << 5) | (_dt.Hour << 11) |
                 (_dt.Day<<16) | (_dt.Month << 21) | ((_dt.Year - 1980) << 25));
         }
         private DateTime? DosTimeToDateTime(uint _dt)

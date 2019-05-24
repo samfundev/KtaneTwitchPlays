@@ -113,7 +113,7 @@ public static class GeneralExtensions
 	{
 		source.AddRange(items);
 	}
-	
+
 	public static bool RegexMatch(this string str, params string[] patterns) => str.RegexMatch(out _, patterns);
 
 	public static bool RegexMatch(this string str, out Match match, params string[] patterns)
@@ -143,14 +143,14 @@ public static class GeneralExtensions
 	{
 		if (!string.IsNullOrEmpty(str) && !string.IsNullOrEmpty(value)) return str.Equals(value);
 		if (str == null && value == null) return true;
-		return str == string.Empty && value == string.Empty;
+		return str?.Length == 0 && value?.Length == 0;
 	}
 
 	public static bool TryEquals(this string str, string value, StringComparison comparisonType)
 	{
 		if (!string.IsNullOrEmpty(str) && !string.IsNullOrEmpty(value)) return str.Equals(value, comparisonType);
 		if (str == null && value == null) return true;
-		return str == string.Empty && value == string.Empty;
+		return str?.Length == 0 && value?.Length == 0;
 	}
 
 	/// <summary>

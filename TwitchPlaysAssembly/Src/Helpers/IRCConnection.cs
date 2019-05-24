@@ -142,7 +142,7 @@ public class IRCConnection : MonoBehaviour
 	private void Start()
 	{
 		_data = GetComponent<IRCConnectionData>();
-		
+
 		alertText = ConnectionAlert.transform.Find("Text").GetComponent<Text>();
 		alertProgressBar = ConnectionAlert.transform.Find("ProgressBar");
 

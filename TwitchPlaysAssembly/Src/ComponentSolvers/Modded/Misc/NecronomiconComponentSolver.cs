@@ -53,7 +53,6 @@ public class NecronomiconComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal("page " + _component.GetValue<int>("correctPage"));
 	}
 
-
 	static NecronomiconComponentSolver()
 	{
 		ComponentType = ReflectionHelper.FindType("necronomiconScript");

@@ -404,7 +404,7 @@ public class TwitchBomb : MonoBehaviour
 			}
 		}
 		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
-		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x == "" ? "Empty" : x).Select(x => "[" + x + "]").Join());
+		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x?.Length == 0 ? "Empty" : x).Select(x => "[" + x + "]").Join());
 		edgework.Add(QueryWidgets<int>(WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
 		edgework.Add(QueryWidgets<string>(WidgetQueryManufacture).Select(x => x["month"] + " - " + x["year"]).Join());
 		edgework.Add(QueryWidgets<string>(WidgetQueryDay).Select(x => {

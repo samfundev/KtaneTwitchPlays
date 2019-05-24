@@ -112,10 +112,10 @@ public class ModuleCameras : MonoBehaviour
 
 			// Light sources in modules don’t show in the camera if we change the layer immediately.
 			// Delaying that by 1 frame by using a coroutine seems to fix that.
-			StartCoroutine(SetModuleLayer(module));
+			StartCoroutine(SetModuleLayer());
 		}
 
-		private IEnumerator SetModuleLayer(TwitchModule module)
+		private IEnumerator SetModuleLayer()
 		{
 			yield return null;
 			// LastInteractiveState doesn't get updated until LateUpdate, so it can only be accurately used after that runs.

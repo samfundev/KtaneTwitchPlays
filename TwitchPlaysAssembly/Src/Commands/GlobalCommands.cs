@@ -649,7 +649,6 @@ static class GlobalCommands
 		return RunDistribution(user, modules, inf, distribution);
 	});
 
-
 	[Command(@"run +(?!.* +\d+$|\d+ +.*$)(.+)")]
 	public static IEnumerator RunMission(string user, bool isWhisper, [Group(1)] string textAfter, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{

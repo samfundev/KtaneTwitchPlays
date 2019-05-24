@@ -211,7 +211,7 @@ public class Leaderboard
 
 	public OtherModes.Team GetTeam(string userName, Color userColor)
 	{
-		LeaderboardEntry entry = GetEntry(userName);
+		LeaderboardEntry entry = GetEntry(userName, userColor);
 		return entry.Team;
 	}
 
