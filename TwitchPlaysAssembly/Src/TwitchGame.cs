@@ -279,6 +279,7 @@ public class TwitchGame : MonoBehaviour
 	private IEnumerator CheckForBomb()
 	{
 		yield return new WaitUntil(() => SceneManager.Instance.GameplayState.Bombs != null && SceneManager.Instance.GameplayState.Bombs.Count > 0);
+		yield return null;
 		var bombs = SceneManager.Instance.GameplayState.Bombs;
 
 		try
