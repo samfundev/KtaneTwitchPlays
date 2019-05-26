@@ -109,7 +109,7 @@ public abstract class GameRoom
 		List<TwitchBomb> bombHandles = TwitchGame.Instance.Bombs;
 
 		Random rand = new Random();
-		const float specialNameProbability = 1.25f;
+		const float specialNameProbability = 0.25f;
 		string[] singleNames =
 		{
 			"Bomblebee ",
@@ -124,7 +124,11 @@ public abstract class GameRoom
 			"Sergeant Cluster",
 			"La Bomba",
 			"Bombchu ",
-			"Bomboleo "
+			"Bomboleo ",
+			"Bombina ",
+			"Bomberman ",
+			"Blaster ",
+			"Boomer ",
 		};
 		string[,] doubleNames =
 		{
@@ -134,8 +138,12 @@ public abstract class GameRoom
 			{null, "The Bomb Reloaded"},
 			{"Bombic ", "& Knuckles"},
 			{null, "The River Kwai"},
-			{"Bomboleo ", "Bombolea "}
+			{"Bomboleo ", "Bombolea "},
+			{"Bombio ", "Bombigi " },
+			{"Bombman ", "Bombin " },
 		};
+
+		bombHandles[0].BombName = "The Bomb";
 
 		switch (bombHandles.Count)
 		{
