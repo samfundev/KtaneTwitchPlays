@@ -71,12 +71,7 @@ public class TwitchBomb : MonoBehaviour
 		EdgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
 		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
-		CanvasGroup.alpha = 1.0f;
-		if (BombID > 0)
-		{
-			EdgeworkWindowTransform.localScale = Vector3.zero;
-			EdgeworkHighlightTransform.localScale = Vector3.zero;
-		}
+		CanvasGroup.alpha = BombID == 0 ? 1 : 0;
 	}
 
 	private void OnDestroy() => StopAllCoroutines();

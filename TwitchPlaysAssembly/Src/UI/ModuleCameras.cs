@@ -468,6 +468,9 @@ public class ModuleCameras : MonoBehaviour
 	public void ChangeBomb(TwitchBomb bomb)
 	{
 		DebugHelper.Log("Switching bomb");
+		if (_currentBomb != null) _currentBomb.CanvasGroup.alpha = 0;
+		if (bomb != null) bomb.CanvasGroup.alpha = 1;
+
 		_currentBomb = bomb;
 		UpdateHeader();
 		UpdateStrikes();
