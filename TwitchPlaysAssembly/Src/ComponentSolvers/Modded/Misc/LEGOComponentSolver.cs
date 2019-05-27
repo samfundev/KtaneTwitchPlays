@@ -13,10 +13,8 @@ public class LEGOComponentSolver : ComponentSolver
 		_component = module.BombComponent.GetComponent(ComponentType);
 		GridButtons = _component.GetValue<KMSelectable[]>("GridButtons");
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Commands: select <column><row>, color <index>, left (times), right (times), clear and submit. The first two commands can be shortened to their first letter. Color indexes are specified in english reading order. You can also select the grid relative to your last position using a string of udlr characters. Commands are chainable using semicolons.");
+		ChainableCommands = true;
 	}
-
-	int CharacterToIndex(char character) => character >= 'a' ? character - 'a' : character - '1';
-	bool FirstOrWhole(string value, string match) => value[0] == match[0] || value == match;
 
 	Vector2Int SelectedPosition = Vector2Int.zero;
 	readonly Dictionary<char, Vector2Int> CharacterToDirection = new Dictionary<char, Vector2Int>
@@ -30,69 +28,61 @@ public class LEGOComponentSolver : ComponentSolver
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = Regex.Replace(inputCommand.ToLowerInvariant().Trim(), "^(press|hit|enter|push)", "");
-		string[] split = inputCommand.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-		List<object> toYield = new List<object>();
-		foreach (string command in split)
+		string[] split = inputCommand.SplitFull(' ');
+		int count = 1;
+		if ((split[0] == "left" || split[0] == "right") && (split.Length == 1 || split.Length == 2 && int.TryParse(split[1], out count)))
 		{
-			string[] commandSplit = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			toYield.Add(((Func<object>) (() =>
-			{
-				int count = 1;
-				if ((commandSplit[0] == "left" || commandSplit[0] == "right") && (commandSplit.Length == 1 || commandSplit.Length == 2 && int.TryParse(commandSplit[1], out count)))
-				{
-					if (!count.InRange(1, 8)) return false;
+			if (!count.InRange(1, 8)) yield break;
 
-					bool leftButton = commandSplit[0] == "left";
-					return ClickButton(_component.GetValue<KMSelectable>($"{(leftButton ? "Left" : "Right")}Button"), count);
-				}
-				else if (commandSplit.Length == 1)
-				{
-					if (command == "submit")
-					{
-						return _component.GetValue<KMSelectable>("SubmitButton");
-					}
-					else if (command == "clear")
-					{
-						return ClearGrid();
-					}
-					else if (command.RegexMatch("^[lrud]+$"))
-					{
-						return command.Select(character => MoveSelected(CharacterToDirection[character], false)).GetEnumerator();
-					}
-				}
-				else if (commandSplit.Length == 2)
-				{
-					if (FirstOrWhole(commandSplit[0], "select") && commandSplit[1].Length == 2)
-					{
-						int column = CharacterToIndex(commandSplit[1][0]);
-						int row = CharacterToIndex(commandSplit[1][1]);
+			bool leftButton = split[0] == "left";
+			KMSelectable selectable = _component.GetValue<KMSelectable>($"{(leftButton ? "Left" : "Right")}Button");
 
-						if (column.InRange(0, 7) && row.InRange(0, 7))
-						{
-							return MoveSelected(new Vector2Int(column, row));
-						}
-					}
-					else if (FirstOrWhole(commandSplit[0], "color") && int.TryParse(commandSplit[1], out int colorPosition))
-					{
-						return _component.GetValue<KMSelectable[]>("ColorButtons")[colorPosition - 1];
-					}
-				}
-
-				return false;
-			}))());
-
-			if (toYield.Contains(false)) yield break;
+			yield return null;
+			for (int i = 0; i < count; i++)
+				yield return DoInteractionClick(selectable);
 		}
+		else if (split.Length == 1)
+		{
+			if (split[0] == "submit")
+			{
+				yield return null;
+				yield return DoInteractionClick(_component.GetValue<KMSelectable>("SubmitButton"));
+			}
+			else if (split[0] == "clear")
+			{
+				yield return null;
+				yield return ClearGrid();
+			}
+			else if (split[0].RegexMatch("^[lrud]+$"))
+			{
+				yield return null;
+				yield return split[0].Select(character => MoveSelected(CharacterToDirection[character], false)).GetEnumerator();
+			}
+		}
+		else if (split.Length == 2)
+		{
+			if (split[0].FirstOrWhole("select") && split[1].Length == 2)
+			{
+				int column = split[1][0].ToIndex();
+				int row = split[1][1].ToIndex();
 
-		yield return null;
-		foreach (object yieldObject in toYield) 
-			yield return (yieldObject is KMSelectable selectable) ? DoInteractionClick(selectable) : yieldObject;
+				if (column.InRange(0, 7) && row.InRange(0, 7))
+				{
+					yield return null;
+					yield return MoveSelected(new Vector2Int(column, row));
+				}
+			}
+			else if (split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition))
+			{
+				yield return null;
+				yield return DoInteractionClick(_component.GetValue<KMSelectable[]>("ColorButtons")[colorPosition - 1]);
+			}
+		}
 	}
 
 	IEnumerator MoveSelected(Vector2Int position, bool absolute = true)
 	{
-		yield return null;
 		SelectedPosition = absolute ? position : SelectedPosition + position;
 		// If we go out of bounds, wrap.
 		SelectedPosition.x = (SelectedPosition.x % 8 + 8) % 8;
@@ -103,7 +93,6 @@ public class LEGOComponentSolver : ComponentSolver
 
 	IEnumerator ClearGrid()
 	{
-		yield return null;
 		int CurrentColor = _component.GetValue<int>("CurrentColor");
 		System.Random random = new System.Random(); // This is totally unnecessary, but it looks cooler if it's all scrambled up.
 
@@ -116,13 +105,6 @@ public class LEGOComponentSolver : ComponentSolver
 		}
 
 		yield return RespondToCommandInternal($"color {CurrentColor}"); // Restore the original color.
-	}
-
-	IEnumerator ClickButton(KMSelectable selectable, int count)
-	{
-		yield return null;
-		for (int i = 0; i < count; i++)
-			yield return DoInteractionClick(selectable);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()

@@ -235,4 +235,18 @@ public static class GeneralExtensions
 			directory.CopyTo(new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
 		}
 	}
+
+	/// <summary>Splits a string using the <paramref name="seperator"/> provided and removing empty entries.</summary>
+	/// <param name="value">The string to split.</param>
+	/// <param name="seperator">The seperators to split by.</param>
+	public static string[] SplitFull(this string value, params char[] seperator) => value.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
+
+	/// <summary>Converts a lowercase <paramref name="character"/> into a zero-based index. Supports a-z and 1-9.</summary>
+	/// <param name="character">The character to convert into a index.</param>
+	public static int ToIndex(this char character) => character >= 'a' ? character - 'a' : character - '1';
+
+	/// <summary>Checks if <paramref name="value"/> has the same first letter or is equal to <paramref name="match"/>.</summary>
+	/// <param name="value">The string to check against the match.</param>
+	/// <param name="match">The string to match.</param>
+	public static bool FirstOrWhole(this string value, string match) => value[0] == match[0] || value == match;
 }

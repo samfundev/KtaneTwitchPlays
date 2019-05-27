@@ -42,7 +42,7 @@ public abstract class ComponentSolver
 
 		try
 		{
-			subcoroutine = RespondToCommandInternal(command);
+			subcoroutine = ChainableCommands ? ChainCommand(command) : RespondToCommandInternal(command);
 		}
 		catch (Exception e)
 		{
@@ -507,6 +507,31 @@ public abstract class ComponentSolver
 		if (!string.IsNullOrEmpty(chatMessage)) SendToTwitchChat($"sendtochat {chatMessage}", userNickName);
 		AwardStrikes(userNickName, Module.Bomb.StrikeLimit - Module.Bomb.StrikeCount);
 		Module.Bomb.CauseExplosionByModuleCommand(string.Empty, ModInfo.moduleDisplayName);
+	}
+
+	protected IEnumerator ChainCommand(string command)
+	{
+		string[] chainedCommands = command.SplitFull(';', ',');
+		if (chainedCommands.Length > 1)
+		{
+			var commandRoutines = chainedCommands.Select(RespondToCommandInternal).ToArray();
+			var invalidCommand = Array.Find(commandRoutines, routine => !routine.MoveNext());
+			if (invalidCommand != null)
+			{
+				yield return "sendtochaterror The command \"" + chainedCommands[Array.IndexOf(commandRoutines, invalidCommand)] + "\" is invalid.";
+				yield break;
+			}
+
+			yield return null;
+			foreach (IEnumerator routine in commandRoutines)
+				yield return routine;
+		}
+		else
+		{
+			var enumerator = RespondToCommandInternal(command);
+			while (enumerator.MoveNext())
+				yield return enumerator.Current;
+		}
 	}
 
 	protected void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
@@ -1198,6 +1223,7 @@ public abstract class ComponentSolver
 
 	private MusicPlayer _musicPlayer;
 	public ModuleInformation ModInfo = null;
+	public bool ChainableCommands = false;
 
 	public bool TurnQueued;
 	private bool _readyToTurn;
