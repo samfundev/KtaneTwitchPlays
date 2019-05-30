@@ -596,11 +596,11 @@ public abstract class ComponentSolver
 						break;
 
 					case "forgetThis": // Forget This
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 3f * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default: // Forget Me Not
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1.5f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 				}
 			}

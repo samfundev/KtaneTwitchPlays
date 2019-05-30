@@ -170,7 +170,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TurnTheKeyAdvanced"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Keys", moduleScore = 10 };
 
 		//Kaneb
-		ModComponentSolverInformation["TwoBits"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Two Bits", moduleScore = 8 };
+		ModComponentSolverInformation["TwoBits"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Two Bits", moduleScore = 7 };
 
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 2 };
@@ -196,10 +196,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Beer Refill Mod" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", moduleScore = 4 };
 		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", moduleScore = 8 };
-		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { moduleScore = 12, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { moduleScore = 14, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { moduleScore = 9, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { moduleScore = 6, builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true };
-		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 10, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 13, builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
@@ -240,7 +240,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["boggle"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["characterShift"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
+		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = true, statusLightLeft = true };
 		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = true };
 		ModComponentSolverInformation["equations"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
@@ -261,7 +261,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["greekCalculus"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
 
 		//CaitSith2
-		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["BigCircle"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["MorseAMaze"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 
 		//clutterArranger
@@ -290,11 +290,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["instructions"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["krazyTalk"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = false };
 		ModComponentSolverInformation["subscribeToPewdiepie"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["tashaSqueals"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["tashaSqueals"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 
 		//eXish
 		ModComponentSolverInformation["equationsXModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["romanArtModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["romanArtModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["transmittedMorseModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 
 		//Fixdoll
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
@@ -307,7 +308,7 @@ public static class ComponentSolverFactory
 		//Goofy
 		ModComponentSolverInformation["leftandRight"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["melodySequencer"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["simonSounds"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
+		ModComponentSolverInformation["simonSounds"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 
 		//Groover
 		ModComponentSolverInformation["3dTunnels"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
@@ -330,10 +331,10 @@ public static class ComponentSolverFactory
 
 		//JerryErris
 		ModComponentSolverInformation["arithmelogic"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["digitString"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["digitString"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["forgetThis"] = new ModuleInformation { moduleScore = 0, moduleScoreIsDynamic = true, CameraPinningAlwaysAllowed = true, DoesTheRightThing = true };
-		ModComponentSolverInformation["gryphons"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
-		ModComponentSolverInformation["qFunctions"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["gryphons"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["qFunctions"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["qSchlagDenBomb"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
 		ModComponentSolverInformation["qSwedishMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
 		ModComponentSolverInformation["quizBuzz"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -343,7 +344,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["pieModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["tapCode"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["valves"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
-		ModComponentSolverInformation["visual_impairment"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["visual_impairment"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 
 		//KingSlendy
 		ModComponentSolverInformation["ColorfulInsanity"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -368,7 +369,7 @@ public static class ComponentSolverFactory
 
 		//Livio
 		ModComponentSolverInformation["theCodeModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
-		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
+		ModComponentSolverInformation["DrDoctorModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 
 		//Maca
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, manualCode = "Playfair%20Cipher", moduleDisplayName = "Playfair Cipher" };
@@ -387,8 +388,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Backgrounds"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = false };
 		ModComponentSolverInformation["BlindMaze"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["FaultyBackgrounds"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
+		ModComponentSolverInformation["FaultyBackgrounds"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["FontSelect"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["MazeScrambler"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["Sink"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
@@ -424,7 +425,7 @@ public static class ComponentSolverFactory
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["accumulation"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["algebra"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["alphabetNumbers"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["benedictCumberbatch"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["britishSlang"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
@@ -461,14 +462,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["taxReturns"] = new ModuleInformation { moduleScore = 17, DoesTheRightThing = true };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["wire"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
-		ModComponentSolverInformation["wireSpaghetti"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
-		ModComponentSolverInformation["blockbusters"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["wireSpaghetti"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
+		ModComponentSolverInformation["blockbusters"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["catchphrase"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 
 		//samfun123
-		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
+		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheGamepadModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["MinesweeperModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SkewedSlotsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -476,7 +477,7 @@ public static class ComponentSolverFactory
 
 		//SL7205
 		ModComponentSolverInformation["colormath"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["fastMath"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["fastMath"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["http"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["Logic"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["neutralization"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -486,7 +487,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["webDesign"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 
 		//Spare Wizard
-		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 16, helpTextOverride = true, helpText = "!4 move L F R F U [move] | !4 walk L F R F U [walk slower] [L = left, R = right, F = forward, U = u-turn]" };
+		ModComponentSolverInformation["spwiz3DMaze"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 15, helpTextOverride = true, helpText = "!4 move L F R F U [move] | !4 walk L F R F U [walk slower] [L = left, R = right, F = forward, U = u-turn]" };
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["spwizAstrology"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["spwizPerspectivePegs"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
@@ -508,21 +509,21 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BitmapsModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["BlackHoleModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
-		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
+		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["BrokenGuitarChordsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true, statusLightLeft = true };
 		ModComponentSolverInformation["CaesarCipherModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["CursedDoubleOhModule"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
+		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["CursedDoubleOhModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["DecoloredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
-		ModComponentSolverInformation["DiscoloredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["DiscoloredSquaresModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["DividedSquaresModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
 		ModComponentSolverInformation["FollowTheLeaderModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["FriendshipModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["GridlockModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["HexamazeModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["HumanResourcesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["KudosudokuModule"] = new ModuleInformation { moduleScore = 16, DoesTheRightThing = true };
 		ModComponentSolverInformation["lasers"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
@@ -532,24 +533,24 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MahjongModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["MarbleTumbleModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["MaritimeFlagsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
+		ModComponentSolverInformation["MouseInTheMaze"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["MysticSquareModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad", moduleScore = 8, DoesTheRightThing = true };
-		ModComponentSolverInformation["OddOneOutModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
+		ModComponentSolverInformation["OddOneOutModule"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["OneHundredAndOneDalmatiansModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["OnlyConnectModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["PatternCubeModule"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
-		ModComponentSolverInformation["PerplexingWiresModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["PerplexingWiresModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["PointOfOrderModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["PolyhedralMazeModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["RegularCrazyTalkModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["RockPaperScissorsLizardSpockModule"] = new ModuleInformation { moduleScore = 6, manualCode = "Rock-Paper-Scissors-Lizard-Spock", DoesTheRightThing = true };
 		ModComponentSolverInformation["RubiksCubeModule"] = new ModuleInformation { moduleScore = 12, manualCode = "Rubik%E2%80%99s Cube", DoesTheRightThing = true };
-		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
+		ModComponentSolverInformation["SetModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["SillySlots"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSendsModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonShrieksModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["SimonSingsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
+		ModComponentSolverInformation["SimonSingsModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpeaksModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpinsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
@@ -593,7 +594,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleScore = 5, moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20", DoesTheRightThing = true };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { moduleScore = 5, helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["EncryptedMorse"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
-		ModComponentSolverInformation["groceryStore"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["groceryStore"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["manometers"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["modernCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["sevenWires"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
