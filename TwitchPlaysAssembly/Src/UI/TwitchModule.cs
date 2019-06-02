@@ -136,7 +136,7 @@ public class TwitchModule : MonoBehaviour
 			if (!Claimed || Solved) SetBannerColor(unclaimedBackgroundColor);
 		}
 
-		if (!Solver.ModInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != TwitchPlaySettings.data.UnclaimedColor)
+		if (!Solver.ModInfo.ShouldSerializeunclaimedColor() && unclaimedBackgroundColor != TwitchPlaySettings.data.UnclaimedColor && !(TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty))
 		{
 			unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
 			if (!Claimed || Solved) SetBannerColor(unclaimedBackgroundColor);
@@ -153,7 +153,7 @@ public class TwitchModule : MonoBehaviour
 
 		CanvasGroupMultiDecker.alpha = 1.0f;
 
-		unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;//idBannerPrefab.GetComponent<Image>().color;
+		unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
 
 		try
 		{
@@ -161,6 +161,15 @@ public class TwitchModule : MonoBehaviour
 			if (Solver != null)
 			{
 				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
+				else if (TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty)
+				{
+					float difficulty = (float) Solver.ModInfo.moduleScore / ComponentSolverFactory.GetModuleInformation().Max(modInfo => modInfo.moduleScore);
+					unclaimedBackgroundColor = Color.HSVToRGB(
+						TwitchPlaySettings.data.ShowModuleType ? BombComponent.ComponentType.ToString().EndsWith("Mod") ? 0.6f : 0.3f : 0.725f,
+						1,
+						TwitchPlaySettings.data.ShowModuleDifficulty ? Mathf.Lerp(0.95f, 0.30f, difficulty) : 0.637f
+					);
+				}
 
 				Solver.Code = Code;
 
