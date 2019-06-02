@@ -690,32 +690,32 @@ public static class ComponentSolverFactory
 
 		if (!info.helpTextOverride)
 		{
-			ModuleData.DataHasChanged |= info.helpText.TryEquals(defInfo.helpText);
+			ModuleData.DataHasChanged |= !info.helpText.TryEquals(defInfo.helpText);
 			info.helpText = defInfo.helpText;
 		}
 
 		if (!info.moduleScoreOverride)
 		{
-			ModuleData.DataHasChanged |= info.moduleScore.Equals(defInfo.moduleScore);
+			ModuleData.DataHasChanged |= !info.moduleScore.Equals(defInfo.moduleScore);
 			info.moduleScore = defInfo.moduleScore;
 		}
 
 		if (!info.strikePenaltyOverride)
 		{
-			ModuleData.DataHasChanged |= info.strikePenalty.Equals(defInfo.strikePenalty);
+			ModuleData.DataHasChanged |= !info.strikePenalty.Equals(defInfo.strikePenalty);
 			info.strikePenalty = defInfo.strikePenalty;
 		}
 
 		if (!info.manualCodeOverride)
 		{
-			ModuleData.DataHasChanged |= info.manualCode.TryEquals(defInfo.manualCode);
+			ModuleData.DataHasChanged |= !info.manualCode.TryEquals(defInfo.manualCode);
 			info.manualCode = defInfo.manualCode;
 		}
 
 		if (!info.statusLightOverride)
 		{
-			ModuleData.DataHasChanged |= info.statusLightDown == defInfo.statusLightDown;
-			ModuleData.DataHasChanged |= info.statusLightLeft == defInfo.statusLightLeft;
+			ModuleData.DataHasChanged |= info.statusLightDown != defInfo.statusLightDown;
+			ModuleData.DataHasChanged |= info.statusLightLeft != defInfo.statusLightLeft;
 			info.statusLightDown = defInfo.statusLightDown;
 			info.statusLightLeft = defInfo.statusLightLeft;
 		}
@@ -744,8 +744,8 @@ public static class ComponentSolverFactory
 
 		if (!info.statusLightOverride)
 		{
-			ModuleData.DataHasChanged |= info.statusLightLeft == statusLightLeft;
-			ModuleData.DataHasChanged |= info.statusLightDown == statusLightBottom;
+			ModuleData.DataHasChanged |= info.statusLightLeft != statusLightLeft;
+			ModuleData.DataHasChanged |= info.statusLightDown != statusLightBottom;
 			info.statusLightLeft = statusLightLeft;
 			info.statusLightDown = statusLightBottom;
 		}
