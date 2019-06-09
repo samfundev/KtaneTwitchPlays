@@ -17,20 +17,22 @@ public static class HoldableCommands
 	[Command(@"(turn|turn round|turn around|rotate|flip|spin)")]
 	public static IEnumerator Flip(TwitchHoldable holdable) => holdable.Turn();
 
-	[Command("throw")]
-	public static IEnumerator Throw(TwitchHoldable holdable)
+	[Command(@"throw *(\d+)?", AccessLevel.Mod, AccessLevel.Mod)]
+	public static IEnumerator Throw(FloatingHoldable holdable, [Group(1)] int? optionalStrength = 3)
 	{
-		holdable.Holdable.Pause();
-		Rigidbody rigidbody = holdable.Holdable.GetComponent<Rigidbody>();
+		int strength = optionalStrength ?? 3;
+
+		holdable.Pause();
+		Rigidbody rigidbody = holdable.GetComponent<Rigidbody>();
 		rigidbody.isKinematic = false;
 		rigidbody.useGravity = true;
-		rigidbody.velocity = Random.onUnitSphere * rigidbody.mass * 3;
-		rigidbody.angularVelocity = Random.onUnitSphere * rigidbody.mass * 3;
+		rigidbody.velocity = Random.onUnitSphere * rigidbody.mass * strength;
+		rigidbody.angularVelocity = Random.onUnitSphere * rigidbody.mass * strength;
 		rigidbody.maxAngularVelocity = 100f;
 		yield return new WaitForSeconds(2);
 		rigidbody.isKinematic = true;
 		rigidbody.useGravity = false;
-		holdable.Holdable.Resume();
+		holdable.Resume();
 	}
 
 	[Command(null)]

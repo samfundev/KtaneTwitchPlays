@@ -17,6 +17,12 @@ public static class BombCommands
 	[Command(@"(drop|let go|put down)")]
 	public static IEnumerator Drop(TwitchBomb bomb) => bomb.LetGoBomb();
 
+	[Command(@"throw *(\d+)?", AccessLevel.Mod, AccessLevel.Mod)]
+	public static IEnumerator Throw(TwitchBomb bomb, [Group(1)] int? strength = 3)
+	{
+		yield return HoldableCommands.Throw(bomb.Bomb.GetComponent<FloatingHoldable>(), strength);
+	}
+
 	[Command(@"edgework((?: right| left| back| r| l| b)?)"), ElevatorOnly]
 	public static IEnumerator EdgeworkElevator(TwitchBomb bomb, [Group(1)] string edge, string user, bool isWhisper) => Edgework(bomb, edge, user, isWhisper);
 	[Command(@"edgework((?: 45|-45)|(?: top right| right top| right bottom| bottom right| bottom left| left bottom| left top| top left| left| top| right| bottom| tr| rt| tl| lt| br| rb| bl| lb| t| r| b| l))?"), ElevatorDisallowed]
