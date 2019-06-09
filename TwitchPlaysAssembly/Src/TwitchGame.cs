@@ -223,7 +223,7 @@ public class TwitchGame : MonoBehaviour
 		TwitchPlaysService.Instance.SetHeaderVisbility(false);
 
 		LogUploader.Instance.GetBombUrl();
-		ParentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
+		ParentService.StartCoroutine(DelayBombResult());
 		if (!claimsEnabled)
 			ParentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
 
@@ -249,6 +249,13 @@ public class TwitchGame : MonoBehaviour
 		{
 			DebugHelper.LogException(ex, "Couldn't write TwitchPlaysLastClaimed.json:");
 		}
+	}
+
+	// We need to delay the bomb result by one frame so we don't award the solve bonus before the person who solved the last module is added to the Players list.
+	public IEnumerator DelayBombResult()
+	{
+		yield return null;
+		SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink);
 	}
 
 	public void DestroyComponentHandles()
