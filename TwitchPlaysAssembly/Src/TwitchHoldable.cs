@@ -537,6 +537,9 @@ public class TwitchHoldable
 
 	public IEnumerator Drop()
 	{
+		// Don't allow people to drop the binder while on the post game screen.
+		if (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.PostGame) yield break;
+
 		if (Holdable.HoldState != FloatingHoldable.HoldStateEnum.Held)
 			yield break;
 		yield return null;
