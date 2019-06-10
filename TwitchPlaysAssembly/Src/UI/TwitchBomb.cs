@@ -104,8 +104,6 @@ public class TwitchBomb : MonoBehaviour
 	}
 
 	#region Private Methods
-	private bool IsAuthorizedDefuser(string userNickName, bool isWhisper) => TwitchGame.IsAuthorizedDefuser(userNickName, isWhisper);
-
 	public IEnumerator DelayBombExplosionCoroutine() => DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
 
 	private IEnumerator DelayBombExplosionCoroutine(string message, string reason, float delay)

@@ -546,8 +546,6 @@ public class TwitchModule : MonoBehaviour
 	#endregion
 
 	#region Private Methods
-	private bool IsAuthorizedDefuser(string userNickName, bool sendMessage = true) => TwitchGame.IsAuthorizedDefuser(userNickName, !sendMessage);
-
 	public void SetBannerColor(Color color)
 	{
 		CanvasGroupMultiDecker.GetComponent<Image>().color = color;

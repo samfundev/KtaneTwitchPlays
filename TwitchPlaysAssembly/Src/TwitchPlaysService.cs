@@ -380,6 +380,11 @@ public class TwitchPlaysService : MonoBehaviour
 			return true;
 		}
 
+		if ((extraObject is TwitchModule || extraObject is TwitchBomb) && !TwitchGame.IsAuthorizedDefuser(msg.UserNickName, msg.IsWhisper))
+		{
+			return true;
+		}
+
 		BanData ban = UserAccess.IsBanned(msg.UserNickName);
 		if (ban != null)
 		{

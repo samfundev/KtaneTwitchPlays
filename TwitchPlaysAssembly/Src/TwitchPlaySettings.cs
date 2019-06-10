@@ -201,7 +201,7 @@ public class TwitchPlaySettingsData
 	public string OwnedModuleListOther = "@{0}’s claimed modules are: {1}";
 	public string NoOwnedModulesOther = "@{0} has no claimed modules.";
 
-	public string TwitchPlaysDisabled = "Sorry @{0}, Twitch plays is only enabled for Authorized defusers";
+	public string TwitchPlaysDisabled = "Sorry @{0}, Twitch Plays is only enabled for Authorized defusers";
 	public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
 	public string FreePlayDisabled = "Sorry @{0}, Only authorized users may access the freeplay briefcase";
 	public string FreePlayNeedyDisabled = "Sorry @{0}, Only authorized users may enable/disable Needy modules";
