@@ -230,10 +230,6 @@ public class TwitchGame : MonoBehaviour
 		if (ModuleCameras != null)
 			ModuleCameras.gameObject.SetActive(false);
 
-		foreach (var bomb in Bombs.Where(x => x != null))
-			Destroy(bomb.gameObject, 2.0f);
-		Bombs.Clear();
-
 		DestroyComponentHandles();
 
 		MusicPlayer.StopAllMusic();
@@ -255,7 +251,11 @@ public class TwitchGame : MonoBehaviour
 	public IEnumerator DelayBombResult()
 	{
 		yield return null;
-		SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink);
+		ParentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
+
+		foreach (var bomb in Bombs.Where(x => x != null))
+			Destroy(bomb.gameObject, 2.0f);
+		Bombs.Clear();
 	}
 
 	public void DestroyComponentHandles()
