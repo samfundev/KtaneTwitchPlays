@@ -522,11 +522,9 @@ public class ModuleCameras : MonoBehaviour
 		if (camera.Module != null && ReferenceEquals(camera.Module, handle))
 			camera.ViewModule(PreferredToView);
 
-		// Make sure camera wall is supposed to be automatic
-		if (!AutomaticCameraWallEnabled) yield break;
-
-		// If there are now 4 or fewer claimed modules, disengage the camera wall
-		if (CameraWallEnabled && TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) <= 4)
+		// If there are now 4 or fewer claimed modules, or 6 or fewer unsolved modules in total, disengage the camera wall
+		if (AutomaticCameraWallEnabled && CameraWallEnabled &&
+			(TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) <= 4 || TwitchGame.Instance.Modules.Count(twitchModule => !twitchModule.Solved) <= 6))
 			DisableCameraWall();
 	}
 
@@ -548,14 +546,14 @@ public class ModuleCameras : MonoBehaviour
 
 	private int BorrowCameraForZoom(TwitchModule component)
 	{
-		int[] camerasIndexes = {11, 12, 7, 16, 15, 8, 10, 13, 9, 14, 17, 6, 5, 4, 3, 2, 1, 0};
-		for(int i = _cameras.Count > 6 ? 0 : 12; i < 18; i++)
+		int[] camerasIndexes = { 11, 12, 7, 16, 15, 8, 10, 13, 9, 14, 17, 6, 5, 4, 3, 2, 1, 0 };
+		for (int i = _cameras.Count > 6 ? 0 : 12; i < 18; i++)
 		{
 			int index = camerasIndexes[i];
 			ModuleCamera camera = _cameras[index];
 
 			if ((camera.PreviousModule != null) &&
-			    (ReferenceEquals(camera.PreviousModule, component)))
+				(ReferenceEquals(camera.PreviousModule, component)))
 			{
 				//Already borrowed this camera, continue to use it.
 				return index;
