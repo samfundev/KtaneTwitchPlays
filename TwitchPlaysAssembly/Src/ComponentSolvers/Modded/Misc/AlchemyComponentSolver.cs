@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,25 +15,25 @@ public class AlchemyComponentSolver : ComponentSolver
 
 	readonly Dictionary<string, int> buttonMap = new Dictionary<string, int>()
 	{
-		{ "s", 0 },
-		{ "redraw", 1 },
-		{ "re-draw", 1 },
-		{ "draw", 1 },
-		{ "rd", 1 },
-		{ "d", 1 },
-		{ "br", 2 },
-		{ "r", 3 },
-		{ "tr", 4 },
-		{ "tl", 5 },
-		{ "l", 6 },
-		{ "bl", 7 },
-		{ "mind", 8 },
-		{ "flames", 9 },
-		{ "matter", 10 },
-		{ "energy", 11 },
-		{ "life", 12 },
-		{ "clear", 13 },
-		{ "cl", 13 },
+		{ "energy", 0 },
+		{ "life", 1 },
+		{ "mind", 2 },
+		{ "flames", 3 },
+		{ "matter", 4 },
+		{ "clear", 5 },
+		{ "cl", 5 },
+		{ "br", 6 },
+		{ "r", 7 },
+		{ "tr", 8 },
+		{ "tl", 9 },
+		{ "l", 10 },
+		{ "bl", 11 },
+		{ "s", 12 },
+		{ "d", 13 },
+		{ "redraw", 13 },
+		{ "re-draw", 13 },
+		{ "draw", 13 },
+		{ "rd", 13 },
 	};
 
 	string SimplifyButtonName(string buttonName)
@@ -47,7 +48,7 @@ public class AlchemyComponentSolver : ComponentSolver
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = Regex.Replace(inputCommand.ToLowerInvariant().Trim(), "^(press|hit|enter|push)", "");
-		string[] split = inputCommand.Split(new[] { ' ', ',', ';' }, System.StringSplitOptions.RemoveEmptyEntries);
+		string[] split = inputCommand.SplitFull(' ', ',', ';');
 
 		if (split.Length >= 1)
 		{
@@ -64,6 +65,40 @@ public class AlchemyComponentSolver : ComponentSolver
 			foreach (int index in buttonIndexes)
 				yield return DoInteractionClick(selectables[index]);
 		}
+	}
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		Type alchemyType = ReflectionHelper.FindType("AlchemyScript");
+		if (alchemyType == null) yield break;
+
+		object component = Module.BombComponent.GetComponent(alchemyType);
+		var frequencies = new[] { "mind", "flames", "matter", "energy", "life" };
+
+		yield return null;
+		while (true)
+		{
+			int correctFreq = component.GetValue<int>("correctFreq");
+			int finalFreq = component.GetValue<int>("finalFreq");
+			List<int> completeSol = component.GetValue<List<int>>("completeSol");
+			int[] nowSymbols = component.GetValue<int[]>("nowSymbols");
+
+			if (correctFreq != -1) yield return RespondToCommandInternal(frequencies[correctFreq]);
+
+			yield return RespondToCommandInternal(completeSol.Select(index =>
+			{
+				var buttons = new[] { "br", "r", "tr", "tl", "l", "bl", "redraw", "submit" };
+				return index > 5 ? buttons[index] : buttons[Array.IndexOf(nowSymbols, index)];
+			}).Join());
+
+			if (finalFreq != -1)
+			{
+				yield return RespondToCommandInternal(frequencies[finalFreq] + " submit");
+				break;
+			}
+		}
+
+		yield return RespondToCommandInternal("submit");
 	}
 
 	private readonly KMSelectable[] selectables;
