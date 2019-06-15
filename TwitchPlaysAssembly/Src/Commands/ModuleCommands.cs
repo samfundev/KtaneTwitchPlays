@@ -213,30 +213,14 @@ static class ModuleCommands
 	[Command(@"unmark", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Unmark(TwitchModule module) => module.SetBannerColor(module.Claimed ? module.ClaimedBackgroundColour : module.unclaimedBackgroundColor);
 
-	[Command(@"zoom(?: +(\d*\.?\d+))?")]
-	public static IEnumerator Zoom(TwitchModule module, string user, [Group(1)] float? duration)
+	public static IEnumerator Zoom(TwitchModule module, string user, object yield)
 	{
-		MusicPlayer musicPlayer = null;
-		var delay = duration ?? 2;
-		delay = Math.Max(2, delay);
-		module.Solver._zoom = true;
-		if (delay >= 15)
-			musicPlayer = MusicPlayer.StartRandomMusic();
-
 		var zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(module, 1);
 		if (zoomCoroutine != null)
 			while (zoomCoroutine.MoveNext())
 				yield return zoomCoroutine.Current;
 
-		yield return new WaitForSecondsWithCancel(delay, false, module.Solver);
-		if (CoroutineCanceller.ShouldCancel)
-		{
-			CoroutineCanceller.ResetCancel();
-			IRCConnection.SendMessage($"Sorry @{user}, your request to hold up the bomb for {delay} seconds has been cut short.");
-		}
-
-		if (musicPlayer != null)
-			musicPlayer.StopMusic();
+		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 
 		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, 1);
 		if (unzoomCoroutine != null)
@@ -244,11 +228,7 @@ static class ModuleCommands
 				yield return unzoomCoroutine.Current;
 	}
 
-	[Command(@"zoom +(?!\d*\.?\d+$)(?:send +to +module +)?(.*)")]
-	public static IEnumerator DefaultZoomCommand1(TwitchModule module, string user, [Group(1)] string zoomCmd) => RunModuleCommand(module, user, zoomCmd, zoom: true);
-
-	[Command(@"tilt *([a-z]+|-?\d+)?")]
-	public static IEnumerator Tilt(TwitchModule module, [Group(1)] string direction)
+	public static IEnumerator Tilt(TwitchModule module, object yield, string direction)
 	{
 		float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
 
@@ -306,10 +286,11 @@ static class ModuleCommands
 			var bombLerp = module.FrontFace ? lerp : Quaternion.Euler(Vector3.Scale(lerp.eulerAngles, new Vector3(1, 1, -1)));
 			module.Bomb.RotateByLocalQuaternion(bombLerp);
 			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
+			DebugHelper.Log(lerp.eulerAngles, bombLerp.eulerAngles, alpha);
 			yield return null;
 		}
 
-		yield return new WaitForSeconds(2.5f);
+		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 
 		foreach (float alpha in TimedAnimation(1f))
 		{
@@ -328,9 +309,60 @@ static class ModuleCommands
 	}
 
 	[Command(null)]
-	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd) => RunModuleCommand(module, user, cmd, zoom: false);
+	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)
+	{
+		if (cmd.RegexMatch(out Match match, @"(?<zoom>zoom *(?<time>\d*\.?\d+)?)? *(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)? *(?:send *to *module)? *(?<command>.+)?"))
+		{
+			var groups = match.Groups;
+			var timed = groups["time"].Success;
+			var zoom = groups["zoom"].Success;
+			var tilt = groups["tilt"].Success;
+			var command = groups["command"].Success;
 
-	private static IEnumerator RunModuleCommand(TwitchModule module, string user, string cmd, bool zoom)
+			// Both a time and a command can't be entered. And either a zoom or tilt needs to take place otherwise, we should let the command run normally.
+			if ((!timed || !command) && (zoom || tilt))
+			{
+				MusicPlayer musicPlayer = null;
+				int delay = 2;
+				if (timed)
+				{
+					delay = groups["time"].Value.TryParseInt() ?? 2;
+					delay = Math.Max(2, delay);
+					if (delay >= 15)
+						musicPlayer = MusicPlayer.StartRandomMusic();
+				}
+
+				object toYield = command ? (object) RunModuleCommand(module, user, groups["command"].Value) : delay;
+
+				IEnumerator routine = null;
+				if (tilt)
+				{
+					routine = Tilt(module, toYield, groups["direction"].Value);
+				}
+
+				if (zoom)
+				{
+					routine = Zoom(module, user, routine ?? toYield);
+				}
+
+				yield return routine;
+				if (CoroutineCanceller.ShouldCancel)
+				{
+					CoroutineCanceller.ResetCancel();
+					IRCConnection.SendMessage($"Sorry @{user}, your request to hold up the bomb for {delay} seconds has been cut short.");
+				}
+
+				if (musicPlayer != null)
+					musicPlayer.StopMusic();
+
+				yield break;
+			}
+		}
+
+		yield return RunModuleCommand(module, user, cmd);
+	}
+
+	private static IEnumerator RunModuleCommand(TwitchModule module, string user, string cmd)
 	{
 		if (module.Solver == null)
 			yield break;
@@ -356,7 +388,7 @@ static class ModuleCommands
 		)
 		{
 			yield return new WaitForSeconds(0.1f);
-			var response = module.Solver.RespondToCommand(user, cmd, zoom);
+			var response = module.Solver.RespondToCommand(user, cmd);
 			while (response.MoveNext())
 				yield return response.Current;
 			yield return new WaitForSeconds(0.1f);

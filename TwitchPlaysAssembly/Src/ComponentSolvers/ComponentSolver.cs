@@ -23,11 +23,10 @@ public abstract class ComponentSolver
 	#endregion
 
 	private int _beforeStrikeCount;
-	public IEnumerator RespondToCommand(string userNickName, string command, bool zoom)
+	public IEnumerator RespondToCommand(string userNickName, string command)
 	{
 		TryCancel = false;
 		_responded = false;
-		_zoom = zoom;
 		_processingTwitchCommand = true;
 		if (Solved && !TwitchPlaySettings.data.AnarchyMode)
 		{
@@ -123,18 +122,6 @@ public abstract class ComponentSolver
 			yield return focusCoroutine.Current;
 
 		yield return new WaitForSeconds(0.5f);
-
-		IEnumerator unzoomCoroutine = null;
-		if (_zoom)
-		{
-			IEnumerator zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(Module, 1);
-			unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(Module, 1);
-			if (zoomCoroutine == null || unzoomCoroutine == null)
-				_zoom = false;
-			else
-				while (zoomCoroutine.MoveNext())
-					yield return zoomCoroutine.Current;
-		}
 
 		bool parseError = false;
 		bool needQuaternionReset = false;
@@ -431,10 +418,6 @@ public abstract class ComponentSolver
 
 		if (!parseError)
 			yield return new WaitForSeconds(0.5f);
-
-		if (_zoom && unzoomCoroutine != null)
-			while (unzoomCoroutine.MoveNext())
-				yield return unzoomCoroutine.Current;
 
 		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Module.Selectable, FrontFace);
 		while (defocusCoroutine.MoveNext())
@@ -1229,7 +1212,6 @@ public abstract class ComponentSolver
 	private bool _readyToTurn;
 	private bool _processingTwitchCommand;
 	private bool _responded;
-	public bool _zoom;
 	public bool AttemptedForcedSolve;
 	private bool _delayedExplosionPending;
 	private Coroutine _delayedExplosionCoroutine;
