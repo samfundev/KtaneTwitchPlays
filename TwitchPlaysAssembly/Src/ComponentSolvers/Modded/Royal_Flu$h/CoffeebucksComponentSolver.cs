@@ -152,7 +152,7 @@ public class CoffeebucksComponentSolver : ComponentSolver
 			}
 
 			// Submit any correct drink.
-			yield return RespondToCommandInternal($"submit {_component.GetValue<List<string>>("legalCoffees").First()}");
+			yield return RespondToCommandInternal($"submit {_component.GetValue<List<string>>("legalCoffees").First().Replace('\n', ' ')}");
 		}
 	}
 
