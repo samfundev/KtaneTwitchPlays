@@ -265,7 +265,10 @@ public class TwitchGame : MonoBehaviour
 		foreach (TwitchModule handle in Modules)
 		{
 			if (handle != null)
+			{
+				handle.ClaimQueue.Clear(); // Prevent any claims from going through.
 				Destroy(handle.gameObject, 2.0f);
+			}
 		}
 		Modules.Clear();
 	}
