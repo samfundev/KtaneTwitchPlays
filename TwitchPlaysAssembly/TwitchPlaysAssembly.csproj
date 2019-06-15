@@ -156,8 +156,10 @@
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyAdvancedComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\HangoverComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\CoffeebucksComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\LabyrinthComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\FestiveJukeboxComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TWordsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\AntiTrollShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\SphereShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ColorGeneratorShim.cs" />
