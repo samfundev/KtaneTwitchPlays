@@ -380,7 +380,7 @@ public class TwitchPlaysService : MonoBehaviour
 			return true;
 		}
 
-		if ((extraObject is TwitchModule || extraObject is TwitchBomb) && !TwitchGame.IsAuthorizedDefuser(msg.UserNickName, msg.IsWhisper))
+		if (!TwitchGame.IsAuthorizedDefuser(msg.UserNickName, msg.IsWhisper))
 		{
 			return true;
 		}
