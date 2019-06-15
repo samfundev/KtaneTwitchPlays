@@ -20,6 +20,7 @@ public class TWordsComponentSolver : ComponentSolver
 
 		if (inputCommand == "led")
 		{
+			yield return null;
 			yield return DoInteractionClick(selectables[4]);
 			yield break;
 		}
