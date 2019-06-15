@@ -56,7 +56,7 @@ public abstract class ComponentSolver
 			try
 			{
 				moved = subcoroutine.MoveNext();
-				if (moved && ModInfo.DoesTheRightThing)
+				if (moved && (ModInfo.DoesTheRightThing || ModInfo.builtIntoTwitchPlays))
 				{
 					//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here, as the solver will yield break if
 					//it is one of these API commands returned.

@@ -44,6 +44,7 @@ public class CoffeebucksComponentSolver : ComponentSolver
 
 			yield return null;
 			yield return DoInteractionClick(selectables[0]);
+			yield return new WaitForSeconds(3);
 			yield break;
 		}
 
@@ -102,8 +103,8 @@ public class CoffeebucksComponentSolver : ComponentSolver
 				yield break;
 			}
 
-			string[] coffeeOptions = _component.GetValue<string[]>("coffeeOptions");
-			string target = split.Skip(1).Join();
+			string[] coffeeOptions = _component.GetValue<string[]>("coffeeOptions").Select(option => option.Replace('\n', ' ').Replace('’', '\'')).ToArray();
+			string target = split.Skip(1).Join().Replace('’', '\'');
 			var matchingOptions = coffeeOptions.Where(option => option.ContainsIgnoreCase(target));
 
 			switch (matchingOptions.Count())
@@ -136,7 +137,7 @@ public class CoffeebucksComponentSolver : ComponentSolver
 		while (!_component.GetValue<bool>("moduleSolved"))
 		{
 			// Get a customer.
-			if (selectables[0].gameObject.activeInHierarchy) yield return RespondToCommandInternal("next");
+			if (selectables[0].gameObject.activeInHierarchy) yield return DoInteractionClick(selectables[0]);
 
 			// Enter the customer's name.
 			if (selectables[5].gameObject.activeInHierarchy) yield return RespondToCommandInternal($"name {_component.GetValue<string>("customerName")} 0");
