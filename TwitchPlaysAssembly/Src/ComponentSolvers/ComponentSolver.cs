@@ -553,7 +553,7 @@ public abstract class ComponentSolver
 
 	public void SolveModule(string reason)
 	{
-		IRCConnection.SendMessageFormat("{0}", reason);
+		IRCConnection.SendMessage(reason);
 		SolveSilently();
 	}
 	#endregion

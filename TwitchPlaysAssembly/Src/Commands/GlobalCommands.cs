@@ -608,7 +608,7 @@ static class GlobalCommands
 		{
 			if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
 			{
-				IRCConnection.SendMessageFormat("Sorry, there is no distribution called \"{0}\".", distributionName);
+				IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 				return null;
 			}
 
@@ -637,7 +637,7 @@ static class GlobalCommands
 	{
 		if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
 		{
-			IRCConnection.SendMessageFormat($"Sorry, there is no distribution called \"{0}\".", distributionName);
+			IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 			return null;
 		}
 
@@ -1031,7 +1031,7 @@ static class GlobalCommands
 	{
 		if (!distribution.Enabled && !UserAccess.HasAccess(user, AccessLevel.Mod) && !TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessageFormat("Sorry, distribution \"{0}\" is disabled", distribution.DisplayName);
+			IRCConnection.SendMessage($"Sorry, distribution \"{distribution.DisplayName}\" is disabled");
 			return null;
 		}
 
