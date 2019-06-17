@@ -10,10 +10,12 @@ public class ModuleInformation
 	public string moduleID;
 
 	public bool moduleScoreOverride;
-	public int moduleScore = 5;
+	public float moduleScore = 5;
 	public bool strikePenaltyOverride;
 	public int strikePenalty = -6;
 	public bool moduleScoreIsDynamic;
+
+	public ScoreMethod scoreMethod;
 
 	public bool helpTextOverride;
 	public string helpText;
@@ -35,6 +37,7 @@ public class ModuleInformation
 
 	public Color unclaimedColor;
 
+	public bool ShouldSerializescoreMethod() => scoreMethod != ScoreMethod.Default;
 	public bool ShouldSerializeunclaimedColor() => unclaimedColor != new Color();
 	public bool ShouldSerializebuiltIntoTwitchPlays() => false;
 	public bool ShouldSerializevalidCommands() => !builtIntoTwitchPlays;
@@ -45,6 +48,13 @@ public class ModuleInformation
 	{
 		return (ModuleInformation) MemberwiseClone();
 	}
+}
+
+public enum ScoreMethod
+{
+	Default,
+	NeedyTime,
+	NeedySolves,
 }
 
 public static class ModuleData

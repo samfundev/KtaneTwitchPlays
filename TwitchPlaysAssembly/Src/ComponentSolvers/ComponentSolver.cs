@@ -565,7 +565,7 @@ public abstract class ComponentSolver
 		if (_disableOnStrike) return false;
 		if (ModInfo != null)
 		{
-			int moduleScore = ModInfo.moduleScore;
+			int moduleScore = (int) ModInfo.moduleScore;
 			if (ModInfo.moduleScoreIsDynamic)
 			{
 				switch (ModInfo.moduleID)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static NeedyComponent;
 
 public class TwitchModule : MonoBehaviour
 {
@@ -197,6 +198,8 @@ public class TwitchModule : MonoBehaviour
 					UnsupportedComponents.Add(this);
 
 				StartCoroutine(AutoAssignModule());
+
+				if (BombComponent.GetComponent<NeedyComponent>() != null) StartCoroutine(TrackNeedyModule());
 			}
 		}
 		catch (Exception e)
@@ -255,6 +258,48 @@ public class TwitchModule : MonoBehaviour
 		needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.gameObject.SetActive(false); needyModule.HandlePass(); needyModule.gameObject.SetActive(true); };
 		needyModule.OnTimerExpired = () => { needyModule.StopAllCoroutines(); needyModule.gameObject.SetActive(false); needyModule.HandlePass(); needyModule.gameObject.SetActive(true); };
 		needyModule.WarnAtFiveSeconds = false;
+	}
+
+	public class NeedyStats
+	{
+		public int Solves;
+		public float ActiveTime;
+	}
+
+	public Dictionary<string, NeedyStats> PlayerNeedyStats = new Dictionary<string, NeedyStats>();
+	public IEnumerator TrackNeedyModule()
+	{
+		NeedyComponent needyModule = BombComponent.GetComponent<NeedyComponent>();
+		NeedyStateEnum lastState = needyModule.State;
+		float lastTime = Time.time;
+		while (true)
+		{
+			if (Claimed)
+			{
+				switch (needyModule.State)
+				{
+					case NeedyStateEnum.BombComplete:
+					case NeedyStateEnum.Terminated:
+						yield break;
+					case NeedyStateEnum.Cooldown when lastState == NeedyStateEnum.Running:
+						if (!PlayerNeedyStats.ContainsKey(PlayerName))
+							PlayerNeedyStats[PlayerName] = new NeedyStats();
+
+						PlayerNeedyStats[PlayerName].Solves++;
+						break;
+					case NeedyStateEnum.Running:
+						if (!PlayerNeedyStats.ContainsKey(PlayerName))
+							PlayerNeedyStats[PlayerName] = new NeedyStats();
+
+						PlayerNeedyStats[PlayerName].ActiveTime += Time.time - lastTime;
+						break;
+				}
+			}
+
+			lastState = needyModule.State;
+			lastTime = Time.time;
+			yield return new WaitForSeconds(0.1f);
+		}
 	}
 
 	public static bool UnsupportedModulesPresent() => UnsupportedComponents.Any(x => x.Solver == null || !x.Solved);

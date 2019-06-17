@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,9 @@ using UnityEngine;
 
 static class SettingsConverter
 {
-	public static string Serialize(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented, new ColorConverter());
+	public static string Serialize(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented, new ColorConverter(), new StringEnumConverter());
 
-	public static T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, new ColorConverter());
+	public static T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, new ColorConverter(), new StringEnumConverter());
 }
 
 internal class ColorConverter : JsonConverter
