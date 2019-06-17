@@ -177,7 +177,7 @@ public static class ComponentSolverFactory
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", moduleScore = 2 };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
-		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math" };
+		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math", manualCode = "Math" };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 2 };
 
 		//Royal_Flu$h
