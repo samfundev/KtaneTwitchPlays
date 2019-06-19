@@ -94,7 +94,7 @@ static class GameCommands
 		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
-			IRCConnection.SendMessage($"{user}: no such module.", user, !isWhisper);
+			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
 			return;
 		}
 		Claim(user, isWhisper, view1 || view2, modules);
@@ -140,7 +140,7 @@ static class GameCommands
 		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => md.PlayerName == user && strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
-			IRCConnection.SendMessage($"{user}: no such module.", user, !isWhisper);
+			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
 			return;
 		}
 
@@ -193,7 +193,7 @@ static class GameCommands
 		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
-			IRCConnection.SendMessage($"{user}: no such module.", user, !isWhisper);
+			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
 			return;
 		}
 		foreach (var module in modules)
