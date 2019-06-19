@@ -90,7 +90,7 @@ static class GameCommands
 	[Command(@"(?:claim *(view)?|(view) *claim) +(?!all$)(.+)")]
 	public static void ClaimSpecific(string user, bool isWhisper, [Group(1)] bool view1, [Group(2)] bool view2, [Group(3)] string claimWhat)
 	{
-		var strings = claimWhat.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+		var strings = claimWhat.SplitFull(' ', ',', ';');
 		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
@@ -136,7 +136,7 @@ static class GameCommands
 	[Command(@"(?:unclaim|release) +(.+)")]
 	public static void UnclaimSpecific([Group(1)] string unclaimWhat, string user, bool isWhisper)
 	{
-		var strings = unclaimWhat.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+		var strings = unclaimWhat.SplitFull(' ', ',', ';');
 		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => md.PlayerName == user && strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
@@ -189,7 +189,7 @@ static class GameCommands
 	[Command(@"(?:view( *pin)?|(pin *)?view) +(.+)")]
 	public static void ViewPin(string user, bool isWhisper, [Group(1)] bool pin1, [Group(2)] bool pin2, [Group(3)] string viewWhat)
 	{
-		var strings = viewWhat.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+		var strings = viewWhat.SplitFull(' ', ',', ';');
 		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
@@ -203,7 +203,7 @@ static class GameCommands
 	[Command(@"(?:find|search)((?: *claim| *view)*) +(.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
-		var modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray()).ToList();
+		var modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray()).ToList();
 		if (!modules.Any())
 		{
 			IRCConnection.SendMessage("No such modules.", user, !isWhisper);
@@ -228,7 +228,7 @@ static class GameCommands
 	[Command(@"(?:find *player|player *find|search *player|player *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindPlayer([Group(1)] string queries, string user, bool isWhisper)
 	{
-		List<string> modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
+		List<string> modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
 			.ToList();
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such claimed/solved modules.", user, !isWhisper);
@@ -237,7 +237,7 @@ static class GameCommands
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindSolved([Group(1)] string queries, string user, bool isWhisper)
 	{
-		List<string> modules = FindModules(queries.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
+		List<string> modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
 			.ToList();
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such solved modules.", user, !isWhisper);
@@ -353,7 +353,7 @@ static class GameCommands
 	[Command(@"assign +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AssignModuleTo([Group(1)] string targetUser, [Group(2)] string queries, string user)
 	{
-		var query = queries.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+		var query = queries.SplitFull(' ', ',', ';');
 		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && GameRoom.Instance.IsCurrentBomb(m.BombID) && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
 			ModuleCommands.Assign(module, user, targetUser);
 	}
