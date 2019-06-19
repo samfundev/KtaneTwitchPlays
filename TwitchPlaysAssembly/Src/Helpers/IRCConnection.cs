@@ -15,9 +15,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class Message
+public class IRCMessage
 {
-	public Message(string userNickName, string userColorCode, string text, bool isWhisper = false, bool internalMessage = false)
+	public IRCMessage(string userNickName, string userColorCode, string text, bool isWhisper = false, bool internalMessage = false)
 	{
 		UserNickName = userNickName;
 		UserColorCode = userColorCode;
@@ -33,13 +33,13 @@ public class Message
 	public readonly bool IsWhisper;
 
 	/// <summary>
-	/// Creates a duplicate <see cref="Message">Message</see> object with the Text changed.
+	/// Creates a duplicate <see cref="IRCMessage">Message</see> object with the Text changed.
 	/// </summary>
 	/// <param name="text">The Message's new text.</param>
-	/// <returns>Returns a duplicate <see cref="Message">Message</see> object with the new Text.</returns>
-	public Message Duplicate(string text)
+	/// <returns>Returns a duplicate <see cref="IRCMessage">Message</see> object with the new Text.</returns>
+	public IRCMessage Duplicate(string text)
 	{
-		Message message = (Message) MemberwiseClone();
+		IRCMessage message = (IRCMessage) MemberwiseClone();
 		message.Text = text;
 		return message;
 	}
@@ -60,13 +60,13 @@ public class IRCConnection : MonoBehaviour
 	Transform alertProgressBar;
 
 	#region Nested Types
-	public class MessageEvent : UnityEvent<Message>
+	public class MessageEvent : UnityEvent<IRCMessage>
 	{
 	}
 
-	private class Commands
+	private class IRCCommand
 	{
-		public Commands(string command)
+		public IRCCommand(string command)
 		{
 			Command = command;
 		}
@@ -153,10 +153,10 @@ public class IRCConnection : MonoBehaviour
 	public Dictionary<TwitchMessage, float> ScrollOutStartTime = new Dictionary<TwitchMessage, float>();
 	private void Update()
 	{
-		lock (_messageQueue)
-			while (_messageQueue.Count > 0)
+		lock (_receiveQueue)
+			while (_receiveQueue.Count > 0)
 			{
-				Message message = _messageQueue.Dequeue();
+				IRCMessage message = _receiveQueue.Dequeue();
 				if (!message.Internal)
 				{
 					bool isCommand = message.Text.StartsWith("!");
@@ -435,7 +435,7 @@ public class IRCConnection : MonoBehaviour
 
 			Instance.UserNickName = Instance._settings.userName.Replace("#", "");
 			Instance.ChannelName = Instance._settings.channelName.Replace("#", "");
-			Instance.CurrentColor = new Commands($".color {TwitchPlaySettings.data.TwitchBotColorOnQuit}").GetColor();
+			Instance.CurrentColor = new IRCCommand($".color {TwitchPlaySettings.data.TwitchBotColorOnQuit}").GetColor();
 
 			settings.authToken = Instance._settings.authToken.ToLowerInvariant();
 			settings.channelName = Instance.ChannelName.ToLowerInvariant();
@@ -649,9 +649,9 @@ public class IRCConnection : MonoBehaviour
 					? $"PRIVMSG #{Instance._settings.channelName} :{line}"
 					: $"PRIVMSG #{Instance._settings.channelName} :.w {userNickName} {line}");
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
-			lock (Instance._messageQueue)
+			lock (Instance._receiveQueue)
 			{
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true));
+				Instance._receiveQueue.Enqueue(new IRCMessage(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true));
 			}
 		}
 	}
@@ -662,15 +662,15 @@ public class IRCConnection : MonoBehaviour
 		if (!Instance._silenceMode)
 		{
 			Instance.SendCommand($"PRIVMSG #{Instance._settings.channelName} :Silence mode on.");
-			lock (Instance._messageQueue)
-				Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor,
+			lock (Instance._receiveQueue)
+				Instance._receiveQueue.Enqueue(new IRCMessage(Instance.UserNickName, Instance.CurrentColor,
 					"Silence mode on.", false, true));
 		}
 		Instance._silenceMode = !Instance._silenceMode;
 		if (Instance._silenceMode) return;
 		Instance.SendCommand($"PRIVMSG #{Instance._settings.channelName} :Silence mode off.");
-		lock (Instance._messageQueue)
-			Instance._messageQueue.Enqueue(new Message(Instance.UserNickName, Instance.CurrentColor,
+		lock (Instance._receiveQueue)
+			Instance._receiveQueue.Enqueue(new IRCMessage(Instance.UserNickName, Instance.CurrentColor,
 				"Silence mode off.", false, true));
 	}
 
@@ -692,8 +692,8 @@ public class IRCConnection : MonoBehaviour
 
 	private void SendCommand(string command)
 	{
-		lock (_commandQueue)
-			_commandQueue.Enqueue(new Commands(command));
+		lock (_sendQueue)
+			_sendQueue.Enqueue(new IRCCommand(command));
 	}
 
 	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
@@ -732,9 +732,9 @@ public class IRCConnection : MonoBehaviour
 
 		if (!isWhisper || TwitchPlaySettings.data.EnableWhispers)
 		{
-			lock (Instance._messageQueue)
+			lock (Instance._receiveQueue)
 			{
-				Instance._messageQueue.Enqueue(new Message(userNickName, userColorCode, text, isWhisper));
+				Instance._receiveQueue.Enqueue(new IRCMessage(userNickName, userColorCode, text, isWhisper));
 			}
 		}
 	}
@@ -812,12 +812,12 @@ public class IRCConnection : MonoBehaviour
 			try
 			{
 				Thread.Sleep(25);
-				Commands command;
+				IRCCommand command;
 				if (stopWatch.ElapsedMilliseconds <= _messageDelay && _state == IRCConnectionState.Connected) continue;
-				lock (_commandQueue)
+				lock (_sendQueue)
 				{
-					if (_commandQueue.Count == 0) continue;
-					command = _commandQueue.Dequeue();
+					if (_sendQueue.Count == 0) continue;
+					command = _sendQueue.Dequeue();
 				}
 
 				if (command.CommandIsColor() &&
@@ -845,7 +845,7 @@ public class IRCConnection : MonoBehaviour
 		{
 			if (_state == IRCConnectionState.Disconnecting)
 			{
-				Commands setColor = new Commands($"PRIVMSG #{_settings.channelName} :.color {ColorOnDisconnect}");
+				IRCCommand setColor = new IRCCommand($"PRIVMSG #{_settings.channelName} :.color {ColorOnDisconnect}");
 				if (setColor.CommandIsColor())
 				{
 					AddTextToHoldable("[IRC:Disconnect] Color {0} was requested, setting it now.", ColorOnDisconnect);
@@ -863,8 +863,8 @@ public class IRCConnection : MonoBehaviour
 				AddTextToHoldable("[IRC:Disconnect] Disconnected from chat IRC.");
 			}
 
-			lock (_commandQueue)
-				_commandQueue.Clear();
+			lock (_sendQueue)
+				_sendQueue.Clear();
 		}
 		catch
 		{
@@ -1005,8 +1005,8 @@ public class IRCConnection : MonoBehaviour
 
 	public string CurrentColor { get; private set; } = string.Empty;
 
-	private readonly Queue<Message> _messageQueue = new Queue<Message>();
-	private readonly Queue<Commands> _commandQueue = new Queue<Commands>();
+	private readonly Queue<IRCMessage> _receiveQueue = new Queue<IRCMessage>();
+	private readonly Queue<IRCCommand> _sendQueue = new Queue<IRCCommand>();
 	private readonly Dictionary<string, Color> _userColors = new Dictionary<string, Color>();
 	private IRCConnectionState _onDisableState = IRCConnectionState.Disconnected;
 	private IEnumerator _keepConnectionAlive;

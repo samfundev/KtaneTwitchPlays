@@ -252,7 +252,7 @@ public class TwitchPlaysService : MonoBehaviour
 			StartCoroutine(_coroutinesToStart.Dequeue());
 	}
 
-	private void OnMessageReceived(Message msg)
+	private void OnMessageReceived(IRCMessage msg)
 	{
 		var m = Regex.Match(msg.Text, @"^\s*!\s*(\w+)\s+(.+)$");
 		if (m.Success)
@@ -287,7 +287,7 @@ public class TwitchPlaysService : MonoBehaviour
 			ProcessGlobalCommand(msg);
 	}
 
-	public void ProcessGlobalCommand(Message msg)
+	public void ProcessGlobalCommand(IRCMessage msg)
 	{
 		var m = Regex.Match(msg.Text, @"^\s*!\s*(.+)$");
 		if (!m.Success)
@@ -342,8 +342,8 @@ public class TwitchPlaysService : MonoBehaviour
 	delegate bool TryParse<T>(string value, out T result);
 	enum NumberParseResult { Success, NotOfDesiredType, Error };
 
-	private void InvokeCommand(Message msg, string cmdStr, params Type[] commandTypes) => InvokeCommand(msg, cmdStr, false, commandTypes);
-	private void InvokeCommand<TObj>(Message msg, string cmdStr, TObj extraObject, params Type[] commandTypes)
+	private void InvokeCommand(IRCMessage msg, string cmdStr, params Type[] commandTypes) => InvokeCommand(msg, cmdStr, false, commandTypes);
+	private void InvokeCommand<TObj>(IRCMessage msg, string cmdStr, TObj extraObject, params Type[] commandTypes)
 	{
 		Match m = null;
 		foreach (var cmd in commandTypes.SelectMany(t => GetCommands(t)).OrderBy(cmd => cmd.Attr.Regex == null))
@@ -354,7 +354,7 @@ public class TwitchPlaysService : MonoBehaviour
 		IRCConnection.SendMessage("@{0}, I don’t recognize that command.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 	}
 
-	private bool AttemptInvokeCommand<TObj>(StaticCommand command, Message msg, string cmdStr, Match m, TObj extraObject)
+	private bool AttemptInvokeCommand<TObj>(StaticCommand command, IRCMessage msg, string cmdStr, Match m, TObj extraObject)
 	{
 		if (command.HasAttribute<DebuggingOnlyAttribute>() && !TwitchPlaySettings.data.EnableDebuggingCommands)
 			return false;
@@ -464,7 +464,7 @@ public class TwitchPlaysService : MonoBehaviour
 				arguments[i] = cmdStr;
 			else if (parameters[i].ParameterType == typeof(bool) && parameters[i].Name == "isWhisper")
 				arguments[i] = msg.IsWhisper;
-			else if (parameters[i].ParameterType == typeof(Message))
+			else if (parameters[i].ParameterType == typeof(IRCMessage))
 				arguments[i] = msg;
 			else if (parameters[i].ParameterType == typeof(KMGameInfo))
 				arguments[i] = GetComponent<KMGameInfo>();
@@ -480,7 +480,7 @@ public class TwitchPlaysService : MonoBehaviour
 				arguments[i] = parameters[i].DefaultValue;
 			else
 			{
-				IRCConnection.SendMessage("@{0}, the “{1}” command has an unrecognized parameter “{2}”. It expects a type of “{3}”, and the extraObject is of type “{4}” This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name, parameters[i].ParameterType.Name, extraObject?.GetType().Name);
+				IRCConnection.SendMessage("@{0}, this is a bug; please notify the devs. Error: the “{1}” command has an unrecognized parameter “{2}”. It expects a type of “{3}”, and the extraObject is of type “{4}”.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name, parameters[i].Name, parameters[i].ParameterType.Name, extraObject?.GetType().Name);
 				return true;
 			}
 		}
@@ -491,7 +491,7 @@ public class TwitchPlaysService : MonoBehaviour
 		else if (invokeResult is IEnumerator coroutine)
 			ProcessCommandCoroutine(coroutine, extraObject);
 		else if (invokeResult != null)
-			IRCConnection.SendMessage("@{0}, the “{1}” command returned something unrecognized. This is a bug; please notify the devs.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name);
+			IRCConnection.SendMessage("@{0}, this is a bug; please notify the devs. Error: the “{1}” command returned something unrecognized.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName, command.Method.Name);
 
 		if ((TwitchPlaySettings.data.AnarchyMode ? command.Attr.AccessLevelAnarchy : command.Attr.AccessLevel) > AccessLevel.Defuser)
 			AuditLog.Log(msg.UserNickName, UserAccess.HighestAccessLevel(msg.UserNickName), msg.Text);

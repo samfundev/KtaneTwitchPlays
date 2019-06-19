@@ -826,7 +826,7 @@ static class GlobalCommands
 	}
 
 	[Command(@"(?:issue|say|mimic) ?commands?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, Message message)
+	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, IRCMessage message)
 	{
 		if (message.IsWhisper)
 		{
