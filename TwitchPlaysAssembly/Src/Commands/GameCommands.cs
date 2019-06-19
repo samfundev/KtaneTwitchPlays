@@ -399,10 +399,13 @@ static class GameCommands
 			IRCConnection.SendMessage($"{user}, the queue is empty.", user, !isWhisper);
 			return;
 		}
-		foreach (var call in TwitchGame.Instance.CommandQueue)
-			RunQueuedCommand(call);
+
+		// Take a copy of the list in case executing one of the commands modifies the command queue
+		var allCommands = TwitchGame.Instance.CommandQueue.ToList();
 		TwitchGame.Instance.CommandQueue.Clear();
 		TwitchGame.ModuleCameras?.SetNotes();
+		foreach (var call in allCommands)
+			RunQueuedCommand(call);
 	}
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
