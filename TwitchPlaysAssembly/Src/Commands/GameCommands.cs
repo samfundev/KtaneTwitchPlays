@@ -186,6 +186,20 @@ static class GameCommands
 		}
 	}
 
+	[Command(@"(?:view( *pin)?|(pin *)?view) +(.+)")]
+	public static void ViewPin(string user, bool isWhisper, [Group(1)] bool pin1, [Group(2)] bool pin2, [Group(3)] string viewWhat)
+	{
+		var strings = viewWhat.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
+		if (modules == null || modules.Length == 0)
+		{
+			IRCConnection.SendMessage($"{user}: no such module.", user, !isWhisper);
+			return;
+		}
+		foreach (var module in modules)
+			module.ViewPin(user, pin1 || pin2);
+	}
+
 	[Command(@"(?:find|search)((?: *claim| *view)*) +(.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
