@@ -106,6 +106,7 @@
     <Compile Include="Src\Audio\Audio.cs" />
     <Compile Include="Src\Audio\InterruptMusic.cs" />
     <Compile Include="Src\Audio\MusicPlayer.cs" />
+    <Compile Include="Src\CommandQueueItem.cs" />
     <Compile Include="Src\Commands\GlobalCommands.cs" />
     <Compile Include="Src\Commands\GameCommands.cs" />
     <Compile Include="Src\Commands\AlarmClockCommands.cs" />

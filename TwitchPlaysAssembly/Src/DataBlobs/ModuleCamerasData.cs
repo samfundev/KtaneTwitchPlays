@@ -13,4 +13,7 @@ public class ModuleCamerasData : MonoBehaviour
 	public Camera CameraPrefab;
 	public RectTransform BombStatus;
 	public Text[] NotesTexts;
+	public Image[] NotesTextBackgrounds;
+	public Text[] NotesTextIDs;
+	public Image[] NotesTextIDsBackgrounds;
 }

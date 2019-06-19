@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Assets.Scripts.Props;
 
 static class GameCommands
@@ -23,7 +24,7 @@ static class GameCommands
 		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NotesTaken, index, notes), user, !isWhisper);
 		index--;
 		TwitchGame.Instance.NotesDictionary[index] = notes;
-		TwitchGame.ModuleCameras?.SetNotes(index, notes);
+		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
 	[Command(@"notes(-?\d+)append +(.+)")]
@@ -35,7 +36,7 @@ static class GameCommands
 			TwitchGame.Instance.NotesDictionary[index] += " " + notes;
 		else
 			TwitchGame.Instance.NotesDictionary[index] = notes;
-		TwitchGame.ModuleCameras?.AppendNotes(index, notes);
+		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
 	[Command(@"(?:notes(-?\d+)clear|clearnotes(-?\d+))")]
@@ -43,8 +44,9 @@ static class GameCommands
 	{
 		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NoteSlotCleared, index), user, !isWhisper);
 		index--;
-		TwitchGame.Instance.NotesDictionary[index] = (OtherModes.ZenModeOn && index == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
-		TwitchGame.ModuleCameras?.SetNotes(index, TwitchGame.Instance.NotesDictionary[index]);
+		if (TwitchGame.Instance.NotesDictionary.ContainsKey(index))
+			TwitchGame.Instance.NotesDictionary.Remove(index);
+		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
 	[Command(@"snooze")]
@@ -323,7 +325,87 @@ static class GameCommands
 			TwitchGame.ModuleCameras.DisableCameraWall();
 	}
 
-	[Command(@"setmultiplier (\d*\.?\d+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	[Command(@"q(?:ueue)? +(?!\s*!)([^!]+) +(!.+)")]
+	public static void EnqueueNamedCommand(string user, bool isWhisper, [Group(1)] string name, [Group(2)] string command)
+	{
+		if (name.Trim().EqualsIgnoreCase("all"))
+		{
+			IRCConnection.SendMessage(@"@{0}, you can’t use “all” as a name for queued commands.", user, !isWhisper, user);
+			return;
+		}
+		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, user, name.Trim()));
+		TwitchGame.ModuleCameras?.SetNotes();
+	}
+
+	[Command(@"q(?:ueue)? +(!.+)")]
+	public static void EnqueueUnnamedCommand(string user, bool isWhisper, [Group(1)] string command)
+	{
+		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, user));
+		TwitchGame.ModuleCameras?.SetNotes();
+	}
+
+	[Command(@"(?:un|(del)|(show|list))q(?:ueue)?( *all| +.+)?")]
+	public static void UnqueueCommand(string user, bool isWhisper, [Group(1)] bool del, [Group(2)] bool show, [Group(3)] string command)
+	{
+		command = command?.Trim() ?? "all";
+		if (del && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+		{
+			IRCConnection.SendMessage($"Sorry {user}, you don’t have moderator access.", user, !isWhisper);
+			return;
+		}
+		var matchingItems = command == "all" || (show && command.Trim() == "")
+			? TwitchGame.Instance.CommandQueue.Where(item => del || item.User == user).ToArray()
+			: command.StartsWith("!")
+				? TwitchGame.Instance.CommandQueue.Where(item => (del || item.User == user) && item.Command.StartsWith(command + " ")).ToArray()
+				: TwitchGame.Instance.CommandQueue.Where(item => (del || item.User == user) && item.Name.EqualsIgnoreCase(command)).ToArray();
+		if (matchingItems.Length == 0)
+		{
+			IRCConnection.SendMessage(@"@{0}, no matching queued commands.", user, !isWhisper, user);
+			return;
+		}
+		IRCConnection.SendMessage(@"@{0}, {1}: {2}", user, !isWhisper, user, show ? "queue contains" : "removing", matchingItems.Select(item => item.Command + (item.Name != null ? $" ({item.Name})" : null)).Join("; "));
+		if (!show)
+		{
+			TwitchGame.Instance.CommandQueue.RemoveAll(item => matchingItems.Contains(item));
+			TwitchGame.ModuleCameras?.SetNotes();
+		}
+	}
+
+	[Command(@"call(?! *all)( +.+)?")]
+	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] string name)
+	{
+		name = name?.Trim();
+		if (string.IsNullOrEmpty(name))
+			name = null;
+
+		// For !call, “name” will be null, so this will find unnamed commands.
+		var call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Name == name);
+
+		if (call == null)
+		{
+			IRCConnection.SendMessage($"@{user}, no {(name == null ? "unnamed commands" : $"commands named “{name}”")} in the queue.", user, !isWhisper);
+			return;
+		}
+		TwitchGame.Instance.CommandQueue.Remove(call);
+		TwitchGame.ModuleCameras?.SetNotes();
+		RunQueuedCommand(call);
+	}
+
+	[Command(@"call *all")]
+	public static void CallAllQueuedCommands(string user, bool isWhisper)
+	{
+		if (TwitchGame.Instance.CommandQueue.Count == 0)
+		{
+			IRCConnection.SendMessage($"{user}, the queue is empty.", user, !isWhisper);
+			return;
+		}
+		foreach (var call in TwitchGame.Instance.CommandQueue)
+			RunQueuedCommand(call);
+		TwitchGame.Instance.CommandQueue.Clear();
+		TwitchGame.ModuleCameras?.SetNotes();
+	}
+
+	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
 
 	[Command(@"solvebomb", AccessLevel.SuperUser, AccessLevel.SuperUser)]
@@ -482,5 +564,7 @@ static class GameCommands
 		else
 			IRCConnection.SendMessage(string.Format(noOwnedMsg, user), user, !isWhisper);
 	}
+
+	private static void RunQueuedCommand(CommandQueueItem call) => IRCConnection.ReceiveMessage(call.User, userColorCode: null, text: call.Command);
 	#endregion
 }

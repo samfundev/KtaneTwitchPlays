@@ -22,6 +22,7 @@ public class TwitchGame : MonoBehaviour
 	public int _currentBomb = -1;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
@@ -356,11 +357,9 @@ public class TwitchGame : MonoBehaviour
 			DebugHelper.LogException(ex, "An exception has occurred attempting to hold the bomb.");
 		}
 
-		for (int i = 0; i < 4; i++)
-		{
-			NotesDictionary[i] = (OtherModes.ZenModeOn && i == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
-			ModuleCameras?.SetNotes(i, NotesDictionary[i]);
-		}
+		NotesDictionary.Clear();
+		CommandQueue.Clear();
+		ModuleCameras?.SetNotes();
 
 		if (EnableDisableInput())
 		{

@@ -629,7 +629,7 @@ public class IRCConnection : MonoBehaviour
 	// ReSharper disable once UnusedMember.Global
 	public static void SendWhisper(string userNickName, string message, params object[] args) => SendMessage(message, userNickName, false, args);
 
-	new public static void SendMessage(string message) => SendMessage(message, null, true);
+	public static new void SendMessage(string message) => SendMessage(message, null, true);
 
 	[StringFormatMethod("message")]
 	public static void SendMessageFormat(string message, params object[] args) => SendMessage(message, null, true, args);
@@ -702,7 +702,7 @@ public class IRCConnection : MonoBehaviour
 		if (isWhisper && !text.StartsWith("!") && !TwitchPlaySettings.data.WhisperCommandsRequireExclaimationPoint)
 			text = $"!{text}";
 		if (Instance == null) return;
-		if (ColorUtility.TryParseHtmlString(userColorCode, out Color color))
+		if (userColorCode != null && ColorUtility.TryParseHtmlString(userColorCode, out Color color))
 		{
 			lock (Instance._userColors)
 				Instance._userColors[userNickName] = color;

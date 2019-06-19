@@ -174,6 +174,9 @@ public class ModuleCameras : MonoBehaviour
 	public Camera CameraPrefab => _data.CameraPrefab;
 	public RectTransform BombStatus => _data.BombStatus;
 	public Text[] NotesTexts => _data.NotesTexts;
+	public Image[] NotesTextBackgrounds => _data.NotesTextBackgrounds;
+	public Text[] NotesTextIDs => _data.NotesTextIDs;
+	public Image[] NotesTextIDsBackgrounds => _data.NotesTextIDsBackgrounds;
 
 	[HideInInspector]
 	public bool CameraWallEnabled;
@@ -338,16 +341,25 @@ public class ModuleCameras : MonoBehaviour
 				.ThenBy(c => c.Module != null ? (DateTime?) c.Module.LastUsed : null)
 				.FirstOrDefault();
 
-	public void SetNotes(int noteIndex, string noteText)
+	public void SetNotes()
 	{
-		if (noteIndex < 0 || noteIndex > 3) return;
-		NotesTexts[noteIndex].text = noteText;
-	}
-
-	public void AppendNotes(int noteIndex, string noteText)
-	{
-		if (noteIndex < 0 || noteIndex > 3) return;
-		NotesTexts[noteIndex].text += " " + noteText;
+		for (int ix = 0; ix < 4; ix++)
+		{
+			if (TwitchGame.Instance.CommandQueue.Count > 0 && ix == 3)
+			{
+				var numNameless = TwitchGame.Instance.CommandQueue.Count(c => c.Name == null);
+				var numNamed = TwitchGame.Instance.CommandQueue.Count - numNameless;
+				NotesTexts[ix].text = $"QUEUE: {(numNameless > 0 ? $"{numNameless} item{(numNameless == 1 ? "" : "s")}" : "")}{(numNameless > 0 && numNamed > 0 ? " + " : "")}{TwitchGame.Instance.CommandQueue.Where(c => c.Name != null).Select(c => $"“{c.Name}”").Join(", ")}";
+				NotesTextBackgrounds[ix].color = new Color32(0xD6, 0xC0, 0xFF, 0xFF);
+				NotesTextIDs[ix].text = "!q";
+			}
+			else
+			{
+				NotesTexts[ix].text = TwitchGame.Instance.NotesDictionary.TryGetValue(ix, out var text) ? text : (OtherModes.ZenModeOn && ix == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
+				NotesTextBackgrounds[ix].color = new Color32(0xEE, 0xEE, 0xEE, 0xFF);
+				NotesTextIDs[ix].text = $"!notes{ix + 1}";
+			}
+		}
 	}
 
 	public void UnviewModule(TwitchModule handle)
