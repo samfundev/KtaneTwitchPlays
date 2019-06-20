@@ -297,22 +297,44 @@ public abstract class ComponentSolver
 			}
 			else if (currentValue is KMSelectable selectable1)
 			{
-				if (HeldSelectables.Contains(selectable1))
+				try
 				{
-					DoInteractionEnd(selectable1);
-					HeldSelectables.Remove(selectable1);
+					if (HeldSelectables.Contains(selectable1))
+					{
+						DoInteractionEnd(selectable1);
+						HeldSelectables.Remove(selectable1);
+					}
+					else
+					{
+						DoInteractionStart(selectable1);
+						HeldSelectables.Add(selectable1);
+					}
 				}
-				else
+				catch (Exception exception)
 				{
-					DoInteractionStart(selectable1);
-					HeldSelectables.Add(selectable1);
+					exceptionThrown = true;
+					HandleModuleException(exception);
+					break;
 				}
 			}
 			else if (currentValue is IEnumerable<KMSelectable> selectables)
 			{
 				foreach (KMSelectable selectable in selectables)
 				{
-					yield return DoInteractionClick(selectable);
+					WaitForSeconds result = null;
+					try
+					{
+						result = DoInteractionClick(selectable);
+					}
+					catch (Exception exception)
+					{
+						exceptionThrown = true;
+						HandleModuleException(exception);
+						break;
+					}
+
+					yield return result;
+
 					if ((_beforeStrikeCount != StrikeCount && !_disableOnStrike || Solved) && !TwitchPlaySettings.data.AnarchyMode || trycancelsequence && CoroutineCanceller.ShouldCancel || Detonated)
 						break;
 				}
