@@ -105,7 +105,6 @@ public class Leaderboard
 
 	private LeaderboardEntry GetEntry(string userName)
 	{
-		DebugHelper.Log($"Getting entry for user {userName}");
 		if (!GetEntry(userName, out LeaderboardEntry entry))
 		{
 			entry = new LeaderboardEntry();

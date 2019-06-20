@@ -495,10 +495,7 @@ public class IRCConnection : MonoBehaviour
 				SslStream sslStream = new SslStream(networkStream, true, VerifyServerCertificate);
 				sslStream.AuthenticateAsClient(_settings.serverName);
 
-				DebugHelper.Log($"SSL encrypted: {sslStream.IsEncrypted}.");
-				DebugHelper.Log($"SSL authenticated: {sslStream.IsAuthenticated}.");
-				DebugHelper.Log($"SSL signed: {sslStream.IsSigned}.");
-				DebugHelper.Log($"SSL mutually authenticated: {sslStream.IsMutuallyAuthenticated}.");
+				DebugHelper.Log($"SSL encrypted: {sslStream.IsEncrypted}, authenticated: {sslStream.IsAuthenticated}, signed: {sslStream.IsSigned} and mutually authenticated: {sslStream.IsMutuallyAuthenticated}.");
 
 				StreamReader inputStream = new StreamReader(sslStream);
 				StreamWriter outputStream = new StreamWriter(sslStream);
