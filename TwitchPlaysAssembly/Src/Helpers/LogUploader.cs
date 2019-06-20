@@ -45,7 +45,6 @@ public class LogUploader : MonoBehaviour
 		"Tick delay:",
 		"Calculated FPS: ",
 		"[ModuleCameras]",
-		"[TwitchPlays]",
 		"(Filename:  Line: 21)"
 	};
 

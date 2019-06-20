@@ -118,8 +118,6 @@ public class IRCConnection : MonoBehaviour
 			if (!match.Success) return false;
 			_action(match.Groups);
 			if (!LogLine) return true;
-			if (LogUploader.Instance != null)
-				LogUploader.Instance.HandleLog(input, null, LogType.Log);
 			UnityEngine.Debug.LogFormat("[IRC:Read] {0}", input);
 
 			return true;
@@ -696,7 +694,7 @@ public class IRCConnection : MonoBehaviour
 			_sendQueue.Enqueue(new IRCCommand(command));
 	}
 
-	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false)
+	public static void ReceiveMessage(string userNickName, string userColorCode, string text, bool isWhisper = false, bool silent = false)
 	{
 		text = text.Replace("…", "...");
 		if (isWhisper && !text.StartsWith("!") && !TwitchPlaySettings.data.WhisperCommandsRequireExclaimationPoint)
@@ -707,6 +705,8 @@ public class IRCConnection : MonoBehaviour
 			lock (Instance._userColors)
 				Instance._userColors[userNickName] = color;
 		}
+
+		if (!silent) DebugHelper.Log($"[M] {userNickName} ({userColorCode}): {text}");
 
 		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
 		{
@@ -927,11 +927,17 @@ public class IRCConnection : MonoBehaviour
 	#region Static Fields/Consts
 	private static readonly ActionMap[] Actions =
 	{
-		new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+:(\S+)!\S+ PRIVMSG #(\S+) :(.+)", (GroupCollection groups) =>
+		new ActionMap(@"color=(#[0-9A-F]{6})?;display-name=([^;]+)?;.+user-id=(\d+).+:(\S+)!\S+ PRIVMSG #\S+ :(.+)", (GroupCollection groups) =>
 		{
-			ReceiveMessage(!string.IsNullOrEmpty(groups[2].Value) ? groups[2].Value : groups[3].Value, groups[1].Value,
-				groups[5].Value);
-		}),
+			// 1: color, 2: display-name, 3: user-id, 4: username, 5: message
+
+			string userNickName = !string.IsNullOrEmpty(groups[2].Value) ? groups[2].Value : groups[4].Value;
+			string userColorCode = groups[1].Value;
+			string text = groups[5].Value;
+
+			DebugHelper.Log($"[M] {userNickName} ({userColorCode}, {groups[3]}): {text}");
+			ReceiveMessage(userNickName, userColorCode, text, silent: true);
+		}, false),
 
 		new ActionMap(@"badges=([^;]+)?;color=(#[0-9A-F]{6})?;display-name=([^;]+)?;emote-sets=\S+ :\S+ USERSTATE #(.+)", (GroupCollection groups) =>
 		{
