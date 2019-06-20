@@ -7,8 +7,8 @@ public class CoroutineQueue : MonoBehaviour
 {
 	private void Awake()
 	{
-		_coroutineQueue = new Queue<IEnumerator>();
-		_forceSolveQueue = new Queue<IEnumerator>();
+		_coroutineQueue = new LinkedList<IEnumerator>();
+		_forceSolveQueue = new LinkedList<IEnumerator>();
 		_bombIDProcessed = new Queue<int>();
 	}
 
@@ -25,11 +25,11 @@ public class CoroutineQueue : MonoBehaviour
 		_activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
 	}
 
-	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.Enqueue(subcoroutine);
+	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.AddLast(subcoroutine);
 
 	public void AddToQueue(IEnumerator subcoroutine)
 	{
-		_coroutineQueue.Enqueue(subcoroutine);
+		_coroutineQueue.AddLast(subcoroutine);
 		QueueModified = true;
 	}
 
@@ -79,9 +79,10 @@ public class CoroutineQueue : MonoBehaviour
 
 		while (_coroutineQueue.Count > 0)
 		{
-			IEnumerator coroutine = _coroutineQueue.Dequeue();
+			IEnumerator coroutine = _coroutineQueue.First.Value;
 			if (_bombIDProcessed.Count > 0)
 				CurrentBombID = _bombIDProcessed.Dequeue();
+
 			bool result = true;
 			while (result)
 			{
@@ -94,8 +95,20 @@ public class CoroutineQueue : MonoBehaviour
 					DebugHelper.LogException(e, "An exception occurred while executing a queued coroutine:");
 					result = false;
 				}
-				if (result) yield return coroutine.Current;
+				if (result)
+				{
+					if (coroutine.Current is IEnumerator enumerator)
+					{
+						_coroutineQueue.AddFirst(enumerator);
+						coroutine = enumerator;
+						continue;
+					}
+
+					yield return coroutine.Current;
+				}
 			}
+
+			_coroutineQueue.RemoveFirst();
 		}
 
 		_processing = false;
@@ -108,7 +121,7 @@ public class CoroutineQueue : MonoBehaviour
 	{
 		while (_forceSolveQueue.Count > 0)
 		{
-			IEnumerator coroutine = _forceSolveQueue.Dequeue();
+			IEnumerator coroutine = _forceSolveQueue.First.Value;
 			bool result = true;
 			while (result)
 			{
@@ -126,27 +139,33 @@ public class CoroutineQueue : MonoBehaviour
 				switch (coroutine.Current)
 				{
 					case bool boolean when boolean:
-						_forceSolveQueue.Enqueue(coroutine);
+						_forceSolveQueue.AddLast(coroutine);
 						yield return null;
 						result = false;
 						break;
+					case IEnumerator enumerator:
+						_forceSolveQueue.AddFirst(enumerator);
+						coroutine = enumerator;
+						continue;
 					default:
 						yield return coroutine.Current;
 						break;
 				}
 			}
+
+			_forceSolveQueue.RemoveFirst();
 		}
 
 		_processingForcedSolve = false;
 		_activeForceSolveCoroutine = null;
 	}
 
-	private static Queue<IEnumerator> _forceSolveQueue;
+	private static LinkedList<IEnumerator> _forceSolveQueue;
 	private bool _processingForcedSolve;
 	private Coroutine _activeForceSolveCoroutine;
 
 	public bool QueueModified;
-	private Queue<IEnumerator> _coroutineQueue;
+	private LinkedList<IEnumerator> _coroutineQueue;
 	private bool _processing;
 	private Coroutine _activeCoroutine;
 
