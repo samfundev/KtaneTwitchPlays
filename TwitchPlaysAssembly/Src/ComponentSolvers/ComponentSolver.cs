@@ -744,7 +744,7 @@ public abstract class ComponentSolver
 		IEnumerator forcedSolve = ForcedSolveIEnumerator();
 		if (!forcedSolve.MoveNext()) return false;
 
-		CoroutineQueue.AddForcedSolve(ForcedSolveIEnumerator());
+		CoroutineQueue.AddForcedSolve(EnsureSolve(ForcedSolveIEnumerator(), Module.BombComponent));
 		return true;
 	}
 
@@ -764,48 +764,47 @@ public abstract class ComponentSolver
 				}
 			}
 
-			if (!(solver?.AttemptedForcedSolve ?? false) && (solver?.HandleForcedSolve() ?? false))
+			solver.AttemptedForcedSolve = true;
+
+			if (solver?.HandleForcedSolve() ?? false)
 			{
-				solver.AttemptedForcedSolve = true;
-				return;
+				// The force solve is being handled by a TP solver.
 			}
-			if (!(solver?.AttemptedForcedSolve ?? false) && solver?.ForcedSolveMethod != null)
+			else if (solver?.ForcedSolveMethod != null)
 			{
-				handle.Solver.AttemptedForcedSolve = true;
-				handle.Solver._delegatedSolveUserNickName = null;
-				handle.Solver._currentUserNickName = null;
-				handle.Solver._silentlySolve = true;
+				// The force solve is being handled by the module's solver.
+				solver.AttemptedForcedSolve = true;
+				solver._delegatedSolveUserNickName = null;
+				solver._currentUserNickName = null;
+				solver._silentlySolve = true;
 				try
 				{
-					object result = handle.Solver.ForcedSolveMethod.Invoke(handle.Solver.CommandComponent, null);
+					object result = solver.ForcedSolveMethod.Invoke(solver.CommandComponent, null);
 					if (result is IEnumerator enumerator)
-						CoroutineQueue.AddForcedSolve(enumerator);
+						CoroutineQueue.AddForcedSolve(EnsureSolve(enumerator, bombComponent));
 				}
 				catch (Exception ex)
 				{
 					DebugHelper.LogException(ex, "An exception occurred while using the Forced Solve handler:");
-					CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.Solver.Module, null);
-					foreach (MonoBehaviour behavior in handle.BombComponent.GetComponentsInChildren<MonoBehaviour>(true))
+					CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
+					foreach (MonoBehaviour behavior in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 					{
 						behavior.StopAllCoroutines();
 					}
 				}
 			}
-			else if (solver != null)
-			{
-				solver._delegatedSolveUserNickName = null;
-				solver._currentUserNickName = null;
-				solver._silentlySolve = true;
-				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.BombComponent, null);
-				foreach (MonoBehaviour behavior in handle.BombComponent.GetComponentsInChildren<MonoBehaviour>(true))
-				{
-					behavior.StopAllCoroutines();
-				}
-			}
 			else if (handle != null)
 			{
-				CommonReflectedTypeInfo.HandlePassMethod.Invoke(handle.BombComponent, null);
-				foreach (MonoBehaviour behavior in handle.BombComponent.GetComponentsInChildren<MonoBehaviour>(true))
+				// There is no force solver, just force a pass.
+				if (solver != null)
+				{
+					solver._delegatedSolveUserNickName = null;
+					solver._currentUserNickName = null;
+					solver._silentlySolve = true;
+				}
+
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
+				foreach (MonoBehaviour behavior in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 				{
 					behavior.StopAllCoroutines();
 				}
@@ -815,6 +814,12 @@ public abstract class ComponentSolver
 		{
 			DebugHelper.LogException(ex, "An exception occurred while silently solving a module:");
 		}
+	}
+
+	static IEnumerator EnsureSolve(IEnumerator enumerator, BombComponent bombComponent)
+	{
+		yield return enumerator;
+		CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 	}
 
 	private void AwardSolve(string userNickName, int componentValue)
