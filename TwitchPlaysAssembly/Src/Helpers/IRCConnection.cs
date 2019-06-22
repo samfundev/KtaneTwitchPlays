@@ -696,28 +696,33 @@ public class IRCConnection : MonoBehaviour
 		text = text.Replace("…", "...");
 		if (isWhisper && !text.StartsWith("!") && !TwitchPlaySettings.data.WhisperCommandsRequireExclaimationPoint)
 			text = $"!{text}";
+		ReceiveMessage(new IRCMessage(userNickName, userColorCode, text, isWhisper), silent);
+	}
+
+	public static void ReceiveMessage(IRCMessage msg, bool silent = false)
+	{
 		if (Instance == null) return;
-		if (userColorCode != null && ColorUtility.TryParseHtmlString(userColorCode, out Color color))
+		if (msg.UserColorCode != null && ColorUtility.TryParseHtmlString(msg.UserColorCode, out Color color))
 		{
 			lock (Instance._userColors)
-				Instance._userColors[userNickName] = color;
+				Instance._userColors[msg.UserNickName] = color;
 		}
 
-		if (!silent) DebugHelper.Log($"[M] {userNickName} ({userColorCode}): {text}");
+		if (!silent) DebugHelper.Log($"[M] {msg.UserNickName} ({msg.UserColorCode}): {msg.Text}");
 
-		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		if (msg.Text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = true;
 			SendMessage("Commands enabled.");
 			return;
 		}
-		if (text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		if (msg.Text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true))
 		{
 			SendMessage("Commands are already enabled.");
 			return;
 		}
-		if (!CommandsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) && (!TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled || !TwitchGame.BombActive)) return;
-		if (text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true))
+		if (!CommandsEnabled && !UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true) && (!TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled || !TwitchGame.BombActive)) return;
+		if (msg.Text.Equals("!disablecommands", StringComparison.InvariantCultureIgnoreCase) && UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true))
 		{
 			CommandsEnabled = false;
 			if (TwitchPlaySettings.data.AllowSolvingCurrentBombWithCommandsDisabled && TwitchGame.BombActive)
@@ -727,13 +732,9 @@ public class IRCConnection : MonoBehaviour
 			return;
 		}
 
-		if (!isWhisper || TwitchPlaySettings.data.EnableWhispers)
-		{
+		if (!msg.IsWhisper || TwitchPlaySettings.data.EnableWhispers)
 			lock (Instance._receiveQueue)
-			{
-				Instance._receiveQueue.Enqueue(new IRCMessage(userNickName, userColorCode, text, isWhisper));
-			}
-		}
+				Instance._receiveQueue.Enqueue(msg);
 	}
 
 	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;

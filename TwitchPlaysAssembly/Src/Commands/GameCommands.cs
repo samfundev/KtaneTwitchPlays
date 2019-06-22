@@ -333,14 +333,14 @@ static class GameCommands
 			IRCConnection.SendMessage(@"@{0}, you can’t use “all” as a name for queued commands.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 			return;
 		}
-		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, msg.UserNickName, msg.UserColorCode, name.Trim()));
+		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(msg.Duplicate(command), name.Trim()));
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
 	[Command(@"q(?:ueue)? +(!.+)")]
 	public static void EnqueueUnnamedCommand(IRCMessage msg, [Group(1)] string command)
 	{
-		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, msg.UserNickName, msg.UserColorCode));
+		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(msg.Duplicate(command)));
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
@@ -354,16 +354,16 @@ static class GameCommands
 			return;
 		}
 		var matchingItems = command == "all" || (show && command.Trim() == "")
-			? TwitchGame.Instance.CommandQueue.Where(item => del || item.User == user).ToArray()
+			? TwitchGame.Instance.CommandQueue.Where(item => del || item.Message.UserNickName == user).ToArray()
 			: command.StartsWith("!")
-				? TwitchGame.Instance.CommandQueue.Where(item => (del || item.User == user) && item.Command.StartsWith(command + " ")).ToArray()
-				: TwitchGame.Instance.CommandQueue.Where(item => (del || item.User == user) && item.Name.EqualsIgnoreCase(command)).ToArray();
+				? TwitchGame.Instance.CommandQueue.Where(item => (del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
+				: TwitchGame.Instance.CommandQueue.Where(item => (del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
 		if (matchingItems.Length == 0)
 		{
 			IRCConnection.SendMessage(@"@{0}, no matching queued commands.", user, !isWhisper, user);
 			return;
 		}
-		IRCConnection.SendMessage(@"@{0}, {1}: {2}", user, !isWhisper, user, show ? "queue contains" : "removing", matchingItems.Select(item => item.Command + (item.Name != null ? $" ({item.Name})" : null)).Join("; "));
+		IRCConnection.SendMessage(@"@{0}, {1}: {2}", user, !isWhisper, user, show ? "queue contains" : "removing", matchingItems.Select(item => item.Message.Text + (item.Name != null ? $" ({item.Name})" : null)).Join("; "));
 		if (!show)
 		{
 			TwitchGame.Instance.CommandQueue.RemoveAll(item => matchingItems.Contains(item));
@@ -388,7 +388,7 @@ static class GameCommands
 		}
 		TwitchGame.Instance.CommandQueue.Remove(call);
 		TwitchGame.ModuleCameras?.SetNotes();
-		RunQueuedCommand(call);
+		IRCConnection.ReceiveMessage(call.Message);
 	}
 
 	[Command(@"call *all")]
@@ -405,7 +405,7 @@ static class GameCommands
 		TwitchGame.Instance.CommandQueue.Clear();
 		TwitchGame.ModuleCameras?.SetNotes();
 		foreach (var call in allCommands)
-			RunQueuedCommand(call);
+			IRCConnection.ReceiveMessage(call.Message);
 	}
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
@@ -549,7 +549,5 @@ static class GameCommands
 		else
 			IRCConnection.SendMessage(string.Format(noOwnedMsg, user), user, !isWhisper);
 	}
-
-	private static void RunQueuedCommand(CommandQueueItem call) => IRCConnection.ReceiveMessage(call.User, call.UserColor, call.Command);
 	#endregion
 }
