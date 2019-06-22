@@ -326,21 +326,21 @@ static class GameCommands
 	}
 
 	[Command(@"q(?:ueue)? +(?!\s*!)([^!]+) +(!.+)")]
-	public static void EnqueueNamedCommand(string user, bool isWhisper, [Group(1)] string name, [Group(2)] string command)
+	public static void EnqueueNamedCommand(IRCMessage msg, [Group(1)] string name, [Group(2)] string command)
 	{
 		if (name.Trim().EqualsIgnoreCase("all"))
 		{
-			IRCConnection.SendMessage(@"@{0}, you can’t use “all” as a name for queued commands.", user, !isWhisper, user);
+			IRCConnection.SendMessage(@"@{0}, you can’t use “all” as a name for queued commands.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 			return;
 		}
-		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, user, name.Trim()));
+		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, msg.UserNickName, msg.UserColorCode, name.Trim()));
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
 	[Command(@"q(?:ueue)? +(!.+)")]
-	public static void EnqueueUnnamedCommand(string user, bool isWhisper, [Group(1)] string command)
+	public static void EnqueueUnnamedCommand(IRCMessage msg, [Group(1)] string command)
 	{
-		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, user));
+		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(command, msg.UserNickName, msg.UserColorCode));
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
@@ -568,6 +568,6 @@ static class GameCommands
 			IRCConnection.SendMessage(string.Format(noOwnedMsg, user), user, !isWhisper);
 	}
 
-	private static void RunQueuedCommand(CommandQueueItem call) => IRCConnection.ReceiveMessage(call.User, userColorCode: null, text: call.Command);
+	private static void RunQueuedCommand(CommandQueueItem call) => IRCConnection.ReceiveMessage(call.User, call.UserColor, call.Command);
 	#endregion
 }
