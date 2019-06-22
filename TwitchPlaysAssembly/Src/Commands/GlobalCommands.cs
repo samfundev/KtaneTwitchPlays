@@ -866,16 +866,10 @@ static class GlobalCommands
 	public static void WhisperTest(string user) => IRCConnection.SendMessage("Test successful", user, false);
 
 	[Command("secondary camera", AccessLevel.Streamer, AccessLevel.Streamer), DebuggingOnly]
-	public static void EnableSecondaryCamera()
-	{
-		GameRoom.ToggleCamera(false);
-	}
+	public static void EnableSecondaryCamera() => GameRoom.ToggleCamera(false);
 
 	[Command("main camera", AccessLevel.Streamer, AccessLevel.Streamer), DebuggingOnly]
-	public static void EnableMainCamera()
-	{
-		GameRoom.ToggleCamera(true);
-	}
+	public static void EnableMainCamera() => GameRoom.ToggleCamera(true);
 
 	[Command(@"(move|rotate) ?camera ?([xyz]) (-?[0-9]+(?:\\.[0-9]+)*)", AccessLevel.Streamer, AccessLevel.Streamer), DebuggingOnly]
 	public static void ChangeCamera([Group(1)] string action, [Group(2)] string axis, [Group(3)] float number, string user, bool isWhisper)
