@@ -13,6 +13,7 @@ public class TwitchBomb : MonoBehaviour
 {
 	#region Public Fields
 	public CanvasGroup CanvasGroup;
+	public Image EdgeworkID;
 	public Text EdgeworkIDText;
 	public Text EdgeworkText;
 	public RectTransform EdgeworkWindowTransform;
@@ -56,8 +57,9 @@ public class TwitchBomb : MonoBehaviour
 		CanvasGroup = transform.Find("UI").GetComponent<CanvasGroup>();
 		EdgeworkWindowTransform = CanvasGroup.transform.Find("EdgeworkWindow").GetComponent<RectTransform>();
 		EdgeworkHighlightTransform = CanvasGroup.transform.Find("EdgeworkHighlight").GetComponent<RectTransform>();
-		EdgeworkText = EdgeworkWindowTransform.Find("Header").Find("HeaderText").GetComponent<Text>();
+		EdgeworkID = EdgeworkWindowTransform.Find("ID").GetComponent<Image>();
 		EdgeworkIDText = EdgeworkWindowTransform.Find("ID").Find("IDText").GetComponent<Text>();
+		EdgeworkText = EdgeworkWindowTransform.Find("Header").Find("HeaderText").GetComponent<Text>();
 	}
 
 	private void Start()

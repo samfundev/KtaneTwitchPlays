@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Props;
-using UnityEngine;
 using Assets.Scripts.Records;
 using Assets.Scripts.Stats;
-using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class TwitchPlaysService : MonoBehaviour
 {
@@ -37,6 +38,9 @@ public class TwitchPlaysService : MonoBehaviour
 
 	public RectTransform BombHeader => _data.BombHeader;
 	public TwitchLeaderboard TwitchLeaderboardPrefab => _data.TwitchLeaderboardPrefab;
+
+	// Returns a hue component to be used for colors of UI elements
+	private static float UiHue => TwitchPlaySettings.data.EnableTwitchPlaysMode ? .72f : .089f;
 
 	private void Awake()
 	{
@@ -82,6 +86,8 @@ public class TwitchPlaysService : MonoBehaviour
 		_publicProperties.TwitchPlaysService = this; // Useless variable?
 		if (TwitchPlaySettings.data.SkipModManagerInstructionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
 			ModManagerManualInstructionScreen.HasShownOnce = true;
+
+		UpdateUiHue();
 	}
 
 	private void OnDisable()
@@ -641,5 +647,14 @@ public class TwitchPlaysService : MonoBehaviour
 		{
 			IRCConnection.SendMessage("There is a new update to Twitch Plays!");
 		}
+	}
+
+	public void UpdateUiHue()
+	{
+		var darkBand = Color.HSVToRGB(UiHue, .6f, .62f);
+		BombHeader.GetComponent<Image>().color = darkBand;
+		TwitchGame.ModuleCameras?.SetNotes();
+		foreach (var bomb in TwitchGame.Instance?.Bombs)
+			bomb.EdgeworkID.color = darkBand;
 	}
 }

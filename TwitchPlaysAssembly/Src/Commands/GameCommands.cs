@@ -469,6 +469,7 @@ static class GameCommands
 		TwitchPlaySettings.data.EnableTwitchPlaysMode = true;
 		TwitchPlaySettings.WriteDataToFile();
 		TwitchGame.EnableDisableInput();
+		TwitchPlaysService.Instance.UpdateUiHue();
 	}
 
 	[Command(@"disabletwitchplays", AccessLevel.SuperUser, AccessLevel.SuperUser)]
@@ -478,6 +479,7 @@ static class GameCommands
 		TwitchPlaySettings.data.EnableTwitchPlaysMode = false;
 		TwitchPlaySettings.WriteDataToFile();
 		TwitchGame.EnableDisableInput();
+		TwitchPlaysService.Instance.UpdateUiHue();
 	}
 
 	[Command(@"enableinteractivemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]

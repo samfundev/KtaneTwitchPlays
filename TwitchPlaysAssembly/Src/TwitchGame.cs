@@ -373,6 +373,8 @@ public class TwitchGame : MonoBehaviour
 					bomb.Bomb.GetTimer().SetRateModifier(-bomb.Bomb.GetTimer().GetRate());
 			yield return null;
 		}
+
+		TwitchPlaysService.Instance.UpdateUiHue();
 	}
 
 	internal void InitializeModuleCodes()
