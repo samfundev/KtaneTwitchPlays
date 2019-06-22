@@ -164,7 +164,7 @@ public class TwitchModule : MonoBehaviour
 				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
 				else if (TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty)
 				{
-					float difficulty = (float) Solver.ModInfo.moduleScore / ComponentSolverFactory.GetModuleInformation().Max(modInfo => modInfo.moduleScore);
+					float difficulty = Solver.ModInfo.moduleScore / ComponentSolverFactory.GetModuleInformation().Max(modInfo => modInfo.moduleScore);
 					unclaimedBackgroundColor = Color.HSVToRGB(
 						TwitchPlaySettings.data.ShowModuleType ? BombComponent.ComponentType.ToString().EndsWith("Mod") ? 0.6f : 0.3f : 0.725f,
 						1,
@@ -212,10 +212,8 @@ public class TwitchModule : MonoBehaviour
 			CanvasGroupUnsupported.gameObject.SetActive(true);
 			IDTextUnsupported.gameObject.SetActive(false);
 
-			if (TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode)
-			{
+			if (!TwitchPlaySettings.data.EnableInteractiveMode)
 				DebugHelper.Log("An unimplemented module was added to a bomb, solving module.");
-			}
 
 			if (BombComponent != null)
 			{

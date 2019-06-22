@@ -40,7 +40,7 @@ public class TwitchPlaysService : MonoBehaviour
 	public TwitchLeaderboard TwitchLeaderboardPrefab => _data.TwitchLeaderboardPrefab;
 
 	// Returns a hue component to be used for colors of UI elements
-	private static float UiHue => TwitchPlaySettings.data.EnableTwitchPlaysMode ? .72f : .089f;
+	private static float UiHue => TwitchPlaySettings.data.EnableWhiteList ? .089f : .72f;
 
 	private void Awake()
 	{

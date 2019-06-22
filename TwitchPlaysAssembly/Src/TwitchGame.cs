@@ -35,7 +35,7 @@ public class TwitchGame : MonoBehaviour
 
 	public static bool EnableDisableInput()
 	{
-		if (IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableTwitchPlaysMode && !TwitchPlaySettings.data.EnableInteractiveMode && BombActive)
+		if (IRCConnection.Instance.State == IRCConnectionState.Connected && !TwitchPlaySettings.data.EnableInteractiveMode && BombActive)
 		{
 			InputInterceptor.DisableInput();
 			return true;
@@ -581,7 +581,7 @@ public class TwitchGame : MonoBehaviour
 		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || Instance.Bombs.Any(x => x.BombName == userNickName))
 			return true;
 
-		bool result = TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true);
+		bool result = !TwitchPlaySettings.data.EnableWhiteList || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true);
 		if (!result && !silent)
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.TwitchPlaysDisabled, userNickName), userNickName, !isWhisper);
 

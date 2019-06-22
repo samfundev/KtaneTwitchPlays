@@ -462,26 +462,6 @@ static class GameCommands
 	[Command(@"(?:returntosetup|leave|exit)(?:room)?|return", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void ReturnToSetup() => SceneManager.Instance.ReturnToSetupState();
 
-	[Command(@"enabletwitchplays", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void EnableTwitchPlays()
-	{
-		IRCConnection.SendMessage("Twitch Plays Enabled");
-		TwitchPlaySettings.data.EnableTwitchPlaysMode = true;
-		TwitchPlaySettings.WriteDataToFile();
-		TwitchGame.EnableDisableInput();
-		TwitchPlaysService.Instance.UpdateUiHue();
-	}
-
-	[Command(@"disabletwitchplays", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void DisableTwitchPlays()
-	{
-		IRCConnection.SendMessage("Twitch Plays Disabled");
-		TwitchPlaySettings.data.EnableTwitchPlaysMode = false;
-		TwitchPlaySettings.WriteDataToFile();
-		TwitchGame.EnableDisableInput();
-		TwitchPlaysService.Instance.UpdateUiHue();
-	}
-
 	[Command(@"enableinteractivemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void EnableInteractiveMode()
 	{

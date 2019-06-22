@@ -825,6 +825,24 @@ static class GlobalCommands
 		IRCConnection.SendMessage("Leaderboard Reset.", user, !isWhisper);
 	}
 
+	[Command(@"disablewhitelist", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void DisableWhitelist()
+	{
+		TwitchPlaySettings.data.EnableWhiteList = false;
+		TwitchPlaySettings.WriteDataToFile();
+		TwitchPlaysService.Instance.UpdateUiHue();
+		IRCConnection.SendMessage("Whitelist disabled.");
+	}
+
+	[Command(@"enablewhitelist", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void EnableWhitelist()
+	{
+		TwitchPlaySettings.data.EnableWhiteList = true;
+		TwitchPlaySettings.WriteDataToFile();
+		TwitchPlaysService.Instance.UpdateUiHue();
+		IRCConnection.SendMessage("Whitelist enabled.");
+	}
+
 	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, IRCMessage message)
 	{
@@ -1007,7 +1025,7 @@ static class GlobalCommands
 			return null;
 		}
 
-		if (!((TwitchPlaySettings.data.EnableRunCommand && (TwitchPlaySettings.data.EnableTwitchPlaysMode || UserAccess.HasAccess(user, AccessLevel.Defuser, true))) || UserAccess.HasAccess(user, AccessLevel.Mod, true) || TwitchPlaySettings.data.AnarchyMode) || isWhisper)
+		if (!((TwitchPlaySettings.data.EnableRunCommand && (!TwitchPlaySettings.data.EnableWhiteList || UserAccess.HasAccess(user, AccessLevel.Defuser, true))) || UserAccess.HasAccess(user, AccessLevel.Mod, true) || TwitchPlaySettings.data.AnarchyMode) || isWhisper)
 		{
 			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.RunCommandDisabled, user);
 			return null;

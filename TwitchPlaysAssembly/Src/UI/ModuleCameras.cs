@@ -132,7 +132,7 @@ public class ModuleCameras : MonoBehaviour
 
 			if (Module != null) Module.UpdateLayerData();
 
-			bool interactiveState = (!TwitchPlaySettings.data.EnableTwitchPlaysMode || TwitchPlaySettings.data.EnableInteractiveMode);
+			bool interactiveState = TwitchPlaySettings.data.EnableInteractiveMode;
 			interactiveState |= IRCConnection.Instance.State != IRCConnectionState.Connected;
 			interactiveState |= EscapePressed;
 			interactiveState &= !(GameRoom.Instance is ElevatorGameRoom);
@@ -343,7 +343,7 @@ public class ModuleCameras : MonoBehaviour
 
 	public void SetNotes()
 	{
-		float hue = TwitchPlaySettings.data.EnableTwitchPlaysMode ? .72f : .1f;
+		float hue = TwitchPlaySettings.data.EnableWhiteList ? .1f : .72f;
 		for (int ix = 0; ix < 4; ix++)
 		{
 			if (TwitchGame.Instance.CommandQueue.Count > 0 && ix == 3)

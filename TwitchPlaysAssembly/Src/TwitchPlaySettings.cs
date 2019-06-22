@@ -26,7 +26,7 @@ public class TwitchPlaySettingsData
 	public bool EnableRankCommand = true;
 	public bool EnableSoloPlayMode = true;
 	public bool EnableRetryButton = true;
-	public bool EnableTwitchPlaysMode = true;
+	public bool EnableWhiteList = false;
 	public bool EnableInteractiveMode = false;
 	public bool EnableAutomaticEdgework = false;
 	public bool EnableEdgeworkCommand = true;
