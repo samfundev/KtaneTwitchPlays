@@ -845,10 +845,7 @@ static class GlobalCommands
 
 	//As of now, Debugging commands are streamer only, apart from whispertest, which are superuser and above.
 	[Command("whispertest", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
-	public static void WhisperTest(string user)
-	{
-		IRCConnection.SendMessage("Test successful", user, false);
-	}
+	public static void WhisperTest(string user) => IRCConnection.SendMessage("Test successful", user, false);
 
 	[Command("secondary camera", AccessLevel.Streamer, AccessLevel.Streamer), DebuggingOnly]
 	public static void EnableSecondaryCamera()

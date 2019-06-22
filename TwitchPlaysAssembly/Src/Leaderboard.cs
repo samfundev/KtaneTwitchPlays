@@ -196,15 +196,9 @@ public class Leaderboard
 		entry.LastAction = DateTime.Now;
 	}
 
-	public bool isAnyEvil()
-	{
-		return _entryList.Any(x => x.Team == OtherModes.Team.Evil);
-	}
+	public bool isAnyEvil() => _entryList.Any(x => x.Team == OtherModes.Team.Evil);
 
-	public bool isAnyGood()
-	{
-		return _entryList.Any(x => x.Team == OtherModes.Team.Good);
-	}
+	public bool isAnyGood() => _entryList.Any(x => x.Team == OtherModes.Team.Good);
 
 	public OtherModes.Team GetTeam(string userName) => GetTeam(userName, SafeGetColor(userName));
 

@@ -44,10 +44,7 @@ public class ModuleInformation
 	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
 	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
 
-	public ModuleInformation Clone()
-	{
-		return (ModuleInformation) MemberwiseClone();
-	}
+	public ModuleInformation Clone() => (ModuleInformation) MemberwiseClone();
 }
 
 public enum ScoreMethod
