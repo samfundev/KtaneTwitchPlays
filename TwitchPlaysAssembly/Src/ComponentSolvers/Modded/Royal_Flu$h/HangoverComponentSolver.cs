@@ -33,7 +33,7 @@ public class HangoverComponentSolver : ComponentSolver
 			List<string> validOptions = new List<string>();
 			var options = actionOptions.Concat(ingredientOptions);
 
-			foreach (string item in split.Skip(1).Join(" ").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+			foreach (string item in split.Skip(1).Join(" ").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(item => item.Trim()))
 			{
 				var matchingOptions = options.Where(option => option.ContainsIgnoreCase(item));
 				switch (matchingOptions.Count())
