@@ -344,20 +344,24 @@ static class GameCommands
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
-	[Command(@"(?:un|(del)|(show|list))q(?:ueue)?( *all| +.+)?")]
-	public static void UnqueueCommand(string user, bool isWhisper, [Group(1)] bool del, [Group(2)] bool show, [Group(3)] string command)
+	[Command(@"(?:(un)|(del)|(show|list))q(?:ueue)?(?: *(all)| +(.+))?")]
+	public static void UnqueueCommand(string user, bool isWhisper, [Group(1)] bool un, [Group(2)] bool del, [Group(3)] bool show, [Group(4)] bool all, [Group(5)] string command)
 	{
-		command = command?.Trim() ?? "all";
-		if (del && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+		if ((del || (un && all)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 		{
-			IRCConnection.SendMessage($"Sorry {user}, you don’t have moderator access.", user, !isWhisper);
+			IRCConnection.SendMessage($"{user}, you don’t have moderator access.", user, !isWhisper);
 			return;
 		}
-		var matchingItems = command == "all" || (show && command.Trim() == "")
-			? TwitchGame.Instance.CommandQueue.Where(item => del || item.Message.UserNickName == user).ToArray()
+		if ((del || un) && !all && (command == null || command.Trim() == ""))
+		{
+			IRCConnection.SendMessage($"{user}, specify a command name or use “!{(del ? "del" : "un")}qall”.", user, !isWhisper);
+			return;
+		}
+		var matchingItems = all || (show && command.Trim() == "")
+			? TwitchGame.Instance.CommandQueue.Where(item => all || item.Message.UserNickName == user).ToArray()
 			: command.StartsWith("!")
-				? TwitchGame.Instance.CommandQueue.Where(item => (del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
-				: TwitchGame.Instance.CommandQueue.Where(item => (del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
+				? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
+				: TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
 		if (matchingItems.Length == 0)
 		{
 			IRCConnection.SendMessage(@"@{0}, no matching queued commands.", user, !isWhisper, user);
