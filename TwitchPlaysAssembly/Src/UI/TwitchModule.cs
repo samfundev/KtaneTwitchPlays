@@ -44,7 +44,7 @@ public class TwitchModule : MonoBehaviour
 	public bool Unsupported;
 
 	[HideInInspector]
-	public List<Tuple<string, double, bool, bool>> ClaimQueue = new List<Tuple<string, double, bool, bool>>();
+	public List<ClaimQueueItem> ClaimQueue = new List<ClaimQueueItem>();
 
 	public string Code { get; set; }
 	public bool IsKey { get; set; }
@@ -408,17 +408,17 @@ public class TwitchModule : MonoBehaviour
 	public void AddToClaimQueue(string userNickname, bool viewRequested = false, bool viewPinRequested = false)
 	{
 		double seconds = CanClaimNow(userNickname, false).Second;
-		if (ClaimQueue.Any(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase))) return;
+		if (ClaimQueue.Any(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase))) return;
 		for (int i = 0; i < ClaimQueue.Count; i++)
 		{
-			if (ClaimQueue[i].Second < seconds) continue;
-			ClaimQueue.Insert(i, new Tuple<string, double, bool, bool>(userNickname, seconds, viewRequested, viewPinRequested));
+			if (ClaimQueue[i].Timestamp < seconds) continue;
+			ClaimQueue.Insert(i, new ClaimQueueItem(userNickname, seconds, viewRequested, viewPinRequested));
 			return;
 		}
-		ClaimQueue.Add(new Tuple<string, double, bool, bool>(userNickname, seconds, viewRequested, viewPinRequested));
+		ClaimQueue.Add(new ClaimQueueItem(userNickname, seconds, viewRequested, viewPinRequested));
 	}
 
-	public void RemoveFromClaimQueue(string userNickname) => ClaimQueue.RemoveAll(x => x.First.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
+	public void RemoveFromClaimQueue(string userNickname) => ClaimQueue.RemoveAll(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
 
 	public IEnumerator AutoAssignModule()
 	{
@@ -430,11 +430,11 @@ public class TwitchModule : MonoBehaviour
 
 			for (int i = 0; i < ClaimQueue.Count; i++)
 			{
-				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].First, ClaimQueue[i].Third, ClaimQueue[i].Fourth);
+				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].UserNickname, ClaimQueue[i].ViewRequested, ClaimQueue[i].ViewPinRequested);
 				if (!claim.First) continue;
 				IRCConnection.SendMessage(claim.Second);
-				if (ClaimQueue[i].Third)
-					ViewPin(user: ClaimQueue[i].First, pin: ClaimQueue[i].Fourth);
+				if (ClaimQueue[i].ViewRequested)
+					ViewPin(user: ClaimQueue[i].UserNickname, pin: ClaimQueue[i].ViewPinRequested);
 				ClaimQueue.RemoveAt(i);
 				break;
 			}
@@ -493,7 +493,7 @@ public class TwitchModule : MonoBehaviour
 
 		if (PlayerName == null)
 		{
-			bool wasQueued = ClaimQueue.Any(x => x.First == userNickName);
+			bool wasQueued = ClaimQueue.Any(cqi => cqi.UserNickname == userNickName);
 			if (wasQueued) RemoveFromClaimQueue(userNickName);
 
 			return new Tuple<bool, string>(false, !wasQueued ? string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText) : null);

@@ -113,7 +113,7 @@ static class ModuleCommands
 			return;
 		}
 
-		if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.First != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+		if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.UserNickname != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 		{
 			IRCConnection.SendMessage($"{user}, {module.Code} can only be reassigned if you have it claimed and the other user is in its claim queue.");
 			return;

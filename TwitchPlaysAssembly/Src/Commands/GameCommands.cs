@@ -452,7 +452,7 @@ static class GameCommands
 		var denied = new List<string>();
 		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && GameRoom.Instance.IsCurrentBomb(m.BombID) && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
 		{
-			if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.First != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+			if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.UserNickname != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 				denied.Add(module.Code);
 			else
 				ModuleCommands.Assign(module, user, targetUser);
