@@ -123,14 +123,14 @@ static class GameCommands
 			IRCConnection.SendMessage($"There are no more unclaimed{(vanilla ? " vanilla" : modded ? " modded" : null)} modules.");
 	}
 
-	[Command(@"(?:unclaim|release) *all")]
-	public static void UnclaimAll(string user)
+	[Command(@"(?:unclaim|release) *(?:all|(q(?:ueued?)?))")]
+	public static void UnclaimAll(string user, [Group(1)] bool queuedOnly)
 	{
 		foreach (var module in TwitchGame.Instance.Modules)
 		{
 			module.RemoveFromClaimQueue(user);
 			// Only unclaim the player’s own modules. Avoid releasing other people’s modules if the user is a moderator.
-			if (user.Equals(module.PlayerName, StringComparison.InvariantCultureIgnoreCase))
+			if (!queuedOnly && user.Equals(module.PlayerName, StringComparison.InvariantCultureIgnoreCase))
 				module.UnclaimModule(user);
 		}
 	}
