@@ -107,16 +107,27 @@ static class ModuleCommands
 	[Command(@"assign +(.+)")]
 	public static void Assign(TwitchModule module, string user, [Group(1)] string targetUser)
 	{
+		if (user.EqualsIgnoreCase(targetUser))
+			return;
+
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
 			IRCConnection.SendMessage($"{user}, assigning modules is not allowed in anarchy mode.");
 			return;
 		}
 
-		if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.UserNickname != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true))
 		{
-			IRCConnection.SendMessage($"{user}, {module.Code} can only be reassigned if you have it claimed and the other user is in its claim queue.");
-			return;
+			if (module.PlayerName != user || !module.ClaimQueue.Any(q => q.UserNickname != targetUser))
+			{
+				IRCConnection.SendMessage($"{user}, {module.Code} can only be reassigned if you have it claimed and the other user is in its claim queue.");
+				return;
+			}
+			if (TwitchGame.Instance.Modules.Count(md => !md.Solved && targetUser.EqualsIgnoreCase(md.PlayerName)) >= TwitchPlaySettings.data.ModuleClaimLimit)
+			{
+				IRCConnection.SendMessage($"{user}, {module.Code} cannot be reassigned because it would take the other user above their claim limit.");
+				return;
+			}
 		}
 
 		if (module.TakeInProgress != null)
