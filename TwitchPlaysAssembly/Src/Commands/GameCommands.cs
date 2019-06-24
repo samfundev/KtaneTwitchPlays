@@ -86,20 +86,21 @@ static class GameCommands
 			ShowClaimsOfUser(user, user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.NoOwnedModules);
 	}
 
-	[Command(@"(?:claim *(view)?|(view) *claim) *all")]
-	public static void ClaimAll(string user, bool isWhisper, [Group(1)] bool view1, [Group(2)] bool view2) => Claim(user, isWhisper, view1 || view2, TwitchGame.Instance.Modules.Where(m => !m.Solved));
-
-	[Command(@"(?:claim *(view)?|(view) *claim) +(?!all$)(.+)")]
-	public static void ClaimSpecific(string user, bool isWhisper, [Group(1)] bool view1, [Group(2)] bool view2, [Group(3)] string claimWhat)
+	[Command(@"((?:claim *|view *|pin *)+) +(.+)")]
+	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat)
 	{
 		var strings = claimWhat.SplitFull(' ', ',', ';');
-		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
+		var modules =
+			claimWhat.EqualsIgnoreCase("all") ? TwitchGame.Instance.Modules.Where(m => !m.Solved).ToArray() :
+			strings.Length == 0 ? null :
+			TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
+
 		if (modules == null || modules.Length == 0)
 		{
 			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
 			return;
 		}
-		Claim(user, isWhisper, view1 || view2, modules);
+		ClaimViewPin(user, isWhisper, modules, command.Contains("claim"), command.Contains("view"), command.Contains("pin"));
 	}
 
 	[Command(@"(?:claim *(any|van|mod) *(view)?|(view) *claim *(any|van|mod))")]
@@ -118,7 +119,7 @@ static class GameCommands
 			.FirstOrDefault();
 
 		if (unclaimed != null)
-			Claim(user, isWhisper, view1 || view2, new[] { unclaimed });
+			ClaimViewPin(user, isWhisper, new[] { unclaimed }, claim: true, view: view);
 		else
 			IRCConnection.SendMessage($"There are no more unclaimed{(vanilla ? " vanilla" : modded ? " modded" : null)} modules.");
 	}
@@ -188,20 +189,6 @@ static class GameCommands
 		}
 	}
 
-	[Command(@"(?:view( *pin)?|(pin *)?view) +(.+)")]
-	public static void ViewPin(string user, bool isWhisper, [Group(1)] bool pin1, [Group(2)] bool pin2, [Group(3)] string viewWhat)
-	{
-		var strings = viewWhat.SplitFull(' ', ',', ';');
-		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
-		if (modules == null || modules.Length == 0)
-		{
-			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
-			return;
-		}
-		foreach (var module in modules)
-			module.ViewPin(user, pin1 || pin2);
-	}
-
 	[Command(@"(?:find|search)((?: *claim| *view)*) +(.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
@@ -214,13 +201,8 @@ static class GameCommands
 
 		var claim = commands.ContainsIgnoreCase("claim");
 		var view = commands.ContainsIgnoreCase("view");
-		if (claim)
-			Claim(user, isWhisper, view, modules);
-		else if (view)
-		{
-			foreach (var module in modules)
-				module.ViewPin(user, pin: false);
-		}
+		if (claim || view)
+			ClaimViewPin(user, isWhisper, modules, claim: claim, view: view);
 		else
 			// Neither claim nor view: just “find”, so output top 3 search results
 			IRCConnection.SendMessage("{0}, modules are: {1}", user, !isWhisper, user,
@@ -250,18 +232,18 @@ static class GameCommands
 	{
 		if (!OtherModes.ZenModeOn)
 		{
-			IRCConnection.SendMessage($"Sorry {user}, the newbomb command is only allowed in Zen mode.", user, !isWhisper);
+			IRCConnection.SendMessage($"{user}, the newbomb command is only allowed in Zen mode.", user, !isWhisper);
 			return;
 		}
 		if (isWhisper)
 		{
-			IRCConnection.SendMessage($"Sorry {user}, the newbomb command is not allowed in whispers.", user, !isWhisper);
+			IRCConnection.SendMessage($"{user}, the newbomb command is not allowed in whispers.", user, !isWhisper);
 			return;
 		}
 
 		Leaderboard.Instance.GetRank(user, out var entry);
 		if (entry.SolveScore < TwitchPlaySettings.data.MinScoreForNewbomb && !UserAccess.HasAccess(user, AccessLevel.Defuser, true))
-			IRCConnection.SendMessage($"Sorry {user}, you don’t have enough points to use the newbomb command.");
+			IRCConnection.SendMessage($"{user}, you don’t have enough points to use the newbomb command.");
 		else
 		{
 			TwitchPlaySettings.AddRewardBonus(-TwitchPlaySettings.GetRewardBonus());
@@ -527,7 +509,7 @@ static class GameCommands
 	#endregion
 
 	#region Private methods
-	private static void Claim(string user, bool isWhisper, bool view, IEnumerable<TwitchModule> modules)
+	private static void ClaimViewPin(string user, bool isWhisper, IEnumerable<TwitchModule> modules, bool claim = false, bool view = false, bool pin = false)
 	{
 		if (isWhisper)
 		{
@@ -540,7 +522,12 @@ static class GameCommands
 			return;
 		}
 		foreach (var module in modules)
-			module.AddToClaimQueue(user, view);
+		{
+			if (claim)
+				module.AddToClaimQueue(user, view, pin);
+			else if (view)
+				module.ViewPin(user, pin);
+		}
 	}
 
 	private static IEnumerable<TwitchModule> FindModules(string[] queries, Func<TwitchModule, bool> predicate = null) => TwitchGame.Instance.Modules
