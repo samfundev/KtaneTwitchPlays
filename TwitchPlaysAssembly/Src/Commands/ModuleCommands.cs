@@ -104,12 +104,18 @@ static class ModuleCommands
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleReady, module.Code, user, module.HeaderText);
 	}
 
-	[Command(@"assign +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"assign +(.+)")]
 	public static void Assign(TwitchModule module, string user, [Group(1)] string targetUser)
 	{
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessageFormat("Sorry {0}, assigning modules is not allowed in anarchy mode.", user);
+			IRCConnection.SendMessage($"{user}, assigning modules is not allowed in anarchy mode.");
+			return;
+		}
+
+		if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.First != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+		{
+			IRCConnection.SendMessage($"{user}, {module.Code} can only be reassigned if you have it claimed and the other user is in its claim queue.");
 			return;
 		}
 
@@ -130,9 +136,9 @@ static class ModuleCommands
 	public static void Take(TwitchModule module, string user, bool isWhisper)
 	{
 		if (isWhisper)
-			IRCConnection.SendMessageFormat("Sorry {0}, taking modules is not allowed in whispers.", user);
+			IRCConnection.SendMessage($"{user}, taking modules is not allowed in whispers.");
 		else if (TwitchPlaySettings.data.AnarchyMode)
-			IRCConnection.SendMessageFormat("Sorry {0}, taking modules is not allowed in anarchy mode.", user);
+			IRCConnection.SendMessage($"{user}, taking modules is not allowed in anarchy mode.");
 
 		// Attempt to take over from another user
 		else if (module.PlayerName != null && user != module.PlayerName)

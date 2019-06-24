@@ -439,12 +439,28 @@ static class GameCommands
 		IRCConnection.SendMessage("Claims have been disabled.");
 	}
 
-	[Command(@"assign +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"assign +(\S+) +(.+)")]
 	public static void AssignModuleTo([Group(1)] string targetUser, [Group(2)] string queries, string user)
 	{
+		if (TwitchPlaySettings.data.AnarchyMode)
+		{
+			IRCConnection.SendMessage($"{user}, assigning modules is not allowed in anarchy mode.");
+			return;
+		}
+
 		var query = queries.SplitFull(' ', ',', ';');
+		var denied = new List<string>();
 		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && GameRoom.Instance.IsCurrentBomb(m.BombID) && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
-			ModuleCommands.Assign(module, user, targetUser);
+		{
+			if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.First != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+				denied.Add(module.Code);
+			else
+				ModuleCommands.Assign(module, user, targetUser);
+		}
+		if (denied.Count == 1)
+			IRCConnection.SendMessage($"{user}, since you’re not a moderator, {denied.First()} has not been reassigned.", user, false);
+		else if (denied.Count > 1)
+			IRCConnection.SendMessage($"{user}, since you’re not a moderator, {denied.Take(denied.Count - 1).Join(", ")} and {denied.Last()} have not been reassigned.", user, false);
 	}
 
 	[Command(@"bot ?unclaim( ?all)?", AccessLevel.Mod, AccessLevel.Mod)]
@@ -515,12 +531,12 @@ static class GameCommands
 	{
 		if (isWhisper)
 		{
-			IRCConnection.SendMessage($"Sorry {user}, claiming modules is not allowed in whispers.", user, false);
+			IRCConnection.SendMessage($"{user}, claiming modules is not allowed in whispers.", user, false);
 			return;
 		}
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
-			IRCConnection.SendMessage($"Sorry {user}, claiming modules is not allowed in anarchy mode.");
+			IRCConnection.SendMessage($"{user}, claiming modules is not allowed in anarchy mode.");
 			return;
 		}
 		foreach (var module in modules)
