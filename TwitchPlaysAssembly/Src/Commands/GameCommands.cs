@@ -146,7 +146,7 @@ static class GameCommands
 			return;
 		}
 
-		foreach (var module in TwitchGame.Instance.Modules)
+		foreach (var module in modules)
 			module.UnclaimModule(user);
 	}
 
