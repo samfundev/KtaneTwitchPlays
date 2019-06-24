@@ -151,8 +151,16 @@ static class ModuleCommands
 		else if (TwitchPlaySettings.data.AnarchyMode)
 			IRCConnection.SendMessage($"{user}, taking modules is not allowed in anarchy mode.");
 
+		// Module is already claimed by the same user
+		else if (module.PlayerName == user)
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleAlreadyOwned, user, module.Code, module.HeaderText);
+
+		// Module is not claimed at all: just claim it
+		else if (module.PlayerName == null)
+			IRCConnection.SendMessage(module.ClaimModule(user).Second);
+
 		// Attempt to take over from another user
-		else if (module.PlayerName != null && user != module.PlayerName)
+		else
 		{
 			module.AddToClaimQueue(user);
 			if (module.TakeInProgress == null)
@@ -164,18 +172,6 @@ static class ModuleCommands
 			else
 				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeInProgress, user, module.Code, module.HeaderText);
 		}
-
-		// Module is already claimed by the same user
-		else if (module.PlayerName != null)
-		{
-			if (!module.PlayerName.Equals(user))
-				module.AddToClaimQueue(user);
-			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleAlreadyOwned, user, module.Code, module.HeaderText);
-		}
-
-		// Module is not claimed at all: just claim it
-		else
-			IRCConnection.SendMessage(module.ClaimModule(user).Second);
 	}
 
 	[Command(@"mine")]
