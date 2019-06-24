@@ -540,11 +540,7 @@ static class GameCommands
 			return;
 		}
 		foreach (var module in modules)
-		{
 			module.AddToClaimQueue(user, view);
-			if (view)
-				module.ViewPin(user, pin: false);
-		}
 	}
 
 	private static IEnumerable<TwitchModule> FindModules(string[] queries, Func<TwitchModule, bool> predicate = null) => TwitchGame.Instance.Modules

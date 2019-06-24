@@ -412,10 +412,8 @@ static class ModuleCommands
 			return;
 		}
 
-		var result = module.ClaimModule(user);
+		var result = module.ClaimModule(user, view, pin);
 		IRCConnection.SendMessage(result.Second);
-		if (result.First && view)
-			module.ViewPin(user, pin);
 	}
 	#endregion
 }

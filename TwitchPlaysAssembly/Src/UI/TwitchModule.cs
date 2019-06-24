@@ -482,6 +482,8 @@ public class TwitchModule : MonoBehaviour
 			PlayerName = userNickName;
 			if (CameraPriority < CameraPriority.Claimed)
 				CameraPriority = CameraPriority.Claimed;
+			if (viewRequested)
+				ViewPin(userNickName, viewPinRequested);
 			return new Tuple<bool, string>(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, Code, PlayerName, HeaderText));
 		}
 	}
