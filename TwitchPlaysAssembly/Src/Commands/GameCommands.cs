@@ -109,7 +109,7 @@ static class GameCommands
 
 		var vanilla = claimWhat.EqualsIgnoreCase("van");
 		var modded = claimWhat.EqualsIgnoreCase("mod");
-		var view = claimWhat.EqualsIgnoreCase("view");
+		var view = view1 || view2;
 		var avoid = new[] { "Forget Everything", "Forget Me Not", "Souvenir", "The Swan", "The Time Keeper", "Turn The Key", "Turn The Keys" };
 
 		var unclaimed = TwitchGame.Instance.Modules
