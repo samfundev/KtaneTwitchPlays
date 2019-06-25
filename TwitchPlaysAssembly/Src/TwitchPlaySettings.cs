@@ -173,11 +173,11 @@ public class TwitchPlaySettingsData
 
 	public string DoYouEvenPlayBro = "FailFish {0}, do you even play this game?";
 
-	public string TurnBombOnSolve = "Turning to the other side when Module {0} ({1}) is solved";
+	public string TurnBombOnSolve = "Turning to the other side when module {0} ({1}) is solved";
 	public string CancelBombTurn = "Bomb turn on Module {0} ({1}) solve cancelled";
 
-	public string ModuleClaimed = "{1} has claimed Module {0} ({2}).";
-	public string ModuleUnclaimed = "{1} has released Module {0} ({2}).";
+	public string ModuleClaimed = "{1} has claimed module {0} ({2}).";
+	public string ModuleUnclaimed = "{1} has released module {0} ({2}).";
 	public string ModuleNotClaimed = "@{0}, nobody has claimed module {1} ({2}).";
 	public string ModuleAlreadyOwned = "@{0}, you already have a claim on {1} ({2})";
 
@@ -186,13 +186,12 @@ public class TwitchPlaySettingsData
 
 	public string TakeModule = "@{0}, {1} wishes to take module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
 	public string TakeInProgress = "@{0}, there is already a takeover attempt for module {1} ({2}) in progress.";
-	public string ModuleAbandoned = "{1} has released Module {0} ({2}).";
-	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
-	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules. The claim has been queued.";
-	public string NoUnclaimed = "{0}, There are no more unclaimed modules.";
-	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
+	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2}).";
+	public string TooManyClaimed = "ItsBoshyTime {0}, you may only have {1} claimed modules. The claim has been queued.";
+	public string NoUnclaimed = "{0}, there are no more unclaimed modules.";
+	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}.";
 	public string AlreadyClaimed = "@{2}, module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
-	public string AlreadySolved = "@{2}, module {0} ({3}) has already been solved by {1}";
+	public string AlreadySolved = "@{2}, module {0} ({3}) has already been solved by {1}.";
 	public string ClaimCooldown = "@{2}, module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
 
 	public string OwnedModule = "“{1}” ({0})";
@@ -390,7 +389,6 @@ public class TwitchPlaySettingsData
 
 		valid &= ValidateString(ref TakeModule, data.TakeModule, 4);
 		valid &= ValidateString(ref TakeInProgress, data.TakeInProgress, 3);
-		valid &= ValidateString(ref ModuleAbandoned, data.ModuleAbandoned, 3);
 		valid &= ValidateString(ref ModuleIsMine, data.ModuleIsMine, 3);
 		valid &= ValidateString(ref TooManyClaimed, data.TooManyClaimed, 2);
 		valid &= ValidateString(ref NoUnclaimed, data.NoUnclaimed, 1);
