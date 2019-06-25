@@ -86,12 +86,12 @@ static class GameCommands
 			ShowClaimsOfUser(user, user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.NoOwnedModules);
 	}
 
-	[Command(@"((?:claim *|view *|pin *)+) +(.+)")]
-	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat)
+	[Command(@"((?:claim *|view *|pin *)+)(?: +(.+)| *(all))")]
+	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat, [Group(3)] bool all)
 	{
-		var strings = claimWhat.SplitFull(' ', ',', ';');
+		var strings = all ? null : claimWhat.SplitFull(' ', ',', ';');
 		var modules =
-			claimWhat.EqualsIgnoreCase("all") ? TwitchGame.Instance.Modules.Where(m => !m.Solved).ToArray() :
+			all ? TwitchGame.Instance.Modules.Where(m => !m.Solved).ToArray() :
 			strings.Length == 0 ? null :
 			TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 
