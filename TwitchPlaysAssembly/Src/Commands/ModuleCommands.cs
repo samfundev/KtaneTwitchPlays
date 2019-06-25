@@ -86,11 +86,22 @@ static class ModuleCommands
 	[Command("(unclaim|release|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
 	public static void Unclaim(TwitchModule module, string user, [Group(1)] string cmd)
 	{
+		// If module is already unclaimed, just remove from claim queue
+		if (module.PlayerName == null)
+		{
+			module.RemoveFromClaimQueue(user);
+			return;
+		}
+
+		// Error if a non-mod tries to unclaim someone else’s module
+		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true) && module.PlayerName != user)
+		{
+			IRCConnection.SendMessage($"{user}, module {module.Code} ({module.HeaderText}) is not claimed by you.");
+			return;
+		}
+
 		var result = module.UnclaimModule(user);
-		// If UnclaimModule responds with a null message, someone tried to unclaim a module that no one has claimed but they were waiting to claim.
-		// It's a valid command and they were removed from the queue but no message is sent.
-		if (result.Second != null)
-			IRCConnection.SendMessage(result.Second);
+		IRCConnection.SendMessage(result.Second);
 
 		if (result.First && cmd.Contains("v"))
 			TwitchGame.ModuleCameras?.UnviewModule(module);
@@ -134,6 +145,7 @@ static class ModuleCommands
 		{
 			module.StopCoroutine(module.TakeInProgress);
 			module.TakeInProgress = null;
+			module.TakeUser = null;
 		}
 
 		module.PlayerName = targetUser;
@@ -167,6 +179,7 @@ static class ModuleCommands
 			{
 				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeModule, module.PlayerName, user, module.Code, module.HeaderText);
 				module.TakeInProgress = module.TakeModule();
+				module.TakeUser = user;
 				module.StartCoroutine(module.TakeInProgress);
 			}
 			else
@@ -189,6 +202,7 @@ static class ModuleCommands
 			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleIsMine, module.PlayerName, module.Code, module.HeaderText);
 			module.StopCoroutine(module.TakeInProgress);
 			module.TakeInProgress = null;
+			module.TakeUser = null;
 		}
 
 		// The module isn’t claimed: just claim it
@@ -202,19 +216,26 @@ static class ModuleCommands
 		// If the user has a claim on the module but there’s no takeover attempt, just ignore this command
 	}
 
-	[Command(@"canceltake", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"canceltake")]
 	public static void CancelTake(TwitchModule module, string user, bool isWhisper)
 	{
-		// cancel the takeover attempt if there is one
-		if (module.TakeInProgress != null)
+		if (module.TakeInProgress == null)
 		{
-			IRCConnection.SendMessage(
-				$"The takeover attempt on module {module.Code} ({module.HeaderText}) was manually cancelled by {user}");
-			module.StopCoroutine(module.TakeInProgress);
-			module.TakeInProgress = null;
+			IRCConnection.SendMessage($"{user}, there are no takeover attempts on module {module.Code} ({module.HeaderText}).", user, !isWhisper);
+			return;
 		}
-		else
-			IRCConnection.SendMessage("There are no takeover attempts on this module", user, !isWhisper);
+
+		if (!UserAccess.HasAccess(user, AccessLevel.Mod) && module.TakeUser != user)
+		{
+			IRCConnection.SendMessage($"{user}, if you’re not a mod, you can only cancel your own takeover attempts.");
+			return;
+		}
+
+		// Cancel the takeover attempt
+		IRCConnection.SendMessage($"{module.TakeUser}’s takeover of module {module.Code} ({module.HeaderText}) was cancelled by {user}.");
+		module.StopCoroutine(module.TakeInProgress);
+		module.TakeInProgress = null;
+		module.TakeUser = null;
 	}
 
 	[Command(@"(points|score)")]

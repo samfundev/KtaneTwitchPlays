@@ -85,6 +85,7 @@ public class TwitchModule : MonoBehaviour
 	}
 
 	public IEnumerator TakeInProgress;
+	public string TakeUser;
 	public static List<string> ClaimedList = new List<string>();
 	#endregion
 
@@ -343,6 +344,7 @@ public class TwitchModule : MonoBehaviour
 		{
 			StopCoroutine(TakeInProgress);
 			TakeInProgress = null;
+			TakeUser = null;
 		}
 		if (PlayerName == null) return;
 	}
@@ -361,11 +363,7 @@ public class TwitchModule : MonoBehaviour
 		yield return new WaitForSecondsRealtime(60.0f);
 		SetBannerColor(unclaimedBackgroundColor);
 		if (PlayerName != null)
-		{
-			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleAbandoned, Code, PlayerName, HeaderText);
-			PlayerName = null;
-			TakeInProgress = null;
-		}
+			UnclaimModule(PlayerName);
 	}
 
 	public IEnumerator EndClaimCooldown()
@@ -445,17 +443,17 @@ public class TwitchModule : MonoBehaviour
 	{
 		if (Solver.AttemptedForcedSolve)
 		{
-			return new Tuple<bool, string>(false, string.Format("Sorry @{1}, module ID {0} ({2}) is being solved automatically.", Code, userNickName, HeaderText));
+			return new Tuple<bool, string>(false, $"@{userNickName}, module {Code} ({HeaderText}) is being solved automatically.");
 		}
 
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
-			return new Tuple<bool, string>(false, $"Sorry {userNickName}, claiming modules is not allowed in anarchy mode.");
+			return new Tuple<bool, string>(false, $"{userNickName}, claiming modules is not allowed in anarchy mode.");
 		}
 
 		if (!ClaimsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
 		{
-			return new Tuple<bool, string>(false, $"Sorry {userNickName}, claims have been disabled.");
+			return new Tuple<bool, string>(false, $"{userNickName}, claims have been disabled.");
 		}
 
 		if (PlayerName != null)
@@ -488,39 +486,36 @@ public class TwitchModule : MonoBehaviour
 		}
 	}
 
+	// Unclaims a module WITHOUT checking if the user has permission to do so.
 	public Tuple<bool, string> UnclaimModule(string userNickName)
 	{
 		if (Solved)
 			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, BombComponent.GetModuleDisplayName()));
 
-		if (PlayerName == null)
-		{
-			bool wasQueued = ClaimQueue.Any(cqi => cqi.UserNickname == userNickName);
-			if (wasQueued) RemoveFromClaimQueue(userNickName);
-
-			return new Tuple<bool, string>(false, !wasQueued ? string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText) : null);
-		}
-
 		RemoveFromClaimQueue(userNickName);
-		if (PlayerName.Equals(userNickName, StringComparison.InvariantCultureIgnoreCase) || UserAccess.HasAccess(userNickName, AccessLevel.Mod, true))
+
+		if (PlayerName == null)
+			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText));
+		RemoveFromClaimQueue(PlayerName);
+
+		// If a takeover is in progress, assign the module to the TakeUser directly
+		string assignToUser = null;
+		if (TakeInProgress != null)
 		{
-			RemoveFromClaimQueue(PlayerName);
-			if (TakeInProgress != null)
-			{
-				StopCoroutine(TakeInProgress);
-				TakeInProgress = null;
-			}
-			SetBannerColor(unclaimedBackgroundColor);
-			string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, Code, PlayerName, HeaderText);
-			PlayerName = null;
-			if (CameraPriority > CameraPriority.Interacted)
-				CameraPriority = CameraPriority.Interacted;
-			return new Tuple<bool, string>(true, messageOut);
+			assignToUser = TakeUser;
+			StopCoroutine(TakeInProgress);
+			TakeInProgress = null;
+			TakeUser = null;
 		}
-		else
-		{
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText));
-		}
+
+		SetBannerColor(unclaimedBackgroundColor);
+		string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, Code, PlayerName, HeaderText);
+		PlayerName = null;
+		if (CameraPriority > CameraPriority.Interacted)
+			CameraPriority = CameraPriority.Interacted;
+		if (assignToUser != null)
+			return ClaimModule(assignToUser);
+		return new Tuple<bool, string>(true, messageOut);
 	}
 
 	public void CommandError(string userNickName, string message) => IRCConnection.SendMessageFormat(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message);
