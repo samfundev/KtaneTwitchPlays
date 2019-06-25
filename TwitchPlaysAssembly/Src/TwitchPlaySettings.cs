@@ -131,11 +131,11 @@ public class TwitchPlaySettingsData
 	public string TPSharedFolder = Path.Combine(Application.persistentDataPath, "TwitchPlaysShared");
 	public string TPSolveStrikeLog = "TPLog.txt";
 
-	public string InvalidCommand = "Sorry @{0}, that command for {1} ({2}) is invalid.";
-	public string CommandError = "Sorry @{0}, Module {1} ({2}) responded with: {3}";
+	public string InvalidCommand = "@{0}, that command for {1} ({2}) is invalid.";
+	public string CommandError = "@{0}, Module {1} ({2}) responded with: {3}";
 
-	public string HoldableInvalidCommand = "Sorry @{1}, that command for Holdable !{0} is invalid.";
-	public string HoldableCommandError = "Sorry @{1}, Holdable !{0} responded with the following error: {2}";
+	public string HoldableInvalidCommand = "@{1}, that command for Holdable !{0} is invalid.";
+	public string HoldableCommandError = "@{1}, Holdable !{0} responded with the following error: {2}";
 
 	public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
 	public string AwardVsSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. {4} HP from {5}. VoteYea";
@@ -178,22 +178,22 @@ public class TwitchPlaySettingsData
 
 	public string ModuleClaimed = "{1} has claimed Module {0} ({2}).";
 	public string ModuleUnclaimed = "{1} has released Module {0} ({2}).";
-	public string ModuleNotClaimed = "Sorry @{0}, nobody has claimed Module {1} ({2}).";
+	public string ModuleNotClaimed = "@{0}, nobody has claimed module {1} ({2}).";
 	public string ModuleAlreadyOwned = "@{0}, you already have a claim on {1} ({2})";
 
 	public string AssignModule = "Module {0} ({3}) assigned to {1} by {2}";
 	public string ModuleReady = "{1} says module {0} ({2}) is ready to be submitted";
 
-	public string TakeModule = "@{0}, {1} wishes to take Module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
-	public string TakeInProgress = "Sorry @{0}, There is already a takeover attempt for Module {1} ({2}) in progress.";
+	public string TakeModule = "@{0}, {1} wishes to take module {2} ({3}). It will be freed up in one minute unless you type !{2} mine.";
+	public string TakeInProgress = "@{0}, there is already a takeover attempt for module {1} ({2}) in progress.";
 	public string ModuleAbandoned = "{1} has released Module {0} ({2}).";
 	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2})";
 	public string TooManyClaimed = "ItsBoshyTime Sorry, {0}, you may only have {1} claimed modules. The claim has been queued.";
-	public string NoUnclaimed = "Sorry {0}, There are no more unclaimed modules.";
+	public string NoUnclaimed = "{0}, There are no more unclaimed modules.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}";
-	public string AlreadyClaimed = "Sorry @{2}, Module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
-	public string AlreadySolved = "Sorry @{2}, Module {0} ({3}) has already been solved by {1}";
-	public string ClaimCooldown = "Sorry @{2}, Module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
+	public string AlreadyClaimed = "@{2}, module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
+	public string AlreadySolved = "@{2}, module {0} ({3}) has already been solved by {1}";
+	public string ClaimCooldown = "@{2}, module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
 
 	public string OwnedModule = "“{1}” ({0})";
 	public string OwnedModuleList = "@{0}, your claimed modules are: {1}";
@@ -201,18 +201,18 @@ public class TwitchPlaySettingsData
 	public string OwnedModuleListOther = "@{0}’s claimed modules are: {1}";
 	public string NoOwnedModulesOther = "@{0} has no claimed modules.";
 
-	public string TwitchPlaysDisabled = "Sorry @{0}, Twitch Plays is only enabled for Authorized defusers";
-	public string MissionBinderDisabled = "Sorry @{0}, Only authorized users may access the mission binder";
-	public string FreePlayDisabled = "Sorry @{0}, Only authorized users may access the freeplay briefcase";
-	public string FreePlayNeedyDisabled = "Sorry @{0}, Only authorized users may enable/disable Needy modules";
-	public string FreePlayHardcoreDisabled = "Sorry @{0}, Only authorized users may enable/disable Hardcore mode";
-	public string FreePlayModsOnlyDisabled = "Sorry @{0}, Only authorized users may enable/disable Mods only mode";
-	public string TimeModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Time Mode";
-	public string VsModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable VS Mode";
-	public string ZenModeCommandDisabled = "Sorry @{0}, Only authorized users may enable/disable Zen Mode";
-	public string RunCommandDisabled = "Sorry @{0}, Only authorized users may use the !run command.";
-	public string ProfileCommandDisabled = "Sorry @{0}, profile management is currently disabled.";
-	public string RetryInactive = "Sorry, retry is inactive. Returning to hallway instead.";
+	public string TwitchPlaysDisabled = "@{0}, Twitch Plays is only enabled for Authorized defusers";
+	public string MissionBinderDisabled = "@{0}, Only authorized users may access the mission binder";
+	public string FreePlayDisabled = "@{0}, Only authorized users may access the freeplay briefcase";
+	public string FreePlayNeedyDisabled = "@{0}, Only authorized users may enable/disable Needy modules";
+	public string FreePlayHardcoreDisabled = "@{0}, Only authorized users may enable/disable Hardcore mode";
+	public string FreePlayModsOnlyDisabled = "@{0}, Only authorized users may enable/disable Mods only mode";
+	public string TimeModeCommandDisabled = "@{0}, Only authorized users may enable/disable Time Mode";
+	public string VsModeCommandDisabled = "@{0}, Only authorized users may enable/disable VS Mode";
+	public string ZenModeCommandDisabled = "@{0}, Only authorized users may enable/disable Zen Mode";
+	public string RunCommandDisabled = "@{0}, Only authorized users may use the !run command.";
+	public string ProfileCommandDisabled = "@{0}, profile management is currently disabled.";
+	public string RetryInactive = "Retry is inactive. Returning to hallway instead.";
 
 	public string ProfileActionUseless = "That profile ({0}) is already {1}.";
 	public string ProfileNotWhitelisted = "That profile ({0}) cannot be enabled/disabled.";
@@ -243,7 +243,7 @@ public class TwitchPlaySettingsData
 	public string GiveBonusSolves = "{0} awarded {1} solves by {2}";
 	public string GiveBonusStrikes = "{0} awarded {1} strikes by {2}";
 
-	public string UnsubmittableAnswerPenalty = "Sorry {0}, The answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
+	public string UnsubmittableAnswerPenalty = "{0}, the answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
 
 	public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
