@@ -949,6 +949,8 @@ public abstract class ComponentSolver
 
 	private void AwardStrikes(string userNickName, int strikeCount)
 	{
+		List<string> messageParts = new List<string>();
+
 		string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
 		int strikePenalty = ModInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		int hpPenalty = 0;
@@ -963,22 +965,22 @@ public abstract class ComponentSolver
 				hpPenalty = team == OtherModes.Team.Good
 					? OtherModes.GetGoodHealth() > 30 ? 30 : OtherModes.GetGoodHealth() < 2 ? 0 : OtherModes.GetGoodHealth() - 1
 					: OtherModes.GetEvilHealth() > 30 ? 30 : OtherModes.GetEvilHealth() < 2 ? 0 : OtherModes.GetEvilHealth() - 1;
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardVsStrike, Code,
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsStrike, Code,
 					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", team == OtherModes.Team.Good ? "the good team" : "the evil team", string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText,
-					hpPenalty == 0 ? team == OtherModes.Team.Good ? OtherModes.GetGoodHealth() : OtherModes.GetEvilHealth() : hpPenalty, strikePenalty, userNickName);
+					hpPenalty == 0 ? team == OtherModes.Team.Good ? OtherModes.GetGoodHealth() : OtherModes.GetEvilHealth() : hpPenalty, strikePenalty, userNickName));
 			}
 		}
 		else
 		{
 			if (!string.IsNullOrEmpty(userNickName))
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardStrike, Code,
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardStrike, Code,
 					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", userNickName,
 					string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage,
-					headerText, strikePenalty);
+					headerText, strikePenalty));
 			else
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardRewardStrike, Code,
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardRewardStrike, Code,
 					strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", headerText,
-					string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage);
+					string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage));
 		}
 
 		if (strikeCount <= 0) return;
@@ -990,8 +992,7 @@ public abstract class ComponentSolver
 		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
 		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
 		if (currentReward != originalReward)
-			IRCConnection.SendMessage(
-				$"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
+			messageParts.Add($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 
 		if (OtherModes.VSModeOn)
 		{
@@ -1050,7 +1051,7 @@ public abstract class ComponentSolver
 				Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer - timeReducer;
 				tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
-			IRCConnection.SendMessage(tempMessage);
+			messageParts.Add(tempMessage);
 			Module.Bomb.StrikeCount = 0;
 			TwitchGame.ModuleCameras.UpdateStrikes();
 		}
@@ -1065,6 +1066,8 @@ public abstract class ComponentSolver
 		}
 		StrikeMessage = string.Empty;
 		StrikeMessageConflict = false;
+
+		IRCConnection.SendMessage(messageParts.Join());
 	}
 
 	protected void AddAbandonedModule(KMBombModule module)
