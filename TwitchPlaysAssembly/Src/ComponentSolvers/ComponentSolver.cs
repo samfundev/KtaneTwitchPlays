@@ -926,7 +926,7 @@ public abstract class ComponentSolver
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
 		}
 
-		if (!OtherModes.TimeModeOn)
+		if (OtherModes.TimeModeOn)
 		{
 			float time = OtherModes.GetAdjustedMultiplier() * componentValue;
 			if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
