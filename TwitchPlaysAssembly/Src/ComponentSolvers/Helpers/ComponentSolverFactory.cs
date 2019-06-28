@@ -580,7 +580,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SimonSingsModule"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpeaksModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpinsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 5, CameraPinningAlwaysAllowed = true };
+		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 0, CameraPinningAlwaysAllowed = true, DoesTheRightThing = true };
 		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
 		ModComponentSolverInformation["SymbolCycleModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["TennisModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
