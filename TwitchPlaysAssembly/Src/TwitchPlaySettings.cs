@@ -247,6 +247,7 @@ public class TwitchPlaySettingsData
 	public string GiveBonusStrikes = "{0} awarded {1} strikes by {2}";
 
 	public string UnsubmittableAnswerPenalty = "{0}, the answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
+	public string PointsAwardedByModule = "{0} receives {1} point{2} from module {3} ({4})!";
 
 	public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 

@@ -292,6 +292,15 @@ public abstract class ComponentSolver
 							Module.Bomb.Bomb.GetTimer().TimeRemaining = skipTimeTo;
 					}
 				}
+				else if (currentString.RegexMatch(out match, @"^awardpoints (-?\d+)$") && int.TryParse(match.Groups[1].Value, out int pointsAwarded))
+				{
+					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
+					{
+						Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
+						IRCConnection.SendMessageFormat(TwitchPlaySettings.data.PointsAwardedByModule,
+							_currentUserNickName, pointsAwarded, pointsAwarded> 1 ? "s" : "", Code, ModInfo.moduleDisplayName);
+					}
+				}
 				else if (TwitchPlaySettings.data.EnableDebuggingCommands)
 					DebugHelper.Log($"Unprocessed string: {currentString}");
 			}
