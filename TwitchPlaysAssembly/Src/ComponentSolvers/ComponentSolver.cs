@@ -280,7 +280,7 @@ public abstract class ComponentSolver
 					TryCancel = false;
 					break;
 				}
-				else if (currentString.RegexMatch(out match, "^(?:skiptime|settime) ([0-9:.]+)") &&
+				else if (currentString.RegexMatch(out match, "^(?:skiptime|settime) ([0-9:.]+)$") &&
 						match.Groups[1].Value.TryParseTime(out float skipTimeTo))
 				{
 					if (TwitchGame.Instance.Modules.Where(x => x.BombID == Module.BombID && x.BombComponent.IsSolvable && !x.Solved).All(x => x.Solver.SkipTimeAllowed))
