@@ -10,14 +10,15 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	public TranslatedPasswordComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		_downButtons = (KMSelectable[]) DownButtonField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
-		_submitButton = (MonoBehaviour) SubmitButtonField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
-		_display = (TextMesh[]) DisplayField.GetValue(module.BombComponent.GetComponent(PasswordComponentType));
+		_component = module.BombComponent.GetComponent(PasswordComponentType);
+		_downButtons = (KMSelectable[]) DownButtonField.GetValue(_component);
+		_submitButton = (MonoBehaviour) SubmitButtonField.GetValue(_component);
+		_display = (TextMesh[]) DisplayField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]").Clone();
 
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType);
+		string language = TranslatedModuleHelper.GetManualCodeAddOn(_component, PasswordComponentType);
 		if (language != null) ManualCode = $"Password{language}";
-		ModInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(module.BombComponent.GetComponent(PasswordComponentType), PasswordComponentType)}";
+		ModInfo.moduleDisplayName = $"Passwords Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(_component, PasswordComponentType)}";
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
@@ -63,10 +64,15 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		// Special case for Korean (convert Hangul to Jamos)
-		string lettersToSubmit = commandParts[0].Length > 0 && commandParts[0][0] >= '가' && commandParts[0][0] <= '힣'
-			? commandParts[0].SelectMany(DeconstructHangulSyllableToJamos).Select(ch => SimilarJamos.ContainsKey(ch) ? SimilarJamos[ch] : ch).Join("")
-			: commandParts[0];
+		string lettersToSubmit =
+			// Special case for Korean (convert Hangul to Jamos)
+			commandParts[0].Length > 0 && commandParts[0][0] >= '가' && commandParts[0][0] <= '힣'
+				? commandParts[0].SelectMany(DeconstructHangulSyllableToJamos).Select(ch => SimilarJamos.ContainsKey(ch) ? SimilarJamos[ch] : ch).Join("") :
+			// Special case for Hebrew (expects input back to front)
+			TranslatedModuleHelper.GetLanguageCode(_component, PasswordComponentType) == "he"
+				? commandParts[0].Reverse().Join("") :
+			// Usual case
+			commandParts[0];
 
 		if (lettersToSubmit.Length != 5)
 			yield break;
@@ -135,4 +141,5 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	private readonly MonoBehaviour _submitButton;
 	private readonly KMSelectable[] _downButtons;
 	private readonly TextMesh[] _display;
+	private readonly Component _component;
 }
