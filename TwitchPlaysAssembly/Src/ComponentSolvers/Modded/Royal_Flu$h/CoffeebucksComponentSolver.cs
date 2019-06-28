@@ -24,8 +24,8 @@ public class CoffeebucksComponentSolver : ComponentSolver
 		{ "name", 15 },
 		{ "milk", 11 },
 		{ "cream", 12 },
-		{ "sprinkles", 13 },
-		{ "gluten", 14 },
+		{ "gluten", 13 },
+		{ "sprinkles", 14 },
 	};
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
