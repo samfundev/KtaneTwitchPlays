@@ -833,6 +833,8 @@ public abstract class ComponentSolver
 
 	private void AwardSolve(string userNickName, int componentValue)
 	{
+		List<string> messageParts = new List<string>();
+
 		if (OtherModes.ZenModeOn) componentValue = (int) Math.Ceiling(componentValue * 0.20f);
 		if (userNickName == null)
 			TwitchPlaySettings.AddRewardBonus(componentValue);
@@ -869,12 +871,12 @@ public abstract class ComponentSolver
 			}
 			string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
 			if (OtherModes.VSModeOn && !UnsupportedModule)
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
 					componentValue, headerText, HPDamage,
-					team == OtherModes.Team.Evil ? "the evil team" : "the good team");
+					team == OtherModes.Team.Evil ? "the evil team" : "the good team"));
 			else
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
-					headerText);
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
+					headerText));
 			string recordMessageTone =
 				$"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
 			Leaderboard.Instance?.AddSolve(userNickName);
@@ -924,19 +926,23 @@ public abstract class ComponentSolver
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
 		}
 
-		if (!OtherModes.TimeModeOn) return;
-		float time = OtherModes.GetAdjustedMultiplier() * componentValue;
-		if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
+		if (!OtherModes.TimeModeOn)
 		{
-			Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
-			IRCConnection.SendMessage($"Bomb time increased by the minimum {TwitchPlaySettings.data.TimeModeMinimumTimeGained} seconds!");
+			float time = OtherModes.GetAdjustedMultiplier() * componentValue;
+			if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
+			{
+				Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + TwitchPlaySettings.data.TimeModeMinimumTimeGained;
+				messageParts.Add($"Bomb time increased by the minimum {TwitchPlaySettings.data.TimeModeMinimumTimeGained} seconds!");
+			}
+			else
+			{
+				Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + time;
+				messageParts.Add($"Bomb time increased by {Math.Round(time, 1)} seconds!");
+			}
+			OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 		}
-		else
-		{
-			Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + time;
-			IRCConnection.SendMessage($"Bomb time increased by {Math.Round(time, 1)} seconds!");
-		}
-		OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
+
+		IRCConnection.SendMessage(messageParts.Join());
 	}
 
 	private void AwardStrikes(int strikeCount) => AwardStrikes(null, strikeCount);
