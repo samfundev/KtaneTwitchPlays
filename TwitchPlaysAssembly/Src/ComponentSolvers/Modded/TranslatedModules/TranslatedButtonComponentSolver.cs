@@ -85,7 +85,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 	{
 		ComponentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
 		ButtonField = ComponentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
-		SelectedField = ComponentType.GetField("isSelected", BindingFlags.NonPublic | BindingFlags.Instance);
+		SelectedField = ComponentType.GetField("isModuleSelected", BindingFlags.NonPublic | BindingFlags.Instance);
 		StripMaterialField = ComponentType.GetField("StripMatColor", BindingFlags.Public | BindingFlags.Instance);
 	}
 
