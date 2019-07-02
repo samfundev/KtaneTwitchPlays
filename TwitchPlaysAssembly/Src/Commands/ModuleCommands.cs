@@ -83,7 +83,7 @@ static class ModuleCommands
 	[Command(@"(claim view|view claim|claimview|viewclaim|cv|vc|claim view pin|view pin claim|claimviewpin|viewpinclaim|cvp|vpc)")]
 	public static void ClaimViewPin(TwitchModule module, string user, bool isWhisper, [Group(1)] string cmd) => ClaimViewOrPin(module, user, isWhisper, view: true, pin: cmd.Contains("p"));
 
-	[Command("(unclaim|release|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
+	[Command("(unclaim|un?c|release|rel|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
 	public static void Unclaim(TwitchModule module, string user, [Group(1)] string cmd)
 	{
 		// If module is already unclaimed, just remove from claim queue
