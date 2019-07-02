@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Props;
 using Assets.Scripts.Records;
+using Assets.Scripts.Services;
 using Assets.Scripts.Stats;
 using UnityEngine;
 using UnityEngine.UI;
@@ -632,10 +633,13 @@ public class TwitchPlaysService : MonoBehaviour
 		set
 		{
 			if (RecordManager.Instance != null)
-				RecordManager.Instance.DisableBestRecords = value;
+				RecordManager.Instance.DisableBestRecords = !value;
 
 			if (StatsManager.Instance != null)
-				StatsManager.Instance.DisableStatChanges = value;
+				StatsManager.Instance.DisableStatChanges = !value;
+
+			if (AbstractServices.Instance != null)
+				AbstractServices.Instance.LeaderboardMediator.DisableLeaderboardRequests = !value;
 		}
 	}
 
