@@ -29,6 +29,13 @@ public class LEGOComponentSolver : ComponentSolver
 	{
 		inputCommand = Regex.Replace(inputCommand.ToLowerInvariant().Trim(), "^(press|hit|enter|push)", "");
 
+		if (inputCommand.RegexMatch("^[lrud ]+$"))
+		{
+			yield return null;
+			yield return inputCommand.Replace(" ", "").Select(character => MoveSelected(CharacterToDirection[character], false)).GetEnumerator();
+			yield break;
+		}
+
 		string[] split = inputCommand.SplitFull(' ');
 		int count = 1;
 		if ((split[0] == "left" || split[0] == "right") && (split.Length == 1 || split.Length == 2 && int.TryParse(split[1], out count)))
@@ -54,30 +61,26 @@ public class LEGOComponentSolver : ComponentSolver
 				yield return null;
 				yield return ClearGrid();
 			}
-			else if (split[0].RegexMatch("^[lrud]+$"))
+		}
+		else if (split[0].FirstOrWhole("select") && split.Length.EqualsAny(2, 3))
+		{
+			if (split.Length == 3) split[1] = split.Skip(1).Join("");
+
+			if (split[1].Length != 2) yield break;
+
+			int column = split[1][0].ToIndex();
+			int row = split[1][1].ToIndex();
+
+			if (column.InRange(0, 7) && row.InRange(0, 7))
 			{
 				yield return null;
-				yield return split[0].Select(character => MoveSelected(CharacterToDirection[character], false)).GetEnumerator();
+				yield return MoveSelected(new Vector2Int(column, row));
 			}
 		}
-		else if (split.Length == 2)
+		else if (split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition) && split.Length == 2)
 		{
-			if (split[0].FirstOrWhole("select") && split[1].Length == 2)
-			{
-				int column = split[1][0].ToIndex();
-				int row = split[1][1].ToIndex();
-
-				if (column.InRange(0, 7) && row.InRange(0, 7))
-				{
-					yield return null;
-					yield return MoveSelected(new Vector2Int(column, row));
-				}
-			}
-			else if (split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition))
-			{
-				yield return null;
-				yield return DoInteractionClick(_component.GetValue<KMSelectable[]>("ColorButtons")[colorPosition - 1]);
-			}
+			yield return null;
+			yield return DoInteractionClick(_component.GetValue<KMSelectable[]>("ColorButtons")[colorPosition - 1]);
 		}
 	}
 
