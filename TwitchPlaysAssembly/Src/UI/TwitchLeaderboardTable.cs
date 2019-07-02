@@ -7,7 +7,7 @@ public class TwitchLeaderboardTable : MonoBehaviour
 	public TwitchLeaderboardRow[] specialRows = null;
 	public TwitchLeaderboardRow normalRow = null;
 
-	[Header("Hierachy Management")]
+	[Header("Hierarchy Management")]
 	public RectTransform tableTransform = null;
 
 	[Header("Values")]
