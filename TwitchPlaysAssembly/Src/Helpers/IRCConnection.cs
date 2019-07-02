@@ -364,6 +364,7 @@ public class IRCConnection : MonoBehaviour
 						yield break;
 					case IRCConnectionState.Connected:
 						AddTextToHoldable("[IRC:Connect] Successful.");
+						SendMessage("Welcome to Twitch Plays: Keep Talking and Nobody Explodes!");
 						break;
 					default:
 						_state = IRCConnectionState.Retrying;
