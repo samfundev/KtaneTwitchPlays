@@ -371,7 +371,7 @@ static class ModuleCommands
 				IEnumerator routine = null;
 				if (tilt)
 				{
-					routine = Tilt(module, toYield, groups["direction"].Value);
+					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant());
 				}
 
 				if (zoom)
