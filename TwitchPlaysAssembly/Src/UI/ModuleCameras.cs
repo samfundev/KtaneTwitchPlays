@@ -323,7 +323,7 @@ public class ModuleCameras : MonoBehaviour
 		if (camera.Module == null || camera.Module.CameraPriority < module.CameraPriority)
 			camera.ViewModule(module);
 		// If we can and should enable the camera wall, enable it and then view the module.
-		else if (AutomaticCameraWallEnabled && !CameraWallEnabled && TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) >= 7)
+		else if (AutomaticCameraWallEnabled && !CameraWallEnabled && TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) >= 7 && !InputInterceptor.IsInputEnabled)
 		{
 			EnableCameraWall();
 			TryViewModule(module);

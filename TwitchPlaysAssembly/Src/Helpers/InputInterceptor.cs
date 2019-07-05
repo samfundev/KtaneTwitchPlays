@@ -8,8 +8,11 @@ public static class InputInterceptor
 		_inputSystems = Resources.FindObjectsOfTypeAll<AbstractControls>();
 	}
 
+	public static bool IsInputEnabled { get; private set; }
+
 	public static void EnableInput()
 	{
+		IsInputEnabled = true;
 		foreach (AbstractControls inputSystem in _inputSystems)
 			try
 			{
@@ -25,6 +28,7 @@ public static class InputInterceptor
 
 	public static void DisableInput()
 	{
+		IsInputEnabled = false;
 		foreach (AbstractControls inputSystem in _inputSystems)
 			try
 			{

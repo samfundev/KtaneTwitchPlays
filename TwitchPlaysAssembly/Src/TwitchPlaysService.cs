@@ -113,6 +113,7 @@ public class TwitchPlaysService : MonoBehaviour
 		if (Input.GetKey(KeyCode.Escape))
 		{
 			InputInterceptor.EnableInput();
+			TwitchGame.ModuleCameras?.DisableCameraWall();
 		}
 
 		if (Input.GetKeyDown(DebugSequence[_debugSequenceIndex].ToString()))
