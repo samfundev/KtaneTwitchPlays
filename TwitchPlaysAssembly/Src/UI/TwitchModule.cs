@@ -247,6 +247,7 @@ public class TwitchModule : MonoBehaviour
 		}
 
 		SetBannerColor(unclaimedBackgroundColor);
+		TakeUser = null;
 	}
 
 	public static void DeactivateNeedyModule(TwitchModule handle)
