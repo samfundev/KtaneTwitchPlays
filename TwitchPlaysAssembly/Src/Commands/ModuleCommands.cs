@@ -25,7 +25,7 @@ static class ModuleCommands
 			? string.Format(TwitchPlaySettings.data.ModulePlayer, module.Code, module.PlayerName, module.HeaderText)
 			: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, user, module.Code, module.HeaderText));
 
-	[Command("(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)"), SolvedAllowed]
+	[Command("(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)")]
 	public static void BombTurnAround(TwitchModule module)
 	{
 		if (!module.Solver.TurnQueued)
@@ -36,7 +36,7 @@ static class ModuleCommands
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TurnBombOnSolve, module.Code, module.HeaderText);
 	}
 
-	[Command("cancel +(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)"), SolvedAllowed]
+	[Command("cancel +(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)")]
 	public static void BombTurnAroundCancel(TwitchModule module)
 	{
 		module.Solver.TurnQueued = false;
@@ -238,7 +238,7 @@ static class ModuleCommands
 		module.TakeUser = null;
 	}
 
-	[Command(@"(points|score)")]
+	[Command(@"(points|score)"), SolvedAllowed]
 	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) current score: {module.Solver.ModInfo.moduleScore}");
 
 	[Command(@"mark", AccessLevel.Mod, AccessLevel.Mod)]
