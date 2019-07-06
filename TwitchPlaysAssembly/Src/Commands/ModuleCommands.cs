@@ -86,6 +86,12 @@ static class ModuleCommands
 	[Command("(unclaim|un?c|release|rel|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
 	public static void Unclaim(TwitchModule module, string user, [Group(1)] string cmd)
 	{
+		if (module.Solved)
+		{
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadySolved, module.Code, module.PlayerName, user, module.HeaderText);
+			return;
+		}
+
 		// If module is already unclaimed, just remove from claim queue
 		if (module.PlayerName == null)
 		{
@@ -100,10 +106,8 @@ static class ModuleCommands
 			return;
 		}
 
-		var result = module.UnclaimModule(user);
-		IRCConnection.SendMessage(result.Second);
-
-		if (result.First && cmd.Contains("v"))
+		module.SetUnclaimed();
+		if (cmd.Contains("v"))
 			TwitchGame.ModuleCameras?.UnviewModule(module);
 	}
 
@@ -148,10 +152,7 @@ static class ModuleCommands
 			module.TakeUser = null;
 		}
 
-		module.PlayerName = targetUser;
-		module.RemoveFromClaimQueue(user);
-		module.CanClaimNow(user, true, true);
-		module.SetBannerColor(module.ClaimedBackgroundColour);
+		module.SetClaimedBy(targetUser);
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AssignModule, module.Code, module.PlayerName, user, module.HeaderText);
 	}
 
@@ -159,9 +160,9 @@ static class ModuleCommands
 	public static void Take(TwitchModule module, string user, bool isWhisper)
 	{
 		if (isWhisper)
-			IRCConnection.SendMessage($"{user}, taking modules is not allowed in whispers.");
+			IRCConnection.SendMessage($"@{user}, taking modules is not allowed in whispers.");
 		else if (TwitchPlaySettings.data.AnarchyMode)
-			IRCConnection.SendMessage($"{user}, taking modules is not allowed in anarchy mode.");
+			IRCConnection.SendMessage($"@{user}, taking modules is not allowed in anarchy mode.");
 
 		// Module is already claimed by the same user
 		else if (module.PlayerName == user)
@@ -169,21 +170,20 @@ static class ModuleCommands
 
 		// Module is not claimed at all: just claim it
 		else if (module.PlayerName == null)
-			IRCConnection.SendMessage(module.ClaimModule(user).Second);
+			IRCConnection.SendMessage(module.TryClaim(user).Message);
 
 		// Attempt to take over from another user
 		else
 		{
 			module.AddToClaimQueue(user);
-			if (module.TakeInProgress == null)
+			if (module.TakeInProgress != null)
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeInProgress, user, module.Code, module.HeaderText);
+			else
 			{
 				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeModule, module.PlayerName, user, module.Code, module.HeaderText);
-				module.TakeInProgress = module.TakeModule();
 				module.TakeUser = user;
-				module.StartCoroutine(module.TakeInProgress);
+				module.TakeInProgress = module.StartCoroutine(module.ProcessTakeover());
 			}
-			else
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeInProgress, user, module.Code, module.HeaderText);
 		}
 	}
 
@@ -192,7 +192,7 @@ static class ModuleCommands
 	{
 		if (isWhisper)
 		{
-			IRCConnection.SendMessage($"Sorry {user}, using mine on modules is not allowed in whispers", user, false);
+			IRCConnection.SendMessage($"@{user}, using mine on modules is not allowed in whispers.", user, false);
 			return;
 		}
 
@@ -207,7 +207,7 @@ static class ModuleCommands
 
 		// The module isn’t claimed: just claim it
 		else if (module.PlayerName == null)
-			IRCConnection.SendMessage(module.ClaimModule(user).Second);
+			IRCConnection.SendMessage(module.TryClaim(user).Message);
 
 		// Someone else has a claim on the module
 		else if (module.PlayerName != user)
@@ -221,13 +221,13 @@ static class ModuleCommands
 	{
 		if (module.TakeInProgress == null)
 		{
-			IRCConnection.SendMessage($"{user}, there are no takeover attempts on module {module.Code} ({module.HeaderText}).", user, !isWhisper);
+			IRCConnection.SendMessage($"@{user}, there are no takeover attempts on module {module.Code} ({module.HeaderText}).", user, !isWhisper);
 			return;
 		}
 
 		if (!UserAccess.HasAccess(user, AccessLevel.Mod) && module.TakeUser != user)
 		{
-			IRCConnection.SendMessage($"{user}, if you’re not a mod, you can only cancel your own takeover attempts.");
+			IRCConnection.SendMessage($"@{user}, if you’re not a mod, you can only cancel your own takeover attempts.");
 			return;
 		}
 
@@ -436,12 +436,11 @@ static class ModuleCommands
 	{
 		if (isWhisper)
 		{
-			IRCConnection.SendMessage($"Sorry {user}, claiming modules is not allowed in whispers", user, false);
+			IRCConnection.SendMessage($"@{user}, claiming modules is not allowed in whispers.", user, false);
 			return;
 		}
 
-		var result = module.ClaimModule(user, view, pin);
-		IRCConnection.SendMessage(result.Second);
+		IRCConnection.SendMessage(module.TryClaim(user, view, pin).Message);
 	}
 	#endregion
 }

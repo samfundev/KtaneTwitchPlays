@@ -131,8 +131,8 @@ static class GameCommands
 		{
 			module.RemoveFromClaimQueue(user);
 			// Only unclaim the player’s own modules. Avoid releasing other people’s modules if the user is a moderator.
-			if (!queuedOnly && user.Equals(module.PlayerName, StringComparison.InvariantCultureIgnoreCase))
-				module.UnclaimModule(user);
+			if (!module.Solved && !queuedOnly && module.PlayerName == user)
+				module.SetUnclaimed();
 		}
 	}
 
@@ -140,7 +140,7 @@ static class GameCommands
 	public static void UnclaimSpecific([Group(1)] string unclaimWhat, string user, bool isWhisper)
 	{
 		var strings = unclaimWhat.SplitFull(' ', ',', ';');
-		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => md.PlayerName == user && strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
+		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => !md.Solved && md.PlayerName == user && strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
 			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
@@ -148,7 +148,7 @@ static class GameCommands
 		}
 
 		foreach (var module in modules)
-			module.UnclaimModule(user);
+			module.SetUnclaimed();
 	}
 
 	[Command(@"unclaimed")]
@@ -448,14 +448,9 @@ static class GameCommands
 	[Command(@"bot ?unclaim( ?all)?", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void BotUnclaim(string user)
 	{
-		var modules = TwitchGame.Instance.Modules;
-		foreach (var module in modules)
-		{
-			module.RemoveFromClaimQueue(IRCConnection.Instance.UserNickName);
-
-			if (!module.Solved && module.PlayerName != null && module.PlayerName.EqualsIgnoreCase(IRCConnection.Instance.UserNickName) && GameRoom.Instance.IsCurrentBomb(module.BombID))
-				module.UnclaimModule(user);
-		}
+		foreach (var module in TwitchGame.Instance.Modules)
+			if (!module.Solved && module.PlayerName == IRCConnection.Instance.UserNickName && GameRoom.Instance.IsCurrentBomb(module.BombID))
+				module.SetUnclaimed();
 	}
 
 	[Command(@"disableinteractive", AccessLevel.Mod, AccessLevel.Mod)]

@@ -194,9 +194,9 @@ public class TwitchPlaySettingsData
 	public string TooManyClaimed = "ItsBoshyTime {0}, you may only have {1} claimed modules. The claim has been queued.";
 	public string NoUnclaimed = "{0}, there are no more unclaimed modules.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}.";
-	public string AlreadyClaimed = "@{2}, module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, you may type !{0} take to free it up.";
+	public string AlreadyClaimed = "@{2}, module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, type !{0} take to free it up.";
 	public string AlreadySolved = "@{2}, module {0} ({3}) has already been solved by {1}.";
-	public string ClaimCooldown = "@{2}, module {0} ({3}) can still be claimed by someone else during the first {1} seconds of this bomb.";
+	public string ClaimCooldown = "@{2}, you’ve played {3} recently, so your claim for module {0} is queued until {1} seconds after the start of this bomb.";
 
 	public string OwnedModule = "“{1}” ({0})";
 	public string OwnedModuleList = "@{0}, your claimed modules are: {1}";

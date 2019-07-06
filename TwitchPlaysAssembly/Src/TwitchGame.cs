@@ -560,6 +560,24 @@ public class TwitchGame : MonoBehaviour
 		}
 	}
 
+	public double? GetLastClaimedTime(string moduleID, string userNickName)
+	{
+		if (LastClaimedModule == null)
+			LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+
+		if (!LastClaimedModule.TryGetValue(moduleID, out var lastClaimedTimes) || lastClaimedTimes == null)
+			lastClaimedTimes = LastClaimedModule[moduleID] = new Dictionary<string, double>();
+
+		return lastClaimedTimes.TryGetValue(userNickName, out var time) ? time : (double?) null;
+	}
+
+	public void SetLastClaimedTime(string moduleID, string userNickName, double timestamp)
+	{
+		// Ensures that the relevant dictionaries exist
+		GetLastClaimedTime(moduleID, userNickName);
+		LastClaimedModule[moduleID][userNickName] = timestamp;
+	}
+
 	private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
 	{
 		yield return new WaitForSeconds(delay);

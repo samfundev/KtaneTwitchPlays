@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,7 +84,7 @@ public class TwitchModule : MonoBehaviour
 		set => _headerText = value;
 	}
 
-	public IEnumerator TakeInProgress;
+	public Coroutine TakeInProgress;
 	public string TakeUser;
 	public static List<string> ClaimedList = new List<string>();
 	#endregion
@@ -198,7 +198,7 @@ public class TwitchModule : MonoBehaviour
 				if (Solver.UnsupportedModule)
 					UnsupportedComponents.Add(this);
 
-				StartCoroutine(AutoAssignModule());
+				StartCoroutine(ProcessClaimQueue());
 
 				if (BombComponent.GetComponent<NeedyComponent>() != null) StartCoroutine(TrackNeedyModule());
 			}
@@ -336,24 +336,28 @@ public class TwitchModule : MonoBehaviour
 	{
 		CanvasGroupMultiDecker.alpha = TwitchPlaySettings.data.AnarchyMode ? 0.5f : 0.0f;
 		if (PlayerName == null)
-		{
 			PlayerName = userNickname;
-			CanClaimNow(userNickname, true, true);
-		}
 		if (TakeInProgress != null)
 		{
 			StopCoroutine(TakeInProgress);
 			TakeInProgress = null;
 			TakeUser = null;
 		}
-		if (PlayerName == null) return;
 	}
 
 	private void OnDestroy() => StopAllCoroutines();
 	#endregion
 
 	#region Public Methods
-	public IEnumerator TakeModule()
+	public void AddToClaimQueue(string userNickname, bool viewRequested = false, bool viewPinRequested = false)
+	{
+		if (!ClaimQueue.Any(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase)))
+			ClaimQueue.Add(new ClaimQueueItem(userNickname, viewRequested, viewPinRequested));
+	}
+
+	public void RemoveFromClaimQueue(string userNickname) => ClaimQueue.RemoveAll(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
+
+	public IEnumerator ProcessTakeover()
 	{
 		if (TakeModuleSound != null)
 		{
@@ -361,161 +365,138 @@ public class TwitchModule : MonoBehaviour
 			TakeModuleSound.Play();
 		}
 		yield return new WaitForSecondsRealtime(60.0f);
-		SetBannerColor(unclaimedBackgroundColor);
-		if (PlayerName != null)
-			UnclaimModule(PlayerName);
+
+		// Takeover attempt successful! Just unclaim the module, ProcessClaimQueue() will reassign it
+		SetUnclaimed();
 	}
 
-	public IEnumerator EndClaimCooldown()
+	public IEnumerator ProcessClaimCooldown()
 	{
 		if (TwitchPlaySettings.data.InstantModuleClaimCooldown > 0)
-		{
 			yield return new WaitForSeconds(TwitchPlaySettings.data.InstantModuleClaimCooldown);
-		}
 		_claimCooldown = false;
 	}
 
-	public Tuple<bool, double> CanClaimNow(string userNickName, bool updatePreviousClaim, bool force = false)
+	public IEnumerator ProcessClaimQueue()
 	{
-		if (TwitchPlaySettings.data.AnarchyMode) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
-
-		if (string.IsNullOrEmpty(userNickName)) return new Tuple<bool, double>(false, DateTime.Now.TotalSeconds());
-
-		if (TwitchGame.Instance.LastClaimedModule == null)
-		{
-			TwitchGame.Instance.LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
-		}
-
-		if (!TwitchGame.Instance.LastClaimedModule.TryGetValue(Solver.ModInfo.moduleID, out Dictionary<string, double> value) || value == null)
-		{
-			value = new Dictionary<string, double>();
-			TwitchGame.Instance.LastClaimedModule[Solver.ModInfo.moduleID] = value;
-		}
-		if (_claimCooldown && !force && value.TryGetValue(userNickName, out double seconds) &&
-			(DateTime.Now.TotalSeconds() - seconds) < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry)
-		{
-			return new Tuple<bool, double>(false, seconds + TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry);
-		}
-		if (updatePreviousClaim || force)
-		{
-			value[userNickName] = DateTime.Now.TotalSeconds();
-		}
-		return new Tuple<bool, double>(true, DateTime.Now.TotalSeconds());
-	}
-
-	public void AddToClaimQueue(string userNickname, bool viewRequested = false, bool viewPinRequested = false)
-	{
-		double seconds = CanClaimNow(userNickname, false).Second;
-		if (ClaimQueue.Any(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase))) return;
-		for (int i = 0; i < ClaimQueue.Count; i++)
-		{
-			if (ClaimQueue[i].Timestamp < seconds) continue;
-			ClaimQueue.Insert(i, new ClaimQueueItem(userNickname, seconds, viewRequested, viewPinRequested));
-			return;
-		}
-		ClaimQueue.Add(new ClaimQueueItem(userNickname, seconds, viewRequested, viewPinRequested));
-	}
-
-	public void RemoveFromClaimQueue(string userNickname) => ClaimQueue.RemoveAll(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
-
-	public IEnumerator AutoAssignModule()
-	{
-		StartCoroutine(EndClaimCooldown());
+		StartCoroutine(ProcessClaimCooldown());
 		while (!Solved && !Solver.AttemptedForcedSolve)
 		{
 			yield return new WaitForSeconds(0.1f);
-			if (PlayerName != null || ClaimQueue.Count == 0) continue;
 
+			// Module is already claimed
+			if (PlayerName != null)
+				continue;
+
+			// Give priority to a player trying to take over the module
+			if (TakeUser != null && TryClaim(TakeUser) is ClaimResult result && result.Claimed)
+			{
+				if (TakeInProgress != null)
+				{
+					StopCoroutine(TakeInProgress);
+					TakeInProgress = null;
+				}
+				TakeUser = null;
+				IRCConnection.SendMessage(result.Message);
+				continue;
+			}
+
+			// Check if the claim queue contains a suitable player
 			for (int i = 0; i < ClaimQueue.Count; i++)
 			{
-				Tuple<bool, string> claim = ClaimModule(ClaimQueue[i].UserNickname, ClaimQueue[i].ViewRequested, ClaimQueue[i].ViewPinRequested);
-				if (!claim.First) continue;
-				IRCConnection.SendMessage(claim.Second);
-				if (ClaimQueue[i].ViewRequested)
-					ViewPin(user: ClaimQueue[i].UserNickname, pin: ClaimQueue[i].ViewPinRequested);
-				ClaimQueue.RemoveAt(i);
-				break;
+				if (TryClaim(ClaimQueue[i].UserNickname, ClaimQueue[i].ViewRequested, ClaimQueue[i].ViewPinRequested) is ClaimResult claimResult && claimResult.Claimed)
+				{
+					if (ClaimQueue[i].ViewRequested)
+						ViewPin(ClaimQueue[i].UserNickname, ClaimQueue[i].ViewPinRequested);
+					ClaimQueue.RemoveAt(i);
+					IRCConnection.SendMessage(claimResult.Message);
+					break;
+				}
 			}
 		}
 	}
 
-	public Tuple<bool, string> ClaimModule(string userNickName, bool viewRequested = false, bool viewPinRequested = false)
+	public sealed class ClaimResult
+	{
+		public bool Claimed { get; private set; }
+		public string Message { get; private set; }
+		public ClaimResult(bool claimed, string message)
+		{
+			Claimed = claimed;
+			Message = message;
+		}
+	}
+
+	public ClaimResult TryClaim(string userNickName, bool viewRequested = false, bool viewPinRequested = false)
 	{
 		if (Solver.AttemptedForcedSolve)
-		{
-			return new Tuple<bool, string>(false, $"@{userNickName}, module {Code} ({HeaderText}) is being solved automatically.");
-		}
+			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) is being solved automatically.");
 
 		if (TwitchPlaySettings.data.AnarchyMode)
-		{
-			return new Tuple<bool, string>(false, $"{userNickName}, claiming modules is not allowed in anarchy mode.");
-		}
+			return new ClaimResult(false, $"@{userNickName}, claiming modules is not allowed in anarchy mode.");
 
 		if (!ClaimsEnabled && !UserAccess.HasAccess(userNickName, AccessLevel.Admin, true))
-		{
-			return new Tuple<bool, string>(false, $"{userNickName}, claims have been disabled.");
-		}
+			return new ClaimResult(false, $"@{userNickName}, claims have been disabled.");
 
+		if (Solved)
+			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) is already solved.");
+
+		// Already claimed by the same user
+		if (userNickName.Equals(PlayerName))
+			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.ModuleAlreadyOwned, userNickName, Code, HeaderText));
+
+		// Claimed by someone else ⇒ queue
 		if (PlayerName != null)
 		{
-			if (!PlayerName.Equals(userNickName))
-				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText));
+			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
+			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.AlreadyClaimed, Code, PlayerName, userNickName, HeaderText));
 		}
-		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName) && !md.Solved) >= TwitchPlaySettings.data.ModuleClaimLimit && !Solved && (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
+
+		// Would violate the claim limit ⇒ queue
+		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName) && !md.Solved) >= TwitchPlaySettings.data.ModuleClaimLimit
+			&& (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
 			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
+			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
-		else
+
+		// Check the claim cooldown at the start of the bomb
+		if (_claimCooldown)
 		{
-			Tuple<bool, double> claim = CanClaimNow(userNickName, true);
-			if (!claim.First)
+			var lastClaimedTime = TwitchGame.Instance.GetLastClaimedTime(Solver.ModInfo.moduleID, userNickName);
+			if (lastClaimedTime != null && DateTime.UtcNow.TotalSeconds() < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry + lastClaimedTime.Value)
 			{
 				AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-				return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ClaimCooldown, Code, TwitchPlaySettings.data.InstantModuleClaimCooldown, userNickName, HeaderText));
+				return new ClaimResult(false, string.Format(TwitchPlaySettings.data.ClaimCooldown, Code, TwitchPlaySettings.data.InstantModuleClaimCooldown, userNickName, HeaderText));
 			}
-
-			SetBannerColor(ClaimedBackgroundColour);
-			PlayerName = userNickName;
-			if (CameraPriority < CameraPriority.Claimed)
-				CameraPriority = CameraPriority.Claimed;
-			if (viewRequested)
-				ViewPin(userNickName, viewPinRequested);
-			return new Tuple<bool, string>(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, Code, PlayerName, HeaderText));
 		}
+
+		// We are actually claiming the module!
+		SetClaimedBy(userNickName);
+		if (viewRequested)
+			ViewPin(userNickName, viewPinRequested);
+		return new ClaimResult(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, Code, userNickName, HeaderText));
 	}
 
-	// Unclaims a module WITHOUT checking if the user has permission to do so.
-	public Tuple<bool, string> UnclaimModule(string userNickName)
+	public void SetClaimedBy(string userNickName, bool skipIrcMessage = false)
 	{
-		if (Solved)
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.AlreadySolved, Code, PlayerName, userNickName, BombComponent.GetModuleDisplayName()));
+		TwitchGame.Instance.SetLastClaimedTime(Solver.ModInfo.moduleID, userNickName, DateTime.UtcNow.TotalSeconds());
+		SetBannerColor(ClaimedBackgroundColour);
+		PlayerName = userNickName;
+		if (CameraPriority < CameraPriority.Claimed)
+			CameraPriority = CameraPriority.Claimed;
+	}
 
-		RemoveFromClaimQueue(userNickName);
-
+	public void SetUnclaimed()
+	{
 		if (PlayerName == null)
-			return new Tuple<bool, string>(false, string.Format(TwitchPlaySettings.data.ModuleNotClaimed, userNickName, Code, HeaderText));
+			return;
+		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ModuleUnclaimed, Code, PlayerName, HeaderText));
 		RemoveFromClaimQueue(PlayerName);
-
-		// If a takeover is in progress, assign the module to the TakeUser directly
-		string assignToUser = null;
-		if (TakeInProgress != null)
-		{
-			assignToUser = TakeUser;
-			StopCoroutine(TakeInProgress);
-			TakeInProgress = null;
-			TakeUser = null;
-		}
-
 		SetBannerColor(unclaimedBackgroundColor);
-		string messageOut = string.Format(TwitchPlaySettings.data.ModuleUnclaimed, Code, PlayerName, HeaderText);
 		PlayerName = null;
 		if (CameraPriority > CameraPriority.Interacted)
 			CameraPriority = CameraPriority.Interacted;
-		if (assignToUser != null)
-			return ClaimModule(assignToUser);
-		return new Tuple<bool, string>(true, messageOut);
 	}
 
 	public void CommandError(string userNickName, string message) => IRCConnection.SendMessageFormat(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message);
