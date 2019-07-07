@@ -60,6 +60,15 @@ public class TwitchBomb : MonoBehaviour
 		EdgeworkID = EdgeworkWindowTransform.Find("ID").GetComponent<Image>();
 		EdgeworkIDText = EdgeworkWindowTransform.Find("ID").Find("IDText").GetComponent<Text>();
 		EdgeworkText = EdgeworkWindowTransform.Find("Header").Find("HeaderText").GetComponent<Text>();
+
+		if (TwitchPlaySettings.data.EnableEdgeworkCameras)
+		{
+			EdgeworkWindowTransform.gameObject.SetActive(false);
+			EdgeworkHighlightTransform.gameObject.SetActive(false);
+			EdgeworkID.gameObject.SetActive(false);
+			EdgeworkIDText.gameObject.SetActive(false);
+			EdgeworkText.gameObject.SetActive(false);
+		}
 	}
 
 	private void Start()
@@ -402,14 +411,16 @@ public class TwitchBomb : MonoBehaviour
 		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x?.Length == 0 ? "Empty" : x).Select(x => "[" + x + "]").Join());
 		edgework.Add(QueryWidgets<int>(WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
 		edgework.Add(QueryWidgets<string>(WidgetQueryManufacture).Select(x => x["month"] + " - " + x["year"]).Join());
-		edgework.Add(QueryWidgets<string>(WidgetQueryDay).Select(x => {
+		edgework.Add(QueryWidgets<string>(WidgetQueryDay).Select(x =>
+		{
 			var enabled = x["colorenabled"] == "True";
 			var monthChar = enabled ? "(O)" : "(M)";
 			var dateChar = enabled ? "(C)" : "(D)";
 			return string.Format("{0}({1}) {2}", x["day"], x["daycolor"],
 			int.Parse(x["monthcolor"]).Equals(0) ? (x["month"] + monthChar + "-" + x["date"] + dateChar) : (x["date"] + dateChar + "-" + x["month"] + monthChar));
 		}).Join());
-		edgework.Add(QueryWidgets<string>(WidgetQueryRandomTime).Select(x => {
+		edgework.Add(QueryWidgets<string>(WidgetQueryRandomTime).Select(x =>
+		{
 			var str1 = x["time"].Substring(0, 2);
 			var str2 = x["time"].Substring(2, 2);
 			var str3 = x["am"] == "True" ? "am" : x["pm"] == "True" ? "pm" : "";

@@ -30,14 +30,19 @@ public class ModuleCameras : MonoBehaviour
 		private static readonly Rect ZoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
 		private Rect _originalCameraRect;
 
-		public static ModuleCamera CreateModuleCamera(Camera instantiatedCamera, ModuleCameras parentInstance, int layer)
+		public static ModuleCamera CreateModuleCamera(ModuleCameras parentInstance, int cameraIx)
 		{
 			ModuleCamera moduleCamera = new GameObject().AddComponent<ModuleCamera>();
 			moduleCamera.transform.parent = parentInstance.transform;
 
-			moduleCamera.CameraInstance = instantiatedCamera;
-			moduleCamera._originalCameraRect = moduleCamera.CameraInstance.rect;
-			moduleCamera.CameraLayer = layer;
+			Camera camera = Instantiate(parentInstance.CameraPrefab);
+			camera.rect = parentInstance._cameraLocations[cameraIx];
+			camera.aspect = 1f;
+			camera.depth = 99;
+
+			moduleCamera.CameraInstance = camera;
+			moduleCamera._originalCameraRect = camera.rect;
+			moduleCamera.CameraLayer = CameraLayers[cameraIx];
 			return moduleCamera;
 		}
 
@@ -184,7 +189,8 @@ public class ModuleCameras : MonoBehaviour
 
 	#region Private Fields
 	private ModuleCamerasData _data;
-	private readonly List<ModuleCamera> _cameras = new List<ModuleCamera>();
+	private readonly List<ModuleCamera> _moduleCameras = new List<ModuleCamera>();
+	private readonly List<Camera> _widgetCameras = new List<Camera>();
 	private TwitchBomb _currentBomb;
 
 	private int _currentSolves;
@@ -241,30 +247,127 @@ public class ModuleCameras : MonoBehaviour
 		{ TwitchPlaysMode.Zen, Color.cyan }
 	};
 
-	private void InstantiateCamera(int cameraIx)
-	{
-		Camera instantiatedCamera = Instantiate(CameraPrefab);
-		instantiatedCamera.rect = _cameraLocations[cameraIx];
-		instantiatedCamera.aspect = 1f;
-		instantiatedCamera.depth = 99;
-
-		ModuleCamera cam = ModuleCamera.CreateModuleCamera(instantiatedCamera, this, CameraLayers[cameraIx]);
-
-		_cameras.Add(cam);
-	}
-
 	private void Awake() => _data = GetComponent<ModuleCamerasData>();
 
 	private void Start()
 	{
+		// Create the first 6 module cameras (more will be created if the camera wall gets enabled)
 		for (int i = 0; i < 6; i++)
-			InstantiateCamera(i);
+			_moduleCameras.Add(ModuleCamera.CreateModuleCamera(this, i));
 
+		// Change timer/strike colors according to current game mode (normal mode, time mode, Zen mode, etc.)
 		TimerComponent timer = _currentBomb.Bomb.GetTimer();
 		Color modeColor = ModeColors[OtherModes.currentMode];
 		TimerPrefab.color = modeColor;
 		timer.text.color = modeColor;
 		timer.StrikeIndicator.RedColour = modeColor;
+
+		if (TwitchPlaySettings.data.EnableEdgeworkCameras)
+		{
+			// Create widget cameras
+			var widgets = _currentBomb.Bomb.WidgetManager.GetWidgets();
+			var widgetTypes = new[] { "BatteryWidget", "IndicatorWidget", "EncryptedIndicator", "NumberInd", "PortWidget", "DayTimeWidget", "TwoFactorWidget", "MultipleWidgets", null, "SerialNumber", "RuleSeedWidget" };
+			widgets.Sort((w1, w2) =>
+			{
+				var i1 = widgetTypes.IndexOf(wt => wt != null && w1.GetComponent(wt) != null);
+				if (i1 == -1)
+					i1 = Array.IndexOf(widgetTypes, null);
+				var i2 = widgetTypes.IndexOf(wt => wt != null && w2.GetComponent(wt) != null);
+				if (i2 == -1)
+					i2 = Array.IndexOf(widgetTypes, null);
+
+				if (i1 < i2)
+					return -1;
+				if (i1 > i2)
+					return 1;
+
+				switch (w1)
+				{
+					case BatteryWidget batteries:
+						return batteries.GetNumberOfBatteries().CompareTo(((BatteryWidget) w2).GetNumberOfBatteries());
+
+					case IndicatorWidget indicator:
+						return indicator.Label.CompareTo(((IndicatorWidget) w2).Label);
+
+					case PortWidget port:
+						var port2 = (PortWidget) w2;
+						return (
+							port.IsPortPresent(PortWidget.PortType.Parallel) || port.IsPortPresent(PortWidget.PortType.Serial) ? 0 :
+							port.IsPortPresent(PortWidget.PortType.DVI) || port.IsPortPresent(PortWidget.PortType.PS2) || port.IsPortPresent(PortWidget.PortType.RJ45) || port.IsPortPresent(PortWidget.PortType.StereoRCA) ? 1 : 2
+						).CompareTo(
+							port2.IsPortPresent(PortWidget.PortType.Parallel) || port2.IsPortPresent(PortWidget.PortType.Serial) ? 0 :
+							port2.IsPortPresent(PortWidget.PortType.DVI) || port2.IsPortPresent(PortWidget.PortType.PS2) || port2.IsPortPresent(PortWidget.PortType.RJ45) || port2.IsPortPresent(PortWidget.PortType.StereoRCA) ? 1 : 2
+						);
+					default: return w1.name.CompareTo(w2.name);
+				}
+			});
+
+			const float availableWidth = 0.6666667f;
+			const float availableHeight = .08f;
+
+			// Find out how tall the widgets would be if we arrange them in one row
+			var widgetWidths = widgets.Select(w => (float) w.SizeX / w.SizeZ * Screen.height / Screen.width).ToArray();
+			var totalWidth = widgetWidths.Sum();
+			var widgetMiddles = new float[widgetWidths.Length];
+			for (int i = 0; i < widgetWidths.Length; i++)
+				widgetMiddles[i] = (i == 0 ? 0 : widgetMiddles[i - 1] + widgetWidths[i - 1] / 2) + widgetWidths[i] / 2;
+			var cutOffPoints = new int[] { widgetWidths.Length };
+			var rowHeight = Mathf.Min(availableWidth / totalWidth, availableHeight);
+
+			// See if we can make them bigger by wrapping them into multiple rows
+			while (true)
+			{
+				var n = cutOffPoints.Length + 1;
+				var newCutOffPoints = new int[n];
+				for (int i = 0; i < n; i++)
+				{
+					newCutOffPoints[i] = widgetMiddles.IndexOf(w => w > (i + 1) * totalWidth / n);
+					if (newCutOffPoints[i] == -1)
+						newCutOffPoints[i] = widgetWidths.Length;
+				}
+				var rowWidths = Enumerable.Range(0, n).Select(i => widgetWidths.Skip(i == 0 ? 0 : newCutOffPoints[i - 1]).Take(newCutOffPoints[i] - (i == 0 ? 0 : newCutOffPoints[i - 1])).Sum()).ToArray();
+				var newRowHeight = Mathf.Min(availableWidth / rowWidths.Max(), availableHeight / n);
+				if (newRowHeight <= rowHeight)
+					break;
+				cutOffPoints = newCutOffPoints;
+				rowHeight = newRowHeight;
+			}
+
+			for (int i = 0; i < widgets.Count; i++)
+			{
+				// Setup the camera, using layer 2
+				var camera = Instantiate(CameraPrefab);
+				var row = cutOffPoints.IndexOf(ix => ix > i);
+				var totalWidthInThisRow = widgetWidths.Skip(row == 0 ? 0 : cutOffPoints[row - 1]).Take(cutOffPoints[row] - (row == 0 ? 0 : cutOffPoints[row - 1])).Sum() * rowHeight;
+				var widthBeforeThis = widgetWidths.Skip(row == 0 ? 0 : cutOffPoints[row - 1]).Take(i - (row == 0 ? 0 : cutOffPoints[row - 1])).Sum() * rowHeight;
+				camera.rect = new Rect(.5f - totalWidthInThisRow / 2 + widthBeforeThis, 1 - (row + 1) * rowHeight, widgetWidths[i] * rowHeight, rowHeight);
+				camera.aspect = (float) widgets[i].SizeX / widgets[i].SizeZ;
+				camera.depth = 99;
+				camera.fieldOfView = 3.25f;
+				camera.transform.SetParent(widgets[i].transform, false);
+				camera.transform.localPosition = new Vector3(.001f, 2.26f / widgets[i].SizeX * widgets[i].SizeZ, 0);
+				if (widgets[i] is PortWidget || (widgets[i] is ModWidget mw && mw.name == "NumberInd(Clone)"))
+					camera.transform.localEulerAngles = new Vector3(90, 180, 0);
+				var lossyScale = camera.transform.lossyScale;
+				camera.nearClipPlane = 1f * lossyScale.y;
+				camera.farClipPlane = 3f / widgets[i].SizeX * widgets[i].SizeZ * lossyScale.y;
+				camera.cullingMask = 1 << 2;
+				camera.gameObject.SetActive(true);
+
+				// Move the widget’s GameObjects to Layer 2
+				foreach (var obj in widgets[i].gameObject.GetComponentsInChildren<Transform>(true))
+					obj.gameObject.layer = 2;
+
+				// Add a light source
+				var light = camera.gameObject.AddComponent<Light>();
+				light.type = LightType.Spot;
+				light.cullingMask = 1 << 2;
+				light.range = 5f * camera.transform.lossyScale.y;
+				light.spotAngle = 90;
+				light.intensity = camera.transform.lossyScale.y;
+				light.enabled = true;
+			}
+		}
 	}
 
 	private void LateUpdate()
@@ -284,7 +387,7 @@ public class ModuleCameras : MonoBehaviour
 		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
 		{
-			ModuleCamera cam = _cameras[existingCamera];
+			ModuleCamera cam = _moduleCameras[existingCamera];
 			return cam.ZoomCamera(delay);
 		}
 		return null;
@@ -296,7 +399,7 @@ public class ModuleCameras : MonoBehaviour
 		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
 		{
-			ModuleCamera cam = _cameras[existingCamera];
+			ModuleCamera cam = _moduleCameras[existingCamera];
 			return cam.UnzoomCamera(delay);
 		}
 		return null;
@@ -334,7 +437,7 @@ public class ModuleCameras : MonoBehaviour
 		return true;
 	}
 
-	private ModuleCamera AvailableCamera(CameraPriority maxPriority) => _cameras
+	private ModuleCamera AvailableCamera(CameraPriority maxPriority) => _moduleCameras
 				.Where(c => c.Module == null || (c.Module != null && c.Module.CameraPriority <= maxPriority && !c.ZoomActive))
 				.OrderBy(c => c.Module != null)
 				.ThenBy(c => c.Module != null ? (CameraPriority?) c.Module.CameraPriority : null)
@@ -434,15 +537,15 @@ public class ModuleCameras : MonoBehaviour
 	{
 		if (CameraWallEnabled)
 		{
-			DebugHelper.Log("Camera Wall already enabled");
+			DebugHelper.Log("Camera wall already enabled");
 			return;
 		}
-		DebugHelper.Log("Enabling Camera Wall");
+		DebugHelper.Log("Enabling camera wall");
 		CameraWallEnabled = true;
 		GameRoom.HideCamera();
 
 		for (int i = 6; i < _cameraLocations.Length; i++)
-			InstantiateCamera(i);
+			_moduleCameras.Add(ModuleCamera.CreateModuleCamera(this, i));
 		while (HasEmptySlot)
 		{
 			var preferredToView = PreferredToView;
@@ -450,24 +553,24 @@ public class ModuleCameras : MonoBehaviour
 				break;
 		}
 
-		DebugHelper.Log("Camera Wall enabled");
+		DebugHelper.Log("Camera wall enabled");
 	}
 
 	public void DisableCameraWall()
 	{
 		if (!CameraWallEnabled)
 		{
-			DebugHelper.Log("Camera Wall already disabled");
+			DebugHelper.Log("Camera wall already disabled");
 			return;
 		}
-		DebugHelper.Log("Disabling Camera Wall");
+		DebugHelper.Log("Disabling camera wall");
 		CameraWallEnabled = false;
 		GameRoom.ShowCamera();
 
-		while (_cameras.Count > 6)
+		while (_moduleCameras.Count > 6)
 		{
-			ModuleCamera camera = _cameras[6];
-			_cameras.RemoveAt(6);
+			ModuleCamera camera = _moduleCameras[6];
+			_moduleCameras.RemoveAt(6);
 
 			camera.Deactivate();
 			Destroy(camera.CameraInstance);
@@ -476,7 +579,7 @@ public class ModuleCameras : MonoBehaviour
 		for (int i = 0; i < 6; i++)
 			TryViewModule(PreferredToView);
 
-		DebugHelper.Log("Camera Wall disabled");
+		DebugHelper.Log("Camera wall disabled");
 	}
 
 	public void ChangeBomb(TwitchBomb bomb)
@@ -498,7 +601,7 @@ public class ModuleCameras : MonoBehaviour
 
 	public void DisableInteractive()
 	{
-		foreach (var camera in _cameras)
+		foreach (var camera in _moduleCameras)
 			camera.EscapePressed = false;
 	}
 	#endregion
@@ -522,7 +625,7 @@ public class ModuleCameras : MonoBehaviour
 
 	private IEnumerator UnviewModuleCoroutine(TwitchModule handle)
 	{
-		var camera = _cameras.FirstOrDefault(c => c.Module != null && c.Module == handle);
+		var camera = _moduleCameras.FirstOrDefault(c => c.Module != null && c.Module == handle);
 		if (camera == null)
 			yield break;
 
@@ -545,7 +648,7 @@ public class ModuleCameras : MonoBehaviour
 	private int CurrentModulesContains(TwitchModule component)
 	{
 		int i = 0;
-		foreach (ModuleCamera camera in _cameras)
+		foreach (ModuleCamera camera in _moduleCameras)
 		{
 			if ((camera.Module != null) &&
 				(ReferenceEquals(camera.Module, component)))
@@ -561,10 +664,10 @@ public class ModuleCameras : MonoBehaviour
 	private int BorrowCameraForZoom(TwitchModule component)
 	{
 		int[] camerasIndexes = { 11, 12, 7, 16, 15, 8, 10, 13, 9, 14, 17, 6, 5, 4, 3, 2, 1, 0 };
-		for (int i = _cameras.Count > 6 ? 0 : 12; i < 18; i++)
+		for (int i = _moduleCameras.Count > 6 ? 0 : 12; i < 18; i++)
 		{
 			int index = camerasIndexes[i];
-			ModuleCamera camera = _cameras[index];
+			ModuleCamera camera = _moduleCameras[index];
 
 			if ((camera.PreviousModule != null) &&
 				(ReferenceEquals(camera.PreviousModule, component)))
@@ -587,7 +690,7 @@ public class ModuleCameras : MonoBehaviour
 
 	private void SetCameraVisibility(bool visible)
 	{
-		foreach (ModuleCamera camera in _cameras)
+		foreach (ModuleCamera camera in _moduleCameras)
 			if (!visible || (camera.Module && camera.Module.CameraPriority > CameraPriority.Unviewed))
 				camera.CameraInstance.gameObject.SetActive(visible);
 	}
@@ -595,11 +698,11 @@ public class ModuleCameras : MonoBehaviour
 
 	#region Properties
 	private TwitchModule PreferredToView => TwitchGame.Instance.Modules
-				.Where(module => !module.Solved && _cameras.All(cam => cam.Module != module))
+				.Where(module => !module.Solved && _moduleCameras.All(cam => cam.Module != module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();
 
-	public bool HasEmptySlot => _cameras.Any(c => c.Module == null);
+	public bool HasEmptySlot => _moduleCameras.Any(c => c.Module == null);
 
 	// Make sure automatic camera wall is enabled and respect EnableFactoryZenModeCameraWall
 	private bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryZenModeCameraWall && OtherModes.ZenModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
