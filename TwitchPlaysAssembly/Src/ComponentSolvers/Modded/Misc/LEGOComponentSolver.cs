@@ -38,7 +38,7 @@ public class LEGOComponentSolver : ComponentSolver
 
 		string[] split = inputCommand.SplitFull(' ');
 		int count = 1;
-		if ((split[0] == "left" || split[0] == "right") && (split.Length == 1 || split.Length == 2 && int.TryParse(split[1], out count)))
+		if ((split.Length == 1 || split.Length == 2 && int.TryParse(split[1], out count)) && (split[0] == "left" || split[0] == "right"))
 		{
 			if (!count.InRange(1, 8)) yield break;
 
@@ -62,7 +62,7 @@ public class LEGOComponentSolver : ComponentSolver
 				yield return ClearGrid();
 			}
 		}
-		else if (split[0].FirstOrWhole("select") && split.Length.EqualsAny(2, 3))
+		else if (split.Length.EqualsAny(2, 3) && split[0].FirstOrWhole("select"))
 		{
 			if (split.Length == 3) split[1] = split.Skip(1).Join("");
 
@@ -77,7 +77,7 @@ public class LEGOComponentSolver : ComponentSolver
 				yield return MoveSelected(new Vector2Int(column, row));
 			}
 		}
-		else if (split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition) && split.Length == 2)
+		else if (split.Length == 2 && split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition))
 		{
 			yield return null;
 			yield return DoInteractionClick(_component.GetValue<KMSelectable[]>("ColorButtons")[colorPosition - 1]);
