@@ -8,7 +8,7 @@ public class CoroutineQueue : MonoBehaviour
 	private void Awake()
 	{
 		_coroutineQueue = new LinkedList<IEnumerator>();
-		_forceSolveQueue = new LinkedList<IEnumerator>();
+		_forceSolveQueue = new LinkedList<Stack<IEnumerator>>();
 		_bombIDProcessed = new Queue<int>();
 	}
 
@@ -25,7 +25,7 @@ public class CoroutineQueue : MonoBehaviour
 		_activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
 	}
 
-	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.AddLast(subcoroutine);
+	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.AddLast(new Stack<IEnumerator>(new[] { subcoroutine }));
 
 	public void AddToQueue(IEnumerator subcoroutine)
 	{
@@ -121,7 +121,7 @@ public class CoroutineQueue : MonoBehaviour
 	{
 		while (_forceSolveQueue.Count > 0)
 		{
-			IEnumerator coroutine = _forceSolveQueue.First.Value;
+			IEnumerator coroutine = _forceSolveQueue.First.Value.Peek();
 			bool result = true;
 			while (result)
 			{
@@ -134,17 +134,27 @@ public class CoroutineQueue : MonoBehaviour
 					DebugHelper.LogException(e, "An exception occurred while executing a force-solve coroutine:");
 					result = false;
 				}
-				if (!result) continue;
+
+				if (!result)
+				{
+					if (_forceSolveQueue.First.Value.Count > 1)
+						_forceSolveQueue.First.Value.Pop();
+					else
+						_forceSolveQueue.RemoveFirst();
+
+					continue;
+				}
 
 				switch (coroutine.Current)
 				{
 					case bool boolean when boolean:
-						_forceSolveQueue.AddLast(coroutine);
+						_forceSolveQueue.AddLast(_forceSolveQueue.First.Value);
+						_forceSolveQueue.RemoveFirst();
 						yield return null;
 						result = false;
 						break;
 					case IEnumerator enumerator:
-						_forceSolveQueue.AddFirst(enumerator);
+						_forceSolveQueue.First.Value.Push(enumerator);
 						coroutine = enumerator;
 						continue;
 					default:
@@ -152,15 +162,13 @@ public class CoroutineQueue : MonoBehaviour
 						break;
 				}
 			}
-
-			_forceSolveQueue.RemoveFirst();
 		}
 
 		_processingForcedSolve = false;
 		_activeForceSolveCoroutine = null;
 	}
 
-	private static LinkedList<IEnumerator> _forceSolveQueue;
+	private static LinkedList<Stack<IEnumerator>> _forceSolveQueue;
 	private bool _processingForcedSolve;
 	private Coroutine _activeForceSolveCoroutine;
 
