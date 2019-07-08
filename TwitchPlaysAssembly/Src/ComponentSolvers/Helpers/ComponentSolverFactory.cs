@@ -66,7 +66,6 @@ public static class ComponentSolverFactory
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
-		ModComponentSolverCreators["FlavorText"] = module => new FlavorTextComponentSolver(module);
 		ModComponentSolverCreators["KnowYourWay"] = module => new KnowYourWayComponentSolver(module);
 		ModComponentSolverCreators["LetterKeys"] = module => new LetterKeysComponentSolver(module);
 		ModComponentSolverCreators["Microcontroller"] = module => new MicrocontrollerComponentSolver(module);
