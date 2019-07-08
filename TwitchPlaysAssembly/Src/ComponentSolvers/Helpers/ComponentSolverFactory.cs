@@ -58,8 +58,10 @@ public static class ComponentSolverFactory
 		//Royal_Flu$h Modules
 		ModComponentSolverCreators["coffeebucks"] = module => new CoffeebucksComponentSolver(module);
 		ModComponentSolverCreators["festiveJukebox"] = module => new FestiveJukeboxComponentSolver(module);
-		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
 		ModComponentSolverCreators["hangover"] = module => new HangoverComponentSolver(module);
+		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
+		ModComponentSolverCreators["simonsStages"] = module => new SimonsStagesComponentSolver(module);
+		ModComponentSolverCreators["skinnyWires"] = module => new SkinnyWiresComponentSolver(module);
 		ModComponentSolverCreators["tWords"] = module => new TWordsComponentSolver(module);
 
 		//Misc Modules
@@ -183,8 +185,10 @@ public static class ComponentSolverFactory
 		//Royal_Flu$h
 		ModComponentSolverInformation["coffeebucks"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 11 };
 		ModComponentSolverInformation["festiveJukebox"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 3 };
-		ModComponentSolverInformation["labyrinth"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 9 };
 		ModComponentSolverInformation["hangover"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 7 };
+		ModComponentSolverInformation["labyrinth"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 9 };
+		ModComponentSolverInformation["simonStages"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 9 };
+		ModComponentSolverInformation["skinnyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 5 };
 		ModComponentSolverInformation["tWords"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 5 };
 
 		//Misc
