@@ -317,6 +317,7 @@ static class GameCommands
 		}
 		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(msg.Duplicate(command), name.Trim()));
 		TwitchGame.ModuleCameras?.SetNotes();
+		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 	}
 
 	[Command(@"q(?:ueue)? +(!.+)")]
