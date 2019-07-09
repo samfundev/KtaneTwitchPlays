@@ -381,6 +381,11 @@ public class TwitchModule : MonoBehaviour
 	public IEnumerator ProcessClaimQueue()
 	{
 		StartCoroutine(ProcessClaimCooldown());
+
+		// Cause the modules on the bomb to process their claim queues in random order.
+		// This way, !claimall doesn’t give players all the modules in the same order every time.
+		yield return new WaitForSeconds(UnityEngine.Random.Range(.1f, .5f));
+
 		while (!Solved && !Solver.AttemptedForcedSolve)
 		{
 			yield return new WaitForSeconds(0.1f);
