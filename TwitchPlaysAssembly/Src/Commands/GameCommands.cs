@@ -364,8 +364,7 @@ static class GameCommands
 		if (string.IsNullOrEmpty(name))
 			name = null;
 
-		// For !call, “name” will be null, so this will find unnamed commands.
-		var call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Name == name);
+		var call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name == null ? item.Name == null : item.Name.EqualsIgnoreCase(name));
 
 		if (call == null)
 		{
@@ -374,6 +373,7 @@ static class GameCommands
 		}
 		TwitchGame.Instance.CommandQueue.Remove(call);
 		TwitchGame.ModuleCameras?.SetNotes();
+		IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
 		IRCConnection.ReceiveMessage(call.Message);
 	}
 
