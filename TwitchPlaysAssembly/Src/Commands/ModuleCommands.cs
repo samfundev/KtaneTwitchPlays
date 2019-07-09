@@ -122,8 +122,11 @@ static class ModuleCommands
 	[Command(@"assign +(.+)")]
 	public static void Assign(TwitchModule module, string user, [Group(1)] string targetUser)
 	{
-		if (user.EqualsIgnoreCase(targetUser))
+		if (module.PlayerName == targetUser)
+		{
+			IRCConnection.SendMessage($"{user}, the module is already assigned to {targetUser}.");
 			return;
+		}
 
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
