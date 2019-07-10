@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 public static class BombCommands
 {
@@ -67,7 +66,7 @@ public static class BombCommands
 		return bomb.DelayBombExplosionCoroutine();
 	}
 
-	[Command(@"(explode|detonate)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(explode|detonate|kapow)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static IEnumerator Explode(TwitchBomb bomb) => bomb.DelayBombExplosionCoroutine();
 
 	[Command(@"(status|info)")]
