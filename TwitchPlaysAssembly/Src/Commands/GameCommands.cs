@@ -364,7 +364,7 @@ static class GameCommands
 		if (string.IsNullOrEmpty(name))
 			name = null;
 
-		var call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name == null ? item.Name == null : item.Name.EqualsIgnoreCase(name));
+		var call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name == null ? item.Name == null : name.EqualsIgnoreCase(item.Name));
 
 		if (call == null)
 		{
