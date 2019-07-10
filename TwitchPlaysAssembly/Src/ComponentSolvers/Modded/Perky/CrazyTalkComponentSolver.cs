@@ -30,6 +30,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
 			while (timeRemaining % 10 != time)
 			{
 				yield return null;
+				yield return "trycancel";
 				timeRemaining = (int) timerComponent.TimeRemaining;
 			}
 
