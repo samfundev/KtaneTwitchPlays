@@ -113,7 +113,7 @@ public class LEGOComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		yield return RespondToCommandInternal("right 8;clear"); // Move to the build page and clear.
+		yield return ChainCommand("right 8;clear"); // Move to the build page and clear.
 
 		int[] shiftedSolution = _component.CallMethod<int[]>("ShiftGrid", _component.GetValue<int[]>("SolutionDisplay"));
 		for (int i = 1; i <= shiftedSolution.Max(); i++)
