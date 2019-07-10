@@ -578,7 +578,7 @@ public abstract class ComponentSolver
 
 	protected void HandleModuleException(Exception e)
 	{
-		DebugHelper.LogException(e, "While solving a module an exception has occurred! Here's the error:");
+		DebugHelper.LogException(e, $"While solving a module ({Module.BombComponent.GetModuleDisplayName()}) an exception has occurred! Here's the error:");
 		SolveModule($"Looks like {Module.BombComponent.GetModuleDisplayName()} ran into a problem while running a command, automatically solving module.");
 	}
 
@@ -798,7 +798,7 @@ public abstract class ComponentSolver
 				}
 				catch (Exception ex)
 				{
-					DebugHelper.LogException(ex, "An exception occurred while using the Forced Solve handler:");
+					DebugHelper.LogException(ex, $"An exception occurred while using the Forced Solve handler ({bombComponent.GetModuleDisplayName()}):");
 					CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 					foreach (MonoBehaviour behavior in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 					{
@@ -825,7 +825,7 @@ public abstract class ComponentSolver
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex, "An exception occurred while silently solving a module:");
+			DebugHelper.LogException(ex, $"An exception occurred while silently solving a module ({handle.BombComponent.GetModuleDisplayName()}):");
 		}
 	}
 

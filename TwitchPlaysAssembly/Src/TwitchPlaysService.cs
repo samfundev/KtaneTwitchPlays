@@ -565,7 +565,7 @@ public class TwitchPlaysService : MonoBehaviour
 			}
 			catch (Exception e)
 			{
-				DebugHelper.LogException(e, "Couldn't create a component solver during startup for the following reason:");
+				DebugHelper.LogException(e, $"Couldn't create a component solver for \"{bombComponent.GetModuleDisplayName()}\" during startup for the following reason:");
 			}
 
 			ModuleData.DataHasChanged |= solver != null;
