@@ -392,7 +392,10 @@ static class GameCommands
 		TwitchGame.Instance.CommandQueue.Clear();
 		TwitchGame.ModuleCameras?.SetNotes();
 		foreach (var call in allCommands)
+		{
+			IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
 			IRCConnection.ReceiveMessage(call.Message);
+		}
 	}
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
