@@ -62,6 +62,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
 		ModComponentSolverCreators["simonsStages"] = module => new SimonsStagesComponentSolver(module);
 		ModComponentSolverCreators["skinnyWires"] = module => new SkinnyWiresComponentSolver(module);
+		ModComponentSolverCreators["streetFighter"] = module => new StreetFighterComponentSolver(module);
 		ModComponentSolverCreators["tWords"] = module => new TWordsComponentSolver(module);
 
 		//Misc Modules
@@ -188,6 +189,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["labyrinth"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 9 };
 		ModComponentSolverInformation["simonsStages"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 0, CameraPinningAlwaysAllowed = true, moduleScoreIsDynamic = true, manualCode = "Simon%E2%80%99s Stages" };
 		ModComponentSolverInformation["skinnyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 5 };
+		ModComponentSolverInformation["streetFighter"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 5 };
 		ModComponentSolverInformation["tWords"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 5 };
 
 		//Misc

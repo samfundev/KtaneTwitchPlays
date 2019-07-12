@@ -108,6 +108,7 @@
     <Compile Include="Src\Audio\MusicPlayer.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SimonsStagesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SkinnyWiresComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\StreetFighterComponentSolver.cs" />
     <Compile Include="Src\Helpers\ClaimQueueItem.cs" />
     <Compile Include="Src\Helpers\CommandQueueItem.cs" />
     <Compile Include="Src\Commands\GlobalCommands.cs" />

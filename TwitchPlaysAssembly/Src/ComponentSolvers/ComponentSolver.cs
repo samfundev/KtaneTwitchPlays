@@ -557,6 +557,8 @@ public abstract class ComponentSolver
 		selectable.SetHighlight(false);
 	}
 
+	protected void DoInteractionHighlight(MonoBehaviour interactable) =>  interactable.GetComponent<Selectable>().SetHighlight(true);
+
 	protected string GetModuleType() => Module.BombComponent.GetComponent<KMBombModule>()?.ModuleType ?? Module.BombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
 
 	// ReSharper disable once UnusedMember.Global
