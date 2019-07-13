@@ -19,11 +19,12 @@ public class SimonsStagesComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		inputCommand = Regex.Replace(inputCommand.ToUpperInvariant().Trim(), "^(press|hit|enter|push) ", "");
+		inputCommand = Regex.Replace(inputCommand.ToUpperInvariant().Trim(), "^(press|hit|enter|push) ", "", RegexOptions.IgnoreCase);
 
 		if (!inputCommand.RegexMatch("^[RBYOMGPLCW ]+$"))
 			yield break;
 
+		yield return null;
 		foreach (char character in inputCommand.Replace(" ", ""))
 		{
 			yield return DoInteractionClick(selectables[Array.IndexOf(colorOrder, character)]);
