@@ -623,6 +623,10 @@ public abstract class ComponentSolver
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 3f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
+					case "tallorderedKeys": // Tallordered Keys
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 2f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+
 					default: // Forget Me Not
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1.5f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;

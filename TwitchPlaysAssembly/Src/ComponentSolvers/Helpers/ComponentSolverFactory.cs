@@ -534,6 +534,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["orderedKeys"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["recordedKeys"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["reorderedKeys"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
+		ModComponentSolverInformation["tallorderedKeys"] = new ModuleInformation { moduleScore = 0, CameraPinningAlwaysAllowed = true, moduleScoreIsDynamic = true, DoesTheRightThing = true };
 		ModComponentSolverInformation["unorderedKeys"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 
 		//taggedjc
