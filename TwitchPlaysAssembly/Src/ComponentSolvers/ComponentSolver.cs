@@ -620,9 +620,7 @@ public abstract class ComponentSolver
 						break;
 						
 					case "forgetEnigma": // Forget Enigma
-					    moduleScore = (int)
-(Module.Bomb.bombSolvableModules * 4f *
-TwitchPlaySettings.data.DynamicScorePercentage);
+					    moduleScore = (int) (Module.Bomb.bombSolvableModules * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
                         break;
 
 					case "simonsStages": // Simon's Stages
