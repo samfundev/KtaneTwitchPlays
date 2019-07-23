@@ -604,7 +604,7 @@ public abstract class ComponentSolver
 				switch (ModInfo.moduleID)
 				{
 					case "HexiEvilFMN": // Forget Everything
-						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 4 * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					case "cookieJars": //cookie jars
@@ -612,11 +612,15 @@ public abstract class ComponentSolver
 						break;
 
 					case "forgetThis": // Forget This
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 						
 					case "forgetThemAll": // Forget Them All
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 5f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+						
+					case "forgetEnigma": // Forget Enigma
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					case "simonsStages": // Simon's Stages
