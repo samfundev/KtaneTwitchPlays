@@ -301,14 +301,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Mastermind Cruel"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true };
 
 		//EpicToast
-		ModComponentSolverInformation["bombDiffusal"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["brushStrokes"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["brushStrokes"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = false };
 		ModComponentSolverInformation["burgerAlarm"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
 		ModComponentSolverInformation["buttonGrid"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["challengeAndContact"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["cookieJars"] = new ModuleInformation { moduleScoreIsDynamic = true, moduleScore = 0, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
 		ModComponentSolverInformation["factoryMaze"] = new ModuleInformation { moduleScore = 19, DoesTheRightThing = true };
-		ModComponentSolverInformation["faultyDigitalRootModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["instructions"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["krazyTalk"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = false };
 		ModComponentSolverInformation["subscribeToPewdiepie"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
@@ -318,6 +316,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["blueArrowsModule"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
 		ModComponentSolverInformation["cruelDigitalRootModule"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["equationsXModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
+		ModComponentSolverInformation["faultyDigitalRootModule"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["FlavorText"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true };
 		ModComponentSolverInformation["FlavorTextCruel"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["greenArrowsModule"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
@@ -557,6 +556,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["synonyms"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 
 		//TheThirdMan
+		ModComponentSolverInformation["bombDiffusal"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["constellations"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["deckOfManyThings"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["doubleExpert"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
