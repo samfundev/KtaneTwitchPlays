@@ -17,7 +17,7 @@ public static class HoldableCommands
 	[Command(@"(turn|turn round|turn around|rotate|flip|spin)")]
 	public static IEnumerator Flip(TwitchHoldable holdable) => holdable.Turn();
 
-	[Command(@"throw *(\d+)?", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(?:throw|yeet) *(\d+)?", AccessLevel.Mod, AccessLevel.Mod)]
 	public static IEnumerator Throw(FloatingHoldable holdable, [Group(1)] int? optionalStrength = 3)
 	{
 		int strength = optionalStrength ?? 3;
