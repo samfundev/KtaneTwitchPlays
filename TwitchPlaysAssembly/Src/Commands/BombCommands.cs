@@ -66,7 +66,7 @@ public static class BombCommands
 		return bomb.DelayBombExplosionCoroutine();
 	}
 
-	[Command(@"(explode|detonate|kapow)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(explode|detonate|kapow|yeet)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static IEnumerator Explode(TwitchBomb bomb) => bomb.DelayBombExplosionCoroutine();
 
 	[Command(@"(status|info)")]
