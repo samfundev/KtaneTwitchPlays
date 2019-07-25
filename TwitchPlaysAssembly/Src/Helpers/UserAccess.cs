@@ -266,14 +266,14 @@ public static class UserAccess
 		bool unban = ban.BanExpiry < DateTime.Now.TotalSeconds();
 		if (!string.IsNullOrEmpty(ban.BannedBy) && !UserAccessData.Instance.StickyBans)
 		{
-			if (double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForBanCommand))
+			if (double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true))
 			{
 				unban = true;
 				IRCConnection.SendMessage($"User {userNickName} is no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.");
 				if (TwitchPlaySettings.data.EnableWhispers)
 					IRCConnection.SendMessage($"You are no longer banned from twitch plays because {ban.BannedBy} no longer has the power to issue permanent bans.", userNickName, false);
 			}
-			if (!double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand))
+			if (!double.IsInfinity(ban.BanExpiry) && !HasAccess(ban.BannedBy, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true))
 			{
 				unban = true;
 				IRCConnection.SendMessage($"User {userNickName} is no longer timed out from twitch plays because {ban.BannedBy} no longer has the power to issue time outs.");
