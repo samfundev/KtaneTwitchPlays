@@ -210,11 +210,6 @@ static class GlobalCommands
 					case "pin allowed":
 						IRCConnection.SendMessage($"Module {moduleName} pinning always allowed: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}", user, !isWhisper);
 						break;
-					case "strike":
-					case "strikepenalty":
-					case "strike penalty":
-						IRCConnection.SendMessage($"Module {moduleName} strike penalty: {modules[0].strikePenalty}", user, !isWhisper);
-						break;
 					case "color":
 					case "colour":
 						var moduleColor = JsonConvert.SerializeObject(TwitchPlaySettings.data.UnclaimedColor, Formatting.None, new ColorConverter());
@@ -381,12 +376,6 @@ static class GlobalCommands
 								break;
 						}
 						IRCConnection.SendMessage($"Module {moduleName} Module pinning always allowed changed to: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}", user, !isWhisper);
-						break;
-					case "strike":
-					case "strikepenalty":
-					case "strike penalty":
-						module.strikePenalty = !int.TryParse(changeTo, out int strikePenalty) ? defaultModule.strikePenalty : -strikePenalty;
-						IRCConnection.SendMessage($"Module {moduleName} Strike Penalty changed to: {modules[0].strikePenalty}", user, !isWhisper);
 						break;
 					case "color":
 					case "colour":
