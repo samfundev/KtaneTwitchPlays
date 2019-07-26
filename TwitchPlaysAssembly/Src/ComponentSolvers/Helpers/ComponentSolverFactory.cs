@@ -732,8 +732,6 @@ public static class ComponentSolverFactory
 				statusLightDown = info.statusLightDown,
 				statusLightLeft = info.statusLightLeft,
 				statusLightOverride = false,
-				strikePenalty = info.strikePenalty,
-				strikePenaltyOverride = info.strikePenaltyOverride,
 				unclaimedColor = info.unclaimedColor,
 				validCommands = info.validCommands,
 				validCommandsOverride = false
@@ -798,12 +796,6 @@ public static class ComponentSolverFactory
 		{
 			ModuleData.DataHasChanged |= !info.moduleScore.Equals(defInfo.moduleScore);
 			info.moduleScore = defInfo.moduleScore;
-		}
-
-		if (!info.strikePenaltyOverride)
-		{
-			ModuleData.DataHasChanged |= !info.strikePenalty.Equals(defInfo.strikePenalty);
-			info.strikePenalty = defInfo.strikePenalty;
 		}
 
 		if (!info.manualCodeOverride)
@@ -891,10 +883,8 @@ public static class ComponentSolverFactory
 
 			i.moduleScore = info.moduleScore;
 			i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
-			i.strikePenalty = info.strikePenalty;
 
 			i.moduleScoreOverride = info.moduleScoreOverride;
-			i.strikePenaltyOverride = info.strikePenaltyOverride;
 			i.helpTextOverride = info.helpTextOverride;
 			i.manualCodeOverride = info.manualCodeOverride;
 			i.statusLightOverride = info.statusLightOverride;
@@ -1039,12 +1029,6 @@ public static class ComponentSolverFactory
 		{
 			ModuleData.DataHasChanged |= !score.Equals(info.moduleScore);
 			info.moduleScore = score;
-		}
-
-		if (FindStrikePenalty(module.BombComponent, commandComponentType, out int penalty) && !info.strikePenaltyOverride)
-		{
-			ModuleData.DataHasChanged |= !penalty.Equals(info.strikePenalty);
-			info.strikePenalty = penalty;
 		}
 
 		if (FindRegexList(module.BombComponent, commandComponentType, out string[] regexList) && !info.validCommandsOverride)

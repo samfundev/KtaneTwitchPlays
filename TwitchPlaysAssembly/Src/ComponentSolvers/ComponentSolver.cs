@@ -970,7 +970,7 @@ public abstract class ComponentSolver
 		List<string> messageParts = new List<string>();
 
 		string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
-		int strikePenalty = ModInfo.strikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
+		int strikePenalty = -TwitchPlaySettings.data.StrikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		int hpPenalty = 0;
 		OtherModes.Team? team = null;
 		if (OtherModes.ZenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
