@@ -298,7 +298,7 @@ public abstract class ComponentSolver
 					{
 						Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
 						IRCConnection.SendMessageFormat(TwitchPlaySettings.data.PointsAwardedByModule,
-							_currentUserNickName, pointsAwarded, pointsAwarded> 1 ? "s" : "", Code, ModInfo.moduleDisplayName);
+							_currentUserNickName, pointsAwarded, pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName);
 					}
 				}
 				else if (TwitchPlaySettings.data.EnableDebuggingCommands)
@@ -557,7 +557,7 @@ public abstract class ComponentSolver
 		selectable.SetHighlight(false);
 	}
 
-	protected void DoInteractionHighlight(MonoBehaviour interactable) =>  interactable.GetComponent<Selectable>().SetHighlight(true);
+	protected void DoInteractionHighlight(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().SetHighlight(true);
 
 	protected string GetModuleType() => Module.BombComponent.GetComponent<KMBombModule>()?.ModuleType ?? Module.BombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
 
@@ -614,11 +614,11 @@ public abstract class ComponentSolver
 					case "forgetThis": // Forget This
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
-						
+
 					case "forgetThemAll": // Forget Them All
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 5f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
-						
+
 					case "forgetEnigma": // Forget Enigma
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
