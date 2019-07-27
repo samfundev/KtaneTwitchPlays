@@ -1160,7 +1160,7 @@ public static class ComponentSolverFactory
 
 	private static bool FindRegexList(Component bombComponent, Type commandComponentType, out string[] validCommands)
 	{
-		FieldInfo candidateString = commandComponentType.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo candidateString = commandComponentType?.GetField("TwitchValidCommands", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateString == null)
 		{
 			validCommands = null;
@@ -1194,7 +1194,7 @@ public static class ComponentSolverFactory
 
 	private static bool FindModuleScore(Component bombComponent, Type commandComponentType, out int moduleScore)
 	{
-		FieldInfo candidateInt = commandComponentType.GetField("TwitchModuleScore", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo candidateInt = commandComponentType?.GetField("TwitchModuleScore", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateInt == null)
 		{
 			moduleScore = 5;
@@ -1211,7 +1211,7 @@ public static class ComponentSolverFactory
 
 	private static bool FindStrikePenalty(Component bombComponent, Type commandComponentType, out int strikePenalty)
 	{
-		FieldInfo candidateInt = commandComponentType.GetField("TwitchStrikePenalty", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo candidateInt = commandComponentType?.GetField("TwitchStrikePenalty", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		if (candidateInt == null)
 		{
 			strikePenalty = -6;
@@ -1245,45 +1245,45 @@ public static class ComponentSolverFactory
 
 	private static FieldInfo FindHelpMessage(Type commandComponentType)
 	{
-		FieldInfo cancelField = commandComponentType.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo cancelField = commandComponentType?.GetField("TwitchHelpMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(string) ? cancelField : null;
 	}
 
 	private static FieldInfo FindManualCode(Type commandComponentType)
 	{
-		FieldInfo cancelField = commandComponentType.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo cancelField = commandComponentType?.GetField("TwitchManualCode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(string) ? cancelField : null;
 	}
 
 	private static FieldInfo FindCancelBool(Type commandComponentType)
 	{
-		FieldInfo cancelField = commandComponentType.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo cancelField = commandComponentType?.GetField("TwitchShouldCancelCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(bool) ? cancelField : null;
 	}
 
 	private static FieldInfo FindZenModeBool(Type commandComponentType)
 	{
-		FieldInfo zenField = commandComponentType.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ??
-							commandComponentType.GetField("ZenModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo zenField = commandComponentType?.GetField("TwitchZenMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ??
+							commandComponentType?.GetField("ZenModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return zenField?.FieldType == typeof(bool) ? zenField : null;
 	}
 
 	private static FieldInfo FindTimeModeBool(Type commandComponentType)
 	{
-		FieldInfo timeField = commandComponentType.GetField("TwitchTimeMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ??
-							commandComponentType.GetField("TimeModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo timeField = commandComponentType?.GetField("TwitchTimeMode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ??
+							commandComponentType?.GetField("TimeModeActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return timeField?.FieldType == typeof(bool) ? timeField : null;
 	}
 
 	private static FieldInfo FindTwitchPlaysBool(Type commandComponentType)
 	{
-		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo twitchPlaysActiveField = commandComponentType?.GetField("TwitchPlaysActive", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 
 	private static FieldInfo FindTwitchPlaysSkipTimeBool(Type commandComponentType)
 	{
-		FieldInfo twitchPlaysActiveField = commandComponentType.GetField("TwitchPlaysSkipTimeAllowed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo twitchPlaysActiveField = commandComponentType?.GetField("TwitchPlaysSkipTimeAllowed", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return twitchPlaysActiveField?.FieldType == typeof(bool) ? twitchPlaysActiveField : null;
 	}
 
@@ -1313,7 +1313,7 @@ public static class ComponentSolverFactory
 
 	private static FieldInfo FindAbandonModuleList(Type commandComponentType)
 	{
-		FieldInfo cancelField = commandComponentType.GetField("TwitchAbandonModule", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+		FieldInfo cancelField = commandComponentType?.GetField("TwitchAbandonModule", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 		return cancelField?.FieldType == typeof(List<KMBombModule>) ? cancelField : null;
 	}
 
