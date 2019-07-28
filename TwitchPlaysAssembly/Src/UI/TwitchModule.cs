@@ -180,7 +180,14 @@ public class TwitchModule : MonoBehaviour
 				// Which is done by getting the status light's position in world space, converting it to the tag's local space, taking the Y and adding 0.03514.
 				StatusLightParent statusLightParent = BombComponent.GetComponentInChildren<StatusLightParent>();
 				if (statusLightParent != null)
-					pos.y = CanvasGroupMultiDecker.transform.parent.InverseTransformPoint(statusLightParent.transform.position).y + 0.03514f;
+				{
+					float y = CanvasGroupMultiDecker.transform.parent.InverseTransformPoint(statusLightParent.transform.position).y + 0.03514f;
+					if (y >= 0) // Make sure the Y position wouldn't be inside the module.
+					{
+						pos.y = y;
+					}
+				}
+
 
 				_originalIDPosition = pos;
 				CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.ModInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.ModInfo.statusLightDown ? -pos.z : pos.z);
