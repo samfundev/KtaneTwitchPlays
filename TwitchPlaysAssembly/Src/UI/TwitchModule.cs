@@ -65,7 +65,7 @@ public class TwitchModule : MonoBehaviour
 		if (Solved && !TwitchPlaySettings.data.AnarchyMode) return;
 
 		CameraPriority =
-			pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || TwitchPlaySettings.data.AnarchyMode)
+			pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || BombComponent is NeedyComponent || TwitchPlaySettings.data.AnarchyMode)
 				? CameraPriority.Pinned
 				: CameraPriority.Viewed;
 		LastUsed = DateTime.UtcNow;
