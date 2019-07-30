@@ -11,6 +11,8 @@ public static class GeneralExtensions
 
 	public static bool InRange(this int num, int min, int max) => min <= num && num <= max;
 
+	public static int Mod(this int n, int m) => (n % m + m) % m;
+
 	public static string FormatTime(this float seconds)
 	{
 		bool addMilliseconds = seconds < 60;

@@ -88,8 +88,8 @@ public class LEGOComponentSolver : ComponentSolver
 	{
 		SelectedPosition = absolute ? position : SelectedPosition + position;
 		// If we go out of bounds, wrap.
-		SelectedPosition.x = (SelectedPosition.x % 8 + 8) % 8;
-		SelectedPosition.y = (SelectedPosition.y % 8 + 8) % 8;
+		SelectedPosition.x = SelectedPosition.x.Mod(8);
+		SelectedPosition.y = SelectedPosition.y.Mod(8);
 
 		yield return DoInteractionClick(GridButtons[(7 - SelectedPosition.y) * 8 + SelectedPosition.x], 0.05f);
 	}
