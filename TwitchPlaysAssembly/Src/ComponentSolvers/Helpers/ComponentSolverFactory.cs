@@ -82,6 +82,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["boolMaze"] = module => new BooleanMazeComponentSolver(module);
 		ModComponentSolverCreators["MorseWar"] = module => new MorseWarComponentSolver(module);
 		ModComponentSolverCreators["necronomicon"] = module => new NecronomiconComponentSolver(module);
+		ModComponentSolverCreators["numberNimbleness"] = module => new NumberNimblenessComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -381,6 +382,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["theTriangleButton"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 
 		//KingBranBran
+		ModComponentSolverInformation["numberNimbleness"] = new ModuleInformation { moduleScore = 7, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["pieModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["tapCode"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["valves"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
