@@ -251,6 +251,7 @@ public class TwitchGame : MonoBehaviour
 						AwardedNeedyPoints[playerName] = 0;
 
 					AwardedNeedyPoints[playerName] += points;
+					Leaderboard.Instance.AddScore(playerName, points);
 				}
 			}
 		}
