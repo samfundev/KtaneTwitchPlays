@@ -580,8 +580,43 @@ public abstract class ComponentSolver
 
 	protected void HandleModuleException(Exception e)
 	{
+		if (Module.BombComponent.GetModuleDisplayName() == "Manometers")
+		{
+			try
+			{
+				var component = Module.BombComponent.GetComponent(ReflectionHelper.FindType("manometers"));
+				var _processList = component.GetValue<int[,]>("processList");
+				DebugHelper.Log(_processList.GetLength(0) + " " + _processList.GetLength(1));
+				for (int i = 0; i < _processList.GetLength(0); i++)
+				{
+					DebugHelper.Log($"Checking value {i} of the list...");
+					var value1 = _processList[i, 0];
+					var value2 = _processList[i, 1];
+					var value3 = _processList[i, 2];
+					DebugHelper.Log($"Values are: {value1}, {value2}, and {value3}");
+				}
+				DebugHelper.Log("List checks out, problem is elsewhere.");
+			}
+			catch (Exception ex)
+			{
+				DebugHelper.LogException(ex, "While attempting to process an issue with Manometers, an exception has occurred. Here's the error:");
+			}
+			//Stop the audio from playing, but separate it out from the previous try/catch to identify errors better
+			try
+			{
+				var component = Module.BombComponent.GetComponent(ReflectionHelper.FindType("manometers"));
+				var audio = component.GetValue<KMAudio.KMAudioRef>("timerSound");
+				if (audio != null)
+					audio.StopSound();
+			}
+			catch
+			{
+				DebugHelper.Log("Audio for manometers could not be stopped.");
+			}
+		}
 		DebugHelper.LogException(e, $"While solving a module ({Module.BombComponent.GetModuleDisplayName()}) an exception has occurred! Here's the error:");
 		SolveModule($"Looks like {Module.BombComponent.GetModuleDisplayName()} ran into a problem while running a command, automatically solving module.");
+		
 	}
 
 	public void SolveModule(string reason)
