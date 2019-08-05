@@ -677,7 +677,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["symbolicPasswordModule"] = new ModuleInformation { moduleScore = 7, helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!", DoesTheRightThing = true };
 		ModComponentSolverInformation["VaricoloredSquaresModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 
-		//Other modded Modules not built into Twitch Plays
+		//Other modded modules not built into Twitch Plays
 		ModComponentSolverInformation["aa"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 0.4f, scoreMethod = ScoreMethod.NeedySolves };
 		ModComponentSolverInformation["BartendingModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["BinaryLeds"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };

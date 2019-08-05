@@ -616,7 +616,7 @@ public abstract class ComponentSolver
 		}
 		DebugHelper.LogException(e, $"While solving a module ({Module.BombComponent.GetModuleDisplayName()}) an exception has occurred! Here's the error:");
 		SolveModule($"Looks like {Module.BombComponent.GetModuleDisplayName()} ran into a problem while running a command, automatically solving module.");
-		
+
 	}
 
 	public void SolveModule(string reason)
@@ -928,10 +928,8 @@ public abstract class ComponentSolver
 					componentValue, headerText, HPDamage,
 					team == OtherModes.Team.Evil ? "the evil team" : "the good team"));
 			else
-				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue,
-					headerText));
-			string recordMessageTone =
-				$"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue, headerText));
+			string recordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
 			Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 				Leaderboard.Instance?.AddScore(userNickName, componentValue);
@@ -979,7 +977,7 @@ public abstract class ComponentSolver
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
 		}
 
-		if (OtherModes.TimeModeOn)
+		if (OtherModes.TimeModeOn && Module.Bomb.bombSolvedModules < Module.Bomb.bombSolvableModules)
 		{
 			float time = OtherModes.GetAdjustedMultiplier() * componentValue;
 			if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
@@ -995,7 +993,8 @@ public abstract class ComponentSolver
 			OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 		}
 
-		IRCConnection.SendMessage(messageParts.Join());
+		if (componentValue > 0)
+			IRCConnection.SendMessage(messageParts.Join());
 	}
 
 	private void AwardStrikes(int strikeCount) => AwardStrikes(null, strikeCount);

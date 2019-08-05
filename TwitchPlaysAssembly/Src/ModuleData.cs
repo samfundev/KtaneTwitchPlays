@@ -63,10 +63,8 @@ public static class ModuleData
 
 		try
 		{
-			List<ModuleInformation> infoList = ComponentSolverFactory.GetModuleInformation().ToList();
-			infoList = infoList.OrderBy(info => info.moduleDisplayName).ThenBy(info => info.moduleID).ToList();
-
-			File.WriteAllText(path, SettingsConverter.Serialize(infoList));//JsonConvert.SerializeObject(infoList, Formatting.Indented));
+			var infoList = ComponentSolverFactory.GetModuleInformation().OrderBy(info => info.moduleDisplayName).ThenBy(info => info.moduleID).ToList();
+			File.WriteAllText(path, SettingsConverter.Serialize(infoList));
 		}
 		catch (FileNotFoundException)
 		{
@@ -90,7 +88,7 @@ public static class ModuleData
 		try
 		{
 			DebugHelper.Log($"ModuleData: Loading Module information data from file: {path}");
-			modInfo = SettingsConverter.Deserialize<ModuleInformation[]>(File.ReadAllText(path));//JsonConvert.DeserializeObject<ModuleInformation[]>(File.ReadAllText(path));
+			modInfo = SettingsConverter.Deserialize<ModuleInformation[]>(File.ReadAllText(path));
 		}
 		catch (FileNotFoundException)
 		{
