@@ -16,8 +16,8 @@ public static class BombCommands
 	[Command(@"(drop|let go|put down)")]
 	public static IEnumerator Drop(TwitchBomb bomb) => bomb.LetGoBomb();
 
-	[Command(@"(?:throw|yeet) *(\d+)?", AccessLevel.Mod, AccessLevel.Mod)]
-	public static IEnumerator Throw(TwitchBomb bomb, [Group(1)] int? strength = 3)
+	[Command(@"(?:throw|yeet) *(\d+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	public static IEnumerator Throw(TwitchBomb bomb, [Group(1)] int? strength = 5)
 	{
 		yield return HoldableCommands.Throw(bomb.Bomb.GetComponent<FloatingHoldable>(), strength);
 	}

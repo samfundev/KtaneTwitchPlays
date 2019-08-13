@@ -292,7 +292,7 @@ static class GameCommands
 	[Command(@"enablecamerawall")]
 	public static void EnableCameraWall(string user)
 	{
-		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Admin, true))
+		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 			IRCConnection.SendMessage("The camera wall is being controlled automatically and cannot be enabled.");
 		else
 			TwitchGame.ModuleCameras.EnableCameraWall();
@@ -301,7 +301,7 @@ static class GameCommands
 	[Command(@"disablecamerawall")]
 	public static void DisableCameraWall(string user)
 	{
-		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Admin, true))
+		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 			IRCConnection.SendMessage("The camera wall is being controlled automatically and cannot be disabled.");
 		else
 			TwitchGame.ModuleCameras.DisableCameraWall();
@@ -399,7 +399,7 @@ static class GameCommands
 		}
 	}
 
-	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
 
 	[Command(@"solvebomb", AccessLevel.SuperUser, AccessLevel.SuperUser)]
@@ -464,7 +464,7 @@ static class GameCommands
 	[Command(@"(?:returntosetup|leave|exit)(?:room)?|return", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void ReturnToSetup() => SceneManager.Instance.ReturnToSetupState();
 
-	[Command(@"enableinteractivemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	[Command(@"enableinteractivemode", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void EnableInteractiveMode()
 	{
 		IRCConnection.SendMessage("Interactive Mode Enabled");
@@ -473,7 +473,7 @@ static class GameCommands
 		TwitchGame.EnableDisableInput();
 	}
 
-	[Command(@"disableinteractivemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	[Command(@"disableinteractivemode", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void DisableInteractiveMode()
 	{
 		IRCConnection.SendMessage("Interactive Mode Disabled");

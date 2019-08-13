@@ -888,7 +888,7 @@ public abstract class ComponentSolver
 	{
 		List<string> messageParts = new List<string>();
 
-		if (OtherModes.ZenModeOn) componentValue = (int) Math.Ceiling(componentValue * 0.20f);
+		if (OtherModes.ZenModeOn) componentValue = 0;
 		if (userNickName == null)
 			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
@@ -1007,7 +1007,7 @@ public abstract class ComponentSolver
 		int strikePenalty = -TwitchPlaySettings.data.StrikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		int hpPenalty = 0;
 		OtherModes.Team? team = null;
-		if (OtherModes.ZenModeOn) strikePenalty = (int) (strikePenalty * 0.20f);
+		if (OtherModes.ZenModeOn) strikePenalty = 0;
 		if (OtherModes.VSModeOn)
 		{
 			if (!string.IsNullOrEmpty(userNickName))

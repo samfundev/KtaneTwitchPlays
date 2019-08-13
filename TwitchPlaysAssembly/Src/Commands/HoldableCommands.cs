@@ -17,10 +17,10 @@ public static class HoldableCommands
 	[Command(@"(turn|turn round|turn around|rotate|flip|spin)")]
 	public static IEnumerator Flip(TwitchHoldable holdable) => holdable.Turn();
 
-	[Command(@"(?:throw|yeet) *(\d+)?", AccessLevel.Mod, AccessLevel.Mod)]
-	public static IEnumerator Throw(FloatingHoldable holdable, [Group(1)] int? optionalStrength = 3)
+	[Command(@"(?:throw|yeet) *(\d+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	public static IEnumerator Throw(FloatingHoldable holdable, [Group(1)] int? optionalStrength = 5)
 	{
-		int strength = optionalStrength ?? 3;
+		int strength = optionalStrength ?? 5;
 
 		holdable.Pause();
 		Rigidbody rigidbody = holdable.GetComponent<Rigidbody>();

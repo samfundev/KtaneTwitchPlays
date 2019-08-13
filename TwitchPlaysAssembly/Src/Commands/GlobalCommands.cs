@@ -69,7 +69,7 @@ static class GlobalCommands
 			IRCConnection.SendMessage("We are currently in anarchy mode.", user, !isWhisper);
 	}
 
-	[Command(@"resetusers? +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"resetusers? +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetUser([Group(1)] string parameters, string user, bool isWhisper)
 	{
 		foreach (string userRaw in parameters.Split(';'))
