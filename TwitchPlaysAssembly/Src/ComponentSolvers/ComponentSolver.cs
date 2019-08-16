@@ -993,7 +993,7 @@ public abstract class ComponentSolver
 			OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 		}
 
-		if (componentValue > 0)
+		if (ModInfo.moduleScore != 0 || !ModInfo.moduleScoreIsDynamic)
 			IRCConnection.SendMessage(messageParts.Join());
 	}
 
