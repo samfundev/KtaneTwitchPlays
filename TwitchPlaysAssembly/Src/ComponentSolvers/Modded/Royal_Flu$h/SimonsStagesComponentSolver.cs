@@ -47,13 +47,11 @@ public class SimonsStagesComponentSolver : ComponentSolver
 	static SimonsStagesComponentSolver()
 	{
 		ComponentType = ReflectionHelper.FindType("SimonsStagesScript");
-		LightInformationType = ReflectionHelper.FindType("LightInformation");
 	}
 
 	private static readonly Type ComponentType;
 	private readonly object _component;
 
-	private static readonly Type LightInformationType;
 	private readonly object[] lightDevices;
 	private char[] colorOrder;
 
