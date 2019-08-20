@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpNotEverything
   m_EditorClassIdentifier: 
   DisplayName: Not One With Everything
-  Description: "\t"
+  Description: I Can't Believe It's Not Vanilla!
   GeneratorSetting:
     TimeLimit: 480
     NumStrikes: 1
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 1
       AllowedSources: 2

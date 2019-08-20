@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpMathisHard
   m_EditorClassIdentifier: 
   DisplayName: Math is Hard
-  Description: 
+  Description: Math may be hard, but this time it'll safe your life!
   GeneratorSetting:
     TimeLimit: 660
     NumStrikes: 3
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 1
       AllowedSources: 2

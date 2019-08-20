@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Name: tpSouvenir2
   m_EditorClassIdentifier: 
   DisplayName: Souvenir StepUp
-  Description: 
+  Description: Bust out your notepads, text editors and write things down like your
+    life depends on it. Because it does.
   GeneratorSetting:
     TimeLimit: 660
     NumStrikes: 2
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 4
       AllowedSources: 2

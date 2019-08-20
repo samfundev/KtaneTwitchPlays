@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpBlinking
   m_EditorClassIdentifier: 
   DisplayName: Blinkenlights 3
-  Description: 
+  Description: Don't blink, you can't miss it.
   GeneratorSetting:
     TimeLimit: 420
     NumStrikes: 3
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 1
       AllowedSources: 2

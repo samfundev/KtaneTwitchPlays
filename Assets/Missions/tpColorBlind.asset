@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Name: tpColorBlind
   m_EditorClassIdentifier: 
   DisplayName: Colors Everywhere
-  Description: 
+  Description: Their here, their there, their everywhere. What'cha gonna solve? Colors
+    Everywhere.
   GeneratorSetting:
     TimeLimit: 720
     NumStrikes: 3
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 1
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 11
       AllowedSources: 2

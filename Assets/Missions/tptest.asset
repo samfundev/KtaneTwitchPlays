@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Name: tptest
   m_EditorClassIdentifier: 
   DisplayName: Practice
-  Description: 
+  Description: This is a test. This mission is conducting a test of the emergency
+    bomb deployment system. This is only a test.
   GeneratorSetting:
     TimeLimit: 600
     NumStrikes: 5
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 1
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 5
       AllowedSources: 3

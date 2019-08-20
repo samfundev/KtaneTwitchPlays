@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpOneWithEverything
   m_EditorClassIdentifier: 
   DisplayName: One with Everything
-  Description: 
+  Description: I Can't Believe It's Not Modded!
   GeneratorSetting:
     TimeLimit: 240
     NumStrikes: 1
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 1
       AllowedSources: 2

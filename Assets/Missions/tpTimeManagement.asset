@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpTimeManagement
   m_EditorClassIdentifier: 
   DisplayName: Time Management
-  Description: 
+  Description: What time is it? It's cooperation time!
   GeneratorSetting:
     TimeLimit: 960
     NumStrikes: 2
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 1
       AllowedSources: 2

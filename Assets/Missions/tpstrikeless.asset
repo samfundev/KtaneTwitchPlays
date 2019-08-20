@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpstrikeless
   m_EditorClassIdentifier: 
   DisplayName: No strikes
-  Description: 
+  Description: Strikingly, striking strikes out any chance of winning.
   GeneratorSetting:
     TimeLimit: 5880
     NumStrikes: 1
     TimeBeforeNeedyActivation: 0
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 11
       AllowedSources: 1

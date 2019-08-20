@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpNeedyReturns
   m_EditorClassIdentifier: 
   DisplayName: Needy Come Back
-  Description: 
+  Description: You can strike it all on me!
   GeneratorSetting:
     TimeLimit: 600
     NumStrikes: 1
     TimeBeforeNeedyActivation: 20
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 1
       AllowedSources: 1

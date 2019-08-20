@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpGottaBeFast
   m_EditorClassIdentifier: 
   DisplayName: Gotta Be Fast
-  Description: 
+  Description: Tick tock, your racing against the clock!
   GeneratorSetting:
     TimeLimit: 570
     NumStrikes: 2
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 4
       AllowedSources: 2

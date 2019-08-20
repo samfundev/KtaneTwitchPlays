@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpAmazing
   m_EditorClassIdentifier: 
   DisplayName: Amazing
-  Description: 
+  Description: Chat would certainly be a-maze-ing if they could do this one.
   GeneratorSetting:
     TimeLimit: 840
     NumStrikes: 2
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 1
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 2
       AllowedSources: 2

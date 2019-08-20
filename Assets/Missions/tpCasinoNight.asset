@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Name: tpCasinoNight
   m_EditorClassIdentifier: 
   DisplayName: Casino Night
-  Description: 
+  Description: Round and around the stream goes, where it stops? Only chat knows.
   GeneratorSetting:
     TimeLimit: 900
     NumStrikes: 1
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
+    OptionalWidgetCount: 5
     ComponentPools:
     - Count: 2
       AllowedSources: 2
