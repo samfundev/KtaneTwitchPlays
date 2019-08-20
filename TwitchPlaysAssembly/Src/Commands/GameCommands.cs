@@ -156,19 +156,21 @@ static class GameCommands
 	[Command(@"unclaimed")]
 	public static void ListUnclaimed(string user, bool isWhisper)
 	{
-		// Make a list of all modules.
-		if (unclaimedModules == null)
+		// Make a list of all modules, if we haven't already or if we're in a new round but have an old list of modules.
+		if (unclaimedModules == null || unclaimedModules.Any(handle => handle == null))
 		{
 			unclaimedModules = TwitchGame.Instance.Modules.Shuffle().ToList();
+			unclaimedModuleIndex = 0;
 		}
 
 		List<string> unclaimed = new List<string>();
-		int max = Math.Min(TwitchGame.Instance.Modules.Count, 3); // In case there is less than 3 modules, we have to lower the amount we return so we don't show repeats.
+		int max = Math.Min(unclaimedModules.Count, 3); // In case there is less than 3 modules, we have to lower the amount we return so we don't show repeats.
 		for (int i = 0; i < max; i++)
 		{
 			// We've reached the end, wrap back to the beginning.
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
 			{
+				unclaimedModules = unclaimedModules.Shuffle().ToList();
 				unclaimedModuleIndex = 0;
 			}
 
@@ -188,17 +190,23 @@ static class GameCommands
 				continue;
 			}
 
-			unclaimed.Add(string.Format($"{handle.HeaderText} ({handle.Code})"));
+			string moduleString = string.Format($"{handle.HeaderText} ({handle.Code})");
+			// If we hit a duplicate because we were at the end of the list and we shuffled then skip over it and get another item.
+			if (unclaimed.Contains(moduleString))
+			{
+				i--;
+				unclaimedModuleIndex++;
+
+				continue;
+			}
+
+			unclaimed.Add(moduleString);
 			unclaimedModuleIndex++;
 		}
 
 		// If we didn't find any unclaimed, there aren't any left.
 		if (unclaimed.Count == 0)
 		{
-			// Reset the unclaimed modules for the next time the command runs.
-			unclaimedModules = null;
-			unclaimedModuleIndex = 0;
-
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NoUnclaimed, user), user, !isWhisper);
 			return;
 		}
