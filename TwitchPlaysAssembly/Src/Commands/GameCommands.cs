@@ -151,18 +151,59 @@ static class GameCommands
 			module.SetUnclaimed();
 	}
 
+	static List<TwitchModule> unclaimedModules;
+	static int unclaimedModuleIndex = 0;
 	[Command(@"unclaimed")]
 	public static void ListUnclaimed(string user, bool isWhisper)
 	{
-		IEnumerable<string> unclaimed = TwitchGame.Instance.Modules
-			.Where(handle => !handle.Claimed && !handle.Solved)
-			.Shuffle().Take(3)
-			.Select(handle => string.Format($"{handle.HeaderText} ({handle.Code})"))
-			.ToList();
+		// Make a list of all modules.
+		if (unclaimedModules == null)
+		{
+			unclaimedModules = TwitchGame.Instance.Modules.Shuffle().ToList();
+		}
 
-		IRCConnection.SendMessage(unclaimed.Any()
-			? $"Unclaimed Modules: {unclaimed.Join(", ")}"
-			: string.Format(TwitchPlaySettings.data.NoUnclaimed, user), user, !isWhisper);
+		List<string> unclaimed = new List<string>();
+		int max = Math.Min(TwitchGame.Instance.Modules.Count, 3); // In case there is less than 3 modules, we have to lower the amount we return so we don't show repeats.
+		for (int i = 0; i < max; i++)
+		{
+			// We've reached the end, wrap back to the beginning.
+			if (unclaimedModuleIndex >= unclaimedModules.Count)
+			{
+				unclaimedModuleIndex = 0;
+			}
+
+			// See if there is a valid module at the current index and increment for the next go around.
+			TwitchModule handle = unclaimedModules[unclaimedModuleIndex];
+			if (handle.Claimed || handle.Solved)
+			{
+				unclaimedModules.RemoveAt(unclaimedModuleIndex);
+				i--;
+
+				// Check if there aren't any unclaimed modules left.
+				if (unclaimedModules.Count == 0)
+				{
+					break;
+				}
+
+				continue;
+			}
+
+			unclaimed.Add(string.Format($"{handle.HeaderText} ({handle.Code})"));
+			unclaimedModuleIndex++;
+		}
+
+		// If we didn't find any unclaimed, there aren't any left.
+		if (unclaimed.Count == 0)
+		{
+			// Reset the unclaimed modules for the next time the command runs.
+			unclaimedModules = null;
+			unclaimedModuleIndex = 0;
+
+			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NoUnclaimed, user), user, !isWhisper);
+			return;
+		}
+
+		IRCConnection.SendMessage($"Unclaimed Modules: {unclaimed.Join(", ")}");
 	}
 
 	[Command(@"unsolved")]
