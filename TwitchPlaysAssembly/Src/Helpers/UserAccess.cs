@@ -357,11 +357,7 @@ public static class AuditLog
 
 	public static void Log(string username, AccessLevel level, string command)
 	{
-		StreamWriter Stream = new StreamWriter(File.OpenWrite(Path.Combine(Application.persistentDataPath, SavePath)));
-		Stream.WriteLine($"{username} ({UserAccess.LevelToString(level)}): {command}");
-		Stream.Flush();
-		Stream.Dispose();
-		Stream.Close();
+		File.AppendAllText(Path.Combine(Application.persistentDataPath, SavePath), $"[{DateTime.Now}] {username} ({UserAccess.LevelToString(level)}): {command}{Environment.NewLine}");
 	}
 
 	public static string SavePath = "AuditLog.txt";
