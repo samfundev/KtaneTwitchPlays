@@ -151,16 +151,15 @@ static class GameCommands
 			module.SetUnclaimed();
 	}
 
-	static List<TwitchModule> unclaimedModules;
-	static int unclaimedModuleIndex = 0;
+	public static List<TwitchModule> unclaimedModules;
+	public static int unclaimedModuleIndex;
 	[Command(@"unclaimed")]
 	public static void ListUnclaimed(string user, bool isWhisper)
 	{
-		// Make a list of all modules, if we haven't already or if we're in a new round but have an old list of modules.
-		if (unclaimedModules == null || unclaimedModules.Any(handle => handle == null))
+		// TwitchGame sets up the unclaimed list at the beginning of each round, so it would be hard to hit this but just in case someone does we can't do anything until they're setup.
+		if (unclaimedModules == null)
 		{
-			unclaimedModules = TwitchGame.Instance.Modules.Shuffle().ToList();
-			unclaimedModuleIndex = 0;
+			return;
 		}
 
 		List<string> unclaimed = new List<string>();

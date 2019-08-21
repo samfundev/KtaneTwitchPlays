@@ -259,6 +259,7 @@ public class TwitchGame : MonoBehaviour
 		if (AwardedNeedyPoints.Count > 0)
 			IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {AwardedNeedyPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
 
+		GameCommands.unclaimedModules = null;
 		DestroyComponentHandles();
 
 		MusicPlayer.StopAllMusic();
@@ -366,6 +367,10 @@ public class TwitchGame : MonoBehaviour
 		{
 			TwitchModule.SolveUnsupportedModules(true);
 		}
+
+		// Set up some stuff for the !unclaimed command.
+		GameCommands.unclaimedModules = Modules.Shuffle().ToList();
+		GameCommands.unclaimedModuleIndex = 0;
 
 		while (OtherModes.ZenModeOn)
 		{
