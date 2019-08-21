@@ -163,13 +163,14 @@ static class GameCommands
 		}
 
 		List<string> unclaimed = new List<string>();
-		int max = Math.Min(unclaimedModules.Count, 3); // In case there is less than 3 modules, we have to lower the amount we return so we don't show repeats.
-		for (int i = 0; i < max; i++)
+		for (int i = 0; i < 3 && i < unclaimedModules.Count; i++) // In case there are less than 3 modules, we have to lower the amount we return so we don't show repeats.
 		{
 			// We've reached the end, wrap back to the beginning.
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
 			{
-				unclaimedModules = unclaimedModules.Shuffle().ToList();
+				// Add back any modules that may have been released.	
+				unclaimedModules = TwitchGame.Instance.Modules.Where(h => !h.Claimed && !h.Solved)
+					.Shuffle().ToList();
 				unclaimedModuleIndex = 0;
 			}
 
