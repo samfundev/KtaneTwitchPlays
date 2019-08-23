@@ -582,23 +582,30 @@ public abstract class ComponentSolver
 	{
 		if (Module.BombComponent.GetModuleDisplayName() == "Manometers")
 		{
+			var j = 0;
 			try
 			{
 				var component = Module.BombComponent.GetComponent(ReflectionHelper.FindType("manometers"));
-				var _processList = component.GetValue<int[,]>("processList");
-				DebugHelper.Log(_processList.GetLength(0) + " " + _processList.GetLength(1));
-				for (int i = 0; i < _processList.GetLength(0); i++)
+				var _pressureList = component.GetValue<int[,]>("pressureList");
+				DebugHelper.Log(_pressureList.GetLength(0) + " " + _pressureList.GetLength(1));
+				for (int i = 0; i < _pressureList.GetLength(0); i++)
 				{
 					DebugHelper.Log($"Checking value {i} of the list...");
-					var value1 = _processList[i, 0];
-					var value2 = _processList[i, 1];
-					var value3 = _processList[i, 2];
+					j++;
+					var value1 = _pressureList[i, 0];
+					j++;
+					var value2 = _pressureList[i, 1];
+					j++;
+					var value3 = _pressureList[i, 2];
+					j = 0;
 					DebugHelper.Log($"Values are: {value1}, {value2}, and {value3}");
 				}
 				DebugHelper.Log("List checks out, problem is elsewhere.");
 			}
 			catch (Exception ex)
 			{
+				if (j != 0)
+					DebugHelper.Log($"Index at { j - 1 } was out of range.");
 				DebugHelper.LogException(ex, "While attempting to process an issue with Manometers, an exception has occurred. Here's the error:");
 			}
 			//Stop the audio from playing, but separate it out from the previous try/catch to identify errors better
