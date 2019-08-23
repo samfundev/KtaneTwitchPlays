@@ -65,7 +65,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["simonsStages"] = module => new SimonsStagesComponentSolver(module);
 		ModComponentSolverCreators["skinnyWires"] = module => new SkinnyWiresComponentSolver(module);
 		ModComponentSolverCreators["streetFighter"] = module => new StreetFighterComponentSolver(module);
-		//ModComponentSolverCreators["troll"] = module => new TrollComponentSolver(module);
 		ModComponentSolverCreators["tWords"] = module => new TWordsComponentSolver(module);
 
 		//Misc Modules
@@ -516,7 +515,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["taxReturns"] = new ModuleInformation { moduleScore = 18, DoesTheRightThing = true };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true };
-		//ModComponentSolverInformation["troll"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["wire"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
 		ModComponentSolverInformation["wireSpaghetti"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
 		ModComponentSolverInformation["blockbusters"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
