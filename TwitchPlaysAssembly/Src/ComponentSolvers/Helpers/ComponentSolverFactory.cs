@@ -61,6 +61,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["hangover"] = module => new HangoverComponentSolver(module);
 		ModComponentSolverCreators["hieroglyphics"] = module => new HieroglyphicsComponentSolver(module);
 		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
+		ModComponentSolverCreators["plungerButton"] = module => new PlungerButtonComponentSolver(module);
 		ModComponentSolverCreators["simonsStages"] = module => new SimonsStagesComponentSolver(module);
 		ModComponentSolverCreators["skinnyWires"] = module => new SkinnyWiresComponentSolver(module);
 		ModComponentSolverCreators["streetFighter"] = module => new StreetFighterComponentSolver(module);
@@ -499,6 +500,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["moon"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
 		ModComponentSolverInformation["mortalKombat"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["numberCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = false };
+		ModComponentSolverInformation["plungerButton"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["Poker"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["quintuples"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
 		ModComponentSolverInformation["reverseMorse"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
