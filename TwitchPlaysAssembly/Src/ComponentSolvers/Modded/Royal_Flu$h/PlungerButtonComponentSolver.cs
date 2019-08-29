@@ -17,7 +17,7 @@ public class PlungerButtonComponentSolver : ComponentSolver
 	{
 		inputCommand = inputCommand.ToLowerInvariant();
 		var match = Regex.Match(inputCommand, "^(hold|release) on ([0-9])$");
-		var chainMatch = Regex.Match(inputCommand, "^(hold on|submit) ([0-9])(?:;|,|)( |)(?:release on |)([0-9])$");
+		var chainMatch = Regex.Match(inputCommand, "^(hold on|submit) ([0-9])(?:;|,|)(?: |)(?:release on |)([0-9])$");
 		if (!match.Success && !chainMatch.Success)
 			yield break;
 		yield return null;
@@ -41,23 +41,20 @@ public class PlungerButtonComponentSolver : ComponentSolver
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		forcedSolve = true;
-		idColor = Module.ClaimedUserMultiDecker.color;
-		var disco = Disco();
-		var timer = Module.Bomb.Bomb.GetTimer();
 		if (_component.GetValue<bool>("pressed"))
 		{
 			_component.SetValue("pressed", false);
 			var animator = _component.GetValue<Animator>("buttonAnimation");
-			Module.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonRelease, Module.transform);
+			Module.BombComponent.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonRelease, Module.transform);
 			selectable.AddInteractionPunch();
 			animator.SetBool("press", false);
 			animator.SetBool("release", true);
 		}
 		yield return null;
-		Module.StartCoroutine(disco);
+		var discoRoutine = Module.StartCoroutine(Disco());
+		var idColor = Module.ClaimedUserMultiDecker.color;
 		yield return RespondToCommandInternal("hold on " + _component.GetValue<int>("targetPressTime"));
-		Module.StopCoroutine(disco);
+		Module.StopCoroutine(discoRoutine);
 		Module.SetBannerColor(idColor);
 		yield return RespondToCommandInternal("release on " + _component.GetValue<int>("targetReleaseTime"));
 	}
@@ -83,6 +80,4 @@ public class PlungerButtonComponentSolver : ComponentSolver
 	private readonly KMSelectable selectable;
 	private Color[] colors = new[] { Color.blue, brown, Color.green, Color.grey, lime, orange, Color.magenta, Color.red, Color.white, Color.yellow  };
 	static Color brown = new Color(165 / 255f, 42 / 255f, 42 / 255f), lime = new Color(50/255f, 205/255f, 50/255f), orange = new Color(1, 0.5f, 0);
-	private bool forcedSolve = false;
-	private Color idColor;
 }
