@@ -10,37 +10,40 @@ public class PlungerButtonComponentSolver : ComponentSolver
 	{
 		_component = Module.BombComponent.GetComponent(ComponentType);
 		selectable = Module.BombComponent.GetComponent<KMSelectable>().Children[0];
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Hold the button by using !{0} hold on 0, and release the button by using !{0} release on 0");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Hold and release the button by using !{0} hold on 0; release on 0");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		var disco = Disco();
 		inputCommand = inputCommand.ToLowerInvariant();
 		var match = Regex.Match(inputCommand, "^(hold|release) on ([0-9])$");
-		if (!match.Success)
+		var chainMatch = Regex.Match(inputCommand, "^(hold on|submit) ([0-9])(?:;|,|)( |)(?:release on |)([0-9])$");
+		if (!match.Success && !chainMatch.Success)
 			yield break;
 		yield return null;
 		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
-		if (match.Groups[1].Value == "hold" && forcedSolve)
-			Module.StartCoroutine(disco);
-		while (Mathf.FloorToInt(timerComponent.TimeRemaining % 60 % 10) != int.Parse(match.Groups[2].Value))
+		var time = match.Success ? match.Groups[2].Value : chainMatch.Groups[2].Value;
+		while (Mathf.FloorToInt(timerComponent.TimeRemaining % 60 % 10) != int.Parse(time))
 			yield return $"trycancel The Plunger button was not {(_component.GetValue<bool>("pressed") ? "released" : "pressed")} due to a request to cancel.";
 		if (match.Groups[1].Value == "hold")
 			DoInteractionStart(selectable);
+		else if (chainMatch.Success)
+		{
+			DoInteractionStart(selectable);
+			time = chainMatch.Groups[3].Value;
+			while (Mathf.FloorToInt(timerComponent.TimeRemaining % 60 % 10) != int.Parse(time))
+				yield return $"trycancel The Punger button was not released due to a request to cancel.";
+			DoInteractionEnd(selectable);
+		}
 		else
 			DoInteractionEnd(selectable);
-		if (disco.MoveNext())
-		{
-			Module.StopCoroutine(disco);
-			Module.SetBannerColor(idColor);
-		}
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		forcedSolve = true;
 		idColor = Module.ClaimedUserMultiDecker.color;
+		var disco = Disco();
 		var timer = Module.Bomb.Bomb.GetTimer();
 		if (_component.GetValue<bool>("pressed"))
 		{
@@ -52,7 +55,10 @@ public class PlungerButtonComponentSolver : ComponentSolver
 			animator.SetBool("release", true);
 		}
 		yield return null;
+		Module.StartCoroutine(disco);
 		yield return RespondToCommandInternal("hold on " + _component.GetValue<int>("targetPressTime"));
+		Module.StopCoroutine(disco);
+		Module.SetBannerColor(idColor);
 		yield return RespondToCommandInternal("release on " + _component.GetValue<int>("targetReleaseTime"));
 	}
 
