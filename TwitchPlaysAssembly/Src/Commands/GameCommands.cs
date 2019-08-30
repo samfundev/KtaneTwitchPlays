@@ -456,7 +456,11 @@ static class GameCommands
 	{
 		foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
 			bomb.StartCoroutine(bomb.KeepAlive());
-		foreach (var module in TwitchGame.Instance.Modules.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
+
+		var modules = TwitchGame.Instance.Modules
+			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID))
+			.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule"));
+		foreach (var module in modules)
 			if (!module.Solved)
 				module.SolveSilently();
 	}
