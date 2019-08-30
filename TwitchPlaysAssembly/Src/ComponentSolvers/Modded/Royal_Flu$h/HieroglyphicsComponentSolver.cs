@@ -10,7 +10,6 @@ public class HieroglyphicsComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		DebugHelper.Log(selectables.Select(selectable => selectable.name).Join());
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} <anubis> <horus> <digit> [set the anubis and horus lock positions then submit when timer matches the digit]");
 	}
 

@@ -74,7 +74,7 @@ static class GameCommands
 		else if (isWhisper && TwitchPlaySettings.data.EnableWhispers)
 			IRCConnection.SendMessage("Checking other people's claims in whispers is not supported.", user, false);
 		else
-			ShowClaimsOfUser(targetUser, user, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.NoOwnedModulesOther);
+			ShowClaimsOfUser(targetUser, targetUser, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.NoOwnedModulesOther);
 	}
 
 	[Command(@"claims")]
