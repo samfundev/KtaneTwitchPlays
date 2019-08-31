@@ -492,7 +492,7 @@ public class TwitchGame : MonoBehaviour
 		foreach (var handle in Modules.Where(c => c.IsKey))
 		{
 			var moduleName = handle.BombComponent.GetModuleDisplayName();
-			IRCConnection.SendMessage($"Module {handle.Code} {(moduleName.EqualsAny("The Swan", "The Time Keeper") ? "is" : "is a")} {moduleName}");
+			IRCConnection.SendMessage($"Module {handle.Code} is {moduleName}");
 		}
 	}
 
