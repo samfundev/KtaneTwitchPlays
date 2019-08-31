@@ -162,8 +162,7 @@ static class GameCommands
 			return;
 		}
 
-		List<string> unclaimed = new List<string>();
-		for (int i = 0; i < 3 && i < unclaimedModules.Count; i++) // In case there are less than 3 modules, we have to lower the amount we return so we don't show repeats.
+		void checkAndWrap()
 		{
 			// We've reached the end, wrap back to the beginning.
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
@@ -173,7 +172,15 @@ static class GameCommands
 					.Shuffle().ToList();
 				unclaimedModuleIndex = 0;
 			}
+		}
 
+		// The for loop below won't run if all the modules got claimed, but we still need to add back in any modules that were released.
+		if (unclaimedModules.Count == 0)
+			checkAndWrap();
+
+		List<string> unclaimed = new List<string>();
+		for (int i = 0; i < 3 && i < unclaimedModules.Count; i++) // In case there are less than 3 modules, we have to lower the amount we return so we don't show repeats.
+		{
 			// See if there is a valid module at the current index and increment for the next go around.
 			TwitchModule handle = unclaimedModules[unclaimedModuleIndex];
 			if (handle.Claimed || handle.Solved)
@@ -187,21 +194,25 @@ static class GameCommands
 					break;
 				}
 
+				// Wrap in case we removed the last module.
+				checkAndWrap();
 				continue;
 			}
 
+			// At this point we have a valid module, so we should increase the index and wrap.
+			unclaimedModuleIndex++;
+			checkAndWrap();
+
 			string moduleString = string.Format($"{handle.HeaderText} ({handle.Code})");
-			// If we hit a duplicate because we were at the end of the list and we shuffled then skip over it and get another item.
+			// If we hit a duplicate because we were at the end of the list and we wrapped so we'll skip over it and get another item.
 			if (unclaimed.Contains(moduleString))
 			{
 				i--;
-				unclaimedModuleIndex++;
 
 				continue;
 			}
 
 			unclaimed.Add(moduleString);
-			unclaimedModuleIndex++;
 		}
 
 		// If we didn't find any unclaimed, there aren't any left.
