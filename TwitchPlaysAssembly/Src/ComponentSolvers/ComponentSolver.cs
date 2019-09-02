@@ -645,11 +645,7 @@ public abstract class ComponentSolver
 			{
 				switch (ModInfo.moduleID)
 				{
-					case "HexiEvilFMN": // Forget Everything
-						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
-						break;
-
-					case "cookieJars": //cookie jars
+					case "cookieJars": // Cookie Jars
 						moduleScore = (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * 0.5f * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
 						break;
 
@@ -657,20 +653,33 @@ public abstract class ComponentSolver
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
-					case "forgetThemAll": // Forget Them All
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 5f * TwitchPlaySettings.data.DynamicScorePercentage);
+					case "forgetUsNot": // Forget Us Not
+					case "tallorderedKeys": // Tallordered Keys
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 2f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
-					case "forgetEnigma": // Forget Enigma
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
+					case "ForgetMeNow": // Forget Me Now
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 2.5f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					case "simonsStages": // Simon's Stages
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 3f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
-					case "tallorderedKeys": // Tallordered Keys
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 2f * TwitchPlaySettings.data.DynamicScorePercentage);
+					case "HexiEvilFMN": // Forget Everything
+						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+
+					case "forgetEnigma": // Forget Enigma
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+
+					case "forgetThemAll": // Forget Them All
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 5f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+
+					case "qkForgetPerspective": // Forget Perspective
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 5.5f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default: // Forget Me Not
