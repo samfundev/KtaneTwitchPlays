@@ -521,7 +521,7 @@ public class TwitchGame : MonoBehaviour
 		{
 			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced", "theSwan", "HexiEvilFMN", "taxReturns", "timeKeeper", "cookieJars",
 			"DividedSquaresModule", "forgetThis", "simonsStages", "forgetThemAll", "tallorderedKeys", "forgetEnigma", "forgetUsNot", "qkForgetPerspective",
-			"organizationModule"
+			"organizationModule", "ForgetMeNow"
 		};
 
 		foreach (var component in bomb.Bomb.BombComponents)
@@ -622,7 +622,7 @@ public class TwitchGame : MonoBehaviour
 
 	private static string[] solveBased = {
 		"MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN", "simonsStages", "forgetThemAll",
-		"tallorderedKeys", "forgetEnigma", "forgetUsNot", "qkForgetPerspective", "organizationModule"
+		"tallorderedKeys", "forgetEnigma", "forgetUsNot", "qkForgetPerspective", "organizationModule", "ForgetMeNow"
 	};
 	private bool removedSolveBasedModules = false;
 	public void RemoveSolveBasedModules()
