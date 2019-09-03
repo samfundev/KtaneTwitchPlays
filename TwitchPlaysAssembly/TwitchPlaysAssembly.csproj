@@ -107,7 +107,7 @@
     <Compile Include="Src\Audio\InterruptMusic.cs" />
     <Compile Include="Src\Audio\MusicPlayer.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NumberNimblenessComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\PlungerButtonComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Shims\PlungerButtonShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SimonsStagesComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SkinnyWiresComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\StreetFighterComponentSolver.cs" />

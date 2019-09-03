@@ -11,9 +11,9 @@ public abstract class ComponentSolverShim : ComponentSolver
 		ModInfo = Unshimmed.ModInfo;
 	}
 
-	protected sealed override IEnumerator ForcedSolveIEnumerator() => TwitchPlaySettings.data.EnableTwitchPlayShims ? ForcedSolveIEnumratorShimmed() : ForcedSolveIEnumeratorUnshimmed();
+	protected sealed override IEnumerator ForcedSolveIEnumerator() => TwitchPlaySettings.data.EnableTwitchPlayShims ? ForcedSolveIEnumeratorShimmed() : ForcedSolveIEnumeratorUnshimmed();
 
-	protected virtual IEnumerator ForcedSolveIEnumratorShimmed() => ForcedSolveIEnumeratorUnshimmed();
+	protected virtual IEnumerator ForcedSolveIEnumeratorShimmed() => ForcedSolveIEnumeratorUnshimmed();
 
 	protected IEnumerator ForcedSolveIEnumeratorUnshimmed()
 	{

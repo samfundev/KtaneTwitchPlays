@@ -61,7 +61,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["hangover"] = module => new HangoverComponentSolver(module);
 		ModComponentSolverCreators["hieroglyphics"] = module => new HieroglyphicsComponentSolver(module);
 		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
-		ModComponentSolverCreators["plungerButton"] = module => new PlungerButtonComponentSolver(module);
 		ModComponentSolverCreators["simonsStages"] = module => new SimonsStagesComponentSolver(module);
 		ModComponentSolverCreators["skinnyWires"] = module => new SkinnyWiresComponentSolver(module);
 		ModComponentSolverCreators["streetFighter"] = module => new StreetFighterComponentSolver(module);
@@ -94,9 +93,10 @@ public static class ComponentSolverFactory
 
 		// SHIMS
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
-		ModComponentSolverCreators["ExtendedPassword"] = module => new ExtendedPasswordComponentSolver(module);
 		ModComponentSolverCreators["Color Generator"] = module => new ColorGeneratorShim(module);
+		ModComponentSolverCreators["ExtendedPassword"] = module => new ExtendedPasswordComponentSolver(module);
 		ModComponentSolverCreators["groceryStore"] = module => new GroceryStoreShim(module);
+		ModComponentSolverCreators["plungerButton"] = module => new PlungerButtonShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
