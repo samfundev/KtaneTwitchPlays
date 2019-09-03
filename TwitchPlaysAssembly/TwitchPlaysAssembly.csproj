@@ -169,7 +169,6 @@
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\FestiveJukeboxComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TWordsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\AntiTrollShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\SphereShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ColorGeneratorShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ComponentSolverShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\ExtendedPasswordComponentSolver.cs" />

@@ -96,7 +96,6 @@ public static class ComponentSolverFactory
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 		ModComponentSolverCreators["ExtendedPassword"] = module => new ExtendedPasswordComponentSolver(module);
 		ModComponentSolverCreators["Color Generator"] = module => new ColorGeneratorShim(module);
-		ModComponentSolverCreators["sphere"] = module => new SphereShim(module);
 		ModComponentSolverCreators["groceryStore"] = module => new GroceryStoreShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
