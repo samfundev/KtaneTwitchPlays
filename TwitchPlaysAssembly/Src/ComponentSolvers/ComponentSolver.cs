@@ -1009,8 +1009,7 @@ public abstract class ComponentSolver
 			OtherModes.SetMultiplier(OtherModes.GetMultiplier() + TwitchPlaySettings.data.TimeModeSolveBonus);
 		}
 
-		if (ModInfo.moduleScore != 0 || !ModInfo.moduleScoreIsDynamic)
-			IRCConnection.SendMessage(messageParts.Join());
+		IRCConnection.SendMessage(messageParts.Join());
 	}
 
 	private void AwardStrikes(int strikeCount) => AwardStrikes(null, strikeCount);
