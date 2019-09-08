@@ -261,113 +261,6 @@ public class ModuleCameras : MonoBehaviour
 		TimerPrefab.color = modeColor;
 		timer.text.color = modeColor;
 		timer.StrikeIndicator.RedColour = modeColor;
-
-		if (TwitchPlaySettings.data.EnableEdgeworkCameras)
-		{
-			// Create widget cameras
-			var widgets = _currentBomb.Bomb.WidgetManager.GetWidgets();
-			var widgetTypes = new[] { "BatteryWidget", "IndicatorWidget", "EncryptedIndicator", "NumberInd", "PortWidget", "DayTimeWidget", "TwoFactorWidget", "MultipleWidgets", null, "SerialNumber", "RuleSeedWidget" };
-			widgets.Sort((w1, w2) =>
-			{
-				var i1 = widgetTypes.IndexOf(wt => wt != null && w1.GetComponent(wt) != null);
-				if (i1 == -1)
-					i1 = Array.IndexOf(widgetTypes, null);
-				var i2 = widgetTypes.IndexOf(wt => wt != null && w2.GetComponent(wt) != null);
-				if (i2 == -1)
-					i2 = Array.IndexOf(widgetTypes, null);
-
-				if (i1 < i2)
-					return -1;
-				if (i1 > i2)
-					return 1;
-
-				switch (w1)
-				{
-					case BatteryWidget batteries:
-						return batteries.GetNumberOfBatteries().CompareTo(((BatteryWidget) w2).GetNumberOfBatteries());
-
-					case IndicatorWidget indicator:
-						return indicator.Label.CompareTo(((IndicatorWidget) w2).Label);
-
-					case PortWidget port:
-						var port2 = (PortWidget) w2;
-						return (
-							port.IsPortPresent(PortWidget.PortType.Parallel) || port.IsPortPresent(PortWidget.PortType.Serial) ? 0 :
-							port.IsPortPresent(PortWidget.PortType.DVI) || port.IsPortPresent(PortWidget.PortType.PS2) || port.IsPortPresent(PortWidget.PortType.RJ45) || port.IsPortPresent(PortWidget.PortType.StereoRCA) ? 1 : 2
-						).CompareTo(
-							port2.IsPortPresent(PortWidget.PortType.Parallel) || port2.IsPortPresent(PortWidget.PortType.Serial) ? 0 :
-							port2.IsPortPresent(PortWidget.PortType.DVI) || port2.IsPortPresent(PortWidget.PortType.PS2) || port2.IsPortPresent(PortWidget.PortType.RJ45) || port2.IsPortPresent(PortWidget.PortType.StereoRCA) ? 1 : 2
-						);
-					default: return w1.name.CompareTo(w2.name);
-				}
-			});
-
-			const float availableWidth = 0.6666667f;
-			const float availableHeight = .08f;
-
-			// Find out how tall the widgets would be if we arrange them in one row
-			var widgetWidths = widgets.Select(w => (float) w.SizeX / w.SizeZ * Screen.height / Screen.width).ToArray();
-			var totalWidth = widgetWidths.Sum();
-			var widgetMiddles = new float[widgetWidths.Length];
-			for (int i = 0; i < widgetWidths.Length; i++)
-				widgetMiddles[i] = (i == 0 ? 0 : widgetMiddles[i - 1] + widgetWidths[i - 1] / 2) + widgetWidths[i] / 2;
-			var cutOffPoints = new int[] { widgetWidths.Length };
-			var rowHeight = Mathf.Min(availableWidth / totalWidth, availableHeight);
-
-			// See if we can make them bigger by wrapping them into multiple rows
-			while (true)
-			{
-				var n = cutOffPoints.Length + 1;
-				var newCutOffPoints = new int[n];
-				for (int i = 0; i < n; i++)
-				{
-					newCutOffPoints[i] = widgetMiddles.IndexOf(w => w > (i + 1) * totalWidth / n);
-					if (newCutOffPoints[i] == -1)
-						newCutOffPoints[i] = widgetWidths.Length;
-				}
-				var rowWidths = Enumerable.Range(0, n).Select(i => widgetWidths.Skip(i == 0 ? 0 : newCutOffPoints[i - 1]).Take(newCutOffPoints[i] - (i == 0 ? 0 : newCutOffPoints[i - 1])).Sum()).ToArray();
-				var newRowHeight = Mathf.Min(availableWidth / rowWidths.Max(), availableHeight / n);
-				if (newRowHeight <= rowHeight)
-					break;
-				cutOffPoints = newCutOffPoints;
-				rowHeight = newRowHeight;
-			}
-
-			for (int i = 0; i < widgets.Count; i++)
-			{
-				// Setup the camera, using layer 2
-				var camera = Instantiate(CameraPrefab);
-				var row = cutOffPoints.IndexOf(ix => ix > i);
-				var totalWidthInThisRow = widgetWidths.Skip(row == 0 ? 0 : cutOffPoints[row - 1]).Take(cutOffPoints[row] - (row == 0 ? 0 : cutOffPoints[row - 1])).Sum() * rowHeight;
-				var widthBeforeThis = widgetWidths.Skip(row == 0 ? 0 : cutOffPoints[row - 1]).Take(i - (row == 0 ? 0 : cutOffPoints[row - 1])).Sum() * rowHeight;
-				camera.rect = new Rect(.5f - totalWidthInThisRow / 2 + widthBeforeThis, 1 - (row + 1) * rowHeight, widgetWidths[i] * rowHeight, rowHeight);
-				camera.aspect = (float) widgets[i].SizeX / widgets[i].SizeZ;
-				camera.depth = 99;
-				camera.fieldOfView = 3.25f;
-				camera.transform.SetParent(widgets[i].transform, false);
-				camera.transform.localPosition = new Vector3(.001f, 2.26f / widgets[i].SizeX * widgets[i].SizeZ, 0);
-				if (widgets[i] is PortWidget || (widgets[i] is ModWidget mw && mw.name == "NumberInd(Clone)"))
-					camera.transform.localEulerAngles = new Vector3(90, 180, 0);
-				var lossyScale = camera.transform.lossyScale;
-				camera.nearClipPlane = 1f * lossyScale.y;
-				camera.farClipPlane = 3f / widgets[i].SizeX * widgets[i].SizeZ * lossyScale.y;
-				camera.cullingMask = 1 << 2;
-				camera.gameObject.SetActive(true);
-
-				// Move the widget’s GameObjects to Layer 2
-				foreach (var obj in widgets[i].gameObject.GetComponentsInChildren<Transform>(true))
-					obj.gameObject.layer = 2;
-
-				// Add a light source
-				var light = camera.gameObject.AddComponent<Light>();
-				light.type = LightType.Spot;
-				light.cullingMask = 1 << 2;
-				light.range = 5f * camera.transform.lossyScale.y;
-				light.spotAngle = 90;
-				light.intensity = camera.transform.lossyScale.y;
-				light.enabled = true;
-			}
-		}
 	}
 
 	private void LateUpdate()
@@ -597,6 +490,128 @@ public class ModuleCameras : MonoBehaviour
 		int needies = _currentBomb.Bomb.BombComponents.Count(bombComponent => bombComponent.GetComponent<NeedyComponent>() != null);
 		NeediesPrefab.gameObject.SetActive(needies > 0);
 		NeediesPrefab.text = needies.ToString();
+
+		if (TwitchPlaySettings.data.EnableEdgeworkCameras)
+			SetupEdgeworkCameras();
+	}
+
+	readonly List<GameObject> edgeworkCameras = new List<GameObject>();
+	void SetupEdgeworkCameras()
+	{
+		foreach (GameObject edgeworkCamera in edgeworkCameras)
+			Destroy(edgeworkCamera);
+
+		// Create widget cameras
+		var widgets = _currentBomb.Bomb.WidgetManager.GetWidgets();
+		var widgetTypes = new[] { "BatteryWidget", "IndicatorWidget", "EncryptedIndicator", "NumberInd", "PortWidget", "DayTimeWidget", "TwoFactorWidget", "MultipleWidgets", null, "SerialNumber", "RuleSeedWidget" };
+		widgets.Sort((w1, w2) =>
+		{
+			var i1 = widgetTypes.IndexOf(wt => wt != null && w1.GetComponent(wt) != null);
+			if (i1 == -1)
+				i1 = Array.IndexOf(widgetTypes, null);
+			var i2 = widgetTypes.IndexOf(wt => wt != null && w2.GetComponent(wt) != null);
+			if (i2 == -1)
+				i2 = Array.IndexOf(widgetTypes, null);
+
+			if (i1 < i2)
+				return -1;
+			if (i1 > i2)
+				return 1;
+
+			switch (w1)
+			{
+				case BatteryWidget batteries:
+					return batteries.GetNumberOfBatteries().CompareTo(((BatteryWidget) w2).GetNumberOfBatteries());
+
+				case IndicatorWidget indicator:
+					return indicator.Label.CompareTo(((IndicatorWidget) w2).Label);
+
+				case PortWidget port:
+					var port2 = (PortWidget) w2;
+					return (
+						port.IsPortPresent(PortWidget.PortType.Parallel) || port.IsPortPresent(PortWidget.PortType.Serial) ? 0 :
+						port.IsPortPresent(PortWidget.PortType.DVI) || port.IsPortPresent(PortWidget.PortType.PS2) || port.IsPortPresent(PortWidget.PortType.RJ45) || port.IsPortPresent(PortWidget.PortType.StereoRCA) ? 1 : 2
+					).CompareTo(
+						port2.IsPortPresent(PortWidget.PortType.Parallel) || port2.IsPortPresent(PortWidget.PortType.Serial) ? 0 :
+						port2.IsPortPresent(PortWidget.PortType.DVI) || port2.IsPortPresent(PortWidget.PortType.PS2) || port2.IsPortPresent(PortWidget.PortType.RJ45) || port2.IsPortPresent(PortWidget.PortType.StereoRCA) ? 1 : 2
+					);
+				default: return w1.name.CompareTo(w2.name);
+			}
+		});
+
+		const float availableWidth = 0.6666667f;
+		const float availableHeight = .08f;
+
+		// Find out how tall the widgets would be if we arrange them in one row
+		var widgetWidths = widgets.Select(w => (float) w.SizeX / w.SizeZ * Screen.height / Screen.width).ToArray();
+		var totalWidth = widgetWidths.Sum();
+		var widgetMiddles = new float[widgetWidths.Length];
+		for (int i = 0; i < widgetWidths.Length; i++)
+			widgetMiddles[i] = (i == 0 ? 0 : widgetMiddles[i - 1] + widgetWidths[i - 1] / 2) + widgetWidths[i] / 2;
+		var cutOffPoints = new int[] { widgetWidths.Length };
+		var rowHeight = Mathf.Min(availableWidth / totalWidth, availableHeight);
+
+		// See if we can make them bigger by wrapping them into multiple rows
+		while (true)
+		{
+			var n = cutOffPoints.Length + 1;
+			var newCutOffPoints = new int[n];
+			for (int i = 0; i < n; i++)
+			{
+				newCutOffPoints[i] = widgetMiddles.IndexOf(w => w > (i + 1) * totalWidth / n);
+				if (newCutOffPoints[i] == -1)
+					newCutOffPoints[i] = widgetWidths.Length;
+			}
+			var rowWidths = Enumerable.Range(0, n).Select(i => widgetWidths.Skip(i == 0 ? 0 : newCutOffPoints[i - 1]).Take(newCutOffPoints[i] - (i == 0 ? 0 : newCutOffPoints[i - 1])).Sum()).ToArray();
+			var newRowHeight = Mathf.Min(availableWidth / rowWidths.Max(), availableHeight / n);
+			if (newRowHeight <= rowHeight)
+				break;
+			cutOffPoints = newCutOffPoints;
+			rowHeight = newRowHeight;
+		}
+
+		// Move all lights off layer 2 to prevent them from affecting the widgets
+		foreach (Light light in FindObjectsOfType<Light>())
+		{
+			light.cullingMask &= ~(1 << 2);
+		}
+
+		for (int i = 0; i < widgets.Count; i++)
+		{
+			// Setup the camera, using layer 2
+			var camera = Instantiate(CameraPrefab);
+			edgeworkCameras.Add(camera.gameObject);
+			var row = cutOffPoints.IndexOf(ix => ix > i);
+			var totalWidthInThisRow = widgetWidths.Skip(row == 0 ? 0 : cutOffPoints[row - 1]).Take(cutOffPoints[row] - (row == 0 ? 0 : cutOffPoints[row - 1])).Sum() * rowHeight;
+			var widthBeforeThis = widgetWidths.Skip(row == 0 ? 0 : cutOffPoints[row - 1]).Take(i - (row == 0 ? 0 : cutOffPoints[row - 1])).Sum() * rowHeight;
+			camera.rect = new Rect(.5f - totalWidthInThisRow / 2 + widthBeforeThis, 1 - (row + 1) * rowHeight, widgetWidths[i] * rowHeight, rowHeight);
+			camera.aspect = (float) widgets[i].SizeX / widgets[i].SizeZ;
+			camera.depth = 99;
+			camera.fieldOfView = 3.25f;
+			camera.transform.SetParent(widgets[i].transform, false);
+			camera.transform.localPosition = new Vector3(.001f, 2.26f / widgets[i].SizeX * widgets[i].SizeZ, 0);
+			if (widgets[i] is PortWidget || (widgets[i] is ModWidget mw && mw.name == "NumberInd(Clone)"))
+				camera.transform.localEulerAngles = new Vector3(90, 180, 0);
+			var lossyScale = camera.transform.lossyScale;
+			camera.nearClipPlane = 1f * lossyScale.y;
+			camera.farClipPlane = 3f / widgets[i].SizeX * widgets[i].SizeZ * lossyScale.y;
+			camera.cullingMask = 1 << 2;
+			camera.gameObject.SetActive(true);
+
+			// Move the widget’s GameObjects to Layer 2
+			foreach (var obj in widgets[i].gameObject.GetComponentsInChildren<Transform>(true))
+				if (obj.gameObject.name != "LightGlow")
+					obj.gameObject.layer = 2;
+
+			// Add a light source
+			var light = camera.gameObject.AddComponent<Light>();
+			light.type = LightType.Spot;
+			light.cullingMask = 1 << 2;
+			light.range = (camera.transform.localPosition.y + 0.05f) * lossyScale.z;
+			light.spotAngle = 7.25f;
+			light.intensity = 75;
+			light.enabled = true;
+		}
 	}
 
 	public void DisableInteractive()
