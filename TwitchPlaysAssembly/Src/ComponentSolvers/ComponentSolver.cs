@@ -867,7 +867,7 @@ public abstract class ComponentSolver
 					CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 					foreach (MonoBehaviour behavior in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 					{
-						behavior.StopAllCoroutines();
+						behavior?.StopAllCoroutines();
 					}
 				}
 			}
@@ -884,7 +884,7 @@ public abstract class ComponentSolver
 				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 				foreach (MonoBehaviour behavior in bombComponent.GetComponentsInChildren<MonoBehaviour>(true))
 				{
-					behavior.StopAllCoroutines();
+					behavior?.StopAllCoroutines();
 				}
 			}
 		}
