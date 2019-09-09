@@ -28,10 +28,12 @@ public static class ReflectionHelper
 	static readonly Dictionary<string, MemberInfo> MemberCache = new Dictionary<string, MemberInfo>();
 	public static T GetCachedMember<T>(this Type type, string member) where T : MemberInfo
 	{
-		if (MemberCache.ContainsKey(member)) return MemberCache[member] is T cachedCastedInfo ? cachedCastedInfo : null;
+		// Use AssemblyQualifiedName and the member name as a unique key to prevent a collision if two types have the same member name
+		var key = type.AssemblyQualifiedName + member;
+		if (MemberCache.ContainsKey(key)) return MemberCache[key] is T cachedCastedInfo ? cachedCastedInfo : null;
 
 		MemberInfo memberInfo = type.GetMember(member, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance).FirstOrDefault();
-		MemberCache[member] = memberInfo;
+		MemberCache[key] = memberInfo;
 
 		return memberInfo is T castedInfo ? castedInfo : null;
 	}
