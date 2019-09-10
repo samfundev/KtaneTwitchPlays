@@ -27,9 +27,10 @@ public class SimonsStagesComponentSolver : ComponentSolver
 		yield return null;
 		foreach (char character in inputCommand.Replace(" ", ""))
 		{
-			yield return DoInteractionClick(selectables[Array.IndexOf(colorOrder, character)]);
 			while (_component.GetValue<bool>("moduleLocked"))
 				yield return true;
+
+			yield return DoInteractionClick(selectables[Array.IndexOf(colorOrder, character)]);
 		}
 	}
 
