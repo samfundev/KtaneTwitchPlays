@@ -471,6 +471,19 @@ public class IRCConnection : MonoBehaviour
 		Instance.StartCoroutine(Instance._keepConnectionAlive);
 	}
 
+	/// <summary>
+	/// A NetworkStream that doesn't block if there is no data to read from the network.
+	/// This means the "end of the stream" indicates there is no data to read from the network.
+	/// </summary>
+	class AsyncNetworkStream : NetworkStream
+	{
+		public AsyncNetworkStream(TcpClient tcpClient) : base(tcpClient.Client, true)
+		{
+		}
+
+		public override int Read(byte[] buffer, int offset, int count) => !base.DataAvailable ? 0 : base.Read(buffer, offset, count);
+	}
+
 	private void ConnectToIRC()
 	{
 		_state = IRCConnectionState.Connecting;
@@ -489,7 +502,7 @@ public class IRCConnection : MonoBehaviour
 
 			AddTextToHoldable("[IRC:Connect] Connection to chat IRC successful.");
 
-			NetworkStream networkStream = sock.GetStream();
+			AsyncNetworkStream networkStream = new AsyncNetworkStream(sock);
 			try
 			{
 				AddTextToHoldable("[IRC:Connect] Attempting to set up SSL connection.");
@@ -510,8 +523,7 @@ public class IRCConnection : MonoBehaviour
 					return;
 				}
 
-				NetworkStream stream = networkStream;
-				_inputThread = new Thread(() => InputThreadMethod(inputStream, stream));
+				_inputThread = new Thread(() => InputThreadMethod(inputStream));
 				_inputThread.Start();
 
 				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
@@ -527,7 +539,7 @@ public class IRCConnection : MonoBehaviour
 				DebugHelper.LogException(ex, "An Exception has occurred when attempting to connect using SSL, using insecure stream instead:");
 				_settings.serverPort = 6667;
 				sock = new TcpClient(_settings.serverName, _settings.serverPort);
-				networkStream = sock.GetStream();
+				networkStream = new AsyncNetworkStream(sock);
 				StreamReader inputStream = new StreamReader(networkStream);
 				StreamWriter outputStream = new StreamWriter(networkStream);
 
@@ -539,7 +551,7 @@ public class IRCConnection : MonoBehaviour
 					return;
 				}
 
-				_inputThread = new Thread(() => InputThreadMethod(inputStream, networkStream));
+				_inputThread = new Thread(() => InputThreadMethod(inputStream));
 				_inputThread.Start();
 
 				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
@@ -739,7 +751,7 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
-	private void InputThreadMethod(TextReader input, NetworkStream networkStream)
+	private void InputThreadMethod(StreamReader input)
 	{
 		bool pingTimeoutTest = false; // Keeps track of if we are currently in a ping timeout test.
 		Stopwatch stopwatch = new Stopwatch();
@@ -774,7 +786,7 @@ public class IRCConnection : MonoBehaviour
 					}
 				}
 
-				if (!networkStream.DataAvailable)
+				if (input.EndOfStream)
 				{
 					Thread.Sleep(25);
 					continue;
