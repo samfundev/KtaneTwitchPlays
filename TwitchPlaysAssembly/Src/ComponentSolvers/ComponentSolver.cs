@@ -650,6 +650,7 @@ public abstract class ComponentSolver
 						break;
 
 					case "forgetThis": // Forget This
+					case "organizationModule": // Organization
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
@@ -949,8 +950,8 @@ public abstract class ComponentSolver
 			Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 				Leaderboard.Instance?.AddScore(userNickName, componentValue);
-
-			TwitchPlaySettings.AddRewardBonus(componentValue);
+			else
+				TwitchPlaySettings.AddRewardBonus(componentValue);
 
 			if (OtherModes.VSModeOn)
 			{
@@ -1010,6 +1011,12 @@ public abstract class ComponentSolver
 		}
 
 		IRCConnection.SendMessage(messageParts.Join());
+
+		if (ModInfo.moduleID == "organizationModule")
+		{
+			TwitchPlaySettings.AddRewardBonus((Module.Bomb.bombSolvableModules - 1) * 3);
+			IRCConnection.SendMessage($"Reward increased by {(Module.Bomb.bombSolvableModules - 1) * 3} for defusing module !{Code} ({ModInfo.moduleDisplayName}).");
+		}
 	}
 
 	private void AwardStrikes(int strikeCount) => AwardStrikes(null, strikeCount);
