@@ -488,12 +488,6 @@ public class TwitchGame : MonoBehaviour
 			foreach (var handle in Modules)
 				handle.Code = num++.ToString();
 		}
-
-		foreach (var handle in Modules.Where(c => c.IsKey))
-		{
-			var moduleName = handle.BombComponent.GetModuleDisplayName();
-			IRCConnection.SendMessage($"Module {handle.Code} is {moduleName}");
-		}
 	}
 
 	public void SetBomb(Bomb bomb, int id)
@@ -517,17 +511,9 @@ public class TwitchGame : MonoBehaviour
 
 	public void CreateComponentHandlesForBomb(TwitchBomb bomb)
 	{
-		string[] keyModules =
-		{
-			"SouvenirModule", "MemoryV2", "TurnTheKey", "TurnTheKeyAdvanced", "theSwan", "HexiEvilFMN", "taxReturns", "timeKeeper", "cookieJars",
-			"DividedSquaresModule", "forgetThis", "simonsStages", "forgetThemAll", "tallorderedKeys", "forgetEnigma", "forgetUsNot", "qkForgetPerspective",
-			"organizationModule", "ForgetMeNow", "timingIsEverything"
-		};
-
 		foreach (var component in bomb.Bomb.BombComponents)
 		{
 			var componentType = component.ComponentType;
-			bool keyModule = false;
 			string moduleName;
 
 			// ReSharper disable once SwitchStatementMissingSomeCases
@@ -536,18 +522,6 @@ public class TwitchGame : MonoBehaviour
 				case ComponentTypeEnum.Empty:
 				case ComponentTypeEnum.Timer:
 					continue;
-
-				case ComponentTypeEnum.NeedyCapacitor:
-				case ComponentTypeEnum.NeedyKnob:
-				case ComponentTypeEnum.NeedyVentGas:
-				case ComponentTypeEnum.NeedyMod:
-					moduleName = component.GetModuleDisplayName();
-					keyModule = true;
-					break;
-
-				case ComponentTypeEnum.Mod:
-					keyModule = keyModules.Contains(component.GetComponent<KMBombModule>().ModuleType);
-					goto default;
 
 				default:
 					moduleName = component.GetModuleDisplayName();
@@ -558,7 +532,6 @@ public class TwitchGame : MonoBehaviour
 			module.Bomb = bomb;
 			module.BombComponent = component;
 			module.BombID = _currentBomb == -1 ? -1 : Bombs.Count - 1;
-			module.IsKey = keyModule;
 
 			module.transform.SetParent(component.transform.parent, true);
 			module.BasePosition = module.transform.localPosition;

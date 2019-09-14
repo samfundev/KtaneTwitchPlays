@@ -12,6 +12,7 @@ public class ModuleInformation
 	public bool moduleScoreOverride;
 	public float moduleScore = 5;
 	public bool moduleScoreIsDynamic;
+	public bool announceModule;
 
 	public ScoreMethod scoreMethod;
 

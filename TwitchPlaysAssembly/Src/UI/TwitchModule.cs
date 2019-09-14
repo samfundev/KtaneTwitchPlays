@@ -47,7 +47,6 @@ public class TwitchModule : MonoBehaviour
 	public List<ClaimQueueItem> ClaimQueue = new List<ClaimQueueItem>();
 
 	public string Code { get; set; }
-	public bool IsKey { get; set; }
 	public CameraPriority CameraPriority
 	{
 		get => _cameraPriority;
@@ -251,6 +250,12 @@ public class TwitchModule : MonoBehaviour
 					};
 				}
 			}
+		}
+
+		// Announce any solvable modules that are marked and needies
+		if (Solver?.ModInfo.announceModule == true || BombComponent.GetComponent<NeedyComponent>() != null)
+		{
+			IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
 		}
 
 		SetBannerColor(unclaimedBackgroundColor);
