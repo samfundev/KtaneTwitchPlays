@@ -32,7 +32,7 @@ public class SimpleModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		IList<KMSelectable> selectableList = null;
+		IEnumerable<KMSelectable> selectableSequence = null;
 
 		string exception = null;
 		try
@@ -50,10 +50,9 @@ public class SimpleModComponentSolver : ComponentSolver
 			if (!regexValid)
 				yield break;
 
-			IEnumerable<KMSelectable> selectableSequence = (IEnumerable<KMSelectable>) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
+			selectableSequence = (IEnumerable<KMSelectable>) ProcessMethod.Invoke(CommandComponent, new object[] { inputCommand });
 			if (selectableSequence == null)
 				yield break;
-			selectableList = selectableSequence as IList<KMSelectable> ?? selectableSequence.ToArray();
 		}
 		catch (Exception ex)
 		{
@@ -78,13 +77,13 @@ public class SimpleModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		if (selectableList?.Count == 0)
+		if (!selectableSequence?.Any() == true)
 			yield return null;
 		else
 		{
 			yield return "modsequence";
 			yield return "trycancelsequence";
-			yield return selectableList;
+			yield return selectableSequence;
 		}
 	}
 }
