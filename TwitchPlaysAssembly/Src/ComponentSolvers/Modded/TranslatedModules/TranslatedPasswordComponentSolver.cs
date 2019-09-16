@@ -14,7 +14,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		_downButtons = (KMSelectable[]) DownButtonField.GetValue(_component);
 		_submitButton = (MonoBehaviour) SubmitButtonField.GetValue(_component);
 		_display = (TextMesh[]) DisplayField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]").Clone();
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]").Clone();
 
 		string language = TranslatedModuleHelper.GetManualCodeAddOn(_component, PasswordComponentType);
 		if (language != null) ManualCode = $"Password{language}";
