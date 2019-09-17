@@ -8,7 +8,7 @@ public static class TranslatedModuleHelper
 	{
 		{"en", "" },
 		{"cu", null },
-		{"cs", "%20translated%20(%C4%8De%C5%A1tina%20%E2%80%94%20*)" },
+		{"cs", "%20translated%20(%C4%8De%C5%A1tina%20%E2%80%94%20*) p%C5%99elo%C5%BEen%C3%BD%20modul" },
 		{"da", "%20translated%20(Dansk%20%E2%80%94%20*)" },
 		{"de", "%20translated%20(Deutsch%20%E2%80%94%20*)" },
 		{"et", "%20translated%20(eesti%20%E2%80%94%20*)" },
