@@ -638,6 +638,8 @@ public static class TwitchPlaySettings
 
 	public static void SetRetryReward() => ClearReward = RetryReward;
 
+	public static void ClearRetryReward() => RetryReward = 0;
+
 	public static Tuple<bool, string> ResetSettingToDefault(string setting)
 	{
 		var split = setting.Split('.');

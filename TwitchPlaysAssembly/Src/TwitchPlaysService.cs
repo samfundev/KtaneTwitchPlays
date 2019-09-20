@@ -203,6 +203,11 @@ public class TwitchPlaysService : MonoBehaviour
 				_coroutinesToStart.Enqueue(MultipleBombs.Refresh());
 				_coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
 				_coroutinesToStart.Enqueue(FindSupportedModules());
+
+				// Clear out the retry reward if we return to the setup room since the retry button doesn't return to setup.
+				// A post game run command would set the retry bonus and then return to the setup room to start the mission, so we don't want to clear that.
+				if (TwitchPlaySettings.GetRewardBonus() == 0)
+					TwitchPlaySettings.ClearRetryReward();
 				break;
 
 			case KMGameInfo.State.PostGame:
