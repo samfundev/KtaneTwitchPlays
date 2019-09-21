@@ -952,7 +952,8 @@ static class GlobalCommands
 		failureMessage = null;
 		var missions = ModManager.Instance.ModMissions;
 
-		var mission = missions.FirstOrDefault(x => Regex.IsMatch(x.name, "mod_.+_" + Regex.Escape(targetID), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
+		var mission = missions.FirstOrDefault(x => x.name.EqualsIgnoreCase(targetID)) ??
+			missions.FirstOrDefault(x => Regex.IsMatch(x.name, $"^mod_.+_{Regex.Escape(targetID)}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
 		if (mission == null)
 		{
 			failureMessage = $"Unable to find a mission with an ID of “{targetID}”.";
