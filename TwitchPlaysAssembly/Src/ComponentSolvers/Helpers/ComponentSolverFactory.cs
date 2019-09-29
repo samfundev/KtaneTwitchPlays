@@ -1222,8 +1222,9 @@ public static class ComponentSolverFactory
 			return false;
 		}
 
-		statusLightLeft = (component.transform.localPosition.x < 0);
-		statusLightBottom = (component.transform.localPosition.z < 0);
+		Vector3 position = bombComponent.transform.InverseTransformPoint(component.transform.position);
+		statusLightLeft = (position.x < 0);
+		statusLightBottom = (position.z < 0);
 		DebugLog($"{statusLightStatus} Found in the {(statusLightBottom ? "bottom" : "top")} {(statusLightLeft ? "left" : "right")} corner.");
 		return true;
 	}
