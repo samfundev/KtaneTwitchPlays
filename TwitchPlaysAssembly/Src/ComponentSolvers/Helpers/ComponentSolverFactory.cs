@@ -1225,7 +1225,7 @@ public static class ComponentSolverFactory
 		Vector3 position = bombComponent.transform.InverseTransformPoint(component.transform.position);
 		statusLightLeft = (position.x < 0);
 		statusLightBottom = (position.z < 0);
-		DebugLog($"{statusLightStatus} Found in the {(statusLightBottom ? "bottom" : "top")} {(statusLightLeft ? "left" : "right")} corner.");
+		//DebugLog($"{statusLightStatus} Found in the {(statusLightBottom ? "bottom" : "top")} {(statusLightLeft ? "left" : "right")} corner.");
 		return true;
 	}
 
@@ -1435,13 +1435,13 @@ public static class ComponentSolverFactory
 
 		if (typeof(IEnumerable<KMSelectable>).IsAssignableFrom(candidateMethod.ReturnType))
 		{
-			DebugLog("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
+			//DebugLog("Found a valid candidate ProcessCommand method in {0} (using easy/simple API).", type.FullName);
 			commandType = ModCommandType.Simple;
 			return true;
 		}
 
 		if (candidateMethod.ReturnType != typeof(IEnumerator)) return false;
-		DebugLog("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
+		//DebugLog("Found a valid candidate ProcessCommand method in {0} (using advanced/coroutine API).", type.FullName);
 		commandType = ModCommandType.Coroutine;
 		return true;
 	}
