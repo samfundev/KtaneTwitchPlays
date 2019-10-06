@@ -259,6 +259,12 @@ static class ModuleCommands
 
 		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 
+		if (CoroutineCanceller.ShouldCancel)
+		{
+			module.StartCoroutine(TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 0));
+			yield break;
+		}
+
 		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 1);
 		if (unzoomCoroutine != null)
 			while (unzoomCoroutine.MoveNext())
@@ -323,11 +329,20 @@ static class ModuleCommands
 			var bombLerp = module.FrontFace ? lerp : Quaternion.Euler(Vector3.Scale(lerp.eulerAngles, new Vector3(1, 1, -1)));
 			module.Bomb.RotateByLocalQuaternion(bombLerp);
 			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
-			DebugHelper.Log(lerp.eulerAngles, bombLerp.eulerAngles, alpha);
 			yield return null;
 		}
 
 		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
+
+		if (CoroutineCanceller.ShouldCancel)
+		{
+			var angle = Quaternion.identity;
+			var bombAngle = module.FrontFace ? angle : Quaternion.Euler(Vector3.Scale(angle.eulerAngles, new Vector3(1, 1, -1)));
+			module.Bomb.RotateByLocalQuaternion(bombAngle);
+			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, angle);
+			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace, false));
+			yield break;
+		}
 
 		foreach (float alpha in TimedAnimation(1f))
 		{

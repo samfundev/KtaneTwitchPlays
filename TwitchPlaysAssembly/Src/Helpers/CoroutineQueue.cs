@@ -83,6 +83,27 @@ public class CoroutineQueue : MonoBehaviour
 			if (_bombIDProcessed.Count > 0)
 				CurrentBombID = _bombIDProcessed.Dequeue();
 
+			yield return ProcessCoroutine(coroutine);
+
+			_coroutineQueue.RemoveFirst();
+		}
+
+		_processing = false;
+		_activeCoroutine = null;
+
+		CoroutineCanceller.ResetCancel();
+	}
+
+	private IEnumerator ProcessCoroutine(IEnumerator coroutine)
+	{
+		var localQueue = new LinkedList<IEnumerator>();
+		localQueue.AddFirst(coroutine);
+
+		while (localQueue.Count > 0)
+		{
+			coroutine = localQueue.First.Value;
+			if (_bombIDProcessed.Count > 0)
+				CurrentBombID = _bombIDProcessed.Dequeue();
 			bool result = true;
 			while (result)
 			{
@@ -99,7 +120,7 @@ public class CoroutineQueue : MonoBehaviour
 				{
 					if (coroutine.Current is IEnumerator enumerator)
 					{
-						_coroutineQueue.AddFirst(enumerator);
+						localQueue.AddFirst(enumerator);
 						coroutine = enumerator;
 						continue;
 					}
@@ -108,13 +129,8 @@ public class CoroutineQueue : MonoBehaviour
 				}
 			}
 
-			_coroutineQueue.RemoveFirst();
+			localQueue.RemoveFirst();
 		}
-
-		_processing = false;
-		_activeCoroutine = null;
-
-		CoroutineCanceller.ResetCancel();
 	}
 
 	private IEnumerator ProcessForcedSolveCoroutine()

@@ -61,7 +61,6 @@ public class ModuleCameras : MonoBehaviour
 
 				CameraInstance.fieldOfView = Mathf.Lerp(5, 5 / zoomData.factor, lerp);
 				CameraInstance.transform.localPosition = Vector3.Lerp(new Vector3(0.001f, 2.25f, 0), new Vector3(0.001f + (zoomData.x - 0.5f) * 0.2f, 2.25f, (zoomData.y - 0.5f) * 0.2f), lerp);
-				DebugHelper.Log(CameraInstance.transform.localPosition.x, CameraInstance.transform.localPosition.z);
 
 				yield return null;
 			}
