@@ -250,16 +250,16 @@ static class ModuleCommands
 	[Command(@"unmark", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Unmark(TwitchModule module) => module.SetBannerColor(module.Claimed ? module.ClaimedBackgroundColour : module.unclaimedBackgroundColor);
 
-	public static IEnumerator Zoom(TwitchModule module, string user, object yield)
+	public static IEnumerator Zoom(TwitchModule module, SuperZoomData zoomData, object yield)
 	{
-		var zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(module, 1);
+		var zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(module, zoomData, 1);
 		if (zoomCoroutine != null)
 			while (zoomCoroutine.MoveNext())
 				yield return zoomCoroutine.Current;
 
 		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 
-		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, 1);
+		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 1);
 		if (unzoomCoroutine != null)
 			while (unzoomCoroutine.MoveNext())
 				yield return unzoomCoroutine.Current;
@@ -348,22 +348,22 @@ static class ModuleCommands
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)
 	{
-		if (cmd.RegexMatch(out Match match, @"(?<zoom>zoom *(?<time>\d*\.?\d+)?)? *(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)? *(?:send *to *module)? *(?<command>.+)?"))
+		if (cmd.RegexMatch(out Match match, @"(?:(?<zoom>zoom *(?<time>\d*\.?\d+)?)|(?<superzoom>superzoom *(?<factor>\d*\.?\d+) *(?<x>\d*\.?\d+)? *(?<y>\d*\.?\d+)? *(?<stime>\d*\.?\d+)?))? *(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)? *(?:send *to *module)? *(?<command>.+)?"))
 		{
 			var groups = match.Groups;
-			var timed = groups["time"].Success;
-			var zoom = groups["zoom"].Success;
+			var timed = groups["time"].Success || groups["stime"].Success;
+			var zooming = groups["zoom"].Success || groups["superzoom"].Success;
 			var tilt = groups["tilt"].Success;
 			var command = groups["command"].Success;
 
 			// Both a time and a command can't be entered. And either a zoom or tilt needs to take place otherwise, we should let the command run normally.
-			if ((!timed || !command) && (zoom || tilt))
+			if ((!timed || !command) && (zooming || tilt))
 			{
 				MusicPlayer musicPlayer = null;
 				int delay = 2;
 				if (timed)
 				{
-					delay = groups["time"].Value.TryParseInt() ?? 2;
+					delay = groups["time"].Value.TryParseInt() ?? groups["stime"].Value.TryParseInt() ?? 2;
 					delay = Math.Max(2, delay);
 					if (delay >= 15)
 						musicPlayer = MusicPlayer.StartRandomMusic();
@@ -377,9 +377,14 @@ static class ModuleCommands
 					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant());
 				}
 
-				if (zoom)
+				if (zooming)
 				{
-					routine = Zoom(module, user, routine ?? toYield);
+					var zoomData = new SuperZoomData(
+						groups["factor"].Value.TryParseFloat() ?? 1,
+						groups["x"].Value.TryParseFloat() ?? 0.5f,
+						groups["y"].Value.TryParseFloat() ?? 0.5f
+					);
+					routine = Zoom(module, zoomData, routine ?? toYield);
 				}
 
 				yield return routine;
@@ -446,4 +451,18 @@ static class ModuleCommands
 		IRCConnection.SendMessage(module.TryClaim(user, view, pin).Message);
 	}
 	#endregion
+}
+
+public struct SuperZoomData
+{
+	public float factor;
+	public float x;
+	public float y;
+
+	public SuperZoomData(float factor = 1, float x = 0.5f, float y = 0.5f)
+	{
+		this.factor = Math.Max(factor, 0.1f);
+		this.x = Math.Max(Math.Min(x, 1), 0);
+		this.y = Math.Max(Math.Min(y, 1), 0);
+	}
 }

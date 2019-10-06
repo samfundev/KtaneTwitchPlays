@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using static ModuleCommands;
 
 public class ModuleCameras : MonoBehaviour
 {
@@ -46,40 +47,41 @@ public class ModuleCameras : MonoBehaviour
 			return moduleCamera;
 		}
 
-		public IEnumerator ZoomCamera(float duration = 1.0f)
+		public IEnumerator ZoomCamera(float duration = 1.0f, SuperZoomData zoomData = default)
 		{
 			CameraInstance.depth = 100;
 			ZoomActive = true;
 			yield return null;
-			float initialTime = Time.time;
-			while ((Time.time - initialTime) < duration)
+			foreach (float lerp in duration.TimedAnimation())
 			{
-				float lerp = (Time.time - initialTime) / duration;
 				CameraInstance.rect = new Rect(Mathf.Lerp(_originalCameraRect.x, ZoomCameraLocation.x, lerp),
 					Mathf.Lerp(_originalCameraRect.y, ZoomCameraLocation.y, lerp),
 					Mathf.Lerp(_originalCameraRect.width, ZoomCameraLocation.width, lerp),
 					Mathf.Lerp(_originalCameraRect.height, ZoomCameraLocation.height, lerp));
 
+				CameraInstance.fieldOfView = Mathf.Lerp(5, 5 / zoomData.factor, lerp);
+				CameraInstance.transform.localPosition = Vector3.Lerp(new Vector3(0.001f, 2.25f, 0), new Vector3(0.001f + (zoomData.x - 0.5f) * 0.2f, 2.25f, (zoomData.y - 0.5f) * 0.2f), lerp);
+				DebugHelper.Log(CameraInstance.transform.localPosition.x, CameraInstance.transform.localPosition.z);
+
 				yield return null;
 			}
-			CameraInstance.rect = ZoomCameraLocation;
 		}
 
-		public IEnumerator UnzoomCamera(float duration = 1.0f)
+		public IEnumerator UnzoomCamera(float duration = 1.0f, SuperZoomData zoomData = default)
 		{
 			yield return null;
-			float initialTime = Time.time;
-			while ((Time.time - initialTime) < duration)
+			foreach (float lerp in duration.TimedAnimation())
 			{
-				float lerp = (Time.time - initialTime) / duration;
 				CameraInstance.rect = new Rect(Mathf.Lerp(ZoomCameraLocation.x, _originalCameraRect.x, lerp),
 					Mathf.Lerp(ZoomCameraLocation.y, _originalCameraRect.y, lerp),
 					Mathf.Lerp(ZoomCameraLocation.width, _originalCameraRect.width, lerp),
 					Mathf.Lerp(ZoomCameraLocation.height, _originalCameraRect.height, lerp));
 
+				CameraInstance.fieldOfView = Mathf.Lerp(5, 5 / zoomData.factor, 1 - lerp);
+				CameraInstance.transform.localPosition = Vector3.Lerp(new Vector3(0.001f, 2.25f, 0), new Vector3(0.001f + (zoomData.x - 0.5f) * 0.2f, 2.25f, (zoomData.y - 0.5f) * 0.2f), 1 - lerp);
+
 				yield return null;
 			}
-			CameraInstance.rect = _originalCameraRect;
 			CameraInstance.depth = 99;
 			ZoomActive = false;
 
@@ -274,26 +276,26 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Public Methods
-	public IEnumerator ZoomCamera(TwitchModule component, float delay)
+	public IEnumerator ZoomCamera(TwitchModule component, SuperZoomData zoomData, float delay)
 	{
 		int existingCamera = CurrentModulesContains(component);
 		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
 		{
 			ModuleCamera cam = _moduleCameras[existingCamera];
-			return cam.ZoomCamera(delay);
+			return cam.ZoomCamera(delay, zoomData);
 		}
 		return null;
 	}
 
-	public IEnumerator UnzoomCamera(TwitchModule component, float delay)
+	public IEnumerator UnzoomCamera(TwitchModule component, SuperZoomData zoomData, float delay)
 	{
 		int existingCamera = CurrentModulesContains(component);
 		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
 		{
 			ModuleCamera cam = _moduleCameras[existingCamera];
-			return cam.UnzoomCamera(delay);
+			return cam.UnzoomCamera(delay, zoomData);
 		}
 		return null;
 	}

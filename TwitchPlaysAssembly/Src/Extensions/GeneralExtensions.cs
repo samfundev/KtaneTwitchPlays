@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 public static class GeneralExtensions
 {
@@ -100,6 +102,8 @@ public static class GeneralExtensions
 	}
 
 	public static int? TryParseInt(this string number) => int.TryParse(number, out int i) ? (int?) i : null;
+
+	public static float? TryParseFloat(this string number) => float.TryParse(number, out float i) ? (float?) i : null;
 
 	public static bool ContainsIgnoreCase(this string str, string value) => str.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) != -1;
 
@@ -248,4 +252,15 @@ public static class GeneralExtensions
 	/// <param name="value">The string to check against the match.</param>
 	/// <param name="match">The string to match.</param>
 	public static bool FirstOrWhole(this string value, string match) => value[0] == match[0] || value == match;
+
+	public static IEnumerable TimedAnimation(this float length)
+	{
+		float startTime = Time.time;
+		float alpha = 0;
+		while (alpha < 1)
+		{
+			alpha = Mathf.Min((Time.time - startTime) / length, 1);
+			yield return alpha;
+		}
+	}
 }
