@@ -637,7 +637,7 @@ public class IRCConnection : MonoBehaviour
 	// ReSharper disable once UnusedMember.Global
 	public static void SendWhisper(string userNickName, string message, params object[] args) => SendMessage(message, userNickName, false, args);
 
-	public static new void SendMessage(string message) => SendMessage(message, null, true);
+	public new static void SendMessage(string message) => SendMessage(message, null, true);
 
 	[StringFormatMethod("message")]
 	public static void SendMessageFormat(string message, params object[] args) => SendMessage(message, null, true, args);
@@ -722,6 +722,9 @@ public class IRCConnection : MonoBehaviour
 		}
 
 		if (!silent) DebugHelper.Log($"[M] {msg.UserNickName} ({msg.UserColorCode}): {msg.Text}");
+
+		Leaderboard.Instance.GetRank(msg.UserNickName, out Leaderboard.LeaderboardEntry entry);
+		entry.SetActivity(true);
 
 		if (msg.Text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true))
 		{
@@ -888,7 +891,7 @@ public class IRCConnection : MonoBehaviour
 		});
 	}
 
-	private void SetDelay(string badges, string nickname, string channel)
+	private void SetDelay(string badges, string nickname, string channel) //TODO account for known/verified bot status
 	{
 		if (!channel.Equals(_settings.channelName, StringComparison.InvariantCultureIgnoreCase) ||
 			!nickname.Equals(_settings.userName, StringComparison.InvariantCultureIgnoreCase)) return;

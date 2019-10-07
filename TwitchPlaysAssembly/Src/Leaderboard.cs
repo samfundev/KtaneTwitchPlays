@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Xml.Serialization;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
@@ -80,6 +81,28 @@ public class Leaderboard
 		[JsonConverter(typeof(StringEnumConverter))]
 		public OtherModes.Team Team { get; set; } = OtherModes.Team.Good;
 
+		[JsonIgnore]
+		private bool _active;
+
+		[JsonIgnore]
+		private Timer _activityTimer;
+
+		[JsonIgnore]
+		public bool Active
+		{
+			get => _active;
+			private set
+			{
+				_active = value;
+				_activityTimer?.Dispose();
+				_activityTimer = null;
+				if (!value) return;
+				_activityTimer = new Timer(1.8e+6) {AutoReset = false};
+				_activityTimer.Elapsed += delegate { Active = false; };
+				_activityTimer.Enabled = true;
+			}
+		}
+
 		public float TimePerSoloSolve
 		{
 			get
@@ -97,6 +120,8 @@ public class Leaderboard
 		public void AddStrike(int num = 1) => StrikeCount += num;
 
 		public void AddScore(int num) => SolveScore += num;
+
+		public void SetActivity(bool value) => Active = value;
 	}
 
 	private Color SafeGetColor(string userName) => IRCConnection.GetUserColor(userName);
