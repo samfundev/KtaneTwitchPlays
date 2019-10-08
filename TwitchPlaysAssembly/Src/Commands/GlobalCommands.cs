@@ -473,6 +473,52 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"User {targetUser} made Evil");
 	}
 
+	[Command(@"join (evil|good)")]
+	[DebuggingOnly]
+	public static void JoinTeam([Group(1)] string team, string user, bool isWhisper)
+	{
+		OtherModes.Team target = (OtherModes.Team)Enum.Parse(typeof(OtherModes.Team), team);
+		Leaderboard.Instance.GetRank(user, out Leaderboard.LeaderboardEntry entry);
+		// ReSharper disable once SwitchStatementMissingSomeCases
+		switch (target)
+		{
+			case OtherModes.Team.Good:
+				if (entry != null && entry.Team == OtherModes.Team.Good)
+				{
+					IRCConnection.SendMessage($"@{user}, You are already on the Good team", user, !isWhisper);
+					return;
+				}
+
+				if (!Leaderboard.Instance.IsTeamBalanced(OtherModes.Team.Good))
+				{
+					IRCConnection.SendMessage(
+						$"@{user}, you cannot join the Good team at the moment, since there are too many players on the Good team. Please try again later{(entry.Team != OtherModes.Team.Evil ? ", or join the Evil team" : "")}.",
+						user, !isWhisper);
+					return;
+				}
+				Leaderboard.Instance.MakeGood(user);
+				IRCConnection.SendMessage($"@{user} joined the Good team", user, !isWhisper);
+				break;
+			case OtherModes.Team.Evil:
+				if (entry != null && entry.Team == OtherModes.Team.Evil)
+				{
+					IRCConnection.SendMessage($"@{user}, You are already on the Evil team", user, !isWhisper);
+					return;
+				}
+
+				if (!Leaderboard.Instance.IsTeamBalanced(OtherModes.Team.Evil))
+				{
+					IRCConnection.SendMessage(
+						$"@{user}, you cannot join the Evil team at the moment, since there are too many players on the Evil team. Please try again later{(entry.Team != OtherModes.Team.Evil ? ", or join the Good team" : "")}.",
+						user, !isWhisper);
+					return;
+				}
+				Leaderboard.Instance.MakeGood(user);
+				IRCConnection.SendMessage($"@{user} joined the Evil team", user, !isWhisper);
+				break;
+		}
+	}
+
 	[Command(@"(add|remove) +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddRemoveRole([Group(1)] string command, [Group(2)] string targetUser, [Group(3)] string roles, string user, bool isWhisper)
 	{
@@ -601,13 +647,13 @@ static class GlobalCommands
 				return null;
 			}
 
-			if (!Leaderboard.Instance.isAnyEvil())
+			if (!Leaderboard.Instance.IsAnyEvil())
 			{
 				IRCConnection.SendMessage("There are no evil players designated, the VS bomb cannot be run");
 				return null;
 			}
 
-			if (!Leaderboard.Instance.isAnyGood())
+			if (!Leaderboard.Instance.IsAnyGood())
 			{
 				IRCConnection.SendMessage("There are no good players designated, the VS bomb cannot be run");
 				return null;

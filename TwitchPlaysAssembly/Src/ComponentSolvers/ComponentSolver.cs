@@ -918,7 +918,7 @@ public abstract class ComponentSolver
 			{
 				HPDamage = componentValue * 5;
 				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
-				team = entry == null ? OtherModes.Team.Evil : entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good;
+				team = entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good; //if entry is null here something went very wrong
 				if (UnsupportedModule)
 					HPDamage = 0;
 

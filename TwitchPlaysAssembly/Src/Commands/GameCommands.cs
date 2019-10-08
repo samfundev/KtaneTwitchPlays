@@ -302,7 +302,7 @@ static class GameCommands
 		}
 
 		Leaderboard.Instance.GetRank(user, out var entry);
-		if (entry.SolveScore < TwitchPlaySettings.data.MinScoreForNewbomb && !UserAccess.HasAccess(user, AccessLevel.Defuser, true))
+		if (entry == null || entry.SolveScore < TwitchPlaySettings.data.MinScoreForNewbomb && !UserAccess.HasAccess(user, AccessLevel.Defuser, true))
 			IRCConnection.SendMessage($"{user}, you don’t have enough points to use the newbomb command.");
 		else
 		{

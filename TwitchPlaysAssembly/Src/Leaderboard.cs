@@ -79,7 +79,7 @@ public class Leaderboard
 		}
 
 		[JsonConverter(typeof(StringEnumConverter))]
-		public OtherModes.Team Team { get; set; } = OtherModes.Team.Good;
+		public OtherModes.Team? Team { get; set; } = null;
 
 		[JsonIgnore]
 		private bool _active;
@@ -221,13 +221,21 @@ public class Leaderboard
 		entry.LastAction = DateTime.Now;
 	}
 
-	public bool isAnyEvil() => _entryList.Any(x => x.Team == OtherModes.Team.Evil);
+	public bool IsAnyEvil() => _entryList.Where(x => x.Active).Any(x => x.Team == OtherModes.Team.Evil);
 
-	public bool isAnyGood() => _entryList.Any(x => x.Team == OtherModes.Team.Good);
+	public bool IsAnyGood() => _entryList.Where(x => x.Active).Any(x => x.Team == OtherModes.Team.Good);
 
-	public OtherModes.Team GetTeam(string userName) => GetTeam(userName, SafeGetColor(userName));
+	public bool IsTeamBalanced(OtherModes.Team team)
+	{
+		List<LeaderboardEntry> leaderboardEntries = _entryList.Where(x => x.Active).ToList();
+		IEnumerable<LeaderboardEntry> givenTeamEntries = leaderboardEntries.Where(x => x.Team == team);
 
-	public OtherModes.Team GetTeam(string userName, Color userColor)
+		return (double) givenTeamEntries.Count() / leaderboardEntries.Count < 0.75;
+	}
+
+	public OtherModes.Team? GetTeam(string userName) => GetTeam(userName, SafeGetColor(userName));
+
+	public OtherModes.Team? GetTeam(string userName, Color userColor)
 	{
 		LeaderboardEntry entry = GetEntry(userName, userColor);
 		return entry.Team;

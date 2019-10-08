@@ -393,6 +393,14 @@ public class TwitchPlaysService : MonoBehaviour
 			return true;
 		}
 
+		Leaderboard.Instance.GetRank(msg.UserNickName, out Leaderboard.LeaderboardEntry entry);
+		if (entry?.Team == null && extraObject is TwitchModule && OtherModes.VSModeOn)
+		{
+			IRCConnection.SendMessage($@"{msg.UserNickName}, you have not joined a team, and cannot solve modules in this mode until you do, please use !join evil or !join good.");
+			// Return true so that the command counts as processed (otherwise you get the above message multiple times)
+			return true;
+		}
+			
 		if (!TwitchGame.IsAuthorizedDefuser(msg.UserNickName, msg.IsWhisper))
 		{
 			return true;
