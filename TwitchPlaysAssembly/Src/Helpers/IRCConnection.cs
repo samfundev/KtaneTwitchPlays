@@ -723,8 +723,7 @@ public class IRCConnection : MonoBehaviour
 
 		if (!silent) DebugHelper.Log($"[M] {msg.UserNickName} ({msg.UserColorCode}): {msg.Text}");
 
-		Leaderboard.Instance.GetRank(msg.UserNickName, out Leaderboard.LeaderboardEntry entry);
-		entry?.SetActivity(true);
+		Leaderboard.Instance.SetActivity(msg.UserNickName, true);
 
 		if (msg.Text.Equals("!enablecommands", StringComparison.InvariantCultureIgnoreCase) && !CommandsEnabled && UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true))
 		{

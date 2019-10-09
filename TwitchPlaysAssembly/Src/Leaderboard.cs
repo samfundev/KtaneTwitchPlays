@@ -91,7 +91,7 @@ public class Leaderboard
 		public bool Active
 		{
 			get => _active;
-			private set
+			set
 			{
 				_active = value;
 				_activityTimer?.Dispose();
@@ -120,8 +120,6 @@ public class Leaderboard
 		public void AddStrike(int num = 1) => StrikeCount += num;
 
 		public void AddScore(int num) => SolveScore += num;
-
-		public void SetActivity(bool value) => Active = value;
 	}
 
 	private Color SafeGetColor(string userName) => IRCConnection.GetUserColor(userName);
@@ -147,6 +145,12 @@ public class Leaderboard
 		entry.UserName = userName;
 		entry.UserColor = userColor;
 		return entry;
+	}
+
+	public void SetActivity(string userName, bool active)
+	{
+		LeaderboardEntry entry = GetEntry(userName);
+		entry.Active = active;
 	}
 
 	public LeaderboardEntry AddSoloClear(string userName, float newRecord, out float previousRecord)
