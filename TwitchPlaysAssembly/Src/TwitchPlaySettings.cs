@@ -145,9 +145,9 @@ public class TwitchPlaySettingsData
 	public string HoldableCommandError = "@{1}, Holdable !{0} responded with the following error: {2}";
 
 	public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
-	public string AwardVsSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. {4} HP from {5}. VoteYea";
+	public string AwardVsSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. -{4} HP from {5}. VoteYea";
 	public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
-	public string AwardVsStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} HP from {4}. {8} points from {9}{5} VoteNay";
+	public string AwardVsStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! -{7} HP from {4}. {8} points from {9}{5} VoteNay";
 	public string AwardHoldableStrike = "VoteNay Holdable !{0} got {1} strike{2}! {3} points from {4}{5} VoteNay";
 	public string AwardRewardStrike = "VoteNay Module {0} ({3}) got {1} strike{2}{4}! VoteNay";
 
@@ -157,12 +157,16 @@ public class TwitchPlaySettingsData
 	public string BombExplodedMessage = "KAPOW KAPOW The bomb has exploded, with {0} remaining! KAPOW KAPOW";
 
 	public string BombDefusedMessage = "PraiseIt PraiseIt The bomb has been defused, with {0} remaining!";
-	public string BombDefusedVsMessage = "PraiseIt PraiseIt The {0} team has won! The bomb had {1} remaining!";
 	public string BombDefusedBonusMessage = " {0} reward points to everyone who helped with this success.";
-
-	public string BombDefusedVsBonusMessage =
-		" {0} reward points to everyone on the {1} team who helped with this success.";
 	public string BombDefusedFooter = " PraiseIt PraiseIt";
+
+	public string VersusGoodHeader = "PraiseIt PraiseIt ";
+	public string VersusEvilHeader = "KAPOW KAPOW ";
+	public string VersusEndMessage = "The {0} team has won! The bomb had {1} remaining!";
+	public string VersusBonusMessage = " {0} reward points to everyone on the {1} team who helped with this success.";
+	public string VersusGoodFooter = " PraiseIt PraiseIt";
+	public string VersusEvilFooter = " KAPOW KAPOW";
+
 
 	public string BombSoloDefusalMessage = "PraiseIt PraiseIt {0} completed a solo defusal in {1}:{2:00}!";
 	public string BombSoloDefusalNewRecordMessage = " It's a new record! (Previous record: {0}:{1:00})";
@@ -365,10 +369,15 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref BombExplodedMessage, data.BombExplodedMessage, 1);
 
 		valid &= ValidateString(ref BombDefusedMessage, data.BombDefusedMessage, 1);
-		valid &= ValidateString(ref BombDefusedVsMessage, data.BombDefusedVsMessage, 2);
 		valid &= ValidateString(ref BombDefusedBonusMessage, data.BombDefusedBonusMessage, 1);
-		valid &= ValidateString(ref BombDefusedVsBonusMessage, data.BombDefusedVsBonusMessage, 2);
 		valid &= ValidateString(ref BombDefusedFooter, data.BombDefusedFooter, 0);
+
+		valid &= ValidateString(ref VersusGoodHeader, data.VersusGoodHeader, 0);
+		valid &= ValidateString(ref VersusEvilHeader, data.VersusEvilHeader, 0);
+		valid &= ValidateString(ref VersusEndMessage, data.VersusEndMessage, 2);
+		valid &= ValidateString(ref VersusBonusMessage, data.VersusBonusMessage, 2);
+		valid &= ValidateString(ref VersusGoodFooter, data.VersusGoodFooter, 0);
+		valid &= ValidateString(ref VersusEvilFooter, data.VersusEvilFooter, 0);
 
 		valid &= ValidateString(ref BombSoloDefusalMessage, data.BombSoloDefusalMessage, 3);
 		valid &= ValidateString(ref BombSoloDefusalNewRecordMessage, data.BombSoloDefusalNewRecordMessage, 2);
@@ -613,8 +622,8 @@ public static class TwitchPlaySettings
 
 			int ClearReward2 =
 				Mathf.CeilToInt(ClearReward / (float) Players.Count(x => Leaderboard.Instance.GetTeam(x) == winner));
-			message = string.Format(data.BombDefusedVsBonusMessage, ClearReward2,
-				winner == OtherModes.Team.Good ? "good" : "evil") + data.BombDefusedFooter;
+			message = string.Format(data.VersusBonusMessage, ClearReward2,
+				winner == OtherModes.Team.Good ? "good" : "evil");
 
 			foreach (string player in Players.Where(x => Leaderboard.Instance.GetTeam(x) == winner))
 			{

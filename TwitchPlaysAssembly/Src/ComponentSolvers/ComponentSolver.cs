@@ -913,30 +913,30 @@ public abstract class ComponentSolver
 		{
 			int HPDamage = 0;
 			bool solve = false;
-			OtherModes.Team? team = null;
+			OtherModes.Team? teamDamaged = null;
 			if (OtherModes.VSModeOn)
 			{
 				HPDamage = componentValue * 5;
 				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
-				team = entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good; //if entry is null here something went very wrong
+				teamDamaged = entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good; //if entry is null here something went very wrong
 				if (UnsupportedModule)
 					HPDamage = 0;
 
-				switch (team)
+				switch (teamDamaged)
 				{
 					case OtherModes.Team.Evil:
 						if (OtherModes.GetEvilHealth() <= 1)
 							solve = true;
 
-						if (OtherModes.GetGoodHealth() <= HPDamage && !solve)
-							HPDamage = OtherModes.GetGoodHealth() - 1;
+						if (OtherModes.GetEvilHealth() <= HPDamage && !solve)
+							HPDamage = OtherModes.GetEvilHealth() - 1;
 						break;
 					case OtherModes.Team.Good:
 						if (OtherModes.GetGoodHealth() <= 1)
 							solve = true;
 
-						if (OtherModes.GetEvilHealth() <= HPDamage && !solve)
-							HPDamage = OtherModes.GetEvilHealth() - 1;
+						if (OtherModes.GetGoodHealth() <= HPDamage && !solve)
+							HPDamage = OtherModes.GetGoodHealth() - 1;
 						break;
 				}
 			}
@@ -944,7 +944,7 @@ public abstract class ComponentSolver
 			if (OtherModes.VSModeOn && !UnsupportedModule)
 				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
 					componentValue, headerText, HPDamage,
-					team == OtherModes.Team.Evil ? "the evil team" : "the good team"));
+					teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team"));
 			else
 				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue, headerText));
 			string recordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
@@ -958,33 +958,36 @@ public abstract class ComponentSolver
 			{
 				if (!solve)
 				{
-					switch (team)
+					switch (teamDamaged)
 					{
 						case OtherModes.Team.Good:
-							OtherModes.SubtractEvilHealth(HPDamage);
+							OtherModes.SubtractGoodHealth(HPDamage);
 							break;
 						case OtherModes.Team.Evil:
-							OtherModes.SubtractGoodHealth(HPDamage);
+							OtherModes.SubtractEvilHealth(HPDamage);
 							break;
 					}
 				}
 				else
 				{
-					switch (team)
+					switch (teamDamaged)
 					{
 						case OtherModes.Team.Good:
-							OtherModes.evilHealth = 0;
+							OtherModes.goodHealth = 0;
+
+							// If Good loses, the bomb blows up.
+							TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
+							TwitchGame.Instance.Bombs[0].CauseVersusExplosion();
+
+							// This was here originally to detonate the bomb, but was nonfunctional.
+							//TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Explode(TwitchGame.Instance.Bombs[0]));
 							break;
 						case OtherModes.Team.Evil:
-							OtherModes.goodHealth = 0;
+							OtherModes.evilHealth = 0;
+
+							// If Evil loses, the bomb is solved.
+							GameCommands.SolveBomb();
 							break;
-					}
-					if (OtherModes.GetEvilHealth() <= 0)
-						GameCommands.SolveBomb();
-					else
-					{
-						TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
-						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Explode(TwitchGame.Instance.Bombs[0]));
 					}
 				}
 				if (!solve)
@@ -1083,18 +1086,29 @@ public abstract class ComponentSolver
 				else
 				{
 					if (team == OtherModes.Team.Evil)
+					{
+						OtherModes.evilHealth = 0;
+
+						// If Evil loses, the bomb is solved.
 						GameCommands.SolveBomb();
+					}
 					else
 					{
+						// If Good loses, the bomb blows up.
 						TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
-						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Explode(TwitchGame.Instance.Bombs[0]));
+						TwitchGame.Instance.Bombs[0].CauseVersusExplosion();
+
+						// This was here originally to detonate the bomb, but was nonfunctional.
+						//TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(BombCommands.Explode(TwitchGame.Instance.Bombs[0]));
 					}
 				}
 
-				Module.Bomb.StrikeCount = 0;
 				if (hpPenalty != 0)
 					TwitchGame.ModuleCameras.UpdateConfidence();
 			}
+
+			// Ensure strikes are always set to 0 in VS mode, even for strikes not assigned to a team. (Needies, etc.)
+			Module.Bomb.StrikeCount = 0;
 		}
 
 		if (OtherModes.TimeModeOn)

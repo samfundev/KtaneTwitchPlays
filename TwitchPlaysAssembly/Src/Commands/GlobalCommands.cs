@@ -56,7 +56,7 @@ static class GlobalCommands
 
 	[Command(@"timemode( *(on)| *off)?")]
 	public static void TimeMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Time, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableTimeModeForEveryone, TwitchPlaySettings.data.TimeModeCommandDisabled);
-	[Command(@"vsmode( *(on)| *off)?", AccessLevel.Mod, AccessLevel.Mod), DebuggingOnly]
+	[Command(@"vsmode( *(on)| *off)?", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void VsMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.VS, !any, on, user, isWhisper, false, TwitchPlaySettings.data.VsModeCommandDisabled);
 	[Command(@"zenmode( *(on)| *off)?")]
 	public static void ZenMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Zen, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableZenModeForEveryone, TwitchPlaySettings.data.ZenModeCommandDisabled);
@@ -474,10 +474,9 @@ static class GlobalCommands
 	}
 
 	[Command(@"join (evil|good)")]
-	[DebuggingOnly]
 	public static void JoinTeam([Group(1)] string team, string user, bool isWhisper)
 	{
-		OtherModes.Team target = (OtherModes.Team)Enum.Parse(typeof(OtherModes.Team), team);
+		OtherModes.Team target = (OtherModes.Team)Enum.Parse(typeof(OtherModes.Team), team, true);
 		Leaderboard.Instance.GetRank(user, out Leaderboard.LeaderboardEntry entry);
 		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (target)
@@ -513,7 +512,7 @@ static class GlobalCommands
 						user, !isWhisper);
 					return;
 				}
-				Leaderboard.Instance.MakeGood(user);
+				Leaderboard.Instance.MakeEvil(user);
 				IRCConnection.SendMessage($"@{user} joined the Evil team", user, !isWhisper);
 				break;
 		}

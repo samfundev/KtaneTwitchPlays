@@ -114,6 +114,8 @@ public class TwitchBomb : MonoBehaviour
 		set => Bomb.GetTimer().TimeRemaining = (value < 0) ? 0 : value;
 	}
 
+	public void CauseVersusExplosion() =>  StartCoroutine(DelayBombExplosionCoroutine(null, "Evil defeated Good", 0.1f));
+
 	#region Private Methods
 	public IEnumerator DelayBombExplosionCoroutine() => DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
 

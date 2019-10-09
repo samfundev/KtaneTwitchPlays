@@ -128,8 +128,34 @@ public class TwitchGame : MonoBehaviour
 			}
 		}
 
-		string bombMessage;
-		if (hasDetonated)
+		string bombMessage = "";
+		if (OtherModes.VSModeOn && (hasDetonated || hasBeenSolved))
+		{
+			OtherModes.Team winner = OtherModes.Team.Good;
+			if (OtherModes.GetGoodHealth() == 0)
+			{
+				winner = OtherModes.Team.Evil;
+				bombMessage = TwitchPlaySettings.data.VersusEvilHeader;
+			}
+			else if (OtherModes.GetEvilHealth() == 0)
+			{
+				winner = OtherModes.Team.Good;
+				bombMessage = TwitchPlaySettings.data.VersusGoodHeader;
+			}
+
+			bombMessage += string.Format(TwitchPlaySettings.data.VersusEndMessage,
+				winner == OtherModes.Team.Good ? "good" : "evil", timeRemainingFormatted);
+			bombMessage += TwitchPlaySettings.GiveBonusPoints();
+
+			if (winner == OtherModes.Team.Good)
+				bombMessage += TwitchPlaySettings.data.VersusGoodFooter;
+			else if (winner == OtherModes.Team.Evil)
+				bombMessage += TwitchPlaySettings.data.VersusEvilFooter;
+
+			if (lastBomb && hasBeenSolved)
+				Leaderboard.Instance.Success = true;
+		}
+		else if (hasDetonated)
 		{
 			bombMessage = string.Format(TwitchPlaySettings.data.BombExplodedMessage, timeRemainingFormatted);
 			Leaderboard.Instance.BombsExploded += Bombs.Count;
@@ -141,18 +167,7 @@ public class TwitchGame : MonoBehaviour
 		}
 		else if (hasBeenSolved)
 		{
-			if (!OtherModes.VSModeOn)
-				bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedMessage, timeRemainingFormatted);
-			else
-			{
-				OtherModes.Team winner = OtherModes.Team.Good;
-				if (OtherModes.GetGoodHealth() == 0)
-					winner = OtherModes.Team.Evil;
-				else if (OtherModes.GetEvilHealth() == 0)
-					winner = OtherModes.Team.Good;
-				bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedVsMessage,
-					winner == OtherModes.Team.Good ? "good" : "evil", timeRemainingFormatted);
-			}
+			bombMessage = string.Format(TwitchPlaySettings.data.BombDefusedMessage, timeRemainingFormatted);
 
 			Leaderboard.Instance.BombsCleared += Bombs.Count;
 			bombMessage += TwitchPlaySettings.GiveBonusPoints();
