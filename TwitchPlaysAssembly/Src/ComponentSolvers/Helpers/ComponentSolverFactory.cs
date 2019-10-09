@@ -1237,8 +1237,8 @@ public static class ComponentSolverFactory
 		}
 
 		Vector3 position = bombComponent.transform.InverseTransformPoint(component.transform.position);
-		statusLightLeft = (position.x < 0);
-		statusLightBottom = (position.z < 0);
+		statusLightLeft = (Math.Round(position.x, 5) < 0);
+		statusLightBottom = (Math.Round(position.z, 5) < 0);
 		//DebugLog($"{statusLightStatus} Found in the {(statusLightBottom ? "bottom" : "top")} {(statusLightLeft ? "left" : "right")} corner.");
 		return true;
 	}
