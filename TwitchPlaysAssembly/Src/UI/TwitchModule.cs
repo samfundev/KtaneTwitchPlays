@@ -127,6 +127,11 @@ public class TwitchModule : MonoBehaviour
 		{
 			Vector3 pos = _originalIDPosition;
 			CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.ModInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.ModInfo.statusLightDown ? -pos.z : pos.z);
+
+			RectTransform rectTransform = ClaimedUserMultiDecker.rectTransform;
+			rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(Solver.ModInfo.statusLightLeft ? 1 : 0, Solver.ModInfo.statusLightDown ? 0 : 1);
+			rectTransform.pivot = new Vector2(Solver.ModInfo.statusLightLeft ? 0 : 1, Solver.ModInfo.statusLightDown ? 0 : 1);
+
 			_statusLightLeft = Solver.ModInfo.statusLightLeft;
 			_statusLightDown = Solver.ModInfo.statusLightDown;
 		}
