@@ -168,7 +168,7 @@ static class GameCommands
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
 			{
 				// Add back any modules that may have been released.	
-				unclaimedModules = TwitchGame.Instance.Modules.Where(h => !h.Claimed && !h.Solved)
+				unclaimedModules = TwitchGame.Instance.Modules.Where(h => h.CanBeClaimed && !h.Claimed && !h.Solved)
 					.Shuffle().ToList();
 				unclaimedModuleIndex = 0;
 			}
@@ -183,7 +183,7 @@ static class GameCommands
 		{
 			// See if there is a valid module at the current index and increment for the next go around.
 			TwitchModule handle = unclaimedModules[unclaimedModuleIndex];
-			if (handle.Claimed || handle.Solved)
+			if (!handle.CanBeClaimed || handle.Claimed || handle.Solved)
 			{
 				unclaimedModules.RemoveAt(unclaimedModuleIndex);
 				i--;

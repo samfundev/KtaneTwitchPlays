@@ -173,7 +173,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Listening"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = false, moduleDisplayName = "Listening", moduleScore = 4 };
 		ModComponentSolverInformation["OrientationCube"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Orientation Cube", moduleScore = 8 };
 		ModComponentSolverInformation["Probing"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Probing", moduleScore = 7 };
-		ModComponentSolverInformation["TurnTheKey"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Key", moduleScore = 3, announceModule = true };
+		ModComponentSolverInformation["TurnTheKey"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Key", moduleScore = 3, announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["TurnTheKeyAdvanced"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Keys", moduleScore = 8, announceModule = true };
 
 		//Kaneb
@@ -282,7 +282,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["flowerPatch"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["jackAttack"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["matchematics"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
-		ModComponentSolverInformation["timingIsEverything"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true, announceModule = true };
+		ModComponentSolverInformation["timingIsEverything"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["weirdAlYankovic"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 
 		//CaitSith2
@@ -729,7 +729,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SimonSingsModule"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpeaksModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["SimonSpinsModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 0, CameraPinningAlwaysAllowed = true, announceModule = true, DoesTheRightThing = true };
+		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { moduleScore = 0, CameraPinningAlwaysAllowed = true, announceModule = true, DoesTheRightThing = true, unclaimable = true };
 		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["SymbolCycleModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["TennisModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };

@@ -13,6 +13,7 @@ public class ModuleInformation
 	public float moduleScore = 5;
 	public bool moduleScoreIsDynamic;
 	public bool announceModule;
+	public bool unclaimable;
 
 	public ScoreMethod scoreMethod;
 

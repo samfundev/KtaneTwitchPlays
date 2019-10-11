@@ -36,6 +36,9 @@ public class TwitchModule : MonoBehaviour
 	public bool Claimed => PlayerName != null;
 
 	[HideInInspector]
+	public bool CanBeClaimed => !(Solver != null && Solver.ModInfo.unclaimable);
+
+	[HideInInspector]
 	public int BombID;
 
 	public bool Solved => BombComponent.IsSolved;
@@ -463,6 +466,9 @@ public class TwitchModule : MonoBehaviour
 
 		if (Solved)
 			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) is already solved.");
+
+		if (!CanBeClaimed)
+			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) cannot be claimed.");
 
 		// Already claimed by the same user
 		if (userNickName.Equals(PlayerName))

@@ -384,7 +384,7 @@ public class TwitchGame : MonoBehaviour
 		}
 
 		// Set up some stuff for the !unclaimed command.
-		GameCommands.unclaimedModules = Modules.Shuffle().ToList();
+		GameCommands.unclaimedModules = Modules.Where(h => h.CanBeClaimed).Shuffle().ToList();
 		GameCommands.unclaimedModuleIndex = 0;
 
 		while (OtherModes.ZenModeOn)
