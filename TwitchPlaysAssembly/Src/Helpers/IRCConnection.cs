@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using JetBrains.Annotations;
@@ -472,16 +473,63 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	/// <summary>
-	/// A NetworkStream that doesn't block if there is no data to read from the network.
-	/// This means the "end of the stream" indicates there is no data to read from the network.
+	/// A <see cref="TextReader"/> that reads lines from a <see cref="NetworkStream"/> and will check to see if any data is available to avoid blocking.
+	/// Allows you specify a seperate stream to read from if you have another stream (like a <see cref="SslStream"/>) wrapping your <see cref="NetworkStream"/>.
 	/// </summary>
-	class AsyncNetworkStream : NetworkStream
+	class NetworkStreamLineReader : TextReader
 	{
-		public AsyncNetworkStream(TcpClient tcpClient) : base(tcpClient.Client, true)
+		Stream stream;
+		NetworkStream networkStream;
+		Decoder decoder = Encoding.UTF8.GetDecoder();
+		byte[] inputBuffer = new byte[512];
+		char[] characterBuffer = new char[Encoding.UTF8.GetMaxCharCount(512)];
+		int characterPosition = 0;
+		int charactersDecoded = 0;
+		StringBuilder stringBuilder = new StringBuilder(512);
+
+		public NetworkStreamLineReader(NetworkStream networkStream, Stream stream = null)
 		{
+			this.stream = stream ?? networkStream;
+			this.networkStream = networkStream;
 		}
 
-		public override int Read(byte[] buffer, int offset, int count) => !base.DataAvailable ? 0 : base.Read(buffer, offset, count);
+		/// <summary>
+		/// Attempts to read a line from the <see cref="Stream"/>. Returns null if a line isn't available.
+		/// </summary>
+		public override string ReadLine()
+		{
+			while (characterPosition < charactersDecoded || networkStream?.DataAvailable == true)
+			{
+				if (characterPosition >= charactersDecoded)
+				{
+					characterPosition = 0;
+					charactersDecoded = 0;
+					while (charactersDecoded == 0)
+					{
+						int bytesRead = stream.Read(inputBuffer, 0, inputBuffer.Length);
+						if (bytesRead == 0) return null;
+
+						charactersDecoded += decoder.GetChars(inputBuffer, 0, bytesRead, characterBuffer, 0);
+					}
+				}
+
+				char character = characterBuffer[characterPosition++];
+				switch (character)
+				{
+					case '\r':
+						continue;
+					case '\n':
+						string result = stringBuilder.ToString();
+						stringBuilder.Length = 0;
+						return result;
+					default:
+						stringBuilder.Append(character);
+						break;
+				}
+			}
+
+			return null;
+		}
 	}
 
 	private void ConnectToIRC()
@@ -502,7 +550,7 @@ public class IRCConnection : MonoBehaviour
 
 			AddTextToHoldable("[IRC:Connect] Connection to chat IRC successful.");
 
-			AsyncNetworkStream networkStream = new AsyncNetworkStream(sock);
+			NetworkStream networkStream = sock.GetStream();
 			try
 			{
 				AddTextToHoldable("[IRC:Connect] Attempting to set up SSL connection.");
@@ -511,7 +559,7 @@ public class IRCConnection : MonoBehaviour
 
 				DebugHelper.Log($"SSL encrypted: {sslStream.IsEncrypted}, authenticated: {sslStream.IsAuthenticated}, signed: {sslStream.IsSigned} and mutually authenticated: {sslStream.IsMutuallyAuthenticated}.");
 
-				StreamReader inputStream = new StreamReader(sslStream);
+				NetworkStreamLineReader inputStream = new NetworkStreamLineReader(networkStream, sslStream);
 				StreamWriter outputStream = new StreamWriter(sslStream);
 
 				if (_state == IRCConnectionState.DoNotRetry)
@@ -523,6 +571,7 @@ public class IRCConnection : MonoBehaviour
 					return;
 				}
 
+				NetworkStream stream = networkStream;
 				_inputThread = new Thread(() => InputThreadMethod(inputStream));
 				_inputThread.Start();
 
@@ -539,8 +588,8 @@ public class IRCConnection : MonoBehaviour
 				DebugHelper.LogException(ex, "An Exception has occurred when attempting to connect using SSL, using insecure stream instead:");
 				_settings.serverPort = 6667;
 				sock = new TcpClient(_settings.serverName, _settings.serverPort);
-				networkStream = new AsyncNetworkStream(sock);
-				StreamReader inputStream = new StreamReader(networkStream);
+				networkStream = sock.GetStream();
+				NetworkStreamLineReader inputStream = new NetworkStreamLineReader(networkStream);
 				StreamWriter outputStream = new StreamWriter(networkStream);
 
 				if (_state == IRCConnectionState.DoNotRetry)
@@ -753,7 +802,7 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
-	private void InputThreadMethod(StreamReader input)
+	private void InputThreadMethod(NetworkStreamLineReader input)
 	{
 		bool pingTimeoutTest = false; // Keeps track of if we are currently in a ping timeout test.
 		Stopwatch stopwatch = new Stopwatch();
@@ -788,7 +837,8 @@ public class IRCConnection : MonoBehaviour
 					}
 				}
 
-				if (input.EndOfStream)
+				string buffer = input.ReadLine();
+				if (buffer == null)
 				{
 					Thread.Sleep(25);
 					continue;
@@ -798,7 +848,6 @@ public class IRCConnection : MonoBehaviour
 				MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(false));
 				stopwatch.Reset();
 				stopwatch.Start();
-				string buffer = input.ReadLine();
 				MainThreadQueue.Enqueue(() =>
 				{
 					foreach (ActionMap action in Actions)
@@ -807,8 +856,9 @@ public class IRCConnection : MonoBehaviour
 				});
 			}
 		}
-		catch
+		catch (Exception exception)
 		{
+			DebugHelper.LogException(exception, "An exception occured trying to connect to IRC:");
 			AddTextToHoldable("[IRC:Disconnect] Connection failed.");
 			_state = IRCConnectionState.Disconnected;
 		}
