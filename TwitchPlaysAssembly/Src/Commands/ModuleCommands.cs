@@ -242,7 +242,7 @@ static class ModuleCommands
 	}
 
 	[Command(@"(points|score)"), SolvedAllowed]
-	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) current score: {module.Solver.ModInfo.moduleScore}");
+	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) {(module.Solver.ModInfo.moduleScoreIsDynamic ? "awards points dynamically depending on the number of modules on the bomb." : $"current score: {module.Solver.ModInfo.moduleScore}")}");
 
 	[Command(@"mark", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Mark(TwitchModule module) => module.SetBannerColor(module.MarkedBackgroundColor);
