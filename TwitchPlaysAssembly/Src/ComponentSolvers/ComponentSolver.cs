@@ -650,6 +650,10 @@ public abstract class ComponentSolver
 						break;
 
 					case "forgetThis": // Forget This
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 0.8f * TwitchPlaySettings.data.DynamicScorePercentage);
+						break;
+
+					case "encryptionBingo": //Encryption Bingo
 					case "organizationModule": // Organization
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
@@ -669,7 +673,7 @@ public abstract class ComponentSolver
 						break;
 
 					case "HexiEvilFMN": // Forget Everything
-						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 4f * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * 3f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					case "forgetEnigma": // Forget Enigma
@@ -681,11 +685,11 @@ public abstract class ComponentSolver
 						break;
 
 					case "qkForgetPerspective": // Forget Perspective
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 5.5f * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 6f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default: // Forget Me Not
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1.5f * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore = (int) (Module.Bomb.bombSolvableModules * 1f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 				}
 			}
