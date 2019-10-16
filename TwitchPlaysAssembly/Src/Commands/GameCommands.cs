@@ -423,16 +423,49 @@ static class GameCommands
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] string name)
 	{
 		name = name?.Trim();
+
+		CommandQueueItem call = null;
 		if (string.IsNullOrEmpty(name))
-			name = null;
-
-		var call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name == null ? item.Name == null : name.EqualsIgnoreCase(item.Name));
-
-		if (call == null)
 		{
-			IRCConnection.SendMessage($"@{user}, no {(name == null ? "unnamed commands" : $"commands named “{name}”")} in the queue.", user, !isWhisper);
-			return;
+			// Call the first unnamed item in the queue.
+			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Name == null);
+
+			if (call == null)
+			{
+				IRCConnection.SendMessage($"@{user}, no unnamed commands in the queue.", user, !isWhisper);
+				return;
+			}
 		}
+		else if (name.StartsWith("!"))
+		{
+			// Call an unnamed item in the queue for a specific module.
+			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Message.Text.StartsWith(name) && item.Name == null);
+
+			if (call == null)
+			{
+				// If a named command exists, and no unnamed commands exist, then show the name of that command (but don't call it).
+				call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Message.Text.StartsWith(name));
+
+				if (call != null)
+					IRCConnection.SendMessage($"@{user}, module {name} is queued with the name “{call.Name}”, please use “!call {call.Name}” to call it.", user, !isWhisper);
+				else
+					IRCConnection.SendMessage($"@{user}, no commands for module {name} in the queue.", user, !isWhisper);
+
+				return;
+			}
+		}
+		else
+		{
+			// Call a named item in the queue.
+			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name.EqualsIgnoreCase(item.Name));
+
+			if (call == null)
+			{
+				IRCConnection.SendMessage($"@{user}, no commands named “{name}” in the queue.", user, !isWhisper);
+				return;
+			}
+		}
+
 		TwitchGame.Instance.CommandQueue.Remove(call);
 		TwitchGame.ModuleCameras?.SetNotes();
 		IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
