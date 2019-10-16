@@ -975,6 +975,8 @@ public static class ComponentSolverFactory
 
 			i.moduleScore = info.moduleScore;
 			i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
+			i.announceModule = info.announceModule;
+			i.unclaimable = info.unclaimable;
 
 			i.moduleScoreOverride = info.moduleScoreOverride;
 			i.helpTextOverride = info.helpTextOverride;
