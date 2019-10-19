@@ -77,7 +77,7 @@ public class LEGOComponentSolver : ComponentSolver
 				yield return MoveSelected(new Vector2Int(column, row));
 			}
 		}
-		else if (split.Length == 2 && split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition))
+		else if (split.Length == 2 && split[0].FirstOrWhole("color") && int.TryParse(split[1], out int colorPosition) && colorPosition.InRange(1, 6))
 		{
 			yield return null;
 			yield return DoInteractionClick(_component.GetValue<KMSelectable[]>("ColorButtons")[colorPosition - 1]);
