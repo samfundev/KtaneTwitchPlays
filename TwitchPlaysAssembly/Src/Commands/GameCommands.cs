@@ -438,6 +438,8 @@ static class GameCommands
 		}
 		else if (name.StartsWith("!"))
 		{
+			name += ' ';
+
 			// Call an unnamed item in the queue for a specific module.
 			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Message.Text.StartsWith(name) && item.Name == null);
 
