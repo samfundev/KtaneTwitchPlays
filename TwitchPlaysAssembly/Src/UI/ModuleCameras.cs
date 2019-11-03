@@ -332,8 +332,9 @@ public class ModuleCameras : MonoBehaviour
 	}
 
 	private ModuleCamera AvailableCamera(CameraPriority maxPriority) => _moduleCameras
-				.Where(c => c.Module == null || (c.Module != null && c.Module.CameraPriority <= maxPriority && !c.ZoomActive))
+				.Where(c => c.Module == null || (c.Module.CameraPriority <= maxPriority && !c.ZoomActive))
 				.OrderBy(c => c.Module != null)
+				.ThenBy(c => c.Module != null ? c.Module.Solved : false)
 				.ThenBy(c => c.Module != null ? (CameraPriority?) c.Module.CameraPriority : null)
 				.ThenBy(c => c.Module != null ? (DateTime?) c.Module.LastUsed : null)
 				.FirstOrDefault();
@@ -645,9 +646,9 @@ public class ModuleCameras : MonoBehaviour
 		if (camera == null)
 			yield break;
 
-		// Delayed by 1 second when a module is solved
+		// Delayed by 3 second when a module is solved
 		if (handle.Solved)
-			yield return new WaitForSeconds(1.0f);
+			yield return new WaitForSeconds(3.0f);
 
 		// This second check is necessary in case another module has moved in during the delay.
 		// As long as the delay ends before the current move does, this won't be an issue for most modules
