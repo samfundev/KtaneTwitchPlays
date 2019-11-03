@@ -96,10 +96,7 @@ static class GlobalCommands
 	[Command(@"rank solo (\d+)")]
 	public static void SoloRank([Group(1)] int desiredRank, string user, bool isWhisper)
 	{
-		Leaderboard.Instance.GetSoloRank(desiredRank, out var entry);
-		var entries = new List<Leaderboard.LeaderboardEntry>() { entry };
-		if (Leaderboard.Instance.IsSoloDuplicate(entry, out var soloDuplicates))
-			entries.AddRange(soloDuplicates);
+		var entries = Leaderboard.Instance.GetSoloEntries(desiredRank);
 		ShowRank(entries, user, user, isWhisper, numeric: true);
 	}
 
@@ -109,10 +106,7 @@ static class GlobalCommands
 	[Command(@"rank (\d+)")]
 	public static void Rank([Group(1)] int desiredRank, string user, bool isWhisper)
 	{
-		Leaderboard.Instance.GetRank(desiredRank, out var entry);
-		var entries = new List<Leaderboard.LeaderboardEntry>() { entry };
-		if (Leaderboard.Instance.IsDuplicate(entry, out var duplicates))
-			entries.AddRange(duplicates);
+		var entries = Leaderboard.Instance.GetEntries(desiredRank);
 		ShowRank(entries, user, user, isWhisper, numeric: true);
 	}
 
@@ -969,6 +963,11 @@ static class GlobalCommands
 
 	private static void ShowRank(IList<Leaderboard.LeaderboardEntry> entries, string targetUser, string user, bool isWhisper, bool numeric = false)
 	{
+		entries = entries.Where(entry => entry != null).ToList();
+		if (entries.Count == 0) {
+			entries = null;
+		}
+
 		if (entries == null && numeric)
 			IRCConnection.SendMessage(TwitchPlaySettings.data.RankTooLow, user, !isWhisper);
 		else if (entries == null)

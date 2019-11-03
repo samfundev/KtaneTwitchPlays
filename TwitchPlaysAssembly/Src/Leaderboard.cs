@@ -299,18 +299,16 @@ public class Leaderboard
 		return _entryList.IndexOf(entry) + 1;
 	}
 
-	public int GetRank(int rank, out LeaderboardEntry entry)
+	public List<LeaderboardEntry> GetEntries(int rank)
 	{
 		CheckAndSort();
-		entry = (_entryList.Count >= rank) ? _entryList[rank - 1] : null;
-		return entry?.Rank ?? 0;
+		return _entryList.Where(entry => entry.Rank == rank && (entry.SolveCount != 0 || entry.StrikeCount != 0)).ToList();
 	}
 
-	public int GetSoloRank(int rank, out LeaderboardEntry entry)
+	public List<LeaderboardEntry> GetSoloEntries(int rank)
 	{
 		CheckAndSort();
-		entry = (_entryListSolo.Count >= rank) ? _entryListSolo[rank - 1] : null;
-		return entry?.SoloRank ?? 0;
+		return _entryListSolo.Where(entry => entry.Rank == rank && (entry.SolveCount != 0 || entry.StrikeCount != 0)).ToList();
 	}
 
 	public int GetSoloRank(string userName, out LeaderboardEntry entry)
@@ -320,40 +318,6 @@ public class Leaderboard
 			return _entryListSolo.IndexOf(entry);
 		else
 			return 0;
-	}
-
-	public bool IsDuplicate(LeaderboardEntry person, out List<LeaderboardEntry> entries)
-	{
-		if (_entryDictionary.ContainsValue(person))
-		{
-			entries = _entryList.Where(x => x.SolveScore == person.SolveScore && x.UserName != person.UserName).ToList();
-			if (entries != null && entries.Any())
-				return true;
-			else
-			{
-				entries = null;
-				return false;
-			}
-		}
-		entries = null;
-		return false;
-	}
-
-	public bool IsSoloDuplicate(LeaderboardEntry person, out List<LeaderboardEntry> entries)
-	{
-		if (_entryListSolo.Contains(person))
-		{
-			entries = _entryListSolo.Where(x => x.RecordSoloTime == person.RecordSoloTime && x.UserName != person.UserName).ToList();
-			if (entries != null && entries.Any())
-				return true;
-			else
-			{
-				entries = null;
-				return false;
-			}
-		}
-		entries = null;
-		return false;
 	}
 
 	public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int scoreCount)
