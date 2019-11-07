@@ -663,7 +663,6 @@ public abstract class ComponentSolver
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 2f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
-					case "forgetMeLater": // Forget Me Later
 					case "ForgetMeNow": // Forget Me Now
 						moduleScore = (int) (Module.Bomb.bombSolvableModules * 2.5f * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
