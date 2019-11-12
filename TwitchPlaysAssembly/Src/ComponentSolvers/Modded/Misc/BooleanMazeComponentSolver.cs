@@ -52,6 +52,8 @@ public class BooleanMazeComponentSolver : ComponentSolver
 		Vector2Int goal = new Vector2Int(component.GetValue<int>("correctgridcol"), component.GetValue<int>("correctgridrow"));
 		int[,] grid = component.GetValue<int[,]>("grid");
 
+		TextMesh NumDisplay = component.GetValue<TextMesh>("NumDisplay");
+
 		Dictionary<char, Vector2Int> moves = new Dictionary<char, Vector2Int>
 		{
 			{ 'u', new Vector2Int( 0, -1) },
@@ -68,7 +70,7 @@ public class BooleanMazeComponentSolver : ComponentSolver
 			var legalMoves = moves.Where(pair => IsLegalMove(pair.Value + currentPosition)).ToList();
 			if (legalMoves.Count == 0) // If we have no legal moves, we're stuck.
 			{
-				yield return RespondToCommandInternal("stuck?");
+				DoInteractionClick(selectables[buttonMap["stuck?"]]);
 			}
 			else
 			{
@@ -81,11 +83,14 @@ public class BooleanMazeComponentSolver : ComponentSolver
 
 				// If we have no good moves, just move somewhere.
 				// But if a move that will move us towards the goal, use one of those.
-				var move = goodMoves.Count == 0 ? legalMoves.First() : goodMoves.First();
+				var move = goodMoves.Count == 0 ? legalMoves[0] : goodMoves[0];
 
 				currentPosition += move.Value;
-				yield return RespondToCommandInternal(move.Key.ToString());
+				DoInteractionClick(selectables[buttonMap[move.Key.ToString()]]);
 			}
+
+			yield return new WaitUntil(() => NumDisplay.text.Length == 0);
+			yield return new WaitUntil(() => NumDisplay.text.Length != 0);
 		}
 	}
 
