@@ -23,10 +23,21 @@ public class NecronomiconComponentSolver : ComponentSolver
 
 			yield return DoInteractionClick(selectables[0]);
 
+			int pagesTurned = 0;
 			for (int i = 0; i < 8; i++)
 			{
 				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
-				yield return new WaitForSeconds(2.25f);
+				yield return new WaitForSecondsWithCancel(2.25f, false, this);
+				if (CoroutineCanceller.ShouldCancel)
+					break;
+
+				pagesTurned = i;
+				yield return DoInteractionClick(selectables[1]);
+			}
+
+			for (int i = pagesTurned; i < 8; i++)
+			{
+				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
 				yield return DoInteractionClick(selectables[1]);
 			}
 		}
@@ -36,7 +47,18 @@ public class NecronomiconComponentSolver : ComponentSolver
 
 			yield return DoInteractionClick(selectables[0]);
 
+			int pagesTurned = 0;
 			for (int i = 1; i < pageNumber; i++)
+			{
+				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
+				if (CoroutineCanceller.ShouldCancel)
+					break;
+
+				pagesTurned = i;
+				yield return DoInteractionClick(selectables[1]);
+			}
+
+			for (int i = pagesTurned; i < 8; i++)
 			{
 				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
 				yield return DoInteractionClick(selectables[1]);
