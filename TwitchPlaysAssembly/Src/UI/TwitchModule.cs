@@ -126,7 +126,7 @@ public class TwitchModule : MonoBehaviour
 		}
 
 		if (_originalIDPosition == Vector3.zero) return;
-		if (Solver.ModInfo.statusLightLeft != _statusLightLeft || Solver.ModInfo.statusLightDown != _statusLightDown)
+		if (Solver.ModInfo.statusLightOverride && (Solver.ModInfo.statusLightLeft != _statusLightLeft || Solver.ModInfo.statusLightDown != _statusLightDown))
 		{
 			Vector3 pos = _originalIDPosition;
 			CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.ModInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.ModInfo.statusLightDown ? -pos.z : pos.z);
@@ -195,11 +195,19 @@ public class TwitchModule : MonoBehaviour
 					}
 				}
 
-
 				_originalIDPosition = pos;
-				CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.ModInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.ModInfo.statusLightDown ? -pos.z : pos.z);
+
 				_statusLightLeft = Solver.ModInfo.statusLightLeft;
 				_statusLightDown = Solver.ModInfo.statusLightDown;
+
+				if (!Solver.ModInfo.statusLightOverride && statusLightParent != null)
+				{
+					Vector3 position = BombComponent.transform.InverseTransformPoint(statusLightParent.transform.position);
+					_statusLightLeft = Math.Round(position.x, 5) < 0;
+					_statusLightDown = Math.Round(position.z, 5) < 0;
+				}
+
+				CanvasGroupMultiDecker.transform.localPosition = new Vector3(Solver.ModInfo.statusLightLeft ? -pos.x : pos.x, pos.y, Solver.ModInfo.statusLightDown ? -pos.z : pos.z);
 				RectTransform rectTransform = ClaimedUserMultiDecker.rectTransform;
 				rectTransform.anchorMax = rectTransform.anchorMin = new Vector2(Solver.ModInfo.statusLightLeft ? 1 : 0, Solver.ModInfo.statusLightDown ? 0 : 1);
 				rectTransform.pivot = new Vector2(Solver.ModInfo.statusLightLeft ? 0 : 1, Solver.ModInfo.statusLightDown ? 0 : 1);
