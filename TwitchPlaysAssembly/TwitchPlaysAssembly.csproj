@@ -167,6 +167,11 @@
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\HangoverComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\CoffeebucksComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\LabyrinthComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\MemorableButtonsComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SimonsOnFirstComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\StainedGlassComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TheMatrixComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TheTrollComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\FestiveJukeboxComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TWordsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\AntiTrollShim.cs" />
