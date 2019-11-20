@@ -58,10 +58,13 @@ public class NecronomiconComponentSolver : ComponentSolver
 				yield return DoInteractionClick(selectables[1]);
 			}
 
-			for (int i = pagesTurned; i < 8; i++)
+			if (CoroutineCanceller.ShouldCancel)
 			{
-				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
-				yield return DoInteractionClick(selectables[1]);
+				for (int i = pagesTurned; i < 8; i++)
+				{
+					yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
+					yield return DoInteractionClick(selectables[1]);
+				}
 			}
 
 			yield return "solve";
