@@ -104,6 +104,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["ExtendedPassword"] = module => new ExtendedPasswordComponentSolver(module);
 		ModComponentSolverCreators["groceryStore"] = module => new GroceryStoreShim(module);
 		ModComponentSolverCreators["plungerButton"] = module => new PlungerButtonShim(module);
+		ModComponentSolverCreators["theSwan"] = module => new SwanShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -597,7 +598,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["sun"] = new ModuleInformation { moduleScore = 11, DoesTheRightThing = true };
 		ModComponentSolverInformation["symbolicCoordinates"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["taxReturns"] = new ModuleInformation { moduleScore = 18, DoesTheRightThing = true, announceModule = true };
-		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 15, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true, announceModule = true };
+		ModComponentSolverInformation["theSwan"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true, CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["wire"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
 		ModComponentSolverInformation["wireSpaghetti"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
 
@@ -833,6 +834,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["sevenWires"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
 		ModComponentSolverInformation["Signals"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
 		ModComponentSolverInformation["simonStores"] = new ModuleInformation { moduleScore = 25, DoesTheRightThing = true };
+		ModComponentSolverInformation["thinkingWiresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["timezone"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["thewitness"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["vigenereCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
