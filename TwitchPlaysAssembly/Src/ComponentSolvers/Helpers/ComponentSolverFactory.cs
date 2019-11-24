@@ -55,6 +55,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["Needy Math"] = module => new NeedyMathComponentSolver(module);
 		ModComponentSolverCreators["WordScrambleModule"] = module => new AnagramsComponentSolver(module);
 
+        //Procyon Modules
+        ModComponentSolverCreators["theRule"] = module => new TheRuleComponentSolver(module);
+
 		//Royal_Flu$h Modules
 		ModComponentSolverCreators["coffeebucks"] = module => new CoffeebucksComponentSolver(module);
 		ModComponentSolverCreators["festiveJukebox"] = module => new FestiveJukeboxComponentSolver(module);
@@ -191,6 +194,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", moduleScore = 3 };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math", manualCode = "Math", moduleScore = 1.1f, scoreMethod = ScoreMethod.NeedySolves };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", moduleScore = 1 };
+
+        //Procyon modules
+        ModComponentSolverInformation["theRule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 7 };
+		
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["coffeebucks"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 11 };

@@ -1,5 +1,4 @@
 using System.Collections;
-
 public class TheTrollComponentSolver : ComponentSolver
 {
 	public TheTrollComponentSolver(TwitchModule module) :
