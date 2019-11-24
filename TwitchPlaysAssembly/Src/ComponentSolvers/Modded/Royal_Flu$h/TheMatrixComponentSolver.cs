@@ -11,15 +11,23 @@ public class TheMatrixComponentSolver : ComponentSolver
 		Switch = _component.GetValue<KMSelectable>("switchObject");
 		bluePill = _component.GetValue<KMSelectable>("bluePill");
 		redPill = _component.GetValue<KMSelectable>("redPill");
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip the switch with '!{0} flip'! Use '!{0} press <colour>' at # to press the pill corresponding to the colour you specified when the last digit of the timer equals to #");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip the switch and flip it again in x seconds with '!{0} flip for x'! Use '!{0} press <colour>' at # to press the pill corresponding to the colour you specified when the last digit of the timer equals to #");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		string command = inputCommand.ToLowerInvariant();
-		if (command == "flip")
+		if (command.StartsWith("flip"))
 		{
+			command = command.Replace("flip ", "").Replace("for ", "");
+			if (!int.TryParse(command, out int output))
+			{
+				yield return "sendtochaterror Number not valid!";
+				yield break;
+			}
 			yield return null;
+			yield return DoInteractionClick(Switch);
+			yield return new WaitForSeconds(output - 0.01f);
 			yield return DoInteractionClick(Switch);
 			yield break;
 		}
