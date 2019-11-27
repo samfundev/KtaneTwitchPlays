@@ -39,6 +39,7 @@ public class TwitchPlaySettingsData
 	public bool EnableLetterCodes = false;
 	public bool AllowSolvingCurrentBombWithCommandsDisabled = true;
 	public int BombLiveMessageDelay = 0;
+	public bool ShowUnrecognizedCommandError = true;
 	public int ClaimCooldownTime = 30;
 	public int ModuleClaimLimit = 2;
 	public float DynamicScorePercentage = 0.5f;
