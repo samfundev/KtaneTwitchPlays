@@ -7,7 +7,7 @@ public class TheRuleComponentSolver : ComponentSolver
 		base(module)
 	{
 		Buttons = Module.BombComponent.GetComponent<KMSelectable>().Children;
-        ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Toggle squares with '!{0} toggle # # #': squares are numbered in reading order (only the clickable ones). Submit the module with '!{0} submit!'");
+        ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Toggle squares with '!{0} toggle # # #': squares are numbered in reading order (only the clickable ones). Submit the module with '!{0} submit'!");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
