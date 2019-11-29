@@ -39,19 +39,19 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 			switch (command)
 			{
 				case "1":
-				case "TL":
+				case "tl":
 					btn = buttons[2];
 					break;
 				case "2":
-				case "TR":
+				case "tr":
 					btn = buttons[3];
 					break;
 				case "3":
-				case "BL":
+				case "bl":
 					btn = buttons[0];
 					break;
 				case "4":
-				case "BR":
+				case "br":
 					btn = buttons[1];
 					break;
 				default:
