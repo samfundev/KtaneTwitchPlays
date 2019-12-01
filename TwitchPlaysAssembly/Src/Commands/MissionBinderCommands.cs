@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.BombBinder;
 using Assets.Scripts.Missions;
 using UnityEngine;
 
@@ -26,6 +27,66 @@ public static class MissionBinderCommands
 			MoveOnPage(offset);
 			yield return new WaitForSeconds(0.2f);
 		}
+	}
+
+	[Command("(?:search|s|find|f) (.+)")]
+	public static IEnumerator Search(FloatingHoldable holdable, [Group(1)] string query)
+	{
+		BombBinder binder = SceneManager.Instance.SetupState.Room.GetComponent<SetupRoom>().BombBinder;
+
+		var possibleMissions = ModManager.Instance.ModMissions
+			.Concat(MissionManager.Instance.MissionDB.Missions)
+			.Where(mission => Localization.GetLocalizedString(mission.DisplayNameTerm).ContainsIgnoreCase(query));
+		switch (possibleMissions.Count())
+		{
+			case 0:
+				IRCConnection.SendMessage($"There are no missions that match \"{query}\".");
+				break;
+			case 1:
+				var missionID = possibleMissions.First().ID;
+				binder.ShowMissionDetail(missionID, binder.MissionTableOfContentsPageManager.GetMissionEntry(missionID).Selectable);
+				yield return null;
+				break;
+			default:
+				IRCConnection.SendMessage($"{possibleMissions.Count()} missions match \"{query}\", displaying matching missions in the binder.");
+				
+				var pageManager = binder.MissionTableOfContentsPageManager;
+				var tableOfContentsList = pageManager.GetValue<List<MissionTableOfContents>>("tableOfContentsList");
+
+				var previousResults = pageManager.GetToC("toc_tp_search");
+				if (previousResults != null)
+				{
+					previousResults.ClearPages();
+					tableOfContentsList.Remove(previousResults);
+				}
+
+				var missionIDs = possibleMissions.Select(mission => mission.ID);
+				var metaData = new TableOfContentsMetaData();
+				metaData.ID = "toc_tp_search";
+				metaData.Sections = 
+				tableOfContentsList
+					.SelectMany(toc => toc.GetValue<TableOfContentsMetaData>("tocData").Sections)
+					.Where(section => section.IsUnlocked && missionIDs.Any(section.MissionIDs.Contains))
+					.Select(section => new SectionMetaData
+						{
+							SectionNum = section.SectionNum,
+							TitleTerm = section.TitleTerm,
+							MissionIDs = missionIDs.Where(section.MissionIDs.Contains).ToList(),
+							IsUnlocked = true
+						})
+					.ToList();
+
+				MissionTableOfContents missionTableOfContents = new MissionTableOfContents();
+				missionTableOfContents.Init(pageManager, metaData, binder.Selectable, true);
+				tableOfContentsList.Add(missionTableOfContents);
+
+				pageManager.ShowToC("toc_tp_search");
+				
+				yield return null;
+				break;
+		}
+
+		InitializePage(holdable);
 	}
 
 	public static void InitializePage(FloatingHoldable holdable)
