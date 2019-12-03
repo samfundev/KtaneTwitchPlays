@@ -9,90 +9,84 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 		base(module)
 	{
 		_component = module.BombComponent.GetComponent(ComponentSolverType);
-		solveKeypad = _component.GetValue<KMSelectable[]>("solveKeypad");
-		buttons = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press the x button !{0} press x; Buttons can be: 1; 2; 3; 4; TL; TR; BL; BR; (Only use this before solve stage!) On solve stage: '!{0} solve x y' where x and y are numbers between 1 and 12 (The buttons are numbered in reading order.)");
-		buttonOrder = new Dictionary<int, int>()
-		{
-			{1, 9},
-			{2, 10},
-			{3, 11},
-			{4, 12},
-			{5, 5},
-			{6, 6},
-			{7, 7},
-			{8, 8},
-			{9, 1},
-			{10, 2},
-			{11, 3},
-			{12, 4},
-		};
+		finalKeypad = _component.GetValue<KMSelectable[]>("solveKeypad");
+		interKeypad = Module.BombComponent.GetComponent<KMSelectable>().Children;
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a button with '!{0} press 1' or '!{0} press TL'. When at the solving stage, press multiple buttons with '!{0} press 1 5 9 4 8 12 …'. Buttons are numbered in reading order at all times.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string command = inputCommand.ToLowerInvariant();
-		KMSelectable btn;
-		if (command.StartsWith("press"))
-		{
+		string command = inputCommand.ToLowerInvariant().Trim();
+		bool solvingMode = finalKeypad[0].gameObject.activeInHierarchy;
+
+		if (command.StartsWith("press "))
 			command = command.Replace("press ", "");
-			switch (command)
-			{
-				case "1":
-				case "tl":
-					btn = buttons[2];
-					break;
-				case "2":
-				case "tr":
-					btn = buttons[3];
-					break;
-				case "3":
-				case "bl":
-					btn = buttons[0];
-					break;
-				case "4":
-				case "br":
-					btn = buttons[1];
-					break;
-				default:
-					yield return $"sendtochaterror {command} is not a valid button.";
-					yield break;
-			}
-			yield return null;
-			yield return DoInteractionClick(btn);
-		}
-		else if (command.StartsWith("solve"))
+		else if (command.StartsWith("select "))
+			command = command.Replace("select ", "");
+		else
+			yield break;
+
+		if (!solvingMode)
 		{
-			command = command.Replace("solve ", "");
-			string[] btns = command.SplitFull(' ', ';', ',');
-			List<KMSelectable> btnstopress = new List<KMSelectable>();
-			foreach (string input in btns)
+			if (!interButtonOrder.ContainsKey(command))
 			{
-				if (!int.TryParse(input, out int output))
-				{
-					yield return "sendtochaterror Number not valid!";
-					yield break;
-				}
-
-				if (!output.InRange(1, 12))
-				{
-					yield return "sendtochaterror Number out of range!";
-					yield break;
-				}
-				btnstopress.Add(solveKeypad[buttonOrder[output] - 1]);
+				yield return $"sendtochaterror I don't know what button '{command}' is. (Note: You're not at the solving stage yet.)";
+				yield break;
 			}
 
 			yield return null;
-			foreach (KMSelectable topress in btnstopress)
+			yield return DoInteractionClick(interKeypad[interButtonOrder[command]]);
+		}
+		else
+		{
+			string[] allCommands = command.SplitFull(' ', ';', ',');
+			List<KMSelectable> inputList = new List<KMSelectable>();
+			if (inputList.Count > 15)
+				yield break;
+
+			foreach (string sCmd in allCommands)
 			{
-				yield return DoInteractionClick(topress);
+				if (!finalButtonOrder.ContainsKey(sCmd))
+				{
+					yield return $"sendtochaterror I don't know what button '{sCmd}' is. (Note: You're at the solving stage.)";
+					yield break;
+				}
+
+				inputList.Add(finalKeypad[finalButtonOrder[sCmd]]);
+			}
+
+			yield return null;
+
+			int i = 0;
+			foreach (KMSelectable input in inputList)
+			{
+				yield return $"strikemessage the {ordinals[i++]} input given";
+				yield return DoInteractionClick(input);
 			}
 		}
 	}
 
-	private KMSelectable[] buttons;
-	private KMSelectable[] solveKeypad;
-	private Dictionary<int, int> buttonOrder;
+	static private readonly string[] ordinals = new string[]
+	{
+		"1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+		"11th", "12th", "13th", "14th", "15th"
+	};
+
+	static private readonly Dictionary<string, int> interButtonOrder = new Dictionary<string, int>()
+	{
+		{ "1", 2}, { "2", 3}, { "3", 0}, { "4", 1},
+		{"tl", 2}, {"tr", 3}, {"bl", 0}, {"br", 1},
+	};
+
+	static private readonly Dictionary<string, int> finalButtonOrder = new Dictionary<string, int>()
+	{
+		{ "1", 8},  { "2",  9}, { "3", 10}, { "4", 11},
+		{ "5", 4},  { "6",  5}, { "7",  6}, { "8",  7},
+		{ "9", 0},  {"10",  1}, {"11",  2}, {"12",  3},
+	};
+
+	private KMSelectable[] interKeypad;
+	private KMSelectable[] finalKeypad;
 
 	private readonly Component _component;
 	private static readonly Type ComponentSolverType = ReflectionHelper.FindType("MemorableButtons");
