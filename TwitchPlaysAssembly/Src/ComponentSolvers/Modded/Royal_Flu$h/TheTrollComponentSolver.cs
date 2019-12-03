@@ -23,7 +23,7 @@ public class TheTrollComponentSolver : ComponentSolver
 				yield break;
 			}
 
-			if (!secstopress.InRange(1, 9))
+			if (!secstopress.InRange(0, 9))
 			{
 				yield return "sendtochaterror Number is out of range!";
 				yield break;
