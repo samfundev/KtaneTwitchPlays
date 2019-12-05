@@ -1136,7 +1136,7 @@ static class GlobalCommands
 			{
 				ComponentPools = pools,
 				TimeLimit = (120 * modules) - (60 * vanillaModules),
-				NumStrikes = Math.Max(3, modules / 12)
+				NumStrikes = Math.Max(3, modules / TwitchPlaySettings.data.ModuleToStrikeRatio)
 			};
 
 		int rewardPoints = (5 * modules) - (3 * vanillaModules);

@@ -55,6 +55,7 @@ public class TwitchPlaySettingsData
 	public bool SuperStreamerIgnoreClaimLimit = false;
 	public int MinScoreForNewbomb = 100;
 	public int StrikePenalty = 6;
+	public int ModuleToStrikeRatio = 12;
 
 	public bool EnableTimeModeForEveryone = false;
 	public int TimeModeStartingTime = 5;
@@ -464,6 +465,7 @@ public class TwitchPlaySettingsData
 		valid &= ValidateInt(ref InstantModuleClaimCooldown, data.InstantModuleClaimCooldown, 0);
 		valid &= ValidateInt(ref InstantModuleClaimCooldownExpiry, data.InstantModuleClaimCooldownExpiry, 0);
 		valid &= ValidateInt(ref StrikePenalty, data.StrikePenalty, 0, int.MaxValue);
+		valid &= ValidateInt(ref ModuleToStrikeRatio, data.ModuleToStrikeRatio, 1, int.MaxValue);
 
 		valid &= ValidateDictionaryEntry("infozen", ref BombCustomMessages, data.BombCustomMessages);
 
