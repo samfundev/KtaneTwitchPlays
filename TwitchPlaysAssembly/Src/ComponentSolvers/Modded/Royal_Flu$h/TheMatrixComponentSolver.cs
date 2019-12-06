@@ -16,43 +16,57 @@ public class TheMatrixComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		string command = inputCommand.ToLowerInvariant();
-		if (command.StartsWith("flip"))
+		string command = inputCommand.ToLowerInvariant().Trim();
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
+
+		if (command.StartsWith("flip") || command.StartsWith("jack in"))
 		{
-			command = command.Replace("flip ", "").Replace("for ", "");
-			if (!int.TryParse(command, out int output))
+			command = command.Replace("flip ", "").Replace("jack in ", "").Replace("for ", "");
+			if (!int.TryParse(command, out int output) || output <= 0 || output > 60)
 			{
 				yield return "sendtochaterror Number not valid!";
 				yield break;
 			}
 			yield return null;
+
+			// The module strikes as soon as the integer difference between the starting time and
+			// the current time is equal to the "safe time" it gives. What this actually means is
+			// that you have up to a full second less "safe time" than you supposedly do, so we
+			// need to compensate for this.
+			// We'll flip back when there's about 2/10ths of a second remaining, ideally.
+			float flipBackTime = ((int)timerComponent.TimeRemaining - output) + 1.2f;
+			int flipBackDisplayedTime = (int)timerComponent.TimeRemaining - output;
 			yield return DoInteractionClick(Switch);
-			yield return new WaitForSeconds(output - 0.01f);
+			yield return $"sendtochat Jacking in until {string.Format("{0:D2}:{1:D2}", flipBackDisplayedTime / 60, flipBackDisplayedTime % 60)}!";
+
+			while (!CoroutineCanceller.ShouldCancel && timerComponent.TimeRemaining > flipBackTime)
+				yield return null;
+
 			yield return DoInteractionClick(Switch);
+
+			// So the proper message shows.
+			if (CoroutineCanceller.ShouldCancel)
+				yield return "trycancel you left the Matrix early due to a request to cancel";
 			yield break;
 		}
 
-		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
 		int timeRemaining = (int) timerComponent.TimeRemaining;
-		command = command.Replace("press ", "");
+		command = command.Replace("press ", "").Replace("take ", "");
 		KMSelectable correctButton;
 		if (command.StartsWith("blue"))
 		{
-			command = command.Replace("blue ", "").Replace("at ", "");
+			command = command.Replace("blue ", "").Replace("at ", "").Replace("on ", "");
 			correctButton = bluePill;
 		}
 		else if (command.StartsWith("red"))
 		{
-			command = command.Replace("red ", "").Replace("at ", "");
+			command = command.Replace("red ", "").Replace("at ", "").Replace("on ", "");
 			correctButton = redPill;
 		}
 		else
-		{
-			yield return "sendtochaterror Colour not valid!";
 			yield break;
-		}
 
-		if (!int.TryParse(command, out int num))
+		if (!int.TryParse(command, out int num) || num < 0 || num > 9)
 		{
 			yield return "sendtochaterror Number not valid!";
 			yield break;
