@@ -220,6 +220,18 @@ public class TwitchPlaysService : MonoBehaviour
 			case KMGameInfo.State.Transitioning:
 				ModuleData.LoadDataFromFile();
 				TwitchPlaySettings.LoadDataFromFile();
+
+				var pageManager = SceneManager.Instance?.SetupState?.Room.GetComponent<SetupRoom>().BombBinder.MissionTableOfContentsPageManager;
+				if (pageManager != null)
+				{
+					var tableOfContentsList = pageManager.GetValue<List<Assets.Scripts.BombBinder.MissionTableOfContents>>("tableOfContentsList");
+					if (tableOfContentsList[SetupState.LastBombBinderTOCIndex].ToCID == "toc_tp_search")
+					{
+						SetupState.LastBombBinderTOCIndex = 0;
+						SetupState.LastBombBinderTOCPage = 0;
+					}
+				}
+
 				break;
 		}
 	}
