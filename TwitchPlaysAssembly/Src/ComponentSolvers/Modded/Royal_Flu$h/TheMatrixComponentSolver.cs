@@ -50,7 +50,6 @@ public class TheMatrixComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		int timeRemaining = (int) timerComponent.TimeRemaining;
 		command = command.Replace("press ", "").Replace("take ", "");
 		KMSelectable correctButton;
 		if (command.StartsWith("blue"))
@@ -73,6 +72,8 @@ public class TheMatrixComponentSolver : ComponentSolver
 		}
 
 		yield return null;
+
+		int timeRemaining = (int) timerComponent.TimeRemaining;
 		while (timeRemaining % 10 != num)
 		{
 			yield return null;
