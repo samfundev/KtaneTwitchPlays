@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class Factory : GameRoom
+public sealed class Factory : GameRoom
 {
 	private readonly bool _finiteMode;
 	private readonly bool _infiniteMode;

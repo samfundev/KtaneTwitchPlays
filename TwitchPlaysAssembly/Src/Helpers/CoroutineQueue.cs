@@ -20,7 +20,7 @@ public class CoroutineQueue : MonoBehaviour
 			_activeCoroutine = StartCoroutine(ProcessQueueCoroutine());
 		}
 
-		if (_processingForcedSolve || _forceSolveQueue.Count <= 0) return;
+		if (_processingForcedSolve || _forceSolveQueue.Count == 0) return;
 		_processingForcedSolve = true;
 		_activeForceSolveCoroutine = StartCoroutine(ProcessForcedSolveCoroutine());
 	}

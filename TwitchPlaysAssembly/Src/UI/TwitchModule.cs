@@ -515,7 +515,7 @@ public class TwitchModule : MonoBehaviour
 		return new ClaimResult(true, string.Format(TwitchPlaySettings.data.ModuleClaimed, Code, userNickName, HeaderText));
 	}
 
-	public void SetClaimedBy(string userNickName, bool skipIrcMessage = false)
+	public void SetClaimedBy(string userNickName)
 	{
 		TwitchGame.Instance.SetLastClaimedTime(Solver.ModInfo.moduleID, userNickName, DateTime.UtcNow.TotalSeconds());
 		SetBannerColor(ClaimedBackgroundColour);

@@ -6,7 +6,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
 
-public class ElevatorGameRoom : GameRoom
+public sealed class ElevatorGameRoom : GameRoom
 {
 	public static Type RoomType() => typeof(ElevatorRoom);
 

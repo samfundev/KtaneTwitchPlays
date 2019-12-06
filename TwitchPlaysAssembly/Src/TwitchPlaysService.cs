@@ -401,7 +401,7 @@ public class TwitchPlaysService : MonoBehaviour
 			// Return true so that the command counts as processed (otherwise you get the above message multiple times)
 			return true;
 		}
-			
+
 		if (!TwitchGame.IsAuthorizedDefuser(msg.UserNickName, msg.IsWhisper))
 		{
 			return true;

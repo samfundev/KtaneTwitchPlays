@@ -18,7 +18,7 @@ sealed class CommandAttribute : Attribute
 	public AccessLevel AccessLevelAnarchy { get; }
 
 	/// <summary>Constructor.</summary>
-	public CommandAttribute(string regex, AccessLevel accessLevel = AccessLevel.User, AccessLevel accessLevelAnarchy = AccessLevel.User, bool whisper = false)
+	public CommandAttribute(string regex, AccessLevel accessLevel = AccessLevel.User, AccessLevel accessLevelAnarchy = AccessLevel.User)
 	{
 		Regex = regex == null ? null : $"^{regex}$";
 		AccessLevel = accessLevel;

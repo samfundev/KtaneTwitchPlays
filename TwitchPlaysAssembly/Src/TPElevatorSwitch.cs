@@ -20,7 +20,7 @@ public class TPElevatorSwitch : MonoBehaviour
 		Room room = SceneManager.Instance.CurrentRoom;
 		switch (room)
 		{
-			case SetupRoom setupRoom:
+			case SetupRoom _:
 				StartCoroutine(SetupRoomElevatorSwitch());
 				break;
 			default:

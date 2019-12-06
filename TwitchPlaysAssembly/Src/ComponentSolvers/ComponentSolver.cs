@@ -623,7 +623,6 @@ public abstract class ComponentSolver
 		}
 		DebugHelper.LogException(e, $"While solving a module ({Module.BombComponent.GetModuleDisplayName()}) an exception has occurred! Here's the error:");
 		SolveModule($"Looks like {Module.BombComponent.GetModuleDisplayName()} ran into a problem while running a command, automatically solving module.");
-
 	}
 
 	public void SolveModule(string reason)

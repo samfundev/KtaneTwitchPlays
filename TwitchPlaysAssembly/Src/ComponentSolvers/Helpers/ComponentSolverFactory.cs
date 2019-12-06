@@ -74,7 +74,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["troll"] = module => new TheTrollComponentSolver(module);
 		ModComponentSolverCreators["tWords"] = module => new TWordsComponentSolver(module);
 
-
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
 		ModComponentSolverCreators["KnowYourWay"] = module => new KnowYourWayComponentSolver(module);

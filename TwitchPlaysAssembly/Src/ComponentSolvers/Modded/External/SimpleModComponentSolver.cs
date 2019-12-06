@@ -77,7 +77,7 @@ public class SimpleModComponentSolver : ComponentSolver
 			yield break;
 		}
 
-		if (!selectableSequence?.Any() == true)
+		if (selectableSequence?.Any() == false)
 			yield return null;
 		else
 		{

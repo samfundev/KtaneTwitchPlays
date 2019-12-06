@@ -25,7 +25,6 @@ public class TwitchMessage : MonoBehaviour
 
 	public void SetMessage(string text) => _messageText.text = text;
 
-		// ReSharper disable once SwitchStatementMissingSomeCases
 	public IEnumerator DoBackgroundColorChange(Color targetColor, float duration = 0.2f)
 	{
 		Color initialColor = _messageBackground.color;

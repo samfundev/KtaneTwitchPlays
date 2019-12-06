@@ -192,7 +192,7 @@ public class IRCConnection : MonoBehaviour
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
 			}
 
-		if (ScrollOutStartTime.Count <= 0) return;
+		if (ScrollOutStartTime.Count == 0) return;
 
 		float vertScroll = 0;
 		foreach (KeyValuePair<TwitchMessage, float> pair in ScrollOutStartTime.ToArray())

@@ -322,27 +322,18 @@ public static class UserAccess
 
 	public static string LevelToString(AccessLevel level)
 	{
-		switch (level)
+		return level switch
 		{
-			case AccessLevel.Banned:
-				return "Banned";
-			case AccessLevel.User:
-				return "User";
-			case AccessLevel.NoPoints:
-				return "No Points";
-			case AccessLevel.Defuser:
-				return "Defuser";
-			case AccessLevel.Mod:
-				return "Moderator";
-			case AccessLevel.Admin:
-				return "Admin";
-			case AccessLevel.SuperUser:
-				return "Super User";
-			case AccessLevel.Streamer:
-				return "Streamer";
-			default:
-				return null;
-		}
+			AccessLevel.Banned => "Banned",
+			AccessLevel.User => "User",
+			AccessLevel.NoPoints => "No Points",
+			AccessLevel.Defuser => "Defuser",
+			AccessLevel.Mod => "Moderator",
+			AccessLevel.Admin => "Admin",
+			AccessLevel.SuperUser => "Super User",
+			AccessLevel.Streamer => "Streamer",
+			_ => null,
+		};
 	}
 }
 

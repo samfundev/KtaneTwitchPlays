@@ -15,8 +15,8 @@ static class ProfileHelper
 
 	public static void ReloadActiveConfiguration()
 	{
-		ProfileManagerType = ProfileManagerType ?? ReflectionHelper.FindType("ProfileManager");
-		ReloadActiveConfigurationMethod = ReloadActiveConfigurationMethod ?? ProfileManagerType?.GetMethod("ReloadActiveConfiguration", BindingFlags.Public | BindingFlags.Static);
+		ProfileManagerType ??= ReflectionHelper.FindType("ProfileManager");
+		ReloadActiveConfigurationMethod ??= ProfileManagerType?.GetMethod("ReloadActiveConfiguration", BindingFlags.Public | BindingFlags.Static);
 		ReloadActiveConfigurationMethod?.Invoke(null, null);
 	}
 

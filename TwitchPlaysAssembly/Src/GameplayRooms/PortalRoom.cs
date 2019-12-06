@@ -7,7 +7,7 @@ using Assets.Scripts.Pacing;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class PortalRoom : GameRoom
+public sealed class PortalRoom : GameRoom
 {
 	public static Type PortalRoomType()
 	{

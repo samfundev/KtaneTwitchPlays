@@ -49,7 +49,7 @@ public static class MissionBinderCommands
 				break;
 			default:
 				IRCConnection.SendMessage($"{possibleMissions.Count()} missions match \"{query}\", displaying matching missions in the binder.");
-				
+
 				var pageManager = binder.MissionTableOfContentsPageManager;
 				var tableOfContentsList = pageManager.GetValue<List<MissionTableOfContents>>("tableOfContentsList");
 
@@ -61,27 +61,28 @@ public static class MissionBinderCommands
 				}
 
 				var missionIDs = possibleMissions.Select(mission => mission.ID);
-				var metaData = new TableOfContentsMetaData();
-				metaData.ID = "toc_tp_search";
-				metaData.Sections = 
-				tableOfContentsList
-					.SelectMany(toc => toc.GetValue<TableOfContentsMetaData>("tocData").Sections)
-					.Where(section => section.IsUnlocked && missionIDs.Any(section.MissionIDs.Contains))
-					.Select(section => new SectionMetaData
+				var metaData = new TableOfContentsMetaData
+				{
+					ID = "toc_tp_search",
+					Sections = tableOfContentsList
+						.SelectMany(toc => toc.GetValue<TableOfContentsMetaData>("tocData").Sections)
+						.Where(section => missionIDs.Any(section.MissionIDs.Contains))
+						.Select(section => new SectionMetaData
 						{
 							SectionNum = section.SectionNum,
 							TitleTerm = section.TitleTerm,
 							MissionIDs = missionIDs.Where(section.MissionIDs.Contains).ToList(),
-							IsUnlocked = true
+							IsUnlocked = section.IsUnlocked
 						})
-					.ToList();
+						.ToList()
+				};
 
 				MissionTableOfContents missionTableOfContents = new MissionTableOfContents();
 				missionTableOfContents.Init(pageManager, metaData, binder.Selectable, true);
 				tableOfContentsList.Add(missionTableOfContents);
 
 				pageManager.ShowToC("toc_tp_search");
-				
+
 				yield return null;
 				break;
 		}

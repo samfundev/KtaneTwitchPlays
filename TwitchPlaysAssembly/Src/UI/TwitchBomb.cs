@@ -432,7 +432,7 @@ public class TwitchBomb : MonoBehaviour
 
 		edgework.Add(QueryWidgets<string>(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER).First()["serial"]);
 
-		string edgeworkString = edgework.Where(str => str != "").Join(" // ");
+		string edgeworkString = edgework.Where(str => !string.IsNullOrEmpty(str)).Join(" // ");
 		if (EdgeworkText.text != edgeworkString)
 			EdgeworkText.text = edgeworkString;
 		return edgeworkString;

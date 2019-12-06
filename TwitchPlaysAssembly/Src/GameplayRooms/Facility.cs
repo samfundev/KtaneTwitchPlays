@@ -6,7 +6,7 @@ using System.Reflection;
 using Assets.Scripts.Pacing;
 using Object = UnityEngine.Object;
 
-public class Facility : GameRoom
+public sealed class Facility : GameRoom
 {
 	public static Type RoomType() => typeof(FacilityRoom);
 

@@ -191,7 +191,6 @@ public class ModuleCameras : MonoBehaviour
 	#region Private Fields
 	private ModuleCamerasData _data;
 	private readonly List<ModuleCamera> _moduleCameras = new List<ModuleCamera>();
-	private readonly List<Camera> _widgetCameras = new List<Camera>();
 	private TwitchBomb _currentBomb;
 
 	private int _currentSolves;
@@ -334,7 +333,7 @@ public class ModuleCameras : MonoBehaviour
 	private ModuleCamera AvailableCamera(CameraPriority maxPriority) => _moduleCameras
 				.Where(c => c.Module == null || (c.Module.CameraPriority <= maxPriority && !c.ZoomActive))
 				.OrderBy(c => c.Module != null)
-				.ThenBy(c => c.Module != null ? c.Module.Solved : false)
+				.ThenBy(c => c.Module?.Solved ?? false)
 				.ThenBy(c => c.Module != null ? (CameraPriority?) c.Module.CameraPriority : null)
 				.ThenBy(c => c.Module != null ? (DateTime?) c.Module.LastUsed : null)
 				.FirstOrDefault();

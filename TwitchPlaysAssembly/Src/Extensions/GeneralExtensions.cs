@@ -30,7 +30,7 @@ public static class GeneralExtensions
 			foreach (int timeLength in timeLengths)
 			{
 				int time = (int) (seconds / timeLength);
-				if (time <= 0 && timeParts.Count <= 0) continue;
+				if (time <= 0 && timeParts.Count == 0) continue;
 				timeParts.Add(time);
 				seconds -= time * timeLength;
 			}

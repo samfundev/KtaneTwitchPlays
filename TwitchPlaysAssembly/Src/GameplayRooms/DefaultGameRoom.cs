@@ -1,7 +1,7 @@
 ﻿using System;
 using Object = UnityEngine.Object;
 
-public class DefaultGameRoom : GameRoom
+public sealed class DefaultGameRoom : GameRoom
 {
 	//The one catch-all room that as of now, should never be reached unless the game developers add in a new room type in the future.
 	public static Type RoomType() => typeof(GameplayRoom);
@@ -14,12 +14,11 @@ public class DefaultGameRoom : GameRoom
 			return false;
 		}
 
-		room = new DefaultGameRoom(roomObjects[0]);
+		room = new DefaultGameRoom();
 		return true;
 	}
 
-	// ReSharper disable once UnusedParameter.Local
-	private DefaultGameRoom(Object roomObjects)
+	private DefaultGameRoom()
 	{
 		DebugHelper.Log("Found gameplay room of type Gameplay Room");
 	}

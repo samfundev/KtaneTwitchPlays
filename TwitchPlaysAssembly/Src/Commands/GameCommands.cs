@@ -428,7 +428,7 @@ static class GameCommands
 		if (string.IsNullOrEmpty(name))
 		{
 			// Call the first unnamed item in the queue.
-			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Name == null);
+			call = TwitchGame.Instance.CommandQueue.Find(item => item.Name == null);
 
 			if (call == null)
 			{
@@ -441,12 +441,12 @@ static class GameCommands
 			name += ' ';
 
 			// Call an unnamed item in the queue for a specific module.
-			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Message.Text.StartsWith(name) && item.Name == null);
+			call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name) && item.Name == null);
 
 			if (call == null)
 			{
 				// If a named command exists, and no unnamed commands exist, then show the name of that command (but don't call it).
-				call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => item.Message.Text.StartsWith(name));
+				call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name));
 
 				if (call != null)
 					IRCConnection.SendMessage($"@{user}, module {name} is queued with the name “{call.Name}”, please use “!call {call.Name}” to call it.", user, !isWhisper);
@@ -550,7 +550,7 @@ static class GameCommands
 	}
 
 	[Command(@"bot ?unclaim( ?all)?", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void BotUnclaim(string user)
+	public static void BotUnclaim()
 	{
 		foreach (var module in TwitchGame.Instance.Modules)
 			if (!module.Solved && module.PlayerName == IRCConnection.Instance.UserNickName && GameRoom.Instance.IsCurrentBomb(module.BombID))

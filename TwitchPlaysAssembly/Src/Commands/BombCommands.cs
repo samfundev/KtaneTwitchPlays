@@ -109,7 +109,6 @@ public static class BombCommands
 	public static void ChangeTimer(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] string amount)
 	{
 		float time = 0;
-		float originalTime = bomb.Bomb.GetTimer().TimeRemaining;
 		var timeLengths = new Dictionary<string, float>()
 			{
 				{ "ms", 0.001f },

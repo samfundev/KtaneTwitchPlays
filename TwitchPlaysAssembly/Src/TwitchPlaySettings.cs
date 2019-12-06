@@ -99,7 +99,7 @@ public class TwitchPlaySettingsData
 		{ "infozen", "Zen Mode is a peaceful mode. The clock counts up instead of down. Strikes can't blow up the bomb (though they still count). Points are reduced by 75%, and if you don't like the modules, you can !newbomb to get new ones. Use the time given by !bomb time for starting time calculations." },
 		{ "qhelp", "A solve queue is generally used when a Forget Everything or similar boss module is present on the bomb. To add a command to the queue, type “!q” before your command (ex. “!q !1 submit”). You can name a command by typing “!q [name]” before your command (ex. “!q 12 solves !1 submit” will be named “12 solves” and will run “!1 submit” when called). To remove something from the queue, use “!unq !1” for commands concerning module 1 and “!unq 12 solved” for named commands. Use “!listq” to see your items in the queue or “!listqall” for everybody’s. If you are the player running the solve queue, use “!call” to run the next unnamed command from the queue. You may also use “!call [name]” to run a named command (ex. “!call 12 solves”). Use “!callall” to call every command in the queue." }
 	};
-	
+
 	public Dictionary<string, string> GeneralCustomMessages = new Dictionary<string, string>
 	{
 		{ "welcome", "Welcome, this is a Twitch Plays version of Keep Talking and Nobody Explodes. For some basic info and how to get started, you may find this link useful: https://docs.google.com/document/d/1ESin9CKWtt4nT3oxDvYqCmbf3xyFLpjM1wcXL78v29A/edit?usp=sharing" },
@@ -168,7 +168,6 @@ public class TwitchPlaySettingsData
 	public string VersusBonusMessage = " {0} reward points to everyone on the {1} team who helped with this success.";
 	public string VersusGoodFooter = " PraiseIt PraiseIt";
 	public string VersusEvilFooter = " KAPOW KAPOW";
-
 
 	public string BombSoloDefusalMessage = "PraiseIt PraiseIt {0} completed a solo defusal in {1}:{2:00}!";
 	public string BombSoloDefusalNewRecordMessage = " It's a new record! (Previous record: {0}:{1:00})";
@@ -859,39 +858,28 @@ public static class TwitchPlaySettings
 			case string settingString:
 				return $"Setting {settingField.Name}: {settingString.Replace("\n", "\\n")}";
 			case List<string> settingListString:
-				switch (split.Length)
+				return split.Length switch
 				{
-					case 2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count:
-						return $"Settings {settingField.Name}[{listIndex}]: {settingListString[listIndex]}";
-					case 2 when int.TryParse(split[1], out int listIndex):
-						return $"Settings {settingField.Name}[{listIndex}]: Index out of range";
-					default:
-						return $"Setting {settingField.Name}: Count = {settingListString.Count}";
-				}
+					2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count => $"Settings {settingField.Name}[{listIndex}]: {settingListString[listIndex]}",
+					2 when int.TryParse(split[1], out int listIndex) => $"Settings {settingField.Name}[{listIndex}]: Index out of range",
+					_ => $"Setting {settingField.Name}: Count = {settingListString.Count}",
+				};
 			case Dictionary<string, string> settingsDictionaryStringString:
-				switch (split.Length)
+				return split.Length switch
 				{
-					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString):
-						return $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n", "\\n")}";
-					case 2 when !string.IsNullOrEmpty(split[1]):
-						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
-					case 2:
-						return $"Setting {settingField.Name}: The second item cannot be empty or null";
-					default:
-						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}";
-				}
+					2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString) => $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n", "\\n")}",
+					2 when !string.IsNullOrEmpty(split[1]) => $"Setting {settingField.Name}[{split[1]}]: does not exist",
+					2 => $"Setting {settingField.Name}: The second item cannot be empty or null",
+					_ => $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}",
+				};
 			case Dictionary<string, bool> settingsDictionaryStringBool:
-				switch (split.Length)
+				return split.Length switch
 				{
-					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDsbBool):
-						return $"Setting {settingField.Name}[{split[1]}]: {settingsDsbBool}";
-					case 2 when !string.IsNullOrEmpty(split[1]):
-						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
-					case 2:
-						return $"Setting {settingField.Name}: The second item cannot be empty or null";
-					default:
-						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringBool.Count}";
-				}
+					2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDsbBool) => $"Setting {settingField.Name}[{split[1]}]: {settingsDsbBool}",
+					2 when !string.IsNullOrEmpty(split[1]) => $"Setting {settingField.Name}[{split[1]}]: does not exist",
+					2 => $"Setting {settingField.Name}: The second item cannot be empty or null",
+					_ => $"Setting {settingField.Name}: Count = {settingsDictionaryStringBool.Count}",
+				};
 			case Dictionary<string, ModuleDistributions> settingsDictionaryStringModuleDistributions:
 				switch (split.Length)
 				{

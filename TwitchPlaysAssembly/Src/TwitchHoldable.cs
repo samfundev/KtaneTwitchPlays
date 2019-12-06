@@ -268,7 +268,7 @@ public class TwitchHoldable
 					}
 					else if (currentString.StartsWith("strikemessage ",
 								 StringComparison.InvariantCultureIgnoreCase) &&
-							 currentString.Substring(14).Trim() != string.Empty)
+							 !string.IsNullOrEmpty(currentString.Substring(14).Trim()))
 						StrikeMessage = currentString.Substring(14);
 					else if (currentString.Equals("strike", StringComparison.InvariantCultureIgnoreCase))
 						_delegatedStrikeUserNickName = _currentUserNickName;
@@ -404,7 +404,6 @@ public class TwitchHoldable
 
 	private static bool IsAskingPermission(string permission, string userNickName, out bool permissionGranted)
 	{
-		permissionGranted = false;
 		switch (permission)
 		{
 			case "streamer":
@@ -469,12 +468,12 @@ public class TwitchHoldable
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.HoldableInvalidCommand, ID, userNickname), userNickname, !isWhisper);
 			return;
 		}
-		if (message.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(11).Trim() != string.Empty)
+		if (message.StartsWith("sendtochat ", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(message.Substring(11).Trim()))
 		{
 			IRCConnection.SendMessage(string.Format(message.Substring(11), ID, userNickname), userNickname, !isWhisper);
 			return;
 		}
-		if (message.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) && message.Substring(16).Trim() != string.Empty)
+		if (message.StartsWith("sendtochaterror ", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(message.Substring(16).Trim()))
 		{
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.HoldableCommandError, ID, userNickname, message.Substring(16)), userNickname, !isWhisper);
 			parseerror = true;

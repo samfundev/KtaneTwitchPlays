@@ -7,7 +7,6 @@ public class SkinnyWiresComponentSolver : ComponentSolver
 	public SkinnyWiresComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		_component = Module.BombComponent.GetComponent(ComponentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cut <letter><number> [cut the wire going from <letter> to <number>]");
 	}
@@ -55,12 +54,9 @@ public class SkinnyWiresComponentSolver : ComponentSolver
 
 	static SkinnyWiresComponentSolver()
 	{
-		ComponentType = ReflectionHelper.FindType("wireModuleScript");
 		WireDetailsType = ReflectionHelper.FindType("WireDetails");
 	}
 
-	private static readonly Type ComponentType;
-	private readonly object _component;
 	private static readonly Type WireDetailsType;
 
 	private readonly KMSelectable[] selectables;
