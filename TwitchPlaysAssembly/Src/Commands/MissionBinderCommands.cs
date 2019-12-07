@@ -33,6 +33,7 @@ public static class MissionBinderCommands
 	public static IEnumerator Search(FloatingHoldable holdable, [Group(1)] string query)
 	{
 		BombBinder binder = SceneManager.Instance.SetupState.Room.GetComponent<SetupRoom>().BombBinder;
+		var pageManager = binder.MissionTableOfContentsPageManager;
 
 		var possibleMissions = ModManager.Instance.ModMissions
 			.Concat(MissionManager.Instance.MissionDB.Missions)
@@ -45,12 +46,14 @@ public static class MissionBinderCommands
 			case 1:
 				var missionID = possibleMissions.First().ID;
 				binder.ShowMissionDetail(missionID, binder.MissionTableOfContentsPageManager.GetMissionEntry(missionID).Selectable);
+				pageManager.FindMissionInBinder(missionID, out int tocIndex, out int pageIndex, out _);
+				pageManager.SetValue("currentToCIndex", tocIndex);
+				pageManager.SetValue("currentPageIndex", pageIndex);
 				yield return null;
 				break;
 			default:
 				IRCConnection.SendMessage($"{possibleMissions.Count()} missions match \"{query}\", displaying matching missions in the binder.");
 
-				var pageManager = binder.MissionTableOfContentsPageManager;
 				var tableOfContentsList = pageManager.GetValue<List<MissionTableOfContents>>("tableOfContentsList");
 
 				var previousResults = pageManager.GetToC("toc_tp_search");
