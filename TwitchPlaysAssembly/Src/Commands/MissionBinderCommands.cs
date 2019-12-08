@@ -37,7 +37,7 @@ public static class MissionBinderCommands
 
 		var possibleMissions = ModManager.Instance.ModMissions
 			.Concat(MissionManager.Instance.MissionDB.Missions)
-			.Where(mission => Localization.GetLocalizedString(mission.DisplayNameTerm).ContainsIgnoreCase(query));
+			.Where(mission => Localization.GetLocalizedString(mission.DisplayNameTerm)?.ContainsIgnoreCase(query) == true);
 		switch (possibleMissions.Count())
 		{
 			case 0:
