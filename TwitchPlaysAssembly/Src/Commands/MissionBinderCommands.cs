@@ -126,6 +126,9 @@ public static class MissionBinderCommands
 
 	private static IEnumerator SelectOnPage(FloatingHoldable holdable, int index = 0, IList<string> search = null)
 	{
+		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup)
+			yield break;
+
 		if (index > 0 || (search != null && search.Count > 0))
 		{
 			if ((_currentSelectables == null) || (index > _currentSelectables.Length))

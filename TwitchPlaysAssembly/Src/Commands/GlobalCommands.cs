@@ -1041,24 +1041,25 @@ static class GlobalCommands
 
 	private static IEnumerator RunWrapper(string user, bool isWhisper, Func<IEnumerator> action, bool VSOnly = false)
 	{
+		yield return null;
 		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.PostGame && TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup)
 		{
 			IRCConnection.SendMessage("You can't use the !run command right now.");
-			return null;
+			yield break;
 		}
 
 		if (VSOnly && !OtherModes.VSModeOn)
 		{
 			IRCConnection.SendMessage("That formatting can only be used in VS mode.");
-			return null;
+			yield break;
 		}
 
 		if (!((TwitchPlaySettings.data.EnableRunCommand && (!TwitchPlaySettings.data.EnableWhiteList || UserAccess.HasAccess(user, AccessLevel.Defuser, true))) || UserAccess.HasAccess(user, AccessLevel.Mod, true) || TwitchPlaySettings.data.AnarchyMode) || isWhisper)
 		{
 			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.RunCommandDisabled, user);
-			return null;
+			yield break;
 		}
-		return action();
+		yield return action();
 	}
 
 	private static void ProfileWrapper(string profileName, string user, bool isWhisper, Action<string, string> action)
