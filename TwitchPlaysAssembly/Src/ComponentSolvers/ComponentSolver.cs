@@ -846,6 +846,13 @@ public abstract class ComponentSolver
 				}
 			}
 
+			if (solver.AttemptedForcedSolve)
+			{
+				IRCConnection.SendMessage("Forcing the module into a solved state.");
+				CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
+				return;
+			}
+
 			solver.AttemptedForcedSolve = true;
 
 			if (solver?.HandleForcedSolve() ?? false)
