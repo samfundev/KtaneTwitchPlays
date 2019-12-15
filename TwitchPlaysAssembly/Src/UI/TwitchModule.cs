@@ -169,6 +169,16 @@ public class TwitchModule : MonoBehaviour
 			Solver = ComponentSolverFactory.CreateSolver(this);
 			if (Solver != null)
 			{
+				// Set the display name for built in modules
+				if (Solver.ModInfo.builtIntoTwitchPlays)
+				{
+					var displayName = BombComponent.GetModuleDisplayName();
+					ModuleData.DataHasChanged |= displayName != Solver.ModInfo.moduleDisplayName;
+					Solver.ModInfo.moduleDisplayName = displayName;
+
+					ModuleData.WriteDataToFile();
+				}
+
 				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
 				else if (TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty)
 				{

@@ -36,6 +36,7 @@ public class TwitchPlaysService : MonoBehaviour
 	private readonly Queue<IEnumerator> _coroutinesToStart = new Queue<IEnumerator>();
 	private TwitchLeaderboard _leaderboardDisplay;
 	private TwitchPlaysServiceData _data;
+	private bool initialLoad;
 
 	public RectTransform BombHeader => _data.BombHeader;
 	public TwitchLeaderboard TwitchLeaderboardPrefab => _data.TwitchLeaderboardPrefab;
@@ -203,6 +204,12 @@ public class TwitchPlaysService : MonoBehaviour
 				_coroutinesToStart.Enqueue(MultipleBombs.Refresh());
 				_coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
 				_coroutinesToStart.Enqueue(FindSupportedModules());
+
+				if (!initialLoad)
+				{
+					initialLoad = true;
+					_coroutinesToStart.Enqueue(ComponentSolverFactory.LoadDefaultInformation(true));
+				}
 
 				// Clear out the retry reward if we return to the setup room since the retry button doesn't return to setup.
 				// A post game run command would set the retry bonus and then return to the setup room to start the mission, so we don't want to clear that.

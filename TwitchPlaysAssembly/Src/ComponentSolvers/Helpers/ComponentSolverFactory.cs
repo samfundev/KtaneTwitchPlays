@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public static class ComponentSolverFactory
 {
@@ -235,8 +238,8 @@ public static class ComponentSolverFactory
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
-		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button", moduleScore = 1 };
-		ModComponentSolverInformation["ButtonComponentModifiedSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button", moduleScore = 4 };
+		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button", moduleScore = 1 };
+		ModComponentSolverInformation["ButtonComponentModifiedSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button", moduleScore = 4 };
 		ModComponentSolverInformation["WireSequenceComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wire Sequence", moduleScore = 4 };
 		ModComponentSolverInformation["WhosOnFirstComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First", moduleScore = 4 };
 		ModComponentSolverInformation["VennWireComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires", moduleScore = 3 };
@@ -255,7 +258,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code Translated", moduleScore = 3 };
 		ModComponentSolverInformation["PasswordsTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password Translated", moduleScore = 2 };
 		ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First Translated", moduleScore = 4 };
-		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas Translated", moduleScore = 0.4f, scoreMethod = ScoreMethod.NeedySolves };
+		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Vent Gas Translated", moduleScore = 0.4f, scoreMethod = ScoreMethod.NeedySolves };
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true, moduleScore = 5, helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true };
@@ -870,6 +873,106 @@ public static class ComponentSolverFactory
 			ModComponentSolverInformation[kvp.Key].moduleID = kvp.Key;
 			AddDefaultModuleInformation(kvp.Value);
 		}
+	}
+
+	public static Dictionary<string, float> dynamicScores = new Dictionary<string, float>()
+	{
+		{ "cookieJars", 0.5f },
+		{ "HexiEvilFMN", 3 },
+	};
+
+	public static IEnumerator LoadDefaultInformation(bool reloadData = false)
+	{
+		UnityWebRequest www = UnityWebRequest.Get("https://spreadsheets.google.com/feeds/list/1WEzVOKxOO5CDGoqAHjJKrC-c-ZGgsTPRLXBCs8RrAwU/1/public/values?alt=json");
+
+		yield return www.SendWebRequest();
+
+		if (!www.isNetworkError && !www.isHttpError)
+		{
+			var displayNames = new List<string>();
+			foreach (var entry in JObject.Parse(www.downloadHandler.text)["feed"]["entry"])
+			{
+				string scoreString = entry["gsx$tpscore"]["$t"]?.Value<string>();
+				if (string.IsNullOrEmpty(scoreString))
+					continue;
+
+				string moduleName = entry["gsx$modulename"].Value<string>("$t");
+				if (string.IsNullOrEmpty(moduleName) || moduleName == "NEEDIES")
+					continue;
+
+				var scoreMethod = ScoreMethod.Default;
+				if (moduleName.EndsWith(" (Solve)"))
+					scoreMethod = ScoreMethod.NeedySolves;
+				else if (moduleName.EndsWith(" (Time)"))
+					scoreMethod = ScoreMethod.NeedyTime;
+
+				moduleName = Regex.Replace(moduleName, @" \((Solve|Time)\)", "");
+
+				bool equalNames(string nameA, string nameB) => nameA.Replace('’', '\'') == nameB.Replace('’', '\'');
+
+				string moduleID = null;
+				var bombComponent = ModManager.Instance.GetValue<Dictionary<string, BombComponent>>("loadedBombComponents").Values.FirstOrDefault(module => equalNames(module.GetModuleDisplayName(), moduleName));
+				if (bombComponent?.ComponentType.EqualsAny(ComponentTypeEnum.Mod, ComponentTypeEnum.NeedyMod) == true)
+				{
+					moduleID = bombComponent.GetComponent<KMBombModule>()?.ModuleType ?? bombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
+				}
+
+				if (moduleID == null)
+					moduleID = GetModuleInformation().FirstOrDefault(info => equalNames(info.moduleDisplayName, moduleName))?.moduleID;
+
+				if (moduleID == null)
+				{
+					displayNames.Add(moduleName);
+
+					continue;
+				}
+
+				// The Module ID has been determined, now parse the score.
+				var defaultInfo = GetDefaultInformation(moduleID);
+				defaultInfo.scoreMethod = scoreMethod;
+
+				// UN and is for unchanged and temporary score which are read normally.
+				scoreString = Regex.Replace(scoreString, @"(?:UN )?(\d+)T?", "$1");
+
+				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
+				var dynamicMatch = Regex.Match(scoreString, @"S ([\d.]+)x");
+				if (dynamicMatch.Success && float.TryParse(dynamicMatch.Groups[1].Value, out float dynamicScore))
+				{
+					dynamicScores[moduleID] = dynamicScore * 2; // Multiply the score by two because the default DynamicScorePercentage is 0.5.
+					continue;
+				}
+
+				defaultInfo.moduleScoreIsDynamic = dynamicMatch.Success;
+
+				// PPA is for point per action modules which can be parsed in some cases.
+				scoreString = Regex.Replace(scoreString, @"PPA ([\d.]+) \+ ([\d.]+)", "$2");
+
+				// Catch any PPA or TDB modules which can't be parsed.
+				if (scoreString.StartsWith("PPA ") || scoreString == "TBD")
+					continue;
+
+				if (float.TryParse(scoreString, out float score))
+				{
+					defaultInfo.moduleScore = score;
+				}
+				else
+				{
+					DebugHelper.Log($"Unrecognized score \"{scoreString}\" for {moduleName} ({moduleID}).");
+				}
+			}
+
+			if (displayNames.Count > 0)
+			{
+				DebugHelper.Log("Unable to match these modules when loading the default information:", displayNames.Join(", "));
+			}
+		}
+		else
+		{
+			DebugHelper.Log("Failed to load the default module information.");
+		}
+
+		if (reloadData)
+			ModuleData.LoadDataFromFile();
 	}
 
 	private static void AddDefaultModuleInformation(ModuleInformation info)

@@ -752,14 +752,15 @@ static class GlobalCommands
 	}
 
 	[Command("reloaddata", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void ReloadData(string user, bool isWhisper)
+	public static IEnumerator ReloadData(string user, bool isWhisper)
 	{
 		bool streamer = UserAccess.HasAccess(user, AccessLevel.Streamer);
 		bool superuser = UserAccess.HasAccess(user, AccessLevel.SuperUser);
 
-		ModuleData.LoadDataFromFile();
 		TwitchPlaySettings.LoadDataFromFile();
 		UserAccess.LoadAccessList();
+		yield return ComponentSolverFactory.LoadDefaultInformation();
+		ModuleData.LoadDataFromFile();
 
 		if (streamer)
 			UserAccess.AddUser(user, AccessLevel.Streamer);

@@ -47,6 +47,11 @@ public class ModuleInformation
 	public ModuleInformation Clone() => (ModuleInformation) MemberwiseClone();
 }
 
+public class FileModuleInformation : ModuleInformation
+{
+	new public float? moduleScore;
+}
+
 public enum ScoreMethod
 {
 	Default,
@@ -57,6 +62,7 @@ public enum ScoreMethod
 public static class ModuleData
 {
 	public static bool DataHasChanged = true;
+	private static FileModuleInformation[] lastRead = new FileModuleInformation[0]; // Used to prevent overriding settings that are only controlled by the file.
 	public static void WriteDataToFile()
 	{
 		if (!DataHasChanged || ComponentSolverFactory.SilentMode) return;
@@ -65,7 +71,29 @@ public static class ModuleData
 
 		try
 		{
-			var infoList = ComponentSolverFactory.GetModuleInformation().OrderBy(info => info.moduleDisplayName).ThenBy(info => info.moduleID).ToList();
+			var infoList = ComponentSolverFactory
+				.GetModuleInformation()
+				.OrderBy(info => info.moduleDisplayName)
+				.ThenBy(info => info.moduleID)
+				.Select(info =>
+				{
+					var dictionary = new Dictionary<string, object>();
+					var type = info.GetType();
+					foreach (var field in type.GetFields())
+					{
+						if (!(info.CallMethod<bool?>($"ShouldSerialize{field.Name}") ?? true))
+							continue;
+
+						dictionary[field.Name] = field.GetValue(info);
+					}
+
+					var fileInfo = lastRead.FirstOrDefault(file => file.moduleID == info.moduleID);
+					dictionary["moduleScore"] = fileInfo?.moduleScore;
+
+					return dictionary;
+				})
+				.ToList();
+
 			File.WriteAllText(path, SettingsConverter.Serialize(infoList));
 		}
 		catch (FileNotFoundException)
@@ -85,12 +113,13 @@ public static class ModuleData
 
 	public static bool LoadDataFromFile()
 	{
-		ModuleInformation[] modInfo;
+		FileModuleInformation[] modInfo;
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		try
 		{
 			DebugHelper.Log($"ModuleData: Loading Module information data from file: {path}");
-			modInfo = SettingsConverter.Deserialize<ModuleInformation[]>(File.ReadAllText(path));
+			modInfo = SettingsConverter.Deserialize<FileModuleInformation[]>(File.ReadAllText(path));
+			lastRead = modInfo;
 		}
 		catch (FileNotFoundException)
 		{
@@ -103,8 +132,12 @@ public static class ModuleData
 			return false;
 		}
 
-		foreach (ModuleInformation info in modInfo)
+		foreach (var fileInfo in modInfo)
 		{
+			var info = (ModuleInformation) fileInfo;
+			if (fileInfo.moduleScore == null && fileInfo.moduleID != null)
+				info.moduleScore = ComponentSolverFactory.GetDefaultInformation(fileInfo.moduleID).moduleScore;
+
 			ComponentSolverFactory.AddModuleInformation(info);
 		}
 		return true;
