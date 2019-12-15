@@ -86,8 +86,8 @@ public class ModuleCameras : MonoBehaviour
 
 			if (PreviousModule != null)
 			{
-				//Return the camera back to the component that WAS there.
-				ViewModule(PreviousModule);
+				// Return the camera back to the component that WAS there unless that module is now solved.
+				ViewModule(PreviousModule.Solved ? Instance.PreferredToView : PreviousModule);
 				PreviousModule = null;
 			}
 		}
@@ -186,6 +186,8 @@ public class ModuleCameras : MonoBehaviour
 
 	[HideInInspector]
 	public bool CameraWallEnabled;
+
+	public static ModuleCameras Instance;
 	#endregion
 
 	#region Private Fields
@@ -251,6 +253,8 @@ public class ModuleCameras : MonoBehaviour
 
 	private void Start()
 	{
+		Instance = this;
+
 		// Create the first 6 module cameras (more will be created if the camera wall gets enabled)
 		for (int i = 0; i < 6; i++)
 			_moduleCameras.Add(ModuleCamera.CreateModuleCamera(this, i));
@@ -713,8 +717,8 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Properties
-	private TwitchModule PreferredToView => TwitchGame.Instance.Modules
-				.Where(module => !module.Solved && _moduleCameras.All(cam => cam.Module != module))
+	public TwitchModule PreferredToView => TwitchGame.Instance.Modules
+				.Where(module => !module.Solved && _moduleCameras.All(cam => cam.Module != module && cam.PreviousModule != module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();
 
