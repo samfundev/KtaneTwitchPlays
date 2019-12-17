@@ -931,18 +931,17 @@ public static class ComponentSolverFactory
 				var defaultInfo = GetDefaultInformation(moduleID);
 				defaultInfo.scoreMethod = scoreMethod;
 
-				// UN and is for unchanged and temporary score which are read normally.
+				// UN and T is for unchanged and temporary score which are read normally.
 				scoreString = Regex.Replace(scoreString, @"(?:UN )?(\d+)T?", "$1");
 
 				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
 				var dynamicMatch = Regex.Match(scoreString, @"S ([\d.]+)x");
+				defaultInfo.moduleScoreIsDynamic = dynamicMatch.Success;
 				if (dynamicMatch.Success && float.TryParse(dynamicMatch.Groups[1].Value, out float dynamicScore))
 				{
 					dynamicScores[moduleID] = dynamicScore * 2; // Multiply the score by two because the default DynamicScorePercentage is 0.5.
 					continue;
 				}
-
-				defaultInfo.moduleScoreIsDynamic = dynamicMatch.Success;
 
 				// PPA is for point per action modules which can be parsed in some cases.
 				scoreString = Regex.Replace(scoreString, @"PPA ([\d.]+) \+ ([\d.]+)", "$2");
