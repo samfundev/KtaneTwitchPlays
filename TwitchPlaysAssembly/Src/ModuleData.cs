@@ -50,6 +50,7 @@ public class ModuleInformation
 public class FileModuleInformation : ModuleInformation
 {
 	new public float? moduleScore;
+	new public bool? moduleScoreIsDynamic;
 }
 
 public enum ScoreMethod
@@ -77,6 +78,7 @@ public static class ModuleData
 				.ThenBy(info => info.moduleID)
 				.Select(info =>
 				{
+					var fileInfo = lastRead.FirstOrDefault(file => file.moduleID == info.moduleID);
 					var dictionary = new Dictionary<string, object>();
 					var type = info.GetType();
 					foreach (var field in type.GetFields())
@@ -84,11 +86,14 @@ public static class ModuleData
 						if (!(info.CallMethod<bool?>($"ShouldSerialize{field.Name}") ?? true))
 							continue;
 
-						dictionary[field.Name] = field.GetValue(info);
-					}
+						var value = field.GetValue(info);
+						if (field.Name == "moduleScore")
+							value = fileInfo?.moduleScore;
+						else if (field.Name == "moduleScoreIsDynamic")
+							value = fileInfo?.moduleScoreIsDynamic;
 
-					var fileInfo = lastRead.FirstOrDefault(file => file.moduleID == info.moduleID);
-					dictionary["moduleScore"] = fileInfo?.moduleScore;
+						dictionary[field.Name] = value;
+					}
 
 					return dictionary;
 				})
@@ -135,8 +140,14 @@ public static class ModuleData
 		foreach (var fileInfo in modInfo)
 		{
 			var info = (ModuleInformation) fileInfo;
-			if (fileInfo.moduleScore == null && fileInfo.moduleID != null)
-				info.moduleScore = ComponentSolverFactory.GetDefaultInformation(fileInfo.moduleID).moduleScore;
+			if (fileInfo.moduleID != null)
+			{
+				var defaultInfo = ComponentSolverFactory.GetDefaultInformation(fileInfo.moduleID);
+				if (fileInfo.moduleScore == null)
+					info.moduleScore = defaultInfo.moduleScore;
+				if (fileInfo.moduleScoreIsDynamic == null)
+					info.moduleScoreIsDynamic = defaultInfo.moduleScoreIsDynamic;
+			}
 
 			ComponentSolverFactory.AddModuleInformation(info);
 		}
