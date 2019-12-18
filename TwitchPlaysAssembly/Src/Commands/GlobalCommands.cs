@@ -824,7 +824,7 @@ static class GlobalCommands
 			File.WriteAllText(bootConfigPath, originalContents.Replace("single-instance=", ""));
 
 			Process
-				.Start(Process.GetCurrentProcess().MainModule.FileName)
+				.Start(Process.GetCurrentProcess().MainModule.FileName, Environment.GetCommandLineArgs().Skip(1).Join())
 				.WaitForInputIdle(); // Wait until the game is accepting input so we don't put back the original contents too early.
 
 			File.WriteAllText(bootConfigPath, originalContents);
