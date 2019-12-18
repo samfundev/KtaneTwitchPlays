@@ -12,8 +12,13 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 		_component = module.BombComponent.GetComponent(ComponentType);
 		objects = Module.BombComponent.GetComponent<KMSelectable>().Children.ToList();
 
-		GetValues();
-		AssignNumbers();
+		// module.enabled is set to false when TP is testing a module for TP support.
+		// Both of the functions below depend on actually having the module or they'll throw an exception.
+		if (module.enabled)
+		{
+			GetValues();
+			AssignNumbers();
+		}
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Use '!{0} press <buttons>' to press the buttons. Valid button formats are: Directional: T, TR, R, BR, B, BL, L, TL; The numbers associated with each button; Colours (Use lime for light green and green for dark green.)");
 	}
 
