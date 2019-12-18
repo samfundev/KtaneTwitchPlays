@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using System.Reflection;
 
 public class ModuleInformation
 {
@@ -81,7 +82,7 @@ public static class ModuleData
 					var fileInfo = lastRead.FirstOrDefault(file => file.moduleID == info.moduleID);
 					var dictionary = new Dictionary<string, object>();
 					var type = info.GetType();
-					foreach (var field in type.GetFields())
+					foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
 					{
 						if (!(info.CallMethod<bool?>($"ShouldSerialize{field.Name}") ?? true))
 							continue;
@@ -147,6 +148,11 @@ public static class ModuleData
 					info.moduleScore = defaultInfo.moduleScore;
 				if (fileInfo.moduleScoreIsDynamic == null)
 					info.moduleScoreIsDynamic = defaultInfo.moduleScoreIsDynamic;
+			}
+			else
+			{
+				info.moduleScore = fileInfo.moduleScore ?? 5;
+				info.moduleScoreIsDynamic = fileInfo.moduleScoreIsDynamic ?? false;
 			}
 
 			ComponentSolverFactory.AddModuleInformation(info);
