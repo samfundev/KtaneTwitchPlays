@@ -65,6 +65,8 @@ public static class ModuleData
 {
 	public static bool DataHasChanged = true;
 	private static FileModuleInformation[] lastRead = new FileModuleInformation[0]; // Used to prevent overriding settings that are only controlled by the file.
+	private static FieldInfo[] infoFields = typeof(ModuleInformation).GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+	private static FieldInfo[] fileInfoFields = typeof(FileModuleInformation).GetFields();
 	public static void WriteDataToFile()
 	{
 		if (!DataHasChanged || ComponentSolverFactory.SilentMode) return;
@@ -81,8 +83,7 @@ public static class ModuleData
 				{
 					var fileInfo = lastRead.FirstOrDefault(file => file.moduleID == info.moduleID);
 					var dictionary = new Dictionary<string, object>();
-					var type = info.GetType();
-					foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+					foreach (var field in infoFields)
 					{
 						if (!(info.CallMethod<bool?>($"ShouldSerialize{field.Name}") ?? true))
 							continue;
@@ -140,19 +141,35 @@ public static class ModuleData
 
 		foreach (var fileInfo in modInfo)
 		{
-			var info = (ModuleInformation) fileInfo;
+			ModuleInformation defaultInfo = null;
 			if (fileInfo.moduleID != null)
 			{
-				var defaultInfo = ComponentSolverFactory.GetDefaultInformation(fileInfo.moduleID);
-				if (fileInfo.moduleScore == null)
-					info.moduleScore = defaultInfo.moduleScore;
-				if (fileInfo.moduleScoreIsDynamic == null)
-					info.moduleScoreIsDynamic = defaultInfo.moduleScoreIsDynamic;
+				defaultInfo = ComponentSolverFactory.GetDefaultInformation(fileInfo.moduleID);
 			}
-			else
+
+			var info = new ModuleInformation();
+			foreach (FieldInfo fileFieldInfo in fileInfoFields)
 			{
-				info.moduleScore = fileInfo.moduleScore ?? 5;
-				info.moduleScoreIsDynamic = fileInfo.moduleScoreIsDynamic ?? false;
+				if (fileFieldInfo.DeclaringType == typeof(ModuleInformation)) {
+					if (fileInfoFields.Any(field => field.DeclaringType == typeof(FileModuleInformation) && field.Name == fileFieldInfo.Name))
+						continue;
+
+					fileFieldInfo.SetValue(info, fileFieldInfo.GetValue(fileInfo));
+				}
+				else
+				{
+					var baseFieldInfo = infoFields.FirstOrDefault(field => field.Name == fileFieldInfo.Name);
+					if (baseFieldInfo == null)
+						throw new NotSupportedException("Superclass isn't overriding only base fields.");
+
+					var value = fileFieldInfo.GetValue(fileInfo);
+					if (value == null && defaultInfo != null)
+					{
+						value = baseFieldInfo.GetValue(defaultInfo);
+					}
+
+					baseFieldInfo.SetValue(info, value);
+				}
 			}
 
 			ComponentSolverFactory.AddModuleInformation(info);
