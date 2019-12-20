@@ -68,6 +68,7 @@ public class TwitchPlaySettingsData
 	public int TimeModeMinimumTimeLost = 15;
 	public int TimeModeMinimumTimeGained = 20;
 	public float AwardDropMultiplierOnStrike = 0.80f;
+	public bool TimeModeTimeForActions = true; 
 
 	public bool EnableFactoryZenModeCameraWall = true;
 	public bool EnableFactoryAutomaticNextBomb = true;

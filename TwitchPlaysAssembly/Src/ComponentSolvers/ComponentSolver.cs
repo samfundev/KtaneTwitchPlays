@@ -294,12 +294,22 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.RegexMatch(out match, @"^awardpoints (-?\d+)$") && int.TryParse(match.Groups[1].Value, out int pointsAwarded))
 				{
+					List<string> messageParts = new List<string>();
 					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 					{
 						Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
-						IRCConnection.SendMessageFormat(TwitchPlaySettings.data.PointsAwardedByModule,
-							_currentUserNickName, pointsAwarded, pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName);
+						messageParts.Add(string.Format(TwitchPlaySettings.data.PointsAwardedByModule,
+							_currentUserNickName, pointsAwarded, pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName));
 					}
+
+					if (TwitchPlaySettings.data.TimeModeTimeForActions && OtherModes.TimeModeOn)
+					{
+						float time = OtherModes.GetAdjustedMultiplier() * pointsAwarded;
+						Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + time;
+						messageParts.Add($"Bomb time increased by {Math.Round(time, 1)} seconds!");
+					}
+
+					IRCConnection.SendMessage(messageParts.Join());
 				}
 				else if (TwitchPlaySettings.data.EnableDebuggingCommands)
 					DebugHelper.Log($"Unprocessed string: {currentString}");
