@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 public class TheMatrixComponentSolver : ComponentSolver
@@ -34,7 +35,7 @@ public class TheMatrixComponentSolver : ComponentSolver
 			// that you have up to a full second less "safe time" than you supposedly do, so we
 			// need to compensate for this.
 			// We'll flip back when there's about 2/10ths of a second remaining, ideally.
-			float flipBackTime = ((int)timerComponent.TimeRemaining - output) + 1.2f;
+			float flipBackTime = ((int)timerComponent.TimeRemaining - output) + 1.35f;
 			int flipBackDisplayedTime = (int)timerComponent.TimeRemaining - output;
 			yield return DoInteractionClick(Switch);
 			yield return $"sendtochat Jacking in until {string.Format("{0:D2}:{1:D2}", flipBackDisplayedTime / 60, flipBackDisplayedTime % 60)}!";
@@ -42,6 +43,10 @@ public class TheMatrixComponentSolver : ComponentSolver
 			while (!CoroutineCanceller.ShouldCancel && timerComponent.TimeRemaining > flipBackTime)
 				yield return null;
 
+			// Work around a bug in the module itself; immediately flipping as soon as the
+			// switch unlocks causes the coroutine for showing names to not get stopped.
+			yield return new WaitUntil(() => !_component.GetValue<bool>("switchLocked"));
+			yield return new WaitForSeconds(0.1f);
 			yield return DoInteractionClick(Switch);
 
 			// So the proper message shows.
