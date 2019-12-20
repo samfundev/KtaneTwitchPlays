@@ -183,14 +183,7 @@ static class GlobalCommands
 						IRCConnection.SendMessage($"Module {moduleName} score: {modules[0].moduleScore}", user, !isWhisper);
 						break;
 					case "statuslight":
-						if (modules[0].statusLightDown && modules[0].statusLightLeft)
-							IRCConnection.SendMessage($"Module {moduleName} status light position: bottom left", user, !isWhisper);
-						else if (modules[0].statusLightDown)
-							IRCConnection.SendMessage($"Module {moduleName} status light position: bottom right", user, !isWhisper);
-						else if (modules[0].statusLightLeft)
-							IRCConnection.SendMessage($"Module {moduleName} status light position: top left", user, !isWhisper);
-						else
-							IRCConnection.SendMessage($"Module {moduleName} status light position: top right", user, !isWhisper);
+						IRCConnection.SendMessage($"Module {moduleName} status light position: {modules[0].statusLightPosition}", user, !isWhisper);
 						break;
 					case "module pin allowed":
 					case "camera pin allowed":
@@ -305,45 +298,32 @@ static class GlobalCommands
 							case "bl":
 							case "bottomleft":
 							case "bottom left":
-								module.statusLightOverride = true;
-								module.statusLightDown = true;
-								module.statusLightLeft = true;
+								module.statusLightPosition = StatusLightPosition.BottomLeft;
 								break;
 							case "br":
 							case "bottomright":
 							case "bottom right":
-								module.statusLightOverride = true;
-								module.statusLightDown = true;
-								module.statusLightLeft = false;
+								module.statusLightPosition = StatusLightPosition.BottomRight;
 								break;
 							case "tr":
 							case "topright":
 							case "top right":
-								module.statusLightOverride = true;
-								module.statusLightDown = false;
-								module.statusLightLeft = false;
+								module.statusLightPosition = StatusLightPosition.TopRight;
 								break;
 							case "tl":
 							case "topleft":
 							case "top left":
-								module.statusLightOverride = true;
-								module.statusLightDown = false;
-								module.statusLightLeft = true;
+								module.statusLightPosition = StatusLightPosition.TopLeft;
+								break;
+							case "c":
+							case "center":
+								module.statusLightPosition = StatusLightPosition.Center;
 								break;
 							default:
-								module.statusLightOverride = false;
-								module.statusLightDown = defaultModule.statusLightDown;
-								module.statusLightLeft = defaultModule.statusLightLeft;
+								module.statusLightPosition = StatusLightPosition.Default;
 								break;
 						}
-						if (module.statusLightDown && module.statusLightLeft)
-							IRCConnection.SendMessage($"Module {moduleName} status light position changed to: Bottom Left", user, !isWhisper);
-						else if (module.statusLightDown)
-							IRCConnection.SendMessage($"Module {moduleName} status light position changed to: Bottom Right", user, !isWhisper);
-						else if (module.statusLightLeft)
-							IRCConnection.SendMessage($"Module {moduleName} status light position changed to: Top Left", user, !isWhisper);
-						else
-							IRCConnection.SendMessage($"Module {moduleName} status light position changed to: Top Right", user, !isWhisper);
+						IRCConnection.SendMessage($"Module {moduleName} status light position changed to: {module.statusLightPosition}", user, !isWhisper);
 						break;
 					case "module pin allowed":
 					case "camera pin allowed":

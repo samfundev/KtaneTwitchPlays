@@ -24,9 +24,7 @@ public class ModuleInformation
 	public bool manualCodeOverride;
 	public string manualCode;
 
-	public bool statusLightOverride;
-	public bool statusLightLeft;
-	public bool statusLightDown;
+	public StatusLightPosition statusLightPosition;
 
 	public bool validCommandsOverride;
 	public string[] validCommands;
@@ -59,6 +57,16 @@ public enum ScoreMethod
 	Default,
 	NeedyTime,
 	NeedySolves,
+}
+
+public enum StatusLightPosition
+{
+	Default,
+	TopRight,
+	TopLeft,
+	BottomRight,
+	BottomLeft,
+	Center,
 }
 
 public static class ModuleData

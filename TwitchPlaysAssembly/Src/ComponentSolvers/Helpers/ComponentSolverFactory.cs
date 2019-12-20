@@ -131,9 +131,7 @@ public static class ComponentSolverFactory
 				"helpText": "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.) Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.",
 				"manualCodeOverride": false,
 				"manualCode": null,
-				"statusLightOverride": true,
-				"statusLightLeft": false,
-				"statusLightDown": false,
+				"statusLightPosition": "Default",
 				"validCommandsOverride": false,
 				"validCommands": null,
 				"DoesTheRightThing": true,
@@ -152,11 +150,6 @@ public static class ComponentSolverFactory
 		 * 
 		 * manualCodeOverride - If true, the manual code will not be overwritten by the manual code in the module.
 		 * manualCode - If defined, is used instead of moduleDisplayName to look up the html/pdf manual.
-		 * 
-		 * statusLightOverride - Specifies an override of the ID# position / rotation. (This must be set if you wish to have the ID be anywhere other than
-		 *      Above the status light, or if you wish to rotate the ID / chat box.)
-		 * statusLightLeft - Specifies whether the ID should be on the left side of the module.
-		 * statusLightDown - Specifies whether the ID should be on the bottom side of the module.
 		 * 
 		 * Finally, validCommands, DoesTheRightThing and all of the override flags will only show up in modules not built into Twitch plays.
 		 * validCommandsOverride - Specifies whether the valid regular expression list should not be updated from the module.
@@ -185,7 +178,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["CrazyTalk"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Crazy Talk", moduleScore = 3 };
 		ModComponentSolverInformation["CryptModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptography", moduleScore = 9 };
 		ModComponentSolverInformation["ForeignExchangeRates"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Foreign Exchange Rates", moduleScore = 3 };
-		ModComponentSolverInformation["Listening"] = new ModuleInformation { builtIntoTwitchPlays = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = false, moduleDisplayName = "Listening", moduleScore = 4 };
+		ModComponentSolverInformation["Listening"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Listening", moduleScore = 4 };
 		ModComponentSolverInformation["OrientationCube"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Orientation Cube", moduleScore = 8 };
 		ModComponentSolverInformation["Probing"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Probing", moduleScore = 7 };
 		ModComponentSolverInformation["TurnTheKey"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Key", moduleScore = 3, announceModule = true };
@@ -235,7 +228,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", moduleScore = 8 };
 		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { moduleScore = 14, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { moduleScore = 8, builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { moduleScore = 6, builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true };
+		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { moduleScore = 6, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 12, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["chordProgressions"] = new ModuleInformation { builtIntoTwitchPlays = true };
@@ -280,8 +273,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["calendar"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["characterShift"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["complexKeypad"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
-		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = true, statusLightLeft = true };
-		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true, statusLightDown = true };
+		ModComponentSolverInformation["doubleColor"] = new ModuleInformation { moduleScore = 2, DoesTheRightThing = true };
+		ModComponentSolverInformation["dragonEnergy"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
 		ModComponentSolverInformation["equations"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["insanagrams"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["subways"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
@@ -395,7 +388,7 @@ public static class ComponentSolverFactory
 		//Flamanis
 		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { moduleScore = 8, helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", DoesTheRightThing = false };
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { moduleScore = 11, helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa", DoesTheRightThing = true };
-		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 7, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", statusLightOverride = true, statusLightDown = false, statusLightLeft = false, DoesTheRightThing = true };
+		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { moduleScore = 7, helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit.", DoesTheRightThing = true };
 
 		//GHXX
 		ModComponentSolverInformation["characterCodes"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
@@ -757,19 +750,19 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BlackHoleModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["BlindAlleyModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["BrailleModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
-		ModComponentSolverInformation["BrokenGuitarChordsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true, statusLightOverride = true, statusLightLeft = true };
+		ModComponentSolverInformation["BrokenGuitarChordsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheBulbModule"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["CaesarCipherModule"] = new ModuleInformation { moduleScore = 3, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheClockModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["ColoredSquaresModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["ColoredSwitchesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["CoordinatesModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
-		ModComponentSolverInformation["CornersModule"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
+		ModComponentSolverInformation["CornersModule"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true, statusLightPosition = StatusLightPosition.Center };
 		ModComponentSolverInformation["CursedDoubleOhModule"] = new ModuleInformation { moduleScore = 13, DoesTheRightThing = true };
 		ModComponentSolverInformation["DecoloredSquaresModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["DiscoloredSquaresModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["DividedSquaresModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true, announceModule = true };
-		ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true, statusLightOverride = true, statusLightDown = false, statusLightLeft = false };
+		ModComponentSolverInformation["DoubleOhModule"] = new ModuleInformation { moduleScore = 6, DoesTheRightThing = true };
 		ModComponentSolverInformation["FollowTheLeaderModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["FriendshipModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["GridlockModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
@@ -997,9 +990,7 @@ public static class ComponentSolverFactory
 				moduleScore = info.moduleScore,
 				moduleScoreOverride = false,
 				moduleScoreIsDynamic = info.moduleScoreIsDynamic,
-				statusLightDown = info.statusLightDown,
-				statusLightLeft = info.statusLightLeft,
-				statusLightOverride = false,
+				statusLightPosition = info.statusLightPosition,
 				unclaimedColor = info.unclaimedColor,
 				validCommands = info.validCommands,
 				validCommandsOverride = false
@@ -1007,7 +998,7 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	private static void AddDefaultModuleInformation(string moduleType, string moduleDisplayName, string helpText, string manualCode, bool statusLeft, bool statusBottom, string[] regexList)
+	private static void AddDefaultModuleInformation(string moduleType, string moduleDisplayName, string helpText, string manualCode, string[] regexList)
 	{
 		if (string.IsNullOrEmpty(moduleType)) return;
 		AddDefaultModuleInformation(GetModuleInfo(moduleType));
@@ -1015,8 +1006,6 @@ public static class ComponentSolverFactory
 		info.moduleDisplayName = moduleDisplayName;
 		if (!string.IsNullOrEmpty(helpText)) info.helpText = helpText;
 		if (!string.IsNullOrEmpty(manualCode)) info.manualCode = manualCode;
-		info.statusLightLeft = statusLeft;
-		info.statusLightDown = statusBottom;
 		info.validCommands = regexList;
 	}
 
@@ -1072,21 +1061,13 @@ public static class ComponentSolverFactory
 			info.manualCode = defInfo.manualCode;
 		}
 
-		if (!info.statusLightOverride)
-		{
-			ModuleData.DataHasChanged |= info.statusLightDown != defInfo.statusLightDown;
-			ModuleData.DataHasChanged |= info.statusLightLeft != defInfo.statusLightLeft;
-			info.statusLightDown = defInfo.statusLightDown;
-			info.statusLightLeft = defInfo.statusLightLeft;
-		}
-
 		if (writeData && !info.builtIntoTwitchPlays)
 			ModuleData.WriteDataToFile();
 
 		return ModComponentSolverInformation[moduleType];
 	}
 
-	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode = null, bool statusLightLeft = false, bool statusLightBottom = false)
+	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode = null)
 	{
 		ModuleInformation info = GetModuleInfo(moduleType, false);
 		ModuleInformation defInfo = GetDefaultInformation(moduleType);
@@ -1102,18 +1083,8 @@ public static class ComponentSolverFactory
 			info.manualCode = manualCode;
 		}
 
-		if (!info.statusLightOverride)
-		{
-			ModuleData.DataHasChanged |= info.statusLightLeft != statusLightLeft;
-			ModuleData.DataHasChanged |= info.statusLightDown != statusLightBottom;
-			info.statusLightLeft = statusLightLeft;
-			info.statusLightDown = statusLightBottom;
-		}
-
 		defInfo.helpText = helpText;
 		defInfo.manualCode = manualCode;
-		defInfo.statusLightLeft = statusLightLeft;
-		defInfo.statusLightDown = statusLightBottom;
 
 		ModuleData.WriteDataToFile();
 
@@ -1146,9 +1117,6 @@ public static class ComponentSolverFactory
 			if (!string.IsNullOrEmpty(info.manualCode) || info.manualCodeOverride)
 				i.manualCode = info.manualCode;
 
-			i.statusLightLeft = info.statusLightLeft;
-			i.statusLightDown = info.statusLightDown;
-
 			i.moduleScore = info.moduleScore;
 			i.moduleScoreIsDynamic = info.moduleScoreIsDynamic;
 			i.announceModule = info.announceModule;
@@ -1157,7 +1125,7 @@ public static class ComponentSolverFactory
 			i.moduleScoreOverride = info.moduleScoreOverride;
 			i.helpTextOverride = info.helpTextOverride;
 			i.manualCodeOverride = info.manualCodeOverride;
-			i.statusLightOverride = info.statusLightOverride;
+			i.statusLightPosition = info.statusLightPosition;
 
 			if (!i.builtIntoTwitchPlays)
 			{
@@ -1287,14 +1255,6 @@ public static class ComponentSolverFactory
 			info.manualCode = manual;
 		}
 
-		if (FindStatusLightPosition(module.BombComponent, out bool statusLeft, out bool statusBottom) && !info.statusLightOverride)
-		{
-			ModuleData.DataHasChanged |= info.statusLightLeft != statusLeft;
-			ModuleData.DataHasChanged |= info.statusLightDown != statusBottom;
-			info.statusLightLeft = statusLeft;
-			info.statusLightDown = statusBottom;
-		}
-
 		if (FindModuleScore(module.BombComponent, commandComponentType, out int score) && !info.moduleScoreOverride)
 		{
 			ModuleData.DataHasChanged |= !score.Equals(info.moduleScore);
@@ -1333,7 +1293,7 @@ public static class ComponentSolverFactory
 		info.moduleDisplayName = displayName;
 		ModuleData.WriteDataToFile();
 
-		AddDefaultModuleInformation(moduleType, displayName, help, manual, statusLeft, statusBottom, regexList);
+		AddDefaultModuleInformation(moduleType, displayName, help, manual, regexList);
 
 		if (commandComponentType == null) return null;
 		ComponentSolverFields componentSolverFields = new ComponentSolverFields
@@ -1401,25 +1361,6 @@ public static class ComponentSolverFactory
 		{
 			DebugHelper.LogException(ex, "Could not log the component types due to an exception:");
 		}
-	}
-
-	private static bool FindStatusLightPosition(Component bombComponent, out bool statusLightLeft, out bool statusLightBottom)
-	{
-		const string statusLightStatus = "Attempting to find the module’s StatusLightParent...";
-		Component component = bombComponent.GetComponentInChildren<StatusLightParent>() ?? (Component) bombComponent.GetComponentInChildren<KMStatusLightParent>();
-		if (component == null)
-		{
-			DebugLog($"{statusLightStatus} Not found.");
-			statusLightLeft = false;
-			statusLightBottom = false;
-			return false;
-		}
-
-		Vector3 position = bombComponent.transform.InverseTransformPoint(component.transform.position);
-		statusLightLeft = (Math.Round(position.x, 5) < 0);
-		statusLightBottom = (Math.Round(position.z, 5) < 0);
-		//DebugLog($"{statusLightStatus} Found in the {(statusLightBottom ? "bottom" : "top")} {(statusLightLeft ? "left" : "right")} corner.");
-		return true;
 	}
 
 	private static bool FindRegexList(Component bombComponent, Type commandComponentType, out string[] validCommands)
