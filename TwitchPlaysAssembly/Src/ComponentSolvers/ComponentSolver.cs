@@ -578,6 +578,18 @@ public abstract class ComponentSolver
 		return new WaitForSeconds(delay);
 	}
 
+	protected IEnumerator SelectIndex(int current, int target, int length, MonoBehaviour increase, MonoBehaviour decrease)
+	{
+		var difference = target - current;
+		if (Math.Abs(difference) > (length / 2))
+		{
+			difference = Math.Abs(difference) - length;
+		}
+
+		for (int i = 0; i < Math.Abs(difference); i++)
+			yield return DoInteractionClick(difference > 0 ? increase : decrease);
+	}
+
 	protected void HandleModuleException(Exception e)
 	{
 		if (Module.BombComponent.GetModuleDisplayName() == "Manometers")
@@ -1333,3 +1345,4 @@ public abstract class ComponentSolver
 	public Component CommandComponent = null;
 	#endregion
 }
+ 
