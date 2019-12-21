@@ -107,6 +107,12 @@ public class CoroutineQueue : MonoBehaviour
 			bool result = true;
 			while (result)
 			{
+				if (SkipCurrentCoroutine)
+				{
+					SkipCurrentCoroutine = false;
+					yield break;
+				}
+
 				try
 				{
 					result = coroutine.MoveNext();
@@ -195,4 +201,6 @@ public class CoroutineQueue : MonoBehaviour
 
 	public int CurrentBombID = -1;
 	private Queue<int> _bombIDProcessed;
+
+	public bool SkipCurrentCoroutine;
 }

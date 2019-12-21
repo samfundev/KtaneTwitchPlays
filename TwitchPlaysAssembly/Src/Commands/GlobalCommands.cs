@@ -890,6 +890,12 @@ static class GlobalCommands
 		IRCConnection.ReceiveMessage(targetPlayer, message.UserColorCode, newMessage);
 	}
 
+	[Command("skip(?:coroutine|command|cmd)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void Skip()
+	{
+		TwitchPlaysService.Instance.CoroutineQueue.SkipCurrentCoroutine = true;
+	}
+
 	//As of now, Debugging commands are streamer only, apart from whispertest, which are superuser and above.
 	[Command("whispertest", AccessLevel.SuperUser, AccessLevel.SuperUser), DebuggingOnly]
 	public static void WhisperTest(string user) => IRCConnection.SendMessage("Test successful", user, false);
