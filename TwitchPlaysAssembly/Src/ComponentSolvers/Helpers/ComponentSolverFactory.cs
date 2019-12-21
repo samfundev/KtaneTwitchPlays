@@ -94,6 +94,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["MorseWar"] = module => new MorseWarComponentSolver(module);
 		ModComponentSolverCreators["necronomicon"] = module => new NecronomiconComponentSolver(module);
 		ModComponentSolverCreators["numberNimbleness"] = module => new NumberNimblenessComponentSolver(module);
+		ModComponentSolverCreators["babaIsWho"] = module => new BabaIsWhoComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -235,6 +236,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { moduleScore = 8, builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { moduleScore = 6, builtIntoTwitchPlays = true, statusLightDown = true, statusLightLeft = true };
 		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { moduleScore = 12, builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
