@@ -47,7 +47,7 @@ public class SimonsStagesComponentSolver : ComponentSolver
 
 	static SimonsStagesComponentSolver()
 	{
-		ComponentType = ReflectionHelper.FindType("SimonsStagesScript");
+		ComponentType = ReflectionHelper.FindType("SimonsStagesScript", "simonsStages");
 	}
 
 	private static readonly Type ComponentType;
