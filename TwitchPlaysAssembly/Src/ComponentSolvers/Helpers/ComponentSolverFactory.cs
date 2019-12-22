@@ -381,6 +381,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["transmittedMorseModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["vectorsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["yellowArrowsModule"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
+		ModComponentSolverInformation["blinkstopModule"] = new ModuleInformation { statusLightPosition = StatusLightPosition.TopLeft, DoesTheRightThing = true };
 
 		//Fixdoll
 		ModComponentSolverInformation["curriculum"] = new ModuleInformation { DoesTheRightThing = true, moduleScore = 12 };
