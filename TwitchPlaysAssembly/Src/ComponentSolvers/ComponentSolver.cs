@@ -294,6 +294,9 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.RegexMatch(out match, @"^awardpoints (-?\d+)$") && int.TryParse(match.Groups[1].Value, out int pointsAwarded))
 				{
+					if (OtherModes.ZenModeOn)
+						continue;
+
 					List<string> messageParts = new List<string>();
 					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 					{

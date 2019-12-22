@@ -247,32 +247,35 @@ public class TwitchGame : MonoBehaviour
 			ModuleCameras.gameObject.SetActive(false);
 
 		// Award users who maintained needy modules.
-		Dictionary<string, int> AwardedNeedyPoints = new Dictionary<string, int>();
-		foreach (TwitchModule twitchModule in Modules)
+		if (!OtherModes.ZenModeOn)
 		{
-			ModuleInformation ModInfo = twitchModule.Solver.ModInfo;
-			ScoreMethod scoreMethod = ModInfo.scoreMethod;
-			if (scoreMethod == ScoreMethod.Default) continue;
-
-			foreach (var pair in twitchModule.PlayerNeedyStats)
+			Dictionary<string, int> AwardedNeedyPoints = new Dictionary<string, int>();
+			foreach (TwitchModule twitchModule in Modules)
 			{
-				string playerName = pair.Key;
-				var needyStats = pair.Value;
+				ModuleInformation ModInfo = twitchModule.Solver.ModInfo;
+				ScoreMethod scoreMethod = ModInfo.scoreMethod;
+				if (scoreMethod == ScoreMethod.Default) continue;
 
-				int points = Mathf.RoundToInt((scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore);
-				if (points != 0)
+				foreach (var pair in twitchModule.PlayerNeedyStats)
 				{
-					if (!AwardedNeedyPoints.ContainsKey(playerName))
-						AwardedNeedyPoints[playerName] = 0;
+					string playerName = pair.Key;
+					var needyStats = pair.Value;
 
-					AwardedNeedyPoints[playerName] += points;
-					Leaderboard.Instance.AddScore(playerName, points);
+					int points = Mathf.RoundToInt((scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore);
+					if (points != 0)
+					{
+						if (!AwardedNeedyPoints.ContainsKey(playerName))
+							AwardedNeedyPoints[playerName] = 0;
+
+						AwardedNeedyPoints[playerName] += points;
+						Leaderboard.Instance.AddScore(playerName, points);
+					}
 				}
 			}
-		}
 
-		if (AwardedNeedyPoints.Count > 0)
-			IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {AwardedNeedyPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
+			if (AwardedNeedyPoints.Count > 0)
+				IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {AwardedNeedyPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
+		}
 
 		GameCommands.unclaimedModules = null;
 		DestroyComponentHandles();
