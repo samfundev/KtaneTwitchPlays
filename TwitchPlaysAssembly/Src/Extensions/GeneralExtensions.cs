@@ -244,6 +244,8 @@ public static class GeneralExtensions
 	/// <param name="seperator">The seperators to split by.</param>
 	public static string[] SplitFull(this string value, params char[] seperator) => value.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
 
+	public static string[] SplitFull(this string value, string seperators) => value.SplitFull(seperators.ToCharArray());
+
 	/// <summary>Converts a lowercase <paramref name="character"/> into a zero-based index. Supports a-z and 1-9.</summary>
 	/// <param name="character">The character to convert into a index.</param>
 	public static int ToIndex(this char character) => character >= 'a' ? character - 'a' : character - '1';

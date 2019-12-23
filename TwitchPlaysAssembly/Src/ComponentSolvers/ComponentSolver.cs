@@ -594,9 +594,12 @@ public abstract class ComponentSolver
 	protected IEnumerator SelectIndex(int current, int target, int length, MonoBehaviour increase, MonoBehaviour decrease)
 	{
 		var difference = target - current;
-		if (Math.Abs(difference) > (length / 2))
+		if (Math.Abs(difference) > length / 2)
 		{
 			difference = Math.Abs(difference) - length;
+
+			if (target < current)
+				difference = -difference;
 		}
 
 		for (int i = 0; i < Math.Abs(difference); i++)
