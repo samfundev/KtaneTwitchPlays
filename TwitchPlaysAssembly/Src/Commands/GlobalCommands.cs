@@ -141,7 +141,7 @@ static class GlobalCommands
 			TwitchPlaySettings.WriteDataToFile();
 	}
 
-	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands) +(.+)")]
+	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands|unclaimable|announce(?:ment| *module)?) +(.+)")]
 	public static void ReadModuleInformation([Group(1)] string command, [Group(2)] string parameter, string user, bool isWhisper)
 	{
 		var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(parameter)).ToList();
@@ -209,6 +209,15 @@ static class GlobalCommands
 					case "validcommands":
 						IRCConnection.SendMessage($"Module {moduleName} valid commands: {modules[0].validCommands}", user, !isWhisper);
 						break;
+					case "announcemodule":
+					case "announce module":
+					case "announce":
+					case "announcement":
+						IRCConnection.SendMessage($"Module {moduleName} announce on bomb start: {(modules[0].announceModule ? "Yes" : "No")}", user, !isWhisper);
+						break;
+					case "unclaimable":
+						IRCConnection.SendMessage($"Module {moduleName} unclaimable: {(modules[0].unclaimable ? "Yes" : "No")}", user, !isWhisper);
+						break;
 				}
 				break;
 
@@ -225,7 +234,7 @@ static class GlobalCommands
 		}
 	}
 
-	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r) +(.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|unclaimable|announce(?:ment| *module)?) +(.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void WriteModuleInformation([Group(1)] string command, [Group(2)] string search, [Group(3)] string changeTo, string user, bool isWhisper)
 	{
 		var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(search)).ToList();
@@ -335,20 +344,7 @@ static class GlobalCommands
 					case "camerapinallowed":
 					case "pinallowed":
 					case "pin allowed":
-						switch (changeTo.ToLowerInvariant())
-						{
-							case "true":
-							case "yes":
-								module.CameraPinningAlwaysAllowed = true;
-								break;
-							case "no":
-							case "false":
-								module.CameraPinningAlwaysAllowed = false;
-								break;
-							default:
-								module.CameraPinningAlwaysAllowed = defaultModule.CameraPinningAlwaysAllowed;
-								break;
-						}
+						module.CameraPinningAlwaysAllowed = (changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes"));
 						IRCConnection.SendMessage($"Module {moduleName} Module pinning always allowed changed to: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}", user, !isWhisper);
 						break;
 					case "color":
@@ -373,6 +369,17 @@ static class GlobalCommands
 						}
 
 						IRCConnection.SendMessage($"Module {moduleName} Unclaimed color changed to: {moduleColor}", user, !isWhisper);
+						break;
+					case "announcemodule":
+					case "announce module":
+					case "announce":
+					case "announcement":
+						module.announceModule = (changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes"));
+						IRCConnection.SendMessage($"Module {moduleName} announce on bomb start changed to: {(modules[0].announceModule ? "Yes" : "No")}", user, !isWhisper);
+						break;
+					case "unclaimable":
+						module.unclaimable = (changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes"));
+						IRCConnection.SendMessage($"Module {moduleName} unclaimable changed to: {(modules[0].unclaimable ? "Yes" : "No")}", user, !isWhisper);
 						break;
 				}
 				ModuleData.DataHasChanged = true;
