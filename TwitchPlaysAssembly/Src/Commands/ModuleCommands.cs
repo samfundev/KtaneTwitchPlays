@@ -444,11 +444,9 @@ static class ModuleCommands
 			TwitchGame.Instance.Modules.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.BombID)) < TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims
 		)
 		{
-			yield return new WaitForSeconds(0.1f);
 			var response = module.Solver.RespondToCommand(user, cmd);
 			while (response.MoveNext())
 				yield return response.Current;
-			yield return new WaitForSeconds(0.1f);
 
 			module.Solver.EnableAnarchyStrike();
 		}
