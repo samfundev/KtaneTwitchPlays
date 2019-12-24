@@ -449,6 +449,8 @@ static class ModuleCommands
 			while (response.MoveNext())
 				yield return response.Current;
 			yield return new WaitForSeconds(0.1f);
+
+			module.Solver.EnableAnarchyStrike();
 		}
 		else
 			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadyClaimed, module.Code, module.PlayerName, user, module.HeaderText);

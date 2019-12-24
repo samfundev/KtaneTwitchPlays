@@ -25,6 +25,8 @@ public abstract class ComponentSolver
 	private int _beforeStrikeCount;
 	public IEnumerator RespondToCommand(string userNickName, string command)
 	{
+		_disableAnarchyStrike = TwitchPlaySettings.data.AnarchyMode;
+
 		TryCancel = false;
 		_responded = false;
 		_processingTwitchCommand = true;
@@ -762,6 +764,8 @@ public abstract class ComponentSolver
 		else
 			AwardStrikes(IRCConnection.Instance.ChannelName, 0);
 	}
+
+	public void EnableAnarchyStrike() => _disableAnarchyStrike = false;
 
 	private bool _disableOnStrike;
 	private bool _disableAnarchyStrike;
