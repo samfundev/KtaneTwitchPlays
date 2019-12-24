@@ -131,7 +131,20 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 		}
 	}
 
-	private List<KMSelectable> objects = new List<KMSelectable>();
+    protected override IEnumerator ForcedSolveIEnumerator()
+    {
+		yield return null;
+        while (!_component.GetValue<bool>("moduleSolved"))
+        {
+			while (_component.GetValue<bool>("checking"))
+				yield return true;
+
+            string correctSequence = _component.GetValue<string>("correctSequence").ToCharArray().Join();
+            yield return RespondToCommandInternal($"press {correctSequence}");
+        }
+    }
+
+    private List<KMSelectable> objects = new List<KMSelectable>();
 	private List<KMSelectable> numbers = new List<KMSelectable>();
 	private static Type ComponentType = ReflectionHelper.FindType("SimonsOnFirstScript");
 	private Component _component;
