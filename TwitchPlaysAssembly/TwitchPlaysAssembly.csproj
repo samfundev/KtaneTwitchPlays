@@ -106,6 +106,7 @@
     <Compile Include="Src\Audio\Audio.cs" />
     <Compile Include="Src\Audio\InterruptMusic.cs" />
     <Compile Include="Src\Audio\MusicPlayer.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\AdditionComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\CrypticPasswordComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ChordProgressionsComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\BabaIsWhoComponentSolver.cs" />
