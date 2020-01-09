@@ -9,11 +9,11 @@ public static class FreeplayCommands
 {
 	#region Commands
 
-	[Command(@"needy(?: +(on)| +off)", AccessLevel.Admin, accessLevelAnarchy: AccessLevel.Defuser)]
+	[Command(@"needy(?: +(on)| +off)")]
 	public static void Needy(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.HasNeedy, s => s.NeedyToggle, TwitchPlaySettings.data.EnableFreeplayNeedy, TwitchPlaySettings.data.FreePlayNeedyDisabled);
-	[Command(@"hardcore(?: +(on)| +off)", AccessLevel.Admin, accessLevelAnarchy: AccessLevel.Defuser)]
+	[Command(@"hardcore(?: +(on)| +off)")]
 	public static void Hardcore(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.IsHardCore, s => s.HardcoreToggle, TwitchPlaySettings.data.EnableFreeplayHardcore, TwitchPlaySettings.data.FreePlayHardcoreDisabled);
-	[Command(@"mods ?only(?: +(on)| +off)", AccessLevel.Admin, accessLevelAnarchy: AccessLevel.Defuser)]
+	[Command(@"mods ?only(?: +(on)| +off)")]
 	public static void ModsOnly(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.OnlyMods, s => s.ModsOnly, TwitchPlaySettings.data.EnableFreeplayModsOnly, TwitchPlaySettings.data.FreePlayModsOnlyDisabled);
 
 	[Command(@"timer? +(\d+):(\d{1,3}):(\d{2})")]
@@ -142,7 +142,7 @@ public static class FreeplayCommands
 
 	private static void SetSetting(FloatingHoldable holdable, bool on, string user, bool isWhisper, Func<FreeplaySettings, bool> getCurrent, Func<FreeplayDevice, ToggleSwitch> toggle, bool settingAllowed, string disabledMessage)
 	{
-		if (settingAllowed || !on || UserAccess.HasAccess(user, AccessLevel.Admin, true))
+		if (settingAllowed || !on || UserAccess.HasAccess(user, AccessLevel.Admin, true) || TwitchPlaySettings.data.AnarchyMode)
 		{
 			var device = holdable.GetComponent<FreeplayDevice>();
 			if (on != getCurrent(device.CurrentSettings))
