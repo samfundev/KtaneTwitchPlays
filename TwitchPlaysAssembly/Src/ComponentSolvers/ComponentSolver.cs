@@ -1121,42 +1121,44 @@ public abstract class ComponentSolver
 			Module.Bomb.StrikeCount = 0;
 		}
 
-		if (OtherModes.TimeModeOn)
-		{
-			float originalMultiplier = OtherModes.GetAdjustedMultiplier();
-			bool multiDropped = OtherModes.DropMultiplier();
-			float multiplier = OtherModes.GetAdjustedMultiplier();
-			string tempMessage;
-			if (multiDropped)
+		if (!Module.Bomb.CheckStrikeRateLimit()) {
+			if (OtherModes.TimeModeOn)
 			{
-				if (Mathf.Abs(originalMultiplier - multiplier) >= 0.1)
-					tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
+				float originalMultiplier = OtherModes.GetAdjustedMultiplier();
+				bool multiDropped = OtherModes.DropMultiplier();
+				float multiplier = OtherModes.GetAdjustedMultiplier();
+				string tempMessage;
+				if (multiDropped)
+				{
+					if (Mathf.Abs(originalMultiplier - multiplier) >= 0.1)
+						tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
+					else
+						tempMessage = "Time";
+				}
 				else
-					tempMessage = "Time";
-			}
-			else
-				tempMessage =
-					$"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
+					tempMessage =
+						$"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
 
-			if (Module.Bomb.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
-			{
-				Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
-				tempMessage += $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
+				if (Module.Bomb.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
+				{
+					Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
+					tempMessage += $" reduced by {TwitchPlaySettings.data.TimeModeMinimumTimeLost} seconds.";
+				}
+				else
+				{
+					float timeReducer = Module.Bomb.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
+					double easyText = Math.Round(timeReducer, 1);
+					Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer - timeReducer;
+					tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
+				}
+				messageParts.Add(tempMessage);
+				Module.Bomb.StrikeCount = 0;
+				TwitchGame.ModuleCameras.UpdateStrikes();
 			}
-			else
-			{
-				float timeReducer = Module.Bomb.CurrentTimer * TwitchPlaySettings.data.TimeModeTimerStrikePenalty;
-				double easyText = Math.Round(timeReducer, 1);
-				Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer - timeReducer;
-				tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
-			}
-			messageParts.Add(tempMessage);
-			Module.Bomb.StrikeCount = 0;
-			TwitchGame.ModuleCameras.UpdateStrikes();
+
+			if (OtherModes.ZenModeOn)
+				Module.Bomb.StrikeLimit += strikeCount;
 		}
-
-		if (OtherModes.ZenModeOn)
-			Module.Bomb.StrikeLimit += strikeCount;
 
 		if (!string.IsNullOrEmpty(userNickName))
 		{

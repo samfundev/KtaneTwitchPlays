@@ -46,6 +46,9 @@ public class TwitchBomb : MonoBehaviour
 	}
 
 	private static bool HeldFrontFace => KTInputManager.Instance.SelectableManager.GetActiveFace() == FaceEnum.Front;
+
+	private float quickStrikeTime;
+	private int quickStrikeCount;
 	#endregion
 
 	#region Unity Lifecycle
@@ -115,6 +118,23 @@ public class TwitchBomb : MonoBehaviour
 	}
 
 	public void CauseVersusExplosion() =>  StartCoroutine(DelayBombExplosionCoroutine(null, "Evil defeated Good", 0.1f));
+
+	internal bool CheckStrikeRateLimit()
+	{
+		bool result;
+		if (Time.time - quickStrikeTime <= 0.6f)
+		{
+			++quickStrikeCount;
+			result = quickStrikeCount >= 20;
+		}
+		else
+		{
+			quickStrikeCount = 0;
+			result = false;
+		}
+		quickStrikeTime = Time.time;
+		return result;
+	}
 
 	#region Private Methods
 	public IEnumerator DelayBombExplosionCoroutine() => DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
