@@ -419,59 +419,87 @@ static class GameCommands
 		}
 	}
 
-	[Command(@"call(?! *all)( +.+)?")]
+    [Command(@"call *set ( +.+)")]
+    public static void CallChangeSet(string user, bool isWhisper, [Group(1)] string calltrySet)
+    {
+        int x;//used for testing purposes, makes sure it can be converted into an int
+        if (Int32.TryParse(calltrySet, out x))
+        {//valid, now check to make sure it woks in this context
+			if (x >= 1)
+            {
+                callSet = x;
+                currentCall = 0;
+                IRCConnection.SendMessage("{0} calls now required for a queued command. Pending calls reset.", callSet);
+            }
+            else IRCConnection.SendMessage($"@{user}, invalid value, no action taken.", user, !isWhisper);
+        }
+		else IRCConnection.SendMessage($"@{user}, invalid value, no action taken.", user, !isWhisper);
+    }
+
+    [Command(@"call(?! *all)(?! *set)( +.+)?")]
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] string name)
 	{
-		name = name?.Trim();
+        currentCall++;
+        if (currentCall >= callSet) 
+        {
+			if (!(callSet == 1)) IRCConnection.SendMessage("{0} of {1} calls now made, calling command.", currentCall, callSet);
+            name = name?.Trim();
 
-		CommandQueueItem call = null;
-		if (string.IsNullOrEmpty(name))
-		{
-			// Call the first unnamed item in the queue.
-			call = TwitchGame.Instance.CommandQueue.Find(item => item.Name == null);
+            CommandQueueItem call = null;
+            if (string.IsNullOrEmpty(name))
+            {
+                // Call the first unnamed item in the queue.
+                call = TwitchGame.Instance.CommandQueue.Find(item => item.Name == null);
 
-			if (call == null)
-			{
-				IRCConnection.SendMessage($"@{user}, no unnamed commands in the queue.", user, !isWhisper);
-				return;
-			}
-		}
-		else if (name.StartsWith("!"))
-		{
-			name += ' ';
+                if (call == null)
+                {
+                    IRCConnection.SendMessage($"@{user}, no unnamed commands in the queue.", user, !isWhisper);
+                    return;
+                }
+            }
+            else if (name.StartsWith("!"))
+            {
+                name += ' ';
 
-			// Call an unnamed item in the queue for a specific module.
-			call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name) && item.Name == null);
+                // Call an unnamed item in the queue for a specific module.
+                call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name) && item.Name == null);
 
-			if (call == null)
-			{
-				// If a named command exists, and no unnamed commands exist, then show the name of that command (but don't call it).
-				call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name));
+                if (call == null)
+                {
+                    // If a named command exists, and no unnamed commands exist, then show the name of that command (but don't call it).
+                    call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name));
 
-				if (call != null)
-					IRCConnection.SendMessage($"@{user}, module {name} is queued with the name “{call.Name}”, please use “!call {call.Name}” to call it.", user, !isWhisper);
-				else
-					IRCConnection.SendMessage($"@{user}, no commands for module {name} in the queue.", user, !isWhisper);
+                    if (call != null)
+                        IRCConnection.SendMessage($"@{user}, module {name} is queued with the name “{call.Name}”, please use “!call {call.Name}” to call it.", user, !isWhisper);
+                    else
+                        IRCConnection.SendMessage($"@{user}, no commands for module {name} in the queue.", user, !isWhisper);
 
-				return;
-			}
-		}
-		else
-		{
-			// Call a named item in the queue.
-			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name.EqualsIgnoreCase(item.Name));
+                    return;
+                }
+            }
 
-			if (call == null)
-			{
-				IRCConnection.SendMessage($"@{user}, no commands named “{name}” in the queue.", user, !isWhisper);
-				return;
-			}
-		}
+            else
+            {
+                // Call a named item in the queue.
+                call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name.EqualsIgnoreCase(item.Name));
 
-		TwitchGame.Instance.CommandQueue.Remove(call);
-		TwitchGame.ModuleCameras?.SetNotes();
-		IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
-		IRCConnection.ReceiveMessage(call.Message);
+                if (call == null)
+                {
+                    IRCConnection.SendMessage($"@{user}, no commands named “{name}” in the queue.", user, !isWhisper);
+                    return;
+                }
+            }
+
+            TwitchGame.Instance.CommandQueue.Remove(call);
+            TwitchGame.ModuleCameras?.SetNotes();
+            IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
+            IRCConnection.ReceiveMessage(call.Message);
+            currentCall = 0;
+        }
+        else //not met required calls yet
+        {
+            IRCConnection.SendMessage("{0} of {1} calls now made.", currentCall, callSet);
+        }
 	}
 
 	[Command(@"call *all")]
