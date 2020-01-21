@@ -23,6 +23,8 @@ public class TwitchGame : MonoBehaviour
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
+	public int callsNeeded = 1;
+	public int callsTotal = 0;
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
