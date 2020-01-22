@@ -83,6 +83,8 @@ public class TwitchGame : MonoBehaviour
 		EnableDisableInput();
 		Leaderboard.Instance.ClearSolo();
 		LogUploader.Instance.Clear();
+		callsNeeded = 1;
+		callsTotal = 0;
 
 		_bombStarted = false;
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;
