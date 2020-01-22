@@ -187,7 +187,7 @@ public abstract class ComponentSolver
 					continue;
 				}
 				else if (currentString.RegexMatch(out match,
-							"^trywaitcancel ([0-9]+(?:\\.[0-9])?)((?: (?:.|\\n)+)?)$") &&
+							"^trywaitcancel ([0-9]+(?:\\.[0-9]+)?)((?: (?:.|\\n)+)?)$") &&
 						float.TryParse(match.Groups[1].Value, out float waitCancelTime))
 				{
 					yield return new WaitForSecondsWithCancel(waitCancelTime, false, this);
