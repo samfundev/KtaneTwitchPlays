@@ -30,12 +30,12 @@ public class TheTrollComponentSolver : ComponentSolver
 			}
 
 			yield return null;
-			while (timeRemaining % 10 != secstopress)
+			do
 			{
 				yield return null;
 				yield return "trycancel Button was't pressed due to request to cancel.";
 				timeRemaining = (int) timerComponent.TimeRemaining;
-			}
+			}while(timeRemaining % 10 != secstopress);
 			yield return DoInteractionClick(trollButton[0]);
 		}
 		else if (command.StartsWith("press"))
