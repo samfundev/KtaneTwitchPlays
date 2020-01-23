@@ -435,14 +435,13 @@ static class GameCommands
 		}
 
 		var _callsNeeded = TwitchGame.Instance.callsNeeded;
-		var _callsTotal = TwitchGame.Instance.callsTotal;
+		var _callsTotal = TwitchGame.Instance.CallingPlayers.Count;
 
 		// Only call if there are enough calls.
 		if (!(_callsTotal + 1 >= _callsNeeded) && !now)
 		{
-			TwitchGame.Instance.callsTotal++;
-			IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", _callsTotal + 1, _callsNeeded);
 			TwitchGame.Instance.CallingPlayers.Add(user);
+			CallCountCommand();
 			return;
 		}
 
@@ -489,8 +488,6 @@ static class GameCommands
 				return;
 			}
 		}
-
-		TwitchGame.Instance.callsTotal = 0;
 		TwitchGame.Instance.CallingPlayers.Clear();
 		TwitchGame.Instance.CommandQueue.Remove(call);
 		TwitchGame.ModuleCameras?.SetNotes();
@@ -532,13 +529,12 @@ static class GameCommands
 		}
 
 		TwitchGame.Instance.callsNeeded = minimum;
-		TwitchGame.Instance.callsTotal = 0;
 		TwitchGame.Instance.CallingPlayers.Clear();
 		IRCConnection.SendMessageFormat("Set minimum calls to {0}.", minimum);
 	}
 
 	[Command(@"call *count")]
-	public static void CallCountCommand(string user) => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.callsTotal, TwitchGame.Instance.callsNeeded);
+	public static void CallCountCommand() => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.CallingPlayers.Count, TwitchGame.Instance.callsNeeded);
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);

@@ -24,7 +24,6 @@ public class TwitchGame : MonoBehaviour
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
-	public int callsTotal = 0;
 	public List<string> CallingPlayers = new List<string>();
 
 #pragma warning disable 169
@@ -85,7 +84,6 @@ public class TwitchGame : MonoBehaviour
 		Leaderboard.Instance.ClearSolo();
 		LogUploader.Instance.Clear();
 		callsNeeded = 1;
-		callsTotal = 0;
 		CallingPlayers.Clear();
 
 		_bombStarted = false;
