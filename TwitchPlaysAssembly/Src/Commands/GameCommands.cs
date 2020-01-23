@@ -423,29 +423,34 @@ static class GameCommands
 		}
 	}
 
-	[Command(@"call( *now)?(?! *all| *set)( +.+)?")]
+	[Command(@"call( *now)?(?! *all| *set| *count)( +.+)?")]
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = name?.Trim();
 
+		if (TwitchGame.Instance.CallingPlayers.Contains(user))
+		{
+			IRCConnection.SendMessageFormat("@{0}, you already called!", user);
+			return;
+		}
+
+		var _callsNeeded = TwitchGame.Instance.callsNeeded;
+		var _callsTotal = TwitchGame.Instance.callsTotal;
+
+		// Only call if there are enough calls.
+		if (!(_callsTotal + 1 >= _callsNeeded) && !now)
+		{
+			TwitchGame.Instance.callsTotal++;
+			IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", _callsTotal + 1, _callsNeeded);
+			TwitchGame.Instance.CallingPlayers.Add(user);
+			return;
+		}
+
 		CommandQueueItem call = null;
 		if (string.IsNullOrEmpty(name))
 		{
-			TwitchGame.Instance.callsTotal++;
-
-			var _callsNeeded = TwitchGame.Instance.callsNeeded;
-			var _callsTotal = TwitchGame.Instance.callsTotal;
-
-			// Only call if there are enough calls.
-			if (!(_callsTotal >= _callsNeeded) && !now)
-			{
-				IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", _callsTotal, _callsNeeded);
-				return;
-			}
-
 			// Call the first unnamed item in the queue.
 			call = TwitchGame.Instance.CommandQueue.Find(item => item.Name == null);
-			TwitchGame.Instance.callsTotal = 0;
 
 			if (call == null)
 			{
@@ -485,9 +490,15 @@ static class GameCommands
 			}
 		}
 
+		TwitchGame.Instance.callsTotal = 0;
+		TwitchGame.Instance.CallingPlayers.Clear();
 		TwitchGame.Instance.CommandQueue.Remove(call);
 		TwitchGame.ModuleCameras?.SetNotes();
-		IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
+		IRCConnection.SendMessageFormat("{0} {1}: {2}", now 
+			? "Bypassing the required number of calls, calling" 
+			: TwitchGame.Instance.callsNeeded > 1 
+				? "Required calls reached, calling" 
+				: "Calling", call.Message.UserNickName, call.Message.Text);
 		IRCConnection.ReceiveMessage(call.Message);
 	}
 
@@ -512,18 +523,22 @@ static class GameCommands
 	}
 
 	[Command(@"call *set +(\d*)")]
-	public static void SetMinimumCalls(string user, [Group(1)] int minimum)
+	public static void CallSetCommand(string user, [Group(1)] int minimum)
 	{
-		if (minimum <= 0)
+		if (minimum <= 0 || minimum >= 25)
 		{
-			IRCConnection.SendMessageFormat("{0}, {1} is in invalid number of calls!", user, minimum);
+			IRCConnection.SendMessageFormat("@{0}, {1} is in invalid number of calls!", user, minimum);
 			return;
 		}
 
 		TwitchGame.Instance.callsNeeded = minimum;
 		TwitchGame.Instance.callsTotal = 0;
+		TwitchGame.Instance.CallingPlayers.Clear();
 		IRCConnection.SendMessageFormat("Set minimum calls to {0}.", minimum);
 	}
+
+	[Command(@"call *count")]
+	public static void CallCountCommand(string user) => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.callsTotal, TwitchGame.Instance.callsNeeded);
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
