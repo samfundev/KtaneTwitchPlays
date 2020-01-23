@@ -25,6 +25,7 @@ public class TwitchGame : MonoBehaviour
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
 	public int callsTotal = 0;
+	public List<string> CallingPlayers = new List<string>();
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
@@ -85,6 +86,7 @@ public class TwitchGame : MonoBehaviour
 		LogUploader.Instance.Clear();
 		callsNeeded = 1;
 		callsTotal = 0;
+		CallingPlayers.Clear();
 
 		_bombStarted = false;
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;
