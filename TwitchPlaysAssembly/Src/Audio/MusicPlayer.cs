@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -29,6 +30,45 @@ public class MusicPlayer : MonoBehaviour
 		foreach (MusicPlayer player in MusicPlayers.Values)
 		{
 			player.StopMusic();
+		}
+	}
+
+	public static void LoadMusic()
+	{
+		var interruptSource = MusicPlayers.Values.First().StartInterruptSound;
+
+		var musicDirectory = Path.Combine(Application.persistentDataPath, "ElevatorMusic");
+		if (!Directory.Exists(musicDirectory))
+			Directory.CreateDirectory(musicDirectory);
+
+		foreach (var file in Directory.GetFiles(musicDirectory))
+		{
+			if (Path.GetExtension(file).EqualsAny(".wav", ".ogg"))
+			{
+				try
+				{
+					AudioClip clip = new WWW("file:///" + file).GetAudioClip();
+					while (clip.loadState != AudioDataLoadState.Loaded)
+					{
+					}
+
+					var name = Path.GetFileName(file);
+					var musicObject = new GameObject(name);
+					musicObject.transform.parent = TwitchPlaysService.Instance.transform;
+					var musicPlayer = musicObject.AddComponent<MusicPlayer>();
+					var source = musicObject.AddComponent<AudioSource>();
+					source.loop = true;
+					source.clip = clip;
+
+					musicPlayer.StartInterruptSound = interruptSource;
+					musicPlayer.MusicLoopSound = source;
+					musicPlayer.EndInterruptSound = interruptSource;
+				}
+				catch (System.Exception ex)
+				{
+					DebugHelper.LogException(ex, $"Failed to load \"{file}\" because:");
+				}
+			}
 		}
 	}
 

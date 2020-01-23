@@ -23,8 +23,13 @@ public class TwitchGame : MonoBehaviour
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
+<<<<<<< HEAD
     public int callSet = 1;
     public int currentCall = 0;
+=======
+	public int callsNeeded = 1;
+	public int callsTotal = 0;
+>>>>>>> fe37f429e33b578a5ff716896a7f4b8c28c7a4d2
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
@@ -83,6 +88,8 @@ public class TwitchGame : MonoBehaviour
 		EnableDisableInput();
 		Leaderboard.Instance.ClearSolo();
 		LogUploader.Instance.Clear();
+		callsNeeded = 1;
+		callsTotal = 0;
 
 		_bombStarted = false;
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;

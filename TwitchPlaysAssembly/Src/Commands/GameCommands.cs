@@ -391,7 +391,7 @@ static class GameCommands
 	[Command(@"(?:(un)|(del)|(show|list))q(?:ueue)?(?: *(all)| +(.+))?")]
 	public static void UnqueueCommand(string user, bool isWhisper, [Group(1)] bool un, [Group(2)] bool del, [Group(3)] bool show, [Group(4)] bool all, [Group(5)] string command)
 	{
-		if ((del || (un && all)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+		if (del && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 		{
 			IRCConnection.SendMessage($"{user}, you don’t have moderator access.", user, !isWhisper);
 			return;
@@ -401,11 +401,15 @@ static class GameCommands
 			IRCConnection.SendMessage($"{user}, specify a command name or use “!{(del ? "del" : "un")}qall”.", user, !isWhisper);
 			return;
 		}
-		var matchingItems = all || (show && command.Trim() == "")
-			? TwitchGame.Instance.CommandQueue.Where(item => all || item.Message.UserNickName == user).ToArray()
-			: command.StartsWith("!")
-				? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
-				: TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
+		var matchingItems = all && un
+			? TwitchGame.Instance.CommandQueue.Where(item => item.Message.UserNickName == user).ToArray()
+			: all || (show && command.Trim() == "")
+				? TwitchGame.Instance.CommandQueue.Where(item => all || item.Message.UserNickName == user).ToArray()
+				: command.StartsWith("!")
+					? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
+					: command.Trim().Count() > 0
+						? TwitchGame.Instance.CommandQueue.Where(item => all || del || item.Message.UserNickName == user && item.Name != null && item.Name == command.Trim()).ToArray()
+						: TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
 		if (matchingItems.Length == 0)
 		{
 			IRCConnection.SendMessage(@"@{0}, no matching queued commands.", user, !isWhisper, user);
@@ -419,6 +423,7 @@ static class GameCommands
 		}
 	}
 
+<<<<<<< HEAD
     [Command(@"call *set ( +.+)")]
     public static void CallChangeSet(string user, bool isWhisper, [Group(1)] string calltrySet)
     {
@@ -500,6 +505,74 @@ static class GameCommands
         {
             IRCConnection.SendMessage("{0} of {1} calls now made.", currentCall, callSet);
         }
+=======
+	[Command(@"call( *now)?(?! *all| *set)( +.+)?")]
+	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
+	{
+		name = name?.Trim();
+
+		CommandQueueItem call = null;
+		if (string.IsNullOrEmpty(name))
+		{
+			TwitchGame.Instance.callsTotal++;
+
+			var _callsNeeded = TwitchGame.Instance.callsNeeded;
+			var _callsTotal = TwitchGame.Instance.callsTotal;
+
+			// Only call if there are enough calls.
+			if (!(_callsTotal >= _callsNeeded) && !now)
+			{
+				IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", _callsTotal, _callsNeeded);
+				return;
+			}
+
+			// Call the first unnamed item in the queue.
+			call = TwitchGame.Instance.CommandQueue.Find(item => item.Name == null);
+			TwitchGame.Instance.callsTotal = 0;
+
+			if (call == null)
+			{
+				IRCConnection.SendMessage($"@{user}, no unnamed commands in the queue.", user, !isWhisper);
+				return;
+			}
+		}
+		else if (name.StartsWith("!"))
+		{
+			name += ' ';
+
+			// Call an unnamed item in the queue for a specific module.
+			call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name) && item.Name == null);
+
+			if (call == null)
+			{
+				// If a named command exists, and no unnamed commands exist, then show the name of that command (but don't call it).
+				call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name));
+
+				if (call != null)
+					IRCConnection.SendMessage($"@{user}, module {name} is queued with the name “{call.Name}”, please use “!call {call.Name}” to call it.", user, !isWhisper);
+				else
+					IRCConnection.SendMessage($"@{user}, no commands for module {name} in the queue.", user, !isWhisper);
+
+				return;
+			}
+		}
+		else
+		{
+			// Call a named item in the queue.
+			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name.EqualsIgnoreCase(item.Name));
+
+			if (call == null)
+			{
+				IRCConnection.SendMessage($"@{user}, no commands named “{name}” in the queue.", user, !isWhisper);
+				return;
+			}
+		}
+
+		TwitchGame.Instance.CommandQueue.Remove(call);
+		TwitchGame.ModuleCameras?.SetNotes();
+		IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
+		IRCConnection.ReceiveMessage(call.Message);
+>>>>>>> fe37f429e33b578a5ff716896a7f4b8c28c7a4d2
 	}
 
 	[Command(@"call *all")]
@@ -520,6 +593,20 @@ static class GameCommands
 			IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
 			IRCConnection.ReceiveMessage(call.Message);
 		}
+	}
+
+	[Command(@"call *set +(\d*)")]
+	public static void SetMinimumCalls(string user, [Group(1)] int minimum)
+	{
+		if (minimum <= 0)
+		{
+			IRCConnection.SendMessageFormat("{0}, {1} is in invalid number of calls!", user, minimum);
+			return;
+		}
+
+		TwitchGame.Instance.callsNeeded = minimum;
+		TwitchGame.Instance.callsTotal = 0;
+		IRCConnection.SendMessageFormat("Set minimum calls to {0}.", minimum);
 	}
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
