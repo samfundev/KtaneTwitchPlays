@@ -26,6 +26,8 @@ public class CrypticPasswordComponentSolver : ComponentSolver
 		}
 		else if (split.Length == 2 && split[0].EqualsAny("press", "hit", "enter", "push", "submit") && split[1].Length == 6)
 		{
+			yield return null;
+
 			var word = split[1].ToUpperInvariant();
 			var displayLetters = component.GetValue<List<char>[]>("displayLetters");
 			for (int i = 0; i < 6; i++)
@@ -36,8 +38,6 @@ public class CrypticPasswordComponentSolver : ComponentSolver
 					yield break;
 				}
 			}
-
-			yield return null;
 
 			var displayIndices = component.GetValue<int[]>("displayIndices");
 			for (int i = 0; i < 6; i++)
