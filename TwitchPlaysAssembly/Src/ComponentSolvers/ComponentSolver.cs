@@ -492,9 +492,9 @@ public abstract class ComponentSolver
 		// Within the messages, allow variables:
 		// {0} = user’s nickname
 		// {1} = Code (module number)
-		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9])?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
+		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9]+)?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
 		{
-			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(match.Groups[3].Value, userNickName, Module.Code)));
+			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(match.Groups[2].Value, userNickName, Module.Code)));
 			return SendToTwitchChatResponse.InstantResponse;
 		}
 
