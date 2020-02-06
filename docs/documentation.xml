@@ -1,0 +1,667 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TwitchPlaysAssembly</name>
+    </assembly>
+    <members>
+        <member name="T:GlobalCommands">
+            <summary>Commands that can generally be used at any time.</summary>
+        </member>
+        <member name="M:GlobalCommands.Moderators(System.String,System.Boolean)">
+            <name>Moderators</name>
+            <syntax>moderators</syntax>
+            <summary>If enabled, sends to chat a list of users who have the moderator rank or above.</summary>
+        </member>
+        <member name="M:GlobalCommands.RunSpecific(System.String,System.Boolean,System.String,System.Int32,KMGameInfo)">
+            <name>Run Specific</name>
+            <syntax>run [distribution] [modules]</syntax>
+            <summary>Runs a distribution with a set number of modules.</summary>
+        </member>
+        <member name="T:GameCommands">
+            <summary>Commands that can be run during a game.</summary>
+        </member>
+        <member name="M:GameCommands.Cancel">
+            <name>Cancel</name>
+            <syntax>cancel</syntax>
+            <summary>Cancels the current running command.</summary>
+        </member>
+        <member name="M:GameCommands.Stop">
+            <name>Stop</name>
+            <syntax>stop</syntax>
+            <summary>Stops the current and queued commands.</summary>
+        </member>
+        <member name="M:GameCommands.ShowNotes(System.Int32,System.String,System.Boolean)">
+            <name>Get Notes</name>
+            <syntax>notes[note]</syntax>
+            <summary>Sends the contents of a note to chat.</summary>
+        </member>
+        <member name="M:GameCommands.SetNotes(System.Int32,System.String,System.String,System.Boolean)">
+            <name>Set Notes</name>
+            <syntax>notes[note] [contents]</syntax>
+            <summary>Sets the contents of a note.</summary>
+        </member>
+        <member name="M:GameCommands.SetNotesAppend(System.Int32,System.String,System.String,System.Boolean)">
+            <name>Append Notes</name>
+            <syntax>notes[note]append [contents]</syntax>
+            <summary>Appends the contents of a note.</summary>
+        </member>
+        <member name="M:GameCommands.SetNotesClear(System.Int32,System.String,System.Boolean)">
+            <name>Clear Notes</name>
+            <syntax>notes[note]clear</syntax>
+            <summary>Clears the contents of a note.</summary>
+        </member>
+        <member name="M:GameCommands.ShowClaims(System.String,System.Boolean)">
+            <name>Claims</name>
+            <syntax>claims</syntax>
+            <summary>Shows all of your claims.</summary>
+        </member>
+        <member name="M:GameCommands.ListUnclaimed(System.String,System.Boolean)">
+            <name>Unclaimed</name>
+            <syntax>unclaimed</syntax>
+            <summary>Sends a maximum of 3 unclaimed modules to chat.</summary>
+        </member>
+        <member name="M:GameCommands.ListUnsolved(System.String,System.Boolean)">
+            <name>Unsolved</name>
+            <syntax>unsolved</syntax>
+            <summary>Sends a maximum of 3 unsolved modules to chat.</summary>
+        </member>
+        <member name="M:GameCommands.EnqueueNamedCommand(IRCMessage,System.String,System.String)">
+            <name>Queue Named Command</name>
+            <syntax>queue [name] [command]</syntax>
+            <summary>Queues a command that can be called by name.</summary>
+        </member>
+        <member name="M:GameCommands.EnqueueUnnamedCommand(IRCMessage,System.String)">
+            <name>Queue Command</name>
+            <syntax>queue [command]</syntax>
+            <summary>Queues a command that will be called in order.</summary>
+        </member>
+        <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.Boolean,System.String)">
+            <name>Call Command</name>
+            <syntax>call (name)\ncallnow (name)</syntax>
+            <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
+        </member>
+        <member name="M:GameCommands.CallAllQueuedCommands(System.String,System.Boolean)">
+            <name>Call All</name>
+            <syntax>call all</syntax>
+            <summary>Calls all commands, including named ones.</summary>
+        </member>
+        <member name="M:GameCommands.CallSetCommand(System.String,System.Int32)">
+            <name>Call Set</name>
+            <syntax>call set [minimum]</syntax>
+            <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
+        </member>
+        <member name="M:GameCommands.SolveBomb">
+            <name>Solve Bomb</name>
+            <syntax>solvebomb</syntax>
+            <summary>Solves the currently held bomb.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GameCommands.AssignModuleTo(System.String,System.String,System.String)">
+            <name>Assign</name>
+            <syntax>assign [user] [codes]</syntax>
+            <summary>Assigns modules to a user based on their module codes.</summary>
+        </member>
+        <member name="T:AlarmClockCommands">
+            <summary>Commands for the alarm clock.</summary>
+        </member>
+        <member name="M:AlarmClockCommands.Snooze(TwitchHoldable,System.String,System.Boolean)">
+            <name>Snooze</name>
+            <syntax>snooze</syntax>
+            <summary>Hits the snooze button on the alarm clock.</summary>
+        </member>
+        <member name="T:IRCConnectionManagerCommands">
+            <summary>Commands for the IRC Connection Holdable.</summary>
+        </member>
+        <member name="M:IRCConnectionManagerCommands.Disconnect(TwitchHoldable,System.String,System.Boolean)">
+            <name>Disconnect</name>
+            <syntax>disconnect</syntax>
+            <summary>Presses the disconnect button.</summary>
+            <restriction>Streamer</restriction>
+        </member>
+        <member name="T:MissionBinderCommands">
+            <summary>Commands that can be used in the bomb binder.</summary>
+            <prefix>binder </prefix>
+        </member>
+        <member name="M:MissionBinderCommands.Select(FloatingHoldable)">
+            <name>Select</name>
+            <syntax>select</syntax>
+            <summary>Selects the currently highlighted item.</summary>
+        </member>
+        <member name="M:MissionBinderCommands.SelectIndex(FloatingHoldable,System.Int32)">
+            <name>Select Index</name>
+            <syntax>select [index]</syntax>
+            <summary>Selects an item based on it's index on the page.</summary>
+        </member>
+        <member name="M:MissionBinderCommands.Navigate(System.String,System.Nullable{System.Int32})">
+            <name>Up / Down</name>
+            <syntax>up (amount)\ndown (amount)</syntax>
+            <summary>Moves up or down the page by a number items.</summary>
+        </member>
+        <member name="M:MissionBinderCommands.Search(FloatingHoldable,System.String)">
+            <name>Search</name>
+            <syntax>search [query]</syntax>
+            <summary>Searches the binder for a mission.</summary>
+        </member>
+        <member name="T:BombCommands">
+            <summary>Commands related to the bomb.</summary>
+            <prefix>bomb </prefix>
+        </member>
+        <member name="M:BombCommands.Help(System.String,System.Boolean)">
+            <name>Help</name>
+            <syntax>help</syntax>
+            <summary>Gives you information about various bomb commands.</summary>
+        </member>
+        <member name="M:BombCommands.TurnBomb(TwitchBomb)">
+            <name>Turn</name>
+            <syntax>turn</syntax>
+            <summary>Turns the bomb around.</summary>
+        </member>
+        <member name="M:BombCommands.Hold(TwitchBomb)">
+            <name>Hold</name>
+            <syntax>hold</syntax>
+            <summary>Holds the bomb.</summary>
+        </member>
+        <member name="M:BombCommands.Drop(TwitchBomb)">
+            <name>Drop</name>
+            <syntax>drop</syntax>
+            <summary>Drops the bomb.</summary>
+        </member>
+        <member name="M:BombCommands.Throw(TwitchBomb,System.Nullable{System.Int32})">
+            <name>Throw</name>
+            <syntax>throw (strength)</syntax>
+            <summary>Throws the bomb. (strength) is how much force the bomb is thrown with.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.EdgeworkElevator(TwitchBomb,System.String,System.String,System.Boolean)">
+            <name>Elevator Edgework</name>
+            <syntax>edgework (wall)</syntax>
+            <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
+            <restriction>ElevatorOnly</restriction>
+        </member>
+        <member name="M:BombCommands.Edgework(TwitchBomb,System.String,System.String,System.Boolean)">
+            <name>Edgework</name>
+            <syntax>edgework (edge)\nedgework 45</syntax>
+            <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
+            <restriction>ElevatorDisallowed</restriction>
+        </member>
+        <member name="M:BombCommands.Time(TwitchBomb,System.String,System.Boolean)">
+            <name>Time</name>
+            <syntax>time</syntax>
+            <summary>Sends a message with how much time is left.</summary>
+        </member>
+        <member name="M:BombCommands.Timestamp(TwitchBomb,System.String,System.Boolean)">
+            <name>Timestamp</name>
+            <syntax>timestamp</syntax>
+            <summary>Sends a message with when the bomb started.</summary>
+        </member>
+        <member name="M:BombCommands.Explode(TwitchBomb,System.String,System.Boolean)">
+            <name>End Zen Mode</name>
+            <syntax>endzenmode</syntax>
+            <summary>Ends a zen mode bomb. Requires either Defuser rank or a minimum score.</summary>
+        </member>
+        <member name="M:BombCommands.Explode(TwitchBomb)">
+            <name>Explode</name>
+            <syntax>explode</syntax>
+            <summary>Forces the bomb to explode.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:BombCommands.Status(TwitchBomb,System.String,System.Boolean)">
+            <name>Status</name>
+            <syntax>status</syntax>
+            <summary>Sends a message with the current status of the bomb. Including things like time, strikes and solves.</summary>
+        </member>
+        <member name="M:BombCommands.Pause(TwitchBomb)">
+            <name>Pause</name>
+            <syntax>pause</syntax>
+            <summary>Pauses the bomb timer.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.Unpause(TwitchBomb)">
+            <name>Unpause</name>
+            <syntax>unpause</syntax>
+            <summary>Starts the bomb timer.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.ChangeTimer(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.String)">
+            <name>Change Timer</name>
+            <syntax>add time [time]\nsubstract time [time]\nset time [time]</syntax>
+            <summary>Adds, substracts or sets the bomb time.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.ChangeStrikeParameter(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+            <name>Change Strikes</name>
+            <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
+            <summary>Adds, substracts or sets the number of strikes.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="T:HoldableCommands">
+            <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
+        </member>
+        <member name="M:HoldableCommands.Hold(TwitchHoldable)">
+            <name>Hold</name>
+            <syntax>hold</syntax>
+            <summary>Holds the holdable.</summary>
+        </member>
+        <member name="M:HoldableCommands.Drop(TwitchHoldable)">
+            <name>Drop</name>
+            <syntax>drop</syntax>
+            <summary>Drops the holdable.</summary>
+        </member>
+        <member name="M:HoldableCommands.Flip(TwitchHoldable)">
+            <name>Turn</name>
+            <syntax>turn</syntax>
+            <summary>Turns the holdable around.</summary>
+        </member>
+        <member name="M:HoldableCommands.Throw(FloatingHoldable,System.Nullable{System.Int32})">
+            <name>Throw</name>
+            <syntax>throw\nthrow 10</syntax>
+            <summary>Throws the holdable with an optional strength.</summary>
+        </member>
+        <member name="T:FreeplayCommands">
+            <summary>Commands for the freeplay briefcase.</summary>
+            <prefix>freeplay </prefix>
+        </member>
+        <member name="M:FreeplayCommands.Needy(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
+            <name>Needy</name>
+            <syntax>needy on\nneedy off</syntax>
+            <summary>Enables or disables the needy switch.</summary>
+        </member>
+        <member name="M:FreeplayCommands.Hardcore(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
+            <name>Hardcore</name>
+            <syntax>hardcore on\nhardcore off</syntax>
+            <summary>Enables or disables the hardcore switch.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ModsOnly(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
+            <name>Mods Only</name>
+            <syntax>mods only\nmods only off</syntax>
+            <summary>Enables or disables the mods only.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ChangeTimerHours(FloatingHoldable,System.Int32,System.Int32,System.Int32)">
+            <name>Set Time</name>
+            <syntax>time (hours):[minutes]:[seconds]</syntax>
+            <summary>Sets the amount of time the bomb will have.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ChangeBombCount(FloatingHoldable,System.Int32)">
+            <name>Set Bombs</name>
+            <syntax>bombs [bombs]</syntax>
+            <summary>Sets the number of bombs.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ChangeModuleCount(FloatingHoldable,System.Int32)">
+            <name>Set Modules</name>
+            <syntax>modules [modules]</syntax>
+            <summary>Sets the number of modules each bomb will have.</summary>
+        </member>
+        <member name="M:FreeplayCommands.Start(FloatingHoldable)">
+            <name>Start</name>
+            <syntax>start</syntax>
+            <summary>Start the game.</summary>
+        </member>
+        <member name="M:FreeplayCommands.StartAdvanced(FloatingHoldable,System.String,System.String,System.String,System.Boolean)">
+            <name>Advanced Set / Start</name>
+            <syntax>set [parameters]\nstart [parameters]</syntax>
+            <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, needy, hardcore, needy.</summary>
+        </member>
+        <member name="T:ModuleCommands">
+            <summary>Commands that can be run on a module.</summary>
+        </member>
+        <member name="M:ModuleCommands.Help(TwitchModule,System.Boolean)">
+            <name>Help</name>
+            <syntax>help</syntax>
+            <summary>Sends a message to chat with information on what commands you can use to solve the module.</summary>
+            <restriction>SolvedAllowed</restriction>
+        </member>
+        <member name="M:ModuleCommands.Player(TwitchModule,System.String)">
+            <name>Player</name>
+            <syntax>player</syntax>
+            <summary>Tells you what user has the module claimed.</summary>
+            <restriction>SolvedAllowed</restriction>
+        </member>
+        <member name="M:ModuleCommands.Claim(TwitchModule,System.String,System.Boolean)">
+            <name>Claim</name>
+            <syntax>claim</syntax>
+            <summary>Claims the module or queues to claim it if it's already claimed.</summary>
+        </member>
+        <member name="M:ModuleCommands.Unview(TwitchModule)">
+            <name>Unview</name>
+            <syntax>unview</syntax>
+            <summary>Stops viewing the module with a camera.</summary>
+        </member>
+        <member name="M:ModuleCommands.View(TwitchModule,System.String,System.String)">
+            <name>Player</name>
+            <syntax>player</syntax>
+            <summary>Tells you what user has the module claimed.</summary>
+        </member>
+        <member name="M:ModuleCommands.Show(TwitchModule)">
+            <name>Show</name>
+            <syntax>show</syntax>
+            <summary>Selects the module on the bomb.</summary>
+        </member>
+        <member name="M:ModuleCommands.Solve(TwitchModule,System.String)">
+            <name>Solve</name>
+            <syntax>solve</syntax>
+            <summary>Forces a module to solve itself. Requires either Admin rank or the module to not be supported on TP.</summary>
+        </member>
+        <member name="M:ModuleCommands.Unclaim(TwitchModule,System.String,System.String)">
+            <name>Unclaim</name>
+            <syntax>unclaim\nunclaim unview</syntax>
+            <summary>Releases your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
+        </member>
+        <member name="T:PostGameCommands">
+            <summary>Commands that be used on the post game screen.</summary>
+        </member>
+        <member name="M:PostGameCommands.Continue">
+            <name>Continue / Back</name>
+            <syntax>continue\nback</syntax>
+            <summary>Presses either the continue or back button.</summary>
+        </member>
+        <member name="M:PostGameCommands.Retry(System.String,System.Boolean)">
+            <name>Retry</name>
+            <syntax>retry</syntax>
+            <summary>If enabled, retries the mission.</summary>
+        </member>
+        <member name="M:ComponentSolverFactory.CreateModComponentSolver(TwitchModule,System.String,System.String)">
+            <summary>Returns the solver for a specific module. If there is a shim or a built-in solver, it will return that.</summary>
+        </member>
+        <member name="M:ComponentSolverFactory.CreateDefaultModComponentSolver(TwitchModule,System.String,System.String,System.Boolean)">
+            <summary>Returns a solver that relies on the module’s own implementation, bypassing built-in solvers and shims.</summary>
+        </member>
+        <member name="M:GeneralExtensions.AddSafe``2(System.Collections.Generic.IDictionary{``0,System.Collections.Generic.List{``1}},``0,``1)">
+            <summary>
+                Adds an element to a List&lt;V&gt; stored in the current IDictionary&lt;K, List&lt;V&gt;&gt;. If the specified key
+                does not exist in the current IDictionary, a new List is created.</summary>
+            <typeparam name="K">
+                Type of the key of the IDictionary.</typeparam>
+            <typeparam name="V">
+                Type of the values in the Lists.</typeparam>
+            <param name="dic">
+                IDictionary to operate on.</param>
+            <param name="key">
+                Key at which the list is located in the IDictionary.</param>
+            <param name="value">
+                Value to add to the List located at the specified Key.</param>
+        </member>
+        <member name="M:GeneralExtensions.IndexOf``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+                Returns the index of the first element in this <paramref name="source"/> satisfying the specified <paramref
+                name="predicate"/>. If no such elements are found, returns <c>-1</c>.</summary>
+        </member>
+        <member name="M:GeneralExtensions.SplitFull(System.String,System.Char[])">
+            <summary>Splits a string using the <paramref name="seperator"/> provided and removing empty entries.</summary>
+            <param name="value">The string to split.</param>
+            <param name="seperator">The seperators to split by.</param>
+        </member>
+        <member name="M:GeneralExtensions.ToIndex(System.Char)">
+            <summary>Converts a lowercase <paramref name="character"/> into a zero-based index. Supports a-z and 1-9.</summary>
+            <param name="character">The character to convert into a index.</param>
+        </member>
+        <member name="M:GeneralExtensions.FirstOrWhole(System.String,System.String)">
+            <summary>Checks if <paramref name="value"/> has the same first letter or is equal to <paramref name="match"/>.</summary>
+            <param name="value">The string to check against the match.</param>
+            <param name="match">The string to match.</param>
+        </member>
+        <member name="M:IRCMessage.Duplicate(System.String)">
+            <summary>
+            Creates a duplicate <see cref="T:IRCMessage">Message</see> object with the Text changed.
+            </summary>
+            <param name="text">The Message's new text.</param>
+            <returns>Returns a duplicate <see cref="T:IRCMessage">Message</see> object with the new Text.</returns>
+        </member>
+        <member name="T:IRCConnection.NetworkStreamLineReader">
+            <summary>
+            A <see cref="T:System.IO.TextReader"/> that reads lines from a <see cref="T:System.Net.Sockets.NetworkStream"/> and will check to see if any data is available to avoid blocking.
+            Allows you specify a seperate stream to read from if you have another stream (like a <see cref="T:System.Net.Security.SslStream"/>) wrapping your <see cref="T:System.Net.Sockets.NetworkStream"/>.
+            </summary>
+        </member>
+        <member name="M:IRCConnection.NetworkStreamLineReader.ReadLine">
+            <summary>
+            Attempts to read a line from the <see cref="T:System.IO.Stream"/>. Returns null if a line isn't available.
+            </summary>
+        </member>
+        <member name="T:MainThreadQueue">
+            <summary>
+            Allows the execution of a function with the guarantee that it will run on Unity's mainthread.
+            </summary>
+        </member>
+        <member name="M:MainThreadQueue.Initialize">
+            <summary>
+            Stores the current thread ID, allowing enqueued functions to execute immediately if they were already on Unity's mainthread.
+            Must be called from Unity's mainthread to work properly.
+            </summary>
+        </member>
+        <member name="M:MainThreadQueue.ProcessQueue">
+            <summary>
+            Runs all enqueued functions.
+            Must be called from Unity's mainthread to work properly.
+            </summary>
+        </member>
+        <member name="T:System.IO.Compression.ZipStorer">
+            <summary>
+            Unique class for compression/decompression file. Represents a Zip file.
+            </summary>
+        </member>
+        <member name="T:System.IO.Compression.ZipStorer.Compression">
+            <summary>
+            Compression method enumeration
+            </summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.Compression.Store">
+            <summary>Uncompressed storage</summary> 
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.Compression.Deflate">
+            <summary>Deflate compression method</summary>
+        </member>
+        <member name="T:System.IO.Compression.ZipStorer.ZipFileEntry">
+            <summary>
+            Represents an entry in Zip file directory
+            </summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Method">
+            <summary>Compression method</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.FilenameInZip">
+            <summary>Full path and filename as stored in Zip</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.FileSize">
+            <summary>Original file size</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.CompressedSize">
+            <summary>Compressed file size</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.HeaderOffset">
+            <summary>Offset of header information inside Zip storage</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.FileOffset">
+            <summary>Offset of file inside Zip storage</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.HeaderSize">
+            <summary>Size of header information</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Crc32">
+            <summary>32-bit checksum of entire file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.ModifyTime">
+            <summary>Last modification time of file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Comment">
+            <summary>User comment for file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.EncodeUTF8">
+            <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ZipFileEntry.ToString">
+            <summary>Overriden method</summary>
+            <returns>Filename in Zip</returns>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.EncodeUTF8">
+            <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ForceDeflating">
+            <summary>Force deflate algotithm even if it inflates the stored file. Off by default.</summary>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Create(System.String,System.String)">
+            <summary>
+            Method to create a new storage file
+            </summary>
+            <param name="_filename">Full path of Zip file to create</param>
+            <param name="_comment">General comment for Zip file</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Create(System.IO.Stream,System.String,System.Boolean)">
+            <summary>
+            Method to create a new zip storage in a stream
+            </summary>
+            <param name="_stream"></param>
+            <param name="_comment"></param>
+            <param name="_leaveOpen">true to leave the stream open after the ZipStorer object is disposed; otherwise, false (default).</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Open(System.String,System.IO.FileAccess)">
+            <summary>
+            Method to open an existing storage file
+            </summary>
+            <param name="_filename">Full path of Zip file to open</param>
+            <param name="_access">File access mode as used in FileStream constructor</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Open(System.IO.Stream,System.IO.FileAccess,System.Boolean)">
+            <summary>
+            Method to open an existing storage from stream
+            </summary>
+            <param name="_stream">Already opened stream with zip contents</param>
+            <param name="_access">File access mode for stream operations</param>
+            <param name="_leaveOpen">true to leave the stream open after the ZipStorer object is disposed; otherwise, false (default).</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddFile(System.IO.Compression.ZipStorer.Compression,System.String,System.String,System.String)">
+            <summary>
+            Add full contents of a file into the Zip storage
+            </summary>
+            <param name="_method">Compression method</param>
+            <param name="_pathname">Full path of file to add to Zip storage</param>
+            <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
+            <param name="_comment">Comment for stored file</param>        
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddStream(System.IO.Compression.ZipStorer.Compression,System.String,System.IO.Stream,System.DateTime,System.String)">
+            <summary>
+            Add full contents of a stream into the Zip storage
+            </summary>
+            <param name="_method">Compression method</param>
+            <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
+            <param name="_source">Stream object containing the data to store in Zip</param>
+            <param name="_modTime">Modification time of the data to store</param>
+            <param name="_comment">Comment for stored file</param>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Close">
+            <summary>
+            Updates central directory (if pertinent) and close the Zip storage
+            </summary>
+            <remarks>This is a required step, unless automatic dispose is used</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ReadCentralDir">
+            <summary>
+            Read all the file records in the central directory 
+            </summary>
+            <returns>List of all entries in directory</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.String)">
+            <summary>
+            Copy the contents of a stored file into a physical file
+            </summary>
+            <param name="_zfe">Entry information of file to extract</param>
+            <param name="_filename">Name of file to store uncompressed data</param>
+            <returns>True if success, false if not.</returns>
+            <remarks>Unique compression methods are Store and Deflate</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.IO.Stream)">
+            <summary>
+            Copy the contents of a stored file into an opened stream
+            </summary>
+            <param name="_zfe">Entry information of file to extract</param>
+            <param name="_stream">Stream to store the uncompressed data</param>
+            <returns>True if success, false if not.</returns>
+            <remarks>Unique compression methods are Store and Deflate</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.Byte[]@)">
+            <summary>
+            Copy the contents of a stored file into a byte array
+            </summary>
+            <param name="_zfe">Entry information of file to extract</param>
+            <param name="_file">Byte array with uncompressed data</param>
+            <returns>True if success, false if not.</returns>
+            <remarks>Unique compression methods are Store and Deflate</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.RemoveEntries(System.IO.Compression.ZipStorer@,System.Collections.Generic.List{System.IO.Compression.ZipStorer.ZipFileEntry})">
+            <summary>
+            Removes one of many files in storage. It creates a new Zip file.
+            </summary>
+            <param name="_zip">Reference to the current Zip object</param>
+            <param name="_zfes">List of Entries to remove from storage</param>
+            <returns>True if success, false if not</returns>
+            <remarks>This method only works for storage of type FileStream</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Dispose">
+            <summary>
+            Closes the Zip file stream
+            </summary>
+        </member>
+        <member name="T:TwitchGame">
+            <summary>Encapsulates an ongoing game, with all its bombs, module cameras, HUDs etc.</summary>
+        </member>
+        <member name="T:CommandAttribute">
+            <summary>Marks a method as a command understood by the Twitch Plays system.</summary>
+        </member>
+        <member name="P:CommandAttribute.Regex">
+            <summary>
+                A regular expression that matches all forms of the command. Note that which part of the command is matched against
+                this regex depends on what type of command it is (global, module, bomb, or holdable).</summary>
+        </member>
+        <member name="P:CommandAttribute.AccessLevel">
+            <summary>Access level required to use this command.</summary>
+        </member>
+        <member name="P:CommandAttribute.AccessLevelAnarchy">
+            <summary>Access level required to use this command when anarchy mode is enabled.</summary>
+        </member>
+        <member name="M:CommandAttribute.#ctor(System.String,AccessLevel,AccessLevel)">
+            <summary>Constructor.</summary>
+        </member>
+        <member name="T:SolvedAllowedAttribute">
+            <summary>Marks a module command as a command that can be used even if the module is already solved.</summary>
+        </member>
+        <member name="T:ElevatorOnlyAttribute">
+            <summary>Specifies a bomb command or game command that can only be used in the Elevator room.</summary>
+        </member>
+        <member name="T:ElevatorDisallowedAttribute">
+            <summary>Specifies a bomb command or game command that cannot be used in the Elevator room.</summary>
+        </member>
+        <member name="T:DebuggingOnlyAttribute">
+            <summary>Specifies a command that can only be used if the EnableDebuggingCommands setting is enabled.</summary>
+        </member>
+        <member name="F:CameraPriority.Unviewed">
+            <summary>This module was explicitly unviewed OR never interacted with.</summary>
+        </member>
+        <member name="F:CameraPriority.Interacted">
+            <summary>This module was interacted with but not claimed or explicitly viewed.</summary>
+        </member>
+        <member name="F:CameraPriority.Claimed">
+            <summary>This module was claimed, but not explicitly viewed.</summary>
+        </member>
+        <member name="F:CameraPriority.Viewed">
+            <summary>This module was explicitly viewed.</summary>
+        </member>
+        <member name="F:CameraPriority.Pinned">
+            <summary>This module is pinned.</summary>
+        </member>
+        <member name="F:ModuleCameras.DefaultCameraLayer">
+            <summary>
+                Camera layer used on all modules/cameras when interactive mode is enabled.</summary>
+            <remarks>
+                This needs to be 11 because that’s what KTANE expects for interactables.</remarks>
+        </member>
+        <member name="F:ModuleCameras.ModuleCamera.CameraLayer">
+            <summary>Camera layer used when interactive mode is NOT enabled.</summary>
+        </member>
+        <member name="T:TwitchBomb">
+            <summary>Encapsulates a bomb (of which there may be multiple in a game).</summary>
+        </member>
+    </members>
+</doc>

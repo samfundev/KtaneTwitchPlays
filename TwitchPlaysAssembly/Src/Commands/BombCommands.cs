@@ -2,28 +2,54 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>Commands related to the bomb.</summary>
+/// <prefix>bomb </prefix>
 public static class BombCommands
 {
 	#region Commands
+	/// <name>Help</name>
+	/// <syntax>help</syntax>
+	/// <summary>Gives you information about various bomb commands.</summary>
 	[Command("help")]
 	public static void Help(string user, bool isWhisper) => IRCConnection.SendMessage(TwitchPlaySettings.data.BombHelp, user, !isWhisper);
 
+	/// <name>Turn</name>
+	/// <syntax>turn</syntax>
+	/// <summary>Turns the bomb around.</summary>
 	[Command(@"(turn|turn round|turn around|rotate|flip|spin)")]
 	public static IEnumerator TurnBomb(TwitchBomb bomb) => bomb.TurnBomb();
 
+	/// <name>Hold</name>
+	/// <syntax>hold</syntax>
+	/// <summary>Holds the bomb.</summary>
 	[Command(@"(hold|pick up)")]
 	public static IEnumerator Hold(TwitchBomb bomb) => bomb.HoldBomb();
+	/// <name>Drop</name>
+	/// <syntax>drop</syntax>
+	/// <summary>Drops the bomb.</summary>
 	[Command(@"(drop|let go|put down)")]
 	public static IEnumerator Drop(TwitchBomb bomb) => bomb.LetGoBomb();
 
+	/// <name>Throw</name>
+	/// <syntax>throw (strength)</syntax>
+	/// <summary>Throws the bomb. (strength) is how much force the bomb is thrown with.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"(?:throw|yeet) *(\d+)?", AccessLevel.Admin, AccessLevel.Admin)]
 	public static IEnumerator Throw(TwitchBomb bomb, [Group(1)] int? strength = 5)
 	{
 		yield return HoldableCommands.Throw(bomb.Bomb.GetComponent<FloatingHoldable>(), strength);
 	}
 
+	/// <name>Elevator Edgework</name>
+	/// <syntax>edgework (wall)</syntax>
+	/// <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
+	/// <restriction>ElevatorOnly</restriction>
 	[Command(@"edgework((?: right| left| back| r| l| b)?)"), ElevatorOnly]
 	public static IEnumerator EdgeworkElevator(TwitchBomb bomb, [Group(1)] string edge, string user, bool isWhisper) => Edgework(bomb, edge, user, isWhisper);
+	/// <name>Edgework</name>
+	/// <syntax>edgework (edge)\nedgework 45</syntax>
+	/// <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
+	/// <restriction>ElevatorDisallowed</restriction>
 	[Command(@"edgework((?: 45|-45)|(?: top right| right top| right bottom| bottom right| bottom left| left bottom| left top| top left| left| top| right| bottom| tr| rt| tl| lt| br| rb| bl| lb| t| r| b| l))?"), ElevatorDisallowed]
 	public static IEnumerator Edgework(TwitchBomb bomb, [Group(1)] string edge, string user, bool isWhisper)
 	{
@@ -36,11 +62,20 @@ public static class BombCommands
 		}
 	}
 
+	/// <name>Time</name>
+	/// <syntax>time</syntax>
+	/// <summary>Sends a message with how much time is left.</summary>
 	[Command(@"(timer?|clock)")]
 	public static void Time(TwitchBomb bomb, string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeRemaining, bomb.GetFullFormattedTime, bomb.GetFullStartingTime), user, !isWhisper);
+	/// <name>Timestamp</name>
+	/// <syntax>timestamp</syntax>
+	/// <summary>Sends a message with when the bomb started.</summary>
 	[Command(@"(timestamp|date)")]
 	public static void Timestamp(TwitchBomb bomb, string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bomb.BombTimeStamp), user, !isWhisper);
 
+	/// <name>End Zen Mode</name>
+	/// <syntax>endzenmode</syntax>
+	/// <summary>Ends a zen mode bomb. Requires either Defuser rank or a minimum score.</summary>
 	[Command(@"endzenmode")]
 	public static IEnumerator Explode(TwitchBomb bomb, string user, bool isWhisper)
 	{
@@ -66,9 +101,16 @@ public static class BombCommands
 		return bomb.DelayBombExplosionCoroutine();
 	}
 
+	/// <name>Explode</name>
+	/// <syntax>explode</syntax>
+	/// <summary>Forces the bomb to explode.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"(explode|detonate|kapow)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static IEnumerator Explode(TwitchBomb bomb) => bomb.DelayBombExplosionCoroutine();
 
+	/// <name>Status</name>
+	/// <syntax>status</syntax>
+	/// <summary>Sends a message with the current status of the bomb. Including things like time, strikes and solves.</summary>
 	[Command(@"(status|info)")]
 	public static void Status(TwitchBomb bomb, string user, bool isWhisper)
 	{
@@ -90,6 +132,10 @@ public static class BombCommands
 		}
 	}
 
+	/// <name>Pause</name>
+	/// <syntax>pause</syntax>
+	/// <summary>Pauses the bomb timer.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"pause", AccessLevel.Admin)]
 	public static void Pause(TwitchBomb bomb)
 	{
@@ -98,6 +144,10 @@ public static class BombCommands
 			bomb.Bomb.GetTimer().StopTimer();
 		}
 	}
+	/// <name>Unpause</name>
+	/// <syntax>unpause</syntax>
+	/// <summary>Starts the bomb timer.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"(unpause|resume)", AccessLevel.Admin)]
 	public static void Unpause(TwitchBomb bomb)
 	{
@@ -105,6 +155,10 @@ public static class BombCommands
 			bomb.Bomb.GetTimer().StartTimer();
 	}
 
+	/// <name>Change Timer</name>
+	/// <syntax>add time [time]\nsubstract time [time]\nset time [time]</syntax>
+	/// <summary>Adds, substracts or sets the bomb time.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:time|t) +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ChangeTimer(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] string amount)
 	{
@@ -153,6 +207,10 @@ public static class BombCommands
 			: $"{(negativeTime ? "Subtracted" : "Added")} {Math.Abs(time).FormatTime()} {(negativeTime ? "from" : "to")} the timer.", user, !isWhisper);
 	}
 
+	/// <name>Change Strikes</name>
+	/// <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
+	/// <summary>Adds, substracts or sets the number of strikes.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:(strikes?|s)|strikelimit|sl|maxstrikes?|ms) +(-?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ChangeStrikeParameter(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] bool isStrikes, [Group(4)] int amount)
 	{

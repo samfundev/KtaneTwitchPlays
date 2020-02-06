@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
     <CodeAnalysisRuleSet>TwitchPlaysAssembly.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>..\docs\documentation.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <GameFolder Condition="'$(GameFolder)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\</GameFolder>

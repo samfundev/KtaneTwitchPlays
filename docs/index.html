@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+		<title>Twitch Plays: KTANE reference</title>
+		<script>			
+			function el(tagName, className, ...args)
+			{
+				const element = document.createElement(tagName);
+				if (className) element.className = className;
+				for (const arg of args)
+				{
+					if (arg instanceof HTMLElement)
+						element.appendChild(arg);
+					else if (typeof arg !== "object")
+						element.appendChild(document.createTextNode(arg));
+					else
+						for (const attr in arg)
+						{
+							if (typeof arg[attr] === 'function')
+								element[attr] = arg[attr];
+							else if (arg[attr] !== undefined && arg[attr] !== null)
+								element.setAttribute(attr, arg[attr]);
+						}
+				}
+				return element;
+			}
+			
+			fetch("documentation.xml").then(response => {
+				if (!response.ok)
+					throw Error(`Failed to get resource: ${response.status}`);
+
+				return response.text();
+			})
+			.then(text => {					
+				const parser = new DOMParser();
+				const xmlDoc = parser.parseFromString(text, "text/xml");
+				parseDocumentation(xmlDoc.getElementsByTagName("members")[0]);
+			})
+			.catch(console.error);
+
+			const restrictionDescriptions = {
+				Streamer: "Can only be used by the streamer.",
+				SuperUser: "Can only be used by super users.",
+				Admin: "Can only be used by admins.",
+				Mod: "Can only be used by moderators.",
+				Defuser: "Can only be used by whitelisted users.",
+
+				ElevatorOnly: "Can only be used in the elevator.",
+				ElevatorDisallowed: "Cannot be used in the elevator.",
+				SolvedAllowed: "Can be still used when the module is solved.",
+			};
+
+			function parseArguments(element) {
+				element.innerHTML = element.textContent.replace(/([\[(].+?[)\]])/g, (match, argument) => {
+					return `<i class="argument" title="${match.startsWith("[") ? "Required argument." : "Optional argument." }">${argument}</i>`;
+				});
+				
+				return element;
+			}
+
+			function parseDocumentation(members) {
+				const content = document.getElementsByClassName("content")[0];
+				const sidebar = document.getElementsByClassName("sidebar")[0];
+				let section;
+				let sidebarList;
+				let commandPrefix = "";
+
+				for (let i = 0; i < members.children.length; i++) {
+					const member = members.children[i];
+					const name = member.getAttribute("name");
+					const match = name.match(/([TM]):(.+)Commands/);
+					
+					if (match === null) {
+						continue;
+					}
+					
+					if (match[1] == "T") {
+						const properName = match[2].replace(/[A-Z]*(?=[A-Z])/g, "$& ");
+						content.appendChild(
+							el("div", "header",
+								{ id: match[2] },
+								el("h2", null, properName),
+								el("span", null, member.getElementsByTagName("summary")[0].textContent)
+							)
+						);
+
+						const headerRow = el("tr");
+						const headers = ["Command", "Usage", "Description"];
+						for (let header of headers)
+							headerRow.appendChild(el("th", null, header));
+
+						section = el("table", null, headerRow);
+						content.appendChild(section);
+
+						const prefixTags = member.getElementsByTagName("prefix");
+						commandPrefix = prefixTags.length == 1 ? prefixTags[0].textContent : "";
+
+						sidebar.appendChild(el("a", null, { href: `#${match[2]}` }, properName));
+						sidebarList = el("ul");
+						sidebar.appendChild(sidebarList);
+					} else if (match[1] == "M") {
+						const commandName = member.getElementsByTagName("name")[0].textContent;
+						const restrictionTags = member.getElementsByTagName("restriction");
+						const restrictions = restrictionTags.length == 1 ? restrictionTags[0].textContent : "";
+
+						section.appendChild(
+							el("tr", null,
+								{ id: `${match[2]}-${commandName}` },
+								el("td", null, commandName),
+								el("td", null, parseArguments(el("pre", null, member.getElementsByTagName("syntax")[0].textContent.split(/\\n/g).map(command => "!" + commandPrefix + command).join("\n") ))),
+								el("td", null, 
+									parseArguments(el("span", null, member.getElementsByTagName("summary")[0].textContent)),
+									restrictions == "" ? null : el("div", null, ...restrictions.split(", ").map(restriction => el("span", `restriction ${restriction}`, restriction, { title: restrictionDescriptions[restriction] || "" })))
+								)
+							)
+						);
+
+						sidebarList.appendChild(el("li", null, el("a", null, { href: `#${match[2]}-${commandName}` }, commandName)));
+					}
+				}
+			}
+		</script>
+		<style>
+			body {
+				display: grid;
+				grid-template-columns: auto 1fr;
+				grid-gap: 10px;
+				background: lightgray;
+			}
+
+			.sidebar, .content {
+				background: white;
+				padding: 10px;
+			}
+
+			.header {
+				margin: 10px 0;
+			}
+
+			table {
+				border-collapse: collapse;
+			}
+
+			table, td, th {
+				border: 1px solid black;
+			}
+
+			td, th {
+				padding: 2.5px 5px;
+			}
+
+			h2 {
+				text-decoration: underline;
+				margin-top: 0;
+			}
+			
+			pre {
+				margin: 0;
+				font-family: monospace, monospace;
+			}
+
+			ul {
+				margin-top: 0;
+				padding-left: 25px;
+			}
+
+			i.argument {
+				cursor: help;
+			}
+
+			span.restriction {
+				border-bottom: 2px solid;
+				cursor: help;
+			}
+			
+			span.Streamer { border-bottom-color: purple }
+			span.SuperUser { border-bottom-color: red }
+			span.Admin { border-bottom-color: orange }
+			span.Mod { border-bottom-color: yellow }
+			span.Defuser { border-bottom-color: green }
+
+			span.ElevatorOnly { border-bottom-color: blue }
+			span.ElevatorDisallowed { border-bottom-color: cyan }
+			span.SolvedAllowed { border-bottom-color: limegreen }
+
+			a {
+				color: black;
+				transition: color 0.1s;
+			}
+
+			a:hover {
+				color: blue;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="sidebar">
+			<h2>TP: KTANE</h2>
+		</div>
+		<div class="content"></div>
+	</body>
+</html>

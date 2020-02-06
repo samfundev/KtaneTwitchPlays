@@ -5,19 +5,32 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Props;
 
+/// <summary>Commands that can be run during a game.</summary>
 static class GameCommands
 {
 	#region Commands during the game
+	/// <name>Cancel</name>
+	/// <syntax>cancel</syntax>
+	/// <summary>Cancels the current running command.</summary>
 	[Command(@"cancel")]
 	public static void Cancel() => CoroutineCanceller.SetCancel();
 
+	/// <name>Stop</name>
+	/// <syntax>stop</syntax>
+	/// <summary>Stops the current and queued commands.</summary>
 	[Command(@"stop")]
 	public static void Stop() => TwitchGame.Instance.StopCommands();
 
+	/// <name>Get Notes</name>
+	/// <syntax>notes[note]</syntax>
+	/// <summary>Sends the contents of a note to chat.</summary>
 	[Command(@"notes(-?\d+)")]
 	public static void ShowNotes([Group(1)] int index, string user, bool isWhisper) =>
 		IRCConnection.SendMessage(TwitchPlaySettings.data.Notes, user, !isWhisper, index, TwitchGame.Instance.NotesDictionary.TryGetValue(index - 1, out var note) ? note : TwitchPlaySettings.data.NotesSpaceFree);
 
+	/// <name>Set Notes</name>
+	/// <syntax>notes[note] [contents]</syntax>
+	/// <summary>Sets the contents of a note.</summary>
 	[Command(@"notes(-?\d+) +(.+)")]
 	public static void SetNotes([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper)
 	{
@@ -27,6 +40,9 @@ static class GameCommands
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
+	/// <name>Append Notes</name>
+	/// <syntax>notes[note]append [contents]</syntax>
+	/// <summary>Appends the contents of a note.</summary>
 	[Command(@"notes(-?\d+)append +(.+)")]
 	public static void SetNotesAppend([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper)
 	{
@@ -39,6 +55,9 @@ static class GameCommands
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
+	/// <name>Clear Notes</name>
+	/// <syntax>notes[note]clear</syntax>
+	/// <summary>Clears the contents of a note.</summary>
 	[Command(@"(?:notes(-?\d+)clear|clearnotes(-?\d+))")]
 	public static void SetNotesClear([Group(1)] int index, string user, bool isWhisper)
 	{
@@ -77,6 +96,9 @@ static class GameCommands
 			ShowClaimsOfUser(targetUser, targetUser, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.NoOwnedModulesOther);
 	}
 
+	/// <name>Claims</name>
+	/// <syntax>claims</syntax>
+	/// <summary>Shows all of your claims.</summary>
 	[Command(@"claims")]
 	public static void ShowClaims(string user, bool isWhisper)
 	{
@@ -153,6 +175,9 @@ static class GameCommands
 
 	public static List<TwitchModule> unclaimedModules;
 	public static int unclaimedModuleIndex;
+	/// <name>Unclaimed</name>
+	/// <syntax>unclaimed</syntax>
+	/// <summary>Sends a maximum of 3 unclaimed modules to chat.</summary>
 	[Command(@"unclaimed")]
 	public static void ListUnclaimed(string user, bool isWhisper)
 	{
@@ -225,6 +250,9 @@ static class GameCommands
 		IRCConnection.SendMessage($"Unclaimed Modules: {unclaimed.Join(", ")}");
 	}
 
+	/// <name>Unsolved</name>
+	/// <syntax>unsolved</syntax>
+	/// <summary>Sends a maximum of 3 unsolved modules to chat.</summary>
 	[Command(@"unsolved")]
 	public static void ListUnsolved(string user, bool isWhisper)
 	{
@@ -367,6 +395,9 @@ static class GameCommands
 			TwitchGame.ModuleCameras.DisableCameraWall();
 	}
 
+	/// <name>Queue Named Command</name>
+	/// <syntax>queue [name] [command]</syntax>
+	/// <summary>Queues a command that can be called by name.</summary>
 	[Command(@"q(?:ueue)? +(?!\s*!)([^!]+) +(!.+)")]
 	public static void EnqueueNamedCommand(IRCMessage msg, [Group(1)] string name, [Group(2)] string command)
 	{
@@ -380,6 +411,9 @@ static class GameCommands
 		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 	}
 
+	/// <name>Queue Command</name>
+	/// <syntax>queue [command]</syntax>
+	/// <summary>Queues a command that will be called in order.</summary>
 	[Command(@"q(?:ueue)? +(!.+)")]
 	public static void EnqueueUnnamedCommand(IRCMessage msg, [Group(1)] string command)
 	{
@@ -423,6 +457,9 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Call Command</name>
+	/// <syntax>call (name)\ncallnow (name)</syntax>
+	/// <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
 	[Command(@"call( *now)?(?! *all| *set| *count)( +.+)?")]
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
 	{
@@ -499,6 +536,9 @@ static class GameCommands
 		IRCConnection.ReceiveMessage(call.Message);
 	}
 
+	/// <name>Call All</name>
+	/// <syntax>call all</syntax>
+	/// <summary>Calls all commands, including named ones.</summary>
 	[Command(@"call *all")]
 	public static void CallAllQueuedCommands(string user, bool isWhisper)
 	{
@@ -519,6 +559,9 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Call Set</name>
+	/// <syntax>call set [minimum]</syntax>
+	/// <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
 	[Command(@"call *set +(\d*)")]
 	public static void CallSetCommand(string user, [Group(1)] int minimum)
 	{
@@ -539,6 +582,10 @@ static class GameCommands
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
 
+	/// <name>Solve Bomb</name>
+	/// <syntax>solvebomb</syntax>
+	/// <summary>Solves the currently held bomb.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"solvebomb", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SolveBomb()
 	{
@@ -567,6 +614,9 @@ static class GameCommands
 		IRCConnection.SendMessage("Claims have been disabled.");
 	}
 
+	/// <name>Assign</name>
+	/// <syntax>assign [user] [codes]</syntax>
+	/// <summary>Assigns modules to a user based on their module codes.</summary>
 	[Command(@"assign +(\S+) +(.+)")]
 	public static void AssignModuleTo([Group(1)] string targetUser, [Group(2)] string queries, string user)
 	{

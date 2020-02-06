@@ -4,6 +4,10 @@ using System.Collections;
 /// <summary>Commands for the IRC Connection Holdable.</summary>
 public static class IRCConnectionManagerCommands
 {
+	/// <name>Disconnect</name>
+	/// <syntax>disconnect</syntax>
+	/// <summary>Presses the disconnect button.</summary>
+	/// <restriction>Streamer</restriction>
 	[Command(@"disconnect")]
 	public static IEnumerator Disconnect(TwitchHoldable holdable, string user, bool isWhisper) =>
 		holdable.RespondToCommand(user, string.Empty, isWhisper, Disconnect(holdable.Holdable.GetComponent<IRCConnectionManagerHoldable>()));

@@ -5,8 +5,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+/// <summary>Commands that can be run on a module.</summary>
 static class ModuleCommands
 {
+	/// <name>Help</name>
+	/// <syntax>help</syntax>
+	/// <summary>Sends a message to chat with information on what commands you can use to solve the module.</summary>
+	/// <restriction>SolvedAllowed</restriction>
 	[Command(@"(?:help|manual)( +pdf)?"), SolvedAllowed]
 	public static void Help(TwitchModule module, [Group(1)] bool pdf)
 	{
@@ -20,6 +25,10 @@ static class ModuleCommands
 			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
 	}
 
+	/// <name>Player</name>
+	/// <syntax>player</syntax>
+	/// <summary>Tells you what user has the module claimed.</summary>
+	/// <restriction>SolvedAllowed</restriction>
 	[Command("player"), SolvedAllowed]
 	public static void Player(TwitchModule module, string user) => IRCConnection.SendMessage(module.PlayerName != null
 			? string.Format(TwitchPlaySettings.data.ModulePlayer, module.Code, module.PlayerName, module.HeaderText)
@@ -43,15 +52,27 @@ static class ModuleCommands
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.CancelBombTurn, module.Code, module.HeaderText);
 	}
 
+	/// <name>Claim</name>
+	/// <syntax>claim</syntax>
+	/// <summary>Claims the module or queues to claim it if it's already claimed.</summary>
 	[Command("claim")]
 	public static void Claim(TwitchModule module, string user, bool isWhisper) => ClaimViewOrPin(module, user, isWhisper, view: false, pin: false);
 
+	/// <name>Unview</name>
+	/// <syntax>unview</syntax>
+	/// <summary>Stops viewing the module with a camera.</summary>
 	[Command("unview")]
 	public static void Unview(TwitchModule module) => TwitchGame.ModuleCameras?.UnviewModule(module);
 
+	/// <name>Player</name>
+	/// <syntax>player</syntax>
+	/// <summary>Tells you what user has the module claimed.</summary>
 	[Command("(view(?: *pin)?|pin *view)")]
 	public static void View(TwitchModule module, string user, [Group(1)] string cmd) => module.ViewPin(user, cmd.ContainsIgnoreCase("p"));
 
+	/// <name>Show</name>
+	/// <syntax>show</syntax>
+	/// <summary>Selects the module on the bomb.</summary>
 	[Command("show")]
 	public static IEnumerator Show(TwitchModule module)
 	{
@@ -68,6 +89,9 @@ static class ModuleCommands
 		yield return new WaitForSeconds(0.5f);
 	}
 
+	/// <name>Solve</name>
+	/// <syntax>solve</syntax>
+	/// <summary>Forces a module to solve itself. Requires either Admin rank or the module to not be supported on TP.</summary>
 	[Command("solve")]
 	public static void Solve(TwitchModule module, string user)
 	{
@@ -83,6 +107,9 @@ static class ModuleCommands
 	[Command(@"(claim view|view claim|claimview|viewclaim|cv|vc|claim view pin|view pin claim|claimviewpin|viewpinclaim|cvp|vpc)")]
 	public static void ClaimViewPin(TwitchModule module, string user, bool isWhisper, [Group(1)] string cmd) => ClaimViewOrPin(module, user, isWhisper, view: true, pin: cmd.Contains("p"));
 
+	/// <name>Unclaim</name>
+	/// <syntax>unclaim\nunclaim unview</syntax>
+	/// <summary>Releases your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
 	[Command("(unclaim|un?c|release|rel|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
 	public static void Unclaim(TwitchModule module, string user, [Group(1)] string cmd)
 	{

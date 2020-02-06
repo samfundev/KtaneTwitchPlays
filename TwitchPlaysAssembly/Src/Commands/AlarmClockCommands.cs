@@ -5,6 +5,9 @@ using Assets.Scripts.Props;
 /// <summary>Commands for the alarm clock.</summary>
 public static class AlarmClockCommands
 {
+	/// <name>Snooze</name>
+	/// <syntax>snooze</syntax>
+	/// <summary>Hits the snooze button on the alarm clock.</summary>
 	[Command("snooze")]
 	public static IEnumerator Snooze(TwitchHoldable holdable, string user, bool isWhisper) =>
 		holdable.RespondToCommand(user, "", isWhisper, Snooze(holdable.Holdable.GetComponent<AlarmClock>()));

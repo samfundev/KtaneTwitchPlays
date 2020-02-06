@@ -6,17 +6,28 @@ using Assets.Scripts.BombBinder;
 using Assets.Scripts.Missions;
 using UnityEngine;
 
+/// <summary>Commands that can be used in the bomb binder.</summary>
+/// <prefix>binder </prefix>
 public static class MissionBinderCommands
 {
+	/// <name>Select</name>
+	/// <syntax>select</syntax>
+	/// <summary>Selects the currently highlighted item.</summary>
 	[Command(@"select")]
 	public static IEnumerator Select(FloatingHoldable holdable) => SelectOnPage(holdable);
 
+	/// <name>Select Index</name>
+	/// <syntax>select [index]</syntax>
+	/// <summary>Selects an item based on it's index on the page.</summary>
 	[Command(@"select +(\d+)")]
 	public static IEnumerator SelectIndex(FloatingHoldable holdable, [Group(1)] int index) => SelectOnPage(holdable, index: index);
 
 	[Command(@"select +(?!\d+$)(.+)")]
 	public static IEnumerator SelectSearch(FloatingHoldable holdable, [Group(1)] string search) => SelectOnPage(holdable, search: search.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
 
+	/// <name>Up / Down</name>
+	/// <syntax>up (amount)\ndown (amount)</syntax>
+	/// <summary>Moves up or down the page by a number items.</summary>
 	[Command(@"(up|u|down|d)(?: (\d+))?")]
 	public static IEnumerator Navigate([Group(1)] string direction, [Group(2)] int? optAmount)
 	{
@@ -29,6 +40,9 @@ public static class MissionBinderCommands
 		}
 	}
 
+	/// <name>Search</name>
+	/// <syntax>search [query]</syntax>
+	/// <summary>Searches the binder for a mission.</summary>
 	[Command("(?:search|s|find|f) (.+)")]
 	public static IEnumerator Search(FloatingHoldable holdable, [Group(1)] string query)
 	{

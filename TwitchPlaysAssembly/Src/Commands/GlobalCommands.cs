@@ -11,6 +11,7 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 
+/// <summary>Commands that can generally be used at any time.</summary>
 static class GlobalCommands
 {
 	[Command(@"(manual|help)")]
@@ -557,6 +558,9 @@ static class GlobalCommands
 		UserAccess.WriteAccessList();
 	}
 
+	/// <name>Moderators</name>
+	/// <syntax>moderators</syntax>
+	/// <summary>If enabled, sends to chat a list of users who have the moderator rank or above.</summary>
 	[Command(@"(tpmods|moderators)")]
 	public static void Moderators(string user, bool isWhisper)
 	{
@@ -645,6 +649,9 @@ static class GlobalCommands
 			return RunDistribution(user, modules, inf, distribution);
 		}, true);
 
+	/// <name>Run Specific</name>
+	/// <syntax>run [distribution] [modules]</syntax>
+	/// <summary>Runs a distribution with a set number of modules.</summary>
 	[Command(@"run +(.*) +(\d+)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] string distributionName, [Group(2)] int modules, KMGameInfo inf) => RunSpecific(user, isWhisper, modules, distributionName, inf);
 	[Command(@"run +(\d+) +(.*)")]
