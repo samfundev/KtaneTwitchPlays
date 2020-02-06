@@ -24,7 +24,7 @@ public class UrlHelper : MonoBehaviour
 
 	public string LogAnalyserFor(string url) => string.Format(TwitchPlaySettings.data.AnalyzerUrl + "#url={0}", url);
 
-	public string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://goo.gl/rQUH8y" : "https://github.com/samfun123/KtaneTwitchPlays/wiki/Commands";
+	public string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://tinyurl.com/v3twx5a" : "https://samfun123.github.io/KtaneTwitchPlays";
 
 	public string ManualFor(string module, string type = "html", bool useVanillaRuleModifier = false) => string.Format(TwitchPlaySettings.data.RepositoryUrl + "{0}/{1}.{2}{3}", type.ToUpper(), NameToUrl(module), type, (useVanillaRuleModifier && type.Equals("html")) ? $"#{VanillaRuleModifier.GetRuleSeed()}" : "");
 
