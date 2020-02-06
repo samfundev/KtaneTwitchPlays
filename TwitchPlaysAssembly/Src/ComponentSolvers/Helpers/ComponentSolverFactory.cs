@@ -937,10 +937,19 @@ public static class ComponentSolverFactory
 				scoreString = Regex.Replace(scoreString, @"(?:UN )?(\d+)T?", "$1");
 
 				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
-				var dynamicMatch = Regex.Match(scoreString, @"S ([\d.]+)x");
+				var dynamicMatch = Regex.Match(scoreString, @"S ([\d.]+)x(?: \+ ([\d.]+))?");
 				defaultInfo.moduleScoreIsDynamic = dynamicMatch.Success;
 				if (dynamicMatch.Success && float.TryParse(dynamicMatch.Groups[1].Value, out float dynamicScore))
 				{
+					// A + after S is for a static addition to the dynamic score.
+					if (dynamicMatch.Groups.Count > 2)
+					{
+						if (float.TryParse(dynamicMatch.Groups[2].Value, out float staticScore))
+							defaultInfo.moduleScore = staticScore;
+					}
+					else
+						defaultInfo.moduleScore = 0;
+
 					dynamicScores[moduleID] = dynamicScore * 2; // Multiply the score by two because the default DynamicScorePercentage is 0.5.
 					continue;
 				}
