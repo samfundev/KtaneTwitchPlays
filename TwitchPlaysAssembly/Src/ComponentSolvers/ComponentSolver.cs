@@ -678,15 +678,15 @@ public abstract class ComponentSolver
 				switch (ModInfo.moduleID)
 				{
 					case "cookieJars": // Cookie Jars
-						moduleScore = (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
+						moduleScore += (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
 						break;
 
 					case "HexiEvilFMN": // Forget Everything
-						moduleScore = (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore += (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default:
-						moduleScore = (int) (Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore += (int) (Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 				}
 			}
