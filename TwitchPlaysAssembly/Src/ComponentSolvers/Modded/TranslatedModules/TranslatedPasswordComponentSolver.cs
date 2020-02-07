@@ -22,20 +22,6 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
 
-	private static string DeconstructHangulSyllableToJamos(char c)
-	{
-		int num = (c - '가') / 0x24C;
-		int num2 = (c - '가') % 0x24C / 0x1C;
-		int num3 = (c - '가') % 0x24C % 0x1C;
-		char c2 = (char) (Convert.ToUInt16('ᄀ') + num);
-		char c3 = (char) (Convert.ToUInt16('ᅡ') + num2);
-		char c4 = (char) (Convert.ToUInt16('ᆨ') + num3 - 1);
-		string text = c2.ToString() + c3.ToString() + ((num3 <= 0) ? string.Empty : c4.ToString());
-		return text.Replace("ᅬ", "ᅩᅵ");
-	}
-
-	private static readonly Dictionary<char, char> SimilarJamos = "ᄀᆨ,ᄁᆩ,ᄂᆫ,ᄃᆮ,ᄅᆯ,ᄆᆷ,ᄇᆸ,ᄉᆺ,ᄊᆻ,ᄋᆼ,ᄌᆽ,ᄎᆾ,ᄏᆿ,ᄐᇀ,ᄑᇁ,ᄒᇂ".Split(',').ToDictionary(str => str[0], str => str[1]);
-
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.Trim();
@@ -67,7 +53,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		string lettersToSubmit =
 			// Special case for Korean (convert Hangul to Jamos)
 			commandParts[0].Length > 0 && commandParts[0][0] >= '가' && commandParts[0][0] <= '힣'
-				? commandParts[0].SelectMany(DeconstructHangulSyllableToJamos).Select(ch => SimilarJamos.ContainsKey(ch) ? SimilarJamos[ch] : ch).Join("") :
+				? commandParts[0].SelectMany(ch => TranslatedModulesSettings.CallMethod<string>("DeconstructHangulSyllableToJamos", null, ch)).Select(ch => SimilarJamos.ContainsKey(ch) ? SimilarJamos[ch] : ch).Join("") :
 			// Special case for Hebrew (expects input back to front)
 			TranslatedModuleHelper.GetLanguageCode(_component, PasswordComponentType) == "he"
 				? commandParts[0].Reverse().Join("") :
@@ -131,12 +117,17 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		DisplayField = PasswordComponentType.GetField("DisplaySlots", BindingFlags.NonPublic | BindingFlags.Instance);
 		DownButtonField = PasswordComponentType.GetField("ButtonsDown", BindingFlags.Public | BindingFlags.Instance);
 		SubmitButtonField = PasswordComponentType.GetField("ButtonSubmit", BindingFlags.Public | BindingFlags.Instance);
+		SimilarJamos = PasswordComponentType.GetValue<Dictionary<char, char>>("SimilarJamos");
+
+		TranslatedModulesSettings = ReflectionHelper.FindType("TranslatedModulesSettings");
 	}
 
 	private static readonly Type PasswordComponentType;
 	private static readonly FieldInfo DisplayField;
 	private static readonly FieldInfo SubmitButtonField;
 	private static readonly FieldInfo DownButtonField;
+	private static readonly Dictionary<char, char> SimilarJamos;
+	private static readonly Type TranslatedModulesSettings;
 
 	private readonly MonoBehaviour _submitButton;
 	private readonly KMSelectable[] _downButtons;
