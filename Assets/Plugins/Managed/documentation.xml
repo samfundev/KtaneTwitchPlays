@@ -103,6 +103,7 @@
         </member>
         <member name="T:AlarmClockCommands">
             <summary>Commands for the alarm clock.</summary>
+            <prefix>alarm </prefix>
         </member>
         <member name="M:AlarmClockCommands.Snooze(TwitchHoldable,System.String,System.Boolean)">
             <name>Snooze</name>

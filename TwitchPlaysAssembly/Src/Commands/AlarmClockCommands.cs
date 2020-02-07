@@ -3,6 +3,7 @@ using System.Reflection;
 using Assets.Scripts.Props;
 
 /// <summary>Commands for the alarm clock.</summary>
+/// <prefix>alarm </prefix>
 public static class AlarmClockCommands
 {
 	/// <name>Snooze</name>
