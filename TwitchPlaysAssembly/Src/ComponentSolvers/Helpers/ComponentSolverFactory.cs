@@ -910,7 +910,8 @@ public static class ComponentSolverFactory
 
 				moduleName = Regex.Replace(moduleName, @" \((Solve|Time)\)", "");
 
-				bool equalNames(string nameA, string nameB) => nameA.Replace('’', '\'') == nameB.Replace('’', '\'');
+				string normalize(string value) => value.ToLowerInvariant().Replace('’', '\'');
+				bool equalNames(string nameA, string nameB) => normalize(nameA) == normalize(nameB);
 
 				string moduleID = null;
 				var bombComponent = ModManager.Instance.GetValue<Dictionary<string, BombComponent>>("loadedBombComponents").Values.FirstOrDefault(module => equalNames(module.GetModuleDisplayName(), moduleName));
