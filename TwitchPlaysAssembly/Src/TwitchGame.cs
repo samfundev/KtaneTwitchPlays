@@ -191,7 +191,7 @@ public class TwitchGame : MonoBehaviour
 				userName = uName;
 				break;
 			}
-			if (Leaderboard.Instance.CurrentSolvers[userName] == (Leaderboard.RequiredSoloSolves * Bombs.Count))
+			if (Leaderboard.Instance.CurrentSolvers[userName] == Leaderboard.RequiredSoloSolves * Bombs.Count && OtherModes.currentMode == TwitchPlaysMode.Normal)
 			{
 				Leaderboard.Instance.AddSoloClear(userName, elapsedTime, out float previousRecord);
 				if (TwitchPlaySettings.data.EnableSoloPlayMode)
