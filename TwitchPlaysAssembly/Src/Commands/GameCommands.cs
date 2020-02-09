@@ -585,6 +585,18 @@ static class GameCommands
 	[Command(@"call *count")]
 	public static void CallCountCommand() => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.CallingPlayers.Count, TwitchGame.Instance.callsNeeded);
 
+	[Command(@"uncall")]
+	public static void RemoveQueuedPlayer(string user)
+	{
+		if (!TwitchGame.Instance.CallingPlayers.Contains(user))
+		{
+			IRCConnection.SendMessage($"@{0}, you haven't called yet!", user);
+			return;
+		}
+		TwitchGame.Instance.CallingPlayers.Remove(user);
+		IRCConnection.SendMessage($"@{0}, your call has been removed.", user);
+		CallCountCommand();
+	}
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
 
