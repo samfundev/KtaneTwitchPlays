@@ -590,11 +590,11 @@ static class GameCommands
 	{
 		if (!TwitchGame.Instance.CallingPlayers.Contains(user))
 		{
-			IRCConnection.SendMessage($"@{0}, you haven't called yet!", user);
+			IRCConnection.SendMessageFormat("@{0}, you haven't called yet!", user);
 			return;
 		}
 		TwitchGame.Instance.CallingPlayers.Remove(user);
-		IRCConnection.SendMessage($"@{0}, your call has been removed.", user);
+		IRCConnection.SendMessageFormat("@{0}, your call has been removed.", user);
 		CallCountCommand();
 	}
 
@@ -604,11 +604,11 @@ static class GameCommands
 		int totalCalls = TwitchGame.Instance.CallingPlayers.Count;
 		if (totalCalls == 0) 
 		{
-			IRCConnection.SendMessage($"@{0}, no calls have been made.", user);
+			IRCConnection.SendMessageFormat("@{0}, no calls have been made.", user);
 			return;
 		}
 		string CallPlayers = string.Join(", @", TwitchGame.Instance.CallingPlayers.ToArray());
-		IRCConnection.SendMessage($"These players have already called: @{0}", CallPlayers);
+		IRCConnection.SendMessageFormat("These players have already called: @{0}", CallPlayers);
 	}
 
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
