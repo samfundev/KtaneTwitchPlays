@@ -768,7 +768,7 @@ static class GlobalCommands
 	[Command(@"silencemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SilenceMode() => IRCConnection.ToggleSilenceMode();
 
-	[Command(@"elevator")]
+	[Command(@"elevator", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Elevator() => TPElevatorSwitch.Instance?.ReportState();
 
 	[Command(@"elevator (on|off|flip|toggle|switch|press|push)")]
