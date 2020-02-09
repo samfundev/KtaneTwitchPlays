@@ -34,21 +34,27 @@
             <name>Get Notes</name>
             <syntax>notes[note]</syntax>
             <summary>Sends the contents of a note to chat.</summary>
+            <argument name="note">The note's number.</argument>
         </member>
         <member name="M:GameCommands.SetNotes(System.Int32,System.String,System.String,System.Boolean)">
             <name>Set Notes</name>
             <syntax>notes[note] [contents]</syntax>
             <summary>Sets the contents of a note.</summary>
+            <argument name="note">The note's number.</argument>
+            <argument name="contents">New text of the note.</argument>
         </member>
         <member name="M:GameCommands.SetNotesAppend(System.Int32,System.String,System.String,System.Boolean)">
             <name>Append Notes</name>
             <syntax>notes[note]append [contents]</syntax>
             <summary>Appends the contents of a note.</summary>
+            <argument name="note">The note's number.</argument>
+            <argument name="contents">The text that will be appended to the note.</argument>
         </member>
         <member name="M:GameCommands.SetNotesClear(System.Int32,System.String,System.Boolean)">
             <name>Clear Notes</name>
             <syntax>notes[note]clear</syntax>
             <summary>Clears the contents of a note.</summary>
+            <argument name="note">The note's number.</argument>
         </member>
         <member name="M:GameCommands.ShowClaims(System.String,System.Boolean)">
             <name>Claims</name>

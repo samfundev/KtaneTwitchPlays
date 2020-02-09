@@ -37,6 +37,8 @@
 				const parser = new DOMParser();
 				const xmlDoc = parser.parseFromString(text, "text/xml");
 				parseDocumentation(xmlDoc.getElementsByTagName("members")[0]);
+
+				addTitlePopups();
 			})
 			.catch(console.error);
 
@@ -52,9 +54,9 @@
 				SolvedAllowed: "Can be still used when the module is solved.",
 			};
 
-			function parseArguments(element) {
-				element.innerHTML = element.textContent.replace(/([\[(].+?[)\]])/g, (match, argument) => {
-					return `<i class="argument" title="${match.startsWith("[") ? "Required argument." : "Optional argument." }">${argument}</i>`;
+			function parseArguments(element, args) {
+				element.innerHTML = element.textContent.replace(/[\[(](.+?)[)\]]/g, (match, argument) => {
+					return `<i class="argument" title="${ (args.hasOwnProperty(argument) ? args[argument] + " " : "") + (match.startsWith("[") ? "Required argument." : "Optional argument.") }">${match}</i>`;
 				});
 				
 				return element;
@@ -79,7 +81,7 @@
 					if (match[1] == "T") {
 						const properName = match[2].replace(/[A-Z]*(?=[A-Z])/g, "$& ");
 						content.appendChild(
-							el("div", "header",
+							el("div", "section",
 								{ id: match[2] },
 								el("h2", null, properName),
 								el("span", null, member.getElementsByTagName("summary")[0].textContent)
@@ -105,13 +107,19 @@
 						const restrictionTags = member.getElementsByTagName("restriction");
 						const restrictions = restrictionTags.length == 1 ? restrictionTags[0].textContent : "";
 
+						const argTags = member.getElementsByTagName("argument");
+						const args = {};
+						for (const argTag of argTags) {
+							args[argTag.getAttribute("name")] = argTag.textContent;
+						}
+
 						section.appendChild(
 							el("tr", null,
 								{ id: `${match[2]}-${commandName}` },
 								el("td", null, commandName),
-								el("td", null, parseArguments(el("pre", null, member.getElementsByTagName("syntax")[0].textContent.split(/\\n/g).map(command => "!" + commandPrefix + command).join("\n") ))),
+								el("td", null, parseArguments(el("pre", null, member.getElementsByTagName("syntax")[0].textContent.split(/\\n/g).map(command => "!" + commandPrefix + command).join("\n") ), args)),
 								el("td", null, 
-									parseArguments(el("span", null, member.getElementsByTagName("summary")[0].textContent)),
+									parseArguments(el("span", null, member.getElementsByTagName("summary")[0].textContent), args),
 									restrictions == "" ? null : el("div", null, ...restrictions.split(", ").map(restriction => el("span", `restriction ${restriction}`, restriction, { title: restrictionDescriptions[restriction] || "" })))
 								)
 							)
@@ -119,6 +127,35 @@
 
 						sidebarList.appendChild(el("li", null, el("a", null, { href: `#${match[2]}-${commandName}` }, commandName)));
 					}
+				}
+			}
+
+			function addTitlePopups() {
+				const titleElements = document.querySelectorAll("[title]");
+				for (const titleElement of titleElements) {
+					titleElement.addEventListener("click", event => {
+						toggleTooltip(titleElement);
+						event.stopPropagation();
+					});
+				}
+
+				document.addEventListener("click", () => {
+					for (const anyTooltip of document.querySelectorAll(".tooltip"))
+						anyTooltip.remove();
+				});
+			}
+
+			function toggleTooltip(element) {
+				const tooltips = element.getElementsByClassName("tooltip");
+				if (tooltips.length == 1) {
+					tooltips[0].remove();
+					element.style.position = "";
+				} else {
+					for (const anyTooltip of document.querySelectorAll(".tooltip"))
+						anyTooltip.remove();
+
+					element.appendChild(el("span", "tooltip", element.getAttribute("title")));
+					element.style.position = "relative";
 				}
 			}
 		</script>
@@ -135,8 +172,8 @@
 				padding: 10px;
 			}
 
-			.header {
-				margin: 10px 0;
+			.section {
+				margin: 15px 0;
 			}
 
 			table {
@@ -153,7 +190,7 @@
 
 			h2 {
 				text-decoration: underline;
-				margin-top: 0;
+				margin: 0;
 			}
 			
 			pre {
@@ -185,6 +222,8 @@
 			span.ElevatorDisallowed { border-bottom-color: cyan }
 			span.SolvedAllowed { border-bottom-color: limegreen }
 
+			span.Example { border-bottom-color: grey }
+
 			a {
 				color: black;
 				transition: color 0.1s;
@@ -193,12 +232,36 @@
 			a:hover {
 				color: blue;
 			}
+
+			.tooltip {
+				font-style: normal;
+				font-family: serif;
+
+				position: absolute;
+				top: 20px;
+				left: 0px;
+				z-index: 1;
+				width: max-content;
+
+				background: white;
+				border: 2px solid lightgray;
+				padding: 3px;
+				border-radius: 5px;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="sidebar">
 			<h2>TP: KTANE</h2>
 		</div>
-		<div class="content"></div>
+		<div class="content">
+			<h2>Legend</h2>
+			<div>Hover over arguments and modifiers for more for more infomation. Tapping or clicking works too.</div>
+			<ul>
+				<li><i class="argument" title="Information about the required argument would be here. Required argument.">[required argument]</i></li>
+				<li><i class="argument" title="Information about the optional argument would be here. Optional argument.">(optional argument)</i></li>
+				<li><span class="restriction Example" title="Some modification to when a command can be used.">Modifier</span></li>
+			</ul>
+		</div>
 	</body>
 </html>

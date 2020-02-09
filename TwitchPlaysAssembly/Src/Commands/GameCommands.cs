@@ -24,6 +24,7 @@ static class GameCommands
 	/// <name>Get Notes</name>
 	/// <syntax>notes[note]</syntax>
 	/// <summary>Sends the contents of a note to chat.</summary>
+	/// <argument name="note">The note's number.</argument>
 	[Command(@"notes(-?\d+)")]
 	public static void ShowNotes([Group(1)] int index, string user, bool isWhisper) =>
 		IRCConnection.SendMessage(TwitchPlaySettings.data.Notes, user, !isWhisper, index, TwitchGame.Instance.NotesDictionary.TryGetValue(index - 1, out var note) ? note : TwitchPlaySettings.data.NotesSpaceFree);
@@ -31,6 +32,8 @@ static class GameCommands
 	/// <name>Set Notes</name>
 	/// <syntax>notes[note] [contents]</syntax>
 	/// <summary>Sets the contents of a note.</summary>
+	/// <argument name="note">The note's number.</argument>
+	/// <argument name="contents">New text of the note.</argument>
 	[Command(@"notes(-?\d+) +(.+)")]
 	public static void SetNotes([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper)
 	{
@@ -43,6 +46,8 @@ static class GameCommands
 	/// <name>Append Notes</name>
 	/// <syntax>notes[note]append [contents]</syntax>
 	/// <summary>Appends the contents of a note.</summary>
+	/// <argument name="note">The note's number.</argument>
+	/// <argument name="contents">The text that will be appended to the note.</argument>
 	[Command(@"notes(-?\d+)append +(.+)")]
 	public static void SetNotesAppend([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper)
 	{
@@ -58,6 +63,7 @@ static class GameCommands
 	/// <name>Clear Notes</name>
 	/// <syntax>notes[note]clear</syntax>
 	/// <summary>Clears the contents of a note.</summary>
+	/// <argument name="note">The note's number.</argument>
 	[Command(@"(?:notes(-?\d+)clear|clearnotes(-?\d+))")]
 	public static void SetNotesClear([Group(1)] int index, string user, bool isWhisper)
 	{
