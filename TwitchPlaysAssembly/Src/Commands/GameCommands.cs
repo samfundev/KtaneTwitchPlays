@@ -466,7 +466,7 @@ static class GameCommands
 	/// <name>Call Command</name>
 	/// <syntax>call (name)\ncallnow (name)</syntax>
 	/// <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
-	[Command(@"call( *now)?(?! *all| *set| *count)( +.+)?")]
+	[Command(@"call( *now)?( +.+)?")]
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = name?.Trim();
@@ -545,7 +545,7 @@ static class GameCommands
 	/// <name>Call All</name>
 	/// <syntax>call all</syntax>
 	/// <summary>Calls all commands, including named ones.</summary>
-	[Command(@"call *all")]
+	[Command(@"callall")]
 	public static void CallAllQueuedCommands(string user, bool isWhisper)
 	{
 		if (TwitchGame.Instance.CommandQueue.Count == 0)
@@ -566,9 +566,9 @@ static class GameCommands
 	}
 
 	/// <name>Call Set</name>
-	/// <syntax>call set [minimum]</syntax>
+	/// <syntax>callset [minimum]</syntax>
 	/// <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
-	[Command(@"call *set +(\d*)")]
+	[Command(@"callset +(\d*)")]
 	public static void CallSetCommand(string user, [Group(1)] int minimum)
 	{
 		if (minimum <= 0 || minimum >= 25)
@@ -582,7 +582,10 @@ static class GameCommands
 		IRCConnection.SendMessageFormat("Set minimum calls to {0}.", minimum);
 	}
 
-	[Command(@"call *count")]
+	/// <name>Call Count</name>
+	/// <syntax>callcount</syntax>
+	/// <summary>Displays the number of times that the Call Command has been run since a command was last called.</summary>
+	[Command(@"callcount")]
 	public static void CallCountCommand() => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.CallingPlayers.Count, TwitchGame.Instance.callsNeeded);
 
 	[Command(@"uncall")]
