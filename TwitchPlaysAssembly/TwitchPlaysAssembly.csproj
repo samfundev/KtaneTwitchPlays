@@ -120,6 +120,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Shims\GroceryStoreShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\BooleanKeypadShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\SwanShim.cs" />
+    <Compile Include="Src\Helpers\CheckSupport.cs" />
     <Compile Include="Src\Helpers\ClaimQueueItem.cs" />
     <Compile Include="Src\Helpers\CommandQueueItem.cs" />
     <Compile Include="Src\Commands\GlobalCommands.cs" />

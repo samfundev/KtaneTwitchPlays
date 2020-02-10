@@ -205,12 +205,12 @@ public class TwitchPlaysService : MonoBehaviour
 				_coroutinesToStart.Enqueue(VanillaRuleModifier.Refresh());
 				_coroutinesToStart.Enqueue(MultipleBombs.Refresh());
 				_coroutinesToStart.Enqueue(FactoryRoomAPI.Refresh());
-				_coroutinesToStart.Enqueue(FindSupportedModules());
 
 				if (!initialLoad)
 				{
 					initialLoad = true;
 					_coroutinesToStart.Enqueue(ComponentSolverFactory.LoadDefaultInformation(true));
+					_coroutinesToStart.Enqueue(CheckSupport.FindSupportedModules());
 				}
 
 				// Clear out the retry reward if we return to the setup room since the retry button doesn't return to setup.
@@ -569,68 +569,6 @@ public class TwitchPlaysService : MonoBehaviour
 		{
 			GameRoom.ResetCamera();
 			GameRoom.ToggleCamera(true);
-		}
-	}
-
-	private IEnumerator FindSupportedModules()
-	{
-		yield return null;
-
-		if (!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods))
-			yield break;
-
-		GameObject fakeModule = new GameObject();
-		TwitchModule module = fakeModule.AddComponent<TwitchModule>();
-		module.enabled = false;
-
-		List<string> unsupportedModules = new List<string>();
-		ComponentSolverFactory.SilentMode = true;
-
-		// Try to create a ComponentSolver for each module so we can see what modules are supported.
-		foreach (BombComponent bombComponent in loadedMods.Values.SelectMany(mod => mod.GetModObjects<BombComponent>()))
-		{
-			ComponentSolver solver = null;
-			try
-			{
-				module.BombComponent = bombComponent.GetComponent<BombComponent>();
-
-				solver = ComponentSolverFactory.CreateSolver(module);
-
-				module.StopAllCoroutines(); // Stop any coroutines to prevent any exceptions or from affecting the next module.
-			}
-			catch (Exception e)
-			{
-				DebugHelper.LogException(e, $"Couldn't create a component solver for \"{bombComponent.GetModuleDisplayName()}\" during startup for the following reason:");
-			}
-
-			ModuleData.DataHasChanged |= solver != null;
-
-			DebugHelper.Log(solver != null
-				? $"Found a solver of type \"{solver.GetType().FullName}\" for component \"{bombComponent.GetModuleDisplayName()}\". This module is {(solver.UnsupportedModule ? "not supported" : "supported")} by Twitch Plays."
-				: $"No solver found for component \"{bombComponent.GetModuleDisplayName()}\". This module is not supported by Twitch Plays.");
-
-			string moduleID = bombComponent.GetComponent<KMBombModule>()?.ModuleType ?? bombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
-			if (solver?.UnsupportedModule != false && moduleID != null)
-				unsupportedModules.Add(moduleID);
-
-			yield return null;
-		}
-
-		ComponentSolverFactory.SilentMode = false;
-		ModuleData.WriteDataToFile();
-		DestroyObject(fakeModule);
-
-		// Using the list of unsupported module IDs stored in unsupportedModules, make a Mod Selector profile.
-		string profilesPath = Path.Combine(Application.persistentDataPath, "ModProfiles");
-		if (Directory.Exists(profilesPath))
-		{
-			Dictionary<string, object> profileData = new Dictionary<string, object>()
-			{
-				{ "DisabledList", unsupportedModules },
-				{ "Operation", 1 }
-			};
-
-			File.WriteAllText(Path.Combine(profilesPath, "TP_Supported.json"), SettingsConverter.Serialize(profileData));
 		}
 	}
 
