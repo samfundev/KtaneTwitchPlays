@@ -230,7 +230,7 @@ static class GlobalCommands
 					goto case 1;
 				}
 
-				IRCConnection.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"“{x.moduleDisplayName}” ({x.moduleID})").Join(", ")}", user, !isWhisper);
+				IRCConnection.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Take(5).Select(x => $"“{x.moduleDisplayName}” ({x.moduleID})").Join(", ")}", user, !isWhisper);
 				break;
 		}
 	}
@@ -395,7 +395,7 @@ static class GlobalCommands
 					goto case 1;
 				}
 
-				IRCConnection.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Select(x => $"“{x.moduleDisplayName}” ({x.moduleID})").Join(", ")}", user, !isWhisper);
+				IRCConnection.SendMessage($"Sorry, there is more than one module matching your search term. They are: {modules.Take(5).Select(x => $"“{x.moduleDisplayName}” ({x.moduleID})").Join(", ")}", user, !isWhisper);
 				break;
 		}
 	}
