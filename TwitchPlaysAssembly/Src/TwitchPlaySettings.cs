@@ -42,6 +42,9 @@ public class TwitchPlaySettingsData
 	public bool ShowUnrecognizedCommandError = true;
 	public int ClaimCooldownTime = 30;
 	public int ModuleClaimLimit = 2;
+	public int FindClaimLimit = 3;
+	public int FindClaimTerms = 3;
+	public int FindClaimAddTime = 5;
 	public float DynamicScorePercentage = 0.5f;
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
