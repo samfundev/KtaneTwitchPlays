@@ -25,6 +25,8 @@ public class TwitchGame : MonoBehaviour
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
 	public List<string> CallingPlayers = new List<string>();
+	public int FindClaimUse = 0;
+	public Dictionary<string, int> FindClaimPlayers = new Dictionary<string, int>();
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
@@ -85,11 +87,15 @@ public class TwitchGame : MonoBehaviour
 		LogUploader.Instance.Clear();
 		callsNeeded = 1;
 		CallingPlayers.Clear();
+		FindClaimPlayers.Clear();
 
 		_bombStarted = false;
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;
 
 		StartCoroutine(CheckForBomb());
+
+		FindClaimUse = TwitchPlaySettings.data.FindClaimLimit;
+		StartCoroutine(AdjustFindClaimLimit());
 		try
 		{
 			string path = Path.Combine(Application.persistentDataPath, "TwitchPlaysLastClaimed.json");
@@ -586,6 +592,18 @@ public class TwitchGame : MonoBehaviour
 		IRCConnection.SendMessage(message);
 
 		callback?.Invoke();
+	}
+
+	private IEnumerator AdjustFindClaimLimit()
+	{
+		if (TwitchPlaySettings.data.FindClaimAddTime < 1) yield break;
+
+		var _time = TwitchPlaySettings.data.FindClaimAddTime * 60;
+		while (true)
+		{
+			yield return new WaitForSeconds(_time);
+			FindClaimUse++;
+		}
 	}
 
 	private void SendAnalysisLink()

@@ -314,17 +314,47 @@ static class GameCommands
 	[Command(@"(?:find|search)((?: *claim| *view)*) +(.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
-		var modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray()).ToList();
+		var claim = commands.ContainsIgnoreCase("claim");
+		var view = commands.ContainsIgnoreCase("view");
+
+		var terms = queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray();
+		if (terms.Length > TwitchPlaySettings.data.FindClaimTerms && claim && TwitchPlaySettings.data.FindClaimTerms != -1)
+		{
+			IRCConnection.SendMessageFormat("@{0}, please reduce the size of your list to {1} or fewer terms.", user, TwitchPlaySettings.data.FindClaimTerms); // Prevents lists greater than length of 3 while using !claim
+			return;
+		}
+
+		var modules = FindModules(terms).ToList();
 		if (!modules.Any())
 		{
 			IRCConnection.SendMessage("No such modules.", user, !isWhisper);
 			return;
 		}
 
-		var claim = commands.ContainsIgnoreCase("claim");
-		var view = commands.ContainsIgnoreCase("view");
-		if (claim || view)
-			ClaimViewPin(user, isWhisper, modules, claim: claim, view: view);
+		if (claim)
+		{
+			if (!TwitchGame.Instance.FindClaimPlayers.ContainsKey(user)) TwitchGame.Instance.FindClaimPlayers.Add(user, 0);
+
+			var _prevClaims = TwitchGame.Instance.FindClaimPlayers[user];
+			var _allowedClaims = TwitchGame.Instance.FindClaimUse;
+			var _remainingClaims = _allowedClaims - _prevClaims;
+
+			if (_remainingClaims < 1 && TwitchPlaySettings.data.FindClaimLimit != -1)
+			{
+				IRCConnection.SendMessageFormat("@{0}, you have no more findclaim uses.", user);
+				return;
+			}
+
+			if (modules.Count > _remainingClaims && TwitchPlaySettings.data.FindClaimLimit != -1)
+			{
+				IRCConnection.SendMessageFormat("@{0}, that goes over your current findclaim limit of {1}. You will receive the first {2} claims.", user, _allowedClaims, _remainingClaims);
+				ClaimViewPin(user, isWhisper, modules.Take(_remainingClaims), claim: claim, view: view);
+			}
+			else ClaimViewPin(user, isWhisper, modules, claim: claim, view: view);
+
+			TwitchGame.Instance.FindClaimPlayers[user] = _prevClaims + modules.Count;
+		}
+		else if (view) ClaimViewPin(user, isWhisper, modules, claim: claim, view: view);
 		else
 			// Neither claim nor view: just “find”, so output top 3 search results
 			IRCConnection.SendMessage("{0}, modules are: {1}", user, !isWhisper, user,
@@ -594,10 +624,10 @@ static class GameCommands
 		TwitchGame.Instance.CallingPlayers.Clear();
 		TwitchGame.Instance.CommandQueue.Remove(call);
 		TwitchGame.ModuleCameras?.SetNotes();
-		IRCConnection.SendMessageFormat("{0} {1}: {2}", now 
-			? "Bypassing the required number of calls, calling" 
-			: TwitchGame.Instance.callsNeeded > 1 
-				? "Required calls reached, calling" 
+		IRCConnection.SendMessageFormat("{0} {1}: {2}", now
+			? "Bypassing the required number of calls, calling"
+			: TwitchGame.Instance.callsNeeded > 1
+				? "Required calls reached, calling"
 				: "Calling", call.Message.UserNickName, call.Message.Text);
 		IRCConnection.ReceiveMessage(call.Message);
 	}
@@ -671,7 +701,7 @@ static class GameCommands
 	public static void ListCalledPlayers(string user)
 	{
 		int totalCalls = TwitchGame.Instance.CallingPlayers.Count;
-		if (totalCalls == 0) 
+		if (totalCalls == 0)
 		{
 			IRCConnection.SendMessageFormat("@{0}, no calls have been made.", user);
 			return;
