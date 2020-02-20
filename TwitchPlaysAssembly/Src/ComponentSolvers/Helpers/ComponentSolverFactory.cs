@@ -76,6 +76,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["streetFighter"] = module => new StreetFighterComponentSolver(module);
 		ModComponentSolverCreators["troll"] = module => new TheTrollComponentSolver(module);
 		ModComponentSolverCreators["tWords"] = module => new TWordsComponentSolver(module);
+		ModComponentSolverCreators["primeEncryption"] = module => new PrimeEncryptionComponentSolver(module);
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
@@ -214,6 +215,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["streetFighter"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 7 };
 		ModComponentSolverInformation["troll"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 8, announceModule = true };
 		ModComponentSolverInformation["tWords"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 5 };
+		ModComponentSolverInformation["primeEncryption"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 5 };
