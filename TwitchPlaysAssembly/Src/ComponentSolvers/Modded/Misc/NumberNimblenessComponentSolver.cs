@@ -20,6 +20,7 @@ public class NumberNimblenessComponentSolver : ComponentSolver
 		if (split.Length == 1 && split[0].FirstOrWhole("screen") && selectables[6].gameObject.activeInHierarchy)
 		{
 			yield return null;
+			yield return "strike";
 			yield return DoInteractionClick(selectables[6]);
 		}
 		else if (split.Length >= 2 && split[0].FirstOrWhole("press"))
@@ -42,6 +43,8 @@ public class NumberNimblenessComponentSolver : ComponentSolver
 				}
 
 				yield return null;
+				yield return "strike";
+				yield return "solve";
 				foreach (KMSelectable button in buttons)
 				{
 					yield return DoInteractionClick(button, 0.05f);
