@@ -78,5 +78,9 @@
     <Rule Id="RCS1057" Action="None" />
     <Rule Id="RCS1110" Action="None" />
     <Rule Id="RCS1123" Action="None" />
+
+    <Rule Id="RCS1058" Action="None" />
+    <Rule Id="RCS1169" Action="None" />
+    <Rule Id="RCS1213" Action="None" />
   </Rules>
 </RuleSet>
