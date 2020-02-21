@@ -56,10 +56,45 @@
             <summary>Clears the contents of a note.</summary>
             <argument name="note">The note's number.</argument>
         </member>
+        <member name="M:GameCommands.Snooze">
+            <name>Snooze</name>
+            <syntax>snooze</syntax>
+            <summary>Snoozes the alarm clock.</summary>
+        </member>
+        <member name="M:GameCommands.ShowClaimsOfAnotherPlayer(System.String,System.String,System.Boolean)">
+            <name>Show Claims</name>
+            <syntax>claims [user]</syntax>
+            <summary>Shows the claims of another user.</summary>
+            <argument name="user">The user whose claims you want to see.</argument>
+        </member>
         <member name="M:GameCommands.ShowClaims(System.String,System.Boolean)">
             <name>Claims</name>
             <syntax>claims</syntax>
             <summary>Shows all of your claims.</summary>
+        </member>
+        <member name="M:GameCommands.ClaimViewPin(System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <name>Claim View Pin</name>
+            <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
+            <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
+            <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
+            <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
+        </member>
+        <member name="M:GameCommands.ClaimAny(System.String,System.String,System.Boolean,System.Boolean,System.String,System.Boolean)">
+            <name>Claim Any</name>
+            <syntax>claim [source]\nclaim [source] view</syntax>
+            <summary>Claims one unsolved and unclaimed module from a source. any, van or mod are acceptable sources.</summary>
+            <argument name="source">The source of the modules to pick from. any for any module, van for vanilla and mod for modded modules.</argument>
+        </member>
+        <member name="M:GameCommands.UnclaimAll(System.String,System.Boolean)">
+            <name>Unclaim All</name>
+            <syntax>unclaim all\nunclaim queued</syntax>
+            <summary>Unclaims all modules you have claimed and queued claims. If queued is used instead of all, then only queued claims will be removed.</summary>
+        </member>
+        <member name="M:GameCommands.UnclaimSpecific(System.String,System.String,System.Boolean)">
+            <name>Unclaim Specific</name>
+            <syntax>unclaim [what]</syntax>
+            <summary>Unclaims a list of module codes.</summary>
+            <argument name="what">A list of module codes to unclaim.</argument>
         </member>
         <member name="M:GameCommands.ListUnclaimed(System.String,System.Boolean)">
             <name>Unclaimed</name>
@@ -71,6 +106,57 @@
             <syntax>unsolved</syntax>
             <summary>Sends a maximum of 3 unsolved modules to chat.</summary>
         </member>
+        <member name="M:GameCommands.FindClaimView(System.String,System.String,System.String,System.Boolean)">
+            <name>Find Claim View</name>
+            <syntax>find (actions) [what]</syntax>
+            <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
+            <argument name="actions">A combination of claim or view seperated by spaces.</argument>
+            <argument name="what">Partial module names seperated by commas or semicolons.</argument>
+        </member>
+        <member name="M:GameCommands.FindPlayer(System.String,System.String,System.Boolean)">
+            <name>Find Player</name>
+            <syntax>findplayer [what]</syntax>
+            <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
+            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+        </member>
+        <member name="M:GameCommands.FindSolved(System.String,System.String,System.Boolean)">
+            <name>Find Solved</name>
+            <syntax>findsolved [what]</syntax>
+            <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
+            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+        </member>
+        <member name="M:GameCommands.NewBomb(System.String,System.Boolean)">
+            <name>New Bomb</name>
+            <syntax>newbomb</syntax>
+            <summary>Starts a new bomb in zen mode. Requires either a minimum score or the defuser rank to run.</summary>
+        </member>
+        <member name="M:GameCommands.FillEdgework(System.String,System.Boolean)">
+            <name>Fill Edgework</name>
+            <syntax>filledgework</syntax>
+            <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
+        </member>
+        <member name="M:GameCommands.EdgeworkElevator(System.String,System.String,System.Boolean)">
+            <name>Elevator Edgework</name>
+            <syntax>edgework (wall)</syntax>
+            <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
+            <restriction>ElevatorOnly</restriction>
+        </member>
+        <member name="M:GameCommands.Edgework(System.String,System.String,System.Boolean)">
+            <name>Edgework</name>
+            <syntax>edgework (edge)\nedgework 45</syntax>
+            <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
+            <restriction>ElevatorDisallowed</restriction>
+        </member>
+        <member name="M:GameCommands.EnableCameraWall(System.String)">
+            <name>Enable Camera Wall</name>
+            <syntax>enablecamerawall</syntax>
+            <summary>Enables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
+        </member>
+        <member name="M:GameCommands.DisableCameraWall(System.String)">
+            <name>Disable Camera Wall</name>
+            <syntax>disablecamerawall</syntax>
+            <summary>Disables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
+        </member>
         <member name="M:GameCommands.EnqueueNamedCommand(IRCMessage,System.String,System.String)">
             <name>Queue Named Command</name>
             <syntax>queue [name] [command]</syntax>
@@ -80,6 +166,12 @@
             <name>Queue Command</name>
             <syntax>queue [command]</syntax>
             <summary>Queues a command that will be called in order.</summary>
+        </member>
+        <member name="M:GameCommands.UnqueueCommand(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.String)">
+            <name>Unqueue Command</name>
+            <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
+            <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
+            <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
         </member>
         <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.Boolean,System.String)">
             <name>Call Command</name>
@@ -93,8 +185,29 @@
         </member>
         <member name="M:GameCommands.CallSetCommand(System.String,System.Int32)">
             <name>Call Set</name>
-            <syntax>call set [minimum]</syntax>
+            <syntax>callset [minimum]</syntax>
             <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
+        </member>
+        <member name="M:GameCommands.CallCountCommand">
+            <name>Call Count</name>
+            <syntax>callcount</syntax>
+            <summary>Displays the number of times that the Call Command has been run since a command was last called.</summary>
+        </member>
+        <member name="M:GameCommands.RemoveQueuedPlayer(System.String)">
+            <name>Uncall</name>
+            <syntax>uncall</syntax>
+            <summary>Retracts your Call Command when multiple are required.</summary>
+        </member>
+        <member name="M:GameCommands.ListCalledPlayers(System.String)">
+            <name>Call Players</name>
+            <syntax>callplayers</syntax>
+            <summary>Lists the current players who have called when multiple are required.</summary>
+        </member>
+        <member name="M:GameCommands.SetMultiplier(System.Single)">
+            <name>Set Multiplier</name>
+            <syntax>setmultiplier [multiplier]</syntax>
+            <summary>Sets the time mode multiplier.</summary>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GameCommands.SolveBomb">
             <name>Solve Bomb</name>
@@ -102,10 +215,69 @@
             <summary>Solves the currently held bomb.</summary>
             <restriction>SuperUser</restriction>
         </member>
+        <member name="M:GameCommands.EnableClaims">
+            <name>Enable Claims</name>
+            <syntax>enableclaims</syntax>
+            <summary>Enables the ability to claim modules.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GameCommands.DisableClaims">
+            <name>Disable Claims</name>
+            <syntax>disableclaims</syntax>
+            <summary>Disables the ability to claim modules.</summary>
+            <restriction>Admin</restriction>
+        </member>
         <member name="M:GameCommands.AssignModuleTo(System.String,System.String,System.String)">
             <name>Assign</name>
             <syntax>assign [user] [codes]</syntax>
             <summary>Assigns modules to a user based on their module codes.</summary>
+        </member>
+        <member name="M:GameCommands.BotUnclaim">
+            <name>Bot Unclaim</name>
+            <syntax>bot unclaim</syntax>
+            <summary>Makes the bot unclaim any module it has claimed.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GameCommands.DisableInteractive">
+            <name>Disable Interactive</name>
+            <syntax>disableinteractive</syntax>
+            <summary>Disables interactive mode on the cameras. As if the escape key hadn't been pressed.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GameCommands.ReturnToSetup">
+            <name>Return To Setup</name>
+            <syntax>returntosetup</syntax>
+            <summary>Forces the game to return to the setup room.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GameCommands.EnableInteractiveMode">
+            <name>Enable Interactive Mode</name>
+            <syntax>enableinteractivemode</syntax>
+            <summary>Enables interactive mode, allowing the streamer to interact with the bomb.</summary>
+            <restriction>Streamer</restriction>
+        </member>
+        <member name="M:GameCommands.DisableInteractiveMode">
+            <name>Disable Interactive Mode</name>
+            <syntax>disableinteractivemode</syntax>
+            <summary>Disables interactive mode, preventing the streamer from interacting with the bomb.</summary>
+            <restriction>Streamer</restriction>
+        </member>
+        <member name="M:GameCommands.SolveUnsupportedModules">
+            <name>Solve Unsupported Modules</name>
+            <syntax>solveunsupportedmodules</syntax>
+            <summary>Solves modules that aren't supported by TP.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GameCommands.RemoveSolveBasedModules">
+            <name>Remove Solve Based Modules</name>
+            <syntax>removesolvebasedmodules</syntax>
+            <summary>Solves modules that depend on the solve count of the bomb.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GameCommands.DefaultCommand(System.String,System.String,System.Boolean)">
+            <name>Custom Messages</name>
+            <syntax>ttks\nttksleft\nttksright\ninfozen\nqhelp</syntax>
+            <summary>These commands send a predefined message to chat. Streamers can choose their own messages but the ones mentioned here are included by default.</summary>
         </member>
         <member name="T:AlarmClockCommands">
             <summary>Commands for the alarm clock.</summary>

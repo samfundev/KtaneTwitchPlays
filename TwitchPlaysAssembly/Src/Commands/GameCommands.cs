@@ -74,6 +74,9 @@ static class GameCommands
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
+	/// <name>Snooze</name>
+	/// <syntax>snooze</syntax>
+	/// <summary>Snoozes the alarm clock.</summary>
 	[Command(@"snooze")]
 	public static IEnumerator Snooze()
 	{
@@ -91,6 +94,10 @@ static class GameCommands
 			yield return e.Current;
 	}
 
+	/// <name>Show Claims</name>
+	/// <syntax>claims [user]</syntax>
+	/// <summary>Shows the claims of another user.</summary>
+	/// <argument name="user">The user whose claims you want to see.</argument>
 	[Command(@"claims +(.+)")]
 	public static void ShowClaimsOfAnotherPlayer([Group(1)] string targetUser, string user, bool isWhisper)
 	{
@@ -114,6 +121,11 @@ static class GameCommands
 			ShowClaimsOfUser(user, user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.NoOwnedModules);
 	}
 
+	/// <name>Claim View Pin</name>
+	/// <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
+	/// <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
+	/// <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
+	/// <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
 	[Command(@"((?:claim *|view *|pin *)+)(?: +(.+)| *(all))")]
 	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat, [Group(3)] bool all)
 	{
@@ -131,6 +143,10 @@ static class GameCommands
 		ClaimViewPin(user, isWhisper, modules, command.Contains("claim"), command.Contains("view"), command.Contains("pin"));
 	}
 
+	/// <name>Claim Any</name>
+	/// <syntax>claim [source]\nclaim [source] view</syntax>
+	/// <summary>Claims one unsolved and unclaimed module from a source. any, van or mod are acceptable sources.</summary>
+	/// <argument name="source">The source of the modules to pick from. any for any module, van for vanilla and mod for modded modules.</argument>
 	[Command(@"(?:claim *(any|van|mod) *(view)?|(view) *claim *(any|van|mod))")]
 	public static void ClaimAny([Group(1)] string claimWhat1, [Group(4)] string claimWhat2, [Group(2)] bool view1, [Group(3)] bool view2, string user, bool isWhisper)
 	{
@@ -152,6 +168,9 @@ static class GameCommands
 			IRCConnection.SendMessage($"There are no more unclaimed{(vanilla ? " vanilla" : modded ? " modded" : null)} modules.");
 	}
 
+	/// <name>Unclaim All</name>
+	/// <syntax>unclaim all\nunclaim queued</syntax>
+	/// <summary>Unclaims all modules you have claimed and queued claims. If queued is used instead of all, then only queued claims will be removed.</summary>
 	[Command(@"(?:unclaim|release) *(?:all|(q(?:ueued?)?))")]
 	public static void UnclaimAll(string user, [Group(1)] bool queuedOnly)
 	{
@@ -164,6 +183,10 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Unclaim Specific</name>
+	/// <syntax>unclaim [what]</syntax>
+	/// <summary>Unclaims a list of module codes.</summary>
+	/// <argument name="what">A list of module codes to unclaim.</argument>
 	[Command(@"(?:unclaim|release) +(.+)")]
 	public static void UnclaimSpecific([Group(1)] string unclaimWhat, string user, bool isWhisper)
 	{
@@ -283,6 +306,11 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Find Claim View</name>
+	/// <syntax>find (actions) [what]</syntax>
+	/// <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
+	/// <argument name="actions">A combination of claim or view seperated by spaces.</argument>
+	/// <argument name="what">Partial module names seperated by commas or semicolons.</argument>
 	[Command(@"(?:find|search)((?: *claim| *view)*) +(.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
@@ -303,6 +331,10 @@ static class GameCommands
 				modules.Take(3).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, handle.Solved ? "solved" : handle.PlayerName == null ? "unclaimed" : "claimed by " + handle.PlayerName)).Join(", "));
 	}
 
+	/// <name>Find Player</name>
+	/// <syntax>findplayer [what]</syntax>
+	/// <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
+	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
 	[Command(@"(?:find *player|player *find|search *player|player *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindPlayer([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -312,6 +344,10 @@ static class GameCommands
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such claimed/solved modules.", user, !isWhisper);
 	}
 
+	/// <name>Find Solved</name>
+	/// <syntax>findsolved [what]</syntax>
+	/// <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
+	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindSolved([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -321,6 +357,9 @@ static class GameCommands
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such solved modules.", user, !isWhisper);
 	}
 
+	/// <name>New Bomb</name>
+	/// <syntax>newbomb</syntax>
+	/// <summary>Starts a new bomb in zen mode. Requires either a minimum score or the defuser rank to run.</summary>
 	[Command(@"newbomb")]
 	public static void NewBomb(string user, bool isWhisper)
 	{
@@ -351,6 +390,9 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Fill Edgework</name>
+	/// <syntax>filledgework</syntax>
+	/// <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
 	[Command(@"filledgework")]
 	public static void FillEdgework(string user, bool isWhisper)
 	{
@@ -365,8 +407,16 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Elevator Edgework</name>
+	/// <syntax>edgework (wall)</syntax>
+	/// <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
+	/// <restriction>ElevatorOnly</restriction>
 	[Command(@"edgework((?: right| left| back| r| l| b)?)"), ElevatorOnly]
 	public static IEnumerator EdgeworkElevator([Group(1)] string edge, string user, bool isWhisper) => Edgework(edge, user, isWhisper);
+	/// <name>Edgework</name>
+	/// <syntax>edgework (edge)\nedgework 45</syntax>
+	/// <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
+	/// <restriction>ElevatorDisallowed</restriction>
 	[Command(@"edgework((?: 45|-45)|(?: top right| right top| right bottom| bottom right| bottom left| left bottom| left top| top left| left| top| right| bottom| tr| rt| tl| lt| br| rb| bl| lb| t| r| b| l))?"), ElevatorDisallowed]
 	public static IEnumerator Edgework([Group(1)] string edge, string user, bool isWhisper)
 	{
@@ -383,6 +433,9 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Enable Camera Wall</name>
+	/// <syntax>enablecamerawall</syntax>
+	/// <summary>Enables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
 	[Command(@"enablecamerawall")]
 	public static void EnableCameraWall(string user)
 	{
@@ -392,6 +445,9 @@ static class GameCommands
 			TwitchGame.ModuleCameras.EnableCameraWall();
 	}
 
+	/// <name>Disable Camera Wall</name>
+	/// <syntax>disablecamerawall</syntax>
+	/// <summary>Disables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
 	[Command(@"disablecamerawall")]
 	public static void DisableCameraWall(string user)
 	{
@@ -428,6 +484,10 @@ static class GameCommands
 		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 	}
 
+	/// <name>Unqueue Command</name>
+	/// <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
+	/// <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
+	/// <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
 	[Command(@"(?:(un)|(del)|(show|list))q(?:ueue)?(?: *(all)| +(.+))?")]
 	public static void UnqueueCommand(string user, bool isWhisper, [Group(1)] bool un, [Group(2)] bool del, [Group(3)] bool show, [Group(4)] bool all, [Group(5)] string command)
 	{
@@ -588,6 +648,9 @@ static class GameCommands
 	[Command(@"callcount")]
 	public static void CallCountCommand() => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.CallingPlayers.Count, TwitchGame.Instance.callsNeeded);
 
+	/// <name>Uncall</name>
+	/// <syntax>uncall</syntax>
+	/// <summary>Retracts your Call Command when multiple are required.</summary>
 	[Command(@"uncall")]
 	public static void RemoveQueuedPlayer(string user)
 	{
@@ -601,6 +664,9 @@ static class GameCommands
 		CallCountCommand();
 	}
 
+	/// <name>Call Players</name>
+	/// <syntax>callplayers</syntax>
+	/// <summary>Lists the current players who have called when multiple are required.</summary>
 	[Command(@"callplayers")]
 	public static void ListCalledPlayers(string user)
 	{
@@ -614,6 +680,10 @@ static class GameCommands
 		IRCConnection.SendMessageFormat("These players have already called: @{0}", CallPlayers);
 	}
 
+	/// <name>Set Multiplier</name>
+	/// <syntax>setmultiplier [multiplier]</syntax>
+	/// <summary>Sets the time mode multiplier.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
 
@@ -635,6 +705,10 @@ static class GameCommands
 				module.SolveSilently();
 	}
 
+	/// <name>Enable Claims</name>
+	/// <syntax>enableclaims</syntax>
+	/// <summary>Enables the ability to claim modules.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"enableclaims", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void EnableClaims()
 	{
@@ -642,6 +716,10 @@ static class GameCommands
 		IRCConnection.SendMessage("Claims have been enabled.");
 	}
 
+	/// <name>Disable Claims</name>
+	/// <syntax>disableclaims</syntax>
+	/// <summary>Disables the ability to claim modules.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"disableclaims", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void DisableClaims()
 	{
@@ -676,6 +754,10 @@ static class GameCommands
 			IRCConnection.SendMessage($"{user}, since you’re not a moderator, {denied.Take(denied.Count - 1).Join(", ")} and {denied.Last()} have not been reassigned.", user, false);
 	}
 
+	/// <name>Bot Unclaim</name>
+	/// <syntax>bot unclaim</syntax>
+	/// <summary>Makes the bot unclaim any module it has claimed.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"bot ?unclaim( ?all)?", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void BotUnclaim()
 	{
@@ -684,12 +766,24 @@ static class GameCommands
 				module.SetUnclaimed();
 	}
 
+	/// <name>Disable Interactive</name>
+	/// <syntax>disableinteractive</syntax>
+	/// <summary>Disables interactive mode on the cameras. As if the escape key hadn't been pressed.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"disableinteractive", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void DisableInteractive() => TwitchGame.ModuleCameras.DisableInteractive();
 
+	/// <name>Return To Setup</name>
+	/// <syntax>returntosetup</syntax>
+	/// <summary>Forces the game to return to the setup room.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"(?:returntosetup|leave|exit)(?:room)?|return", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void ReturnToSetup() => SceneManager.Instance.ReturnToSetupState();
 
+	/// <name>Enable Interactive Mode</name>
+	/// <syntax>enableinteractivemode</syntax>
+	/// <summary>Enables interactive mode, allowing the streamer to interact with the bomb.</summary>
+	/// <restriction>Streamer</restriction>
 	[Command(@"enableinteractivemode", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void EnableInteractiveMode()
 	{
@@ -699,6 +793,10 @@ static class GameCommands
 		TwitchGame.EnableDisableInput();
 	}
 
+	/// <name>Disable Interactive Mode</name>
+	/// <syntax>disableinteractivemode</syntax>
+	/// <summary>Disables interactive mode, preventing the streamer from interacting with the bomb.</summary>
+	/// <restriction>Streamer</restriction>
 	[Command(@"disableinteractivemode", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void DisableInteractiveMode()
 	{
@@ -708,6 +806,10 @@ static class GameCommands
 		TwitchGame.EnableDisableInput();
 	}
 
+	/// <name>Solve Unsupported Modules</name>
+	/// <syntax>solveunsupportedmodules</syntax>
+	/// <summary>Solves modules that aren't supported by TP.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"solveunsupportedmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SolveUnsupportedModules()
 	{
@@ -715,6 +817,10 @@ static class GameCommands
 		TwitchModule.SolveUnsupportedModules();
 	}
 
+	/// <name>Remove Solve Based Modules</name>
+	/// <syntax>removesolvebasedmodules</syntax>
+	/// <summary>Solves modules that depend on the solve count of the bomb.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"removesolvebasedmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void RemoveSolveBasedModules()
 	{
@@ -722,6 +828,9 @@ static class GameCommands
 		TwitchGame.Instance.RemoveSolveBasedModules();
 	}
 
+	/// <name>Custom Messages</name>
+	/// <syntax>ttks\nttksleft\nttksright\ninfozen\nqhelp</syntax>
+	/// <summary>These commands send a predefined message to chat. Streamers can choose their own messages but the ones mentioned here are included by default.</summary>
 	[Command(null)]
 	public static bool DefaultCommand(string cmd, string user, bool isWhisper)
 	{
