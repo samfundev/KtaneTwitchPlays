@@ -176,6 +176,7 @@ public class TwitchPlaysService : MonoBehaviour
 			return;
 
 		StartCoroutine(StopEveryCoroutine());
+		CheckSupport.Cleanup();
 
 		if (state != KMGameInfo.State.PostGame && _leaderboardDisplay != null)
 		{

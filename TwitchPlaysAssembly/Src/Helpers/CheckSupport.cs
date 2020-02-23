@@ -14,6 +14,7 @@ public static class CheckSupport
 {
 	static Text alertText;
 	static Transform alertProgressBar;
+	static List<GameObject> gameObjects = new List<GameObject>();
 
 	public static IEnumerator FindSupportedModules()
 	{
@@ -26,6 +27,7 @@ public static class CheckSupport
 		if (!request.isNetworkError && !request.isHttpError)
 		{
 			var alert = Object.Instantiate(IRCConnection.Instance.ConnectionAlert, IRCConnection.Instance.ConnectionAlert.transform.parent);
+			gameObjects.Add(alert);
 			alert.SetActive(true);
 			alertText = alert.transform.Find("Text").GetComponent<Text>();
 			alertProgressBar = alert.transform.Find("ProgressBar");
@@ -37,9 +39,18 @@ public static class CheckSupport
 		}
 	}
 
+	public static void Cleanup()
+	{
+		foreach (GameObject gameObject in gameObjects)
+			Object.Destroy(gameObject);
+
+		gameObjects.Clear();
+	}
+
 	static IEnumerator TestComponents(IEnumerable<BombComponent> untestedComponents)
 	{
 		GameObject fakeModule = new GameObject();
+		gameObjects.Add(fakeModule);
 		TwitchModule module = fakeModule.AddComponent<TwitchModule>();
 		module.enabled = false;
 
@@ -137,6 +148,7 @@ public static class CheckSupport
 
 		// Get mods that need to be loaded into the game to be tested
 		var disabledParent = new GameObject();
+		gameObjects.Add(disabledParent);
 		disabledParent.SetActive(false);
 
 		var modWorkshopPath = Path.GetFullPath(new[] { SteamDirectory, "steamapps", "workshop", "content", "341800" }.Aggregate(Path.Combine));
