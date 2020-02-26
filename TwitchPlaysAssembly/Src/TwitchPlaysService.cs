@@ -172,6 +172,7 @@ public class TwitchPlaysService : MonoBehaviour
 	private void OnStateChange(KMGameInfo.State state)
 	{
 		CurrentState = state;
+		Votes.Clear();
 		if (!transform.gameObject.activeInHierarchy)
 			return;
 
