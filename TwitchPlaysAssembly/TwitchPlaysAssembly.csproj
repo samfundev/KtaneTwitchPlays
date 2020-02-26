@@ -107,6 +107,9 @@
     <Compile Include="Src\Audio\Audio.cs" />
     <Compile Include="Src\Audio\InterruptMusic.cs" />
     <Compile Include="Src\Audio\MusicPlayer.cs" />
+    <Compile Include="Src\ComponentSolvers\Helpers\ReflectionComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\ShapeMemoryComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Misc\RNGComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\ModulusManipulationComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\AdditionComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\CrypticPasswordComponentSolver.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Shims\GroceryStoreShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\BooleanKeypadShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\SwanShim.cs" />
+    <Compile Include="Src\Extensions\KMBombInfoExtensions.cs" />
     <Compile Include="Src\Helpers\CheckSupport.cs" />
     <Compile Include="Src\Helpers\ClaimQueueItem.cs" />
     <Compile Include="Src\Helpers\CommandQueueItem.cs" />

@@ -4,6 +4,11 @@
         <name>TwitchPlaysAssembly</name>
     </assembly>
     <members>
+        <member name="T:KModkit.KMBombInfoExtensions">
+            <summary>
+            Some helper extensions methods for the KMBombInfo class.
+            </summary>
+        </member>
         <member name="T:GlobalCommands">
             <summary>Commands that can generally be used at any time.</summary>
         </member>

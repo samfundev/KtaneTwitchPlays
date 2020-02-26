@@ -86,19 +86,23 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["resistors"] = module => new ResistorsComponentSolver(module);
 		ModComponentSolverCreators["speakEnglish"] = module => new SpeakEnglishComponentSolver(module);
 		ModComponentSolverCreators["switchModule"] = module => new SwitchesComponentSolver(module);
-		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["NeedyBeer"] = module => new NeedyBeerComponentSolver(module);
 		ModComponentSolverCreators["errorCodes"] = module => new ErrorCodesComponentSolver(module);
 		ModComponentSolverCreators["JuckAlchemy"] = module => new AlchemyComponentSolver(module);
-		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
 		ModComponentSolverCreators["boolMaze"] = module => new BooleanMazeComponentSolver(module);
 		ModComponentSolverCreators["MorseWar"] = module => new MorseWarComponentSolver(module);
 		ModComponentSolverCreators["necronomicon"] = module => new NecronomiconComponentSolver(module);
 		ModComponentSolverCreators["numberNimbleness"] = module => new NumberNimblenessComponentSolver(module);
 		ModComponentSolverCreators["babaIsWho"] = module => new BabaIsWhoComponentSolver(module);
 		ModComponentSolverCreators["chordProgressions"] = module => new ChordProgressionsComponentSolver(module);
-		ModComponentSolverCreators["CrypticPassword"] = module => new CrypticPasswordComponentSolver(module);
 		ModComponentSolverCreators["AdditionModule"] = module => new AdditionComponentSolver(module);
+		ModComponentSolverCreators["rng"] = module => new RNGComponentSolver(module);
+		ModComponentSolverCreators["needyShapeMemory"] = module => new ShapeMemoryComponentSolver(module);
+		// Misc [ZekNikZ]
+		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
+		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
+		// Misc [hockeygoalie78]
+		ModComponentSolverCreators["CrypticPassword"] = module => new CrypticPasswordComponentSolver(module);
 		ModComponentSolverCreators["modulusManipulation"] = module => new ModulusManipulationComponentSolver(module);
 
 		//Translated Modules
@@ -240,6 +244,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["CrypticPassword"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["AdditionModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["ShapeMemoryComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };

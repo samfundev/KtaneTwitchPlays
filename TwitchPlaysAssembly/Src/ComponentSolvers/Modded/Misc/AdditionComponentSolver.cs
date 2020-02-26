@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class AdditionComponentSolver : ComponentSolver
@@ -42,12 +40,12 @@ public class AdditionComponentSolver : ComponentSolver
 			int count = cycle ? 10 : 1;
 
 			KMSelectable selectable = _component.GetValue<KMSelectable>(cycle ? "ScreenCycler" : clear ? "Clear" : "SubmitButton");
-			
+
 			for (int i = 0; i < count; i++)
 			{
 				yield return DoInteractionClick(selectable);
 				yield return new WaitForSeconds(1.5f);
-			}				
+			}
 		}
 	}
 
