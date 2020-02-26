@@ -142,7 +142,7 @@ public static class CheckSupport
 			.Where(bombComponent =>
 			{
 				string moduleID = bombComponent.GetComponent<KMBombModule>()?.ModuleType ?? bombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
-				return json.KtaneModules.Any(module => module.ModuleID == moduleID && module.TwitchPlays == null);
+				return json.KtaneModules.Any(module => module.ModuleID == moduleID && module.TwitchPlays == null) || !json.KtaneModules.Any(module => module.ModuleID == moduleID);
 			})
 			.ToArray();
 
