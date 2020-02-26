@@ -172,11 +172,13 @@ public class TwitchPlaysService : MonoBehaviour
 	private void OnStateChange(KMGameInfo.State state)
 	{
 		CurrentState = state;
+
 		if (!transform.gameObject.activeInHierarchy)
 			return;
 
 		StartCoroutine(StopEveryCoroutine());
 		CheckSupport.Cleanup();
+		Votes.Clear();
 
 		if (state != KMGameInfo.State.PostGame && _leaderboardDisplay != null)
 		{

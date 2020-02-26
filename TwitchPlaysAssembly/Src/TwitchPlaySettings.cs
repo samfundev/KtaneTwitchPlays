@@ -45,6 +45,9 @@ public class TwitchPlaySettingsData
 	public int FindClaimLimit = 3;
 	public int FindClaimTerms = 3;
 	public int FindClaimAddTime = 5;
+	public int VoteCountdownTime = 60;
+	public bool EnableVoting = true;
+	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.getVoteDict();
 	public float DynamicScorePercentage = 0.5f;
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
@@ -494,6 +497,15 @@ public static class TwitchPlaySettings
 	private static int ClearReward = 0;
 	private static int RetryReward = 0;
 
+	public static Dictionary<VoteTypes, int> getVoteDict()
+	{
+		Dictionary<VoteTypes, int> Dict = new Dictionary<VoteTypes, int>();
+		foreach(VoteTypes Name in Enum.GetValues(typeof(VoteTypes)))
+		{
+			Dict.Add(Name, 51);
+		}
+		return Dict;
+	}
 	public static void WriteDataToFile()
 	{
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);

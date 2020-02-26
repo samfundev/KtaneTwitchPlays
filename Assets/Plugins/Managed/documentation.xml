@@ -12,6 +12,33 @@
         <member name="T:GlobalCommands">
             <summary>Commands that can generally be used at any time.</summary>
         </member>
+        <member name="M:GlobalCommands.VoteStart(System.String,System.Boolean)">
+            <name>Start a vote</name>
+            <syntax>vote [action]</syntax>
+            <summary>Starts a vote about doing an action</summary>
+        </member>
+        <member name="M:GlobalCommands.Vote(System.String,System.Boolean)">
+            <name>Vote</name>
+            <syntax>vote [choice]</syntax>
+            <summary>Vote with yes or no</summary>
+        </member>
+        <member name="M:GlobalCommands.RemoveVote(System.String)">
+            <name>Remove vote</name>
+            <syntax>vote remove</syntax>
+            <summary>Removes the vote of a user</summary>
+        </member>
+        <member name="M:GlobalCommands.CancelVote">
+            <name>Cancel vote</name>
+            <syntax>vote cancel</syntax>
+            <summary>Cancels a voting process</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.ForceEndVote">
+            <name>Force-end vote</name>
+            <syntax>vote forceend</syntax>
+            <summary>Skips the countdown of the voting process</summary>
+            <restriction>Mod</restriction>
+        </member>
         <member name="M:GlobalCommands.Moderators(System.String,System.Boolean)">
             <name>Moderators</name>
             <syntax>moderators</syntax>
@@ -387,6 +414,33 @@
             <name>Explode</name>
             <syntax>explode</syntax>
             <summary>Forces the bomb to explode.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:BombCommands.VoteStart(TwitchBomb,System.String,System.Boolean)">
+            <name>Start a vote</name>
+            <syntax>vote [action]</syntax>
+            <summary>Starts a vote about doing an action</summary>
+        </member>
+        <member name="M:BombCommands.Vote(System.String,System.Boolean)">
+            <name>Vote</name>
+            <syntax>vote [choice]</syntax>
+            <summary>Vote with yes or no</summary>
+        </member>
+        <member name="M:BombCommands.RemoveVote(System.String)">
+            <name>Remove vote</name>
+            <syntax>vote remove</syntax>
+            <summary>Removes the vote of a user</summary>
+        </member>
+        <member name="M:BombCommands.CancelVote">
+            <name>Cancel vote</name>
+            <syntax>vote cancel</syntax>
+            <summary>Cancels a voting process</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:BombCommands.ForceEndVote">
+            <name>Force-end vote</name>
+            <syntax>vote forceend</syntax>
+            <summary>Skips the countdown of the voting process</summary>
             <restriction>Mod</restriction>
         </member>
         <member name="M:BombCommands.Status(TwitchBomb,System.String,System.Boolean)">
