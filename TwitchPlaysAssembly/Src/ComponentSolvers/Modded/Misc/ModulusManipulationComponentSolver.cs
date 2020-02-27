@@ -15,7 +15,7 @@ public class ModulusManipulationComponentSolver : ComponentSolver
 	{
 		string[] split = inputCommand.ToLowerInvariant().SplitFull(" ,;");
 
-		if (int.TryParse(split[0], out int answer) && answer.InRange(0, 999) && int.TryParse(split[1], out int minutes))
+		if (split.Length == 2 && int.TryParse(split[0], out int answer) && answer.InRange(0, 999) && int.TryParse(split[1], out int minutes))
 		{
 			yield return null;
 
