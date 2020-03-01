@@ -39,7 +39,7 @@ public static class Votes
 	static Votes()
 	{
 		Countdown.Elapsed += Elapsed;
-		Countdown.AutoReset = false;
+		Countdown.AutoReset = true;
 		ResetTimer();
 	}
 
