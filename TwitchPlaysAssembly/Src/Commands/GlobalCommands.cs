@@ -101,8 +101,8 @@ static class GlobalCommands
 	/// <name>Vote</name>
 	/// <syntax>vote [choice]</syntax>
 	/// <summary>Vote with yes or no</summary>
-	[Command(@"vote (yes|voteyea)|(no|votenay)")]
-	public static void Vote(string user, [Group(1)] bool yesVote) => Votes.Vote(user, yesVote);
+	[Command(@"vote ((yes|voteyea)|(no|votenay))")]
+	public static void Vote(string user, [Group(2)] bool yesVote) => Votes.Vote(user, yesVote);
 
 	/// <name>Remove vote</name>
 	/// <syntax>vote remove</syntax>
