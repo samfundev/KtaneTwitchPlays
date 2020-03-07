@@ -1117,6 +1117,12 @@ static class GlobalCommands
 
 	private static void ProfileWrapper(string profileName, string user, bool isWhisper, Action<string, string> action)
 	{
+		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.PostGame && TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup)
+		{
+			IRCConnection.SendMessage("You can't use a !profile command right now.");
+			return;
+		}
+
 		var profileString = ProfileHelper.GetProperProfileName(profileName);
 		if (TwitchPlaySettings.data.ProfileWhitelist.Contains(profileString))
 			action(profileString.Replace(' ', '_'), profileString);
