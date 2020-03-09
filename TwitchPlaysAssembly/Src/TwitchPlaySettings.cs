@@ -623,8 +623,8 @@ public static class TwitchPlaySettings
 
 		if (!OtherModes.VSModeOn)
 		{
-			int ClearReward2 = Mathf.CeilToInt(ClearReward / (float) Players.Count);
-			message = string.Format(data.BombDefusedBonusMessage, ClearReward2) + data.BombDefusedFooter;
+			float ClearReward2 = ClearReward / (float) Players.Count;
+			message = string.Format(data.BombDefusedBonusMessage, ClearReward2.ToString("0.##")) + data.BombDefusedFooter;
 			foreach (string player in Players)
 			{
 				Leaderboard.Instance.AddScore(player, ClearReward2);
@@ -638,9 +638,9 @@ public static class TwitchPlaySettings
 			else if (OtherModes.GetEvilHealth() == 0)
 				winner = OtherModes.Team.Good;
 
-			int ClearReward2 =
-				Mathf.CeilToInt(ClearReward / (float) Players.Count(x => Leaderboard.Instance.GetTeam(x) == winner));
-			message = string.Format(data.VersusBonusMessage, ClearReward2,
+			float ClearReward2 =
+				ClearReward / (float) Players.Count(x => Leaderboard.Instance.GetTeam(x) == winner);
+			message = string.Format(data.VersusBonusMessage, ClearReward2.ToString("0.##"),
 				winner == OtherModes.Team.Good ? "good" : "evil");
 
 			foreach (string player in Players.Where(x => Leaderboard.Instance.GetTeam(x) == winner))
