@@ -14,6 +14,9 @@ using Random = UnityEngine.Random;
 /// <summary>Commands that can generally be used at any time.</summary>
 static class GlobalCommands
 {
+	/// <name>Help</name>
+	/// <syntax>help</syntax>
+	/// <summary>Gives you some help on how to play TP.</summary>
 	[Command(@"(manual|help)")]
 	public static void Help(string user, bool isWhisper)
 	{
@@ -28,13 +31,21 @@ static class GlobalCommands
 		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", randomCodes[1], UrlHelper.Instance.CommandReference), user, !isWhisper);
 	}
 
-	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
+	/// <name>Bonus Points</name>
+	/// <syntax>bonuspoints [player] [points]</syntax>
+	/// <summary>Adds points to a player's score.</summary>
+	/// <restriction>SuperUser</restriction>
+	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+(?:\.[0-9]+)?)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] float bonus, string user)
 	{
-		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus.ToString("0.##"), user);
 		Leaderboard.Instance.AddScore(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
+	/// <name>Bonus Solves</name>
+	/// <syntax>bonussolves [player] [solves]</syntax>
+	/// <summary>Adds solves to a player.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"bonussolves? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusSolves([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
@@ -42,6 +53,10 @@ static class GlobalCommands
 		Leaderboard.Instance.AddSolve(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
+	/// <name>Bonus Strikes</name>
+	/// <syntax>bonusstrikes [player] [strikes]</syntax>
+	/// <summary>Adds strikes to a player.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"bonusstrikes? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void BonusStrikes([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
@@ -49,19 +64,40 @@ static class GlobalCommands
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
+	/// <name>Set Reward</name>
+	/// <syntax>reward [points]</syntax>
+	/// <summary>Sets the reward that's given out on a succesful defusual.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"reward (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SetReward([Group(1)] int reward) => TwitchPlaySettings.SetRewardBonus(reward);
 
+	/// <name>Add Reward</name>
+	/// <syntax>bonusreward [points]</syntax>
+	/// <summary>Adds to the reward that's given out on a succesful defusual.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"bonusreward (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void AddReward([Group(1)] int reward) => TwitchPlaySettings.AddRewardBonus(reward);
 
+	/// <name>Time Mode</name>
+	/// <syntax>timemode [state]</syntax>
+	/// <summary>Enables or disables time mode. [state] is either on or off.</summary>
 	[Command(@"timemode( *(on)| *off)?")]
 	public static void TimeMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Time, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableTimeModeForEveryone, TwitchPlaySettings.data.TimeModeCommandDisabled);
+	/// <name>VS Mode</name>
+	/// <syntax>vsmode [state]</syntax>
+	/// <summary>Enables or disables VS mode. [state] is either on or off.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"vsmode( *(on)| *off)?", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void VsMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.VS, !any, on, user, isWhisper, false, TwitchPlaySettings.data.VsModeCommandDisabled);
+	/// <name>Zen Mode</name>
+	/// <syntax>zenmode [state]</syntax>
+	/// <summary>Enables or disables zen mode. [state] is either on or off.</summary>
 	[Command(@"zenmode( *(on)| *off)?")]
 	public static void ZenMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Zen, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableZenModeForEveryone, TwitchPlaySettings.data.ZenModeCommandDisabled);
 
+	/// <name>Show Mode</name>
+	/// <syntax>mode</syntax>
+	/// <summary>Sends a message to chat with the current and upcoming mode.</summary>
 	[Command(@"modes?")]
 	public static void ShowMode(string user, bool isWhisper)
 	{
@@ -70,6 +106,10 @@ static class GlobalCommands
 			IRCConnection.SendMessage("We are currently in anarchy mode.", user, !isWhisper);
 	}
 
+	/// <name>Reset User</name>
+	/// <syntax>resetuser [users]</syntax>
+	/// <summary>Resets a user's information on the leaderboard. [users] is a list of usernames seperated by a semicolon.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"resetusers? +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetUser([Group(1)] string parameters, string user, bool isWhisper)
 	{
@@ -143,9 +183,15 @@ static class GlobalCommands
 	}
 	#endregion
 
+	/// <name>My Rank</name>
+	/// <syntax>rank</syntax>
+	/// <summary>Sends a message with what your current rank is.</summary>
 	[Command(@"rank")]
 	public static void OwnRank(string user, bool isWhisper) { Leaderboard.Instance.GetRank(user, out var entry); ShowRank(entry, user, user, isWhisper); }
 
+	/// <name>Get Solo Rank</name>
+	/// <syntax>rank solo [rank]</syntax>
+	/// <summary>Sends a message with who currently has that solo rank.</summary>
 	[Command(@"rank solo (\d+)")]
 	public static void SoloRank([Group(1)] int desiredRank, string user, bool isWhisper)
 	{
@@ -153,9 +199,15 @@ static class GlobalCommands
 		ShowRank(entries, user, user, isWhisper, numeric: true);
 	}
 
+	/// <name>Get Solo Rank By User</name>
+	/// <syntax>rank solo [user]</syntax>
+	/// <summary>Sends a message with the solo rank of that user.</summary>
 	[Command(@"rank solo (?!\d+$)(.*)")]
 	public static void SoloRankByUser([Group(1)] string desiredUser, string user, bool isWhisper) { Leaderboard.Instance.GetSoloRank(desiredUser, out var entry); ShowRank(entry, desiredUser, user, isWhisper); }
 
+	/// <name>Get Rank</name>
+	/// <syntax>rank [rank]</syntax>
+	/// <summary>Sends a message with who currently has that rank.</summary>
 	[Command(@"rank (\d+)")]
 	public static void Rank([Group(1)] int desiredRank, string user, bool isWhisper)
 	{
@@ -163,18 +215,34 @@ static class GlobalCommands
 		ShowRank(entries, user, user, isWhisper, numeric: true);
 	}
 
+	/// <name>Get Rank By User</name>
+	/// <syntax>rank [user]</syntax>
+	/// <summary>Sends a message with the rank of that user.</summary>
 	[Command(@"rank (?!\d+$)(.*)")]
 	public static void RankByUser([Group(1)] string desiredUser, string user, bool isWhisper) { Leaderboard.Instance.GetRank(desiredUser, out var entry); ShowRank(entry, desiredUser, user, isWhisper); }
 
+	/// <name>Get Previous Log</name>
+	/// <syntax>log</syntax>
+	/// <summary>Sends a message with the previous log.</summary>
 	[Command(@"(log|analysis)")]
 	public static void Log() => LogUploader.Instance.PostToChat(LogUploader.Instance.previousUrl, "Analysis for the previous bomb: {0}");
 
+	/// <name>Get Log</name>
+	/// <syntax>lognow</syntax>
+	/// <summary>Sends a message with the current log.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("(log|analysis)now", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void LogNow(string user, bool isWhisper) => LogUploader.Instance.GetAnalyzerUrl(url => IRCConnection.SendMessage(url, user, !isWhisper));
 
+	/// <name>Toggle Short URLs</name>
+	/// <syntax>shorturl</syntax>
+	/// <summary>Toggles shortened URLs.</summary>
 	[Command(@"shorturl")]
 	public static void ShortURL(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs"), user, !isWhisper);
 
+	/// <name>Build Date</name>
+	/// <syntax>builddate</syntax>
+	/// <summary>Sends a message with the build date of TP.</summary>
 	[Command(@"(?:builddate|version)")]
 	public static void BuildDate(string user, bool isWhisper)
 	{
@@ -1037,7 +1105,7 @@ static class GlobalCommands
 					txtSolver = TwitchPlaySettings.data.SolverAndSolo;
 					txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int) recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
 				}
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore), user, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore.ToString("0.##")), user, !isWhisper);
 			}
 		}
 	}

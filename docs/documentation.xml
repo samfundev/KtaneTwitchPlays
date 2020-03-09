@@ -12,6 +12,68 @@
         <member name="T:GlobalCommands">
             <summary>Commands that can generally be used at any time.</summary>
         </member>
+        <member name="M:GlobalCommands.Help(System.String,System.Boolean)">
+            <name>Help</name>
+            <syntax>help</syntax>
+            <summary>Gives you some help on how to play TP.</summary>
+        </member>
+        <member name="M:GlobalCommands.BonusPoints(System.String,System.Single,System.String)">
+            <name>Bonus Points</name>
+            <syntax>bonuspoints [player] [points]</syntax>
+            <summary>Adds points to a player's score.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.BonusSolves(System.String,System.Int32,System.String)">
+            <name>Bonus Solves</name>
+            <syntax>bonussolves [player] [solves]</syntax>
+            <summary>Adds solves to a player.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.BonusStrikes(System.String,System.Int32,System.String)">
+            <name>Bonus Strikes</name>
+            <syntax>bonusstrikes [player] [strikes]</syntax>
+            <summary>Adds strikes to a player.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.SetReward(System.Int32)">
+            <name>Set Reward</name>
+            <syntax>reward [points]</syntax>
+            <summary>Sets the reward that's given out on a succesful defusual.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.AddReward(System.Int32)">
+            <name>Add Reward</name>
+            <syntax>bonusreward [points]</syntax>
+            <summary>Adds to the reward that's given out on a succesful defusual.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.TimeMode(System.Boolean,System.Boolean,System.String,System.Boolean)">
+            <name>Time Mode</name>
+            <syntax>timemode [state]</syntax>
+            <summary>Enables or disables time mode. [state] is either on or off.</summary>
+        </member>
+        <member name="M:GlobalCommands.VsMode(System.Boolean,System.Boolean,System.String,System.Boolean)">
+            <name>VS Mode</name>
+            <syntax>vsmode [state]</syntax>
+            <summary>Enables or disables VS mode. [state] is either on or off.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.ZenMode(System.Boolean,System.Boolean,System.String,System.Boolean)">
+            <name>Zen Mode</name>
+            <syntax>zenmode [state]</syntax>
+            <summary>Enables or disables zen mode. [state] is either on or off.</summary>
+        </member>
+        <member name="M:GlobalCommands.ShowMode(System.String,System.Boolean)">
+            <name>Show Mode</name>
+            <syntax>mode</syntax>
+            <summary>Sends a message to chat with the current and upcoming mode.</summary>
+        </member>
+        <member name="M:GlobalCommands.ResetUser(System.String,System.String,System.Boolean)">
+            <name>Reset User</name>
+            <syntax>resetuser [users]</syntax>
+            <summary>Resets a user's information on the leaderboard. [users] is a list of usernames seperated by a semicolon.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
         <member name="M:GlobalCommands.VoteStart(System.String,System.Boolean)">
             <name>Start a vote</name>
             <syntax>vote [action]</syntax>
@@ -38,6 +100,52 @@
             <syntax>vote forceend</syntax>
             <summary>Skips the countdown of the voting process</summary>
             <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.OwnRank(System.String,System.Boolean)">
+            <name>My Rank</name>
+            <syntax>rank</syntax>
+            <summary>Sends a message with what your current rank is.</summary>
+        </member>
+        <member name="M:GlobalCommands.SoloRank(System.Int32,System.String,System.Boolean)">
+            <name>Get Solo Rank</name>
+            <syntax>rank solo [rank]</syntax>
+            <summary>Sends a message with who currently has that solo rank.</summary>
+        </member>
+        <member name="M:GlobalCommands.SoloRankByUser(System.String,System.String,System.Boolean)">
+            <name>Get Solo Rank By User</name>
+            <syntax>rank solo [user]</syntax>
+            <summary>Sends a message with the solo rank of that user.</summary>
+        </member>
+        <member name="M:GlobalCommands.Rank(System.Int32,System.String,System.Boolean)">
+            <name>Get Rank</name>
+            <syntax>rank [rank]</syntax>
+            <summary>Sends a message with who currently has that rank.</summary>
+        </member>
+        <member name="M:GlobalCommands.RankByUser(System.String,System.String,System.Boolean)">
+            <name>Get Rank By User</name>
+            <syntax>rank [user]</syntax>
+            <summary>Sends a message with the rank of that user.</summary>
+        </member>
+        <member name="M:GlobalCommands.Log">
+            <name>Get Previous Log</name>
+            <syntax>log</syntax>
+            <summary>Sends a message with the previous log.</summary>
+        </member>
+        <member name="M:GlobalCommands.LogNow(System.String,System.Boolean)">
+            <name>Get Log</name>
+            <syntax>lognow</syntax>
+            <summary>Sends a message with the current log.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.ShortURL(System.String,System.Boolean)">
+            <name>Toggle Short URLs</name>
+            <syntax>shorturl</syntax>
+            <summary>Toggles shortened URLs.</summary>
+        </member>
+        <member name="M:GlobalCommands.BuildDate(System.String,System.Boolean)">
+            <name>Build Date</name>
+            <syntax>builddate</syntax>
+            <summary>Sends a message with the build date of TP.</summary>
         </member>
         <member name="M:GlobalCommands.Moderators(System.String,System.Boolean)">
             <name>Moderators</name>
