@@ -245,7 +245,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["AdditionModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["ShapeMemoryComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", moduleScore = 1 };
