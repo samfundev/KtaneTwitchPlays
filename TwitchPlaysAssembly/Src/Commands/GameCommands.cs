@@ -357,8 +357,9 @@ static class GameCommands
 		else if (view) ClaimViewPin(user, isWhisper, modules, claim: claim, view: view);
 		else
 			// Neither claim nor view: just “find”, so output top 3 search results
-			IRCConnection.SendMessage("{0}, modules are: {1}", user, !isWhisper, user,
-				modules.Take(3).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, handle.Solved ? "solved" : handle.PlayerName == null ? "unclaimed" : "claimed by " + handle.PlayerName)).Join(", "));
+			IRCConnection.SendMessage("{0}, modules ({2} total) are: {1}", user, !isWhisper, user,
+				modules.Take(3).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, handle.Solved ? "solved" : handle.PlayerName == null ? "unclaimed" : "claimed by " + handle.PlayerName)).Join(", "),
+				modules.Count);
 	}
 
 	/// <name>Find Player</name>
