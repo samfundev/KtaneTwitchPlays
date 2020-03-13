@@ -36,6 +36,9 @@ public class ModuleInformation
 
 	public Color unclaimedColor;
 
+	public float additionalNeedyTime;
+
+	public bool ShouldSerializeadditionalNeedyTime() => additionalNeedyTime > 0;
 	public bool ShouldSerializescoreMethod() => scoreMethod != ScoreMethod.Default;
 	public bool ShouldSerializeunclaimedColor() => unclaimedColor != new Color();
 	public bool ShouldSerializebuiltIntoTwitchPlays() => false;

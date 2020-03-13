@@ -1147,6 +1147,8 @@ public static class ComponentSolverFactory
 			i.announceModule = info.announceModule;
 			i.unclaimable = info.unclaimable;
 
+			i.scoreMethod = info.scoreMethod;
+
 			i.moduleScoreOverride = info.moduleScoreOverride;
 			i.helpTextOverride = info.helpTextOverride;
 			i.manualCodeOverride = info.manualCodeOverride;
@@ -1160,6 +1162,8 @@ public static class ComponentSolverFactory
 			}
 
 			i.unclaimedColor = info.unclaimedColor;
+
+			i.additionalNeedyTime = info.additionalNeedyTime;
 		}
 		else
 		{

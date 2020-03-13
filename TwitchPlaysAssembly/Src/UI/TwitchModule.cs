@@ -207,7 +207,14 @@ public class TwitchModule : MonoBehaviour
 
 				StartCoroutine(ProcessClaimQueue());
 
-				if (BombComponent.GetComponent<NeedyComponent>() != null) StartCoroutine(TrackNeedyModule());
+				var needyComponent = BombComponent.GetComponent<NeedyComponent>();
+				if (needyComponent != null)
+				{
+					StartCoroutine(TrackNeedyModule());
+
+					needyComponent.CountdownTime += Solver.ModInfo.additionalNeedyTime;
+					needyComponent.GetValue<NeedyTimer>("timer").TotalTime += Solver.ModInfo.additionalNeedyTime;
+				}
 			}
 		}
 		catch (Exception e)
