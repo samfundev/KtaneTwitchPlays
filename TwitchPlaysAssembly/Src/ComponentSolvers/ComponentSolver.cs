@@ -914,9 +914,10 @@ public abstract class ComponentSolver
 	private void AwardSolve(string userNickName, float componentValue)
 	{
 		List<string> messageParts = new List<string>();
-		string valueString = componentValue.ToString("0.##");
 
 		if (OtherModes.ZenModeOn) componentValue = 0;
+
+		string valueString = componentValue.ToString("0.##");
 		if (userNickName == null)
 			TwitchPlaySettings.AddRewardBonus((int) componentValue);
 		else
