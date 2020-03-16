@@ -35,10 +35,10 @@ static class GlobalCommands
 	/// <syntax>bonuspoints [player] [points]</syntax>
 	/// <summary>Adds points to a player's score.</summary>
 	/// <restriction>SuperUser</restriction>
-	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+(?:\.[0-9]+)?)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] float bonus, string user)
+	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
-		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus.ToString("0.##"), user);
+		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddScore(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 

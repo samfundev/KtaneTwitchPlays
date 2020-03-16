@@ -158,7 +158,8 @@ public abstract class ComponentSolver
 				{
 					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
 
-					float penalty = Math.Max(ModInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent, 1);
+					int penalty =
+						Math.Max((int) (ModInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
 					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
 					IRCConnection.SendMessageFormat(TwitchPlaySettings.data.UnsubmittableAnswerPenalty,
 						_currentUserNickName, Code, ModInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
@@ -293,7 +294,7 @@ public abstract class ComponentSolver
 							Module.Bomb.Bomb.GetTimer().TimeRemaining = skipTimeTo;
 					}
 				}
-				else if (currentString.RegexMatch(out match, @"^awardpoints (-?[0-9]+(?:\.[0-9]+)?)$") && float.TryParse(match.Groups[1].Value, out float pointsAwarded))
+				else if (currentString.RegexMatch(out match, @"^awardpoints (-?\d+)$") && int.TryParse(match.Groups[1].Value, out int pointsAwarded))
 				{
 					if (OtherModes.ZenModeOn)
 						continue;
@@ -303,7 +304,7 @@ public abstract class ComponentSolver
 					{
 						Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
 						messageParts.Add(string.Format(TwitchPlaySettings.data.PointsAwardedByModule,
-							_currentUserNickName, pointsAwarded.ToString("0.##"), pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName));
+							_currentUserNickName, pointsAwarded, pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName));
 					}
 
 					if (TwitchPlaySettings.data.TimeModeTimeForActions && OtherModes.TimeModeOn)
@@ -668,7 +669,7 @@ public abstract class ComponentSolver
 		if (_disableOnStrike) return false;
 		if (ModInfo != null)
 		{
-			float moduleScore = ModInfo.moduleScore;
+			int moduleScore = (int) ModInfo.moduleScore;
 			if (ModInfo.moduleScoreIsDynamic)
 			{
 				if (!ComponentSolverFactory.dynamicScores.TryGetValue(ModInfo.moduleID, out float multiplier))
@@ -677,15 +678,15 @@ public abstract class ComponentSolver
 				switch (ModInfo.moduleID)
 				{
 					case "cookieJars": // Cookie Jars
-						moduleScore += Mathf.Clamp(Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
+						moduleScore += (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
 						break;
 
 					case "HexiEvilFMN": // Forget Everything
-						moduleScore += Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage;
+						moduleScore += (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default:
-						moduleScore += Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage;
+						moduleScore += (int) (Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 				}
 			}
@@ -911,15 +912,13 @@ public abstract class ComponentSolver
 		CommonReflectedTypeInfo.HandlePassMethod.Invoke(bombComponent, null);
 	}
 
-	private void AwardSolve(string userNickName, float componentValue)
+	private void AwardSolve(string userNickName, int componentValue)
 	{
 		List<string> messageParts = new List<string>();
 
 		if (OtherModes.ZenModeOn) componentValue = 0;
-
-		string valueString = componentValue.ToString("0.##");
 		if (userNickName == null)
-			TwitchPlaySettings.AddRewardBonus((int) componentValue);
+			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
 		{
 			int HPDamage = 0;
@@ -927,7 +926,7 @@ public abstract class ComponentSolver
 			OtherModes.Team? teamDamaged = null;
 			if (OtherModes.VSModeOn)
 			{
-				HPDamage = (int) componentValue * 5;
+				HPDamage = componentValue * 5;
 				Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
 				teamDamaged = entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good; //if entry is null here something went very wrong
 				if (UnsupportedModule)
@@ -954,16 +953,16 @@ public abstract class ComponentSolver
 			string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
 			if (OtherModes.VSModeOn && !UnsupportedModule)
 				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
-					valueString, headerText, HPDamage,
+					componentValue, headerText, HPDamage,
 					teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team"));
 			else
-				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, valueString, headerText));
-			string recordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {valueString}";
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue, headerText));
+			string recordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
 			Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 				Leaderboard.Instance?.AddScore(userNickName, componentValue);
 			else
-				TwitchPlaySettings.AddRewardBonus((int) componentValue);
+				TwitchPlaySettings.AddRewardBonus(componentValue);
 
 			if (OtherModes.VSModeOn)
 			{

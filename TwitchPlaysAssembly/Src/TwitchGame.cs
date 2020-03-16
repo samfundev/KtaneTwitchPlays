@@ -259,7 +259,7 @@ public class TwitchGame : MonoBehaviour
 		// Award users who maintained needy modules.
 		if (!OtherModes.ZenModeOn)
 		{
-			Dictionary<string, float> AwardedNeedyPoints = new Dictionary<string, float>();
+			Dictionary<string, int> AwardedNeedyPoints = new Dictionary<string, int>();
 			foreach (TwitchModule twitchModule in Modules)
 			{
 				ModuleInformation ModInfo = twitchModule.Solver.ModInfo;
@@ -271,7 +271,7 @@ public class TwitchGame : MonoBehaviour
 					string playerName = pair.Key;
 					var needyStats = pair.Value;
 
-					float points = (scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore;
+					int points = Mathf.RoundToInt((scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore);
 					if (points != 0)
 					{
 						if (!AwardedNeedyPoints.ContainsKey(playerName))
@@ -284,7 +284,7 @@ public class TwitchGame : MonoBehaviour
 			}
 
 			if (AwardedNeedyPoints.Count > 0)
-				IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {AwardedNeedyPoints.Select(pair => $"{pair.Key} ({pair.Value.ToString("0.##")})").Join(", ")}");
+				IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {AwardedNeedyPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
 		}
 
 		GameCommands.unclaimedModules = null;

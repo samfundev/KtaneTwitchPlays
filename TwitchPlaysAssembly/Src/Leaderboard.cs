@@ -36,13 +36,11 @@ public class Leaderboard
 			set;
 		}
 
-		public float SolveScore
+		public int SolveScore
 		{
 			get;
 			set;
 		}
-
-		public int IntSolveScore => Mathf.RoundToInt(SolveScore);
 
 		public DateTime LastAction
 		{
@@ -121,7 +119,7 @@ public class Leaderboard
 
 		public void AddStrike(int num = 1) => StrikeCount += num;
 
-		public void AddScore(float num) => SolveScore += num;
+		public void AddScore(int num) => SolveScore += num;
 	}
 
 	private Color SafeGetColor(string userName) => IRCConnection.GetUserColor(userName);
@@ -199,9 +197,9 @@ public class Leaderboard
 		ResetSortFlag();
 	}
 
-	public void AddScore(string userName, float numScore) => AddScore(userName, SafeGetColor(userName), numScore);
+	public void AddScore(string userName, int numScore) => AddScore(userName, SafeGetColor(userName), numScore);
 
-	public void AddScore(string userName, Color userColor, float numScore)
+	public void AddScore(string userName, Color userColor, int numScore)
 	{
 		LeaderboardEntry entry = GetEntry(userName, userColor);
 		entry.AddScore(numScore);
@@ -322,7 +320,7 @@ public class Leaderboard
 			return 0;
 	}
 
-	public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out float scoreCount)
+	public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int scoreCount)
 	{
 		solveCount = 0;
 		strikeCount = 0;
@@ -539,7 +537,7 @@ public class Leaderboard
 	public int OldBombsExploded = 0;
 	public int OldSolves = 0;
 	public int OldStrikes = 0;
-	public float OldScore = 0;
+	public int OldScore = 0;
 
 	public LeaderboardEntry SoloSolver = null;
 	public Dictionary<string, int> CurrentSolvers = new Dictionary<string, int>();
