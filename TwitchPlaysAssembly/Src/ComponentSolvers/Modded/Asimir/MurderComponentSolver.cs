@@ -97,9 +97,8 @@ public class MurderComponentSolver : ComponentSolver
 			present[catIndex] = true;
 		}
 
-		yield return present.All(b => b)
-			? DoInteractionClick(_buttons[6])   // In this case, yield return null already happened.
-			: (object) "sendtochaterror Command not recognized. Make sure you supply all three values and separate them by commas (“It was [suspect], with the [weapon], in the [location]”).";
+		if (present.All(b => b))
+			yield return DoInteractionClick(_buttons[6]); // In this case, yield return null already happened.
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
@@ -149,7 +148,7 @@ public class MurderComponentSolver : ComponentSolver
 	private static readonly string[] Commands = { "it was", "with the", "in the" };
 	private static readonly string[] NameTypes = { "people", "weapons", "rooms" };
 	private static readonly string[][] NameSpellings = { People, Weapons, Rooms };
-	private static readonly string[] NameMisspelled = { "Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The Only rooms I know about are {1}." };
+	private static readonly string[] NameMisspelled = { "Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The only rooms I know about are {1}." };
 
 	private readonly object _component;
 	private readonly KMSelectable[] _buttons;
