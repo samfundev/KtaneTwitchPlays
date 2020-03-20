@@ -44,6 +44,17 @@ public class TwitchPlaysService : MonoBehaviour
 	// Returns a hue component to be used for colors of UI elements
 	private static float UiHue => TwitchPlaySettings.data.EnableWhiteList ? .089f : .72f;
 
+	public static string DataFolder
+	{
+		get
+		{
+			var path = Path.Combine(Application.persistentDataPath, "TwitchPlays");
+			Directory.CreateDirectory(path);
+
+			return path;
+		}
+	}
+
 	private void Awake()
 	{
 		_data = GetComponent<TwitchPlaysServiceData>();

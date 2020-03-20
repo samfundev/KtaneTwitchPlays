@@ -961,6 +961,9 @@ static class GlobalCommands
 	[Command("update(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator Update() => Updater.Update();
 
+	[Command("revert(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static IEnumerator Revert() => Updater.Revert();
+
 	[Command(@"leaderboard reset", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetLeaderboard(string user, bool isWhisper)
 	{

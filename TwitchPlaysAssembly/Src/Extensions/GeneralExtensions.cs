@@ -265,4 +265,15 @@ public static class GeneralExtensions
 			yield return alpha;
 		}
 	}
+
+	/// <summary>
+	/// Safer version of <see cref="DirectoryInfo.MoveTo(string)"/> as it works across drives. Achieved by <see cref="CopyTo(DirectoryInfo, DirectoryInfo)"/> and then <see cref="DirectoryInfo.Delete(bool)"/>.
+	/// </summary>
+	/// <param name="directoryInfo">The source directory.</param>
+	/// <param name="destDir">The destination directory path.</param>
+	public static void MoveToSafe(this DirectoryInfo directoryInfo, DirectoryInfo destDir)
+	{
+		directoryInfo.CopyTo(destDir);
+		directoryInfo.Delete(true);
+	}
 }

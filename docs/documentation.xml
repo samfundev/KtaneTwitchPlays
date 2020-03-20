@@ -17,7 +17,7 @@
             <syntax>help</syntax>
             <summary>Gives you some help on how to play TP.</summary>
         </member>
-        <member name="M:GlobalCommands.BonusPoints(System.String,System.Single,System.String)">
+        <member name="M:GlobalCommands.BonusPoints(System.String,System.Int32,System.String)">
             <name>Bonus Points</name>
             <syntax>bonuspoints [player] [points]</syntax>
             <summary>Adds points to a player's score.</summary>
@@ -744,6 +744,13 @@
             <summary>Checks if <paramref name="value"/> has the same first letter or is equal to <paramref name="match"/>.</summary>
             <param name="value">The string to check against the match.</param>
             <param name="match">The string to match.</param>
+        </member>
+        <member name="M:GeneralExtensions.MoveToSafe(System.IO.DirectoryInfo,System.IO.DirectoryInfo)">
+            <summary>
+            Safer version of <see cref="M:System.IO.DirectoryInfo.MoveTo(System.String)"/> as it works across drives. Achieved by <see cref="M:GeneralExtensions.CopyTo(System.IO.DirectoryInfo,System.IO.DirectoryInfo)"/> and then <see cref="M:System.IO.DirectoryInfo.Delete(System.Boolean)"/>.
+            </summary>
+            <param name="directoryInfo">The source directory.</param>
+            <param name="destDir">The destination directory path.</param>
         </member>
         <member name="M:IRCMessage.Duplicate(System.String)">
             <summary>

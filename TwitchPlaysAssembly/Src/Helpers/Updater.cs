@@ -59,15 +59,36 @@ static class Updater
 
 		IRCConnection.SendMessage("Updating Twitch Plays and restarting.");
 
-		// Delete the current build
+		// Make the current build the previous build
+		var previousBuild = new DirectoryInfo(Path.Combine(TwitchPlaysService.DataFolder, "Previous Build"));
+		if (previousBuild.Exists)
+			previousBuild.Delete(true);
+
+		DirectoryInfo modFolder = new DirectoryInfo(GetModFolder());
+		modFolder.MoveToSafe(previousBuild);
+
+		// Copy the build that CheckForUpdates() downloaded to where the current one was.
+		DirectoryInfo buildFolder = new DirectoryInfo(Path.Combine(BuildStorage, "Twitch Plays"));
+		buildFolder.MoveToSafe(modFolder);
+
+		GlobalCommands.RestartGame();
+	}
+
+	public static IEnumerator Revert()
+	{
+		var previousBuild = new DirectoryInfo(Path.Combine(TwitchPlaysService.DataFolder, "Previous Build"));
+		if (!previousBuild.Exists)
+		{
+			IRCConnection.SendMessage("There is no previous version of Twitch Plays to revert to.");
+			yield break;
+		}
+
+		IRCConnection.SendMessage("Reverting to the previous Twitch Plays build and restarting.");
+
 		DirectoryInfo modFolder = new DirectoryInfo(GetModFolder());
 		modFolder.Delete(true);
 
-		// Copy the build that CheckForUpdates() downloaded to where the current one was.
-		// Note: .MoveTo(desDirName) was intentionally not used as it doesn't work across drives.
-		DirectoryInfo buildFolder = new DirectoryInfo(Path.Combine(BuildStorage, "Twitch Plays"));
-		buildFolder.CopyTo(modFolder);
-		buildFolder.Delete(true);
+		previousBuild.MoveToSafe(modFolder);
 
 		GlobalCommands.RestartGame();
 	}
