@@ -58,6 +58,7 @@ public class TwitchPlaysService : MonoBehaviour
 	private void Awake()
 	{
 		_data = GetComponent<TwitchPlaysServiceData>();
+		chatSimulator = gameObject.Traverse("UI", "ChatSimulator");
 	}
 
 	private void Start()
@@ -103,6 +104,7 @@ public class TwitchPlaysService : MonoBehaviour
 			ModManagerManualInstructionScreen.HasShownOnce = true;
 
 		UpdateUiHue();
+		SetupChatSimulator();
 	}
 
 	private void OnDisable()
@@ -138,6 +140,8 @@ public class TwitchPlaysService : MonoBehaviour
 			TwitchPlaySettings.data.TwitchPlaysDebugEnabled = !TwitchPlaySettings.data.TwitchPlaysDebugEnabled;
 			TwitchPlaySettings.WriteDataToFile();
 
+			chatSimulator.SetActive(TwitchPlaySettings.data.TwitchPlaysDebugEnabled);
+
 			_debugSequenceIndex = 0;
 			UserAccess.AddUser("_TPDEBUG".ToLowerInvariant(), AccessLevel.Streamer | AccessLevel.SuperUser | AccessLevel.Admin | AccessLevel.Mod);
 			UserAccess.WriteAccessList();
@@ -151,33 +155,56 @@ public class TwitchPlaysService : MonoBehaviour
 	// Allow users to send commands from in game. Toggle the UI by typing "tpdebug".
 	private const string DebugSequence = "tpdebug";
 	private int _debugSequenceIndex;
-	private string _inputCommand;
+	private readonly Queue<string> chatMessages = new Queue<string>(11);
+	private GameObject chatSimulator;
 
-	private void OnGUI()
+	private void SetupChatSimulator()
 	{
-		if (!TwitchPlaySettings.data.TwitchPlaysDebugEnabled) return;
+		chatSimulator.SetActive(TwitchPlaySettings.data.TwitchPlaysDebugEnabled);
+		var num = MouseControls.SCREEN_BOUNDARY_PERCENT * Screen.height + 5;
+		chatSimulator.transform.position = new Vector3(num, num, 0);
 
-		GUILayout.BeginArea(new Rect(50, Screen.height - 75, (Screen.width - 50) * 0.2f, 25));
-		GUILayout.BeginHorizontal();
-		_inputCommand = GUILayout.TextField(_inputCommand, GUILayout.MinWidth(50));
-		if ((GUILayout.Button("Send") || Event.current.keyCode == KeyCode.Return) && !string.IsNullOrEmpty(_inputCommand))
+		var messageInput = chatSimulator.Traverse<InputField>("MessageInput");
+		var sendButton = chatSimulator.Traverse<Button>("SendButton");
+
+		messageInput.onEndEdit.AddListener(_ =>
 		{
-			if (_inputCommand.Equals(DebugSequence))
+			if (Input.GetKey(KeyCode.Return))
+				sendButton.onClick.Invoke();
+		});
+
+		sendButton.onClick.AddListener(() =>
+		{
+			var message = messageInput.text;
+			if (string.IsNullOrEmpty(message))
+				return;
+
+			if (message.Equals(DebugSequence))
 			{
 				TwitchPlaySettings.data.TwitchPlaysDebugEnabled = !TwitchPlaySettings.data.TwitchPlaysDebugEnabled;
 				TwitchPlaySettings.WriteDataToFile();
-				_inputCommand = "";
-				GUILayout.EndHorizontal();
-				GUILayout.EndArea();
-				return;
+
+				chatSimulator.SetActive(TwitchPlaySettings.data.TwitchPlaysDebugEnabled);
 			}
-			IRCConnection.SetDebugUsername();
-			IRCConnection.SendMessage(_inputCommand);
-			IRCConnection.ReceiveMessage(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, _inputCommand);
-			_inputCommand = "";
-		}
-		GUILayout.EndHorizontal();
-		GUILayout.EndArea();
+			else
+			{
+				IRCConnection.SetDebugUsername();
+				IRCConnection.SendMessage(message);
+				IRCConnection.ReceiveMessage(IRCConnection.Instance.UserNickName, IRCConnection.Instance.CurrentColor, message);
+			}
+
+			messageInput.text = "";
+		});
+	}
+
+	public void AddMessage(IRCMessage message)
+	{
+		chatMessages.Enqueue($"<color={(string.IsNullOrEmpty(message.UserColorCode) ? message.UserColorCode : "white")}>{message.UserNickName}</color>: {message.Text}");
+
+		if (chatMessages.Count > 10)
+			chatMessages.Dequeue();
+
+		chatSimulator.Traverse<Text>("ChatHistory").text = chatMessages.Join("\n");
 	}
 
 	private void OnStateChange(KMGameInfo.State state)

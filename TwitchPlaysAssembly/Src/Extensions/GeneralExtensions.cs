@@ -266,6 +266,19 @@ public static class GeneralExtensions
 		}
 	}
 
+	public static GameObject Traverse(this GameObject currentObject, params string[] names)
+	{
+		Transform currentTransform = currentObject.transform;
+		foreach (string name in names)
+		{
+			currentTransform = currentTransform.Find(name);
+		}
+
+		return currentTransform.gameObject;
+	}
+
+	public static T Traverse<T>(this GameObject currentObject, params string[] names) => currentObject.Traverse(names).GetComponent<T>();
+
 	/// <summary>
 	/// Safer version of <see cref="DirectoryInfo.MoveTo(string)"/> as it works across drives. Achieved by <see cref="CopyTo(DirectoryInfo, DirectoryInfo)"/> and then <see cref="DirectoryInfo.Delete(bool)"/>.
 	/// </summary>

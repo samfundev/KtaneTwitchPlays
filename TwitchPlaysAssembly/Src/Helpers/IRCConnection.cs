@@ -190,6 +190,8 @@ public class IRCConnection : MonoBehaviour
 				}
 
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
+				if (message.Internal)
+					TwitchPlaysService.Instance.AddMessage(message);
 			}
 
 		if (ScrollOutStartTime.Count == 0) return;
@@ -771,6 +773,7 @@ public class IRCConnection : MonoBehaviour
 		}
 
 		if (!silent) DebugHelper.Log($"[M] {msg.UserNickName} ({msg.UserColorCode}): {msg.Text}");
+		if (msg.UserNickName != Instance.UserNickName) TwitchPlaysService.Instance.AddMessage(msg);
 
 		Leaderboard.Instance.SetActivity(msg.UserNickName, true);
 
