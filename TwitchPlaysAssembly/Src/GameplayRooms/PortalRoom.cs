@@ -59,7 +59,7 @@ public sealed class PortalRoom : GameRoom
 		{
 			if (bombHandles.TrueForAll(handle => handle.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(OtherModes.currentMode != TwitchPlaysMode.Zen && bombHandles.Any(handle => handle.CurrentTimer < 60f && !handle.Bomb.IsSolved()), bombHandles[0]);
+			ToggleEmergencyLights(!OtherModes.Unexplodable && bombHandles.Any(handle => handle.CurrentTimer < 60f && !handle.Bomb.IsSolved()), bombHandles[0]);
 			yield return null;
 		}
 	}

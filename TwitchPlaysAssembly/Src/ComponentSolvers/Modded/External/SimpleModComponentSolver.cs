@@ -19,7 +19,7 @@ public class SimpleModComponentSolver : ComponentSolver
 		HelpMessageField = componentSolverFields.HelpMessageField;
 		ManualCodeField = componentSolverFields.ManualCodeField;
 		TwitchPlays = true;
-		ZenMode = OtherModes.ZenModeOn;
+		ZenMode = OtherModes.Unexplodable;
 		TimeMode = OtherModes.TimeModeOn;
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}

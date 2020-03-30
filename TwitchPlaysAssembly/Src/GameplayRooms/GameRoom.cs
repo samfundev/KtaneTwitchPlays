@@ -81,7 +81,7 @@ public abstract class GameRoom
 		bool lastState = false;
 		while (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.Gameplay)
 		{
-			bool targetState = OtherModes.currentMode != TwitchPlaysMode.Zen &&
+			bool targetState = !OtherModes.Unexplodable &&
 			                   TwitchGame.Instance.Bombs.Any(bomb => !bomb.Bomb.IsSolved() && bomb.CurrentTimer < 60f);
 			if (targetState != lastState)
 			{
@@ -279,7 +279,7 @@ public abstract class GameRoom
 		foreach (TwitchBomb bomb in bombHandles)
 			if (OtherModes.TimeModeOn)
 				bomb.CurrentTimer = TwitchPlaySettings.data.TimeModeStartingTime * 60;
-			else if (OtherModes.ZenModeOn)
+			else if (OtherModes.Unexplodable)
 				bomb.CurrentTimer = 1;
 	}
 

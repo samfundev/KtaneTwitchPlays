@@ -5,7 +5,8 @@ public enum TwitchPlaysMode
 	Normal,
 	Time,
 	VS,
-	Zen
+	Zen,
+	Training
 }
 
 public static class OtherModes
@@ -41,6 +42,10 @@ public static class OtherModes
 	public static bool TimeModeOn { get => InMode(TwitchPlaysMode.Time); set => Set(TwitchPlaysMode.Time, value); }
 	public static bool VSModeOn { get => InMode(TwitchPlaysMode.VS); set => Set(TwitchPlaysMode.VS, value); }
 	public static bool ZenModeOn { get => InMode(TwitchPlaysMode.Zen); set => Set(TwitchPlaysMode.Zen, value); }
+	public static bool TrainingModeOn { get => InMode(TwitchPlaysMode.Training); set => Set(TwitchPlaysMode.Training, value); }
+
+	public static float ScoreMultiplier => TrainingModeOn ? 0 : ZenModeOn ? 0.25f : 1;
+	public static bool Unexplodable => ZenModeOn || TrainingModeOn;
 
 	public static float timedMultiplier = 9;
 	public static int goodHealth = 0;

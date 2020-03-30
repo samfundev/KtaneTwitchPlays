@@ -63,6 +63,11 @@
             <syntax>zenmode [state]</syntax>
             <summary>Enables or disables zen mode. [state] is either on or off.</summary>
         </member>
+        <member name="M:GlobalCommands.TrainingMode(System.Boolean,System.Boolean,System.String,System.Boolean)">
+            <name>Training Mode</name>
+            <syntax>trainingmode [state]</syntax>
+            <summary>Enables or disables training mode. [state] is either on or off.</summary>
+        </member>
         <member name="M:GlobalCommands.ShowMode(System.String,System.Boolean)">
             <name>Show Mode</name>
             <syntax>mode</syntax>

@@ -83,7 +83,7 @@ public sealed class Factory : GameRoom
 		if (!_factoryRoom) yield break;
 		if (_factoryDataType == null || _warningTimeField == null) yield break;
 		Object roomData = Object.FindObjectOfType(_factoryDataType);
-		_warningTimeField.SetValue(roomData, OtherModes.currentMode == TwitchPlaysMode.Zen ? 0 : 60);
+		_warningTimeField.SetValue(roomData, OtherModes.Unexplodable ? 0 : 60);
 	}
 
 	public IEnumerator DestroyBomb(Object bomb)
@@ -145,7 +145,7 @@ public sealed class Factory : GameRoom
 			{
 				bombHandle.EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 			}
-			if (OtherModes.ZenModeOn)
+			if (OtherModes.Unexplodable)
 				bombHandle.StrikeLimit += bombHandle.StrikeCount;
 
 			IEnumerator bombHold = bombHandle.HoldBomb();

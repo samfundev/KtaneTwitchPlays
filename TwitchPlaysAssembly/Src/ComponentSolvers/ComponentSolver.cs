@@ -296,8 +296,10 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.RegexMatch(out match, @"^awardpoints (-?\d+)$") && int.TryParse(match.Groups[1].Value, out int pointsAwarded))
 				{
-					if (OtherModes.ZenModeOn)
+					if (OtherModes.ScoreMultiplier == 0)
 						continue;
+
+					pointsAwarded = Mathf.RoundToInt(pointsAwarded * OtherModes.ScoreMultiplier);
 
 					List<string> messageParts = new List<string>();
 					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
@@ -916,7 +918,7 @@ public abstract class ComponentSolver
 	{
 		List<string> messageParts = new List<string>();
 
-		if (OtherModes.ZenModeOn) componentValue = 0;
+		componentValue = Mathf.RoundToInt(componentValue * OtherModes.ScoreMultiplier);
 		if (userNickName == null)
 			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
@@ -958,7 +960,7 @@ public abstract class ComponentSolver
 			else
 				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue, headerText));
 			string recordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
-			Leaderboard.Instance?.AddSolve(userNickName);
+			if (!OtherModes.TrainingModeOn) Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
 				Leaderboard.Instance?.AddScore(userNickName, componentValue);
 			else
@@ -1043,7 +1045,7 @@ public abstract class ComponentSolver
 		int strikePenalty = -TwitchPlaySettings.data.StrikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		int hpPenalty = 0;
 		OtherModes.Team? team = null;
-		if (OtherModes.ZenModeOn) strikePenalty = 0;
+		strikePenalty = Mathf.RoundToInt(strikePenalty * OtherModes.ScoreMultiplier);
 		if (OtherModes.VSModeOn)
 		{
 			if (!string.IsNullOrEmpty(userNickName))
@@ -1155,10 +1157,10 @@ public abstract class ComponentSolver
 			TwitchGame.ModuleCameras.UpdateStrikes();
 		}
 
-		if (OtherModes.ZenModeOn)
+		if (OtherModes.Unexplodable)
 			Module.Bomb.StrikeLimit += strikeCount;
 
-		if (!string.IsNullOrEmpty(userNickName))
+		if (!string.IsNullOrEmpty(userNickName) && !OtherModes.TrainingModeOn)
 		{
 			Leaderboard.Instance.AddScore(userNickName, strikePenalty);
 			Leaderboard.Instance.AddStrike(userNickName, strikeCount);
@@ -1299,7 +1301,7 @@ public abstract class ComponentSolver
 		get
 		{
 			if (!(ZenModeField?.GetValue(ZenModeField.IsStatic ? null : CommandComponent) is bool))
-				return OtherModes.ZenModeOn;
+				return OtherModes.Unexplodable;
 			return (bool) ZenModeField.GetValue(ZenModeField.IsStatic ? null : CommandComponent);
 		}
 		set

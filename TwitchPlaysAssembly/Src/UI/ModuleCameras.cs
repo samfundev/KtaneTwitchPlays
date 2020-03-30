@@ -246,7 +246,8 @@ public class ModuleCameras : MonoBehaviour
 		{ TwitchPlaysMode.Normal, Color.red },
 		{ TwitchPlaysMode.Time, new Color(1.0f, 0.5f, 0.0f) },
 		{ TwitchPlaysMode.VS, Color.green },
-		{ TwitchPlaysMode.Zen, Color.cyan }
+		{ TwitchPlaysMode.Zen, Color.cyan },
+		{ TwitchPlaysMode.Training, Color.gray }
 	};
 
 	private void Awake() => _data = GetComponent<ModuleCamerasData>();
@@ -405,7 +406,7 @@ public class ModuleCameras : MonoBehaviour
 			StrikesPrefab.color = Color.yellow;
 			StrikesPrefab.text = conf;
 		}
-		else if (OtherModes.ZenModeOn)
+		else if (OtherModes.Unexplodable)
 		{
 			ConfidencePrefab.color = Color.yellow;
 			string pts = "+" + $"{TwitchPlaySettings.GetRewardBonus():0}";

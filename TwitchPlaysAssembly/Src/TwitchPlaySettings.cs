@@ -80,6 +80,7 @@ public class TwitchPlaySettingsData
 	public bool EnableFactoryAutomaticNextBomb = true;
 
 	public bool EnableZenModeForEveryone = false;
+	public bool EnableTrainingModeForEveryone = false;
 	public bool EnableFilledgeworkForEveryone = false;
 
 	public int MinTimeLeftForClaims = 60;
@@ -228,6 +229,7 @@ public class TwitchPlaySettingsData
 	public string TimeModeCommandDisabled = "@{0}, Only authorized users may enable/disable Time Mode";
 	public string VsModeCommandDisabled = "@{0}, Only authorized users may enable/disable VS Mode";
 	public string ZenModeCommandDisabled = "@{0}, Only authorized users may enable/disable Zen Mode";
+	public string TrainingModeCommandDisabled = "@{0}, Only authorized users may enable/disable Training Mode";
 	public string RunCommandDisabled = "@{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "@{0}, profile management is currently disabled.";
 	public string RetryInactive = "Retry is inactive. Returning to hallway instead.";

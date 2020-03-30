@@ -94,6 +94,11 @@ static class GlobalCommands
 	/// <summary>Enables or disables zen mode. [state] is either on or off.</summary>
 	[Command(@"zenmode( *(on)| *off)?")]
 	public static void ZenMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Zen, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableZenModeForEveryone, TwitchPlaySettings.data.ZenModeCommandDisabled);
+	/// <name>Training Mode</name>
+	/// <syntax>trainingmode [state]</syntax>
+	/// <summary>Enables or disables training mode. [state] is either on or off.</summary>
+	[Command(@"trainingmode( *(on)| *off)?")]
+	public static void TrainingMode([Group(1)] bool any, [Group(2)] bool on, string user, bool isWhisper) => SetGameMode(TwitchPlaysMode.Training, !any, on, user, isWhisper, TwitchPlaySettings.data.EnableTrainingModeForEveryone, TwitchPlaySettings.data.TrainingModeCommandDisabled);
 
 	/// <name>Show Mode</name>
 	/// <syntax>mode</syntax>

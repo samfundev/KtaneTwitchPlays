@@ -84,7 +84,7 @@ public sealed class ElevatorGameRoom : GameRoom
 			if (bombHandle.Bomb.IsSolved())
 				yield break;
 			ToggleEmergencyLights(SceneManager.Instance.GameplayState.Mission.PacingEventsEnabled &&
-				bombHandle.CurrentTimer < 60f && !bombHandle.Bomb.IsSolved() && !OtherModes.ZenModeOn);
+				bombHandle.CurrentTimer < 60f && !bombHandle.Bomb.IsSolved() && !OtherModes.Unexplodable);
 			yield return null;
 		}
 	}

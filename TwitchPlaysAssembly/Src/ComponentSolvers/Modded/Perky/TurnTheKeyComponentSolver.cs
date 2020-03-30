@@ -30,7 +30,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	{
 		int time = (int) TargetTimeField.GetValue(Module.BombComponent.GetComponent(ComponentType));
 		int timeRemaining = (int) Module.Bomb.CurrentTimer;
-		if ((!OtherModes.ZenModeOn && timeRemaining < time) || (OtherModes.ZenModeOn && timeRemaining > time) || !IsTargetTurnTimeCorrect(turnTime)) return false;
+		if ((!OtherModes.Unexplodable && timeRemaining < time) || (OtherModes.Unexplodable && timeRemaining > time) || !IsTargetTurnTimeCorrect(turnTime)) return false;
 		return TwitchGame.Instance.Modules.Where(x => x.BombID == Module.BombID && x.BombComponent.IsSolvable && !x.BombComponent.IsSolved).All(x => x.Solver.SkipTimeAllowed);
 	}
 
@@ -96,7 +96,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 			}
 
 			_keyTurnTimes.Clear();
-			for (int i = OtherModes.ZenModeOn ? 45 : 3; i < (OtherModes.ZenModeOn ? 3600 : Module.Bomb.CurrentTimer - 45); i += 3)
+			for (int i = OtherModes.Unexplodable ? 45 : 3; i < (OtherModes.Unexplodable ? 3600 : Module.Bomb.CurrentTimer - 45); i += 3)
 			{
 				_keyTurnTimes.Add(i);
 			}
@@ -132,7 +132,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		while (!Module.Solved)
 		{
 			int time = Mathf.FloorToInt(Module.Bomb.CurrentTimer);
-			if ((!OtherModes.ZenModeOn && time < expectedTime || OtherModes.ZenModeOn && time > expectedTime) &&
+			if ((!OtherModes.Unexplodable && time < expectedTime || OtherModes.Unexplodable && time > expectedTime) &&
 				!(bool) SolvedField.GetValue(Module.BombComponent.GetComponent(ComponentType)) &&
 				!TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate)
 			{
@@ -168,7 +168,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		if (CanTurnEarlyWithoutStrike(timeTarget))
 			yield return $"skiptime {timeTarget + 0.5f:0.00}";
 
-		int waitingTime = (int) (Module.Bomb.CurrentTimer + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
+		int waitingTime = (int) (Module.Bomb.CurrentTimer + (OtherModes.Unexplodable ? -0.25f : 0.25f));
 		waitingTime -= timeTarget;
 
 		if (Math.Abs(waitingTime) >= 30)
@@ -179,9 +179,9 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		float timeRemaining = float.PositiveInfinity;
 		while (timeRemaining > 0.0f)
 		{
-			timeRemaining = (int) (Module.Bomb.CurrentTimer + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
+			timeRemaining = (int) (Module.Bomb.CurrentTimer + (OtherModes.Unexplodable ? -0.25f : 0.25f));
 
-			if (!OtherModes.ZenModeOn && timeRemaining < timeTarget || OtherModes.ZenModeOn && timeRemaining > timeTarget)
+			if (!OtherModes.Unexplodable && timeRemaining < timeTarget || OtherModes.Unexplodable && timeRemaining > timeTarget)
 			{
 				yield return "sendtochaterror The bomb timer has already gone past the time specified.";
 				yield break;

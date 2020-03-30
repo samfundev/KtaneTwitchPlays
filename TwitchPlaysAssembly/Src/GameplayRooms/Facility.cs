@@ -42,7 +42,7 @@ public sealed class Facility : GameRoom
 		{
 			if (bombHandles.TrueForAll(bomb => bomb.Bomb.IsSolved()))
 				yield break;
-			ToggleEmergencyLights(bombHandles.Any(bomb => bomb.CurrentTimer < 60f && !bomb.IsSolved && !OtherModes.ZenModeOn));
+			ToggleEmergencyLights(bombHandles.Any(bomb => bomb.CurrentTimer < 60f && !bomb.IsSolved && !OtherModes.Unexplodable));
 			yield return null;
 		}
 	}

@@ -129,11 +129,11 @@ public class ButtonComponentSolver : ComponentSolver
 		for (int i = result.Count - 1; i >= 0; i--)
 		{
 			int r = result[i];
-			if (!minutes && !OtherModes.ZenModeOn)
+			if (!minutes && !OtherModes.Unexplodable)
 				waitingMusic &= target + (r > target ? 60 : 0) - r > 30;
 			else if (!minutes)
 				waitingMusic &= r + (r < target ? 60 : 0) - target > 30;
-			else if (!OtherModes.ZenModeOn)
+			else if (!OtherModes.Unexplodable)
 			{
 				if (r > target)
 				{
@@ -158,7 +158,7 @@ public class ButtonComponentSolver : ComponentSolver
 		if (!result.Any())
 		{
 			yield return
-				$"sendtochaterror The button was not {(_held ? "released" : "tapped")} because all of your specified times are {(OtherModes.ZenModeOn ? "less" : "greater")} than the time remaining.";
+				$"sendtochaterror The button was not {(_held ? "released" : "tapped")} because all of your specified times are {(OtherModes.Unexplodable ? "less" : "greater")} than the time remaining.";
 			yield break;
 		}
 
@@ -168,7 +168,7 @@ public class ButtonComponentSolver : ComponentSolver
 		while (result.All(x => x != target))
 		{
 			yield return $"trycancel The button was not {(_held ? "released" : "tapped")} due to a request to cancel.";
-			target = (int) (timerComponent.TimeRemaining + (OtherModes.ZenModeOn ? -0.25f : 0.25f));
+			target = (int) (timerComponent.TimeRemaining + (OtherModes.Unexplodable ? -0.25f : 0.25f));
 			if (!minutes) target %= 60;
 		}
 
