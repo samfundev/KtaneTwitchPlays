@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 public class PasswordComponentSolver : ComponentSolver
 {
@@ -96,12 +95,12 @@ public class PasswordComponentSolver : ComponentSolver
 
 	private IEnumerator GetCharacterSpinnerToCharacterCoroutine(CharSpinner spinner, char desiredCharacter)
 	{
-		MonoBehaviour downButton = spinner.DownButton;
-		for (int hitCount = 0; hitCount < 6 && char.ToLowerInvariant(spinner.GetCurrentChar()) != char.ToLowerInvariant(desiredCharacter); ++hitCount)
-		{
-			yield return DoInteractionClick(downButton);
-			yield return "trycancel";
-		}
+		var options = spinner.Options;
+		var targetIndex = options.IndexOf(char.ToUpperInvariant(desiredCharacter));
+		if (targetIndex == -1)
+			yield break;
+
+		yield return SelectIndex(options.IndexOf(spinner.GetCurrentChar()), targetIndex, options.Count, spinner.DownButton, spinner.UpButton);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
