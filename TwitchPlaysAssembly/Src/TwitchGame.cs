@@ -269,7 +269,7 @@ public class TwitchGame : MonoBehaviour
 				string playerName = pair.Key;
 				var needyStats = pair.Value;
 
-				int points = Mathf.RoundToInt((scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore * OtherModes.ScoreMultiplier);
+				int points = (int)Math.Round((decimal)((scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore * OtherModes.ScoreMultiplier), MidpointRounding.AwayFromZero);
 				if (points != 0)
 				{
 					if (!AwardedNeedyPoints.ContainsKey(playerName))
