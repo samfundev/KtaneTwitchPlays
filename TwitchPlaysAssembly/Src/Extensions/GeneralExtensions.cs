@@ -105,6 +105,8 @@ public static class GeneralExtensions
 
 	public static float? TryParseFloat(this string number) => float.TryParse(number, out float i) ? (float?) i : null;
 
+	public static int RoundToInt(this float number) => (int) Math.Round(number, MidpointRounding.AwayFromZero);
+
 	public static bool ContainsIgnoreCase(this string str, string value) => str.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) != -1;
 
 	public static bool EqualsIgnoreCase(this string str, string value) => str.Equals(value, StringComparison.InvariantCultureIgnoreCase);

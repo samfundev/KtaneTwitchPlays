@@ -299,7 +299,7 @@ public abstract class ComponentSolver
 					if (OtherModes.ScoreMultiplier == 0)
 						continue;
 
-					pointsAwarded = Mathf.RoundToInt(pointsAwarded * OtherModes.ScoreMultiplier);
+					pointsAwarded = (pointsAwarded * OtherModes.ScoreMultiplier).RoundToInt();
 
 					List<string> messageParts = new List<string>();
 					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
@@ -918,7 +918,7 @@ public abstract class ComponentSolver
 	{
 		List<string> messageParts = new List<string>();
 
-		componentValue = Mathf.RoundToInt(componentValue * OtherModes.ScoreMultiplier);
+		componentValue = (componentValue * OtherModes.ScoreMultiplier).RoundToInt();
 		if (userNickName == null)
 			TwitchPlaySettings.AddRewardBonus(componentValue);
 		else
@@ -1045,7 +1045,7 @@ public abstract class ComponentSolver
 		int strikePenalty = -TwitchPlaySettings.data.StrikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		int hpPenalty = 0;
 		OtherModes.Team? team = null;
-		strikePenalty = Mathf.RoundToInt(strikePenalty * OtherModes.ScoreMultiplier);
+		strikePenalty = (strikePenalty * OtherModes.ScoreMultiplier).RoundToInt();
 		if (OtherModes.VSModeOn)
 		{
 			if (!string.IsNullOrEmpty(userNickName))
