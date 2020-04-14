@@ -170,7 +170,10 @@ public class TwitchPlaysService : MonoBehaviour
 		messageInput.onEndEdit.AddListener(_ =>
 		{
 			if (Input.GetKey(KeyCode.Return))
+			{
 				sendButton.onClick.Invoke();
+				messageInput.ActivateInputField();
+			}
 		});
 
 		sendButton.onClick.AddListener(() =>
