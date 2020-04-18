@@ -80,7 +80,6 @@ public static class ComponentSolverFactory
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
-		ModComponentSolverCreators["KnowYourWay"] = module => new KnowYourWayComponentSolver(module);
 		ModComponentSolverCreators["LetterKeys"] = module => new LetterKeysComponentSolver(module);
 		ModComponentSolverCreators["Microcontroller"] = module => new MicrocontrollerComponentSolver(module);
 		ModComponentSolverCreators["resistors"] = module => new ResistorsComponentSolver(module);
@@ -224,7 +223,6 @@ public static class ComponentSolverFactory
 
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", moduleScore = 5 };
-		ModComponentSolverInformation["KnowYourWay"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Know Your Way", moduleScore = 10 };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", moduleScore = 3 };
 		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", moduleScore = 8 };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", moduleScore = 7 };
