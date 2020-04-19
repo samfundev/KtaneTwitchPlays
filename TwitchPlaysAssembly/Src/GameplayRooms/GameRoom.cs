@@ -61,11 +61,10 @@ public abstract class GameRoom
 	{
 		if (!reuseTwitchBomb)
 		{
-			TwitchGame.Instance.SetBomb(bomb, BombCount++);
+			TwitchGame.Instance.SetBomb(bomb, BombCount);
 			return;
 		}
 
-		BombCount++;
 		TwitchBomb tb = TwitchGame.Instance.Bombs[0];
 		tb.Bomb = bomb;
 		tb.BombTimeStamp = DateTime.Now;
