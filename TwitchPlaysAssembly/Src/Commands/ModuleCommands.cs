@@ -255,7 +255,7 @@ static class ModuleCommands
 			return;
 		}
 
-		if (!UserAccess.HasAccess(user, AccessLevel.Mod) && module.TakeUser != user)
+		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true) && module.TakeUser != user)
 		{
 			IRCConnection.SendMessage($"@{user}, if you’re not a mod, you can only cancel your own takeover attempts.");
 			return;
