@@ -1174,7 +1174,7 @@ public abstract class ComponentSolver
 		IRCConnection.SendMessage(messageParts.Join());
 	}
 
-	void ReleaseHeldButtons()
+	protected void ReleaseHeldButtons()
 	{
 		foreach (var selectable in HeldSelectables)
 		{
