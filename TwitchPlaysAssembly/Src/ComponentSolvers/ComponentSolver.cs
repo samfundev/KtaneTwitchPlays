@@ -730,6 +730,7 @@ public abstract class ComponentSolver
 
 		TwitchGame.ModuleCameras?.UnviewModule(Module);
 		CommonReflectedTypeInfo.UpdateTimerDisplayMethod.Invoke(Module.Bomb.Bomb.GetTimer(), null);
+		ReleaseHeldButtons();
 		return false;
 	}
 
@@ -796,6 +797,8 @@ public abstract class ComponentSolver
 			AwardStrikes(1);
 
 		TwitchGame.ModuleCameras?.UpdateStrikes(true);
+
+		ReleaseHeldButtons();
 
 		return false;
 	}
@@ -1169,6 +1172,16 @@ public abstract class ComponentSolver
 		StrikeMessageConflict = false;
 
 		IRCConnection.SendMessage(messageParts.Join());
+	}
+
+	void ReleaseHeldButtons()
+	{
+		foreach (var selectable in HeldSelectables)
+		{
+			DoInteractionEnd(selectable);
+		}
+
+		HeldSelectables.Clear();
 	}
 
 	protected void AddAbandonedModule(KMBombModule module)
