@@ -120,6 +120,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["plungerButton"] = module => new PlungerButtonShim(module);
 		ModComponentSolverCreators["theSwan"] = module => new SwanShim(module);
 		ModComponentSolverCreators["ButtonV2"] = module => new SquareButtonShim(module);
+		ModComponentSolverCreators["spwizAstrology"] = module => new AstrologyShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
