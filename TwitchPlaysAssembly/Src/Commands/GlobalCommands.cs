@@ -28,7 +28,7 @@ static class GlobalCommands
 		};
 
 		IRCConnection.SendMessage(string.Format("!{0} manual [link to module {0}'s manual] | Go to {1} to get manuals for KTaNE", randomCodes[0], TwitchPlaySettings.data.RepositoryUrl), user, !isWhisper);
-		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple pages, see the menu on the right)", randomCodes[1], UrlHelper.Instance.CommandReference), user, !isWhisper);
+		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple sections, see the menu on the left)", randomCodes[1], UrlHelper.Instance.CommandReference), user, !isWhisper);
 	}
 
 	/// <name>Bonus Points</name>
@@ -625,6 +625,10 @@ static class GlobalCommands
 		}
 	}
 
+	/// <name>Add/Remove Rank</name>
+	/// <syntax>add [username] [rank]\nremove [username] [rank]</syntax>
+	/// <summary>Adds or removes a user from a rank. [rank] can be multiple ranks seperated by spaces.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"(add|remove) +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddRemoveRole([Group(1)] string command, [Group(2)] string targetUser, [Group(3)] string roles, string user, bool isWhisper)
 	{
@@ -776,7 +780,7 @@ static class GlobalCommands
 
 	/// <name>Run Specific</name>
 	/// <syntax>run [distribution] [modules]</syntax>
-	/// <summary>Runs a distribution with a set number of modules.</summary>
+	/// <summary>Runs a distribution with a set number of modules. [distribution] can be vanilla, light, mixed, heavy and mods. There are also a few combinations like mixedlight and extralight. Which goes from all vanilla to all modded modules.</summary>
 	[Command(@"run +(.*) +(\d+)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] string distributionName, [Group(2)] int modules, KMGameInfo inf) => RunSpecific(user, isWhisper, modules, distributionName, inf);
 	[Command(@"run +(\d+) +(.*)")]
@@ -796,6 +800,9 @@ static class GlobalCommands
 		return RunDistribution(user, modules, inf, distribution);
 	});
 
+	/// <name>Run Mission</name>
+	/// <syntax>run [mission name]</syntax>
+	/// <summary>Runs a named mission. Mods can give any mission ID to run.</summary>
 	[Command(@"run +(?!.* +\d+$|\d+ +.*$)(.+)")]
 	public static IEnumerator RunMission(string user, bool isWhisper, [Group(1)] string textAfter, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
@@ -822,16 +829,30 @@ static class GlobalCommands
 		return RunMissionCoroutine(missionID);
 	});
 
+	/// <name>Run Raw</name>
+	/// <syntax>runraw [mission id]</syntax>
+	/// <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"runraw +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator RunRaw([Group(1)] string missionName) => RunMissionCoroutine(missionName);
 
+	/// <name>Run Raw Seed</name>
+	/// <syntax>runrawseed [seed] [mission id]</syntax>
+	/// <summary>The same as Run Raw but allows you to specify a seed.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"runrawseed +(\d+) +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator RunRawSeed([Group(1)] string seed, [Group(2)] string missionName) => RunMissionCoroutine(missionName, seed);
 
+	/// <name>Profile Help</name>
+	/// <syntax>profile help</syntax>
+	/// <summary>Gives you help on the profile commands.</summary>
 	[Command(@"profiles? help")]
 	public static void ProfileHelp(string user, bool isWhisper) =>
 		IRCConnection.SendMessage("Enable a profile using: !profile enable <name>. Disable a profile: !profile disable <name>. List the enabled profiles: !profile enabled. List all profiles: !profile list.", user, !isWhisper);
 
+	/// <name>Profile Enable</name>
+	/// <syntax>profile enable [name]</syntax>
+	/// <summary>Enables a profile.</summary>
 	[Command(@"profiles? +(?:enable|add|activate) +(.+)")]
 	public static void ProfileEnable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
@@ -840,6 +861,9 @@ static class GlobalCommands
 			string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled"), user, !isWhisper);
 	});
 
+	/// <name>Profile Disable</name>
+	/// <syntax>profile disable [name]</syntax>
+	/// <summary>Disables a profile.</summary>
 	[Command(@"profiles? +(?:disable|remove|deactivate) +(.+)")]
 	public static void ProfileDisable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
@@ -848,9 +872,15 @@ static class GlobalCommands
 			string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled"), user, !isWhisper);
 	});
 
+	/// <name>Profile Enabled</name>
+	/// <syntax>profile enabled</syntax>
+	/// <summary>Lists out the enabled profiles.</summary>
 	[Command(@"profiles? +enabled(?:list)?")]
 	public static void ProfilesListEnabled(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileListEnabled, ProfileHelper.Profiles.Select(str => str.Replace('_', ' ')).Intersect(TwitchPlaySettings.data.ProfileWhitelist).DefaultIfEmpty("(none)").Join(", ")), user, !isWhisper);
 
+	/// <name>Profile List</name>
+	/// <syntax>profile list</syntax>
+	/// <summary>Lists out all the profiles available.</summary>
 	[Command(@"profiles? +(?:list|all)?")]
 	public static void ProfilesListAll(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileListAll, TwitchPlaySettings.data.ProfileWhitelist.Join(", ")), user, !isWhisper);
 
@@ -870,6 +900,10 @@ static class GlobalCommands
 		IRCConnection.SendMessage("All moderators restored.");
 	}
 
+	/// <name>Reload Data</name>
+	/// <syntax>reloaddata</syntax>
+	/// <summary>Reloads all the data that TP uses. Like settings, access levels, etc.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("reloaddata", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator ReloadData(string user, bool isWhisper)
 	{
@@ -896,6 +930,9 @@ static class GlobalCommands
 	[Command(@"elevator", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Elevator() => TPElevatorSwitch.Instance?.ReportState();
 
+	/// <name>Change Elevator</name>
+	/// <syntax>elevator on\nelevator off\nelevator toggle</syntax>
+	/// <summary>Changes the enabled state of the elevator.</summary>
 	[Command(@"elevator (on|off|flip|toggle|switch|press|push)")]
 	public static IEnumerator Elevator([Group(1)] string command)
 	{
@@ -923,6 +960,10 @@ static class GlobalCommands
 		return TPElevatorSwitch.Instance.ToggleSetupRoomElevatorSwitch(on);
 	}
 
+	/// <name>Restart</name>
+	/// <syntax>restart</syntax>
+	/// <summary>Restarts the game by closing and reopening it. May not work perfectly when running with Steam.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("(?:restart|reboot)(?:game)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void RestartGame()
 	{
@@ -952,9 +993,17 @@ static class GlobalCommands
 		}
 	}
 
+	/// <name>Quit</name>
+	/// <syntax>quit</syntax>
+	/// <summary>Quits KTANE.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("(?:quit|end)(?:game)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void QuitGame() => SceneManager.Instance.QuitGame();
 
+	/// <name>Check For Updates</name>
+	/// <syntax>checkforupdates</syntax>
+	/// <summary>Checks to see if there is a new build of TP on Dropbox. Only applicable if you are using the Dropbox version of TP.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("(?:checkforupdates?|cfu)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator CheckForUpdates()
 	{
@@ -963,12 +1012,20 @@ static class GlobalCommands
 		IRCConnection.SendMessage(Updater.UpdateAvailable ? "There is a new update to Twitch Plays!" : "Twitch Plays is up-to-date.");
 	}
 
+	/// <name>Update</name>
+	/// <syntax>update</syntax>
+	/// <summary>If there is an update available, installs it and restarts the game. Only applicable if you are using the Dropbox version of TP.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("update(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator Update() => Updater.Update();
 
 	[Command("revert(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator Revert() => Updater.Revert();
 
+	/// <name>Reset Leaderboard</name>
+	/// <syntax>leaderboard reset</syntax>
+	/// <summary>Resets all the information on the leaderboard.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"leaderboard reset", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetLeaderboard(string user, bool isWhisper)
 	{
@@ -976,6 +1033,9 @@ static class GlobalCommands
 		IRCConnection.SendMessage("Leaderboard Reset.", user, !isWhisper);
 	}
 
+	/// <name>Disable Whitelist</name>
+	/// <syntax>disablewhitelist</syntax>
+	/// <summary>Disables the whitelist.</summary>
 	[Command(@"disablewhitelist", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void DisableWhitelist()
 	{
@@ -985,6 +1045,10 @@ static class GlobalCommands
 		IRCConnection.SendMessage("Whitelist disabled.");
 	}
 
+	/// <name>Enable Whitelist</name>
+	/// <syntax>enablewhitelist</syntax>
+	/// <summary>Enables the whitelist.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"enablewhitelist", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void EnableWhitelist()
 	{
@@ -994,6 +1058,10 @@ static class GlobalCommands
 		IRCConnection.SendMessage("Whitelist enabled.");
 	}
 
+	/// <name>Mimic</name>
+	/// <syntax>mimic [player] [command]</syntax>
+	/// <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, IRCMessage message)
 	{

@@ -152,6 +152,12 @@
             <syntax>builddate</syntax>
             <summary>Sends a message with the build date of TP.</summary>
         </member>
+        <member name="M:GlobalCommands.AddRemoveRole(System.String,System.String,System.String,System.String,System.Boolean)">
+            <name>Add/Remove Rank</name>
+            <syntax>add [username] [rank]\nremove [username] [rank]</syntax>
+            <summary>Adds or removes a user from a rank. [rank] can be multiple ranks seperated by spaces.</summary>
+            <restriction>Mod</restriction>
+        </member>
         <member name="M:GlobalCommands.Moderators(System.String,System.Boolean)">
             <name>Moderators</name>
             <syntax>moderators</syntax>
@@ -160,7 +166,107 @@
         <member name="M:GlobalCommands.RunSpecific(System.String,System.Boolean,System.String,System.Int32,KMGameInfo)">
             <name>Run Specific</name>
             <syntax>run [distribution] [modules]</syntax>
-            <summary>Runs a distribution with a set number of modules.</summary>
+            <summary>Runs a distribution with a set number of modules. [distribution] can be vanilla, light, mixed, heavy and mods. There are also a few combinations like mixedlight and extralight. Which goes from all vanilla to all modded modules.</summary>
+        </member>
+        <member name="M:GlobalCommands.RunMission(System.String,System.Boolean,System.String,KMGameInfo)">
+            <name>Run Mission</name>
+            <syntax>run [mission name]</syntax>
+            <summary>Runs a named mission. Mods can give any mission ID to run.</summary>
+        </member>
+        <member name="M:GlobalCommands.RunRaw(System.String)">
+            <name>Run Raw</name>
+            <syntax>runraw [mission id]</syntax>
+            <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.RunRawSeed(System.String,System.String)">
+            <name>Run Raw Seed</name>
+            <syntax>runrawseed [seed] [mission id]</syntax>
+            <summary>The same as Run Raw but allows you to specify a seed.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.ProfileHelp(System.String,System.Boolean)">
+            <name>Profile Help</name>
+            <syntax>profile help</syntax>
+            <summary>Gives you help on the profile commands.</summary>
+        </member>
+        <member name="M:GlobalCommands.ProfileEnable(System.String,System.String,System.Boolean)">
+            <name>Profile Enable</name>
+            <syntax>profile enable [name]</syntax>
+            <summary>Enables a profile.</summary>
+        </member>
+        <member name="M:GlobalCommands.ProfileDisable(System.String,System.String,System.Boolean)">
+            <name>Profile Disable</name>
+            <syntax>profile disable [name]</syntax>
+            <summary>Disables a profile.</summary>
+        </member>
+        <member name="M:GlobalCommands.ProfilesListEnabled(System.String,System.Boolean)">
+            <name>Profile Enabled</name>
+            <syntax>profile enabled</syntax>
+            <summary>Lists out the enabled profiles.</summary>
+        </member>
+        <member name="M:GlobalCommands.ProfilesListAll(System.String,System.Boolean)">
+            <name>Profile List</name>
+            <syntax>profile list</syntax>
+            <summary>Lists out all the profiles available.</summary>
+        </member>
+        <member name="M:GlobalCommands.ReloadData(System.String,System.Boolean)">
+            <name>Reload Data</name>
+            <syntax>reloaddata</syntax>
+            <summary>Reloads all the data that TP uses. Like settings, access levels, etc.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.Elevator(System.String)">
+            <name>Change Elevator</name>
+            <syntax>elevator on\nelevator off\nelevator toggle</syntax>
+            <summary>Changes the enabled state of the elevator.</summary>
+        </member>
+        <member name="M:GlobalCommands.RestartGame">
+            <name>Restart</name>
+            <syntax>restart</syntax>
+            <summary>Restarts the game by closing and reopening it. May not work perfectly when running with Steam.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.QuitGame">
+            <name>Quit</name>
+            <syntax>quit</syntax>
+            <summary>Quits KTANE.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.CheckForUpdates">
+            <name>Check For Updates</name>
+            <syntax>checkforupdates</syntax>
+            <summary>Checks to see if there is a new build of TP on Dropbox. Only applicable if you are using the Dropbox version of TP.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.Update">
+            <name>Update</name>
+            <syntax>update</syntax>
+            <summary>If there is an update available, installs it and restarts the game. Only applicable if you are using the Dropbox version of TP.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.ResetLeaderboard(System.String,System.Boolean)">
+            <name>Reset Leaderboard</name>
+            <syntax>leaderboard reset</syntax>
+            <summary>Resets all the information on the leaderboard.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.DisableWhitelist">
+            <name>Disable Whitelist</name>
+            <syntax>disablewhitelist</syntax>
+            <summary>Disables the whitelist.</summary>
+        </member>
+        <member name="M:GlobalCommands.EnableWhitelist">
+            <name>Enable Whitelist</name>
+            <syntax>enablewhitelist</syntax>
+            <summary>Enables the whitelist.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.Mimic(System.String,System.String,IRCMessage)">
+            <name>Mimic</name>
+            <syntax>mimic [player] [command]</syntax>
+            <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
+            <restriction>SuperUser</restriction>
         </member>
         <member name="T:GameCommands">
             <summary>Commands that can be run during a game.</summary>
@@ -313,7 +419,7 @@
             <summary>Queues a command that will be called in order.</summary>
         </member>
         <member name="M:GameCommands.UnqueueCommand(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.String)">
-            <name>Unqueue Command</name>
+            <name>Unqueue/Show Command</name>
             <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
             <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
             <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
@@ -580,9 +686,9 @@
             <restriction>Admin</restriction>
         </member>
         <member name="M:BombCommands.ChangeStrikeParameter(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
-            <name>Change Strikes</name>
+            <name>Change Strikes / Strike Limit</name>
             <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
-            <summary>Adds, substracts or sets the number of strikes.</summary>
+            <summary>Adds, substracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="T:HoldableCommands">
@@ -667,6 +773,16 @@
             <summary>Tells you what user has the module claimed.</summary>
             <restriction>SolvedAllowed</restriction>
         </member>
+        <member name="M:ModuleCommands.BombTurnAround(TwitchModule)">
+            <name>Queue Flip</name>
+            <syntax>queue flip</syntax>
+            <summary>Queues the bomb to be flipped over when the module is solved.</summary>
+        </member>
+        <member name="M:ModuleCommands.BombTurnAroundCancel(TwitchModule)">
+            <name>Cancel Queued Flip</name>
+            <syntax>cancel queue flip</syntax>
+            <summary>Cancels a previously queued flip when the module was solved.</summary>
+        </member>
         <member name="M:ModuleCommands.Claim(TwitchModule,System.String,System.Boolean)">
             <name>Claim</name>
             <syntax>claim</syntax>
@@ -678,9 +794,9 @@
             <summary>Stops viewing the module with a camera.</summary>
         </member>
         <member name="M:ModuleCommands.View(TwitchModule,System.String,System.String)">
-            <name>Player</name>
-            <syntax>player</syntax>
-            <summary>Tells you what user has the module claimed.</summary>
+            <name>View / ViewPin</name>
+            <syntax>view\nviewpin</syntax>
+            <summary>Puts the module into a dedicated view. viewpin requires either moderator+ or the module allows pinning at any time.</summary>
         </member>
         <member name="M:ModuleCommands.Show(TwitchModule)">
             <name>Show</name>
@@ -696,6 +812,48 @@
             <name>Unclaim</name>
             <syntax>unclaim\nunclaim unview</syntax>
             <summary>Releases your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
+        </member>
+        <member name="M:ModuleCommands.Solved(TwitchModule,System.String)">
+            <name>Solved</name>
+            <syntax>solved</syntax>
+            <summary>Changes the color of a module's ID tag to green to mark it as "solved".</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:ModuleCommands.Assign(TwitchModule,System.String,System.String)">
+            <name>Assign</name>
+            <syntax>assign [username]</syntax>
+            <summary>Assigns a module to another user. Usually requires mod rank but if you are claiming the module you can attempt to assign it to another user.</summary>
+        </member>
+        <member name="M:ModuleCommands.Take(TwitchModule,System.String,System.Boolean)">
+            <name>Take</name>
+            <syntax>take</syntax>
+            <summary>Request that the current user releases their claim on the module.</summary>
+        </member>
+        <member name="M:ModuleCommands.Mine(TwitchModule,System.String,System.Boolean)">
+            <name>Mine</name>
+            <syntax>mine</syntax>
+            <summary>Indicates that you are still working on the module. Only the person who has the claim can cancel the take.</summary>
+        </member>
+        <member name="M:ModuleCommands.Mark(TwitchModule)">
+            <name>Mark</name>
+            <syntax>mark</syntax>
+            <summary>Changes the color of a module's ID tag to black.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:ModuleCommands.Unmark(TwitchModule)">
+            <name>Unmark</name>
+            <syntax>unmark</syntax>
+            <summary>Returns the color of a module's ID back to default.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:ModuleCommands.DefaultCommand(TwitchModule,System.String,System.String)">
+            <name>Zoom, Superzoom and Tilt</name>
+            <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)</syntax>
+            <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
+            Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being top left and bottom right respectively.
+            Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
+            Zoom and Tilt or Superzoom and Tilt can be be put back to back to do both at the same time.
+            </summary>
         </member>
         <member name="T:PostGameCommands">
             <summary>Commands that be used on the post game screen.</summary>

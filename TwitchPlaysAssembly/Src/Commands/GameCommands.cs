@@ -515,7 +515,7 @@ static class GameCommands
 		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
 	}
 
-	/// <name>Unqueue Command</name>
+	/// <name>Unqueue/Show Command</name>
 	/// <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
 	/// <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
 	/// <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>

@@ -34,6 +34,9 @@ static class ModuleCommands
 			? string.Format(TwitchPlaySettings.data.ModulePlayer, module.Code, module.PlayerName, module.HeaderText)
 			: string.Format(TwitchPlaySettings.data.ModuleNotClaimed, user, module.Code, module.HeaderText));
 
+	/// <name>Queue Flip</name>
+	/// <syntax>queue flip</syntax>
+	/// <summary>Queues the bomb to be flipped over when the module is solved.</summary>
 	[Command("(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)")]
 	public static void BombTurnAround(TwitchModule module)
 	{
@@ -45,6 +48,9 @@ static class ModuleCommands
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TurnBombOnSolve, module.Code, module.HeaderText);
 	}
 
+	/// <name>Cancel Queued Flip</name>
+	/// <syntax>cancel queue flip</syntax>
+	/// <summary>Cancels a previously queued flip when the module was solved.</summary>
 	[Command("cancel +(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)")]
 	public static void BombTurnAroundCancel(TwitchModule module)
 	{
@@ -64,9 +70,9 @@ static class ModuleCommands
 	[Command("unview")]
 	public static void Unview(TwitchModule module) => TwitchGame.ModuleCameras?.UnviewModule(module);
 
-	/// <name>Player</name>
-	/// <syntax>player</syntax>
-	/// <summary>Tells you what user has the module claimed.</summary>
+	/// <name>View / ViewPin</name>
+	/// <syntax>view\nviewpin</syntax>
+	/// <summary>Puts the module into a dedicated view. viewpin requires either moderator+ or the module allows pinning at any time.</summary>
 	[Command("(view(?: *pin)?|pin *view)")]
 	public static void View(TwitchModule module, string user, [Group(1)] string cmd) => module.ViewPin(user, cmd.ContainsIgnoreCase("p"));
 
@@ -138,6 +144,10 @@ static class ModuleCommands
 			TwitchGame.ModuleCameras?.UnviewModule(module);
 	}
 
+	/// <name>Solved</name>
+	/// <syntax>solved</syntax>
+	/// <summary>Changes the color of a module's ID tag to green to mark it as "solved".</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"solved", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Solved(TwitchModule module, string user)
 	{
@@ -146,6 +156,9 @@ static class ModuleCommands
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.ModuleReady, module.Code, user, module.HeaderText);
 	}
 
+	/// <name>Assign</name>
+	/// <syntax>assign [username]</syntax>
+	/// <summary>Assigns a module to another user. Usually requires mod rank but if you are claiming the module you can attempt to assign it to another user.</summary>
 	[Command(@"assign +(.+)")]
 	public static void Assign(TwitchModule module, string user, [Group(1)] string targetUser)
 	{
@@ -186,6 +199,9 @@ static class ModuleCommands
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AssignModule, module.Code, module.PlayerName, user, module.HeaderText);
 	}
 
+	/// <name>Take</name>
+	/// <syntax>take</syntax>
+	/// <summary>Request that the current user releases their claim on the module.</summary>
 	[Command(@"take")]
 	public static void Take(TwitchModule module, string user, bool isWhisper)
 	{
@@ -217,6 +233,9 @@ static class ModuleCommands
 		}
 	}
 
+	/// <name>Mine</name>
+	/// <syntax>mine</syntax>
+	/// <summary>Indicates that you are still working on the module. Only the person who has the claim can cancel the take.</summary>
 	[Command(@"mine")]
 	public static void Mine(TwitchModule module, string user, bool isWhisper)
 	{
@@ -271,9 +290,17 @@ static class ModuleCommands
 	[Command(@"(points|score)"), SolvedAllowed]
 	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) {(module.Solver.ModInfo.moduleScoreIsDynamic ? "awards points dynamically depending on the number of modules on the bomb." : $"current score: {module.Solver.ModInfo.moduleScore}")}");
 
+	/// <name>Mark</name>
+	/// <syntax>mark</syntax>
+	/// <summary>Changes the color of a module's ID tag to black.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"mark", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Mark(TwitchModule module) => module.SetBannerColor(module.MarkedBackgroundColor);
 
+	/// <name>Unmark</name>
+	/// <syntax>unmark</syntax>
+	/// <summary>Returns the color of a module's ID back to default.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"unmark", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void Unmark(TwitchModule module) => module.SetBannerColor(module.Claimed ? module.ClaimedBackgroundColour : module.unclaimedBackgroundColor);
 
@@ -386,7 +413,13 @@ static class ModuleCommands
 
 		yield return new WaitForSeconds(0.5f);
 	}
-
+	/// <name>Zoom, Superzoom and Tilt</name>
+	/// <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)</syntax>
+	/// <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
+	/// Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being top left and bottom right respectively.
+	/// Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
+	/// Zoom and Tilt or Superzoom and Tilt can be be put back to back to do both at the same time.
+	/// </summary>
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)
 	{

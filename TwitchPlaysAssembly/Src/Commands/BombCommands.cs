@@ -241,9 +241,9 @@ public static class BombCommands
 			: $"{(negativeTime ? "Subtracted" : "Added")} {Math.Abs(time).FormatTime()} {(negativeTime ? "from" : "to")} the timer.", user, !isWhisper);
 	}
 
-	/// <name>Change Strikes</name>
+	/// <name>Change Strikes / Strike Limit</name>
 	/// <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
-	/// <summary>Adds, substracts or sets the number of strikes.</summary>
+	/// <summary>Adds, substracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
 	/// <restriction>Admin</restriction>
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:(strikes?|s)|strikelimit|sl|maxstrikes?|ms) +(-?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ChangeStrikeParameter(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] bool isStrikes, [Group(4)] int amount)
