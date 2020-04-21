@@ -73,28 +73,28 @@ public static class BombCommands
 	[Command(@"(timestamp|date)")]
 	public static void Timestamp(TwitchBomb bomb, string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombTimeStamp, bomb.BombTimeStamp), user, !isWhisper);
 
-	/// <name>End Zen Mode</name>
-	/// <syntax>endzenmode</syntax>
-	/// <summary>Ends a zen mode bomb. Requires either Defuser rank or a minimum score.</summary>
-	[Command(@"endzenmode")]
+	/// <name>End Training Mode</name>
+	/// <syntax>endtrainingmode</syntax>
+	/// <summary>Ends a training mode bomb. Requires either Defuser rank or a minimum score.</summary>
+	[Command(@"endtrainingmode")]
 	public static IEnumerator Explode(TwitchBomb bomb, string user, bool isWhisper)
 	{
-		if (!OtherModes.ZenModeOn)
+		if (!OtherModes.TrainingModeOn)
 		{
-			IRCConnection.SendMessage("Zen mode is not on.", user, false, user);
+			IRCConnection.SendMessage("Training mode is not on.", user, false, user);
 			return null;
 		}
 
 		if (isWhisper)
 		{
-			IRCConnection.SendMessage("Sorry {0}, you can't end Zen mode in a whisper.", user, false, user);
+			IRCConnection.SendMessage("Sorry {0}, you can't end Training mode in a whisper.", user, false, user);
 			return null;
 		}
 
 		Leaderboard.Instance.GetRank(user, out var entry);
 		if (!UserAccess.HasAccess(user, AccessLevel.Defuser, true) && entry != null && entry.SolveScore < TwitchPlaySettings.data.MinScoreForNewbomb)
 		{
-			IRCConnection.SendMessage("Sorry, you don't have enough points to end Zen mode.");
+			IRCConnection.SendMessage("Sorry, you don't have enough points to end Training mode.");
 			return null;
 		}
 

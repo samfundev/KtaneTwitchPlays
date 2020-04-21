@@ -358,7 +358,7 @@ public class ModuleCameras : MonoBehaviour
 			}
 			else
 			{
-				NotesTexts[ix].text = TwitchGame.Instance.NotesDictionary.TryGetValue(ix, out var text) ? text : (OtherModes.ZenModeOn && ix == 3) ? TwitchPlaySettings.data.ZenModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
+				NotesTexts[ix].text = TwitchGame.Instance.NotesDictionary.TryGetValue(ix, out var text) ? text : (OtherModes.TrainingModeOn && ix == 3) ? TwitchPlaySettings.data.TrainingModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
 				NotesTextBackgrounds[ix].color = new Color32(0xEE, 0xEE, 0xEE, 0xFF);
 				NotesTextIDs[ix].text = $"!notes{ix + 1}";
 			}
@@ -726,6 +726,6 @@ public class ModuleCameras : MonoBehaviour
 	public bool HasEmptySlot => _moduleCameras.Any(c => c.Module == null);
 
 	// Make sure automatic camera wall is enabled and respect EnableFactoryZenModeCameraWall
-	private bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryZenModeCameraWall && OtherModes.ZenModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
+	private bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryTrainingModeCameraWall && OtherModes.TrainingModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
 	#endregion
 }

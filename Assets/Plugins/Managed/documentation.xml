@@ -379,7 +379,7 @@
         <member name="M:GameCommands.NewBomb(System.String,System.Boolean)">
             <name>New Bomb</name>
             <syntax>newbomb</syntax>
-            <summary>Starts a new bomb in zen mode. Requires either a minimum score or the defuser rank to run.</summary>
+            <summary>Starts a new bomb in training mode. Requires either a minimum score or the defuser rank to run.</summary>
         </member>
         <member name="M:GameCommands.FillEdgework(System.String,System.Boolean)">
             <name>Fill Edgework</name>
@@ -625,9 +625,9 @@
             <summary>Sends a message with when the bomb started.</summary>
         </member>
         <member name="M:BombCommands.Explode(TwitchBomb,System.String,System.Boolean)">
-            <name>End Zen Mode</name>
-            <syntax>endzenmode</syntax>
-            <summary>Ends a zen mode bomb. Requires either Defuser rank or a minimum score.</summary>
+            <name>End Training Mode</name>
+            <syntax>endtrainingmode</syntax>
+            <summary>Ends a training mode bomb. Requires either Defuser rank or a minimum score.</summary>
         </member>
         <member name="M:BombCommands.Explode(TwitchBomb)">
             <name>Explode</name>

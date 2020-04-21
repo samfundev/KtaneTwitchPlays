@@ -126,7 +126,7 @@ public sealed class Factory : GameRoom
 				InitializeGameModes(true);
 			}
 
-			bool enableCameraWall = OtherModes.ZenModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryZenModeCameraWall;
+			bool enableCameraWall = OtherModes.TrainingModeOn && IRCConnection.Instance.State == IRCConnectionState.Connected && TwitchPlaySettings.data.EnableFactoryTrainingModeCameraWall;
 			if (enableCameraWall != TwitchGame.ModuleCameras.CameraWallEnabled)
 			{
 				if (enableCameraWall)

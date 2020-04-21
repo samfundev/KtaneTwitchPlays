@@ -1324,7 +1324,7 @@ static class GlobalCommands
 				Count = bothModules
 			}
 		};
-		if (FactoryRoomAPI.Installed() && OtherModes.ZenModeOn)
+		if (FactoryRoomAPI.Installed() && OtherModes.TrainingModeOn)
 			pools.Add(new KMComponentPool { Count = 8, ModTypes = new List<string> { "Factory Mode" } });
 
 		mission.PacingEventsEnabled = true;

@@ -76,7 +76,7 @@ public class TwitchPlaySettingsData
 	public float AwardDropMultiplierOnStrike = 0.80f;
 	public bool TimeModeTimeForActions = true; 
 
-	public bool EnableFactoryZenModeCameraWall = true;
+	public bool EnableFactoryTrainingModeCameraWall = true;
 	public bool EnableFactoryAutomaticNextBomb = true;
 
 	public bool EnableZenModeForEveryone = false;
@@ -253,7 +253,7 @@ public class TwitchPlaySettingsData
 	public string BombStatus = "Time remaining: {0} out of {1}, Strikes: {2}/{3}, Solves: {4}/{5}, Reward: {6}";
 
 	public string NotesSpaceFree = "(Free Space)";
-	public string ZenModeFreeSpace = "Zen mode in effect. Type !newbomb to get a new bomb worth of modules. Type !bomb endzenmode to detonate the bomb, and return to setup room.";
+	public string TrainingModeFreeSpace = "Training mode in effect. Type !newbomb to get a new bomb worth of modules. Type !bomb endtrainingmode to detonate the bomb, and return to setup room.";
 	public string Notes = "Notes {0}: {1}";
 	public string NotesTaken = "Notes Taken for Note Slot {0}: {1}";
 	public string NotesAppended = "Notes appended to Note Slot {0}: {1}";

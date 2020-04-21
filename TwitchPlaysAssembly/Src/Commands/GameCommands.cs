@@ -390,13 +390,13 @@ static class GameCommands
 
 	/// <name>New Bomb</name>
 	/// <syntax>newbomb</syntax>
-	/// <summary>Starts a new bomb in zen mode. Requires either a minimum score or the defuser rank to run.</summary>
+	/// <summary>Starts a new bomb in training mode. Requires either a minimum score or the defuser rank to run.</summary>
 	[Command(@"newbomb")]
 	public static void NewBomb(string user, bool isWhisper)
 	{
-		if (!OtherModes.ZenModeOn)
+		if (!OtherModes.TrainingModeOn)
 		{
-			IRCConnection.SendMessage($"{user}, the newbomb command is only allowed in Zen mode.", user, !isWhisper);
+			IRCConnection.SendMessage($"{user}, the newbomb command is only allowed in Training mode.", user, !isWhisper);
 			return;
 		}
 		if (isWhisper)
