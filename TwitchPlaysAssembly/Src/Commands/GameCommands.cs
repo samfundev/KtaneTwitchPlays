@@ -562,21 +562,23 @@ static class GameCommands
 	{
 		name = name?.Trim();
 
-		if (TwitchGame.Instance.CallingPlayers.Contains(user))
-		{
-			IRCConnection.SendMessageFormat("@{0}, you already called!", user);
-			return;
-		}
+		if (!now){
+			if (TwitchGame.Instance.CallingPlayers.Contains(user))
+			{
+				IRCConnection.SendMessageFormat("@{0}, you already called!", user);
+				return;
+			}
 
-		var _callsNeeded = TwitchGame.Instance.callsNeeded;
-		var _callsTotal = TwitchGame.Instance.CallingPlayers.Count;
+			var _callsNeeded = TwitchGame.Instance.callsNeeded;
+			var _callsTotal = TwitchGame.Instance.CallingPlayers.Count;
 
-		// Only call if there are enough calls.
-		if (!(_callsTotal + 1 >= _callsNeeded) && !now)
-		{
-			TwitchGame.Instance.CallingPlayers.Add(user);
-			CallCountCommand();
-			return;
+			// Only call if there are enough calls.
+			if (!(_callsTotal + 1 >= _callsNeeded))
+			{
+				TwitchGame.Instance.CallingPlayers.Add(user);
+				CallCountCommand();
+				return;
+			}
 		}
 
 		CommandQueueItem call = null;
