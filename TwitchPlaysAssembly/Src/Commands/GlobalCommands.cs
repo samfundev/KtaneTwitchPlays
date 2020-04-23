@@ -1305,7 +1305,7 @@ static class GlobalCommands
 
 	private static IEnumerator RunDistribution(string user, int modules, KMGameInfo inf, ModuleDistributions distribution)
 	{
-		if (!distribution.Enabled && !UserAccess.HasAccess(user, AccessLevel.Mod) && !TwitchPlaySettings.data.AnarchyMode)
+		if (!distribution.Enabled && !UserAccess.HasAccess(user, AccessLevel.Mod, true) && !TwitchPlaySettings.data.AnarchyMode)
 		{
 			IRCConnection.SendMessage($"Sorry, distribution \"{distribution.DisplayName}\" is disabled");
 			return null;

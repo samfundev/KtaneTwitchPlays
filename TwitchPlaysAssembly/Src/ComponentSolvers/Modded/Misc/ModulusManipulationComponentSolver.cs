@@ -30,7 +30,6 @@ public class ModulusManipulationComponentSolver : ComponentSolver
 				yield return "trycancel Answer wasn't submitted to due a request to cancel.";
 
 				var minutesLeft = (int) timer.TimeRemaining / 60;
-				DebugHelper.Log(minutesLeft, minutes, timer.GetRate());
 				if (timer.GetRate() > 0 ? minutesLeft <= minutes : minutesLeft >= minutes)
 				{
 					if (minutesLeft != minutes)

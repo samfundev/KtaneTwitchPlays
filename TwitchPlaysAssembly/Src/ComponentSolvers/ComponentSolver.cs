@@ -327,13 +327,13 @@ public abstract class ComponentSolver
 				{
 					if (HeldSelectables.Contains(selectable1))
 					{
-						DoInteractionEnd(selectable1);
 						HeldSelectables.Remove(selectable1);
+						DoInteractionEnd(selectable1);
 					}
 					else
 					{
-						DoInteractionStart(selectable1);
 						HeldSelectables.Add(selectable1);
+						DoInteractionStart(selectable1);
 					}
 				}
 				catch (Exception exception)
