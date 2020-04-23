@@ -210,6 +210,12 @@
             <syntax>profile list</syntax>
             <summary>Lists out all the profiles available.</summary>
         </member>
+        <member name="M:GlobalCommands.ProfileModule(System.String,System.Boolean,System.Boolean,System.String,System.String)">
+            <name>Profile Add/Remove Module</name>
+            <syntax>profile add [module] [profile]\nprofile remove [module] [profile]</syntax>
+            <summary>Adds or removes a module from a profile. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space. [profile] can be a partial profile name.</summary>
+            <restriction>Admin</restriction>
+        </member>
         <member name="M:GlobalCommands.ReloadData(System.String,System.Boolean)">
             <name>Reload Data</name>
             <syntax>reloaddata</syntax>

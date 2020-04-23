@@ -853,7 +853,7 @@ static class GlobalCommands
 	/// <name>Profile Enable</name>
 	/// <syntax>profile enable [name]</syntax>
 	/// <summary>Enables a profile.</summary>
-	[Command(@"profiles? +(?:enable|add|activate) +(.+)")]
+	[Command(@"profiles? +(?:enable|activate) +(.+)")]
 	public static void ProfileEnable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
 		IRCConnection.SendMessage(ProfileHelper.Add(filename) ?
@@ -864,7 +864,7 @@ static class GlobalCommands
 	/// <name>Profile Disable</name>
 	/// <syntax>profile disable [name]</syntax>
 	/// <summary>Disables a profile.</summary>
-	[Command(@"profiles? +(?:disable|remove|deactivate) +(.+)")]
+	[Command(@"profiles? +(?:disable|deactivate) +(.+)")]
 	public static void ProfileDisable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
 		IRCConnection.SendMessage(ProfileHelper.Remove(filename) ?
@@ -883,6 +883,35 @@ static class GlobalCommands
 	/// <summary>Lists out all the profiles available.</summary>
 	[Command(@"profiles? +(?:list|all)?")]
 	public static void ProfilesListAll(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileListAll, TwitchPlaySettings.data.ProfileWhitelist.Join(", ")), user, !isWhisper);
+
+	/// <name>Profile Add/Remove Module</name>
+	/// <syntax>profile add [module] [profile]\nprofile remove [module] [profile]</syntax>
+	/// <summary>Adds or removes a module from a profile. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space. [profile] can be a partial profile name.</summary>
+	/// <restriction>Admin</restriction>
+	[Command("profiles? +(?:(add)|remove) +(\"?)(.+)\\2 +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void ProfileModule(string user, bool isWhisper, [Group(1)] bool adding, [Group(3)] string module, [Group(4)] string profileName)
+	{
+		if (!ComponentSolverFactory.GetModuleInformation().Search(module, modInfo => modInfo.moduleDisplayName, out ModuleInformation moduleInfo, out string message) &&
+			!ComponentSolverFactory.GetModuleInformation().Search(module, modInfo => modInfo.moduleID, out moduleInfo, out message))
+		{
+			IRCConnection.SendMessage(message);
+			return;
+		}
+
+		if (!Directory.GetFiles(ProfileHelper.ProfileFolder, "*.json").Search(profileName, path => Path.GetFileNameWithoutExtension(path).Replace('_', ' '), out string profilePath, out message))
+		{
+			IRCConnection.SendMessage(message);
+			return;
+		}
+
+		var cleanProfileName = Path.GetFileNameWithoutExtension(profilePath).Replace('_', ' ');
+		var success = ProfileHelper.SetState(profilePath, moduleInfo.moduleID, !adding);
+		IRCConnection.SendMessage(success ?
+			$"\"{moduleInfo.moduleDisplayName}\" {(adding ? "added to" : "removed from")} \"{cleanProfileName}\"." :
+			$"\"{moduleInfo.moduleDisplayName}\" is already {(adding ? "added to" : "removed from" )} \"{cleanProfileName}\".",
+			user, !isWhisper
+		);
+	}
 
 	[Command(@"holdables")]
 	public static void Holdables(string user, bool isWhisper) => IRCConnection.SendMessage("The following holdables are present: {0}", user, !isWhisper, TwitchPlaysService.Instance.Holdables.Keys.Select(x => $"!{x}").Join(", "));

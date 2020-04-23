@@ -291,4 +291,35 @@ public static class GeneralExtensions
 		directoryInfo.CopyTo(destDir);
 		directoryInfo.Delete(true);
 	}
+
+	public static bool Search<T>(this IEnumerable<T> source, string query, Func<T, string> toSearch, Func<T, string> toDisplay, out T result, out string message)
+	{
+		var items = source.Where(item => toSearch(item).ContainsIgnoreCase(query));
+		switch (items.Count())
+		{
+			case 0:
+				message = $"There were no items that matched “{query}”.";
+				result = default;
+				return false;
+
+			case 1:
+				message = null;
+				result = items.First();
+				return true;
+
+			default:
+				var oneItem = items.Where(item => toSearch(item).Equals(query));
+				if (oneItem.Count() == 1)
+				{
+					items = oneItem;
+					goto case 1;
+				}
+
+				message = $"There is more than one item matching your search term. They are: {items.Take(5).Select(toDisplay).Join(", ")}";
+				result = default;
+				return false;
+		}
+	}
+
+	public static bool Search<T>(this IEnumerable<T> source, string query, Func<T, string> toSearch, out T result, out string message) => source.Search(query, toSearch, toSearch, out result, out message);
 }

@@ -9,6 +9,7 @@ using UnityEngine;
 static class ProfileHelper
 {
 	static readonly string modSelectorConfig = Path.Combine(Application.persistentDataPath, "modSelectorConfig.json");
+	public static readonly string ProfileFolder = Path.Combine(Application.persistentDataPath, "ModProfiles");
 
 	static Type ProfileManagerType;
 	static MethodInfo ReloadActiveConfigurationMethod;
@@ -49,5 +50,39 @@ static class ProfileHelper
 		Profiles = temp;
 
 		return true;
+	}
+
+	public static bool SetState(string profilePath, string module, bool state)
+	{
+		var profile = JsonConvert.DeserializeObject<Profile>(File.ReadAllText(profilePath));
+		var success = false;
+
+		if (state && (!profile.EnabledList.Contains(module) || profile.DisabledList.Contains(module)))
+		{
+			success |= profile.EnabledList.Add(module);
+			success |= profile.DisabledList.Remove(module);
+		}
+		else if (!state && (profile.EnabledList.Contains(module) || !profile.DisabledList.Contains(module)))
+		{
+			success |= profile.EnabledList.Remove(module);
+			success |= profile.DisabledList.Add(module);
+		}
+
+		if (success)
+		{
+			File.WriteAllText(profilePath, JsonConvert.SerializeObject(profile, Formatting.Indented));
+			ReloadActiveConfiguration();
+		}
+
+		return success;
+	}
+
+	class Profile
+	{
+#pragma warning disable CS0649
+		public HashSet<string> DisabledList;
+		public HashSet<string> EnabledList = new HashSet<string>();
+		public int Operation;
+#pragma warning restore CS0649
 	}
 }
