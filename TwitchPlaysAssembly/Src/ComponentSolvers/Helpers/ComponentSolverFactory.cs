@@ -893,6 +893,8 @@ public static class ComponentSolverFactory
 		{ "HexiEvilFMN", 3 },
 	};
 
+	public static Dictionary<string, float> ppaScores = new Dictionary<string, float>();
+
 	public static IEnumerator LoadDefaultInformation(bool reloadData = false)
 	{
 		UnityWebRequest www = UnityWebRequest.Get("https://spreadsheets.google.com/feeds/list/1WEzVOKxOO5CDGoqAHjJKrC-c-ZGgsTPRLXBCs8RrAwU/1/public/values?alt=json");
@@ -966,10 +968,24 @@ public static class ComponentSolverFactory
 				}
 
 				// PPA is for point per action modules which can be parsed in some cases.
-				scoreString = Regex.Replace(scoreString, @"PPA ([\d.]+) \+ ([\d.]+)", "$2");
+				var ppaMatch = Regex.Match(scoreString, @"PPA ([\d.]+)x?(?: \+ ([\d.]+))?");
+				if (ppaMatch.Success && float.TryParse(ppaMatch.Groups[1].Value, out float ppaScore))
+				{
+					// A + after S is for a static addition to the dynamic score.
+					if (ppaMatch.Groups.Count > 2)
+					{
+						if (float.TryParse(ppaMatch.Groups[2].Value, out float staticScore))
+							defaultInfo.moduleScore = staticScore;
+					}
+					else
+						defaultInfo.moduleScore = 0;
 
-				// Catch any PPA or TDB modules which can't be parsed.
-				if (scoreString.StartsWith("PPA ") || scoreString == "TBD")
+					ppaScores[moduleID] = ppaScore;
+					continue;
+				}
+
+				// Catch any TDB modules which can't be parsed.
+				if (scoreString == "TBD")
 					continue;
 
 				if (float.TryParse(scoreString, out float score))

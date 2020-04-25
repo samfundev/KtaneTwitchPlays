@@ -299,7 +299,7 @@ public abstract class ComponentSolver
 					if (OtherModes.ScoreMultiplier == 0)
 						continue;
 
-					pointsAwarded = (pointsAwarded * OtherModes.ScoreMultiplier).RoundToInt();
+					pointsAwarded = (ComponentSolverFactory.ppaScores.TryGetValue(ModInfo.moduleID, out float ppaScore) ? ppaScore : pointsAwarded * OtherModes.ScoreMultiplier).RoundToInt();
 
 					List<string> messageParts = new List<string>();
 					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
