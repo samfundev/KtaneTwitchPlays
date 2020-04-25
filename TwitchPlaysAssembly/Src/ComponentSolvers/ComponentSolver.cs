@@ -684,6 +684,7 @@ public abstract class ComponentSolver
 						break;
 
 					case "HexiEvilFMN": // Forget Everything
+					case "forgetEnigma": // Forget Enigma
 						moduleScore += (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
