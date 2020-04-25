@@ -115,8 +115,8 @@ static class ModuleCommands
 
 	/// <name>Unclaim</name>
 	/// <syntax>unclaim\nunclaim unview</syntax>
-	/// <summary>Releases your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
-	[Command("(unclaim|un?c|release|rel|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
+	/// <summary>Removes your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
+	[Command("(unclaim|un?c|unclaim unview|unview unclaim|unclaimview|unviewclaim|uncv|unvc)")]
 	public static void Unclaim(TwitchModule module, string user, [Group(1)] string cmd)
 	{
 		if (module.Solved)

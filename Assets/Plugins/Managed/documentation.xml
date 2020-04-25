@@ -817,7 +817,7 @@
         <member name="M:ModuleCommands.Unclaim(TwitchModule,System.String,System.String)">
             <name>Unclaim</name>
             <syntax>unclaim\nunclaim unview</syntax>
-            <summary>Releases your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
+            <summary>Removes your claim on a module or your queued claim. unclaim unview also unviews the module.</summary>
         </member>
         <member name="M:ModuleCommands.Solved(TwitchModule,System.String)">
             <name>Solved</name>
