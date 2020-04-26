@@ -452,11 +452,20 @@ public class TwitchPlaysService : MonoBehaviour
 			return true;
 		}
 
-		if (extraObject is TwitchModule mdl && mdl.Solved && !command.HasAttribute<SolvedAllowedAttribute>() && !TwitchPlaySettings.data.AnarchyMode)
+		if (extraObject is TwitchModule mdl)
 		{
-			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadySolved, mdl.Code, mdl.PlayerName, msg.UserNickName, mdl.BombComponent.GetModuleDisplayName());
-			// Return true so that the command counts as processed (otherwise you get the above message multiple times)
-			return true;
+			if (mdl.Solved && !command.HasAttribute<SolvedAllowedAttribute>() && !TwitchPlaySettings.data.AnarchyMode)
+			{
+				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.AlreadySolved, mdl.Code, mdl.PlayerName, msg.UserNickName, mdl.BombComponent.GetModuleDisplayName());
+				// Return true so that the command counts as processed (otherwise you get the above message multiple times)
+				return true;
+			}
+
+			if (mdl.Hidden)
+			{
+				IRCConnection.SendMessage($"Module {mdl.Code} is currently hidden and cannot be interacted with.");
+				return true;
+			}
 		}
 
 		Leaderboard.Instance.GetRank(msg.UserNickName, out Leaderboard.LeaderboardEntry entry);

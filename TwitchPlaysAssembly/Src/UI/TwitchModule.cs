@@ -77,6 +77,8 @@ public class TwitchModule : MonoBehaviour
 
 	public bool IsMod => BombComponent is ModBombComponent || BombComponent is ModNeedyComponent;
 
+	public bool Hidden => MysteryModuleShim.IsHidden(BombComponent);
+
 	public static bool ClaimsEnabled = true;
 
 	private string _headerText;
@@ -98,6 +100,7 @@ public class TwitchModule : MonoBehaviour
 	private StatusLightPosition _statusLightPosition;
 	private Vector3 _originalIDPosition = Vector3.zero;
 	private bool _anarchyMode;
+	private bool _hidden;
 	private readonly Dictionary<Transform, int> _originalLayers = new Dictionary<Transform, int>();
 	private int? _currentLayer;
 	#endregion
@@ -121,6 +124,18 @@ public class TwitchModule : MonoBehaviour
 			{
 				CanvasGroupMultiDecker.alpha = Solved ? 0.0f : 1.0f;
 				SetBannerColor(Claimed && !Solved ? ClaimedBackgroundColour : unclaimedBackgroundColor);
+			}
+		}
+
+		if (_hidden != Hidden)
+		{
+			_hidden = Hidden;
+			CanvasGroupMultiDecker.alpha = Hidden ? 0.0f : 1.0f;
+
+			if (!Hidden)
+			{
+				GetStatusLightY();
+				SetStatusLightPosition(Solver.ModInfo.statusLightPosition);
 			}
 		}
 
@@ -180,21 +195,7 @@ public class TwitchModule : MonoBehaviour
 				}
 
 				Solver.Code = Code;
-
-				Vector3 pos = CanvasGroupMultiDecker.transform.localPosition;
-				// This sets the Y position of ID tag to be right above the status light forfor modules where the status light has been moved.
-				// Which is done by getting the status light's position in world space, converting it to the tag's local space, taking the Y and adding 0.03514.
-				StatusLightParent statusLightParent = BombComponent.GetComponentInChildren<StatusLightParent>();
-				if (statusLightParent != null)
-				{
-					float y = CanvasGroupMultiDecker.transform.parent.InverseTransformPoint(statusLightParent.transform.position).y + 0.03514f;
-					if (y >= 0) // Make sure the Y position wouldn't be inside the module.
-					{
-						pos.y = y;
-					}
-				}
-
-				_originalIDPosition = pos;
+				GetStatusLightY();
 				SetStatusLightPosition(Solver.ModInfo.statusLightPosition);
 
 				CanvasGroupUnsupported.gameObject.SetActive(Solver.UnsupportedModule);
@@ -261,13 +262,31 @@ public class TwitchModule : MonoBehaviour
 		}
 
 		// Announce any solvable modules that are marked and needies
-		if (Solver?.ModInfo.announceModule == true || BombComponent.GetComponent<NeedyComponent>() != null)
+		if ((Solver?.ModInfo.announceModule == true || BombComponent.GetComponent<NeedyComponent>() != null) && !Hidden)
 		{
 			IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
 		}
 
 		SetBannerColor(unclaimedBackgroundColor);
 		TakeUser = null;
+	}
+
+	private void GetStatusLightY()
+	{
+		Vector3 pos = CanvasGroupMultiDecker.transform.localPosition;
+		// This sets the Y position of ID tag to be right above the status light forfor modules where the status light has been moved.
+		// Which is done by getting the status light's position in world space, converting it to the tag's local space, taking the Y and adding 0.03514.
+		StatusLightParent statusLightParent = BombComponent.GetComponentInChildren<StatusLightParent>();
+		if (statusLightParent != null)
+		{
+			float y = CanvasGroupMultiDecker.transform.parent.InverseTransformPoint(statusLightParent.transform.position).y + 0.03514f;
+			if (y >= 0) // Make sure the Y position wouldn't be inside the module.
+			{
+				pos.y = y;
+			}
+		}
+
+		_originalIDPosition = pos;
 	}
 
 	public static void DeactivateNeedyModule(TwitchModule handle)

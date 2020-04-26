@@ -222,7 +222,7 @@ static class GameCommands
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
 			{
 				// Add back any modules that may have been released.	
-				unclaimedModules = TwitchGame.Instance.Modules.Where(h => h.CanBeClaimed && !h.Claimed && !h.Solved)
+				unclaimedModules = TwitchGame.Instance.Modules.Where(h => h.CanBeClaimed && !h.Claimed && !h.Solved && !h.Hidden)
 					.Shuffle().ToList();
 				unclaimedModuleIndex = 0;
 			}
@@ -237,7 +237,7 @@ static class GameCommands
 		{
 			// See if there is a valid module at the current index and increment for the next go around.
 			TwitchModule handle = unclaimedModules[unclaimedModuleIndex];
-			if (!handle.CanBeClaimed || handle.Claimed || handle.Solved)
+			if (!handle.CanBeClaimed || handle.Claimed || handle.Solved || handle.Hidden)
 			{
 				unclaimedModules.RemoveAt(unclaimedModuleIndex);
 				i--;
@@ -293,7 +293,7 @@ static class GameCommands
 		}
 
 		IEnumerable<string> unsolved = TwitchGame.Instance.Modules
-			.Where(module => !module.Solved && GameRoom.Instance.IsCurrentBomb(module.BombID))
+			.Where(module => !module.Solved && GameRoom.Instance.IsCurrentBomb(module.BombID) && !module.Hidden)
 			.Shuffle().Take(3)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - {(module.PlayerName == null ? "Unclaimed" : "Claimed by " + module.PlayerName)}")
 			.ToList();
@@ -899,7 +899,7 @@ static class GameCommands
 	}
 
 	private static IEnumerable<TwitchModule> FindModules(string[] queries, Func<TwitchModule, bool> predicate = null) => TwitchGame.Instance.Modules
-			.Where(module => queries.Any(q => module.HeaderText.ContainsIgnoreCase(q)) && GameRoom.Instance.IsCurrentBomb(module.BombID) && (predicate == null || predicate(module)))
+			.Where(module => queries.Any(q => module.HeaderText.ContainsIgnoreCase(q)) && GameRoom.Instance.IsCurrentBomb(module.BombID) && (predicate == null || predicate(module)) && !module.Hidden)
 			.OrderByDescending(handle => queries.Any(q => handle.HeaderText.EqualsIgnoreCase(q)))
 			.ThenBy(handle => handle.Solved)
 			.ThenBy(handle => handle.PlayerName != null);

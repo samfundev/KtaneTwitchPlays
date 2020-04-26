@@ -88,6 +88,7 @@ public class TwitchGame : MonoBehaviour
 		callsNeeded = 1;
 		CallingPlayers.Clear();
 		FindClaimPlayers.Clear();
+		MysteryModuleShim.CoveredModules.Clear();
 
 		_bombStarted = false;
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;

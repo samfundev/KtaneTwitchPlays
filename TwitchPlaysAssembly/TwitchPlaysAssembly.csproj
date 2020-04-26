@@ -117,6 +117,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Misc\BabaIsWhoComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Misc\NumberNimblenessComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\PrimeEncryptionComponentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\Shims\MysteryModuleShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\AstrologyShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\SquareButtonShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\PlungerButtonShim.cs" />
