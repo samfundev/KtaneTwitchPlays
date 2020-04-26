@@ -909,6 +909,7 @@ static class GameCommands
 		var claimed = TwitchGame.Instance.Modules
 			.Where(module => module.PlayerName != null && module.PlayerName.EqualsIgnoreCase(targetUser) && !module.Solved)
 			.Select(module => string.Format(TwitchPlaySettings.data.OwnedModule, module.Code, module.HeaderText))
+			.Shuffle()
 			.ToList();
 		if (claimed.Count > 0)
 		{
