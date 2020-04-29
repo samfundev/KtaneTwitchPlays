@@ -58,9 +58,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["Needy Math"] = module => new NeedyMathComponentSolver(module);
 		ModComponentSolverCreators["WordScrambleModule"] = module => new AnagramsComponentSolver(module);
 
-		//Procyon Modules
-		ModComponentSolverCreators["theRule"] = module => new TheRuleComponentSolver(module);
-
 		//Royal_Flu$h Modules
 		ModComponentSolverCreators["coffeebucks"] = module => new CoffeebucksComponentSolver(module);
 		ModComponentSolverCreators["festiveJukebox"] = module => new FestiveJukeboxComponentSolver(module);
