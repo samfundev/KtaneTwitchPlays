@@ -77,7 +77,7 @@ public class TwitchModule : MonoBehaviour
 
 	public bool IsMod => BombComponent is ModBombComponent || BombComponent is ModNeedyComponent;
 
-	public bool Hidden => MysteryModuleShim.IsHidden(BombComponent);
+	public bool Hidden => !BombComponent.gameObject.activeInHierarchy || MysteryModuleShim.IsHidden(BombComponent);
 
 	public static bool ClaimsEnabled = true;
 
@@ -262,13 +262,24 @@ public class TwitchModule : MonoBehaviour
 		}
 
 		// Announce any solvable modules that are marked and needies
-		if ((Solver?.ModInfo.announceModule == true || BombComponent.GetComponent<NeedyComponent>() != null) && !Hidden)
+		if (Solver?.ModInfo.announceModule == true || BombComponent.GetComponent<NeedyComponent>() != null)
 		{
-			IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
+			StartCoroutine(DelayAnnouncement());
 		}
 
 		SetBannerColor(unclaimedBackgroundColor);
 		TakeUser = null;
+	}
+
+	private IEnumerator DelayAnnouncement()
+	{
+		yield return null;
+		yield return null;
+
+		if (Hidden)
+			yield break;
+
+		IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
 	}
 
 	private void GetStatusLightY()
