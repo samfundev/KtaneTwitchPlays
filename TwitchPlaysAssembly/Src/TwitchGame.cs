@@ -539,20 +539,8 @@ public class TwitchGame : MonoBehaviour
 	{
 		foreach (var component in bomb.Bomb.BombComponents)
 		{
-			var componentType = component.ComponentType;
-			string moduleName;
-
-			// ReSharper disable once SwitchStatementMissingSomeCases
-			switch (componentType)
-			{
-				case ComponentTypeEnum.Empty:
-				case ComponentTypeEnum.Timer:
-					continue;
-
-				default:
-					moduleName = component.GetModuleDisplayName();
-					break;
-			}
+			if (component.ComponentType.EqualsAny(ComponentTypeEnum.Empty, ComponentTypeEnum.Timer))
+				continue;
 
 			TwitchModule module = Instantiate(twitchModulePrefab, component.transform, false);
 			module.Bomb = bomb;
