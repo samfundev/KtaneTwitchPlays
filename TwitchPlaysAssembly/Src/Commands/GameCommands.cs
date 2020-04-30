@@ -510,6 +510,13 @@ static class GameCommands
 	[Command(@"q(?:ueue)? +(!.+)")]
 	public static void EnqueueUnnamedCommand(IRCMessage msg, [Group(1)] string command)
 	{
+		var simplifiedCommand = command.Trim().ToLowerInvariant();
+		if (!UserAccess.HasAccess(msg.UserNickName, AccessLevel.Admin, true) && (simplifiedCommand.StartsWith("!q") || simplifiedCommand.StartsWith("!bomb")))
+		{
+			IRCConnection.SendMessage("@{0}, you cannot queue that command.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
+			return;
+		}
+
 		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(msg.Duplicate(command)));
 		TwitchGame.ModuleCameras?.SetNotes();
 		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
