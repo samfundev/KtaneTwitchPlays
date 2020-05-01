@@ -24,7 +24,11 @@ public class TwitchGame : MonoBehaviour
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
+	public bool VSSetFlag = false;
 	public List<string> CallingPlayers = new List<string>();
+	public SortedDictionary<int, string> VSModePlayers = new SortedDictionary<int, string>();
+	public List<string> GoodPlayers = new List<string>();
+	public List<string> EvilPlayers = new List<string>();
 	public int FindClaimUse = 0;
 	public Dictionary<string, int> FindClaimPlayers = new Dictionary<string, int>();
 
@@ -244,6 +248,9 @@ public class TwitchGame : MonoBehaviour
 		if (!claimsEnabled)
 			TwitchModule.ClaimsEnabled = true;
 		StopAllCoroutines();
+		GoodPlayers.Clear();
+		EvilPlayers.Clear();
+		VSSetFlag = false; 
 		Leaderboard.Instance.BombsAttempted++;
 		// ReSharper disable once DelegateSubtraction
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;

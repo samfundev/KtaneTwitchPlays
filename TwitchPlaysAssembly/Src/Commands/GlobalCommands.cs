@@ -567,24 +567,71 @@ static class GlobalCommands
 	}
 
 	[Command(@"addgood (.+)", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void AddTeam([Group(1)] string targetUser)
+	public static void AddGood([Group(1)] string targetUser)
 	{
 		Leaderboard.Instance.MakeGood(targetUser);
-		IRCConnection.SendMessage($"User {targetUser} made Good");
+		if (TwitchPlaySettings.data.AutoSetVSModeTeams) TwitchGame.Instance.GoodPlayers.Add(targetUser);
+		IRCConnection.SendMessage($"@{targetUser} added to the Good Team.");
 	}
 
 	[Command(@"addevil (.+)", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void AddBoss([Group(1)] string targetUser)
+	public static void AddEvil([Group(1)] string targetUser)
 	{
 		Leaderboard.Instance.MakeEvil(targetUser);
-		IRCConnection.SendMessage($"User {targetUser} made Evil");
+		if (TwitchPlaySettings.data.AutoSetVSModeTeams) TwitchGame.Instance.EvilPlayers.Add(targetUser);
+		IRCConnection.SendMessage($"@{targetUser} added to the Evil Team.");
+	}
+
+	[Command(@"join")]
+	public static void JoinAnyTeam(string user)
+	{
+		bool _inGame = TwitchGame.Instance.VSSetFlag;
+
+		if (!TwitchPlaySettings.data.AutoSetVSModeTeams)
+		{
+			IRCConnection.SendMessage($"@{user}, teams are being manually set. Please specify a team.");
+			return;
+		}
+		if (_inGame && !TwitchPlaySettings.data.VSModePlayerLockout)
+		{
+			AddVSPlayer(user);
+			return;
+		}
+
+		Leaderboard.Instance.GetRank(user, out var entry);
+		TwitchGame.Instance.VSModePlayers.Add(entry.Rank, user);
+		IRCConnection.SendMessage($"{(_inGame ? "Sorry " : "")}@{user}, {(_inGame ? "the bomb has already started. Y" : "y")}ou have been added to the next VSMode bomb.");
+	}
+
+	[Command(@"players")]
+	public static void ReadTeams()
+	{
+		if (!TwitchPlaySettings.data.AutoSetVSModeTeams)
+		{
+			IRCConnection.SendMessage($"You cannot use this command in this mode.");
+			return;
+		}
+		else if (!TwitchGame.Instance.VSSetFlag || !TwitchGame.Instance.GoodPlayers.Any() || !TwitchGame.Instance.EvilPlayers.Any())
+		{
+			IRCConnection.SendMessage($"Teams have not yet been set.");
+			return;
+		}
+		string _gPlayers = string.Join(", @", TwitchGame.Instance.GoodPlayers.ToArray());
+		string _ePlayers = string.Join(", @", TwitchGame.Instance.EvilPlayers.ToArray());
+		IRCConnection.SendMessage($"Good players are: @{_gPlayers}");
+		IRCConnection.SendMessage($"Evil players are: @{_ePlayers}");
 	}
 
 	[Command(@"join (evil|good)")]
-	public static void JoinTeam([Group(1)] string team, string user, bool isWhisper)
+	public static void JoinWantedTeam([Group(1)] string team, string user, bool isWhisper)
 	{
-		OtherModes.Team target = (OtherModes.Team)Enum.Parse(typeof(OtherModes.Team), team, true);
+		OtherModes.Team target = (OtherModes.Team) Enum.Parse(typeof(OtherModes.Team), team, true);
 		Leaderboard.Instance.GetRank(user, out Leaderboard.LeaderboardEntry entry);
+		if (TwitchPlaySettings.data.AutoSetVSModeTeams)
+		{
+			IRCConnection.SendMessage($"@{user}, teams are being automatically set. Please use !join to join a team.");
+			return;
+		}
 		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (target)
 		{
@@ -759,17 +806,51 @@ static class GlobalCommands
 				IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 				return null;
 			}
-
-			if (!Leaderboard.Instance.IsAnyEvil())
+			if (TwitchPlaySettings.data.AutoSetVSModeTeams)
 			{
-				IRCConnection.SendMessage("There are no evil players designated, the VS bomb cannot be run");
-				return null;
+				if (TwitchGame.Instance.VSModePlayers.Count() < 2)
+				{
+					IRCConnection.SendMessage("Not enough players for VSMode");
+					return null;
+				}
+
+				string[] allPlayers = TwitchGame.Instance.VSModePlayers.Values.ToArray();
+
+				if (TwitchPlaySettings.data.VSModeBalancedTeams)
+				{
+					for (int i = 0; i < allPlayers.Count(); i++) AddVSPlayer(allPlayers[i]);
+				}
+				else
+				{
+					int goodCount = allPlayers.Count() * TwitchPlaySettings.data.VSModeGoodSplit / 100;
+
+					if (allPlayers.Count() < 4)
+					{
+						AddGood(allPlayers[0]);
+					}
+					else
+					{
+						for (int i = 0; i < goodCount; i++) AddGood(allPlayers[i]);
+					}
+
+					for (int i = TwitchGame.Instance.GoodPlayers.Count(); i < allPlayers.Count(); i++) AddEvil(allPlayers[i]);
+				}
+				TwitchGame.Instance.VSSetFlag = true;
+				TwitchGame.Instance.VSModePlayers.Clear();
 			}
-
-			if (!Leaderboard.Instance.IsAnyGood())
+			else
 			{
-				IRCConnection.SendMessage("There are no good players designated, the VS bomb cannot be run");
-				return null;
+				if (!Leaderboard.Instance.IsAnyEvil())
+				{
+					IRCConnection.SendMessage("There are no evil players designated, the VS bomb cannot be run");
+					return null;
+				}
+
+				if (!Leaderboard.Instance.IsAnyGood())
+				{
+					IRCConnection.SendMessage("There are no good players designated, the VS bomb cannot be run");
+					return null;
+				}
 			}
 
 			OtherModes.goodHealth = GoodHP;
@@ -777,6 +858,32 @@ static class GlobalCommands
 
 			return RunDistribution(user, modules, inf, distribution);
 		}, true);
+
+	[Command(@"assignany (.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void AddVSPlayer([Group(1)] string targetUser)
+	{
+		int diff = TwitchGame.Instance.GoodPlayers.Count() - TwitchGame.Instance.EvilPlayers.Count();
+		if (diff > 1)
+		{
+			AddEvil(targetUser);
+		}
+		else if (diff < -1)
+		{
+			AddGood(targetUser);
+		}
+		else
+		{
+			int rand = Random.Range(0, 2);
+			if (rand == 0)
+			{
+				AddEvil(targetUser);
+			}
+			else
+			{
+				AddGood(targetUser);
+			}
+		}
+	}
 
 	/// <name>Run Specific</name>
 	/// <syntax>run [distribution] [modules]</syntax>
@@ -908,7 +1015,7 @@ static class GlobalCommands
 		var success = ProfileHelper.SetState(profilePath, moduleInfo.moduleID, !adding);
 		IRCConnection.SendMessage(success ?
 			$"\"{moduleInfo.moduleDisplayName}\" {(adding ? "added to" : "removed from")} \"{cleanProfileName}\"." :
-			$"\"{moduleInfo.moduleDisplayName}\" is already {(adding ? "added to" : "removed from" )} \"{cleanProfileName}\".",
+			$"\"{moduleInfo.moduleDisplayName}\" is already {(adding ? "added to" : "removed from")} \"{cleanProfileName}\".",
 			user, !isWhisper
 		);
 	}
@@ -1190,7 +1297,8 @@ static class GlobalCommands
 	private static void ShowRank(IList<Leaderboard.LeaderboardEntry> entries, string targetUser, string user, bool isWhisper, bool numeric = false)
 	{
 		entries = entries.Where(entry => entry != null).ToList();
-		if (entries.Count == 0) {
+		if (entries.Count == 0)
+		{
 			entries = null;
 		}
 

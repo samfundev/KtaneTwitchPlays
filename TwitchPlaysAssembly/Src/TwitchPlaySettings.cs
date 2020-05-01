@@ -76,6 +76,11 @@ public class TwitchPlaySettingsData
 	public float AwardDropMultiplierOnStrike = 0.80f;
 	public bool TimeModeTimeForActions = true; 
 
+	public bool AutoSetVSModeTeams = false; 
+	public bool VSModeBalancedTeams = true;
+	public bool VSModePlayerLockout = true;
+	public int VSModeGoodSplit = 35;
+
 	public bool EnableFactoryTrainingModeCameraWall = true;
 	public bool EnableFactoryAutomaticNextBomb = true;
 
