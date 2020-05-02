@@ -294,29 +294,20 @@ public abstract class ComponentSolver
 							Module.Bomb.Bomb.GetTimer().TimeRemaining = skipTimeTo;
 					}
 				}
-				else if (currentString.RegexMatch(out match, @"^awardpoints (-?\d+)$") && int.TryParse(match.Groups[1].Value, out int pointsAwarded))
+				else if (currentString.RegexMatch(out match, @"^awardpoints(onsolve)? (-?\d+)$") && int.TryParse(match.Groups[2].Value, out int pointsAwarded))
 				{
 					if (OtherModes.ScoreMultiplier == 0)
 						continue;
 
 					pointsAwarded = (ComponentSolverFactory.ppaScores.TryGetValue(ModInfo.moduleID, out float ppaScore) ? ppaScore : pointsAwarded * OtherModes.ScoreMultiplier).RoundToInt();
 
-					List<string> messageParts = new List<string>();
-					if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
+					if (match.Groups[1].Success)
 					{
-						Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
-						messageParts.Add(string.Format(TwitchPlaySettings.data.PointsAwardedByModule,
-							_currentUserNickName, pointsAwarded, pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName));
+						_delegatedAwardUserNickName = userNickName;
+						_pointsToAward = pointsAwarded;
 					}
-
-					if (TwitchPlaySettings.data.TimeModeTimeForActions && OtherModes.TimeModeOn)
-					{
-						float time = OtherModes.GetAdjustedMultiplier() * pointsAwarded;
-						Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + time;
-						messageParts.Add($"Bomb time increased by {Math.Round(time, 1)} seconds!");
-					}
-
-					IRCConnection.SendMessage(messageParts.Join());
+					else
+						AwardPoints(_currentUserNickName, pointsAwarded);
 				}
 				else if (TwitchPlaySettings.data.EnableDebuggingCommands)
 					DebugHelper.Log($"Unprocessed string: {currentString}");
@@ -715,6 +706,8 @@ public abstract class ComponentSolver
 				else
 					solverNickname = IRCConnection.Instance.ChannelName;
 
+				if (_delegatedAwardUserNickName != null)
+					AwardPoints(_delegatedAwardUserNickName, _pointsToAward);
 				AwardSolve(solverNickname, moduleScore);
 			}
 			Module?.OnPass(solverNickname);
@@ -1171,6 +1164,26 @@ public abstract class ComponentSolver
 
 		IRCConnection.SendMessage(messageParts.Join());
 	}
+	
+	private void AwardPoints(string userNickName, int pointsAwarded)
+	{
+		List<string> messageParts = new List<string>();
+		if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
+		{
+			Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
+			messageParts.Add(string.Format(TwitchPlaySettings.data.PointsAwardedByModule,
+			userNickName, pointsAwarded, pointsAwarded > 1 ? "s" : "", Code, ModInfo.moduleDisplayName));
+		}
+
+		if (TwitchPlaySettings.data.TimeModeTimeForActions && OtherModes.TimeModeOn)
+		{
+			float time = OtherModes.GetAdjustedMultiplier() * pointsAwarded;
+			Module.Bomb.Bomb.GetTimer().TimeRemaining = Module.Bomb.CurrentTimer + time;
+			messageParts.Add($"Bomb time increased by {Math.Round(time, 1)} seconds!");
+		}
+
+		IRCConnection.SendMessage(messageParts.Join());
+	}
 
 	protected void ReleaseHeldButtons()
 	{
@@ -1360,7 +1373,9 @@ public abstract class ComponentSolver
 
 	private string _delegatedStrikeUserNickName;
 	private string _delegatedSolveUserNickName;
+	private string _delegatedAwardUserNickName;
 	private string _currentUserNickName;
+	private int _pointsToAward;
 
 	private MusicPlayer _musicPlayer;
 	public ModuleInformation ModInfo = null;
