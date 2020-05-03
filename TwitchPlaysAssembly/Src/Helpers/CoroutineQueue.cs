@@ -75,10 +75,10 @@ public class CoroutineQueue : MonoBehaviour
 
 	private IEnumerator ProcessQueueCoroutine()
 	{
-		CoroutineCanceller.ResetCancel();
-
 		while (_coroutineQueue.Count > 0)
 		{
+			CoroutineCanceller.ResetCancel();
+
 			IEnumerator coroutine = _coroutineQueue.First.Value;
 			if (_bombIDProcessed.Count > 0)
 				CurrentBombID = _bombIDProcessed.Dequeue();
