@@ -877,7 +877,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["thewitness"] = new ModuleInformation { moduleScore = 5, DoesTheRightThing = true };
 		ModComponentSolverInformation["vigenereCipher"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["X01"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = true };
-		ModComponentSolverInformation["mysterymodule"] = new ModuleInformation { DoesTheRightThing = false, CameraPinningAlwaysAllowed = true, announceModule = true };
+		ModComponentSolverInformation["mysterymodule"] = new ModuleInformation { DoesTheRightThing = false, CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true };
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
 		{
