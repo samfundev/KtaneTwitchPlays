@@ -131,9 +131,9 @@ static class GameCommands
 	{
 		var strings = all ? null : claimWhat.SplitFull(' ', ',', ';');
 		var modules =
-			all ? TwitchGame.Instance.Modules.Where(m => !m.Solved).ToArray() :
+			all ? TwitchGame.Instance.Modules.Where(m => !m.Solved && !m.Hidden).ToArray() :
 			strings.Length == 0 ? null :
-			TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
+			TwitchGame.Instance.Modules.Where(md => strings.Any(str => str.EqualsIgnoreCase(md.Code)) && !md.Hidden).ToArray();
 
 		if (modules == null || modules.Length == 0)
 		{
@@ -158,7 +158,7 @@ static class GameCommands
 		var avoid = new[] { "Forget Everything", "Forget Me Not", "Souvenir", "The Swan", "The Time Keeper", "Turn The Key", "Turn The Keys" };
 
 		var unclaimed = TwitchGame.Instance.Modules
-			.Where(module => (vanilla ? !module.IsMod : !modded || module.IsMod) && !module.Claimed && !module.Solved && !avoid.Contains(module.HeaderText) && GameRoom.Instance.IsCurrentBomb(module.BombID))
+			.Where(module => (vanilla ? !module.IsMod : !modded || module.IsMod) && !module.Claimed && !module.Solved && !module.Hidden && !avoid.Contains(module.HeaderText) && GameRoom.Instance.IsCurrentBomb(module.BombID))
 			.Shuffle()
 			.FirstOrDefault();
 
@@ -191,7 +191,7 @@ static class GameCommands
 	public static void UnclaimSpecific([Group(1)] string unclaimWhat, string user, bool isWhisper)
 	{
 		var strings = unclaimWhat.SplitFull(' ', ',', ';');
-		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => !md.Solved && md.PlayerName == user && strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
+		var modules = strings.Length == 0 ? null : TwitchGame.Instance.Modules.Where(md => !md.Solved && !md.Hidden && md.PlayerName == user && strings.Any(str => str.EqualsIgnoreCase(md.Code))).ToArray();
 		if (modules == null || modules.Length == 0)
 		{
 			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
@@ -297,13 +297,8 @@ static class GameCommands
 			.Shuffle().Take(3)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - {(module.PlayerName == null ? "Unclaimed" : "Claimed by " + module.PlayerName)}")
 			.ToList();
-		if (unsolved.Any())
-			IRCConnection.SendMessage($"Unsolved Modules: {unsolved.Join(", ")}", user, !isWhisper);
-		else
-		{
-			IRCConnection.SendMessage("There are no unsolved modules, something went wrong as this message should never be displayed.", user, !isWhisper);
-			IRCConnection.SendMessage("Please file a bug at https://github.com/samfun123/KtaneTwitchPlays", user, !isWhisper); //this should never happen
-		}
+
+			IRCConnection.SendMessage(unsolved.Any() ? $"Unsolved Modules: {unsolved.Join(", ")}" : "There are no unsolved modules on this bomb that aren't hidden.", user, !isWhisper);
 	}
 
 	/// <name>Find Claim View</name>
