@@ -40,6 +40,7 @@ public class TwitchGame : MonoBehaviour
 	public static ModuleCameras ModuleCameras;
 	public static bool BombActive { get; private set; } = false;
 	public static TwitchGame Instance;
+	public static bool RetryAllowed = true;
 
 	public static bool EnableDisableInput()
 	{
@@ -93,6 +94,7 @@ public class TwitchGame : MonoBehaviour
 		CallingPlayers.Clear();
 		FindClaimPlayers.Clear();
 		MysteryModuleShim.CoveredModules.Clear();
+		RetryAllowed = true;
 
 		_bombStarted = false;
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;

@@ -74,6 +74,7 @@ public static class OtherModes
 
 		currentMode = nextMode;
 		IRCConnection.SendMessageFormat("Mode is now set to: {0}", Enum.GetName(typeof(TwitchPlaysMode), currentMode));
+		TwitchGame.RetryAllowed = false;
 	}
 
 	public static float GetMultiplier() => timedMultiplier;

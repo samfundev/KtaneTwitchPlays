@@ -62,6 +62,7 @@ public class TwitchPlaySettingsData
 	public int MinScoreForNewbomb = 100;
 	public int StrikePenalty = 6;
 	public int ModuleToStrikeRatio = 12;
+	public bool PacingEventsOnRunBomb = true;
 
 	public bool EnableTimeModeForEveryone = false;
 	public int TimeModeStartingTime = 5;
@@ -127,21 +128,149 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, ModuleDistributions> ModDistributions = new Dictionary<string, ModuleDistributions>()
 	{
-		// Distributions with fixed percentages of vanilla/modded
-		{ "vanilla", new ModuleDistributions { Vanilla = 1f, Modded = 0f, DisplayName = "Vanilla", MinModules = 1, MaxModules = 101 } },
-		{ "extralight", new ModuleDistributions { Vanilla = 0.9f, Modded = 0.1f, DisplayName = "Extra Light", MinModules = 1, MaxModules = 101 } },
-		{ "light", new ModuleDistributions { Vanilla = 0.8f, Modded = 0.2f, DisplayName = "Light", MinModules = 1, MaxModules = 101 } },
-		{ "lightmixed", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101, Hidden = true } },
-		{ "mixedlight", new ModuleDistributions { Vanilla = 0.67f, Modded = 0.33f, DisplayName = "Mixed Light", MinModules = 1, MaxModules = 101 } },
-		{ "mixed", new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Mixed", MinModules = 1, MaxModules = 101 } },
-		{ "mixedheavy", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101 } },
-		{ "heavymixed", new ModuleDistributions { Vanilla = 0.33f, Modded = 0.67f, DisplayName = "Mixed Heavy", MinModules = 1, MaxModules = 101, Hidden = true } },
-		{ "heavy", new ModuleDistributions { Vanilla = 0.2f, Modded = 0.8f, DisplayName = "Heavy", MinModules = 1, MaxModules = 101 } },
-		{ "extraheavy", new ModuleDistributions { Vanilla = 0.1f, Modded = 0.9f, DisplayName = "Extra Heavy", MinModules = 1, MaxModules = 101 } },
-		{ "mods", new ModuleDistributions { Vanilla = 0f, Modded = 1f, DisplayName = "Modded", MinModules = 1, MaxModules = 101 } },
+		// Non-difficulty related distributions
+		{ "vanilla", new ModuleDistributions {
+			DisplayName = "Vanilla",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE, BASE"),
+			}
+		}},
+		{ "light", new ModuleDistributions {
+			DisplayName = "Mods",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.8f, "ALL_SOLVABLE, BASE"),
+				new DistributionPool(0.2f, "ALL_SOLVABLE, MODS"),
+			},
+			Hidden = true
+		}},
+		{ "mixed", new ModuleDistributions {
+			DisplayName = "Mods",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.5f, "ALL_SOLVABLE, BASE"),
+				new DistributionPool(0.5f, "ALL_SOLVABLE, MODS"),
+			},
+			Hidden = true
+		}},
+		{ "heavy", new ModuleDistributions {
+			DisplayName = "Mods",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.2f, "ALL_SOLVABLE, BASE"),
+				new DistributionPool(0.8f, "ALL_SOLVABLE, MODS"),
+			},
+			Hidden = true
+		}},
+		{ "mods", new ModuleDistributions {
+			DisplayName = "Mods",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE, MODS"),
+			}
+		}},
+		{ "fair", new ModuleDistributions {
+			DisplayName = "Fair Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+			}
+		}},
+		{ "fair+needy", new ModuleDistributions {
+			DisplayName = "Fair + Needy",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY, MODS"),
+			},
+			MinModules = 2
+		}},
 
-		// Distribution in which modded and vanilla have equal fair chances of appearing
-		{ "fair", new ModuleDistributions { Vanilla = 0f, Modded = 0f, DisplayName = "Fair mix", MinModules = 1, MaxModules = 101 } },
+		// Difficulty related distributions
+		{ "lighteasy", new ModuleDistributions {
+			DisplayName = "Light Easy Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.7f, "ALL_SOLVABLE"),
+				new DistributionPool(0.3f, 3, 120, "SCORE, <= 7")
+			}
+		}},
+		{ "easy", new ModuleDistributions {
+			DisplayName = "Easy Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.5f, "ALL_SOLVABLE"),
+				new DistributionPool(0.5f, 3, 120, "SCORE, <= 7")
+			}
+		}},
+		{ "heavyeasy", new ModuleDistributions {
+			DisplayName = "Heavy Easy Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.2f, "ALL_SOLVABLE"),
+				new DistributionPool(0.8f, 3, 120, "SCORE, <= 7")
+			}
+		}},
+		{ "alleasy", new ModuleDistributions {
+			DisplayName = "All Easy",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, 3, 120, "SCORE, <= 7")
+			}
+		}},
+		{ "lightmedium", new ModuleDistributions {
+			DisplayName = "Light Medium Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.7f, "ALL_SOLVABLE"),
+				new DistributionPool(0.3f, "SCORE, > 7, <= 14")
+			}
+		}},
+		{ "medium", new ModuleDistributions {
+			DisplayName = "Medium Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.5f, "ALL_SOLVABLE"),
+				new DistributionPool(0.5f, "SCORE, > 7, <= 14")
+			}
+		}},
+		{ "heavymedium", new ModuleDistributions {
+			DisplayName = "Heavy Medium Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.2f, "ALL_SOLVABLE"),
+				new DistributionPool(0.8f, "SCORE, > 7, <= 14")
+			}
+		}},
+		{ "allmedium", new ModuleDistributions {
+			DisplayName = "All Medium",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "SCORE, > 7, <= 14")
+			}
+		}},
+		{ "lighthard", new ModuleDistributions {
+			DisplayName = "Light Hard Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.7f, "ALL_SOLVABLE"),
+				new DistributionPool(0.3f, 10, 240, "SCORE, > 14, <= 25")
+			}
+		}},
+		{ "hard", new ModuleDistributions {
+			DisplayName = "Hard Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.5f, "ALL_SOLVABLE"),
+				new DistributionPool(0.5f, 10, 240, "SCORE, > 14, <= 25")
+			}
+		}},
+		{ "heavyhard", new ModuleDistributions {
+			DisplayName = "Heavy Hard Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.8f, "ALL_SOLVABLE"),
+				new DistributionPool(0.2f, 10, 240, "SCORE, > 14, <= 25")
+			}
+		}},
+		{ "allhard", new ModuleDistributions {
+			DisplayName = "All Hard",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, 10, 240, "SCORE, > 14, <= 25")
+			}
+		}},
+		{ "variety", new ModuleDistributions {
+			DisplayName = "Variety Mix",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.30f, 3, 120, "SCORE, <= 7"),
+				new DistributionPool(0.25f, "SCORE, > 7, <= 14"),
+				new DistributionPool(0.20f, 10, 240, "SCORE, > 14, <= 25"),
+				new DistributionPool(0.25f, "ALL_SOLVABLE")
+			}
+		}}
 	};
 
 	public string TwitchBotColorOnQuit = string.Empty;
@@ -238,6 +367,7 @@ public class TwitchPlaySettingsData
 	public string RunCommandDisabled = "@{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "@{0}, profile management is currently disabled.";
 	public string RetryInactive = "Retry is inactive. Returning to hallway instead.";
+	public string RetryModeOrProfileChange = "There has been a change to profiles and/or game modes since the last bomb. Returning to hallway instead.";
 
 	public string ProfileActionUseless = "That profile ({0}) is already {1}.";
 	public string ProfileNotWhitelisted = "That profile ({0}) cannot be enabled/disabled.";
@@ -333,8 +463,6 @@ public class TwitchPlaySettingsData
 		foreach (string key in distributions.Keys)
 		{
 			ModuleDistributions distribution = distributions[key];
-			result &= ValidateFloat(ref distribution.Vanilla, 0.5f, 0f, 1f);
-			result &= ValidateFloat(ref distribution.Modded, 1f - distribution.Vanilla, 0f, 1f);
 			if (distribution.MinModules > distribution.MaxModules)
 			{
 				result = false;
