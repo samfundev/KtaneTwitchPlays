@@ -587,9 +587,19 @@ static class GlobalCommands
 	{
 		bool _inGame = TwitchGame.Instance.VSSetFlag;
 
+		if (!OtherModes.VSModeOn)
+		{
+			IRCConnection.SendMessage($"Sorry @{user}, VSMode is inactive.");
+			return;
+		}
 		if (!TwitchPlaySettings.data.AutoSetVSModeTeams)
 		{
 			IRCConnection.SendMessage($"@{user}, teams are being manually set. Please specify a team.");
+			return;
+		}
+		if (TwitchGame.Instance.VSModePlayers.Values.Contains(user)) 
+		{
+			IRCConnection.SendMessage($@"{user}, you have already been added to the next VSMode bomb.");
 			return;
 		}
 		if (_inGame && !TwitchPlaySettings.data.VSModePlayerLockout)
@@ -603,6 +613,13 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"{(_inGame ? "Sorry " : "")}@{user}, {(_inGame ? "the bomb has already started. Y" : "y")}ou have been added to the next VSMode bomb.");
 	}
 
+	[Command(@"clearvsplayers", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void ClearVSPlayers()
+	{
+		TwitchGame.Instance.VSModePlayers.Clear();
+		IRCConnection.SendMessage($"VSMode Players have been cleared.");
+	}
+
 	[Command(@"players")]
 	public static void ReadTeams()
 	{
@@ -613,7 +630,8 @@ static class GlobalCommands
 		}
 		else if (!TwitchGame.Instance.VSSetFlag || !TwitchGame.Instance.GoodPlayers.Any() || !TwitchGame.Instance.EvilPlayers.Any())
 		{
-			IRCConnection.SendMessage($"Teams have not yet been set.");
+			string _vsPlayers = string.Join(", @", TwitchGame.Instance.VSModePlayers.Values.ToArray());
+			IRCConnection.SendMessage($"All VSMode Players are: {_vsPlayers}");
 			return;
 		}
 		string _gPlayers = string.Join(", @", TwitchGame.Instance.GoodPlayers.ToArray());
