@@ -630,14 +630,22 @@ static class GlobalCommands
 		}
 		else if (!TwitchGame.Instance.VSSetFlag || !TwitchGame.Instance.GoodPlayers.Any() || !TwitchGame.Instance.EvilPlayers.Any())
 		{
-			string _vsPlayers = string.Join(", @", TwitchGame.Instance.VSModePlayers.Values.ToArray());
-			IRCConnection.SendMessage($"All VSMode Players are: {_vsPlayers}");
+			var _vsCount = TwitchGame.Instance.VSModePlayers.Count();
+			if (_vsCount < 2) IRCConnection.SendMessage($"Currently {_vsCount} players, not enough to play!");
+			else
+			{
+				string _vsPlayers = string.Join(", @", TwitchGame.Instance.VSModePlayers.Values.ToArray());
+				IRCConnection.SendMessage($"{_vsCount} players joined for VSMode, they are: {_vsPlayers}");
+			}
 			return;
 		}
+		
+		var _gCount = TwitchGame.Instance.GoodPlayers.Count();
+		var _eCount = TwitchGame.Instance.EvilPlayers.Count();
 		string _gPlayers = string.Join(", @", TwitchGame.Instance.GoodPlayers.ToArray());
 		string _ePlayers = string.Join(", @", TwitchGame.Instance.EvilPlayers.ToArray());
-		IRCConnection.SendMessage($"Good players are: @{_gPlayers}");
-		IRCConnection.SendMessage($"Evil players are: @{_ePlayers}");
+		IRCConnection.SendMessage($"{_gCount} Good players joined, they are: @{_gPlayers}");
+		IRCConnection.SendMessage($"{_eCount} Evil players joined, they are: @{_ePlayers}");
 	}
 
 	[Command(@"join (evil|good)")]
