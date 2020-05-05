@@ -151,6 +151,7 @@
     <Compile Include="Src\ComponentSolvers\Modded\Asimir\ShapeShiftComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Asimir\ThirdBaseComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\AT_Bash\MotionSenseCompoenentSolver.cs" />
+    <Compile Include="Src\ComponentSolvers\Modded\AT_Bash\AppreciateArtComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\CoroutineModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\SimpleModComponentSolver.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\External\UnsupportedModComponentSolver.cs" />
