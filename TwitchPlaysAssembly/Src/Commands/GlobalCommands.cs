@@ -599,7 +599,7 @@ static class GlobalCommands
 		}
 		if (TwitchGame.Instance.VSModePlayers.Values.Contains(user)) 
 		{
-			IRCConnection.SendMessage($@"{msg.UserNickName}, you have already been added to the next VSMode bomb.");
+			IRCConnection.SendMessage($@"{user}, you have already been added to the next VSMode bomb.");
 			return;
 		}
 		if (_inGame && !TwitchPlaySettings.data.VSModePlayerLockout)
@@ -617,7 +617,7 @@ static class GlobalCommands
 	public static void ClearVSPlayers()
 	{
 		TwitchGame.Instance.VSModePlayers.Clear();
-		IRCConnection.SendMessage($"VSMode Players has been cleared.");
+		IRCConnection.SendMessage($"VSMode Players have been cleared.");
 	}
 
 	[Command(@"players")]
