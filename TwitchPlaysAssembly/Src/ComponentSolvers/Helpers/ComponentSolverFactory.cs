@@ -954,7 +954,7 @@ public static class ComponentSolverFactory
 				if (dynamicMatch.Success && float.TryParse(dynamicMatch.Groups[1].Value, out float dynamicScore))
 				{
 					// A + after S is for a static addition to the dynamic score.
-					if (dynamicMatch.Groups.Count > 2)
+					if (dynamicMatch.Groups[2].Success)
 					{
 						if (float.TryParse(dynamicMatch.Groups[2].Value, out float staticScore))
 							defaultInfo.moduleScore = staticScore;
@@ -971,7 +971,7 @@ public static class ComponentSolverFactory
 				if (ppaMatch.Success && float.TryParse(ppaMatch.Groups[1].Value, out float ppaScore))
 				{
 					// A + after S is for a static addition to the dynamic score.
-					if (ppaMatch.Groups.Count > 2)
+					if (ppaMatch.Groups[2].Success)
 					{
 						if (float.TryParse(ppaMatch.Groups[2].Value, out float staticScore))
 							defaultInfo.moduleScore = staticScore;
