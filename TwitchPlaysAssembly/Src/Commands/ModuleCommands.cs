@@ -288,7 +288,7 @@ static class ModuleCommands
 	}
 
 	[Command(@"(points|score)"), SolvedAllowed]
-	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) {(module.Solver.ModInfo.moduleScoreIsDynamic ? "awards points dynamically depending on the number of modules on the bomb." : $"current score: {module.Solver.ModInfo.moduleScore}")}");
+	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) score: {module.Solver.ModInfo.ScoreString}");
 
 	/// <name>Mark</name>
 	/// <syntax>mark</syntax>

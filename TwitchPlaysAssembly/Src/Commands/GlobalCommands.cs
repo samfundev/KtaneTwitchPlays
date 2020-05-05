@@ -306,7 +306,7 @@ static class GlobalCommands
 						break;
 					case "points":
 					case "score":
-						IRCConnection.SendMessage($"Module {moduleName} score: {modules[0].moduleScore}", user, !isWhisper);
+						IRCConnection.SendMessage($"Module {moduleName} score: {modules[0].ScoreString}", user, !isWhisper);
 						break;
 					case "statuslight":
 						IRCConnection.SendMessage($"Module {moduleName} status light position: {modules[0].statusLightPosition}", user, !isWhisper);
