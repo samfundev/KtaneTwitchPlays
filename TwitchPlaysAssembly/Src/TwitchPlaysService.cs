@@ -471,7 +471,12 @@ public class TwitchPlaysService : MonoBehaviour
 		Leaderboard.Instance.GetRank(msg.UserNickName, out Leaderboard.LeaderboardEntry entry);
 		if (entry?.Team == null && extraObject is TwitchModule && OtherModes.VSModeOn)
 		{
-			IRCConnection.SendMessage($@"{msg.UserNickName}, you have not joined a team, and cannot solve modules in this mode until you do, please use !join evil or !join good.");
+			if (TwitchPlaySettings.data.AutoSetVSModeTeams)
+			{
+				if (TwitchPlaySettings.data.VSModePlayerLockout) IRCConnection.SendMessage($@"{msg.UserNickName}, you have not joined a team, and the bomb has already started. Use !join to play the next bomb.");
+				else IRCConnection.SendMessage($@"{msg.UserNickName}, you have not joined a team, and cannot solve modules in this mode until you do, please use !join to be assigned a team.");
+			}
+			else IRCConnection.SendMessage($@"{msg.UserNickName}, you have not joined a team, and cannot solve modules in this mode until you do, please use !join evil or !join good.");
 			// Return true so that the command counts as processed (otherwise you get the above message multiple times)
 			return true;
 		}
