@@ -202,6 +202,9 @@ public class TwitchPlaysService : MonoBehaviour
 
 	public void AddMessage(IRCMessage message)
 	{
+		if (message.IsWhisper)
+			return;
+
 		chatMessages.Enqueue($"<color={(string.IsNullOrEmpty(message.UserColorCode) ? message.UserColorCode : "white")}>{message.UserNickName}</color>: {message.Text}");
 
 		if (chatMessages.Count > 10)

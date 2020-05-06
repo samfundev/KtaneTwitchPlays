@@ -45,8 +45,27 @@ public class ModuleInformation
 	public bool ShouldSerializevalidCommands() => !builtIntoTwitchPlays;
 	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
 	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
+	public bool ShouldSerializeScoreString() => false;
 
 	public ModuleInformation Clone() => (ModuleInformation) MemberwiseClone();
+
+	public string ScoreString
+	{
+		get
+		{
+			if (!moduleScoreIsDynamic)
+			{
+				return moduleScore.Pluralize("point");
+			}
+			else
+			{
+				if (!ComponentSolverFactory.dynamicScores.TryGetValue(moduleID, out float multiplier))
+					multiplier = 2;
+
+				return $"{(multiplier * TwitchPlaySettings.data.DynamicScorePercentage).Pluralize("point")} per module + {moduleScore.Pluralize("base point")}";
+			}
+		}
+	}
 }
 
 public class FileModuleInformation : ModuleInformation

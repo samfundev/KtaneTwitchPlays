@@ -190,8 +190,6 @@ public class IRCConnection : MonoBehaviour
 				}
 
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
-				if (message.Internal)
-					TwitchPlaysService.Instance.AddMessage(message);
 			}
 
 		if (ScrollOutStartTime.Count == 0) return;
@@ -707,10 +705,14 @@ public class IRCConnection : MonoBehaviour
 				Instance.SendCommand(sendToChat
 					? $"PRIVMSG #{Instance._settings.channelName} :{line}"
 					: $"PRIVMSG #{Instance._settings.channelName} :.w {userNickName} {line}");
+
+			var ircMessage = new IRCMessage(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true);
+			TwitchPlaysService.Instance.AddMessage(ircMessage);
+
 			if (line.StartsWith(".") || line.StartsWith("/")) continue;
 			lock (Instance._receiveQueue)
 			{
-				Instance._receiveQueue.Enqueue(new IRCMessage(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true));
+				Instance._receiveQueue.Enqueue(ircMessage);
 			}
 		}
 	}
