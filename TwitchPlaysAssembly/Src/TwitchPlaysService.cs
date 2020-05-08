@@ -221,8 +221,8 @@ public class TwitchPlaysService : MonoBehaviour
 			return;
 
 		StartCoroutine(StopEveryCoroutine());
+		Votes.OnStateChange();
 		CheckSupport.Cleanup();
-		Votes.Clear();
 
 		if (state != KMGameInfo.State.PostGame && _leaderboardDisplay != null)
 		{

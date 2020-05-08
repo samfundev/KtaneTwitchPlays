@@ -31,6 +31,7 @@ public class TwitchGame : MonoBehaviour
 	public List<string> EvilPlayers = new List<string>();
 	public int FindClaimUse = 0;
 	public Dictionary<string, int> FindClaimPlayers = new Dictionary<string, int>();
+	public bool VoteDetonateAttempted = false;
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
@@ -91,6 +92,7 @@ public class TwitchGame : MonoBehaviour
 		Leaderboard.Instance.ClearSolo();
 		LogUploader.Instance.Clear();
 		callsNeeded = 1;
+		VoteDetonateAttempted = false;
 		CallingPlayers.Clear();
 		FindClaimPlayers.Clear();
 		MysteryModuleShim.CoveredModules.Clear();
