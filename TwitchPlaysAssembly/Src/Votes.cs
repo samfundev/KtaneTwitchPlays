@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Timers;
 using System.Linq;
+using UnityEngine;
 
 public enum VoteTypes
 {
@@ -9,55 +10,126 @@ public enum VoteTypes
 	VSModeToggle
 }
 
+public class VoteData
+{
+	// Name of the vote (Displayed over !notes3 when in game)
+	public string name;
+
+	// Action to execute if the vote passes
+	internal Action onSuccess;
+}
+
 public static class Votes
 {
-	public static bool Active => Countdown.Enabled;
-	private static readonly Dictionary<string, bool> Voters = new Dictionary<string, bool>();
-	private static TwitchBomb Bomb;
+	private static float VoteTimeRemaining = -1f;
+	internal static VoteTypes CurrentVoteType;
 
-	private static readonly Timer Countdown = new Timer();
-	private static VoteTypes ActionType;
+	public static bool Active => (voteInProgress != null);
+	internal static int TimeLeft => Mathf.CeilToInt(VoteTimeRemaining);
+	internal static int NumVoters => Voters.Count;
 
-	private static readonly Dictionary<VoteTypes, Action> actionDict = new Dictionary<VoteTypes, Action>()
+	internal static readonly Dictionary<VoteTypes, VoteData> PossibleVotes = new Dictionary<VoteTypes, VoteData>()
 	{
-		{ VoteTypes.Detonation, () => Bomb.CauseExplosionByModuleCommand("Voting ended. Detonating bomb...", "Voted detonation") },
-		{ VoteTypes.VSModeToggle, () => SendAndDo("Voting ended. Toggling VS Mode...", () => OtherModes.Toggle(TwitchPlaysMode.VS)) }
-	};
-
-	private static readonly Dictionary<VoteTypes, string> voteNames = new Dictionary<VoteTypes, string>()
-	{
-		{ VoteTypes.Detonation, "Detonate the bomb" },
-		{ VoteTypes.VSModeToggle, "Toggle VS mode" }
-	};
-
-	private static void SendAndDo(string message, Action action)
-	{
-		IRCConnection.SendMessage(message);
-		action();
-	}
-
-	static Votes()
-	{
-		Countdown.Elapsed += Elapsed;
-		Countdown.AutoReset = true;
-		ResetTimer();
-	}
-
-	public static void Elapsed(object _ = null, ElapsedEventArgs __ = null)
-	{
-		if (!Active) return;
-
-		Countdown.Enabled = false;
-		int yesVotes = Voters.Count(pair => pair.Value);
-		if (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[ActionType] / 100f))
 		{
-			actionDict[ActionType]();
-			Clear();
-			return;
+			VoteTypes.Detonation, new VoteData {
+				name = "Detonate the bomb", 
+				onSuccess = () => TwitchGame.Instance.Bombs[0].CauseExplosionByVote()
+			}
+		},
+		{
+			VoteTypes.VSModeToggle, new VoteData {
+				name = "Toggle VS mode",
+				onSuccess = () => {
+					OtherModes.Toggle(TwitchPlaysMode.VS);
+					IRCConnection.SendMessage($"{OtherModes.GetName(OtherModes.nextMode)} mode will be enabled next round.");
+				}
+			}
+		}
+	};
+
+	private static readonly Dictionary<string, bool> Voters = new Dictionary<string, bool>();
+
+	private static Coroutine voteInProgress = null;
+	private static IEnumerator VotingCoroutine()
+	{
+		int oldTime;
+		while (VoteTimeRemaining >= 0f)
+		{
+			oldTime = TimeLeft;
+			VoteTimeRemaining -= Time.deltaTime;
+			if (TwitchGame.BombActive && TimeLeft != oldTime) // Once a second, update notes.
+				TwitchGame.ModuleCameras.SetNotes();
+			yield return null;
 		}
 
-		IRCConnection.SendMessage("Voting ended with a result of no.");
-		Clear();
+		if (TwitchGame.BombActive && CurrentVoteType == VoteTypes.Detonation)
+		{
+			// Add claimed users who didn't vote as "no"
+			int numAddedNoVotes = 0;
+			List<string> usersWithClaims = TwitchGame.Instance.Modules
+				.Where(m => m.PlayerName != null).Select(m => m.PlayerName).Distinct().ToList();
+			foreach (string user in usersWithClaims)
+			{
+				if (!Voters.ContainsKey(user))
+				{
+					++numAddedNoVotes;
+					Voters.Add(user, false);
+				}
+			}
+
+			if (numAddedNoVotes == 1)
+				IRCConnection.SendMessage("1 no vote was added on the behalf of users with claims that did not vote.");
+			else if (numAddedNoVotes > 1)
+				IRCConnection.SendMessage($"{numAddedNoVotes} no votes were added on the behalf of users with claims that did not vote.");
+		}
+
+		int yesVotes = Voters.Count(pair => pair.Value);
+		bool votePassed = (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f));
+		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} yes votes. The vote has {(votePassed ? "passed" : "failed")}.");
+
+		if (votePassed)
+			PossibleVotes[CurrentVoteType].onSuccess();
+
+		DestroyVote();
+	}
+
+	private static void CreateNewVote(string user, VoteTypes act)
+	{
+		if (TwitchGame.BombActive && act == VoteTypes.Detonation)
+		{
+			if (TwitchGame.Instance.VoteDetonateAttempted)
+			{
+				IRCConnection.SendMessage($"Sorry, {user}, a detonation vote was already attempted on this bomb. Another one cannot be started.");
+				return;
+			}
+			TwitchGame.Instance.VoteDetonateAttempted = true;
+		}
+
+		CurrentVoteType = act;
+		VoteTimeRemaining = TwitchPlaySettings.data.VoteCountdownTime;
+		Voters.Clear();
+		Voters.Add(user, true);
+		IRCConnection.SendMessage($"Voting has started by {user} to \"{PossibleVotes[CurrentVoteType].name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '.");
+		voteInProgress = TwitchPlaysService.Instance.StartCoroutine(VotingCoroutine());
+		if (TwitchGame.BombActive)
+			TwitchGame.ModuleCameras.SetNotes();
+	}
+
+	private static void DestroyVote()
+	{
+		if (voteInProgress != null)
+			TwitchPlaysService.Instance.StopCoroutine(voteInProgress);
+		voteInProgress = null;
+		Voters.Clear();
+
+		if (TwitchGame.BombActive)
+			TwitchGame.ModuleCameras.SetNotes();
+	}
+
+	internal static void OnStateChange()
+	{
+		// Any ongoing vote ends.
+		DestroyVote();
 	}
 
 	#region UserCommands
@@ -65,38 +137,34 @@ public static class Votes
 	{
 		if (!Active)
 		{
-			IRCConnection.SendMessage("There is no vote currently in progress.");
+			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
+			return;
+		}
+
+		if (Voters.ContainsKey(user) && Voters[user] == vote)
+		{
+			IRCConnection.SendMessage($"{user}, you've already voted {(vote ? "yes" : "no")}.");
 			return;
 		}
 
 		if (!Voters.ContainsKey(user))
-		{
 			Voters.Add(user, vote);
-			IRCConnection.SendMessage($"{user} voted with {(vote ? "yes" : "no")}.");
-			return;
-		}
-
-		if (Voters[user] == vote)
-		{
-			IRCConnection.SendMessage($"You already voted with {(vote ? "yes" : "no")}");
-			return;
-		}
-
-		Voters[user] = vote;
-		IRCConnection.SendMessage($"{user} voted with {(vote ? "yes" : "no")}.");
+		else
+			Voters[user] = vote;
+		IRCConnection.SendMessage($"{user} voted {(vote ? "yes" : "no")}.");
 	}
 
 	public static void RemoveVote(string user)
 	{
 		if (!Active)
 		{
-			IRCConnection.SendMessage("There is no vote currently in progress.");
+			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
 			return;
 		}
 
 		if (!Voters.ContainsKey(user))
 		{
-			IRCConnection.SendMessage($"@{user} You haven't voted so far.");
+			IRCConnection.SendMessage($"{user}, you haven't voted.");
 			return;
 		}
 
@@ -105,41 +173,52 @@ public static class Votes
 	}
 	#endregion
 
-	public static void StartVote(TwitchBomb TPBomb, string user, VoteTypes act)
+	public static void StartVote(string user, VoteTypes act)
 	{
 		if (!TwitchPlaySettings.data.EnableVoting)
 		{
-			IRCConnection.SendMessage("Voting is disabled");
+			IRCConnection.SendMessage($"Sorry, {user}, voting is disabled.");
 			return;
 		}
 
 		if (Active)
 		{
-			IRCConnection.SendMessage("A voting is already in progress!");
+			IRCConnection.SendMessage($"Sorry, {user}, there's already a vote in progress.");
 			return;
 		}
 
-		Clear();
-		Bomb = TPBomb;
-		ActionType = act;
-		Voters.Add(user, true);
-		Countdown.Enabled = true;
-
-		IRCConnection.SendMessage($"Voting has started by {user} to \"{voteNames[act]}\"! Enter with '!vote VoteYea ' or '!vote VoteNay '");
+		CreateNewVote(user, act);
 	}
 
-	public static void Clear(bool clearGlobal = false)
+	public static void TimeLeftOnVote(string user)
 	{
-		if (Bomb == null && !clearGlobal) return;
-
-		Bomb = null;
-		Voters.Clear();
-		ResetTimer();
+		if (!Active)
+		{
+			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
+			return;
+		}
+		IRCConnection.SendMessage($"The current vote to \"{PossibleVotes[CurrentVoteType].name}\" lasts for {TimeLeft} more seconds.");
 	}
 
-	private static void ResetTimer()
+	public static void CancelVote(string user)
 	{
-		Countdown.Interval = TwitchPlaySettings.data.VoteCountdownTime * 1000;
-		Countdown.Enabled = false;
+		if (!Active)
+		{
+			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
+			return;
+		}
+		IRCConnection.SendMessage("The vote has been cancelled.");
+		DestroyVote();
+	}
+
+	public static void EndVoteEarly(string user)
+	{
+		if (!Active)
+		{
+			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
+			return;
+		}
+		IRCConnection.SendMessage("The vote is being ended now.");
+		VoteTimeRemaining = 0f;
 	}
 }

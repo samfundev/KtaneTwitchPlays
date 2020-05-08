@@ -141,7 +141,7 @@ static class GlobalCommands
 	/// <syntax>vote [action]</syntax>
 	/// <summary>Starts a vote about doing an action</summary>
 	[Command(@"vote (togglevs)")]
-	public static void VoteStart(string user, [Group(1)] bool VSMode) => Votes.StartVote(null, user, VSMode ? VoteTypes.VSModeToggle : 0);
+	public static void VoteStart(string user, [Group(1)] bool VSMode) => Votes.StartVote(user, VSMode ? VoteTypes.VSModeToggle : 0);
 
 	/// <name>Vote</name>
 	/// <syntax>vote [choice]</syntax>
@@ -155,37 +155,25 @@ static class GlobalCommands
 	[Command(@"vote remove")]
 	public static void RemoveVote(string user) => Votes.RemoveVote(user);
 
+	/// <name>Time left of vote</name>
+	/// <syntax>vote time</syntax>
+	/// <summary>Shows remaining voting time</summary>
+	[Command(@"vote time")]
+	public static void ShowVoteTime(string user) => Votes.TimeLeftOnVote(user);
+
 	/// <name>Cancel vote</name>
 	/// <syntax>vote cancel</syntax>
 	/// <summary>Cancels a voting process</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"vote cancel", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void CancelVote()
-	{
-		if (!Votes.Active)
-		{
-			IRCConnection.SendMessage("There is no voting currently in progress.");
-			return;
-		}
-		Votes.Clear(clearGlobal: true);
-		IRCConnection.SendMessage("Voting got canceled");
-	}
+	public static void CancelVote(string user) => Votes.CancelVote(user);
 
 	/// <name>Force-end vote</name>
 	/// <syntax>vote forceend</syntax>
 	/// <summary>Skips the countdown of the voting process</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"vote forceend", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void ForceEndVote()
-	{
-		if (!Votes.Active)
-		{
-			IRCConnection.SendMessage("There is no voting currently in progress.");
-			return;
-		}
-		IRCConnection.SendMessage("Force-ending vote");
-		Votes.Elapsed();
-	}
+	public static void ForceEndVote(string user) => Votes.EndVoteEarly(user);
 	#endregion
 
 	/// <name>My Rank</name>

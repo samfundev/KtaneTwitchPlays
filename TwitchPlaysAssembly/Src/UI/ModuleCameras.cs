@@ -348,7 +348,13 @@ public class ModuleCameras : MonoBehaviour
 		float hue = TwitchPlaySettings.data.EnableWhiteList ? .1f : .72f;
 		for (int ix = 0; ix < 4; ix++)
 		{
-			if (TwitchGame.Instance.CommandQueue.Count > 0 && ix == 3)
+			if (Votes.Active && ix == 2)
+			{
+				NotesTexts[ix].text = $"{Votes.PossibleVotes[Votes.CurrentVoteType].name}: {Votes.NumVoters} vote{(Votes.NumVoters == 1 ? "" : "s")}\n{Votes.TimeLeft} second{(Votes.TimeLeft == 1 ? "" : "s")} left.";
+				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0f, .246f, .93f);
+				NotesTextIDs[ix].text = "!vote";
+			}
+			else if (TwitchGame.Instance.CommandQueue.Count > 0 && ix == 3)
 			{
 				var numNameless = TwitchGame.Instance.CommandQueue.Count(c => c.Name == null);
 				var numNamed = TwitchGame.Instance.CommandQueue.Count - numNameless;

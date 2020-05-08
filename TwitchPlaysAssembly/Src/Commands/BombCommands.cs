@@ -113,7 +113,7 @@ public static class BombCommands
 	/// <syntax>vote [action]</syntax>
 	/// <summary>Starts a vote about doing an action</summary>
 	[Command(@"vote (explode|detonate|kapow)")]
-	public static void VoteStart(TwitchBomb bomb, string user, [Group(1)] bool Detonation) => Votes.StartVote(bomb, user, Detonation ? VoteTypes.Detonation : 0);
+	public static void VoteStart(string user, [Group(1)] bool Detonation) => Votes.StartVote(user, Detonation ? VoteTypes.Detonation : 0);
 
 	/// <name>Vote</name>
 	/// <syntax>vote [choice]</syntax>
@@ -127,19 +127,25 @@ public static class BombCommands
 	[Command(@"vote remove")]
 	public static void RemoveVote(string user) => GlobalCommands.RemoveVote(user);
 
+	/// <name>Time left of vote</name>
+	/// <syntax>vote time</syntax>
+	/// <summary>Shows remaining voting time</summary>
+	[Command(@"vote time")]
+	public static void ShowVoteTime(string user) => GlobalCommands.ShowVoteTime(user);
+
 	/// <name>Cancel vote</name>
 	/// <syntax>vote cancel</syntax>
 	/// <summary>Cancels a voting process</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"vote cancel", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void CancelVote() => GlobalCommands.CancelVote();
+	public static void CancelVote(string user) => GlobalCommands.CancelVote(user);
 
 	/// <name>Force-end vote</name>
 	/// <syntax>vote forceend</syntax>
 	/// <summary>Skips the countdown of the voting process</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"vote forceend", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void ForceEndVote() => GlobalCommands.ForceEndVote();
+	public static void ForceEndVote(string user) => GlobalCommands.ForceEndVote(user);
 	#endregion
 
 	/// <name>Status</name>

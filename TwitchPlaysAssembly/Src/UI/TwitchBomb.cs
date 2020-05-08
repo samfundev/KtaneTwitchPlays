@@ -106,6 +106,8 @@ public class TwitchBomb : MonoBehaviour
 		yield return null;
 	}
 
+	public void CauseExplosionByVote() => StartCoroutine(DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Voted detonation", 1.0f));
+
 	public void CauseExplosionByModuleCommand(string message, string reason) => StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
 
 	public float CurrentTimer

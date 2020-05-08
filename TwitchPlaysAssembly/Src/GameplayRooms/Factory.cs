@@ -161,8 +161,6 @@ public sealed class Factory : GameRoom
 			});
 			if (!TwitchGame.BombActive) yield break;
 
-			Votes.Clear();
-
 			IRCConnection.SendMessage(TwitchGame.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRetryReward();
 
