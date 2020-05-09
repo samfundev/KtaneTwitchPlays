@@ -126,7 +126,7 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, bool> ModPermissions = new Dictionary<string, bool>();
 
-	public Dictionary<string, ModuleDistributions> ModDistributions = new Dictionary<string, ModuleDistributions>()
+	public Dictionary<string, ModuleDistributions> ModDistributionSettings = new Dictionary<string, ModuleDistributions>()
 	{
 		// Non-difficulty related distributions
 		{ "vanilla", new ModuleDistributions {
@@ -610,7 +610,7 @@ public class TwitchPlaySettingsData
 
 		valid &= ValidateDictionaryEntry("infozen", ref BombCustomMessages, data.BombCustomMessages);
 
-		valid &= ValidateModDistribution(ref ModDistributions);
+		valid &= ValidateModDistribution(ref ModDistributionSettings);
 
 		if (!TwitchPlaysDebugUsername.StartsWith("_"))
 		{

@@ -801,7 +801,7 @@ static class GlobalCommands
 	[Command(@"run")]
 	public static void RunHelp()
 	{
-		string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
+		string[] validDistributions = TwitchPlaySettings.data.ModDistributionSettings.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
 		IRCConnection.SendMessage(validDistributions.Any()
 			? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}"
 			: "Sorry, !run has been disabled.");
@@ -813,7 +813,7 @@ static class GlobalCommands
 		user, isWhisper,
 		() =>
 		{
-			if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
+			if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
 			{
 				IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 				return null;
@@ -905,7 +905,7 @@ static class GlobalCommands
 	[Command(@"run +(\d+) +(.*)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] int modules, [Group(2)] string distributionName, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
-		if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
+		if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
 		{
 			IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 			return null;
