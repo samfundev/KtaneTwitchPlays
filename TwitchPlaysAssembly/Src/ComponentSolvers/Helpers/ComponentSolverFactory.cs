@@ -1085,7 +1085,7 @@ public static class ComponentSolverFactory
 		info.moduleID = moduleType;
 		defInfo.moduleID = moduleType;
 
-		if (!info.helpTextOverride)
+		if (!info.helpTextOverride && !string.IsNullOrEmpty(defInfo.helpText))
 		{
 			ModuleData.DataHasChanged |= !info.helpText.TryEquals(defInfo.helpText);
 			info.helpText = defInfo.helpText;
