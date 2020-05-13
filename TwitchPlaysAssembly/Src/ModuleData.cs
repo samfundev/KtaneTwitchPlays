@@ -18,6 +18,9 @@ public class ModuleInformation
 
 	public ScoreMethod scoreMethod;
 
+	public float rewardBonus;
+	public RewardBonusMethod rewardBonusMethod;
+
 	public bool helpTextOverride;
 	public string helpText;
 
@@ -46,6 +49,8 @@ public class ModuleInformation
 	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
 	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
 	public bool ShouldSerializeScoreString() => false;
+	public bool ShouldSerializerewardBonus() => false;
+	public bool ShouldSerializerewardBonusMethod() => false;
 
 	public ModuleInformation Clone() => (ModuleInformation) MemberwiseClone();
 
@@ -90,6 +95,13 @@ public enum ScoreMethod
 	Default,
 	NeedyTime,
 	NeedySolves,
+}
+
+public enum RewardBonusMethod
+{
+	None,
+	Fixed,
+	Dynamic,
 }
 
 public enum StatusLightPosition

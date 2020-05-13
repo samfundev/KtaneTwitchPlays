@@ -324,26 +324,30 @@ public class TwitchModule : MonoBehaviour
 		float lastTime = Time.time;
 		while (true)
 		{
-			if (Claimed)
+			switch (needyModule.State)
 			{
-				switch (needyModule.State)
-				{
-					case NeedyStateEnum.BombComplete:
-					case NeedyStateEnum.Terminated:
-						yield break;
-					case NeedyStateEnum.Cooldown when lastState == NeedyStateEnum.Running:
+				case NeedyStateEnum.BombComplete:
+				case NeedyStateEnum.Terminated:
+					yield break;
+				case NeedyStateEnum.Cooldown when lastState == NeedyStateEnum.Running:
+					if (Claimed)
+					{
 						if (!PlayerNeedyStats.ContainsKey(PlayerName))
 							PlayerNeedyStats[PlayerName] = new NeedyStats();
 
 						PlayerNeedyStats[PlayerName].Solves++;
-						break;
-					case NeedyStateEnum.Running:
+					}
+					Solver.AwardRewardBonus();
+					break;
+				case NeedyStateEnum.Running:
+					if (Claimed)
+					{
 						if (!PlayerNeedyStats.ContainsKey(PlayerName))
 							PlayerNeedyStats[PlayerName] = new NeedyStats();
 
 						PlayerNeedyStats[PlayerName].ActiveTime += Time.time - lastTime;
-						break;
-				}
+					}
+					break;
 			}
 
 			lastState = needyModule.State;
