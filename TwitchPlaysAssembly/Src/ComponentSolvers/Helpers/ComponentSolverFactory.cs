@@ -817,7 +817,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SuperlogicModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["SymbolCycleModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["TennisModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
-		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 10, manualCode = "Tic-Tac-Toe", DoesTheRightThing = true };
+		ModComponentSolverInformation["TicTacToeModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["TheUltracubeModule"] = new ModuleInformation { moduleScore = 20, DoesTheRightThing = true };
 		ModComponentSolverInformation["UncoloredSquaresModule"] = new ModuleInformation { moduleScore = 7, DoesTheRightThing = true };
 		ModComponentSolverInformation["WirePlacementModule"] = new ModuleInformation { moduleScore = 4, DoesTheRightThing = true };
