@@ -94,13 +94,18 @@
             <syntax>vote remove</syntax>
             <summary>Removes the vote of a user</summary>
         </member>
-        <member name="M:GlobalCommands.CancelVote">
+        <member name="M:GlobalCommands.ShowVoteTime(System.String)">
+            <name>Time left of vote</name>
+            <syntax>vote time</syntax>
+            <summary>Shows remaining voting time</summary>
+        </member>
+        <member name="M:GlobalCommands.CancelVote(System.String)">
             <name>Cancel vote</name>
             <syntax>vote cancel</syntax>
             <summary>Cancels a voting process</summary>
             <restriction>Mod</restriction>
         </member>
-        <member name="M:GlobalCommands.ForceEndVote">
+        <member name="M:GlobalCommands.ForceEndVote(System.String)">
             <name>Force-end vote</name>
             <syntax>vote forceend</syntax>
             <summary>Skips the countdown of the voting process</summary>
@@ -641,7 +646,7 @@
             <summary>Forces the bomb to explode.</summary>
             <restriction>Mod</restriction>
         </member>
-        <member name="M:BombCommands.VoteStart(TwitchBomb,System.String,System.Boolean)">
+        <member name="M:BombCommands.VoteStart(System.String,System.Boolean)">
             <name>Start a vote</name>
             <syntax>vote [action]</syntax>
             <summary>Starts a vote about doing an action</summary>
@@ -656,13 +661,18 @@
             <syntax>vote remove</syntax>
             <summary>Removes the vote of a user</summary>
         </member>
-        <member name="M:BombCommands.CancelVote">
+        <member name="M:BombCommands.ShowVoteTime(System.String)">
+            <name>Time left of vote</name>
+            <syntax>vote time</syntax>
+            <summary>Shows remaining voting time</summary>
+        </member>
+        <member name="M:BombCommands.CancelVote(System.String)">
             <name>Cancel vote</name>
             <syntax>vote cancel</syntax>
             <summary>Cancels a voting process</summary>
             <restriction>Mod</restriction>
         </member>
-        <member name="M:BombCommands.ForceEndVote">
+        <member name="M:BombCommands.ForceEndVote(System.String)">
             <name>Force-end vote</name>
             <syntax>vote forceend</syntax>
             <summary>Skips the countdown of the voting process</summary>
