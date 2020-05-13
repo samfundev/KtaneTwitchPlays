@@ -709,6 +709,7 @@ public abstract class ComponentSolver
 				if (_delegatedAwardUserNickName != null)
 					AwardPoints(_delegatedAwardUserNickName, _pointsToAward);
 				AwardSolve(solverNickname, moduleScore);
+				AwardRewardBonus();
 			}
 			Module?.OnPass(solverNickname);
 		}
@@ -1026,12 +1027,6 @@ public abstract class ComponentSolver
 		}
 
 		IRCConnection.SendMessage(messageParts.Join());
-
-		if (ModInfo.moduleID == "organizationModule")
-		{
-			TwitchPlaySettings.AddRewardBonus((Module.Bomb.bombSolvableModules - 1) * 3);
-			IRCConnection.SendMessage($"Reward increased by {(Module.Bomb.bombSolvableModules - 1) * 3} for defusing module !{Code} ({ModInfo.moduleDisplayName}).");
-		}
 	}
 
 	private void AwardStrikes(int strikeCount) => AwardStrikes(null, strikeCount);
@@ -1188,6 +1183,28 @@ public abstract class ComponentSolver
 		}
 
 		IRCConnection.SendMessage(messageParts.Join());
+	}
+
+	internal void AwardRewardBonus()
+	{
+		int rewardBonus = 0;
+		switch(ModInfo.rewardBonusMethod)
+		{
+			case RewardBonusMethod.Fixed:
+				rewardBonus = (int)ModInfo.rewardBonus;
+				break;
+			case RewardBonusMethod.Dynamic:
+				rewardBonus = (int)(ModInfo.rewardBonus * Module.Bomb.bombSolvableModules);
+				break;
+			default:
+				break;
+		}
+
+		if (rewardBonus != 0)
+		{
+			TwitchPlaySettings.AddRewardBonus(rewardBonus);
+			IRCConnection.SendMessage($"Reward increased by {rewardBonus} for defusing module !{Code} ({ModInfo.moduleDisplayName}).");
+		}
 	}
 
 	protected void ReleaseHeldButtons()

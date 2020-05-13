@@ -915,6 +915,9 @@ public static class ComponentSolverFactory
 				if (string.IsNullOrEmpty(moduleName) || moduleName == "NEEDIES")
 					continue;
 
+				string rewardString = entry["gsx$bombreward"].Value<string>("$t");
+				// (Is allowed to be null or "")
+
 				var scoreMethod = ScoreMethod.Default;
 				if (moduleName.EndsWith(" (Solve)"))
 					scoreMethod = ScoreMethod.NeedySolves;
@@ -946,6 +949,23 @@ public static class ComponentSolverFactory
 				// The Module ID has been determined, now parse the score.
 				var defaultInfo = GetDefaultInformation(moduleID);
 				defaultInfo.scoreMethod = scoreMethod;
+
+				if (string.IsNullOrEmpty(rewardString))
+					defaultInfo.rewardBonusMethod = RewardBonusMethod.None;
+				else
+				{
+					var rewardDynamicMatch = Regex.Match(rewardString, @"S ([\d.]+)x");
+					if (rewardDynamicMatch.Success && float.TryParse(rewardDynamicMatch.Groups[1].Value, out float dynamicBonus))
+					{
+						defaultInfo.rewardBonusMethod = RewardBonusMethod.Dynamic;
+						defaultInfo.rewardBonus = dynamicBonus;
+					}
+					else if (float.TryParse(rewardString, out float bonus))
+					{
+						defaultInfo.rewardBonusMethod = RewardBonusMethod.Fixed;
+						defaultInfo.rewardBonus = bonus;
+					}
+				}
 
 				// UN and T is for unchanged and temporary score which are read normally.
 				scoreString = Regex.Replace(scoreString, @"(?:UN )?(\d+)T?", "$1");
@@ -1032,6 +1052,8 @@ public static class ComponentSolverFactory
 				moduleScore = info.moduleScore,
 				moduleScoreOverride = false,
 				moduleScoreIsDynamic = info.moduleScoreIsDynamic,
+				rewardBonus = info.rewardBonus,
+				rewardBonusMethod = info.rewardBonusMethod,
 				statusLightPosition = info.statusLightPosition,
 				unclaimedColor = info.unclaimedColor,
 				validCommands = info.validCommands,
@@ -1103,6 +1125,9 @@ public static class ComponentSolverFactory
 			info.manualCode = defInfo.manualCode;
 		}
 
+		info.rewardBonus = defInfo.rewardBonus;
+		info.rewardBonusMethod = defInfo.rewardBonusMethod;
+
 		if (writeData && !info.builtIntoTwitchPlays)
 			ModuleData.WriteDataToFile();
 
@@ -1165,6 +1190,9 @@ public static class ComponentSolverFactory
 			i.unclaimable = info.unclaimable;
 
 			i.scoreMethod = info.scoreMethod;
+
+			i.rewardBonus = info.rewardBonus;
+			i.rewardBonusMethod = info.rewardBonusMethod;
 
 			i.moduleScoreOverride = info.moduleScoreOverride;
 			i.helpTextOverride = info.helpTextOverride;
