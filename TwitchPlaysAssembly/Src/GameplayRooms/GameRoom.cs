@@ -279,7 +279,7 @@ public abstract class GameRoom
 			if (OtherModes.TimeModeOn)
 				bomb.CurrentTimer = TwitchPlaySettings.data.TimeModeStartingTime * 60;
 			else if (OtherModes.Unexplodable)
-				bomb.CurrentTimer = 1;
+				bomb.CurrentTimer = 0.001f;
 	}
 
 	public virtual IEnumerator ReportBombStatus()

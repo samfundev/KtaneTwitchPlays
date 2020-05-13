@@ -32,6 +32,7 @@ public static class ComponentSolverFactory
 
 		//AT_Bash Modules
 		ModComponentSolverCreators["MotionSense"] = module => new MotionSenseComponentSolver(module);
+		ModComponentSolverCreators["AppreciateArt"] = Module => new AppreciateArtComponentSolver(Module);
 
 		//Perky Modules
 		ModComponentSolverCreators["CrazyTalk"] = module => new CrazyTalkComponentSolver(module);
@@ -180,6 +181,7 @@ public static class ComponentSolverFactory
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
+		ModComponentSolverInformation["AppreciateArt"] = new ModuleInformation { builtIntoTwitchPlays = true, unclaimable = true, moduleDisplayName = "Art Appreciation" };
 
 		//Perky
 		ModComponentSolverInformation["CrazyTalk"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Crazy Talk", moduleScore = 3 };
@@ -1083,7 +1085,7 @@ public static class ComponentSolverFactory
 		info.moduleID = moduleType;
 		defInfo.moduleID = moduleType;
 
-		if (!info.helpTextOverride)
+		if (!info.helpTextOverride && !string.IsNullOrEmpty(defInfo.helpText))
 		{
 			ModuleData.DataHasChanged |= !info.helpText.TryEquals(defInfo.helpText);
 			info.helpText = defInfo.helpText;

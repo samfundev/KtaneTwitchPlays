@@ -17,6 +17,11 @@ public static class PostGameCommands
 	[Command(@"retry")]
 	public static IEnumerator Retry(string user, bool isWhisper)
 	{
+		if (!TwitchGame.RetryAllowed)
+		{
+			IRCConnection.SendMessage(TwitchPlaySettings.data.RetryModeOrProfileChange, user, isWhisper);
+			return doButton(Object.FindObjectOfType<ResultPage>().ContinueButton);
+		}
 		if (!TwitchPlaySettings.data.EnableRetryButton)
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.RetryInactive, user, isWhisper);

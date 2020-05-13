@@ -53,16 +53,27 @@ public class ModuleInformation
 	{
 		get
 		{
-			if (!moduleScoreIsDynamic)
+			if (scoreMethod == ScoreMethod.Default)
 			{
-				return moduleScore.Pluralize("point");
+				var parts = new List<string>();
+				if (ComponentSolverFactory.ppaScores.TryGetValue(moduleID, out float ppa))
+					parts.Add($"{ppa.Pluralize("point")} per action");
+
+				if (moduleScoreIsDynamic)
+				{
+					if (!ComponentSolverFactory.dynamicScores.TryGetValue(moduleID, out float multiplier))
+						multiplier = 2;
+
+					parts.Add($"{(multiplier * TwitchPlaySettings.data.DynamicScorePercentage).Pluralize("point")} per module");
+				}
+
+				parts.Add(moduleScore.Pluralize(parts.Count == 0 ? "point" : "base point"));
+
+				return parts.Join(" + ");
 			}
 			else
 			{
-				if (!ComponentSolverFactory.dynamicScores.TryGetValue(moduleID, out float multiplier))
-					multiplier = 2;
-
-				return $"{(multiplier * TwitchPlaySettings.data.DynamicScorePercentage).Pluralize("point")} per module + {moduleScore.Pluralize("base point")}";
+				return $"{moduleScore.Pluralize("point")} per {(scoreMethod == ScoreMethod.NeedySolves ? "solve" : "second")}";
 			}
 		}
 	}

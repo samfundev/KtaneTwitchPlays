@@ -445,6 +445,7 @@ public class Leaderboard
 
 	public void LoadDataFromFile()
 	{
+		_loaded = false;
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		try
 		{
@@ -468,6 +469,7 @@ public class Leaderboard
 			OldBombsExploded = BombsExploded;
 
 			GetTotalSolveStrikeCounts(out OldSolves, out OldStrikes, out OldScore);
+			_loaded = true;
 		}
 		catch (FileNotFoundException)
 		{
@@ -477,10 +479,19 @@ public class Leaderboard
 		{
 			DebugHelper.LogException(ex);
 		}
+
+		if (!_loaded)
+			TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(SendLeaderboardWarning());
 	}
 
 	public void SaveDataToFile()
 	{
+		if (!_loaded)
+		{
+			DebugHelper.LogError("Leaderboard: Cannot be saved as it did not load successfully.");
+			return;
+		}
+
 		string path = Path.Combine(Application.persistentDataPath, usersSavePath);
 		try
 		{
@@ -518,6 +529,13 @@ public class Leaderboard
 		}
 	}
 
+	private IEnumerator<WaitUntil> SendLeaderboardWarning()
+	{
+		yield return new WaitUntil(() => IRCConnection.Instance.State == IRCConnectionState.Connected);
+
+		IRCConnection.SendMessage("Warning: Unable to load the leaderboard successfully so the leaderboard will not be saved. Please check the log.");
+	}
+
 	public int Count => _entryList.Count;
 
 	public int SoloCount => _entryListSolo.Count;
@@ -527,6 +545,7 @@ public class Leaderboard
 	private List<LeaderboardEntry> _entryListSolo = new List<LeaderboardEntry>();
 	private static Leaderboard _instance;
 	private bool _sorted = false;
+	private bool _loaded = false;
 	public bool Success = false;
 
 	public int BombsAttempted = 0;

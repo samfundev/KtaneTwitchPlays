@@ -19,6 +19,7 @@ static class ProfileHelper
 		ProfileManagerType ??= ReflectionHelper.FindType("ProfileManager");
 		ReloadActiveConfigurationMethod ??= ProfileManagerType?.GetMethod("ReloadActiveConfiguration", BindingFlags.Public | BindingFlags.Static);
 		ReloadActiveConfigurationMethod?.Invoke(null, null);
+		TwitchGame.RetryAllowed = false;
 	}
 
 	public static List<string> Profiles
@@ -40,6 +41,7 @@ static class ProfileHelper
 		temp.Add(profile);
 		Profiles = temp;
 
+		TwitchGame.RetryAllowed = false;
 		return true;
 	}
 
@@ -49,6 +51,7 @@ static class ProfileHelper
 		if (!temp.Remove(profile)) return false;
 		Profiles = temp;
 
+		TwitchGame.RetryAllowed = false;
 		return true;
 	}
 

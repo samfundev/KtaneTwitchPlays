@@ -141,7 +141,7 @@ static class GlobalCommands
 	/// <syntax>vote [action]</syntax>
 	/// <summary>Starts a vote about doing an action</summary>
 	[Command(@"vote (togglevs)")]
-	public static void VoteStart(string user, [Group(1)] bool VSMode) => Votes.StartVote(null, user, VSMode ? VoteTypes.VSModeToggle : 0);
+	public static void VoteStart(string user, [Group(1)] bool VSMode) => Votes.StartVote(user, VSMode ? VoteTypes.VSModeToggle : 0);
 
 	/// <name>Vote</name>
 	/// <syntax>vote [choice]</syntax>
@@ -155,37 +155,25 @@ static class GlobalCommands
 	[Command(@"vote remove")]
 	public static void RemoveVote(string user) => Votes.RemoveVote(user);
 
+	/// <name>Time left of vote</name>
+	/// <syntax>vote time</syntax>
+	/// <summary>Shows remaining voting time</summary>
+	[Command(@"vote time")]
+	public static void ShowVoteTime(string user) => Votes.TimeLeftOnVote(user);
+
 	/// <name>Cancel vote</name>
 	/// <syntax>vote cancel</syntax>
 	/// <summary>Cancels a voting process</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"vote cancel", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void CancelVote()
-	{
-		if (!Votes.Active)
-		{
-			IRCConnection.SendMessage("There is no voting currently in progress.");
-			return;
-		}
-		Votes.Clear(clearGlobal: true);
-		IRCConnection.SendMessage("Voting got canceled");
-	}
+	public static void CancelVote(string user) => Votes.CancelVote(user);
 
 	/// <name>Force-end vote</name>
 	/// <syntax>vote forceend</syntax>
 	/// <summary>Skips the countdown of the voting process</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"vote forceend", AccessLevel.Mod, AccessLevel.Mod)]
-	public static void ForceEndVote()
-	{
-		if (!Votes.Active)
-		{
-			IRCConnection.SendMessage("There is no voting currently in progress.");
-			return;
-		}
-		IRCConnection.SendMessage("Force-ending vote");
-		Votes.Elapsed();
-	}
+	public static void ForceEndVote(string user) => Votes.EndVoteEarly(user);
 	#endregion
 
 	/// <name>My Rank</name>
@@ -801,25 +789,11 @@ static class GlobalCommands
 	[Command(@"run")]
 	public static void RunHelp()
 	{
-		string[] validDistributions = TwitchPlaySettings.data.ModDistributions.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
+		string[] validDistributions = TwitchPlaySettings.data.ModDistributionSettings.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
 		IRCConnection.SendMessage(validDistributions.Any()
 			? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}"
 			: "Sorry, !run has been disabled.");
 	}
-
-	[Command(@"run *zen")]
-	public static IEnumerator RunZen(string user, bool isWhisper, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
-	{
-		if (!TwitchPlaySettings.data.ModDistributions.TryGetValue("zen", out var zenModeDistribution))
-		{
-			zenModeDistribution = new ModuleDistributions { Vanilla = 0.5f, Modded = 0.5f, DisplayName = "Zen Mode", MinModules = 1, MaxModules = GetMaximumModules(inf, 18), Hidden = true };
-			zenModeDistribution.MinModules = 1;
-			zenModeDistribution.MaxModules = GetMaximumModules(inf, 18);
-			zenModeDistribution.Hidden = true;
-			TwitchPlaySettings.data.ModDistributions["zen"] = zenModeDistribution;
-		}
-		return RunDistribution(user, zenModeDistribution.MaxModules, inf, zenModeDistribution);
-	});
 
 	[Command(@"run +(\d+) +(.*) +(\d+) +(\d+)")]
 	public static IEnumerator RunVSHP(string user, bool isWhisper, [Group(1)] int modules,
@@ -827,7 +801,7 @@ static class GlobalCommands
 		user, isWhisper,
 		() =>
 		{
-			if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
+			if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
 			{
 				IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 				return null;
@@ -919,7 +893,7 @@ static class GlobalCommands
 	[Command(@"run +(\d+) +(.*)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] int modules, [Group(2)] string distributionName, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
-		if (!TwitchPlaySettings.data.ModDistributions.TryGetValue(distributionName, out var distribution))
+		if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
 		{
 			IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
 			return null;
@@ -1424,7 +1398,9 @@ static class GlobalCommands
 
 	private static void ProfileWrapper(string profileName, string user, bool isWhisper, Action<string, string> action)
 	{
-		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.PostGame && TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup)
+		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.PostGame
+			&& TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Setup
+			&& TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Gameplay)
 		{
 			IRCConnection.SendMessage("You can't use a !profile command right now.");
 			return;
@@ -1461,54 +1437,21 @@ static class GlobalCommands
 			return null;
 		}
 
-		int vanillaModules = Mathf.FloorToInt(modules * distribution.Vanilla);
-		int moddedModules = Mathf.FloorToInt(modules * distribution.Modded);
-		int bothModules = modules - moddedModules - vanillaModules;
-
 		var mission = ScriptableObject.CreateInstance<KMMission>();
-		var pools = new List<KMComponentPool>
-		{
-			new KMComponentPool()
-			{
-				SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-				AllowedSources = KMComponentPool.ComponentSource.Base,
-				Count = vanillaModules
-			},
-			new KMComponentPool()
-			{
-				SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-				AllowedSources = KMComponentPool.ComponentSource.Mods,
-				Count = moddedModules
-			},
-			new KMComponentPool()
-			{
-				SpecialComponentType = KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE,
-				AllowedSources = KMComponentPool.ComponentSource.Base | KMComponentPool.ComponentSource.Mods,
-				Count = bothModules
-			}
-		};
-		if (FactoryRoomAPI.Installed() && OtherModes.TrainingModeOn)
-			pools.Add(new KMComponentPool { Count = 8, ModTypes = new List<string> { "Factory Mode" } });
-
-		mission.PacingEventsEnabled = true;
+		mission.PacingEventsEnabled = TwitchPlaySettings.data.PacingEventsOnRunBomb;
 		mission.DisplayName = modules + " " + distribution.DisplayName;
-		mission.GeneratorSetting = OtherModes.TimeModeOn
-			? new KMGeneratorSetting()
-			{
-				ComponentPools = pools,
-				TimeLimit = TwitchPlaySettings.data.TimeModeStartingTime * 60,
-				NumStrikes = 9
-			}
-			: new KMGeneratorSetting()
-			{
-				ComponentPools = pools,
-				TimeLimit = (120 * modules) - (60 * vanillaModules),
-				NumStrikes = Math.Max(3, modules / TwitchPlaySettings.data.ModuleToStrikeRatio)
-			};
-
-		int rewardPoints = (5 * modules) - (3 * vanillaModules);
-		TwitchPlaySettings.SetRewardBonus(rewardPoints);
-		IRCConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
+		mission.Description = modules + " " + distribution.DisplayName;
+		try
+		{
+			mission.GeneratorSetting = distribution.GenerateMission(modules, OtherModes.TimeModeOn, out int rewardPoints);
+			TwitchPlaySettings.SetRewardBonus(rewardPoints);
+			IRCConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
+		}
+		catch (InvalidOperationException e)
+		{
+			IRCConnection.SendMessage($"Sorry, the distribution {distribution.DisplayName} cannot be run: {e.Message}");
+			return null;
+		}
 
 		return RunMissionCoroutine(mission);
 	}
