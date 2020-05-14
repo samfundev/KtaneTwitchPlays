@@ -25,6 +25,9 @@ public class TwitchHoldable
 			// Find a suitable ProcessTwitchCommand method
 			foreach (var component in holdable.GetComponentsInChildren<Component>(true))
 			{
+				if (component == null)
+					continue;
+
 				var type = component.GetType();
 				var candidateMethod = type.GetMethod("ProcessTwitchCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 				if (candidateMethod == null)
@@ -611,6 +614,9 @@ public class TwitchHoldable
 		Component[] allComponents = holdable.GetComponentsInChildren<Component>(true);
 		foreach (Component component in allComponents)
 		{
+			if (component == null)
+				continue;
+
 			string fullName = component.GetType().FullName;
 			if (FullNamesLogged.Contains(fullName)) continue;
 			FullNamesLogged.Add(fullName);

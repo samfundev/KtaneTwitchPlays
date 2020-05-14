@@ -1414,10 +1414,11 @@ public static class ComponentSolverFactory
 			Component[] allComponents = bombComponent != null ? bombComponent.GetComponentsInChildren<Component>(true) : new Component[0];
 			foreach (Component component in allComponents)
 			{
-#pragma warning disable IDE0031 // Use null propagation
-				string fullName = component != null ? component.GetType().FullName : null;
-#pragma warning restore IDE0031 // Use null propagation
-				if (string.IsNullOrEmpty(fullName) || FullNamesLogged.Contains(fullName)) continue;
+				if (component == null)
+					continue;
+
+				string fullName = component.GetType().FullName;
+				if (FullNamesLogged.Contains(fullName)) continue;
 				FullNamesLogged.Add(fullName);
 
 				Type[] types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetSafeTypes()).Where(t => t.FullName?.Equals(fullName) ?? false).ToArray();
@@ -1573,6 +1574,9 @@ public static class ComponentSolverFactory
 			Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
 			foreach (Component component in allComponents)
 			{
+				if (component == null)
+					continue;
+
 				Type type = component.GetType();
 				MethodInfo candidateMethod = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 					.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
@@ -1601,6 +1605,9 @@ public static class ComponentSolverFactory
 		Component[] allComponents = bombComponent.GetComponentsInChildren<Component>(true);
 		foreach (Component component in allComponents)
 		{
+			if (component == null)
+				continue;
+
 			Type type = component.GetType();
 			MethodInfo candidateMethod = type.GetMethod("ProcessTwitchCommand", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			if (candidateMethod == null)

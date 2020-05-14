@@ -48,7 +48,7 @@ public static class DebugHelper
 			if (printComponents)
 				foreach (Component component in t.GetComponents<Component>())
 				{
-					if (component is Transform) continue;
+					if (component == null || component is Transform) continue;
 					_treeBuilder.Append($"{prefix} Component: {component.GetType().FullName}\n");
 				}
 
@@ -78,7 +78,7 @@ public static class DebugHelper
 		if (printComponents)
 			foreach (Component component in t.GetComponents<Component>())
 			{
-				if (component is Transform) continue;
+				if (component == null || component is Transform) continue;
 				_treeBuilder.Append($"{prefix} Component: {component.GetType().FullName}\n");
 			}
 
