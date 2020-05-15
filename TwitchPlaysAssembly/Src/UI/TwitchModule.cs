@@ -276,8 +276,7 @@ public class TwitchModule : MonoBehaviour
 		yield return null;
 		yield return null;
 
-		if (Hidden)
-			yield break;
+		yield return new WaitUntil(() => !Hidden);
 
 		IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
 	}
