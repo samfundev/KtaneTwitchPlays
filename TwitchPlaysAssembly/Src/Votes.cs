@@ -67,7 +67,7 @@ public static class Votes
 			// Add claimed users who didn't vote as "no"
 			int numAddedNoVotes = 0;
 			List<string> usersWithClaims = TwitchGame.Instance.Modules
-				.Where(m => m.PlayerName != null).Select(m => m.PlayerName).Distinct().ToList();
+				.Where(m => !m.Solved && m.PlayerName != null).Select(m => m.PlayerName).Distinct().ToList();
 			foreach (string user in usersWithClaims)
 			{
 				if (!Voters.ContainsKey(user))
