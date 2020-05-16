@@ -158,8 +158,10 @@ public abstract class ComponentSolver
 				{
 					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
 
-					int penalty =
-						Math.Max((int) (ModInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent), 1);
+					int penalty = (int) (Mathf.Max(ModInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent, 1) * OtherModes.ScoreMultiplier);
+					if (penalty == 0)
+						continue;
+
 					Leaderboard.Instance.AddScore(_currentUserNickName, -penalty);
 					IRCConnection.SendMessageFormat(TwitchPlaySettings.data.UnsubmittableAnswerPenalty,
 						_currentUserNickName, Code, ModInfo.moduleDisplayName, penalty, penalty > 1 ? "s" : "");
