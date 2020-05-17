@@ -1125,6 +1125,8 @@ public static class ComponentSolverFactory
 			info.manualCode = defInfo.manualCode;
 		}
 
+		info.scoreMethod = defInfo.scoreMethod;
+
 		info.rewardBonus = defInfo.rewardBonus;
 		info.rewardBonusMethod = defInfo.rewardBonusMethod;
 
