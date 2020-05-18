@@ -896,6 +896,8 @@ public static class ComponentSolverFactory
 
 	public static Dictionary<string, float> ppaScores = new Dictionary<string, float>();
 
+	public static Dictionary<string, RewardBonusInfo> rewardBonuses = new Dictionary<string, RewardBonusInfo>();
+
 	public static IEnumerator LoadDefaultInformation(bool reloadData = false)
 	{
 		UnityWebRequest www = UnityWebRequest.Get("https://spreadsheets.google.com/feeds/list/1WEzVOKxOO5CDGoqAHjJKrC-c-ZGgsTPRLXBCs8RrAwU/1/public/values?alt=json");
@@ -950,20 +952,16 @@ public static class ComponentSolverFactory
 				var defaultInfo = GetDefaultInformation(moduleID);
 				defaultInfo.scoreMethod = scoreMethod;
 
-				if (string.IsNullOrEmpty(rewardString))
-					defaultInfo.rewardBonusMethod = RewardBonusMethod.None;
-				else
+				if (!string.IsNullOrEmpty(rewardString))
 				{
 					var rewardDynamicMatch = Regex.Match(rewardString, @"S ([\d.]+)x");
 					if (rewardDynamicMatch.Success && float.TryParse(rewardDynamicMatch.Groups[1].Value, out float dynamicBonus))
 					{
-						defaultInfo.rewardBonusMethod = RewardBonusMethod.Dynamic;
-						defaultInfo.rewardBonus = dynamicBonus;
+						rewardBonuses[moduleID] = new RewardBonusInfo() { Type = RewardBonusMethod.Dynamic, Bonus = dynamicBonus };
 					}
 					else if (float.TryParse(rewardString, out float bonus))
 					{
-						defaultInfo.rewardBonusMethod = RewardBonusMethod.Fixed;
-						defaultInfo.rewardBonus = bonus;
+						rewardBonuses[moduleID] = new RewardBonusInfo() { Type = RewardBonusMethod.Fixed, Bonus = bonus };
 					}
 				}
 
@@ -1052,8 +1050,6 @@ public static class ComponentSolverFactory
 				moduleScore = info.moduleScore,
 				moduleScoreOverride = false,
 				moduleScoreIsDynamic = info.moduleScoreIsDynamic,
-				rewardBonus = info.rewardBonus,
-				rewardBonusMethod = info.rewardBonusMethod,
 				statusLightPosition = info.statusLightPosition,
 				unclaimedColor = info.unclaimedColor,
 				validCommands = info.validCommands,
@@ -1127,9 +1123,6 @@ public static class ComponentSolverFactory
 
 		info.scoreMethod = defInfo.scoreMethod;
 
-		info.rewardBonus = defInfo.rewardBonus;
-		info.rewardBonusMethod = defInfo.rewardBonusMethod;
-
 		if (writeData && !info.builtIntoTwitchPlays)
 			ModuleData.WriteDataToFile();
 
@@ -1192,9 +1185,6 @@ public static class ComponentSolverFactory
 			i.unclaimable = info.unclaimable;
 
 			i.scoreMethod = info.scoreMethod;
-
-			i.rewardBonus = info.rewardBonus;
-			i.rewardBonusMethod = info.rewardBonusMethod;
 
 			i.moduleScoreOverride = info.moduleScoreOverride;
 			i.helpTextOverride = info.helpTextOverride;

@@ -1189,14 +1189,17 @@ public abstract class ComponentSolver
 
 	internal void AwardRewardBonus()
 	{
+		if (!ComponentSolverFactory.rewardBonuses.TryGetValue(ModInfo.moduleID, out RewardBonusInfo info))
+			return;
+
 		int rewardBonus = 0;
-		switch(ModInfo.rewardBonusMethod)
+		switch (info.Type)
 		{
 			case RewardBonusMethod.Fixed:
-				rewardBonus = (int)ModInfo.rewardBonus;
+				rewardBonus = (int)info.Bonus;
 				break;
 			case RewardBonusMethod.Dynamic:
-				rewardBonus = (int)(ModInfo.rewardBonus * Module.Bomb.bombSolvableModules);
+				rewardBonus = (int)(info.Bonus * Module.Bomb.bombSolvableModules);
 				break;
 			default:
 				break;
