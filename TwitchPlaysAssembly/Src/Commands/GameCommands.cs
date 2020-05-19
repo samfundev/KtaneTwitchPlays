@@ -541,7 +541,7 @@ static class GameCommands
 				: command.StartsWith("!")
 					? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
 					: command.Trim().Count() > 0
-						? TwitchGame.Instance.CommandQueue.Where(item => all || del || item.Message.UserNickName == user && item.Name != null && item.Name == command.Trim()).ToArray()
+						? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Name != null && item.Name == command.Trim()).ToArray()
 						: TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
 		if (matchingItems.Length == 0)
 		{
