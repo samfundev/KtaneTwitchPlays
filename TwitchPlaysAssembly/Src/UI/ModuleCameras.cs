@@ -95,7 +95,7 @@ public class ModuleCameras : MonoBehaviour
 		public void ViewModule(TwitchModule module)
 		{
 			Deactivate();
-			if (module == null)
+			if (module == null || module.Hidden)
 				return;
 			Module = module;
 
@@ -305,7 +305,7 @@ public class ModuleCameras : MonoBehaviour
 
 	public bool TryViewModule(TwitchModule module)
 	{
-		if (module == null)
+		if (module == null || module.Hidden)
 			return false;
 
 		module.LastUsed = DateTime.UtcNow;
@@ -725,7 +725,7 @@ public class ModuleCameras : MonoBehaviour
 
 	#region Properties
 	public TwitchModule PreferredToView => TwitchGame.Instance.Modules
-				.Where(module => !module.Solved && _moduleCameras.All(cam => cam.Module != module && cam.PreviousModule != module))
+				.Where(module => !module.Solved && !module.Hidden && _moduleCameras.All(cam => cam.Module != module && cam.PreviousModule != module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();
 
