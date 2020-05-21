@@ -82,7 +82,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["Microcontroller"] = module => new MicrocontrollerComponentSolver(module);
 		ModComponentSolverCreators["resistors"] = module => new ResistorsComponentSolver(module);
 		ModComponentSolverCreators["speakEnglish"] = module => new SpeakEnglishComponentSolver(module);
-		ModComponentSolverCreators["switchModule"] = module => new SwitchesComponentSolver(module);
 		ModComponentSolverCreators["NeedyBeer"] = module => new NeedyBeerComponentSolver(module);
 		ModComponentSolverCreators["errorCodes"] = module => new ErrorCodesComponentSolver(module);
 		ModComponentSolverCreators["JuckAlchemy"] = module => new AlchemyComponentSolver(module);
