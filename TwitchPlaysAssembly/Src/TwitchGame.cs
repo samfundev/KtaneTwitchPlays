@@ -25,7 +25,7 @@ public class TwitchGame : MonoBehaviour
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
 	public bool VSSetFlag = false;
-	public List<string> CallingPlayers = new List<string>();
+	public Dictionary<string, string> CallingPlayers = new Dictionary<string, string>();
 	public SortedDictionary<int, string> VSModePlayers = new SortedDictionary<int, string>();
 	public List<string> GoodPlayers = new List<string>();
 	public List<string> EvilPlayers = new List<string>();
