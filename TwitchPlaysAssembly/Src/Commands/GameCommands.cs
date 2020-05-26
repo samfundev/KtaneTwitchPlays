@@ -580,23 +580,53 @@ static class GameCommands
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = name?.Trim();
+		name = (name == null) ? "" : name;
 
-		if (!now){
-			if (TwitchGame.Instance.CallingPlayers.Contains(user))
+		if (!now)
+		{
+			bool _callChanged = false;
+			if (TwitchGame.Instance.CallingPlayers.Keys.Contains(user))
 			{
-				IRCConnection.SendMessageFormat("@{0}, you already called!", user);
-				return;
+				if (name == TwitchGame.Instance.CallingPlayers[user])
+				{
+					IRCConnection.SendMessageFormat("@{0}, you already called!", user);
+					return;
+				}
+				TwitchGame.Instance.CallingPlayers.Remove(user);
+				_callChanged = true;
 			}
 
+			TwitchGame.Instance.CallingPlayers.Add(user, name);
 			var _callsNeeded = TwitchGame.Instance.callsNeeded;
 			var _callsTotal = TwitchGame.Instance.CallingPlayers.Count;
 
 			// Only call if there are enough calls.
-			if (!(_callsTotal + 1 >= _callsNeeded))
+			if (!(_callsTotal >= _callsNeeded))
 			{
-				TwitchGame.Instance.CallingPlayers.Add(user);
+				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, (name == "") ? "the next queued command" : name);
 				CallCountCommand();
 				return;
+			}
+
+			//we now need to call, but we need to check if uncommon things were called
+			if (_callsTotal != 1) 
+			{
+				string[] _calls = TwitchGame.Instance.CallingPlayers.Values.ToArray();
+
+				for (int i = 1; i < _calls.Count(); i++)
+				{
+					if (_calls[0] != _calls[i])
+					{
+						if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls stil present.", user, (name == "") ? "the next queued command" : name);
+						else
+						{
+							IRCConnection.SendMessage("Sorry, uncommon calls were made. Please either correct your call(s) or use “!callnow” followed by the correct command to call.", user, !isWhisper);
+							ListCalledPlayers();
+						}
+						return;
+					}
+				}
+				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, (name == "") ? "the next queued command" : name);
 			}
 		}
 
@@ -704,9 +734,9 @@ static class GameCommands
 	/// <syntax>uncall</syntax>
 	/// <summary>Retracts your Call Command when multiple are required.</summary>
 	[Command(@"uncall")]
-	public static void RemoveQueuedPlayer(string user)
+	public static void RemoveCalledPlayer(string user)
 	{
-		if (!TwitchGame.Instance.CallingPlayers.Contains(user))
+		if (!TwitchGame.Instance.CallingPlayers.Keys.Contains(user))
 		{
 			IRCConnection.SendMessageFormat("@{0}, you haven't called yet!", user);
 			return;
@@ -720,16 +750,19 @@ static class GameCommands
 	/// <syntax>callplayers</syntax>
 	/// <summary>Lists the current players who have called when multiple are required.</summary>
 	[Command(@"callplayers")]
-	public static void ListCalledPlayers(string user)
+	public static void ListCalledPlayers()
 	{
 		int totalCalls = TwitchGame.Instance.CallingPlayers.Count;
 		if (totalCalls == 0)
 		{
-			IRCConnection.SendMessageFormat("@{0}, no calls have been made.", user);
+			IRCConnection.SendMessageFormat("No calls have been made.");
 			return;
 		}
-		string CallPlayers = string.Join(", @", TwitchGame.Instance.CallingPlayers.ToArray());
-		IRCConnection.SendMessageFormat("These players have already called: @{0}", CallPlayers);
+		string[] __calls = TwitchGame.Instance.CallingPlayers.Values.ToArray();
+		string[] __callPlayers = TwitchGame.Instance.CallingPlayers.Keys.ToArray();
+		string builder = "";
+		for (int j = 0; j < __calls.Count(); j++) builder = builder + ((j == 0) ? "@" : ", @") + __callPlayers[j] + ": " + ((__calls[j] == "") ? "Next queued command" : __calls[j]);
+		IRCConnection.SendMessageFormat("These players have already called: @{0}", builder);
 	}
 
 	/// <name>Set Multiplier</name>
