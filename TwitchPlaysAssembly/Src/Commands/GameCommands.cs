@@ -383,6 +383,23 @@ static class GameCommands
 		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such solved modules.", user, !isWhisper);
 	}
 
+	/// <name>Find Duplicate</name>
+	/// <syntax>findduplicate (what)</syntax>
+	/// <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
+	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	[Command(@"(?:find *dup(?:licate)?|dup(?:licate)? *find|search *dup(?:licate)?|dup(?:licate)? *search)( +.+)?")]
+	public static void FindDuplicate([Group(1)] string queries, string user, bool isWhisper)
+	{
+		var allMatches = (string.IsNullOrEmpty(queries) ? TwitchGame.Instance.Modules : FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray()))
+			.GroupBy(module => module.HeaderText)
+			.Where(grouping => grouping.Count() > 1)
+			.Select(grouping => $"{grouping.Key} ({grouping.Select(module => module.Code).Join(", ")})");
+
+		var modules = allMatches.Shuffle().Take(3).ToList();
+
+		IRCConnection.SendMessage(modules.Count > 0 ? $"Duplicates ({allMatches.Count()} total): {modules.Join(", ")}" : "No such duplicate modules.", user, !isWhisper);
+	}
+
 	/// <name>New Bomb</name>
 	/// <syntax>newbomb</syntax>
 	/// <summary>Starts a new bomb in training mode. Requires either a minimum score or the defuser rank to run.</summary>

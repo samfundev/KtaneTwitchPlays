@@ -387,6 +387,12 @@
             <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
             <argument name="what">A combination of claim or view seperated by spaces.</argument>
         </member>
+        <member name="M:GameCommands.FindDuplicate(System.String,System.String,System.Boolean)">
+            <name>Find Duplicate</name>
+            <syntax>findduplicate (what)</syntax>
+            <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
+            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+        </member>
         <member name="M:GameCommands.NewBomb(System.String,System.Boolean)">
             <name>New Bomb</name>
             <syntax>newbomb</syntax>
