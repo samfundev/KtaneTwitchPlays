@@ -730,6 +730,19 @@ static class GameCommands
 	[Command(@"callcount")]
 	public static void CallCountCommand() => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.CallingPlayers.Count, TwitchGame.Instance.callsNeeded);
 
+	[Command(@"delcall +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void DeleteQueuedPlayer([Group(1)] string callUser, string user)
+	{
+		if (string.IsNullOrEmpty(callUser)) IRCConnection.SendMessageFormat("@{0}, please specify a call to remove!", user);
+		else if (!TwitchGame.Instance.CallingPlayers.Keys.Contains(user)) IRCConnection.SendMessageFormat("@{0}, @{1} has not called!", user, callUser);
+		else
+		{
+			TwitchGame.Instance.CallingPlayers.Remove(callUser);
+			IRCConnection.SendMessageFormat("@{0}, removed @{1}'s call.", user, callUser);
+			CallCountCommand();
+		}
+	}
+
 	/// <name>Uncall</name>
 	/// <syntax>uncall</syntax>
 	/// <summary>Retracts your Call Command when multiple are required.</summary>
