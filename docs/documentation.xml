@@ -461,12 +461,12 @@
             <syntax>callcount</syntax>
             <summary>Displays the number of times that the Call Command has been run since a command was last called.</summary>
         </member>
-        <member name="M:GameCommands.RemoveQueuedPlayer(System.String)">
+        <member name="M:GameCommands.RemoveCalledPlayer(System.String)">
             <name>Uncall</name>
             <syntax>uncall</syntax>
             <summary>Retracts your Call Command when multiple are required.</summary>
         </member>
-        <member name="M:GameCommands.ListCalledPlayers(System.String)">
+        <member name="M:GameCommands.ListCalledPlayers">
             <name>Call Players</name>
             <syntax>callplayers</syntax>
             <summary>Lists the current players who have called when multiple are required.</summary>

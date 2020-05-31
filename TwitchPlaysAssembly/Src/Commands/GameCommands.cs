@@ -617,7 +617,7 @@ static class GameCommands
 				{
 					if (_calls[0] != _calls[i])
 					{
-						if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls stil present.", user, (name == "") ? "the next queued command" : name);
+						if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls still present.", user, (name == "") ? "the next queued command" : name);
 						else
 						{
 							IRCConnection.SendMessage("Sorry, uncommon calls were made. Please either correct your call(s) or use “!callnow” followed by the correct command to call.", user, !isWhisper);
@@ -775,7 +775,7 @@ static class GameCommands
 		string[] __callPlayers = TwitchGame.Instance.CallingPlayers.Keys.ToArray();
 		string builder = "";
 		for (int j = 0; j < __calls.Count(); j++) builder = builder + ((j == 0) ? "@" : ", @") + __callPlayers[j] + ": " + ((__calls[j] == "") ? "Next queued command" : __calls[j]);
-		IRCConnection.SendMessageFormat("These players have already called: @{0}", builder);
+		IRCConnection.SendMessageFormat("These players have already called: {0}", builder);
 	}
 
 	/// <name>Set Multiplier</name>
