@@ -130,6 +130,8 @@
     <Compile Include="Src\ComponentSolvers\Modded\Shims\BooleanKeypadShim.cs" />
     <Compile Include="Src\ComponentSolvers\Modded\Shims\SwanShim.cs" />
     <Compile Include="Src\Helpers\LeaderboardController.cs" />
+    <Compile Include="Src\Helpers\ModdedAPI.cs" />
+    <Compile Include="Src\Helpers\TwitchPlaysAPI.cs" />
     <Compile Include="Src\Votes.cs" />
     <Compile Include="Src\Extensions\KMBombInfoExtensions.cs" />
     <Compile Include="Src\Helpers\CheckSupport.cs" />

@@ -65,7 +65,7 @@ public class TwitchPlaySettingsData
 	public bool PacingEventsOnRunBomb = true;
 
 	public bool EnableTimeModeForEveryone = false;
-	public int TimeModeStartingTime = 5;
+	public float TimeModeStartingTime = 5;
 	public float TimeModeStartingMultiplier = 9.0f;
 	public float TimeModeMaxMultiplier = 10.0f;
 	public float TimeModeMinMultiplier = 1.0f;

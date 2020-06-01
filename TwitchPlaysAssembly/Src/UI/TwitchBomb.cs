@@ -515,7 +515,7 @@ public class TwitchBomb : MonoBehaviour
 		twitchPlaysCameraTransform.localRotation = Quaternion.Euler(HeldFrontFace ? -localQuaternion.eulerAngles : localQuaternion.eulerAngles);
 	}
 
-	private void CauseStrikesToExplosion(string reason)
+	public void CauseStrikesToExplosion(string reason)
 	{
 		for (int strikesToMake = StrikeLimit - StrikeCount; strikesToMake > 0; --strikesToMake)
 		{

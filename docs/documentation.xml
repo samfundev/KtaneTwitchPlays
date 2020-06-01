@@ -4,6 +4,23 @@
         <name>TwitchPlaysAssembly</name>
     </assembly>
     <members>
+        <member name="T:LeaderboardController">
+            <summary>
+            Controls whether or not records will be saved to the leaderboard and if stats can be changed.
+            Call <see cref="M:LeaderboardController.Install"/> to set it up and then call <see cref="M:LeaderboardController.DisableLeaderboards"/> to disable the leaderboards.
+            Leaderboards will re-enabled once the game goes back to the setup state. Make sure to disable them again after that if they should still be disabled.
+            </summary>
+        </member>
+        <member name="M:LeaderboardController.Install">
+            <summary>Installs everything necessary to work and only needs to be called once. Records will still be saved if this is not called.</summary>
+        </member>
+        <member name="M:LeaderboardController.DisableLeaderboards">
+            <summary>
+            Disables records being saved to leaderboards and stat changes.
+            Leaderboards are re-enabled once the game goes back to the setup state.
+            Make sure to disable them again after that if they should still be disabled
+            </summary>
+        </member>
         <member name="T:KModkit.KMBombInfoExtensions">
             <summary>
             Some helper extensions methods for the KMBombInfo class.
