@@ -48,16 +48,11 @@ public class SimonsStagesComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal(_component.GetValue<List<string>>("solutionNames").Select(color => color[0]).Join());
 	}
 
-	static SimonsStagesComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("SimonsStagesScript", "simonsStages");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("SimonsStagesScript", "simonsStages");
 	private readonly object _component;
 
 	private readonly object[] lightDevices;
-	private char[] colorOrder;
+	private readonly char[] colorOrder;
 
 	private readonly KMSelectable[] selectables;
 }

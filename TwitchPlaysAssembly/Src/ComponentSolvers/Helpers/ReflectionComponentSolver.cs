@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class ReflectionComponentSolver : ComponentSolver
 {
-	public ReflectionComponentSolver(TwitchModule module, string componentString, string helpMessage) :
+	protected ReflectionComponentSolver(TwitchModule module, string componentString, string helpMessage) :
 		base(module)
 	{
 		if (!componentTypes.ContainsKey(componentString))

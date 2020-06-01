@@ -156,12 +156,7 @@ public class CoffeebucksComponentSolver : ComponentSolver
 		}
 	}
 
-	static CoffeebucksComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("coffeebucksScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("coffeebucksScript");
 	private readonly object _component;
 
 	private readonly KMSelectable[] selectables;

@@ -7,7 +7,7 @@ using System.Threading;
 /// </summary>
 static class MainThreadQueue
 {
-	static Queue<Action> ActionQueue = new Queue<Action>();
+	static readonly Queue<Action> ActionQueue = new Queue<Action>();
 	static int MainThreadID;
 
 	/// <summary>

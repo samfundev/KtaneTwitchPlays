@@ -53,14 +53,8 @@ public class EmojiMathComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_buttons[11]);
 	}
 
-	static EmojiMathComponentSolver()
-	{
-		_componentType = ReflectionHelper.FindType("EmojiMathModule");
-		_buttonsField = _componentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type _componentType;
-	private static readonly FieldInfo _buttonsField;
+	private static readonly Type _componentType = ReflectionHelper.FindType("EmojiMathModule");
+	private static readonly FieldInfo _buttonsField = _componentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 	private bool _negativeActive;

@@ -56,16 +56,10 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		}
 	}
 
-	static TranslatedWhosOnFirstComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("WhosOnFirstTranslatedModule");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
+	private readonly string languageCode;
 
-	private string languageCode;
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("WhosOnFirstTranslatedModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 }

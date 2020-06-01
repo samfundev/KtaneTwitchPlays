@@ -82,14 +82,8 @@ public class ProbingComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_wires[blue]);
 	}
 
-	static ProbingComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ProbingModule");
-		WiresField = ComponentType.GetField("selectables", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo WiresField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ProbingModule");
+	private static readonly FieldInfo WiresField = ComponentType.GetField("selectables", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly MonoBehaviour[] _wires;
 }

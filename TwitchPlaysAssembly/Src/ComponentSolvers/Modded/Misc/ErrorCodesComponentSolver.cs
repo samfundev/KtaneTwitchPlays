@@ -36,16 +36,9 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_submit);
 	}
 
-	static ErrorCodesComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ErrorCodes");
-		ButtonsField = ComponentType.GetField("numberButtons", BindingFlags.Public | BindingFlags.Instance);
-		SendField = ComponentType.GetField("sendButton", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly FieldInfo SendField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ErrorCodes");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("numberButtons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo SendField = ComponentType.GetField("sendButton", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 	private readonly KMSelectable _submit;

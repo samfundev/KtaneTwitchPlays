@@ -42,14 +42,8 @@ public class StreetFighterComponentSolver : ComponentSolver
 		}
 	}
 
-	static StreetFighterComponentSolver()
-	{
-		_componentType = ReflectionHelper.FindType("streetFighterScript");
-		fighterButtonsField = _componentType.GetField("fighterButton", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type _componentType;
-	private static readonly FieldInfo fighterButtonsField;
+	private static readonly Type _componentType = ReflectionHelper.FindType("streetFighterScript");
+	private static readonly FieldInfo fighterButtonsField = _componentType.GetField("fighterButton", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly object _component;
 

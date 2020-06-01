@@ -47,7 +47,7 @@ public class TwitchPlaySettingsData
 	public int FindClaimAddTime = 5;
 	public int VoteCountdownTime = 60;
 	public bool EnableVoting = true;
-	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.getVoteDict();
+	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.GetVoteDict();
 	public float DynamicScorePercentage = 0.5f;
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
@@ -75,9 +75,9 @@ public class TwitchPlaySettingsData
 	public int TimeModeMinimumTimeLost = 15;
 	public int TimeModeMinimumTimeGained = 20;
 	public float AwardDropMultiplierOnStrike = 0.80f;
-	public bool TimeModeTimeForActions = true; 
+	public bool TimeModeTimeForActions = true;
 
-	public bool AutoSetVSModeTeams = false; 
+	public bool AutoSetVSModeTeams = false;
 	public bool VSModeBalancedTeams = true;
 	public bool VSModePlayerLockout = true;
 	public int VSModeGoodSplit = 35;
@@ -403,7 +403,7 @@ public class TwitchPlaySettingsData
 
 	public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
-	private bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
+	private static bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
 	{
 		MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");
 		int count = matches.Count > 0
@@ -420,8 +420,7 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
-	private bool ValidateFloat(ref float input, float def, bool forceUpdate) => ValidateFloat(ref input, def, float.MinValue, float.MaxValue, forceUpdate);
-	private bool ValidateFloat(ref float input, float def, float min = float.MinValue, float max = float.MaxValue, bool forceUpdate = false)
+	private static bool ValidateFloat(ref float input, float def, float min = float.MinValue, float max = float.MaxValue, bool forceUpdate = false)
 	{
 		if (input < min || input > max || forceUpdate)
 		{
@@ -432,8 +431,7 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
-	private bool ValidateInt(ref int input, int def, bool forceUpdate) => ValidateInt(ref input, def, int.MinValue, int.MaxValue, forceUpdate);
-	private bool ValidateInt(ref int input, int def, int min = int.MinValue, int max = int.MaxValue, bool forceUpdate = false)
+	private static bool ValidateInt(ref int input, int def, int min = int.MinValue, int max = int.MaxValue, bool forceUpdate = false)
 	{
 		if (input < min || input > max || forceUpdate)
 		{
@@ -444,7 +442,7 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
-	private bool ValidateDictionaryEntry(string key, ref Dictionary<string, string> input, Dictionary<string, string> def, bool forceUpdate = false)
+	private static bool ValidateDictionaryEntry(string key, ref Dictionary<string, string> input, Dictionary<string, string> def, bool forceUpdate = false)
 	{
 		if (!input.ContainsKey(key) || forceUpdate)
 		{
@@ -455,7 +453,7 @@ public class TwitchPlaySettingsData
 		return true;
 	}
 
-	private bool ValidateModDistribution(ref Dictionary<string, ModuleDistributions> distributions)
+	private static bool ValidateModDistribution(ref Dictionary<string, ModuleDistributions> distributions)
 	{
 		bool result = true;
 		List<string> invalidKeys = new List<string>();
@@ -476,7 +474,7 @@ public class TwitchPlaySettingsData
 			if (!key.EqualsIgnoreCase(key) || key.Contains(" "))
 				invalidKeys.Add(key);
 		}
-		if (invalidKeys.Any())
+		if (invalidKeys.Count > 0)
 		{
 			result = false;
 			foreach (string key in invalidKeys)
@@ -628,11 +626,11 @@ public static class TwitchPlaySettings
 	public static int SettingsVersion = 2; //Bump this up each time there is a breaking file format change (like a change to the string formats themselves).
 	public static TwitchPlaySettingsData data;
 
-	private static List<string> Players = new List<string>();
+	private static readonly List<string> Players = new List<string>();
 	private static int ClearReward = 0;
 	private static int RetryReward = 0;
 
-	public static Dictionary<VoteTypes, int> getVoteDict()
+	public static Dictionary<VoteTypes, int> GetVoteDict()
 	{
 		Dictionary<VoteTypes, int> Dict = new Dictionary<VoteTypes, int>();
 		foreach(VoteTypes Name in Enum.GetValues(typeof(VoteTypes)))
@@ -718,13 +716,10 @@ public static class TwitchPlaySettings
 		}
 		try
 		{
-			using (StreamWriter file =
-				new StreamWriter(Path.Combine(data.TPSharedFolder, data.TPSolveStrikeLog), true))
+			using StreamWriter file = new StreamWriter(Path.Combine(data.TPSharedFolder, data.TPSolveStrikeLog), true);
+			for (int i = 0; i < copies; i++)
 			{
-				for (int i = 0; i < copies; i++)
-				{
-					file.WriteLine(RecordMessageTone);
-				}
+				file.WriteLine(RecordMessageTone);
 			}
 		}
 		catch (Exception ex)
@@ -809,7 +804,7 @@ public static class TwitchPlaySettings
 		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.IndexOf(split[0], StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
 
 		DebugHelper.Log($"Found {settingFields.Count} settings");
-		if (!settingFields.Any())
+		if (settingFields.Count == 0)
 		{
 			return new Tuple<bool, string>(false, $"Setting {setting} not found.");
 		}
@@ -817,7 +812,7 @@ public static class TwitchPlaySettings
 		var settingField = settingFields[0];
 		if (settingFields.Count > 1)
 		{
-			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
+			settingField = settingFields.Find(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
 			if (settingField == null)
 				return new Tuple<bool, string>(false, $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}");
 		}
@@ -836,7 +831,7 @@ public static class TwitchPlaySettings
 		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.IndexOf(split[0], StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
 
 		DebugHelper.Log($"Found {settingFields.Count} settings");
-		if (!settingFields.Any())
+		if (settingFields.Count == 0)
 		{
 			return new Tuple<bool, string>(false, $"Setting {setting} not found.");
 		}
@@ -844,7 +839,7 @@ public static class TwitchPlaySettings
 		var settingField = settingFields[0];
 		if (settingFields.Count > 1)
 		{
-			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
+			settingField = settingFields.Find(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
 			if (settingField == null)
 				return new Tuple<bool, string>(false, $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}");
 		}
@@ -981,7 +976,7 @@ public static class TwitchPlaySettings
 		var settingFields = tpdata.GetFields(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.IndexOf(split[0], StringComparison.InvariantCultureIgnoreCase) >= 0).ToList();
 
 		DebugHelper.Log($"Found {settingFields.Count} settings");
-		if (!settingFields.Any())
+		if (settingFields.Count == 0)
 		{
 			return $"Setting {setting} not found.";
 		}
@@ -989,7 +984,7 @@ public static class TwitchPlaySettings
 		var settingField = settingFields[0];
 		if (settingFields.Count > 1)
 		{
-			settingField = settingFields.FirstOrDefault(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
+			settingField = settingFields.Find(x => x.Name.Equals(split[0], StringComparison.InvariantCultureIgnoreCase));
 			if (settingField == null)
 				return $"More than one setting with the name {setting} was found. Here are the settings available with the specified name: {settingFields.Select(x => x.Name).Join(", ")}";
 		}

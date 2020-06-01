@@ -13,7 +13,7 @@ public class TwitchLeaderboardTableSolo : MonoBehaviour
 	[Header("Values")]
 	public int maximumRowCount = 20;
 
-	private List<TwitchLeaderboardSoloRow> _instancedRows = new List<TwitchLeaderboardSoloRow>();
+	private readonly List<TwitchLeaderboardSoloRow> _instancedRows = new List<TwitchLeaderboardSoloRow>();
 	public Leaderboard.LeaderboardEntry solver = null;
 	public int bombCount = 0;
 

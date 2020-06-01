@@ -10,15 +10,15 @@ using Formatting = Newtonsoft.Json.Formatting;
 [Flags]
 public enum AccessLevel
 {
-	Streamer = 0x10000,
-	SuperUser = 0x8000,
-	Admin = 0x4000,
-	Mod = 0x2000,
-
-	Defuser = 0x0004,
-	Banned = 0x0002,
+	User = 0x0000,
 	NoPoints = 0x0001,
-	User = 0x0000
+	Banned = 0x0002,
+	Defuser = 0x0004,
+
+	Mod = 0x2000,
+	Admin = 0x4000,
+	SuperUser = 0x8000,
+	Streamer = 0x10000
 }
 
 public class BanData
@@ -42,7 +42,7 @@ public static class UserAccess
 
 		public static UserAccessData Instance
 		{
-			get => _instance ?? (_instance = new UserAccessData());
+			get => _instance ??= new UserAccessData();
 			set => _instance = value;
 		}
 		private static UserAccessData _instance;

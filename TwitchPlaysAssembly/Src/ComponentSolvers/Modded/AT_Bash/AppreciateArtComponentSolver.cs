@@ -68,20 +68,10 @@ public class AppreciateArtComponentSolver : ComponentSolver
 		}
 	}
 
-	static AppreciateArtComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("AppreciateArtModule");
-		SolvedField = ComponentType.GetField("_solved", BindingFlags.NonPublic | BindingFlags.Instance);
-		AppreciationTimeRequiredField = ComponentType.GetField("_appreciationRequiredDuration", BindingFlags.NonPublic | BindingFlags.Instance);
-		StartAppreciateMethod = ComponentType.GetMethod("StartAppreciatingArt", BindingFlags.NonPublic | BindingFlags.Instance);
-		StopAppreciateMethod = ComponentType.GetMethod("StopAppreciatingArt", BindingFlags.NonPublic | BindingFlags.Instance);
-		EnlightenMethod = ComponentType.GetMethod("Enlighten", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo SolvedField;
-	private static readonly FieldInfo AppreciationTimeRequiredField;
-	private static readonly MethodInfo StartAppreciateMethod;
-	private static readonly MethodInfo StopAppreciateMethod;
-	private static readonly MethodInfo EnlightenMethod;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("AppreciateArtModule");
+	private static readonly FieldInfo SolvedField = ComponentType.GetField("_solved", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo AppreciationTimeRequiredField = ComponentType.GetField("_appreciationRequiredDuration", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo StartAppreciateMethod = ComponentType.GetMethod("StartAppreciatingArt", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo StopAppreciateMethod = ComponentType.GetMethod("StopAppreciatingArt", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo EnlightenMethod = ComponentType.GetMethod("Enlighten", BindingFlags.NonPublic | BindingFlags.Instance);
 }

@@ -32,7 +32,7 @@ static class ProfileHelper
 		}
 	}
 
-	public static string GetProperProfileName(string profile) => TwitchPlaySettings.data.ProfileWhitelist.FirstOrDefault(str => string.Equals(str, profile, StringComparison.InvariantCultureIgnoreCase));
+	public static string GetProperProfileName(string profile) => TwitchPlaySettings.data.ProfileWhitelist.Find(str => string.Equals(str, profile, StringComparison.InvariantCultureIgnoreCase));
 
 	public static bool Add(string profile)
 	{

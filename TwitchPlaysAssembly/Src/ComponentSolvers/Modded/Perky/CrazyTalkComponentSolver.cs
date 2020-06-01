@@ -38,14 +38,8 @@ public class CrazyTalkComponentSolver : ComponentSolver
 		}
 	}
 
-	static CrazyTalkComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("CrazyTalkModule");
-		ToggleField = ComponentType.GetField("toggleSwitch", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ToggleField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("CrazyTalkModule");
+	private static readonly FieldInfo ToggleField = ComponentType.GetField("toggleSwitch", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly MonoBehaviour _toggle;
 }

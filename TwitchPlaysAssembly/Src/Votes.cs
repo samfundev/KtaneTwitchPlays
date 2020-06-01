@@ -24,7 +24,7 @@ public static class Votes
 	private static float VoteTimeRemaining = -1f;
 	internal static VoteTypes CurrentVoteType;
 
-	public static bool Active => (voteInProgress != null);
+	public static bool Active => voteInProgress != null;
 	internal static int TimeLeft => Mathf.CeilToInt(VoteTimeRemaining);
 	internal static int NumVoters => Voters.Count;
 
@@ -32,7 +32,7 @@ public static class Votes
 	{
 		{
 			VoteTypes.Detonation, new VoteData {
-				name = "Detonate the bomb", 
+				name = "Detonate the bomb",
 				onSuccess = () => TwitchGame.Instance.Bombs[0].CauseExplosionByVote()
 			}
 		},
@@ -147,10 +147,7 @@ public static class Votes
 			return;
 		}
 
-		if (!Voters.ContainsKey(user))
-			Voters.Add(user, vote);
-		else
-			Voters[user] = vote;
+		Voters[user] = vote;
 		IRCConnection.SendMessage($"{user} voted {(vote ? "yes" : "no")}.");
 	}
 

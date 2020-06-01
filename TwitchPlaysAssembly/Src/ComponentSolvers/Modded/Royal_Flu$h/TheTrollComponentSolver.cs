@@ -16,7 +16,6 @@ public class TheTrollComponentSolver : ComponentSolver
 		{
 			command = command.Replace("press at ", "");
 			TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
-			int timeRemaining = (int) timerComponent.TimeRemaining;
 			if (!int.TryParse(command, out int secstopress))
 			{
 				yield return "sendtochaterror Number not valid!";
@@ -30,12 +29,13 @@ public class TheTrollComponentSolver : ComponentSolver
 			}
 
 			yield return null;
+			int timeRemaining;
 			do
 			{
 				yield return null;
 				yield return "trycancel Button was't pressed due to request to cancel.";
 				timeRemaining = (int) timerComponent.TimeRemaining;
-			}while(timeRemaining % 10 != secstopress);
+			} while (timeRemaining % 10 != secstopress);
 			yield return DoInteractionClick(trollButton[0]);
 		}
 		else if (command.StartsWith("press"))

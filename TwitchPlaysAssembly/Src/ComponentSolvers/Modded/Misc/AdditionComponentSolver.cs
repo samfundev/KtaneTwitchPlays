@@ -57,12 +57,7 @@ public class AdditionComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal($"submit {correctAnswer}");
 	}
 
-	static AdditionComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("AdditionScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("AdditionScript");
 	private readonly object _component;
 
 	private readonly KMSelectable[] numberSelectables;

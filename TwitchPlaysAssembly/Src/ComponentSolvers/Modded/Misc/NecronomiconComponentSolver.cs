@@ -15,7 +15,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
 		inputCommand = inputCommand.ToLowerInvariant().Trim();
-		string[] split = inputCommand.Split(new[] { ' ', ',', ';' }, System.StringSplitOptions.RemoveEmptyEntries);
+		string[] split = inputCommand.SplitFull(' ', ',', ';');
 
 		if (split.Length == 1 && split[0].EqualsAny("cycle", "c", "pages"))
 		{
@@ -81,12 +81,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal("page " + _component.GetValue<int>("correctPage"));
 	}
 
-	static NecronomiconComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("necronomiconScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("necronomiconScript");
 
 	private readonly object _component;
 	private readonly KMSelectable[] selectables;

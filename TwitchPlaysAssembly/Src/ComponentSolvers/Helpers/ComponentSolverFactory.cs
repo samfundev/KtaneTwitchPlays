@@ -19,16 +19,13 @@ public static class ComponentSolverFactory
 	}
 
 	private delegate ComponentSolver ModComponentSolverDelegate(TwitchModule module);
-	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators;
-	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation;
-	private static readonly Dictionary<string, ModuleInformation> DefaultModComponentSolverInformation;
+	private static readonly Dictionary<string, ModComponentSolverDelegate> ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
+	private static readonly Dictionary<string, ModuleInformation> ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
+	private static readonly Dictionary<string, ModuleInformation> DefaultModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
 	static ComponentSolverFactory()
 	{
 		DebugHelper.Log();
-		ModComponentSolverCreators = new Dictionary<string, ModComponentSolverDelegate>();
-		ModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
-		DefaultModComponentSolverInformation = new Dictionary<string, ModuleInformation>();
 
 		//AT_Bash Modules
 		ModComponentSolverCreators["MotionSense"] = module => new MotionSenseComponentSolver(module);
@@ -204,7 +201,6 @@ public static class ComponentSolverFactory
 
 		//Procyon modules
 		ModComponentSolverInformation["theRule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 7 };
-		
 
 		//Royal_Flu$h
 		ModComponentSolverInformation["coffeebucks"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleScore = 11 };
@@ -928,8 +924,8 @@ public static class ComponentSolverFactory
 
 				moduleName = Regex.Replace(moduleName, @" \((Solve|Time)\)", "");
 
-				string normalize(string value) => value.ToLowerInvariant().Replace('’', '\'');
-				bool equalNames(string nameA, string nameB) => normalize(nameA) == normalize(nameB);
+				static string normalize(string value) => value.ToLowerInvariant().Replace('’', '\'');
+				static bool equalNames(string nameA, string nameB) => normalize(nameA) == normalize(nameB);
 
 				string moduleID = null;
 				var bombComponent = ModManager.Instance.GetValue<Dictionary<string, BombComponent>>("loadedBombComponents").Values.FirstOrDefault(module => equalNames(module.GetModuleDisplayName(), moduleName));
@@ -939,7 +935,7 @@ public static class ComponentSolverFactory
 				}
 
 				if (moduleID == null)
-					moduleID = GetModuleInformation().FirstOrDefault(info => equalNames(info.moduleDisplayName, moduleName))?.moduleID;
+					moduleID = Array.Find(GetModuleInformation(), info => equalNames(info.moduleDisplayName, moduleName))?.moduleID;
 
 				if (moduleID == null)
 				{
@@ -1570,8 +1566,7 @@ public static class ComponentSolverFactory
 					continue;
 
 				Type type = component.GetType();
-				MethodInfo candidateMethod = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-					.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
+				MethodInfo candidateMethod = Array.Find(type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance), x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 				if (candidateMethod == null) continue;
 
 				commandComponentType = type;
@@ -1581,9 +1576,7 @@ public static class ComponentSolverFactory
 			return null;
 		}
 
-		MethodInfo solveHandler = commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-			.FirstOrDefault(x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
-		return solveHandler;
+		return Array.Find(commandComponentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance), x => (x.ReturnType == typeof(void) || x.ReturnType == typeof(IEnumerator)) && x.GetParameters().Length == 0 && x.Name.Equals("TwitchHandleForcedSolve"));
 	}
 
 	private static FieldInfo FindAbandonModuleList(Type commandComponentType)

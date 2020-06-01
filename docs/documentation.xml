@@ -891,7 +891,7 @@
             <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
             Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being top left and bottom right respectively.
             Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
-            Zoom and Tilt or Superzoom and Tilt can be be put back to back to do both at the same time.
+            Zoom and Tilt or Superzoom and Tilt can be put back to back to do both at the same time.
             </summary>
         </member>
         <member name="T:PostGameCommands">
@@ -1000,7 +1000,7 @@
             </summary>
         </member>
         <member name="F:System.IO.Compression.ZipStorer.Compression.Store">
-            <summary>Uncompressed storage</summary> 
+            <summary>Uncompressed storage</summary>
         </member>
         <member name="F:System.IO.Compression.ZipStorer.Compression.Deflate">
             <summary>Deflate compression method</summary>
@@ -1094,7 +1094,7 @@
             <param name="_method">Compression method</param>
             <param name="_pathname">Full path of file to add to Zip storage</param>
             <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
-            <param name="_comment">Comment for stored file</param>        
+            <param name="_comment">Comment for stored file</param>
         </member>
         <member name="M:System.IO.Compression.ZipStorer.AddStream(System.IO.Compression.ZipStorer.Compression,System.String,System.IO.Stream,System.DateTime,System.String)">
             <summary>
@@ -1114,7 +1114,7 @@
         </member>
         <member name="M:System.IO.Compression.ZipStorer.ReadCentralDir">
             <summary>
-            Read all the file records in the central directory 
+            Read all the file records in the central directory
             </summary>
             <returns>List of all entries in directory</returns>
         </member>

@@ -62,14 +62,8 @@ public sealed class Facility : GameRoom
 		method.Invoke(_facilityRoom, null);
 	}
 
-	static Facility()
-	{
-		TurnOffEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOffEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
-		TurnOnEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOnEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly MethodInfo TurnOffEmergencyLightsMethod;
-	private static readonly MethodInfo TurnOnEmergencyLightsMethod;
+	private static readonly MethodInfo TurnOffEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOffEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo TurnOnEmergencyLightsMethod = typeof(FacilityRoom).GetMethod("TurnOnEmergencyLights", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly FacilityRoom _facilityRoom;
 }

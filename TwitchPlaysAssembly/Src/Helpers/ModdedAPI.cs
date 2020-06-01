@@ -34,13 +34,15 @@ static class ModdedAPI
 
 	public static bool TryGetAs<T>(string name, out T value)
 	{
+#pragma warning disable IDE0038
 		if (API.TryGetValue(name, out object objectValue) && objectValue is T)
+#pragma warning restore
 		{
 			value = (T) objectValue;
 			return true;
 		}
 
-		value = default(T);
+		value = default;
 		return false;
 	}
 
@@ -49,7 +51,9 @@ static class ModdedAPI
 		if (sharedAPI != null)
 			return;
 
+#pragma warning disable RCS1128
 		var apiObject = GameObject.Find("ModdedAPI_Info");
+#pragma warning restore
 		if (apiObject == null)
 		{
 			apiObject = new GameObject("ModdedAPI_Info", typeof(ModdedAPIBehaviour));
@@ -115,7 +119,9 @@ public class ModdedAPIBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public object this[string key]
 	{
+#pragma warning disable IDE0027
 		get { return GetEnabledProperty(key).Get(); }
+#pragma warning restore
 		set
 		{
 			if (!_properties.ContainsKey(key))
@@ -139,7 +145,9 @@ public class ModdedAPIBehaviour : MonoBehaviour, IDictionary<string, object>
 
 	public ICollection<object> Values
 	{
+#pragma warning disable IDE0025
 		get { throw new NotSupportedException("The Values property is not supported in this Dictionary."); }
+#pragma warning restore
 	}
 
 	public void Add(KeyValuePair<string, object> item)

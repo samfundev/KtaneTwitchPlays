@@ -53,9 +53,7 @@ public static class HoldableCommands
 		if (holdable.CommandType == typeof(AlarmClockCommands))
 			return AlarmClockCommands.Snooze(holdable, user, isWhisper);
 
-		if (holdable.CommandType == typeof(IRCConnectionManagerCommands) ||
-		    holdable.CommandType == typeof(MissionBinderCommands) ||
-		    holdable.CommandType == typeof(FreeplayCommands))
+		if (holdable.CommandType.EqualsAny(typeof(IRCConnectionManagerCommands), typeof(MissionBinderCommands), typeof(FreeplayCommands)))
 			return holdable.RespondToCommand(user, isWhisper);
 
 		return holdable.RespondToCommand(user, cmd, isWhisper);

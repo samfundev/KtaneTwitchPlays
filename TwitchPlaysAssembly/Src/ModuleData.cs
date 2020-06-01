@@ -41,11 +41,11 @@ public class ModuleInformation
 	public bool ShouldSerializeadditionalNeedyTime() => additionalNeedyTime > 0;
 	public bool ShouldSerializescoreMethod() => scoreMethod != ScoreMethod.Default;
 	public bool ShouldSerializeunclaimedColor() => unclaimedColor != new Color();
-	public bool ShouldSerializebuiltIntoTwitchPlays() => false;
+	public static bool ShouldSerializebuiltIntoTwitchPlays() => false;
 	public bool ShouldSerializevalidCommands() => !builtIntoTwitchPlays;
 	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
 	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
-	public bool ShouldSerializeScoreString() => false;
+	public static bool ShouldSerializeScoreString() => false;
 
 	public ModuleInformation Clone() => (ModuleInformation) MemberwiseClone();
 
@@ -119,8 +119,8 @@ public static class ModuleData
 {
 	public static bool DataHasChanged = true;
 	private static FileModuleInformation[] lastRead = new FileModuleInformation[0]; // Used to prevent overriding settings that are only controlled by the file.
-	private static FieldInfo[] infoFields = typeof(ModuleInformation).GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-	private static FieldInfo[] fileInfoFields = typeof(FileModuleInformation).GetFields();
+	private readonly static FieldInfo[] infoFields = typeof(ModuleInformation).GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+	private readonly static FieldInfo[] fileInfoFields = typeof(FileModuleInformation).GetFields();
 	public static void WriteDataToFile()
 	{
 		if (!DataHasChanged || ComponentSolverFactory.SilentMode) return;
@@ -135,7 +135,7 @@ public static class ModuleData
 				.ThenBy(info => info.moduleID)
 				.Select(info =>
 				{
-					var fileInfo = lastRead.FirstOrDefault(file => file.moduleID == info.moduleID);
+					var fileInfo = Array.Find(lastRead, file => file.moduleID == info.moduleID);
 					var dictionary = new Dictionary<string, object>();
 					foreach (var field in infoFields)
 					{
@@ -212,7 +212,7 @@ public static class ModuleData
 				}
 				else
 				{
-					var baseFieldInfo = infoFields.FirstOrDefault(field => field.Name == fileFieldInfo.Name);
+					var baseFieldInfo = Array.Find(infoFields, field => field.Name == fileFieldInfo.Name);
 					if (baseFieldInfo == null)
 						throw new NotSupportedException("Superclass isn't overriding only base fields.");
 

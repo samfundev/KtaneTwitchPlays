@@ -55,7 +55,7 @@ public class CrypticPasswordComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal(component.GetValue<string>("solutionWord"));
 	}
 
-	private static Type componentType = ReflectionHelper.FindType("CrypticPassword");
+	private static readonly Type componentType = ReflectionHelper.FindType("CrypticPassword");
 
 	private readonly object component;
 	private readonly KMSelectable[] selectables;

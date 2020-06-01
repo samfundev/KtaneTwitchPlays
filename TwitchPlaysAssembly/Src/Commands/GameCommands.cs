@@ -216,7 +216,7 @@ static class GameCommands
 			return;
 		}
 
-		void checkAndWrap()
+		static void checkAndWrap()
 		{
 			// We've reached the end, wrap back to the beginning.
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
@@ -320,7 +320,7 @@ static class GameCommands
 		}
 
 		var modules = FindModules(terms).ToList();
-		if (!modules.Any())
+		if (modules.Count == 0)
 		{
 			IRCConnection.SendMessage("No such modules.", user, !isWhisper);
 			return;
@@ -367,7 +367,7 @@ static class GameCommands
 		List<string> modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
 			.ToList();
-		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such claimed/solved modules.", user, !isWhisper);
+		IRCConnection.SendMessage(modules.Count > 0 ? $"Modules: {modules.Join(", ")}" : "No such claimed/solved modules.", user, !isWhisper);
 	}
 
 	/// <name>Find Solved</name>
@@ -380,7 +380,7 @@ static class GameCommands
 		List<string> modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - claimed by {module.PlayerName}")
 			.ToList();
-		IRCConnection.SendMessage(modules.Any() ? $"Modules: {modules.Join(", ")}" : "No such solved modules.", user, !isWhisper);
+		IRCConnection.SendMessage(modules.Count > 0 ? $"Modules: {modules.Join(", ")}" : "No such solved modules.", user, !isWhisper);
 	}
 
 	/// <name>Find Duplicate</name>
@@ -546,18 +546,18 @@ static class GameCommands
 			IRCConnection.SendMessage($"{user}, you don’t have moderator access.", user, !isWhisper);
 			return;
 		}
-		if ((del || un) && !all && (command == null || command.Trim() == ""))
+		if ((del || un) && !all && string.IsNullOrEmpty(command?.Trim()))
 		{
 			IRCConnection.SendMessage($"{user}, specify a command name or use “!{(del ? "del" : "un")}qall”.", user, !isWhisper);
 			return;
 		}
 		var matchingItems = all && un
 			? TwitchGame.Instance.CommandQueue.Where(item => item.Message.UserNickName == user).ToArray()
-			: all || (show && command.Trim() == "")
+			: all || (show && string.IsNullOrEmpty(command?.Trim()))
 				? TwitchGame.Instance.CommandQueue.Where(item => all || item.Message.UserNickName == user).ToArray()
 				: command.StartsWith("!")
 					? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.Text.StartsWith(command + " ")).ToArray()
-					: command.Trim().Count() > 0
+					: command.Trim().Length > 0
 						? TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Name != null && item.Name == command.Trim()).ToArray()
 						: TwitchGame.Instance.CommandQueue.Where(item => (all || del || item.Message.UserNickName == user) && item.Message.UserNickName.EqualsIgnoreCase(command)).ToArray();
 		if (matchingItems.Length == 0)
@@ -580,10 +580,12 @@ static class GameCommands
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = name?.Trim();
-		name = (name == null) ? "" : name;
+		name ??= "";
 
 		if (!now)
 		{
+			bool unnamed = string.IsNullOrEmpty(name);
+
 			bool _callChanged = false;
 			if (TwitchGame.Instance.CallingPlayers.Keys.Contains(user))
 			{
@@ -601,23 +603,23 @@ static class GameCommands
 			var _callsTotal = TwitchGame.Instance.CallingPlayers.Count;
 
 			// Only call if there are enough calls.
-			if (!(_callsTotal >= _callsNeeded))
+			if (_callsTotal < _callsNeeded)
 			{
-				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, (name == "") ? "the next queued command" : name);
+				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, unnamed ? "the next queued command" : name);
 				CallCountCommand();
 				return;
 			}
 
 			//we now need to call, but we need to check if uncommon things were called
-			if (_callsTotal != 1) 
+			if (_callsTotal != 1)
 			{
 				string[] _calls = TwitchGame.Instance.CallingPlayers.Values.ToArray();
 
-				for (int i = 1; i < _calls.Count(); i++)
+				for (int i = 1; i < _calls.Length; i++)
 				{
 					if (_calls[0] != _calls[i])
 					{
-						if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls still present.", user, (name == "") ? "the next queued command" : name);
+						if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls still present.", user, unnamed ? "the next queued command" : name);
 						else
 						{
 							IRCConnection.SendMessage("Sorry, uncommon calls were made. Please either correct your call(s) or use “!callnow” followed by the correct command to call.", user, !isWhisper);
@@ -626,7 +628,7 @@ static class GameCommands
 						return;
 					}
 				}
-				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, (name == "") ? "the next queued command" : name);
+				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, unnamed ? "the next queued command" : name);
 			}
 		}
 
@@ -665,7 +667,7 @@ static class GameCommands
 		else
 		{
 			// Call a named item in the queue.
-			call = TwitchGame.Instance.CommandQueue.FirstOrDefault(item => name.EqualsIgnoreCase(item.Name));
+			call = TwitchGame.Instance.CommandQueue.Find(item => name.EqualsIgnoreCase(item.Name));
 
 			if (call == null)
 			{
@@ -774,7 +776,7 @@ static class GameCommands
 		string[] __calls = TwitchGame.Instance.CallingPlayers.Values.ToArray();
 		string[] __callPlayers = TwitchGame.Instance.CallingPlayers.Keys.ToArray();
 		string builder = "";
-		for (int j = 0; j < __calls.Count(); j++) builder = builder + ((j == 0) ? "@" : ", @") + __callPlayers[j] + ": " + ((__calls[j] == "") ? "Next queued command" : __calls[j]);
+		for (int j = 0; j < __calls.Length; j++) builder = builder + ((j == 0) ? "@" : ", @") + __callPlayers[j] + ": " + (string.IsNullOrEmpty(__calls[j]) ? "Next queued command" : __calls[j]);
 		IRCConnection.SendMessageFormat("These players have already called: {0}", builder);
 	}
 
@@ -847,7 +849,7 @@ static class GameCommands
 				ModuleCommands.Assign(module, user, targetUser);
 		}
 		if (denied.Count == 1)
-			IRCConnection.SendMessage($"{user}, since you’re not a moderator, {denied.First()} has not been reassigned.", user, false);
+			IRCConnection.SendMessage($"{user}, since you’re not a moderator, {denied[0]} has not been reassigned.", user, false);
 		else if (denied.Count > 1)
 			IRCConnection.SendMessage($"{user}, since you’re not a moderator, {denied.Take(denied.Count - 1).Join(", ")} and {denied.Last()} have not been reassigned.", user, false);
 	}

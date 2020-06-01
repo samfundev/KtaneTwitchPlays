@@ -39,14 +39,8 @@ public class NeedyMathComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_buttons[11]);
 	}
 
-	static NeedyMathComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("NeedyMathModule");
-		ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("NeedyMathModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 }

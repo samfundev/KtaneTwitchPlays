@@ -13,7 +13,7 @@ public class TwitchLeaderboardTable : MonoBehaviour
 	[Header("Values")]
 	public int maximumRowCount = 20;
 
-	private List<TwitchLeaderboardRow> _instancedRows = new List<TwitchLeaderboardRow>();
+	private readonly List<TwitchLeaderboardRow> _instancedRows = new List<TwitchLeaderboardRow>();
 
 	private void Start()
 	{

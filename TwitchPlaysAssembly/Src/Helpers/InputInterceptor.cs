@@ -3,11 +3,6 @@ using UnityEngine;
 
 public static class InputInterceptor
 {
-	static InputInterceptor()
-	{
-		_inputSystems = Resources.FindObjectsOfTypeAll<AbstractControls>();
-	}
-
 	public static bool IsInputEnabled { get; private set; }
 
 	public static void EnableInput()
@@ -40,5 +35,5 @@ public static class InputInterceptor
 			}
 	}
 
-	private static readonly AbstractControls[] _inputSystems = null;
+	private static readonly AbstractControls[] _inputSystems = Resources.FindObjectsOfTypeAll<AbstractControls>();
 }

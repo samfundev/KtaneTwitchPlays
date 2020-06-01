@@ -35,14 +35,8 @@ public class SpeakEnglishComponentSolver : ComponentSolver
 		}
 	}
 
-	static SpeakEnglishComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("SpeakEnglishBehav");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("SpeakEnglishBehav");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly List<KMSelectable> _buttons;
 }

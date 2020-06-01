@@ -28,16 +28,16 @@ namespace System.IO.Compression
     /// <summary>
     /// Unique class for compression/decompression file. Represents a Zip file.
     /// </summary>
-    public class ZipStorer : IDisposable
+    public sealed class ZipStorer : IDisposable
     {
         /// <summary>
         /// Compression method enumeration
         /// </summary>
         public enum Compression : ushort {
-            /// <summary>Uncompressed storage</summary> 
+            /// <summary>Uncompressed storage</summary>
             Store = 0,
             /// <summary>Deflate compression method</summary>
-            Deflate = 8
+            Deflate = 1
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace System.IO.Compression
 
 #region Private fields
         // List of files to store
-        private List<ZipFileEntry> Files = new List<ZipFileEntry>();
+        private readonly List<ZipFileEntry> Files = new List<ZipFileEntry>();
         // Filename of storage file
         private string FileName;
         // Stream object of storage file
@@ -101,9 +101,9 @@ namespace System.IO.Compression
         // leave the stream open after the ZipStorer object is disposed
         private bool leaveOpen;
         // Static CRC32 Table
-        private static uint[] CrcTable = null;
+        private static readonly uint[] CrcTable = new uint[256];
         // Default filename encoder
-        private static Encoding DefaultEncoding = Encoding.GetEncoding(437);
+        private static readonly Encoding DefaultEncoding = Encoding.GetEncoding(437);
 #endregion
 
 #region Public methods
@@ -111,7 +111,6 @@ namespace System.IO.Compression
         static ZipStorer()
         {
             // Generate CRC32 table
-            CrcTable = new uint[256];
             for (int i = 0; i < CrcTable.Length; i++)
             {
                 uint c = (uint)i;
@@ -150,12 +149,13 @@ namespace System.IO.Compression
         /// <returns>A valid ZipStorer object</returns>
         public static ZipStorer Create(Stream _stream, string _comment, bool _leaveOpen=false)
         {
-            ZipStorer zip = new ZipStorer();
-            zip.Comment = _comment;
-            zip.ZipFileStream = _stream;
-            zip.Access = FileAccess.Write;
-            zip.leaveOpen = _leaveOpen;
-            return zip;
+			return new ZipStorer
+			{
+				Comment = _comment,
+				ZipFileStream = _stream,
+				Access = FileAccess.Write,
+				leaveOpen = _leaveOpen
+			};
         }
         /// <summary>
         /// Method to open an existing storage file
@@ -184,13 +184,14 @@ namespace System.IO.Compression
             if (!_stream.CanSeek && _access != FileAccess.Read)
                 throw new InvalidOperationException("Stream cannot seek");
 
-            ZipStorer zip = new ZipStorer();
-            //zip.FileName = _filename;
-            zip.ZipFileStream = _stream;
-            zip.Access = _access;
-            zip.leaveOpen = _leaveOpen;
+			ZipStorer zip = new ZipStorer
+			{
+				ZipFileStream = _stream,
+				Access = _access,
+				leaveOpen = _leaveOpen
+			};
 
-            if (zip.ReadFileInfo())
+			if (zip.ReadFileInfo())
                 return zip;
 
             /* prevent files/streams to be opened unused*/
@@ -205,17 +206,15 @@ namespace System.IO.Compression
         /// <param name="_method">Compression method</param>
         /// <param name="_pathname">Full path of file to add to Zip storage</param>
         /// <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
-        /// <param name="_comment">Comment for stored file</param>        
+        /// <param name="_comment">Comment for stored file</param>
         public void AddFile(Compression _method, string _pathname, string _filenameInZip, string _comment)
         {
             if (Access == FileAccess.Read)
                 throw new InvalidOperationException("Writing is not alowed");
 
-            using (var stream = new FileStream(_pathname, FileMode.Open, FileAccess.Read))
-            {
-                AddStream(_method, _filenameInZip, stream, File.GetLastWriteTime(_pathname), _comment);
-            }
-        }
+			using var stream = new FileStream(_pathname, FileMode.Open, FileAccess.Read);
+			AddStream(_method, _filenameInZip, stream, File.GetLastWriteTime(_pathname), _comment);
+		}
         /// <summary>
         /// Add full contents of a stream into the Zip storage
         /// </summary>
@@ -229,20 +228,22 @@ namespace System.IO.Compression
             if (Access == FileAccess.Read)
                 throw new InvalidOperationException("Writing is not alowed");
 
-            // Prepare the fileinfo
-            ZipFileEntry zfe = new ZipFileEntry();
-            zfe.Method = _method;
-            zfe.EncodeUTF8 = EncodeUTF8;
-            zfe.FilenameInZip = NormalizedFilename(_filenameInZip);
-            zfe.Comment = _comment ?? "";
+			// Prepare the fileinfo
+			ZipFileEntry zfe = new ZipFileEntry
+			{
+				Method = _method,
+				EncodeUTF8 = EncodeUTF8,
+				FilenameInZip = NormalizedFilename(_filenameInZip),
+				Comment = _comment ?? "",
 
-            // Even though we write the header now, it will have to be rewritten, since we don't know compressed size or crc.
-            zfe.Crc32 = 0;  // to be updated later
-            zfe.HeaderOffset = (uint)ZipFileStream.Position;  // offset within file of the start of this local record
-            zfe.ModifyTime = _modTime;
+				// Even though we write the header now, it will have to be rewritten, since we don't know compressed size or crc.
+				Crc32 = 0,  // to be updated later
+				HeaderOffset = (uint) ZipFileStream.Position,  // offset within file of the start of this local record
+				ModifyTime = _modTime
+			};
 
-            // Write local header
-            WriteLocalHeader(ref zfe);
+			// Write local header
+			WriteLocalHeader(ref zfe);
             zfe.FileOffset = (uint)ZipFileStream.Position;
 
             // Write file to zip (store)
@@ -288,7 +289,7 @@ namespace System.IO.Compression
             }
         }
         /// <summary>
-        /// Read all the file records in the central directory 
+        /// Read all the file records in the central directory
         /// </summary>
         /// <returns>List of all entries in directory</returns>
         public List<ZipFileEntry> ReadCentralDir()
@@ -318,18 +319,20 @@ namespace System.IO.Compression
 
                 Encoding encoder = encodeUTF8 ? Encoding.UTF8 : DefaultEncoding;
 
-                ZipFileEntry zfe = new ZipFileEntry();
-                zfe.Method = (Compression)method;
-                zfe.FilenameInZip = encoder.GetString(CentralDirImage, pointer + 46, filenameSize);
-                zfe.FileOffset = GetFileOffset(headerOffset);
-                zfe.FileSize = fileSize;
-                zfe.CompressedSize = comprSize;
-                zfe.HeaderOffset = headerOffset;
-                zfe.HeaderSize = headerSize;
-                zfe.Crc32 = crc32;
-                zfe.ModifyTime = DosTimeToDateTime(modifyTime) ?? DateTime.Now;
+				ZipFileEntry zfe = new ZipFileEntry
+				{
+					Method = (Compression) method,
+					FilenameInZip = encoder.GetString(CentralDirImage, pointer + 46, filenameSize),
+					FileOffset = GetFileOffset(headerOffset),
+					FileSize = fileSize,
+					CompressedSize = comprSize,
+					HeaderOffset = headerOffset,
+					HeaderSize = headerSize,
+					Crc32 = crc32,
+					ModifyTime = DosTimeToDateTime(modifyTime) ?? DateTime.Now
+				};
 
-                if (commentSize > 0)
+				if (commentSize > 0)
                     zfe.Comment = encoder.GetString(CentralDirImage, pointer + 46 + filenameSize + extraSize, commentSize);
 
                 result.Add(zfe);
@@ -469,20 +472,18 @@ namespace System.IO.Compression
         /// <remarks>Unique compression methods are Store and Deflate</remarks>
         public bool ExtractFile(ZipFileEntry _zfe, out byte[] _file)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                if (ExtractFile(_zfe, ms))
-                {
-                    _file = ms.ToArray();
-                    return true;
-                }
-                else
-                {
-                    _file = null;
-                    return false;
-                }
-            }
-        }
+			using MemoryStream ms = new MemoryStream();
+			if (ExtractFile(_zfe, ms))
+			{
+				_file = ms.ToArray();
+				return true;
+			}
+			else
+			{
+				_file = null;
+				return false;
+			}
+		}
         /// <summary>
         /// Removes one of many files in storage. It creates a new Zip file.
         /// </summary>
@@ -675,10 +676,10 @@ namespace System.IO.Compression
             long posStart = ZipFileStream.Position;
             long sourceStart = _source.CanSeek ? _source.Position : 0;
 
-            if (_zfe.Method == Compression.Store)
-                outStream = ZipFileStream;
-            else
-                outStream = new DeflateStream(ZipFileStream, CompressionMode.Compress, true);
+			if (_zfe.Method == Compression.Store)
+				outStream = ZipFileStream;
+			else
+				outStream = new DeflateStream(ZipFileStream, CompressionMode.Compress, true);
 
             _zfe.Crc32 = 0 ^ 0xffffffff;
 
@@ -726,13 +727,13 @@ namespace System.IO.Compression
                 5-10 Minute (059) 
                 11-15 Hour (023 on a 24-hour clock) 
         */
-        private uint DateTimeToDosTime(DateTime _dt)
+        private static uint DateTimeToDosTime(DateTime _dt)
         {
             return (uint)(
                 (_dt.Second / 2) | (_dt.Minute << 5) | (_dt.Hour << 11) |
                 (_dt.Day<<16) | (_dt.Month << 21) | ((_dt.Year - 1980) << 25));
         }
-        private DateTime? DosTimeToDateTime(uint _dt)
+        private static DateTime? DosTimeToDateTime(uint _dt)
         {
             int year = (int)(_dt >> 25) + 1980;
             int month = (int)(_dt >> 21) & 15;
@@ -741,7 +742,7 @@ namespace System.IO.Compression
             int minutes = (int)(_dt >> 5) & 63;
             int seconds = (int)(_dt & 31) * 2;
 
-            if (month==0 || day == 0)
+            if (month == 0 || day == 0)
                 return null;
 
             return new DateTime(year, month, day, hours, minutes, seconds);
@@ -770,7 +771,7 @@ namespace System.IO.Compression
             ZipFileStream.Position = lastPos;  // restore position
         }
         // Replaces backslashes with slashes to store in zip header
-        private string NormalizedFilename(string _filename)
+        private static string NormalizedFilename(string _filename)
         {
             string filename = _filename.Replace('\\', '/');
 

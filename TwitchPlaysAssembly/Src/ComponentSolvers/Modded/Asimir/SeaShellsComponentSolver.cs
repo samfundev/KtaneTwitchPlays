@@ -81,16 +81,9 @@ public class SeaShellsComponentSolver : ComponentSolver
 		}
 	}
 
-	static SeaShellsComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("SeaShellsModule");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		StageField = ComponentType.GetField("stage", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly FieldInfo StageField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("SeaShellsModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo StageField = ComponentType.GetField("stage", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly object _component;
 	private readonly KMSelectable[] _buttons;

@@ -9,26 +9,26 @@ public class UrlHelper : MonoBehaviour
 
 	private void Awake() => Instance = this;
 
-	public void ChangeMode(bool toShort)
+	public static void ChangeMode(bool toShort)
 	{
 		TwitchPlaySettings.data.LogUploaderShortUrls = toShort;
 		TwitchPlaySettings.WriteDataToFile();
 	}
 
-	public bool ToggleMode()
+	public static bool ToggleMode()
 	{
 		TwitchPlaySettings.data.LogUploaderShortUrls = !TwitchPlaySettings.data.LogUploaderShortUrls;
 		TwitchPlaySettings.WriteDataToFile();
 		return TwitchPlaySettings.data.LogUploaderShortUrls;
 	}
 
-	public string LogAnalyserFor(string url) => string.Format(TwitchPlaySettings.data.AnalyzerUrl + "#url={0}", url);
+	public static string LogAnalyserFor(string url) => string.Format(TwitchPlaySettings.data.AnalyzerUrl + "#url={0}", url);
 
-	public string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://tinyurl.com/v3twx5a" : "https://samfun123.github.io/KtaneTwitchPlays";
+	public static string CommandReference => TwitchPlaySettings.data.LogUploaderShortUrls ? "https://tinyurl.com/v3twx5a" : "https://samfun123.github.io/KtaneTwitchPlays";
 
-	public string ManualFor(string module, string type = "html", bool useVanillaRuleModifier = false) => string.Format(TwitchPlaySettings.data.RepositoryUrl + "{0}/{1}.{2}{3}", type.ToUpper(), NameToUrl(module), type, (useVanillaRuleModifier && type.Equals("html")) ? $"#{VanillaRuleModifier.GetRuleSeed()}" : "");
+	public static string ManualFor(string module, string type = "html", bool useVanillaRuleModifier = false) => string.Format(TwitchPlaySettings.data.RepositoryUrl + "{0}/{1}.{2}{3}", type.ToUpper(), NameToUrl(module), type, (useVanillaRuleModifier && type.Equals("html")) ? $"#{VanillaRuleModifier.GetRuleSeed()}" : "");
 
-	private string NameToUrl(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name).Replace("'", "’").Split(InvalidCharacters).Join("")).Replace("*", "%2A");
+	private static string NameToUrl(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name).Replace("'", "’").Split(InvalidCharacters).Join("")).Replace("*", "%2A");
 
 	private static readonly char[] InvalidCharacters = Path.GetInvalidFileNameChars().Where(c => c != '*').ToArray();
 }

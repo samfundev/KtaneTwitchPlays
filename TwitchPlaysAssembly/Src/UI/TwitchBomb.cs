@@ -494,7 +494,7 @@ public class TwitchBomb : MonoBehaviour
 		KTInputManager.Instance.SelectableManager.HandleFaceSelection();
 	}
 
-	public void RotateCameraByLocalQuaternion(GameObject gameObj, Quaternion localQuaternion)
+	public static void RotateCameraByLocalQuaternion(GameObject gameObj, Quaternion localQuaternion)
 	{
 		Transform twitchPlaysCameraTransform = gameObj?.transform.Find("TwitchPlayModuleCamera");
 		Camera cam = twitchPlaysCameraTransform?.GetComponentInChildren<Camera>();
@@ -539,7 +539,7 @@ public class TwitchBomb : MonoBehaviour
 		Bomb.OnStrike(null);
 	}
 
-	private IEnumerator ForceHeldRotation(bool? frontFace, float duration)
+	private static IEnumerator ForceHeldRotation(bool? frontFace, float duration)
 	{
 		var sm = KTInputManager.Instance.SelectableManager;
 		var baseTransform = sm.GetBaseHeldObjectTransform();
@@ -671,8 +671,6 @@ public class TwitchBomb : MonoBehaviour
 
 	public string CurrentTimerFormatted => Bomb.GetTimer().GetFormattedTime(CurrentTimer, true);
 
-	private string StartingTimerFormatted => Bomb.GetTimer().GetFormattedTime(BombStartingTimer, true);
-
 	public string GetFullFormattedTime => Math.Max(CurrentTimer, 0).FormatTime();
 
 	public string GetFullStartingTime => Math.Max(BombStartingTimer, 0).FormatTime();
@@ -696,8 +694,8 @@ public class TwitchBomb : MonoBehaviour
 		set { Bomb.NumStrikesToLose = value; HandleStrikeChanges(); }
 	}
 
-	public int bombSolvableModules => Bomb.GetSolvableComponentCount();
-	public int bombSolvedModules => Bomb.GetSolvedComponentCount();
+	public int BombSolvableModules => Bomb.GetSolvableComponentCount();
+	public int BombSolvedModules => Bomb.GetSolvedComponentCount();
 
 	public float BombStartingTimer;
 	#endregion

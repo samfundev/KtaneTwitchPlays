@@ -123,23 +123,12 @@ public class MurderComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_buttons[6]);
 	}
 
-	static MurderComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("MurderModule");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		DisplayField = ComponentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
-
-		DisplayValueField = ComponentType.GetField("displayVal", BindingFlags.NonPublic | BindingFlags.Instance);
-		SolutionValueField = ComponentType.GetField("solution", BindingFlags.NonPublic | BindingFlags.Instance);
-		IsActivatedField = ComponentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly FieldInfo DisplayField;
-	private static readonly FieldInfo DisplayValueField;
-	private static readonly FieldInfo SolutionValueField;
-	private static readonly FieldInfo IsActivatedField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("MurderModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo DisplayField = ComponentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo DisplayValueField = ComponentType.GetField("displayVal", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo SolutionValueField = ComponentType.GetField("solution", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo IsActivatedField = ComponentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private static readonly string[] People = { "Colonel Mustard", "Miss Scarlett", "Mrs Peacock", "Mrs White", "Professor Plum", "Reverend Green" };
 	private static readonly string[] Weapons = { "Dagger", "Candlestick", "Lead Pipe", "Revolver", "Rope", "Spanner" };

@@ -21,7 +21,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
-    <CodeAnalysisRuleSet>TwitchPlaysAssembly.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +30,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
-    <CodeAnalysisRuleSet>TwitchPlaysAssembly.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>..\docs\documentation.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -275,7 +273,7 @@
     <Compile Include="Src\ModuleDistributions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TwitchPlaysAssembly.ruleset" />
+    <None Include=".editorconfig" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -179,10 +179,10 @@ public class ModuleCameras : MonoBehaviour
 	public Text ConfidencePrefab => _data.ConfidencePrefab;
 	public Camera CameraPrefab => _data.CameraPrefab;
 	public RectTransform BombStatus => _data.BombStatus;
-	public Text[] NotesTexts => _data.NotesTexts;
-	public Image[] NotesTextBackgrounds => _data.NotesTextBackgrounds;
-	public Text[] NotesTextIDs => _data.NotesTextIDs;
-	public Image[] NotesTextIDsBackgrounds => _data.NotesTextIDsBackgrounds;
+	public Text[] NotesTexts;
+	public Image[] NotesTextBackgrounds;
+	public Text[] NotesTextIDs;
+	public Image[] NotesTextIDsBackgrounds;
 
 	[HideInInspector]
 	public bool CameraWallEnabled;
@@ -250,7 +250,15 @@ public class ModuleCameras : MonoBehaviour
 		{ TwitchPlaysMode.Training, Color.gray }
 	};
 
-	private void Awake() => _data = GetComponent<ModuleCamerasData>();
+	private void Awake()
+	{
+		_data = GetComponent<ModuleCamerasData>();
+
+		NotesTexts = _data.NotesTexts;
+		NotesTextBackgrounds = _data.NotesTextBackgrounds;
+		NotesTextIDs = _data.NotesTextIDs;
+		NotesTextIDsBackgrounds = _data.NotesTextIDsBackgrounds;
+	}
 
 	private void Start()
 	{
@@ -393,8 +401,8 @@ public class ModuleCameras : MonoBehaviour
 	public void UpdateSolves()
 	{
 		if (_currentBomb == null) return;
-		_currentSolves = _currentBomb.bombSolvedModules;
-		_currentTotalModules = _currentBomb.bombSolvableModules;
+		_currentSolves = _currentBomb.BombSolvedModules;
+		_currentTotalModules = _currentBomb.BombSolvableModules;
 		string solves = _currentSolves.ToString().PadLeft(_currentTotalModules.ToString().Length, char.Parse("0"));
 		Debug.Log(LogPrefix + "Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";
@@ -652,7 +660,7 @@ public class ModuleCameras : MonoBehaviour
 
 	private IEnumerator UnviewModuleCoroutine(TwitchModule handle)
 	{
-		var camera = _moduleCameras.FirstOrDefault(c => c.Module != null && c.Module == handle);
+		var camera = _moduleCameras.Find(c => c.Module != null && c.Module == handle);
 		if (camera == null)
 			yield break;
 
@@ -732,6 +740,6 @@ public class ModuleCameras : MonoBehaviour
 	public bool HasEmptySlot => _moduleCameras.Any(c => c.Module == null);
 
 	// Make sure automatic camera wall is enabled and respect EnableFactoryZenModeCameraWall
-	private bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryTrainingModeCameraWall && OtherModes.TrainingModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
+	private static bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryTrainingModeCameraWall && OtherModes.TrainingModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
 	#endregion
 }

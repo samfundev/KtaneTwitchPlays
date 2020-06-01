@@ -103,37 +103,24 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 
 	static TurnTheKeyAdvancedComponentSolver()
 	{
-		ComponentType = ReflectionHelper.FindType("TurnKeyAdvancedModule");
-		LeftKeyField = ComponentType.GetField("LeftKey", BindingFlags.Public | BindingFlags.Instance);
-		RightKeyField = ComponentType.GetField("RightKey", BindingFlags.Public | BindingFlags.Instance);
-		ActivatedField = ComponentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
-		BeforeLeftKeyField = ComponentType.GetField("LeftBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
-		BeforeRightKeyField = ComponentType.GetField("RightBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
-		AfterLeftKeyField = ComponentType.GetField("LeftAfterA", BindingFlags.NonPublic | BindingFlags.Static);
 		AfterLeftKeyField?.SetValue(null, LeftAfterA);
-		LeftKeyTurnedField = ComponentType.GetField("bLeftKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
-		RightKeyTurnedField = ComponentType.GetField("bRightKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
-		OnLeftKeyTurnMethod = ComponentType.GetMethod("OnLeftKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
-		OnRightKeyTurnMethod = ComponentType.GetMethod("OnRightKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
-		RightKeyAnimatorField = ComponentType.GetField("RightKeyAnim", BindingFlags.Public | BindingFlags.Instance);
-		LeftKeyAnimatorField = ComponentType.GetField("LeftKeyAnim", BindingFlags.Public | BindingFlags.Instance);
 	}
 
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo LeftKeyField;
-	private static readonly FieldInfo RightKeyField;
-	private static readonly FieldInfo ActivatedField;
-	private static readonly FieldInfo BeforeLeftKeyField;
-	private static readonly FieldInfo BeforeRightKeyField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("TurnKeyAdvancedModule");
+	private static readonly FieldInfo LeftKeyField = ComponentType.GetField("LeftKey", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo RightKeyField = ComponentType.GetField("RightKey", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo ActivatedField = ComponentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo BeforeLeftKeyField = ComponentType.GetField("LeftBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
+	private static readonly FieldInfo BeforeRightKeyField = ComponentType.GetField("RightBeforeA", BindingFlags.NonPublic | BindingFlags.Static);
 	// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-	private static readonly FieldInfo AfterLeftKeyField;
-	private static readonly FieldInfo LeftKeyTurnedField;
-	private static readonly FieldInfo RightKeyTurnedField;
-	private static readonly FieldInfo RightKeyAnimatorField;
-	private static readonly FieldInfo LeftKeyAnimatorField;
+	private static readonly FieldInfo AfterLeftKeyField = ComponentType.GetField("LeftAfterA", BindingFlags.NonPublic | BindingFlags.Static);
+	private static readonly FieldInfo LeftKeyTurnedField = ComponentType.GetField("bLeftKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo RightKeyTurnedField = ComponentType.GetField("bRightKeyTurned", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo RightKeyAnimatorField = ComponentType.GetField("RightKeyAnim", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo LeftKeyAnimatorField = ComponentType.GetField("LeftKeyAnim", BindingFlags.Public | BindingFlags.Instance);
 
-	private static readonly MethodInfo OnLeftKeyTurnMethod;
-	private static readonly MethodInfo OnRightKeyTurnMethod;
+	private static readonly MethodInfo OnLeftKeyTurnMethod = ComponentType.GetMethod("OnLeftKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo OnRightKeyTurnMethod = ComponentType.GetMethod("OnRightKeyTurn", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly MonoBehaviour _leftKey;
 	private readonly MonoBehaviour _rightKey;

@@ -59,14 +59,8 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 		}
 	}
 
-	static ExtendedPasswordComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 }

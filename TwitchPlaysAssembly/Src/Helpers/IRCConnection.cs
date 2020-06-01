@@ -226,7 +226,7 @@ public class IRCConnection : MonoBehaviour
 		StartCoroutine(twitchMessage.DoBackgroundColorChange(twitchMessage.HighlightColor));
 	}
 
-	IEnumerator HideMessage(TwitchMessage twitchMessage)
+	static IEnumerator HideMessage(TwitchMessage twitchMessage)
 	{
 		twitchMessage.RemoveMessage();
 		yield break;
@@ -323,7 +323,7 @@ public class IRCConnection : MonoBehaviour
 				stopwatch.Start();
 				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex])
 				{
-					alertText.text = $"The bot is currently disconnected. Attempting to connect in {((connectionRetryDelay[connectionRetryIndex] - stopwatch.ElapsedMilliseconds) / 1000f).ToString("N1")}";
+					alertText.text = $"The bot is currently disconnected. Attempting to connect in {(connectionRetryDelay[connectionRetryIndex] - stopwatch.ElapsedMilliseconds) / 1000f:N1}";
 					alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / (float) connectionRetryDelay[connectionRetryIndex], 1, 1);
 
 					yield return null;
@@ -476,16 +476,16 @@ public class IRCConnection : MonoBehaviour
 	/// A <see cref="TextReader"/> that reads lines from a <see cref="NetworkStream"/> and will check to see if any data is available to avoid blocking.
 	/// Allows you specify a seperate stream to read from if you have another stream (like a <see cref="SslStream"/>) wrapping your <see cref="NetworkStream"/>.
 	/// </summary>
-	class NetworkStreamLineReader : TextReader
+	class NetworkStreamLineReader : TextReader, IDisposable
 	{
-		Stream stream;
-		NetworkStream networkStream;
-		Decoder decoder = Encoding.UTF8.GetDecoder();
-		byte[] inputBuffer = new byte[512];
-		char[] characterBuffer = new char[Encoding.UTF8.GetMaxCharCount(512)];
-		int characterPosition = 0;
-		int charactersDecoded = 0;
-		StringBuilder stringBuilder = new StringBuilder(512);
+		readonly Stream stream;
+		readonly NetworkStream networkStream;
+		readonly Decoder decoder = Encoding.UTF8.GetDecoder();
+		readonly byte[] inputBuffer = new byte[512];
+		readonly char[] characterBuffer = new char[Encoding.UTF8.GetMaxCharCount(512)];
+		int characterPosition;
+		int charactersDecoded;
+		readonly StringBuilder stringBuilder = new StringBuilder(512);
 
 		public NetworkStreamLineReader(NetworkStream networkStream, Stream stream = null)
 		{
@@ -529,6 +529,11 @@ public class IRCConnection : MonoBehaviour
 			}
 
 			return null;
+		}
+
+		new public void Dispose()
+		{
+			networkStream.Close();
 		}
 	}
 
@@ -829,7 +834,7 @@ public class IRCConnection : MonoBehaviour
 					}
 					else if (pingTimeoutTest)
 					{
-						alertText.text = $"The bot might be disconnected from the server. Timing out in {(10 - stopwatch.ElapsedMilliseconds / 1000f).ToString("N1")}";
+						alertText.text = $"The bot might be disconnected from the server. Timing out in {10 - stopwatch.ElapsedMilliseconds / 1000f:N1}";
 						alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / 10000f, 1, 1);
 
 						if (stopwatch.ElapsedMilliseconds > 10000) // Timeout if there hasn't been a response to the ping for 10s.
@@ -963,7 +968,7 @@ public class IRCConnection : MonoBehaviour
 		_isModerator = true;
 	}
 
-	protected void InternalMessageReceived(string userNickName, string userColorCode, string text)
+	protected static void InternalMessageReceived(string userNickName, string userColorCode, string text)
 	{
 		const string actionStart = "\x01" + "ACTION ";
 		const string actionEnd = "\x01";

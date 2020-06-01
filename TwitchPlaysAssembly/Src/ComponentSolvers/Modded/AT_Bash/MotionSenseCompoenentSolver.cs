@@ -26,17 +26,10 @@ public class MotionSenseComponentSolver : ComponentSolver
 		IRCConnection.SendMessage("Motion Sense Status: " + (active ? "Active for " + (int) _needy.GetNeedyTimeRemaining() + " seconds" : "Inactive"));
 	}
 
-	static MotionSenseComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("MotionSenseModule");
-		ActiveField = ComponentType.GetField("_active", BindingFlags.NonPublic | BindingFlags.Instance);
-		NeedyField = ComponentType.GetField("NeedyModule", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("MotionSenseModule");
 	private static Component _component;
-	private static readonly FieldInfo ActiveField;
-	private static readonly FieldInfo NeedyField;
+	private static readonly FieldInfo ActiveField = ComponentType.GetField("_active", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo NeedyField = ComponentType.GetField("NeedyModule", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMNeedyModule _needy;
 }

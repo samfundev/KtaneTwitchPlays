@@ -137,7 +137,7 @@ public class LogUploader : MonoBehaviour
 
 					Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
 
-					callback(UrlHelper.Instance.LogAnalyserFor(rawUrl));
+					callback(UrlHelper.LogAnalyserFor(rawUrl));
 
 					break;
 				}
@@ -164,7 +164,7 @@ public class LogUploader : MonoBehaviour
 		}
 	}
 
-	public void PostToChat(string analysisUrl, string format = "Analysis for this bomb: {0}", string emote = "copyThis") =>
+	public static void PostToChat(string analysisUrl, string format = "Analysis for this bomb: {0}", string emote = "copyThis") =>
 		IRCConnection.SendMessageFormat($"{emote} {format}", analysisUrl);
 
 	public void GetBombUrl()

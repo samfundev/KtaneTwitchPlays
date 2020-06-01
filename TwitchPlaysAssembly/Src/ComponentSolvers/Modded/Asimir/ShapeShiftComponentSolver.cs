@@ -92,20 +92,11 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		}
 	}
 
-	static ShapeShiftComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ShapeShiftModule");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		DisplayLField = ComponentType.GetField("displayL", BindingFlags.NonPublic | BindingFlags.Instance);
-		DisplayRField = ComponentType.GetField("displayR", BindingFlags.NonPublic | BindingFlags.Instance);
-		IsActivatedField = ComponentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly FieldInfo DisplayLField;
-	private static readonly FieldInfo DisplayRField;
-	private static readonly FieldInfo IsActivatedField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ShapeShiftModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo DisplayLField = ComponentType.GetField("displayL", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo DisplayRField = ComponentType.GetField("displayR", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo IsActivatedField = ComponentType.GetField("isActivated", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 	private int _displayL;

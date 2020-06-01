@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public sealed class DistributionPool : ISerializable
 {
 	private readonly int RewardPerModule;
@@ -23,9 +24,11 @@ public sealed class DistributionPool : ISerializable
 	private List<int> ExtraData;
 
 	private string __poolDef;
-	public string PoolDefinition {
-		get { return __poolDef; }
-		private set {
+	public string PoolDefinition
+	{
+		get => __poolDef;
+		private set
+		{
 			__poolDef = value;
 
 			Type = PoolType.Invalid;
@@ -36,7 +39,7 @@ public sealed class DistributionPool : ISerializable
 			arguments.RemoveAt(0);
 
 			bool IsNeedy = false;
-			switch(mode)
+			switch (mode)
 			{
 				// Examples:
 				//     ALL_SOLVABLE (fair mix)
@@ -44,13 +47,13 @@ public sealed class DistributionPool : ISerializable
 				case "SOLVABLE":
 				case "ALLSOLVABLE":
 				case "ALL_SOLVABLE":
-					int ComponentSource = (int)KMComponentPool.ComponentSource.Mods | (int)KMComponentPool.ComponentSource.Base;
+					int ComponentSource = (int) KMComponentPool.ComponentSource.Mods | (int) KMComponentPool.ComponentSource.Base;
 					if (arguments.Count == 1)
 					{
 						if (arguments[0].Equals("MODS"))
-							ComponentSource = (int)KMComponentPool.ComponentSource.Mods;
+							ComponentSource = (int) KMComponentPool.ComponentSource.Mods;
 						else if (arguments[0].Equals("BASE"))
-							ComponentSource = (int)KMComponentPool.ComponentSource.Base;
+							ComponentSource = (int) KMComponentPool.ComponentSource.Base;
 						else
 							return; // Not valid
 					}
@@ -86,25 +89,26 @@ public sealed class DistributionPool : ISerializable
 							return;
 						ScoreMax = ScoreMin;
 					}
-					else foreach (string arg in arguments)
-					{
-						if ((mt = Regex.Match(arg, @"^([<>]=?) *(\d+)$")).Success)
+					else
+						foreach (string arg in arguments)
 						{
-							int temp;
-							if (!int.TryParse(mt.Groups[2].ToString(), out temp))
-								return;
-							switch (mt.Groups[1].ToString())
+							if ((mt = Regex.Match(arg, @"^([<>]=?) *(\d+)$")).Success)
 							{
-								case ">": ScoreMin = temp + 1; break;
-								case "<": ScoreMax = temp - 1; break;
-								case ">=": ScoreMin = temp; break;
-								case "<=": ScoreMax = temp; break;
-								default: return;
+								if (!int.TryParse(mt.Groups[2].ToString(), out int temp))
+									return;
+								switch (mt.Groups[1].ToString())
+								{
+									case ">": ScoreMin = temp + 1; break;
+									case "<": ScoreMax = temp - 1; break;
+									case ">=": ScoreMin = temp; break;
+									case "<=": ScoreMax = temp; break;
+									default: return;
+								}
 							}
+							else
+								return;
 						}
-						else
-							return;
-					}
+
 					if (arguments.Count == 2 && (ScoreMin == int.MinValue || ScoreMax == int.MaxValue))
 						return;
 
@@ -139,7 +143,7 @@ public sealed class DistributionPool : ISerializable
 	}
 
 	// Deserialization
-	public DistributionPool(SerializationInfo info, StreamingContext context)
+	private DistributionPool(SerializationInfo info, StreamingContext context)
 	{
 		PoolDefinition = (string)info.GetValue("Definition", typeof(string));
 
@@ -170,28 +174,28 @@ public sealed class DistributionPool : ISerializable
 		PoolDefinition = def;
 	}
 
-	private string GetTwitchPlaysID(KMGameInfo.KMModuleInfo moduleInfo)
+	private static string GetTwitchPlaysID(KMGameInfo.KMModuleInfo moduleInfo)
 	{
 		if (moduleInfo.IsMod)
 			return moduleInfo.ModuleId;
-		switch (moduleInfo.ModuleType)
+		return moduleInfo.ModuleType switch
 		{
-			case KMComponentPool.ComponentTypeEnum.Wires: return "WireSetComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Keypad: return "KeypadComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.BigButton: return "ButtonComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Memory: return "MemoryComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Simon: return "SimonComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Venn: return "VennWireComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Morse: return "MorseCodeComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.WireSequence: return "WireSequenceComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Password: return "PasswordComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Maze: return "InvisibleWallsComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.WhosOnFirst: return "WhosOnFirstComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.NeedyVentGas: return "NeedyVentComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.NeedyCapacitor: return "NeedyDischargeComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.NeedyKnob: return "NeedyKnobComponentSolver";
-			default: return moduleInfo.ModuleId;
-		}
+			KMComponentPool.ComponentTypeEnum.Wires => "WireSetComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Keypad => "KeypadComponentSolver",
+			KMComponentPool.ComponentTypeEnum.BigButton => "ButtonComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Memory => "MemoryComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Simon => "SimonComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Venn => "VennWireComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Morse => "MorseCodeComponentSolver",
+			KMComponentPool.ComponentTypeEnum.WireSequence => "WireSequenceComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Password => "PasswordComponentSolver",
+			KMComponentPool.ComponentTypeEnum.Maze => "InvisibleWallsComponentSolver",
+			KMComponentPool.ComponentTypeEnum.WhosOnFirst => "WhosOnFirstComponentSolver",
+			KMComponentPool.ComponentTypeEnum.NeedyVentGas => "NeedyVentComponentSolver",
+			KMComponentPool.ComponentTypeEnum.NeedyCapacitor => "NeedyDischargeComponentSolver",
+			KMComponentPool.ComponentTypeEnum.NeedyKnob => "NeedyKnobComponentSolver",
+			_ => moduleInfo.ModuleId,
+		};
 	}
 
 	public KMComponentPool ToComponentPool(int count)
@@ -221,7 +225,7 @@ public sealed class DistributionPool : ISerializable
 					ModuleInformation info = ComponentSolverFactory.GetModuleInfo(GetTwitchPlaysID(x), false);
 					if (info.moduleScoreIsDynamic || info.announceModule)
 						return false;
-					return (info.moduleScore >= ExtraData[0] && info.moduleScore <= ExtraData[1]);
+					return info.moduleScore >= ExtraData[0] && info.moduleScore <= ExtraData[1];
 				}).ToList();
 
 				if (scoredModules.Count == 0)
@@ -268,7 +272,7 @@ public sealed class DistributionPool : ISerializable
 		if (RewardPerModule != -1)
 			return RewardPerModule * count;
 
-		if (Type == PoolType.AllSolvable && ExtraData[0] == (int)KMComponentPool.ComponentSource.Base)
+		if (Type == PoolType.AllSolvable && ExtraData[0] == (int) KMComponentPool.ComponentSource.Base)
 			return 2 * count;
 		return 5 * count;
 	}
@@ -278,7 +282,7 @@ public sealed class DistributionPool : ISerializable
 		if (TimePerModule != -1)
 			return TimePerModule * count;
 
-		if (Type == PoolType.AllSolvable && ExtraData[0] == (int)KMComponentPool.ComponentSource.Base)
+		if (Type == PoolType.AllSolvable && ExtraData[0] == (int) KMComponentPool.ComponentSource.Base)
 			return 60 * count;
 		return 120 * count;
 	}
@@ -340,15 +344,15 @@ public sealed class ModuleDistributions
 		int[] modsPerPool = ModulesPerPool(moduleCount);
 		rewardPoints = RewardPoints(modsPerPool);
 
-		if (timeMode)
-			return new KMGeneratorSetting()
+		return timeMode ?
+			new KMGeneratorSetting()
 			{
 				ComponentPools = GeneratePools(modsPerPool),
 				TimeLimit = TwitchPlaySettings.data.TimeModeStartingTime * 60,
 				NumStrikes = 9
-			};
-		else
-			return new KMGeneratorSetting()
+			}
+			:
+			new KMGeneratorSetting()
 			{
 				ComponentPools = GeneratePools(modsPerPool),
 				TimeLimit = StartingTime(modsPerPool),

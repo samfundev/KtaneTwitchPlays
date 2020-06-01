@@ -111,23 +111,12 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 		}
 	}
 
-	static TranslatedPasswordComponentSolver()
-	{
-		PasswordComponentType = ReflectionHelper.FindType("PasswordsTranslatedModule");
-		DisplayField = PasswordComponentType.GetField("DisplaySlots", BindingFlags.NonPublic | BindingFlags.Instance);
-		DownButtonField = PasswordComponentType.GetField("ButtonsDown", BindingFlags.Public | BindingFlags.Instance);
-		SubmitButtonField = PasswordComponentType.GetField("ButtonSubmit", BindingFlags.Public | BindingFlags.Instance);
-		SimilarJamos = PasswordComponentType.GetValue<Dictionary<char, char>>("SimilarJamos");
-
-		TranslatedModulesSettings = ReflectionHelper.FindType("TranslatedModulesSettings");
-	}
-
-	private static readonly Type PasswordComponentType;
-	private static readonly FieldInfo DisplayField;
-	private static readonly FieldInfo SubmitButtonField;
-	private static readonly FieldInfo DownButtonField;
-	private static readonly Dictionary<char, char> SimilarJamos;
-	private static readonly Type TranslatedModulesSettings;
+	private static readonly Type PasswordComponentType = ReflectionHelper.FindType("PasswordsTranslatedModule");
+	private static readonly FieldInfo DisplayField = PasswordComponentType.GetField("DisplaySlots", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo SubmitButtonField = PasswordComponentType.GetField("ButtonSubmit", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo DownButtonField = PasswordComponentType.GetField("ButtonsDown", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly Dictionary<char, char> SimilarJamos = PasswordComponentType.GetValue<Dictionary<char, char>>("SimilarJamos");
+	private static readonly Type TranslatedModulesSettings = ReflectionHelper.FindType("TranslatedModulesSettings");
 
 	private readonly MonoBehaviour _submitButton;
 	private readonly KMSelectable[] _downButtons;

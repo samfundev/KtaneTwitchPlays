@@ -103,17 +103,7 @@ public class Leaderboard
 			}
 		}
 
-		public float TimePerSoloSolve
-		{
-			get
-			{
-				if (TotalSoloClears == 0)
-				{
-					return 0;
-				}
-				return RecordSoloTime / RequiredSoloSolves;
-			}
-		}
+		public float TimePerSoloSolve => TotalSoloClears == 0 ? 0 : RecordSoloTime / RequiredSoloSolves;
 
 		public void AddSolve(int num = 1) => SolveCount += num;
 
@@ -122,7 +112,7 @@ public class Leaderboard
 		public void AddScore(int num) => SolveScore += num;
 	}
 
-	private Color SafeGetColor(string userName) => IRCConnection.GetUserColor(userName);
+	private static Color SafeGetColor(string userName) => IRCConnection.GetUserColor(userName);
 
 	private bool GetEntry(string UserName, out LeaderboardEntry entry) => _entryDictionary.TryGetValue(UserName.ToLowerInvariant(), out entry);
 
@@ -225,9 +215,9 @@ public class Leaderboard
 		entry.LastAction = DateTime.Now;
 	}
 
-	public bool IsAnyEvil() => _entryList.Where(x => x.Active).Any(x => x.Team == OtherModes.Team.Evil);
+	public bool IsAnyEvil() => _entryList.Any(x => x.Active && x.Team == OtherModes.Team.Evil);
 
-	public bool IsAnyGood() => _entryList.Where(x => x.Active).Any(x => x.Team == OtherModes.Team.Good);
+	public bool IsAnyGood() => _entryList.Any(x => x.Active && x.Team == OtherModes.Team.Good);
 
 	public bool IsTeamBalanced(OtherModes.Team team)
 	{
@@ -313,11 +303,8 @@ public class Leaderboard
 
 	public int GetSoloRank(string userName, out LeaderboardEntry entry)
 	{
-		entry = _entryListSolo.FirstOrDefault(x => string.Equals(x.UserName, userName, StringComparison.InvariantCultureIgnoreCase));
-		if (entry != null)
-			return _entryListSolo.IndexOf(entry);
-		else
-			return 0;
+		entry = _entryListSolo.Find(x => string.Equals(x.UserName, userName, StringComparison.InvariantCultureIgnoreCase));
+		return entry != null ? _entryListSolo.IndexOf(entry) : 0;
 	}
 
 	public void GetTotalSolveStrikeCounts(out int solveCount, out int strikeCount, out int scoreCount)
@@ -403,14 +390,7 @@ public class Leaderboard
 			LeaderboardEntry previous = null;
 			foreach (LeaderboardEntry entry in _entryList)
 			{
-				if (previous == null)
-				{
-					entry.Rank = 1;
-				}
-				else
-				{
-					entry.Rank = (CompareScores(entry, previous) == 0) ? previous.Rank : i;
-				}
+				entry.Rank = previous == null ? 1 : (CompareScores(entry, previous) == 0) ? previous.Rank : i;
 				previous = entry;
 				i++;
 			}
@@ -529,7 +509,7 @@ public class Leaderboard
 		}
 	}
 
-	private IEnumerator<WaitUntil> SendLeaderboardWarning()
+	private static IEnumerator<WaitUntil> SendLeaderboardWarning()
 	{
 		yield return new WaitUntil(() => IRCConnection.Instance.State == IRCConnectionState.Connected);
 
@@ -540,9 +520,9 @@ public class Leaderboard
 
 	public int SoloCount => _entryListSolo.Count;
 
-	private Dictionary<string, LeaderboardEntry> _entryDictionary = new Dictionary<string, LeaderboardEntry>();
-	private List<LeaderboardEntry> _entryList = new List<LeaderboardEntry>();
-	private List<LeaderboardEntry> _entryListSolo = new List<LeaderboardEntry>();
+	private readonly Dictionary<string, LeaderboardEntry> _entryDictionary = new Dictionary<string, LeaderboardEntry>();
+	private readonly List<LeaderboardEntry> _entryList = new List<LeaderboardEntry>();
+	private readonly List<LeaderboardEntry> _entryListSolo = new List<LeaderboardEntry>();
 	private static Leaderboard _instance;
 	private bool _sorted = false;
 	private bool _loaded = false;
@@ -565,5 +545,5 @@ public class Leaderboard
 	public static string usersSavePath = "TwitchPlaysUsers.xml";
 	public static string statsSavePath = "TwitchPlaysStats.json";
 
-	public static Leaderboard Instance => _instance ?? (_instance = new Leaderboard());
+	public static Leaderboard Instance => _instance ??= new Leaderboard();
 }

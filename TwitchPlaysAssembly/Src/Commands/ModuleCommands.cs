@@ -22,7 +22,7 @@ static class ModuleCommands
 
 		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
 			? $"{module.HeaderText} : {helpText} : {manualText}"
-			: $"{module.HeaderText} : {helpText} : {UrlHelper.Instance.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
+			: $"{module.HeaderText} : {helpText} : {UrlHelper.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
 	}
 
 	/// <name>Player</name>
@@ -327,18 +327,7 @@ static class ModuleCommands
 
 	public static IEnumerator Tilt(TwitchModule module, object yield, string direction)
 	{
-		float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
-
-		IEnumerable TimedAnimation(float length)
-		{
-			float startTime = Time.time;
-			float alpha = 0;
-			while (alpha < 1)
-			{
-				alpha = Mathf.Min((Time.time - startTime) / length, 1);
-				yield return alpha;
-			}
-		}
+		static float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
 
 		Dictionary<string[], int> directionNames = new Dictionary<string[], int>()
 		{
@@ -377,12 +366,12 @@ static class ModuleCommands
 		yield return new WaitForSeconds(0.5f);
 
 		var targetAngle = Quaternion.Euler(new Vector3(-Mathf.Cos(targetRotation * Mathf.Deg2Rad), 0, Mathf.Sin(targetRotation * Mathf.Deg2Rad)) * (module.FrontFace ? 60 : -60));
-		foreach (float alpha in TimedAnimation(1f))
+		foreach (float alpha in 1f.TimedAnimation())
 		{
 			var lerp = Quaternion.Lerp(Quaternion.identity, targetAngle, easeCubic(alpha));
 			var bombLerp = module.FrontFace ? lerp : Quaternion.Euler(Vector3.Scale(lerp.eulerAngles, new Vector3(1, 1, -1)));
 			module.Bomb.RotateByLocalQuaternion(bombLerp);
-			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
+			TwitchBomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
 			yield return null;
 		}
 
@@ -393,17 +382,17 @@ static class ModuleCommands
 			var angle = Quaternion.identity;
 			var bombAngle = module.FrontFace ? angle : Quaternion.Euler(Vector3.Scale(angle.eulerAngles, new Vector3(1, 1, -1)));
 			module.Bomb.RotateByLocalQuaternion(bombAngle);
-			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, angle);
+			TwitchBomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, angle);
 			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace, false));
 			yield break;
 		}
 
-		foreach (float alpha in TimedAnimation(1f))
+		foreach (float alpha in 1f.TimedAnimation())
 		{
 			var lerp = Quaternion.Lerp(targetAngle, Quaternion.identity, easeCubic(alpha));
 			var bombLerp = module.FrontFace ? lerp : Quaternion.Euler(Vector3.Scale(lerp.eulerAngles, new Vector3(1, 1, -1)));
 			module.Bomb.RotateByLocalQuaternion(bombLerp);
-			module.Bomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
+			TwitchBomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
 			yield return null;
 		}
 
@@ -418,7 +407,7 @@ static class ModuleCommands
 	/// <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
 	/// Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being top left and bottom right respectively.
 	/// Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
-	/// Zoom and Tilt or Superzoom and Tilt can be be put back to back to do both at the same time.
+	/// Zoom and Tilt or Superzoom and Tilt can be put back to back to do both at the same time.
 	/// </summary>
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)

@@ -33,5 +33,5 @@ public class AntiTrollShim : ComponentSolverShim
 		}
 	}
 
-	private Dictionary<string, string> _trollCommands;
+	private readonly Dictionary<string, string> _trollCommands;
 }

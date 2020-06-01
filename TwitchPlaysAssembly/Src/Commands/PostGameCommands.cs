@@ -9,7 +9,7 @@ public static class PostGameCommands
 	/// <syntax>continue\nback</syntax>
 	/// <summary>Presses either the continue or back button.</summary>
 	[Command(@"(continue|back)")]
-	public static IEnumerator Continue() => doButton(Object.FindObjectOfType<ResultPage>()?.ContinueButton);
+	public static IEnumerator Continue() => DoButton(Object.FindObjectOfType<ResultPage>()?.ContinueButton);
 
 	/// <name>Retry</name>
 	/// <syntax>retry</syntax>
@@ -20,22 +20,22 @@ public static class PostGameCommands
 		if (!TwitchGame.RetryAllowed)
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.RetryModeOrProfileChange, user, isWhisper);
-			return doButton(Object.FindObjectOfType<ResultPage>().ContinueButton);
+			return DoButton(Object.FindObjectOfType<ResultPage>().ContinueButton);
 		}
 		if (!TwitchPlaySettings.data.EnableRetryButton)
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.RetryInactive, user, isWhisper);
-			return doButton(Object.FindObjectOfType<ResultPage>().ContinueButton);
+			return DoButton(Object.FindObjectOfType<ResultPage>().ContinueButton);
 		}
 		else
 		{
 			TwitchPlaySettings.SetRetryReward();
-			return doButton(Object.FindObjectOfType<ResultPage>().RetryButton);
+			return DoButton(Object.FindObjectOfType<ResultPage>().RetryButton);
 		}
 	}
 	#endregion
 
-	private static IEnumerator doButton(Selectable btn)
+	private static IEnumerator DoButton(Selectable btn)
 	{
 		// Press the button
 		btn.Trigger();

@@ -56,14 +56,8 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 		yield return DoInteractionClick(button);
 	}
 
-	static ForeignExchangeRatesComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ForeignExchangeRates");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ForeignExchangeRates");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly MonoBehaviour[] _buttons;
 }

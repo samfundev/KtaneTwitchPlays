@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class UnsupportedModComponentSolver : ComponentSolver
 {
 	public UnsupportedModComponentSolver(TwitchModule module, ComponentSolverFields componentSolverFields = null)
-		: base(module, componentSolverFields != null ? componentSolverFields.HookUpEvents : true)
+		: base(module, componentSolverFields == null || componentSolverFields.HookUpEvents)
 	{
 		_bombModule = module.BombComponent.GetComponent<KMBombModule>();
 		_needyModule = module.BombComponent.GetComponent<KMNeedyModule>();

@@ -158,7 +158,7 @@ public static class BombCommands
 		if (OtherModes.TimeModeOn)
 		{
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatusTimeMode, bomb.GetFullFormattedTime, bomb.GetFullStartingTime,
-				OtherModes.GetAdjustedMultiplier(), bomb.bombSolvedModules, bomb.bombSolvableModules, currentReward), user, !isWhisper);
+				OtherModes.GetAdjustedMultiplier(), bomb.BombSolvedModules, bomb.BombSolvableModules, currentReward), user, !isWhisper);
 		}
 		else if (OtherModes.VSModeOn)
 		{
@@ -168,7 +168,7 @@ public static class BombCommands
 		else
 		{
 			IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.BombStatus, bomb.GetFullFormattedTime, bomb.GetFullStartingTime,
-				bomb.StrikeCount, bomb.StrikeLimit, bomb.bombSolvedModules, bomb.bombSolvableModules, currentReward), user, !isWhisper);
+				bomb.StrikeCount, bomb.StrikeLimit, bomb.BombSolvedModules, bomb.BombSolvableModules, currentReward), user, !isWhisper);
 		}
 	}
 

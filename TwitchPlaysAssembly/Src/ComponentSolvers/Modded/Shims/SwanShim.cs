@@ -23,11 +23,6 @@ public class SwanShim : ComponentSolverShim
 			yield return "awardpoints 1";
 	}
 
-	static SwanShim()
-	{
-		ComponentType = ReflectionHelper.FindType("theSwanScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("theSwanScript");
 	private readonly object _component;
 }

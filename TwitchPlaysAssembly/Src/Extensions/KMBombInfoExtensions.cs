@@ -7,7 +7,6 @@ namespace KModkit
 {
     public enum Battery
     {
-        Unknown = 0,
         Empty = 0,
         D = 1,
         AA = 2,
@@ -117,10 +116,7 @@ namespace KModkit
         private static IEnumerable<T> GetJSONEntries<T>(KMBombInfo bombInfo, string queryKey, string queryInfo)
             where T : new()
         {
-            return bombInfo.QueryWidgets(queryKey, queryInfo).Select(delegate (string queryEntry)
-            {
-                return JsonConvert.DeserializeObject<T>(queryEntry);
-            });
+            return bombInfo.QueryWidgets(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<T>);
         }
 
         private static IEnumerable<IndicatorJSON> GetIndicatorEntries(KMBombInfo bombInfo)

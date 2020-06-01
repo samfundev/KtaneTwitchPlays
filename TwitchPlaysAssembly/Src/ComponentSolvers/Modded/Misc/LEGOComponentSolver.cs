@@ -128,12 +128,7 @@ public class LEGOComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal("submit");
 	}
 
-	static LEGOComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("LEGOModule");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("LEGOModule");
 	private readonly object _component;
 
 	private readonly KMSelectable[] GridButtons;

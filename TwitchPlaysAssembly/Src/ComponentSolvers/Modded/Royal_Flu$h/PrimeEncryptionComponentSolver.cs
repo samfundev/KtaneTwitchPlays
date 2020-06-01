@@ -43,12 +43,7 @@ public class PrimeEncryptionComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal($"{selectedBases[0]} {selectedBases[1]}");
 	}
 
-	static PrimeEncryptionComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("PrimeEncryptionScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("PrimeEncryptionScript");
 	private readonly object _component;
 
 	private readonly KMSelectable[] selectables;

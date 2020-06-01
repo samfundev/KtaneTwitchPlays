@@ -368,7 +368,7 @@ public abstract class ComponentSolver
 				Module.Bomb.RotateByLocalQuaternion(localQuaternion);
 				//Whitelist perspective pegs as it only returns Quaternion.Euler(x, 0, 0), which is compatible with the RotateCameraByQuaternion.
 				if (Module.BombComponent.GetComponent<KMBombModule>()?.ModuleType.Equals("spwizPerspectivePegs") ?? false)
-					Module.Bomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, localQuaternion);
+					TwitchBomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, localQuaternion);
 				needQuaternionReset = true;
 			}
 			else if (currentValue is Quaternion[] localQuaternions)
@@ -376,7 +376,7 @@ public abstract class ComponentSolver
 				if (localQuaternions.Length == 2)
 				{
 					Module.Bomb.RotateByLocalQuaternion(localQuaternions[0]);
-					Module.Bomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, localQuaternions[1]);
+					TwitchBomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, localQuaternions[1]);
 					needQuaternionReset = true;
 				}
 			}
@@ -424,7 +424,7 @@ public abstract class ComponentSolver
 		if (needQuaternionReset)
 		{
 			Module.Bomb.RotateByLocalQuaternion(Quaternion.identity);
-			Module.Bomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, Quaternion.identity);
+			TwitchBomb.RotateCameraByLocalQuaternion(Module.BombComponent.gameObject, Quaternion.identity);
 		}
 
 		if (hideCamera)
@@ -517,7 +517,7 @@ public abstract class ComponentSolver
 		}
 	}
 
-	protected IEnumerator SendDelayedMessage(float delay, string message)
+	protected static IEnumerator SendDelayedMessage(float delay, string message)
 	{
 		yield return new WaitForSeconds(delay);
 		IRCConnection.SendMessage(message);
@@ -558,16 +558,16 @@ public abstract class ComponentSolver
 		}
 	}
 
-	protected void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
+	protected static void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
 
-	protected void DoInteractionEnd(MonoBehaviour interactable)
+	protected static void DoInteractionEnd(MonoBehaviour interactable)
 	{
 		Selectable selectable = interactable.GetComponent<Selectable>();
 		selectable.OnInteractEnded();
 		selectable.SetHighlight(false);
 	}
 
-	protected void DoInteractionHighlight(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().SetHighlight(true);
+	protected static void DoInteractionHighlight(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().SetHighlight(true);
 
 	protected string GetModuleType() => Module.BombComponent.GetComponent<KMBombModule>()?.ModuleType ?? Module.BombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
 
@@ -673,16 +673,16 @@ public abstract class ComponentSolver
 				switch (ModInfo.moduleID)
 				{
 					case "cookieJars": // Cookie Jars
-						moduleScore += (int) Mathf.Clamp(Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
+						moduleScore += (int) Mathf.Clamp(Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
 						break;
 
 					case "HexiEvilFMN": // Forget Everything
 					case "forgetEnigma": // Forget Enigma
-						moduleScore += (int) (Mathf.Clamp(Module.Bomb.bombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore += (int) (Mathf.Clamp(Module.Bomb.BombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 
 					default:
-						moduleScore += (int) (Module.Bomb.bombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
+						moduleScore += (int) (Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
 						break;
 				}
 			}
@@ -797,10 +797,7 @@ public abstract class ComponentSolver
 		return false;
 	}
 
-	protected void ForceAwardSolveToNickName(string nickname)
-	{
-		_delegatedSolveUserNickName = nickname;
-	}
+	protected void ForceAwardSolveToNickName(string nickname) => _delegatedSolveUserNickName = nickname;
 
 	protected void PrepareSilentSolve()
 	{
@@ -1012,7 +1009,7 @@ public abstract class ComponentSolver
 			TwitchPlaySettings.AppendToPlayerLog(userNickName);
 		}
 
-		if (OtherModes.TimeModeOn && Module.Bomb.bombSolvedModules < Module.Bomb.bombSolvableModules)
+		if (OtherModes.TimeModeOn && Module.Bomb.BombSolvedModules < Module.Bomb.BombSolvableModules)
 		{
 			float time = OtherModes.GetAdjustedMultiplier() * componentValue;
 			if (time < TwitchPlaySettings.data.TimeModeMinimumTimeGained)
@@ -1166,7 +1163,7 @@ public abstract class ComponentSolver
 
 		IRCConnection.SendMessage(messageParts.Join());
 	}
-	
+
 	private void AwardPoints(string userNickName, int pointsAwarded)
 	{
 		List<string> messageParts = new List<string>();
@@ -1199,7 +1196,7 @@ public abstract class ComponentSolver
 				rewardBonus = (int)info.Bonus;
 				break;
 			case RewardBonusMethod.Dynamic:
-				rewardBonus = (int)(info.Bonus * Module.Bomb.bombSolvableModules);
+				rewardBonus = (int)(info.Bonus * Module.Bomb.BombSolvableModules);
 				break;
 			default:
 				break;
@@ -1421,4 +1418,4 @@ public abstract class ComponentSolver
 	public Component CommandComponent = null;
 	#endregion
 }
- 
+

@@ -55,12 +55,7 @@ public class HieroglyphicsComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal($"{_component.GetValue<int[]>("correctLockPosition").Select(index => positions[index]).Join()} {(int) _component.GetValue<float>("correctPressTime")}");
 	}
 
-	static HieroglyphicsComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("hieroglyphicsScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("hieroglyphicsScript");
 	private readonly object _component;
 
 	private readonly KMSelectable[] selectables;

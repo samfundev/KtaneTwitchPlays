@@ -121,19 +121,14 @@ public class ModulusManipulationComponentSolver : ComponentSolver
 			finalSolution %= 1000;
 
 		var targetMinutes = (int) bombInfo.GetTime() / 60;
-		yield return RespondToCommandInternal($"{finalSolution.ToString()} {targetMinutes}");
+		yield return RespondToCommandInternal($"{finalSolution} {targetMinutes}");
 
 		// If we missed submitting the module at the time we wanted to, attempt submitting again.
 		if (targetMinutes != (int) bombInfo.GetTime() / 60)
 			yield return ForcedSolveIEnumerator();
 	}
 
-	static ModulusManipulationComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ModulusManipulation");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ModulusManipulation");
 
 	private readonly object _component;
 	private readonly KMSelectable[] selectables;

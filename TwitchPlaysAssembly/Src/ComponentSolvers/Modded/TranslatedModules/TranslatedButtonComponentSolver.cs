@@ -81,18 +81,10 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 		}
 	}
 
-	static TranslatedButtonComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
-		ButtonField = ComponentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
-		SelectedField = ComponentType.GetField("isModuleSelected", BindingFlags.NonPublic | BindingFlags.Instance);
-		StripMaterialField = ComponentType.GetField("StripMatColor", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonField;
-	private static readonly FieldInfo SelectedField;
-	private static readonly FieldInfo StripMaterialField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("BigButtonTranslatedModule");
+	private static readonly FieldInfo ButtonField = ComponentType.GetField("Button", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo SelectedField = ComponentType.GetField("isModuleSelected", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo StripMaterialField = ComponentType.GetField("StripMatColor", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable _button;
 	private bool _held;

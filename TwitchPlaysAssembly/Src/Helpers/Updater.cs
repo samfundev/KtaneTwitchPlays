@@ -115,7 +115,7 @@ static class Updater
 	public static DateTime GetCurrentBuildDateTime() => GetBuildDateTime(Path.Combine(GetModFolder(), "TwitchPlaysAssembly.dll"));
 
 	public static string GetModFolder() => ModManager.Instance.GetEnabledModPaths(ModInfo.ModSourceEnum.Local)
-						.FirstOrDefault(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Any()) ??
+						.Find(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Length > 0) ??
 					ModManager.Instance.GetEnabledModPaths(ModInfo.ModSourceEnum.SteamWorkshop)
-						.First(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Any());
+						.First(x => Directory.GetFiles(x, "TwitchPlaysAssembly.dll").Length > 0);
 }

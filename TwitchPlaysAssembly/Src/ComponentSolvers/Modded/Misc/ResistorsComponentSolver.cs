@@ -84,18 +84,10 @@ public class ResistorsComponentSolver : ComponentSolver
 		}
 	}
 
-	static ResistorsComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ResistorsModule");
-		PinsField = ComponentType.GetField("pins", BindingFlags.Public | BindingFlags.Instance);
-		CheckButtonField = ComponentType.GetField("checkButton", BindingFlags.Public | BindingFlags.Instance);
-		ClearButtonField = ComponentType.GetField("clearButton", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo PinsField;
-	private static readonly FieldInfo CheckButtonField;
-	private static readonly FieldInfo ClearButtonField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ResistorsModule");
+	private static readonly FieldInfo PinsField = ComponentType.GetField("pins", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo CheckButtonField = ComponentType.GetField("checkButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo ClearButtonField = ComponentType.GetField("clearButton", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _pins;
 	private readonly KMSelectable _checkButton;

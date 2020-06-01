@@ -87,9 +87,9 @@ public class TheMatrixComponentSolver : ComponentSolver
 		yield return DoInteractionClick(correctButton);
 	}
 
-	private KMSelectable Switch;
-	private KMSelectable bluePill;
-	private KMSelectable redPill;
+	private readonly KMSelectable Switch;
+	private readonly KMSelectable bluePill;
+	private readonly KMSelectable redPill;
 
 	private readonly Component _component;
 	private static readonly Type ComponentSolverType = ReflectionHelper.FindType("MatrixScript");

@@ -66,6 +66,6 @@ public class StainedGlassComponentSolver : ComponentSolver
 		}
 	}
 
-	private KMSelectable[] buttons;
-	private Dictionary<int, KMSelectable> order;
+	private readonly KMSelectable[] buttons;
+	private readonly Dictionary<int, KMSelectable> order;
 }

@@ -64,16 +64,9 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 		}
 	}
 
-	static MicrocontrollerComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("Micro");
-		ButtonOKField = ComponentType.GetField("buttonOK", BindingFlags.Public | BindingFlags.Instance);
-		ButtonUpField = ComponentType.GetField("buttonUp", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonOKField;
-	private static readonly FieldInfo ButtonUpField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("Micro");
+	private static readonly FieldInfo ButtonOKField = ComponentType.GetField("buttonOK", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo ButtonUpField = ComponentType.GetField("buttonUp", BindingFlags.Public | BindingFlags.Instance);
 
 	private static readonly string[] Colors = { "white", "red", "yellow", "magenta", "blue", "green" };
 	private int _currentIndex;

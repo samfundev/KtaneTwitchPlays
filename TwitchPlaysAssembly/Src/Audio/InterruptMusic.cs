@@ -6,16 +6,10 @@ public class InterruptMusic : MonoBehaviour
 {
 	public static InterruptMusic Instance { get; private set; }
 
-	private static readonly FieldInfo VolumeLevelGameplayField;
+	private static readonly FieldInfo VolumeLevelGameplayField = typeof(GameplayMusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
 	private readonly Dictionary<int, float> _oldVolumesGameplay = new Dictionary<int, float>();
-	private static readonly FieldInfo VolumeLevelOtherField;
+	private static readonly FieldInfo VolumeLevelOtherField = typeof(MusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
 	private readonly Dictionary<int, float> _oldVolumesOther = new Dictionary<int, float>();
-
-	static InterruptMusic()
-	{
-		VolumeLevelGameplayField = typeof(GameplayMusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
-		VolumeLevelOtherField = typeof(MusicController).GetField("volumeLevel", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
 
 	private void Awake() => Instance = this;
 

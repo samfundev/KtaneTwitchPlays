@@ -52,12 +52,7 @@ public class SkinnyWiresComponentSolver : ComponentSolver
 		}
 	}
 
-	static SkinnyWiresComponentSolver()
-	{
-		WireDetailsType = ReflectionHelper.FindType("WireDetails");
-	}
-
-	private static readonly Type WireDetailsType;
+	private static readonly Type WireDetailsType = ReflectionHelper.FindType("WireDetails");
 
 	private readonly KMSelectable[] selectables;
 }

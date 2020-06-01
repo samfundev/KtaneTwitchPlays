@@ -50,15 +50,6 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 
 	private int CurrentFrequency => Frequencies[(int) CurrentFrqIndexField.GetValue(_component)];
 
-	static TranslatedMorseCodeComponentSolver()
-	{
-		MorseCodeComponentType = ReflectionHelper.FindType("MorseCodeTranslatedModule");
-		UpButtonField = MorseCodeComponentType.GetField("ButtonRight", BindingFlags.Public | BindingFlags.Instance);
-		DownButtonField = MorseCodeComponentType.GetField("ButtonLeft", BindingFlags.Public | BindingFlags.Instance);
-		TransmitButtonField = MorseCodeComponentType.GetField("ButtonTX", BindingFlags.Public | BindingFlags.Instance);
-		CurrentFrqIndexField = MorseCodeComponentType.GetField("currentFrqIndex", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
 	private static readonly int[] Frequencies = {
 		505,
 		515,
@@ -78,11 +69,11 @@ public class TranslatedMorseCodeComponentSolver : ComponentSolver
 		600
 	};
 
-	private static readonly Type MorseCodeComponentType;
-	private static readonly FieldInfo UpButtonField;
-	private static readonly FieldInfo DownButtonField;
-	private static readonly FieldInfo TransmitButtonField;
-	private static readonly FieldInfo CurrentFrqIndexField;
+	private static readonly Type MorseCodeComponentType = ReflectionHelper.FindType("MorseCodeTranslatedModule");
+	private static readonly FieldInfo UpButtonField = MorseCodeComponentType.GetField("ButtonRight", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo DownButtonField = MorseCodeComponentType.GetField("ButtonLeft", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo TransmitButtonField = MorseCodeComponentType.GetField("ButtonTX", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo CurrentFrqIndexField = MorseCodeComponentType.GetField("currentFrqIndex", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly Component _component;
 	private readonly MonoBehaviour _upButton;

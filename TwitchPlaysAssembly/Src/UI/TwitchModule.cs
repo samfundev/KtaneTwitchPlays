@@ -477,8 +477,8 @@ public class TwitchModule : MonoBehaviour
 
 	public sealed class ClaimResult
 	{
-		public bool Claimed { get; private set; }
-		public string Message { get; private set; }
+		public bool Claimed { get; }
+		public string Message { get; }
 		public ClaimResult(bool claimed, string message)
 		{
 			Claimed = claimed;
@@ -648,14 +648,10 @@ public class TwitchModule : MonoBehaviour
 				bool left = Math.Round(position.x, 5) < 0;
 				bool down = Math.Round(position.z, 5) < 0;
 
-				if (left && down)
-					newPos = StatusLightPosition.BottomLeft;
-				else if (left)
-					newPos = StatusLightPosition.TopLeft;
-				else if (down)
-					newPos = StatusLightPosition.BottomRight;
-				else
-					newPos = StatusLightPosition.TopRight;
+				newPos = left && down ? StatusLightPosition.BottomLeft :
+					left ? StatusLightPosition.TopLeft :
+					down ? StatusLightPosition.BottomRight :
+					StatusLightPosition.TopRight;
 			}
 			// Else, it'll be left at "Default", which will behave the same as "TopRight".
 		}

@@ -28,7 +28,7 @@ static class GlobalCommands
 		};
 
 		IRCConnection.SendMessage(string.Format("!{0} manual [link to module {0}'s manual] | Go to {1} to get manuals for KTaNE", randomCodes[0], TwitchPlaySettings.data.RepositoryUrl), user, !isWhisper);
-		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple sections, see the menu on the left)", randomCodes[1], UrlHelper.Instance.CommandReference), user, !isWhisper);
+		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple sections, see the menu on the left)", randomCodes[1], UrlHelper.CommandReference), user, !isWhisper);
 	}
 
 	/// <name>Bonus Points</name>
@@ -218,7 +218,7 @@ static class GlobalCommands
 	/// <syntax>log</syntax>
 	/// <summary>Sends a message with the previous log.</summary>
 	[Command(@"(log|analysis)")]
-	public static void Log() => LogUploader.Instance.PostToChat(LogUploader.Instance.previousUrl, "Analysis for the previous bomb: {0}");
+	public static void Log() => LogUploader.PostToChat(LogUploader.Instance.previousUrl, "Analysis for the previous bomb: {0}");
 
 	/// <name>Get Log</name>
 	/// <syntax>lognow</syntax>
@@ -231,7 +231,7 @@ static class GlobalCommands
 	/// <syntax>shorturl</syntax>
 	/// <summary>Toggles shortened URLs.</summary>
 	[Command(@"shorturl")]
-	public static void ShortURL(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format((UrlHelper.Instance.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs"), user, !isWhisper);
+	public static void ShortURL(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format((UrlHelper.ToggleMode()) ? "Enabling shortened URLs" : "Disabling shortened URLs"), user, !isWhisper);
 
 	/// <name>Build Date</name>
 	/// <syntax>builddate</syntax>
@@ -585,7 +585,7 @@ static class GlobalCommands
 			IRCConnection.SendMessage($"@{user}, teams are being manually set. Please specify a team.");
 			return;
 		}
-		if (TwitchGame.Instance.VSModePlayers.Values.Contains(user)) 
+		if (TwitchGame.Instance.VSModePlayers.Values.Contains(user))
 		{
 			IRCConnection.SendMessage($@"{user}, you have already been added to the next VSMode bomb.");
 			return;
@@ -616,9 +616,9 @@ static class GlobalCommands
 			IRCConnection.SendMessage($"You cannot use this command in this mode.");
 			return;
 		}
-		else if (!TwitchGame.Instance.VSSetFlag || !TwitchGame.Instance.GoodPlayers.Any() || !TwitchGame.Instance.EvilPlayers.Any())
+		else if (!TwitchGame.Instance.VSSetFlag || TwitchGame.Instance.GoodPlayers.Count == 0 || TwitchGame.Instance.EvilPlayers.Count == 0)
 		{
-			var _vsCount = TwitchGame.Instance.VSModePlayers.Count();
+			var _vsCount = TwitchGame.Instance.VSModePlayers.Count;
 			if (_vsCount < 2) IRCConnection.SendMessage($"Currently {_vsCount} players, not enough to play!");
 			else
 			{
@@ -627,9 +627,9 @@ static class GlobalCommands
 			}
 			return;
 		}
-		
-		var _gCount = TwitchGame.Instance.GoodPlayers.Count();
-		var _eCount = TwitchGame.Instance.EvilPlayers.Count();
+
+		var _gCount = TwitchGame.Instance.GoodPlayers.Count;
+		var _eCount = TwitchGame.Instance.EvilPlayers.Count;
 		string _gPlayers = string.Join(", @", TwitchGame.Instance.GoodPlayers.ToArray());
 		string _ePlayers = string.Join(", @", TwitchGame.Instance.EvilPlayers.ToArray());
 		IRCConnection.SendMessage($"{_gCount} Good players joined, they are: @{_gPlayers}");
@@ -767,13 +767,13 @@ static class GlobalCommands
 		string[] administrators = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Admin).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
 		string[] mods = moderators.Where(x => UserAccess.HighestAccessLevel(x.Key) == AccessLevel.Mod).OrderBy(x => x.Key).Select(x => x.Key).ToArray();
 
-		if (streamers.Any())
-			finalMessage += $"Streamers: {streamers.Join(", ")}{(superusers.Any() || administrators.Any() || mods.Any() ? " - " : "")}";
-		if (superusers.Any())
-			finalMessage += $"Super Users: {superusers.Join(", ")}{(administrators.Any() || mods.Any() ? " - " : "")}";
-		if (administrators.Any())
-			finalMessage += $"Administrators: {administrators.Join(", ")}{(mods.Any() ? " - " : "")}";
-		if (mods.Any())
+		if (streamers.Length > 0)
+			finalMessage += $"Streamers: {streamers.Join(", ")}{(superusers.Length > 0 || administrators.Length > 0 || mods.Length > 0 ? " - " : "")}";
+		if (superusers.Length > 0)
+			finalMessage += $"Super Users: {superusers.Join(", ")}{(administrators.Length > 0 || mods.Length > 0 ? " - " : "")}";
+		if (administrators.Length > 0)
+			finalMessage += $"Administrators: {administrators.Join(", ")}{(mods.Length > 0 ? " - " : "")}";
+		if (mods.Length > 0)
 			finalMessage += $"Moderators: {mods.Join(", ")}";
 
 		IRCConnection.SendMessage(finalMessage, user, !isWhisper);
@@ -790,7 +790,7 @@ static class GlobalCommands
 	public static void RunHelp()
 	{
 		string[] validDistributions = TwitchPlaySettings.data.ModDistributionSettings.Where(x => x.Value.Enabled && !x.Value.Hidden).Select(x => x.Key).ToArray();
-		IRCConnection.SendMessage(validDistributions.Any()
+		IRCConnection.SendMessage(validDistributions.Length > 0
 			? $"Usage: !run <module_count> <distribution>. Valid distributions are {validDistributions.Join(", ")}"
 			: "Sorry, !run has been disabled.");
 	}
@@ -808,7 +808,7 @@ static class GlobalCommands
 			}
 			if (TwitchPlaySettings.data.AutoSetVSModeTeams)
 			{
-				if (TwitchGame.Instance.VSModePlayers.Count() < 2)
+				if (TwitchGame.Instance.VSModePlayers.Count < 2)
 				{
 					IRCConnection.SendMessage("Not enough players for VSMode");
 					return null;
@@ -818,13 +818,13 @@ static class GlobalCommands
 
 				if (TwitchPlaySettings.data.VSModeBalancedTeams)
 				{
-					for (int i = 0; i < allPlayers.Count(); i++) AddVSPlayer(allPlayers[i]);
+					for (int i = 0; i < allPlayers.Length; i++) AddVSPlayer(allPlayers[i]);
 				}
 				else
 				{
-					int goodCount = allPlayers.Count() * TwitchPlaySettings.data.VSModeGoodSplit / 100;
+					int goodCount = allPlayers.Length * TwitchPlaySettings.data.VSModeGoodSplit / 100;
 
-					if (allPlayers.Count() < 4)
+					if (allPlayers.Length < 4)
 					{
 						AddGood(allPlayers[0]);
 					}
@@ -833,7 +833,7 @@ static class GlobalCommands
 						for (int i = 0; i < goodCount; i++) AddGood(allPlayers[i]);
 					}
 
-					for (int i = TwitchGame.Instance.GoodPlayers.Count(); i < allPlayers.Count(); i++) AddEvil(allPlayers[i]);
+					for (int i = TwitchGame.Instance.GoodPlayers.Count; i < allPlayers.Length; i++) AddEvil(allPlayers[i]);
 				}
 				TwitchGame.Instance.VSSetFlag = true;
 				TwitchGame.Instance.VSModePlayers.Clear();
@@ -862,7 +862,7 @@ static class GlobalCommands
 	[Command(@"assignany (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddVSPlayer([Group(1)] string targetUser)
 	{
-		int diff = TwitchGame.Instance.GoodPlayers.Count() - TwitchGame.Instance.EvilPlayers.Count();
+		int diff = TwitchGame.Instance.GoodPlayers.Count - TwitchGame.Instance.EvilPlayers.Count;
 		if (diff > 1)
 		{
 			AddEvil(targetUser);
@@ -1330,8 +1330,8 @@ static class GlobalCommands
 		failureMessage = null;
 		var missions = ModManager.Instance.ModMissions;
 
-		var mission = missions.FirstOrDefault(x => x.name.EqualsIgnoreCase(targetID)) ??
-			missions.FirstOrDefault(x => Regex.IsMatch(x.name, $"^mod_.+_{Regex.Escape(targetID)}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
+		var mission = missions.Find(x => x.name.EqualsIgnoreCase(targetID)) ??
+			missions.Find(x => Regex.IsMatch(x.name, $"^mod_.+_{Regex.Escape(targetID)}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase));
 		if (mission == null)
 		{
 			failureMessage = $"Unable to find a mission with an ID of “{targetID}”.";
@@ -1354,7 +1354,7 @@ static class GlobalCommands
 			if (modTypes == null || modTypes.Count == 0) continue;
 			foreach (string mod in modTypes.Where(x => !availableMods.Contains(x)))
 			{
-				missingMods.Add(modules.FirstOrDefault(x => x.moduleID == mod)?.moduleDisplayName ?? mod);
+				missingMods.Add(modules.Find(x => x.moduleID == mod)?.moduleDisplayName ?? mod);
 			}
 		}
 		if (missingMods.Count > 0)

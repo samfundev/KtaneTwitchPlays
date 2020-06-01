@@ -44,16 +44,9 @@ public class ThirdBaseComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_buttons[index]);
 	}
 
-	static ThirdBaseComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("ThirdBaseModule");
-		ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
-		PhraseField = ComponentType.GetField("phrase", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly FieldInfo PhraseField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ThirdBaseModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo PhraseField = ComponentType.GetField("phrase", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 	private readonly string[] _phrase;

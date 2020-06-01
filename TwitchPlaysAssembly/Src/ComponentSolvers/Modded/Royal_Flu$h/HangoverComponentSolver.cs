@@ -94,12 +94,7 @@ public class HangoverComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal("submit");
 	}
 
-	static HangoverComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("HangoverScript");
-	}
-
-	private static readonly Type ComponentType;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("HangoverScript");
 	private readonly object _component;
 
 	private readonly List<string> actionOptions;

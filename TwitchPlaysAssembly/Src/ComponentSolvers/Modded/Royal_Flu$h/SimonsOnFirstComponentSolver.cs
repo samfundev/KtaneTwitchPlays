@@ -144,10 +144,10 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
         }
     }
 
-    private List<KMSelectable> objects = new List<KMSelectable>();
-	private List<KMSelectable> numbers = new List<KMSelectable>();
-	private static Type ComponentType = ReflectionHelper.FindType("SimonsOnFirstScript");
-	private Component _component;
-	private List<string> realColourList = new List<string>();
-	private List<string> realNumberList = new List<string>();
+    private readonly List<KMSelectable> objects = new List<KMSelectable>();
+	private readonly List<KMSelectable> numbers = new List<KMSelectable>();
+	private readonly static Type ComponentType = ReflectionHelper.FindType("SimonsOnFirstScript");
+	private readonly Component _component;
+	private readonly List<string> realColourList = new List<string>();
+	private readonly List<string> realNumberList = new List<string>();
 }

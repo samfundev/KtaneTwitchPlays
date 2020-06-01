@@ -104,13 +104,6 @@ public class WireSequenceComponentSolver : ComponentSolver
 
 	private WireSequenceWire GetWire(int wireIndex) => _wireSequence[wireIndex].Wire;
 
-	static WireSequenceComponentSolver()
-	{
-		Type wireSequenceComponentType = typeof(WireSequenceComponent);
-		WireSequenceField = wireSequenceComponentType.GetField("wireSequence", BindingFlags.NonPublic | BindingFlags.Instance);
-		CurrentPageField = wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
@@ -136,8 +129,9 @@ public class WireSequenceComponentSolver : ComponentSolver
 		}
 	}
 
-	private static readonly FieldInfo WireSequenceField;
-	private static readonly FieldInfo CurrentPageField;
+	private static readonly Type wireSequenceComponentType = typeof(WireSequenceComponent);
+	private static readonly FieldInfo WireSequenceField = wireSequenceComponentType.GetField("wireSequence", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo CurrentPageField = wireSequenceComponentType.GetField("currentPage", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly List<WireSequenceComponent.WireConfiguration> _wireSequence;
 	private readonly Selectable _upButton;

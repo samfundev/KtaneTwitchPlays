@@ -197,33 +197,18 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		}
 	}
 
-	static TurnTheKeyComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("TurnKeyModule");
-		LockField = ComponentType.GetField("Lock", BindingFlags.Public | BindingFlags.Instance);
-		ActivatedField = ComponentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
-		SolvedField = ComponentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
-		TargetTimeField = ComponentType.GetField("mTargetSecond", BindingFlags.NonPublic | BindingFlags.Instance);
-		StopAllCorotinesMethod = ComponentType.GetMethod("StopAllCoroutines", BindingFlags.Public | BindingFlags.Instance);
-		KeyAnimatorField = ComponentType.GetField("KeyAnimator", BindingFlags.Public | BindingFlags.Instance);
-		DisplayField = ComponentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
-		KeyUnlockedField = ComponentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
-		KeyAudioField = ComponentType.GetField("mAudio", BindingFlags.NonPublic | BindingFlags.Instance);
-		_keyTurnTimes = new List<int>();
-	}
+	private static readonly Type ComponentType = ReflectionHelper.FindType("TurnKeyModule");
+	private static readonly FieldInfo LockField = ComponentType.GetField("Lock", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo ActivatedField = ComponentType.GetField("bActivated", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo SolvedField = ComponentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo TargetTimeField = ComponentType.GetField("mTargetSecond", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo KeyAnimatorField = ComponentType.GetField("KeyAnimator", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo DisplayField = ComponentType.GetField("Display", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo KeyUnlockedField = ComponentType.GetField("bUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo KeyAudioField = ComponentType.GetField("mAudio", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo StopAllCorotinesMethod = ComponentType.GetMethod("StopAllCoroutines", BindingFlags.Public | BindingFlags.Instance);
 
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo LockField;
-	private static readonly FieldInfo ActivatedField;
-	private static readonly FieldInfo SolvedField;
-	private static readonly FieldInfo TargetTimeField;
-	private static readonly FieldInfo KeyAnimatorField;
-	private static readonly FieldInfo DisplayField;
-	private static readonly FieldInfo KeyUnlockedField;
-	private static readonly FieldInfo KeyAudioField;
-	private static readonly MethodInfo StopAllCorotinesMethod;
-
-	private static List<int> _keyTurnTimes;
+	private static List<int> _keyTurnTimes = new List<int>();
 	private static string _previousSerialNumber;
 
 	private readonly MonoBehaviour _lock;

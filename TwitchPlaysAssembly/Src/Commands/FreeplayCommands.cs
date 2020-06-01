@@ -180,6 +180,6 @@ public static class FreeplayCommands
 	#endregion
 
 	#region private static Static Fields
-	private static FieldInfo _maxModuleField = typeof(FreeplayDevice).GetField("maxModules", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo _maxModuleField = typeof(FreeplayDevice).GetField("maxModules", BindingFlags.NonPublic | BindingFlags.Instance);
 	#endregion
 }

@@ -85,8 +85,8 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 		{ "9", 0},  {"10",  1}, {"11",  2}, {"12",  3},
 	};
 
-	private KMSelectable[] interKeypad;
-	private KMSelectable[] finalKeypad;
+	private readonly KMSelectable[] interKeypad;
+	private readonly KMSelectable[] finalKeypad;
 
 	private readonly Component _component;
 	private static readonly Type ComponentSolverType = ReflectionHelper.FindType("MemorableButtons");

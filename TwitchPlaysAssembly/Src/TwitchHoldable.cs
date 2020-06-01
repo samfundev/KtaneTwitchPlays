@@ -100,15 +100,9 @@ public class TwitchHoldable
 		{
 			bool multiDropped = OtherModes.DropMultiplier();
 			float multiplier = OtherModes.GetMultiplier();
-			string tempMessage;
-			if (multiDropped)
-			{
-				tempMessage = "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time";
-			}
-			else
-			{
-				tempMessage = $"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
-			}
+			string tempMessage = multiDropped
+				? "Multiplier reduced to " + Math.Round(multiplier, 1) + " and time"
+				: $"Multiplier set at {TwitchPlaySettings.data.TimeModeMinMultiplier}, cannot be further reduced.  Time";
 			if (bomb.CurrentTimer < (TwitchPlaySettings.data.TimeModeMinimumTimeLost / TwitchPlaySettings.data.TimeModeTimerStrikePenalty))
 			{
 				bomb.Bomb.GetTimer().TimeRemaining = bomb.CurrentTimer - TwitchPlaySettings.data.TimeModeMinimumTimeLost;
@@ -387,7 +381,7 @@ public class TwitchHoldable
 		DebugHelper.Log("RespondToCommandInternal() Complete");
 	}
 
-	private IEnumerator MakeCoroutine(object obj)
+	private static IEnumerator MakeCoroutine(object obj)
 	{
 		if (obj is IEnumerator ienum)
 			return ienum;
@@ -399,7 +393,7 @@ public class TwitchHoldable
 		return null;
 	}
 
-	private IEnumerator MakeSimpleCoroutine(IEnumerable<KMSelectable> kms)
+	private static IEnumerator MakeSimpleCoroutine(IEnumerable<KMSelectable> kms)
 	{
 		yield return null;
 		yield return kms;
@@ -487,9 +481,9 @@ public class TwitchHoldable
 		parseerror = true;
 	}
 
-	protected void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
+	protected static void DoInteractionStart(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().HandleInteract();
 
-	protected void DoInteractionEnd(MonoBehaviour interactable)
+	protected static void DoInteractionEnd(MonoBehaviour interactable)
 	{
 		Selectable selectable = interactable.GetComponent<Selectable>();
 		selectable.OnInteractEnded();

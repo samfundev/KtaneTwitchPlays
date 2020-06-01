@@ -155,7 +155,7 @@ public class ButtonComponentSolver : ComponentSolver
 			}
 		}
 
-		if (!result.Any())
+		if (result.Count == 0)
 		{
 			yield return
 				$"sendtochaterror The button was not {(_held ? "released" : "tapped")} because all of your specified times are {(OtherModes.Unexplodable ? "less" : "greater")} than the time remaining.";

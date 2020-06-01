@@ -29,14 +29,8 @@ public class CryptographyComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[button]);
 	}
 
-	static CryptographyComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("CryptMod");
-		KeysField = ComponentType.GetField("Keys", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo KeysField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("CryptMod");
+	private static readonly FieldInfo KeysField = ComponentType.GetField("Keys", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 }

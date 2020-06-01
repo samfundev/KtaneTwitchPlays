@@ -58,16 +58,9 @@ public class EdgeworkComponentSolver : ComponentSolver
 		yield return new WaitForSeconds(0.1f);
 	}
 
-	static EdgeworkComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("EdgeworkModule");
-		ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-		CanPressButtonsField = ComponentType.GetField("canPressButtons", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly FieldInfo CanPressButtonsField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("EdgeworkModule");
+	private static readonly FieldInfo ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo CanPressButtonsField = ComponentType.GetField("canPressButtons", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 	private readonly object _component;

@@ -105,26 +105,13 @@ public class TwoBitsComponentSolver : ComponentSolver
 	private string CurrentQuery => ((string) GetCurrentQueryStringMethod.Invoke(_c, null)).ToLowerInvariant();
 	private TwoBitsState State => (TwoBitsState) StateField.GetValue(_c);
 
-	static TwoBitsComponentSolver()
-	{
-		ComponentSolverType = ReflectionHelper.FindType("TwoBitsModule");
-		SubmitButtonField = ComponentSolverType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
-		QueryButtonField = ComponentSolverType.GetField("QueryButton", BindingFlags.Public | BindingFlags.Instance);
-		ButtonsField = ComponentSolverType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-		StateField = ComponentSolverType.GetField("currentState", BindingFlags.NonPublic | BindingFlags.Instance);
-		CalculateCorrectSubmissionMethod = ComponentSolverType.GetMethod("CalculateCorrectSubmission",
-			BindingFlags.NonPublic | BindingFlags.Instance);
-		GetCurrentQueryStringMethod = ComponentSolverType.GetMethod("GetCurrentQueryString",
-			BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentSolverType;
-	private static readonly FieldInfo SubmitButtonField;
-	private static readonly FieldInfo QueryButtonField;
-	private static readonly FieldInfo ButtonsField;
-	private static readonly MethodInfo CalculateCorrectSubmissionMethod;
-	private static readonly MethodInfo GetCurrentQueryStringMethod;
-	private static readonly FieldInfo StateField;
+	private static readonly Type ComponentSolverType = ReflectionHelper.FindType("TwoBitsModule");
+	private static readonly FieldInfo SubmitButtonField = ComponentSolverType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo QueryButtonField = ComponentSolverType.GetField("QueryButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo ButtonsField = ComponentSolverType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly MethodInfo CalculateCorrectSubmissionMethod = ComponentSolverType.GetMethod("CalculateCorrectSubmission", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly MethodInfo GetCurrentQueryStringMethod = ComponentSolverType.GetMethod("GetCurrentQueryString", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static readonly FieldInfo StateField = ComponentSolverType.GetField("currentState", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly MonoBehaviour[] _buttons;
 	private readonly MonoBehaviour _query;

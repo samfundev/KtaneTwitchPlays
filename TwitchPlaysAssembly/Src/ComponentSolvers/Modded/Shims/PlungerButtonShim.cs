@@ -43,7 +43,7 @@ public class PlungerButtonShim : ComponentSolverShim
 			yield return new WaitForSeconds(0.125f);
 		}
 	}
-	
-	private Color[] colors = new[] { Color.blue, brown, Color.green, Color.grey, lime, orange, Color.magenta, Color.red, Color.white, Color.yellow  };
+
+	private readonly Color[] colors = new[] { Color.blue, brown, Color.green, Color.grey, lime, orange, Color.magenta, Color.red, Color.white, Color.yellow  };
 	static Color brown = new Color(165 / 255f, 42 / 255f, 42 / 255f), lime = new Color(50/255f, 205/255f, 50/255f), orange = new Color(1, 0.5f, 0);
 }

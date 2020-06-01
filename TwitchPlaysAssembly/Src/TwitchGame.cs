@@ -254,7 +254,7 @@ public class TwitchGame : MonoBehaviour
 		StopAllCoroutines();
 		GoodPlayers.Clear();
 		EvilPlayers.Clear();
-		VSSetFlag = false; 
+		VSSetFlag = false;
 		Leaderboard.Instance.BombsAttempted++;
 		// ReSharper disable once DelegateSubtraction
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
@@ -427,7 +427,7 @@ public class TwitchGame : MonoBehaviour
 		if (TwitchPlaySettings.data.EnableLetterCodes)
 		{
 			// Ignore initial “the” in module names
-			string SanitizedName(TwitchModule handle) => Regex.Replace(handle.BombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
+			static string SanitizedName(TwitchModule handle) => Regex.Replace(handle.BombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
 
 			// First, assign codes “naively”
 			var dic1 = new Dictionary<string, List<TwitchModule>>();
@@ -583,7 +583,7 @@ public class TwitchGame : MonoBehaviour
 		LastClaimedModule[moduleID][userNickName] = timestamp;
 	}
 
-	private IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
+	private static IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
 	{
 		yield return new WaitForSeconds(delay);
 		IRCConnection.SendMessage(message);
@@ -606,7 +606,7 @@ public class TwitchGame : MonoBehaviour
 	private void SendAnalysisLink()
 	{
 		if (LogUploader.Instance.previousUrl != null)
-			LogUploader.Instance.PostToChat(LogUploader.Instance.previousUrl);
+			LogUploader.PostToChat(LogUploader.Instance.previousUrl);
 		else
 			LogUploader.Instance.postOnComplete = true;
 	}
@@ -630,7 +630,7 @@ public class TwitchGame : MonoBehaviour
 		SetCurrentBomb();
 	}
 
-	private static string[] solveBased = {
+	private static readonly string[] solveBased = {
 		"MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN", "simonsStages", "forgetThemAll",
 		"tallorderedKeys", "forgetEnigma", "forgetUsNot", "qkForgetPerspective", "organizationModule", "ForgetMeNow"
 	};

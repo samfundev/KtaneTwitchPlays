@@ -14,7 +14,7 @@ public static class CheckSupport
 {
 	static Text alertText;
 	static Transform alertProgressBar;
-	static List<GameObject> gameObjects = new List<GameObject>();
+	static readonly List<GameObject> gameObjects = new List<GameObject>();
 
 	public static IEnumerator FindSupportedModules()
 	{

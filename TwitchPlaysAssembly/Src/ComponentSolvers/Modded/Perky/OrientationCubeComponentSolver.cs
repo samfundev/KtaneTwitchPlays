@@ -66,24 +66,13 @@ public class OrientationCubeComponentSolver : ComponentSolver
 		}
 	}
 
-	static OrientationCubeComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("OrientationModule");
-		SubmitField = ComponentType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
-		LeftField = ComponentType.GetField("YawLeftButton", BindingFlags.Public | BindingFlags.Instance);
-		RightField = ComponentType.GetField("YawRightButton", BindingFlags.Public | BindingFlags.Instance);
-		CcwField = ComponentType.GetField("RollLeftButton", BindingFlags.Public | BindingFlags.Instance);
-		CwField = ComponentType.GetField("RollRightButton", BindingFlags.Public | BindingFlags.Instance);
-		//_virtualField = _componentType.GetField("virtualViewAngle", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo SubmitField;
-	private static readonly FieldInfo LeftField;
-	private static readonly FieldInfo RightField;
-	private static readonly FieldInfo CcwField;
-	private static readonly FieldInfo CwField;
-	//private static FieldInfo _virtualField = null;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("OrientationModule");
+	private static readonly FieldInfo SubmitField = ComponentType.GetField("SubmitButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo LeftField = ComponentType.GetField("YawLeftButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo RightField = ComponentType.GetField("YawRightButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo CcwField = ComponentType.GetField("RollLeftButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo CwField = ComponentType.GetField("RollRightButton", BindingFlags.Public | BindingFlags.Instance);
+	//private static FieldInfo _virtualField = _componentType.GetField("virtualViewAngle", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly List<string> _interaction = new List<string>();
 	/*private string[] sides = new string[] { "l", "r", "f", "b", "t", "o" };

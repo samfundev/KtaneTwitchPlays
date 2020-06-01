@@ -54,14 +54,8 @@ public class EnglishTestComponentSolver : ComponentSolver
 		return null;
 	}
 
-	static EnglishTestComponentSolver()
-	{
-		ComponentType = ReflectionHelper.FindType("EnglishTestModule");
-		IndexField = ComponentType.GetField("selectedAnswerIndex", BindingFlags.NonPublic | BindingFlags.Instance);
-	}
-
-	private static readonly Type ComponentType;
-	private static readonly FieldInfo IndexField;
+	private static readonly Type ComponentType = ReflectionHelper.FindType("EnglishTestModule");
+	private static readonly FieldInfo IndexField = ComponentType.GetField("selectedAnswerIndex", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	private readonly Component _englishTestComponent;
 	private readonly KMSelectable _selectButton;

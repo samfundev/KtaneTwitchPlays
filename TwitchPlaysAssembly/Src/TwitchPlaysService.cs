@@ -100,7 +100,7 @@ public class TwitchPlaysService : MonoBehaviour
 		GameObject infoObject = new GameObject("TwitchPlays_Info");
 		infoObject.transform.parent = gameObject.transform;
 		_publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
-		_publicProperties.TwitchPlaysService = this; // Useless variable?
+		_publicProperties.TwitchPlaysService = this; // TODO: Useless variable?
 		if (TwitchPlaySettings.data.SkipModManagerInstructionScreen || IRCConnection.Instance.State == IRCConnectionState.Connected)
 			ModManagerManualInstructionScreen.HasShownOnce = true;
 
@@ -108,7 +108,7 @@ public class TwitchPlaysService : MonoBehaviour
 		SetupChatSimulator();
 	}
 
-	private void OnDisable()
+	public void OnDisable()
 	{
 		CoroutineQueue.StopQueue();
 		CoroutineQueue.CancelFutureSubcoroutines();
@@ -343,11 +343,11 @@ public class TwitchPlaysService : MonoBehaviour
 			if (CurrentState == KMGameInfo.State.Gameplay && prefix.EqualsIgnoreCase("bomb"))
 				InvokeCommand(msg, restCommand, TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb], typeof(BombCommands));
 			// Commands for bombs by bomb name (e.g. “!bomb1 hold”)
-			else if (CurrentState == KMGameInfo.State.Gameplay && (bomb = twitchGame.Bombs.FirstOrDefault(b => b.Code.EqualsIgnoreCase(prefix))) != null)
+			else if (CurrentState == KMGameInfo.State.Gameplay && (bomb = twitchGame.Bombs.Find(b => b.Code.EqualsIgnoreCase(prefix))) != null)
 				InvokeCommand(msg, restCommand, bomb, typeof(BombCommands));
 
 			// Commands for modules
-			else if (CurrentState == KMGameInfo.State.Gameplay && (module = twitchGame.Modules.FirstOrDefault(md => md.Code.EqualsIgnoreCase(prefix))) != null)
+			else if (CurrentState == KMGameInfo.State.Gameplay && (module = twitchGame.Modules.Find(md => md.Code.EqualsIgnoreCase(prefix))) != null)
 				InvokeCommand(msg, restCommand, module, typeof(ModuleCommands));
 
 			// Commands for holdables (check for these after bombs and modules so modded holdables can’t override them)
@@ -397,7 +397,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 	private static readonly Dictionary<Type, StaticCommand[]> _commands = new Dictionary<Type, StaticCommand[]>();
 
-	private StaticCommand[] GetCommands(Type type)
+	private static StaticCommand[] GetCommands(Type type)
 	{
 		if (_commands.TryGetValue(type, out var cmds))
 			return cmds;
@@ -619,7 +619,7 @@ public class TwitchPlaysService : MonoBehaviour
 		CoroutineQueue.AddToQueue(coroutine);
 	}
 
-	private void DefaultCamera()
+	private static void DefaultCamera()
 	{
 		if (GameRoom.SecondaryCamera != null)
 		{
@@ -628,10 +628,7 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 	}
 
-	public void SetHeaderVisbility(bool visible)
-	{
-		StartCoroutine(AnimateHeaderVisiblity(visible));
-	}
+	public void SetHeaderVisbility(bool visible) => StartCoroutine(AnimateHeaderVisiblity(visible));
 
 	private IEnumerator AnimateHeaderVisiblity(bool visbile)
 	{
@@ -658,7 +655,7 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 	}
 
-	private IEnumerator AutomaticUpdateCheck()
+	private static IEnumerator AutomaticUpdateCheck()
 	{
 		yield return Updater.CheckForUpdates();
 

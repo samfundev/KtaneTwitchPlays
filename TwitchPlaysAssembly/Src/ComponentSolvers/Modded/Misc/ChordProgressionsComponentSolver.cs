@@ -36,10 +36,10 @@ public class ChordProgressionsComponentSolver : ComponentSolver
 		yield return RespondToCommandInternal($"{notes[ans / 3]} {chordTypes[ans.Mod(3)]}");
 	}
 
-	private static Type componentType = ReflectionHelper.FindType("ChordProgressions");
+	private static readonly Type componentType = ReflectionHelper.FindType("ChordProgressions");
 
 	private readonly object component;
 	private readonly KMSelectable[] selectables;
-	private List<string> notes = new List<string> { "c", "c#", "d", "eb", "e", "f", "f#", "g", "g#", "ab", "a", "bb", "b" };
-	private List<string> chordTypes = new List<string> { "major", "minor", "diminished" };
+	private readonly List<string> notes = new List<string> { "c", "c#", "d", "eb", "e", "f", "f#", "g", "g#", "ab", "a", "bb", "b" };
+	private readonly List<string> chordTypes = new List<string> { "major", "minor", "diminished" };
 }

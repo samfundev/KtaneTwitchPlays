@@ -34,16 +34,9 @@ public class TranslatedNeedyVentComponentSolver : ComponentSolver
 		}
 	}
 
-	static TranslatedNeedyVentComponentSolver()
-	{
-		NeedyVentComponentSolverType = ReflectionHelper.FindType("VentGasTranslatedModule");
-		YesButtonField = NeedyVentComponentSolverType.GetField("YesButton", BindingFlags.Public | BindingFlags.Instance);
-		NoButtonField = NeedyVentComponentSolverType.GetField("NoButton", BindingFlags.Public | BindingFlags.Instance);
-	}
-
-	private static readonly Type NeedyVentComponentSolverType;
-	private static readonly FieldInfo YesButtonField;
-	private static readonly FieldInfo NoButtonField;
+	private static readonly Type NeedyVentComponentSolverType = ReflectionHelper.FindType("VentGasTranslatedModule");
+	private static readonly FieldInfo YesButtonField = NeedyVentComponentSolverType.GetField("YesButton", BindingFlags.Public | BindingFlags.Instance);
+	private static readonly FieldInfo NoButtonField = NeedyVentComponentSolverType.GetField("NoButton", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly MonoBehaviour _yesButton;
 	private readonly MonoBehaviour _noButton;
