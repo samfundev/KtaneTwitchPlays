@@ -81,6 +81,7 @@ public class TwitchPlaysService : MonoBehaviour
 		CoroutineQueue = GetComponent<CoroutineQueue>();
 
 		Leaderboard.Instance.LoadDataFromFile();
+		LeaderboardController.Install();
 
 		ModuleData.LoadDataFromFile();
 		ModuleData.WriteDataToFile();
@@ -113,13 +114,6 @@ public class TwitchPlaysService : MonoBehaviour
 		CoroutineQueue.CancelFutureSubcoroutines();
 		CoroutineQueue.StopForcedSolve();
 		StopAllCoroutines();
-
-		LeaderboardsEnabled = true;
-	}
-
-	private void OnEnable()
-	{
-		LeaderboardsEnabled = false;
 	}
 
 	private void Update()
@@ -245,6 +239,7 @@ public class TwitchPlaysService : MonoBehaviour
 		{
 			case KMGameInfo.State.Gameplay:
 				DefaultCamera();
+				LeaderboardController.DisableLeaderboards();
 				break;
 
 			case KMGameInfo.State.Setup:
@@ -660,21 +655,6 @@ public class TwitchPlaysService : MonoBehaviour
 			var drop = holdable.Drop();
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
-		}
-	}
-
-	private bool LeaderboardsEnabled
-	{
-		set
-		{
-			if (RecordManager.Instance != null)
-				RecordManager.Instance.DisableBestRecords = !value;
-
-			if (StatsManager.Instance != null)
-				StatsManager.Instance.DisableStatChanges = !value;
-
-			if (AbstractServices.Instance != null)
-				AbstractServices.Instance.LeaderboardMediator.DisableLeaderboardRequests = !value;
 		}
 	}
 
