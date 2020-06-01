@@ -31,7 +31,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 				if (CoroutineCanceller.ShouldCancel)
 					break;
 
-				pagesTurned = i;
+				pagesTurned = i + 1;
 				yield return DoInteractionClick(selectables[1]);
 			}
 
@@ -63,7 +63,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 
 			if (CoroutineCanceller.ShouldCancel)
 			{
-				for (int i = pagesTurned; i < 7; i++)
+				for (int i = pagesTurned; i < 8; i++)
 				{
 					yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
 					yield return DoInteractionClick(selectables[1]);
