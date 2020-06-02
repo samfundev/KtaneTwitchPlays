@@ -514,6 +514,7 @@ static class GameCommands
 		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(msg.Duplicate(command), name.Trim()));
 		TwitchGame.ModuleCameras?.SetNotes();
 		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
+		TwitchGame.Instance.CallUpdate(false);
 	}
 
 	/// <name>Queue Command</name>
@@ -532,6 +533,7 @@ static class GameCommands
 		TwitchGame.Instance.CommandQueue.Add(new CommandQueueItem(msg.Duplicate(command)));
 		TwitchGame.ModuleCameras?.SetNotes();
 		IRCConnection.SendMessage("@{0}, command queued.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
+		TwitchGame.Instance.CallUpdate(false);
 	}
 
 	/// <name>Unqueue/Show Command</name>
@@ -581,109 +583,24 @@ static class GameCommands
 	{
 		name = name?.Trim();
 		name ??= "";
-
-		if (!now)
+		var response = TwitchGame.Instance.CheckIfCall(false, now, user, name, out bool callChanged);
+		if (response != TwitchGame.CallResponse.Success)
 		{
-			bool unnamed = string.IsNullOrEmpty(name);
-
-			bool _callChanged = false;
-			if (TwitchGame.Instance.CallingPlayers.Keys.Contains(user))
-			{
-				if (name == TwitchGame.Instance.CallingPlayers[user])
-				{
-					IRCConnection.SendMessageFormat("@{0}, you already called!", user);
-					return;
-				}
-				TwitchGame.Instance.CallingPlayers.Remove(user);
-				_callChanged = true;
-			}
-
-			TwitchGame.Instance.CallingPlayers.Add(user, name);
-			var _callsNeeded = TwitchGame.Instance.callsNeeded;
-			var _callsTotal = TwitchGame.Instance.CallingPlayers.Count;
-
-			// Only call if there are enough calls.
-			if (_callsTotal < _callsNeeded)
-			{
-				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, unnamed ? "the next queued command" : name);
-				CallCountCommand();
-				return;
-			}
-
-			//we now need to call, but we need to check if uncommon things were called
-			if (_callsTotal != 1)
-			{
-				string[] _calls = TwitchGame.Instance.CallingPlayers.Values.ToArray();
-
-				for (int i = 1; i < _calls.Length; i++)
-				{
-					if (_calls[0] != _calls[i])
-					{
-						if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls still present.", user, unnamed ? "the next queued command" : name);
-						else
-						{
-							IRCConnection.SendMessage("Sorry, uncommon calls were made. Please either correct your call(s) or use “!callnow” followed by the correct command to call.", user, !isWhisper);
-							ListCalledPlayers();
-						}
-						return;
-					}
-				}
-				if (_callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, unnamed ? "the next queued command" : name);
-			}
+			TwitchGame.Instance.SendCallResponse(user, name, response, callChanged);
+			return;
 		}
-
-		CommandQueueItem call = null;
-		if (string.IsNullOrEmpty(name))
-		{
-			// Call the first unnamed item in the queue.
-			call = TwitchGame.Instance.CommandQueue.Find(item => item.Name == null);
-
-			if (call == null)
-			{
-				IRCConnection.SendMessage($"@{user}, no unnamed commands in the queue.", user, !isWhisper);
-				return;
-			}
-		}
-		else if (name.StartsWith("!"))
-		{
-			name += ' ';
-
-			// Call an unnamed item in the queue for a specific module.
-			call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name) && item.Name == null);
-
-			if (call == null)
-			{
-				// If a named command exists, and no unnamed commands exist, then show the name of that command (but don't call it).
-				call = TwitchGame.Instance.CommandQueue.Find(item => item.Message.Text.StartsWith(name));
-
-				if (call != null)
-					IRCConnection.SendMessage($"@{user}, module {name} is queued with the name “{call.Name}”, please use “!call {call.Name}” to call it.", user, !isWhisper);
-				else
-					IRCConnection.SendMessage($"@{user}, no commands for module {name} in the queue.", user, !isWhisper);
-
-				return;
-			}
-		}
-		else
-		{
-			// Call a named item in the queue.
-			call = TwitchGame.Instance.CommandQueue.Find(item => name.EqualsIgnoreCase(item.Name));
-
-			if (call == null)
-			{
-				IRCConnection.SendMessage($"@{user}, no commands named “{name}” in the queue.", user, !isWhisper);
-				return;
-			}
-		}
-		TwitchGame.Instance.CallingPlayers.Clear();
-		TwitchGame.Instance.CommandQueue.Remove(call);
+		if (callChanged) IRCConnection.SendMessage($"@{user}, your call has been changed to {name}.", user, !isWhisper);
+		TwitchGame.Instance.CommandQueue.Remove(TwitchGame.Instance.callSend);
 		TwitchGame.ModuleCameras?.SetNotes();
-		IRCConnection.SendMessageFormat("{0} {1}: {2}", now
-			? "Bypassing the required number of calls, calling"
-			: TwitchGame.Instance.callsNeeded > 1
-				? "Required calls reached, calling"
-				: "Calling", call.Message.UserNickName, call.Message.Text);
-		IRCConnection.ReceiveMessage(call.Message);
+		IRCConnection.SendMessageFormat("{0} {1}: {2}", TwitchGame.Instance.callWaiting
+			? "Call waiting, calling"
+			: now
+				? "Bypassing the required number of calls, calling"
+				: TwitchGame.Instance.callsNeeded > 1
+					? "Required calls reached, calling"
+					: "Calling", TwitchGame.Instance.callSend.Message.UserNickName, TwitchGame.Instance.callSend.Message.Text);
+		DeleteCallInformation(true);
+		IRCConnection.ReceiveMessage(TwitchGame.Instance.callSend.Message);
 	}
 
 	/// <name>Call All</name>
@@ -707,6 +624,7 @@ static class GameCommands
 			IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
 			IRCConnection.ReceiveMessage(call.Message);
 		}
+		DeleteCallInformation(true);
 	}
 
 	/// <name>Call Set</name>
@@ -722,7 +640,7 @@ static class GameCommands
 		}
 
 		TwitchGame.Instance.callsNeeded = minimum;
-		TwitchGame.Instance.CallingPlayers.Clear();
+		DeleteCallInformation(true);
 		IRCConnection.SendMessageFormat("Set minimum calls to {0}.", minimum);
 	}
 
@@ -741,7 +659,7 @@ static class GameCommands
 		{
 			TwitchGame.Instance.CallingPlayers.Remove(callUser);
 			IRCConnection.SendMessageFormat("@{0}, removed @{1}'s call.", user, callUser);
-			CallCountCommand();
+			TwitchGame.Instance.CallUpdate(true);
 		}
 	}
 
@@ -758,7 +676,7 @@ static class GameCommands
 		}
 		TwitchGame.Instance.CallingPlayers.Remove(user);
 		IRCConnection.SendMessageFormat("@{0}, your call has been removed.", user);
-		CallCountCommand();
+		TwitchGame.Instance.CallUpdate(true);
 	}
 
 	/// <name>Call Players</name>
@@ -778,6 +696,14 @@ static class GameCommands
 		string builder = "";
 		for (int j = 0; j < __calls.Length; j++) builder = builder + ((j == 0) ? "@" : ", @") + __callPlayers[j] + ": " + (string.IsNullOrEmpty(__calls[j]) ? "Next queued command" : __calls[j]);
 		IRCConnection.SendMessageFormat("These players have already called: {0}", builder);
+	}
+
+	[Command(@"delcallall", AccessLevel.Mod, AccessLevel.Mod)]
+	public static void DeleteCallInformation(bool silent)
+	{
+		TwitchGame.Instance.CallingPlayers.Clear();
+		TwitchGame.Instance.callWaiting = false;
+		if (!silent) IRCConnection.SendMessageFormat("All call information cleared.");
 	}
 
 	/// <name>Set Multiplier</name>

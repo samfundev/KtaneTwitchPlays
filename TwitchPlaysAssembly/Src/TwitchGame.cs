@@ -26,6 +26,9 @@ public class TwitchGame : MonoBehaviour
 	public int callsNeeded = 1;
 	public bool VSSetFlag = false;
 	public Dictionary<string, string> CallingPlayers = new Dictionary<string, string>();
+	public bool callWaiting;
+	public string commandToCall = "";
+	public CommandQueueItem callSend;
 	public SortedDictionary<int, string> VSModePlayers = new SortedDictionary<int, string>();
 	public List<string> GoodPlayers = new List<string>();
 	public List<string> EvilPlayers = new List<string>();
@@ -94,6 +97,7 @@ public class TwitchGame : MonoBehaviour
 		callsNeeded = 1;
 		VoteDetonateAttempted = false;
 		CallingPlayers.Clear();
+		callWaiting = false;
 		FindClaimPlayers.Clear();
 		MysteryModuleShim.CoveredModules.Clear();
 		RetryAllowed = true;
@@ -340,6 +344,147 @@ public class TwitchGame : MonoBehaviour
 		Modules.Clear();
 	}
 
+	public void CallUpdate(bool response)
+	{
+		var callResponse = CheckIfCall(true, false, "", commandToCall, out _);
+		if (callResponse == CallResponse.Success)
+			GameCommands.CallQueuedCommand("", false, true, commandToCall);
+		else if (callWaiting)
+			IRCConnection.SendMessageFormat("Waiting for {0} to be queued.", string.IsNullOrEmpty(commandToCall) ? "the next unnamed queued command" : commandToCall.StartsWith("!") ? "module " + commandToCall : "the command named “" + commandToCall + "”");
+		else if (response)
+			GameCommands.CallCountCommand();
+	}
+
+	public enum CallResponse
+	{
+		Success,
+		AlreadyCalled,
+		NotEnoughCalls,
+		UncommonCalls,
+		DifferentName,
+		NotPresent
+	}
+
+	public CallResponse CheckIfCall(bool check, bool now, string user, string name, out bool callChanged)
+	{
+		/*	THIS IS THE ORDERING OF THE CALL CHECKING SYSTEM
+		 *	1. Prevent user from being added / add them if necessary*
+		 *	2. Check if enough calls were made**
+		 *	3. Remove all empty sets and check if calls are all now common. This will also set the correct call to be made if necessary**
+		 *	4. Make sure that the correct call exists in the queue. If not, set it to be made when possible
+		 * 
+		 *  * This section is skipped if "bool check" or "bool now" is true
+		 *  ** These sections are skipped if "bool now" is true
+		 */
+
+		callChanged = false;
+		if (!now)
+		{
+			//section 1 start
+			if (!check)
+			{
+				if (CallingPlayers.Keys.Contains(user))
+				{
+					if (name == CallingPlayers[user])
+						return CallResponse.AlreadyCalled;
+
+					callChanged = true;
+					CallingPlayers.Remove(user);
+				}
+				CallingPlayers.Add(user, name);
+			}
+
+			//section 2 start
+			if (callsNeeded > CallingPlayers.Count)
+				return CallResponse.NotEnoughCalls;
+
+			//section 3 start
+			string[] _calls = CallingPlayers.Values.Where(x => x != "").ToArray();
+			if (_calls.Length != 0)
+			{
+				for (int i = 0; i < _calls.Length; i++)
+				{
+					if (!_calls[0].EqualsIgnoreCase(_calls[i]))
+						return CallResponse.UncommonCalls;
+				}
+				name = _calls[0];
+			}
+		}
+		commandToCall = name;
+
+		//section 4 start
+		CommandQueueItem call = null;
+		if (string.IsNullOrEmpty(name)) //call any unnamed command
+		{
+			call = CommandQueue.Find(item => item.Name == null);
+		}
+		else if (name.StartsWith("!")) //call a specific module
+		{
+			name += ' ';
+			call = CommandQueue.Find(item => item.Message.Text.StartsWith(name) && item.Name == null);
+			if (call == null)
+			{
+				call = CommandQueue.Find(item => item.Message.Text.StartsWith(name));
+				if (call != null)
+					return CallResponse.DifferentName;
+			}
+		}
+		else //call a named command
+		{
+			call = CommandQueue.Find(item => name.EqualsIgnoreCase(item.Name));
+		}
+
+		if (call == null)
+			return CallResponse.NotPresent;
+
+		callSend = call;
+		return CallResponse.Success;
+	}
+
+	public void SendCallResponse(string user, string name, CallResponse response, bool callChanged)
+	{
+		bool unnamed = string.IsNullOrEmpty(name);
+		if (response == CallResponse.AlreadyCalled)
+		{
+			IRCConnection.SendMessageFormat("@{0}, you already called!", user);
+			return;
+		}
+		else if (response == CallResponse.NotEnoughCalls)
+		{
+			if (callChanged)
+				IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}.", user, unnamed ? "the next queued command" : name);
+			GameCommands.CallCountCommand();
+			return;
+		}
+		else if (response == CallResponse.UncommonCalls)
+		{
+			if (callChanged)
+				IRCConnection.SendMessageFormat("@{0}, your call has been updated to {1}. Uncommon calls still present.", user, unnamed ? "the next queued command" : name);
+			else
+			{
+				IRCConnection.SendMessageFormat("Sorry, uncommon calls were made. Please either correct your call(s) or use “!callnow” followed by the correct command to call.");
+				GameCommands.ListCalledPlayers();
+			}
+			return;
+		}
+		else if (response == CallResponse.DifferentName)
+		{
+			CommandQueueItem call = CommandQueue.Find(item => item.Message.Text.StartsWith(name));
+			IRCConnection.SendMessageFormat("@{0}, module {1} is queued with the name “{2}”, please use “!call {2}” to call it.", user, name, call.Name);
+			return;
+		}
+		else
+		{
+			unnamed = string.IsNullOrEmpty(commandToCall);
+			if (callWaiting)
+				IRCConnection.SendMessageFormat("Waiting for {0} to be queued.", unnamed ? "the next unnamed queued command" : commandToCall.StartsWith("!") ? "module " + commandToCall : "the command named “" + commandToCall + "”");
+			else
+			{
+				IRCConnection.SendMessageFormat("No {0} in the queue. Calling {1} when it is queued.", unnamed ? "unnamed commands" : commandToCall.StartsWith("!") ? "command for module " + commandToCall : "command named “" + commandToCall + "”", unnamed ? "the next unnamed queued command" : commandToCall.StartsWith("!") ? "module " + commandToCall : "the command named “" + commandToCall + "”");
+				callWaiting = true;
+			}
+		}
+	}
 	#region Protected/Private Methods
 
 	private IEnumerator AutoFillEdgework()
