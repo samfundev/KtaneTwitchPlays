@@ -21,6 +21,37 @@
             Make sure to disable them again after that if they should still be disabled
             </summary>
         </member>
+        <member name="T:ModdedAPI">
+            <summary>A class to add and access shared modded APIs for things like exploding the bomb.</summary>
+        </member>
+        <member name="M:ModdedAPI.AddProperty(System.String,System.Func{System.Object},System.Action{System.Object})">
+            <summary>
+            Adds a new property with a getter and setter. The getter or setter can be null.
+            If at anytime you can't handle a property, disable the property using <see cref="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)"/>.
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="get">The getter of the property.</param>
+            <param name="set">The setter of the property.</param>
+            <returns>An object that represents the property. Used in <see cref="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)"/>.</returns>
+        </member>
+        <member name="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)">
+            <summary>Sets whether or not a property is enabled. This allows other mods to handle the property instead.</summary>
+            <param name="property">The property object from the <see cref="M:ModdedAPI.AddProperty(System.String,System.Func{System.Object},System.Action{System.Object})"/> method.</param>
+            <param name="enabled">Whether or not the property should be enabled or disabled.</param>
+        </member>
+        <member name="M:ModdedAPI.TryGetAs``1(System.String,``0@)">
+            <summary>Gets a value from a property.</summary>
+            <typeparam name="T">The type of the value.</typeparam>
+            <param name="name">The name of the property.</param>
+            <param name="value">The variable to put the value into.</param>
+            <returns>Whether or not a value was read succesfully.</returns>
+        </member>
+        <member name="M:ModdedAPI.TrySet(System.String,System.Object)">
+            <summary>Sets a value to a property.</summary>
+            <param name="name">The name of the property.</param>
+            <param name="value">The value to put into the property.</param>
+            <returns>Whether or not a value was written sucessfully.</returns>
+        </member>
         <member name="T:KModkit.KMBombInfoExtensions">
             <summary>
             Some helper extensions methods for the KMBombInfo class.
