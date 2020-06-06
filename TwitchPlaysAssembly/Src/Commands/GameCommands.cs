@@ -476,28 +476,31 @@ static class GameCommands
 		}
 	}
 
-	/// <name>Enable Camera Wall</name>
-	/// <syntax>enablecamerawall</syntax>
-	/// <summary>Enables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
-	[Command(@"enablecamerawall")]
-	public static void EnableCameraWall(string user)
+	/// <name>Camera Wall</name>
+	/// <syntax>camerawall [mode]</syntax>
+	/// <summary>Sets the mode of the camera wall to either on, off or auto. If automatic camera wall is enabled, mod rank is required to use.</summary>
+	/// <argument name="mode">The mode of the camera wall. Can be on, off or auto.</argument>
+	[Command(@"(?:camerawall|cw) *(.+)")]
+	public static void CameraWall(string user, [Group(1)] string mode)
 	{
 		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
-			IRCConnection.SendMessage("The camera wall is being controlled automatically and cannot be enabled.");
-		else
-			TwitchGame.ModuleCameras.EnableCameraWall();
-	}
+		{
+			IRCConnection.SendMessage("The camera wall is being controlled automatically and can only be changed by mods.");
+			return;
+		}
 
-	/// <name>Disable Camera Wall</name>
-	/// <syntax>disablecamerawall</syntax>
-	/// <summary>Disables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
-	[Command(@"disablecamerawall")]
-	public static void DisableCameraWall(string user)
-	{
-		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
-			IRCConnection.SendMessage("The camera wall is being controlled automatically and cannot be disabled.");
-		else
-			TwitchGame.ModuleCameras.DisableCameraWall();
+		if (mode.EqualsAny("on", "enabled"))
+		{
+			TwitchGame.ModuleCameras.CameraWallMode = ModuleCameras.Mode.Enabled;
+		}
+		else if (mode.EqualsAny("off", "disabled"))
+		{
+			TwitchGame.ModuleCameras.CameraWallMode = ModuleCameras.Mode.Disabled;
+		}
+		else if (mode.StartsWith("auto") && TwitchPlaySettings.data.EnableAutomaticCameraWall)
+		{
+			TwitchGame.ModuleCameras.CameraWallMode = ModuleCameras.Mode.Automatic;
+		}
 	}
 
 	/// <name>Queue Named Command</name>

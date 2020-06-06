@@ -463,15 +463,11 @@
             <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
             <restriction>ElevatorDisallowed</restriction>
         </member>
-        <member name="M:GameCommands.EnableCameraWall(System.String)">
-            <name>Enable Camera Wall</name>
-            <syntax>enablecamerawall</syntax>
-            <summary>Enables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
-        </member>
-        <member name="M:GameCommands.DisableCameraWall(System.String)">
-            <name>Disable Camera Wall</name>
-            <syntax>disablecamerawall</syntax>
-            <summary>Disables the camera wall. If automatic camera wall is enabled, mod permission is required to use.</summary>
+        <member name="M:GameCommands.CameraWall(System.String,System.String)">
+            <name>Camera Wall</name>
+            <syntax>camerawall [mode]</syntax>
+            <summary>Sets the mode of the camera wall to either on, off or auto. If automatic camera wall is enabled, mod rank is required to use.</summary>
+            <argument name="mode">The mode of the camera wall. Can be on, off or auto.</argument>
         </member>
         <member name="M:GameCommands.EnqueueNamedCommand(IRCMessage,System.String,System.String)">
             <name>Queue Named Command</name>

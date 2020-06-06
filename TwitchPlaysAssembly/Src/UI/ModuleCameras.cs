@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
-using static ModuleCommands;
 
 public class ModuleCameras : MonoBehaviour
 {
@@ -209,6 +208,36 @@ public class ModuleCameras : MonoBehaviour
 	[HideInInspector]
 	public bool CameraWallEnabled;
 
+	private Mode _cameraWallMode = Mode.Disabled;
+	public Mode CameraWallMode
+	{
+		get => _cameraWallMode;
+		set
+		{
+			_cameraWallMode = value;
+
+			switch (_cameraWallMode)
+			{
+				case Mode.Enabled:
+					EnableCameraWall();
+					break;
+				case Mode.Disabled:
+					DisableCameraWall();
+					break;
+				case Mode.Automatic:
+					UpdateAutomaticCameraWall();
+					break;
+			}
+		}
+	}
+
+	public enum Mode
+	{
+		Enabled,
+		Disabled,
+		Automatic
+	}
+
 	public static ModuleCameras Instance;
 	#endregion
 
@@ -354,7 +383,7 @@ public class ModuleCameras : MonoBehaviour
 		if (camera.Module == null || camera.Module.CameraPriority < module.CameraPriority)
 			camera.ViewModule(module);
 		// If we can and should enable the camera wall, enable it and then view the module.
-		else if (AutomaticCameraWallEnabled && !CameraWallEnabled && TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) >= 7 && !InputInterceptor.IsInputEnabled)
+		else if (UpdateAutomaticCameraWall())
 		{
 			EnableCameraWall();
 			TryViewModule(module);
@@ -527,6 +556,25 @@ public class ModuleCameras : MonoBehaviour
 			TryViewModule(PreferredToView);
 
 		DebugHelper.Log("Camera wall disabled");
+	}
+
+	public bool UpdateAutomaticCameraWall()
+	{
+		if (!AutomaticCameraWallEnabled)
+			return false;
+
+		if (!CameraWallEnabled && TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) >= 7 && !InputInterceptor.IsInputEnabled)
+		{
+			EnableCameraWall();
+			return true;
+		}
+		else if (CameraWallEnabled && (TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) <= 4 || TwitchGame.Instance.Modules.Count(twitchModule => !twitchModule.Solved) <= 6))
+		{
+			DisableCameraWall();
+			return false;
+		}
+
+		return false;
 	}
 
 	public void ChangeBomb(TwitchBomb bomb)
@@ -708,10 +756,8 @@ public class ModuleCameras : MonoBehaviour
 		if (camera.Module != null && ReferenceEquals(camera.Module, handle))
 			camera.ViewModule(PreferredToView);
 
-		// If there are now 4 or fewer claimed modules, or 6 or fewer unsolved modules in total, disengage the camera wall
-		if (AutomaticCameraWallEnabled && CameraWallEnabled &&
-			(TwitchGame.Instance.Modules.Count(twitchModule => twitchModule.Claimed && !twitchModule.Solved) <= 4 || TwitchGame.Instance.Modules.Count(twitchModule => !twitchModule.Solved) <= 6))
-			DisableCameraWall();
+		// Update the automatic camera wall
+		UpdateAutomaticCameraWall();
 	}
 
 	private int CurrentModulesContains(TwitchModule component)
@@ -774,6 +820,6 @@ public class ModuleCameras : MonoBehaviour
 	public bool HasEmptySlot => _moduleCameras.Any(c => c.Module == null);
 
 	// Make sure automatic camera wall is enabled and respect EnableFactoryZenModeCameraWall
-	private static bool AutomaticCameraWallEnabled => TwitchPlaySettings.data.EnableAutomaticCameraWall && !(TwitchPlaySettings.data.EnableFactoryTrainingModeCameraWall && OtherModes.TrainingModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
+	private static bool AutomaticCameraWallEnabled => Instance.CameraWallMode == Mode.Automatic && !(TwitchPlaySettings.data.EnableFactoryTrainingModeCameraWall && OtherModes.TrainingModeOn && GameRoom.Instance is Factory && IRCConnection.Instance.State == IRCConnectionState.Connected);
 	#endregion
 }
