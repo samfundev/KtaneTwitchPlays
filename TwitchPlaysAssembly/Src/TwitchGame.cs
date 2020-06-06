@@ -22,19 +22,22 @@ public class TwitchGame : MonoBehaviour
 	public int _currentBomb = -1;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
+	public bool VoteDetonateAttempted = false;
+
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
-	public bool VSSetFlag = false;
 	public Dictionary<string, string> CallingPlayers = new Dictionary<string, string>();
 	public bool callWaiting;
 	public string commandToCall = "";
 	public CommandQueueItem callSend;
+
+	public bool VSSetFlag = false;
 	public SortedDictionary<int, string> VSModePlayers = new SortedDictionary<int, string>();
 	public List<string> GoodPlayers = new List<string>();
 	public List<string> EvilPlayers = new List<string>();
+
 	public int FindClaimUse = 0;
 	public Dictionary<string, int> FindClaimPlayers = new Dictionary<string, int>();
-	public bool VoteDetonateAttempted = false;
 
 #pragma warning disable 169
 	// ReSharper disable once InconsistentNaming
@@ -95,9 +98,9 @@ public class TwitchGame : MonoBehaviour
 		Leaderboard.Instance.ClearSolo();
 		LogUploader.Instance.Clear();
 		callsNeeded = 1;
-		VoteDetonateAttempted = false;
 		CallingPlayers.Clear();
 		callWaiting = false;
+		VoteDetonateAttempted = false;
 		FindClaimPlayers.Clear();
 		MysteryModuleShim.CoveredModules.Clear();
 		RetryAllowed = true;
@@ -399,7 +402,7 @@ public class TwitchGame : MonoBehaviour
 				return CallResponse.NotEnoughCalls;
 
 			//section 3 start
-			string[] _calls = CallingPlayers.Values.Where(x => x != "").ToArray();
+			string[] _calls = CallingPlayers.Values.Where(x => x.Length == 0).ToArray();
 			if (_calls.Length != 0)
 			{
 				for (int i = 0; i < _calls.Length; i++)
