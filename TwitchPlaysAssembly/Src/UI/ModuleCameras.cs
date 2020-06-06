@@ -167,6 +167,28 @@ public class ModuleCameras : MonoBehaviour
 
 			Module = null;
 		}
+
+		// Swap the properties of a camera to another one.
+		// Used so that a zoom can continue if the camera wall gets disabled interupting the sequence.
+		public void SwapTo(ModuleCamera otherCamera)
+		{
+			// Copy over the properties that get changed while doing a zoom
+			var otherInstance = otherCamera.CameraInstance;
+			CameraInstance.rect = otherInstance.rect;
+
+			CameraInstance.fieldOfView = otherInstance.fieldOfView;
+			CameraInstance.transform.localPosition = otherInstance.transform.localPosition;
+
+			// Copy everything else over
+			otherCamera.PreviousModule = Module;
+			otherCamera.CameraInstance = CameraInstance;
+			otherCamera.ViewModule(otherCamera.Module);
+			CameraInstance = otherInstance;
+
+			otherCamera.CameraLayer = CameraLayer;
+
+			otherCamera._originalCameraRect = _originalCameraRect;
+		}
 	}
 
 	#region Public Fields
@@ -483,6 +505,18 @@ public class ModuleCameras : MonoBehaviour
 		while (_moduleCameras.Count > 6)
 		{
 			ModuleCamera camera = _moduleCameras[6];
+
+			// If the camera is zooming, we need to swap the zoom onto another camera.
+			if (camera.ZoomActive)
+			{
+				var targetCamera = _moduleCameras[5];
+				targetCamera.SwapTo(camera);
+
+				_moduleCameras[5] = camera;
+				_moduleCameras[6] = targetCamera;
+				camera = targetCamera;
+			}
+
 			_moduleCameras.RemoveAt(6);
 
 			camera.Deactivate();
