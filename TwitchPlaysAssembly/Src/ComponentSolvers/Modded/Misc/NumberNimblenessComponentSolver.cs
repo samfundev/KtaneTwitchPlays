@@ -27,7 +27,9 @@ public class NumberNimblenessComponentSolver : ComponentSolver
 		{
 			var numbers = split.Skip(1).Select(argument =>
 			{
-				int.TryParse(argument, out int number);
+				if (!int.TryParse(argument, out int number))
+					number = -1;
+
 				return number;
 			});
 
