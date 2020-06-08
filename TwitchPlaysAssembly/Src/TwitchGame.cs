@@ -402,7 +402,7 @@ public class TwitchGame : MonoBehaviour
 				return CallResponse.NotEnoughCalls;
 
 			//section 3 start
-			string[] _calls = CallingPlayers.Values.Where(x => x.Length == 0).ToArray();
+			string[] _calls = CallingPlayers.Values.Where(x => x.Length != 0).ToArray();
 			if (_calls.Length != 0)
 			{
 				for (int i = 0; i < _calls.Length; i++)
