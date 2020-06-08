@@ -208,7 +208,7 @@ public class ModuleCameras : MonoBehaviour
 	[HideInInspector]
 	public bool CameraWallEnabled;
 
-	private Mode _cameraWallMode = Mode.Disabled;
+	private Mode _cameraWallMode = TwitchPlaySettings.data.EnableAutomaticCameraWall ? Mode.Automatic : Mode.Disabled;
 	public Mode CameraWallMode
 	{
 		get => _cameraWallMode;
