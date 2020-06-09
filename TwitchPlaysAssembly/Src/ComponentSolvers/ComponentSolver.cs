@@ -1072,7 +1072,7 @@ public abstract class ComponentSolver
 
 		TwitchPlaySettings.AppendToSolveStrikeLog(recordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
-		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
+		int currentReward = Convert.ToInt32(originalReward * (1 - (1 - TwitchPlaySettings.data.AwardDropMultiplierOnStrike) * OtherModes.ScoreMultiplier));
 		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
 		if (currentReward != originalReward)
 			messageParts.Add($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
@@ -1202,6 +1202,7 @@ public abstract class ComponentSolver
 				break;
 		}
 
+		rewardBonus = (rewardBonus * OtherModes.ScoreMultiplier).RoundToInt();
 		if (rewardBonus != 0)
 		{
 			TwitchPlaySettings.AddRewardBonus(rewardBonus);

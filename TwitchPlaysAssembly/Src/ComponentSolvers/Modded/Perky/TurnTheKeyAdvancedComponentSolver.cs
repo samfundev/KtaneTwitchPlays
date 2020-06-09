@@ -45,7 +45,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 
 			if (!GetValue(otherKeyTurned)) return false;
 			int modules = bombInfo.GetSolvedModuleNames().Count(x => RightAfterA.Contains(x) || LeftAfterA.Contains(x));
-			TwitchPlaySettings.AddRewardBonus(2 * modules);
+			TwitchPlaySettings.AddRewardBonus((2 * modules * OtherModes.ScoreMultiplier).RoundToInt());
 			IRCConnection.SendMessage($"Reward increased by {modules * 2} for defusing module !{Code} ({bombModule.ModuleDisplayName}).");
 		}
 		else

@@ -495,6 +495,8 @@ public class ModuleCameras : MonoBehaviour
 			string pts = $"+{TwitchPlaySettings.GetRewardBonus():0}";
 			ConfidencePrefab.text = pts;
 		}
+
+		ConfidencePrefab.enabled = OtherModes.ScoreMultiplier != 0;
 	}
 
 	public void EnableCameraWall()

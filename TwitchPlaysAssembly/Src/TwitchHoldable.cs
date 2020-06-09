@@ -92,7 +92,7 @@ public class TwitchHoldable
 		TwitchPlaySettings.AppendToSolveStrikeLog(recordMessageTone, TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 
 		int originalReward = TwitchPlaySettings.GetRewardBonus();
-		int currentReward = Convert.ToInt32(originalReward * TwitchPlaySettings.data.AwardDropMultiplierOnStrike);
+		int currentReward = Convert.ToInt32(originalReward * (1 - (1 - TwitchPlaySettings.data.AwardDropMultiplierOnStrike) * OtherModes.ScoreMultiplier));
 		TwitchPlaySettings.AddRewardBonus(currentReward - originalReward);
 		if (currentReward != originalReward)
 			IRCConnection.SendMessage($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");

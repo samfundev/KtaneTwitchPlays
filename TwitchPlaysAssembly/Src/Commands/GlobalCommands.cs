@@ -1444,6 +1444,7 @@ static class GlobalCommands
 		try
 		{
 			mission.GeneratorSetting = distribution.GenerateMission(modules, OtherModes.TimeModeOn, out int rewardPoints);
+			rewardPoints = (rewardPoints * OtherModes.ScoreMultiplier).RoundToInt();
 			TwitchPlaySettings.SetRewardBonus(rewardPoints);
 			IRCConnection.SendMessage("Reward for completing bomb: " + rewardPoints);
 		}
