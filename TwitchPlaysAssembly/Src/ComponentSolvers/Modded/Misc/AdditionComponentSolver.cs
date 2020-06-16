@@ -51,7 +51,7 @@ public class AdditionComponentSolver : ComponentSolver
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-		string correctAnswer = _component.GetValue<long>("solution").ToString();
+		string correctAnswer = _component.GetValue<int>("solution").ToString();
 
 		yield return RespondToCommandInternal("clear");
 		yield return RespondToCommandInternal($"submit {correctAnswer}");
