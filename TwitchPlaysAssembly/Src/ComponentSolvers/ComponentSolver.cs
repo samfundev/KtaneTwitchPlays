@@ -15,7 +15,16 @@ public abstract class ComponentSolver
 
 		if (!hookUpEvents) return;
 		module.BombComponent.OnPass += OnPass;
-		module.BombComponent.OnStrike += OnStrike;
+
+		var previousHandler = module.BombComponent.OnStrike;
+		module.BombComponent.OnStrike = _ =>
+		{
+			OnStrike(_);
+			previousHandler(_);
+
+			return false;
+		};
+
 		var gameCommands = module.BombComponent.GetComponentInChildren<KMGameCommands>();
 		if (gameCommands != null)
 			gameCommands.OnCauseStrike += x => OnStrike(x);
