@@ -777,7 +777,7 @@ public abstract class ComponentSolver
 
 	private bool _disableOnStrike;
 	private bool _disableAnarchyStrike;
-	private bool OnStrike(object ignore)
+	private bool OnStrike(object _)
 	{
 		//string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 		StrikeCount++;
@@ -1155,7 +1155,7 @@ public abstract class ComponentSolver
 				tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
 			messageParts.Add(tempMessage);
-			Module.Bomb.StrikeCount = 0;
+			Module.Bomb.Bomb.NumStrikes = -1;
 			TwitchGame.ModuleCameras.UpdateStrikes();
 		}
 
