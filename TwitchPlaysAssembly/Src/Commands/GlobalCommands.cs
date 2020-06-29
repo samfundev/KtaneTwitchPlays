@@ -605,7 +605,7 @@ static class GlobalCommands
 	public static void ClearVSPlayers()
 	{
 		TwitchGame.Instance.VSModePlayers.Clear();
-		IRCConnection.SendMessage($"VSMode Players have been cleared.");
+		IRCConnection.SendMessage("VSMode Players have been cleared.");
 	}
 
 	[Command(@"players")]
@@ -613,7 +613,7 @@ static class GlobalCommands
 	{
 		if (!TwitchPlaySettings.data.AutoSetVSModeTeams)
 		{
-			IRCConnection.SendMessage($"You cannot use this command in this mode.");
+			IRCConnection.SendMessage("You cannot use this command in this mode.");
 			return;
 		}
 		else if (!TwitchGame.Instance.VSSetFlag || TwitchGame.Instance.GoodPlayers.Count == 0 || TwitchGame.Instance.EvilPlayers.Count == 0)

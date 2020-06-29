@@ -919,9 +919,9 @@ public static class TwitchPlaySettings
 							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {settingsDssString} to {settingValue}")
 							: new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] set to {settingValue}");
 					case 2:
-						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
+						return new Tuple<bool, string>(false, "The second item cannot be empty or null");
 					default:
-						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
+						return new Tuple<bool, string>(false, "You must specify a dictionary item you wish to set or change.");
 				}
 			case Dictionary<string, bool> settingsDictionaryStringBool:
 				switch (split.Length)
@@ -935,9 +935,9 @@ public static class TwitchPlaySettings
 					case 2 when !string.IsNullOrEmpty(split[1]):
 						return new Tuple<bool, string>(false, $"Could not parse {settingValue} as bool");
 					case 2:
-						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
+						return new Tuple<bool, string>(false, "The second item cannot be empty or null");
 					default:
-						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
+						return new Tuple<bool, string>(false, "You must specify a dictionary item you wish to set or change.");
 				}
 			case Dictionary<string, ModuleDistributions> settingsDictionaryStringModuleDistributions:
 				switch (split.Length)
@@ -959,9 +959,9 @@ public static class TwitchPlaySettings
 							? new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] changed from {JsonConvert.SerializeObject(settingsDssModuleDistribution, Formatting.None)} to {settingValue}")
 							: new Tuple<bool, string>(true, $"Setting {settingField.Name}[{split[1]}] set to {settingValue}");
 					case 2:
-						return new Tuple<bool, string>(false, $"The second item cannot be empty or null");
+						return new Tuple<bool, string>(false, "The second item cannot be empty or null");
 					default:
-						return new Tuple<bool, string>(false, $"You must specify a dictionary item you wish to set or change.");
+						return new Tuple<bool, string>(false, "You must specify a dictionary item you wish to set or change.");
 				}
 			default:
 				return new Tuple<bool, string>(false, $"Setting {setting} was found, but I don't know how change its value to {settingValue}");
