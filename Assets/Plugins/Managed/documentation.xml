@@ -298,10 +298,10 @@
             <summary>Checks to see if there is a new build of TP on Dropbox. Only applicable if you are using the Dropbox version of TP.</summary>
             <restriction>SuperUser</restriction>
         </member>
-        <member name="M:GlobalCommands.Update">
+        <member name="M:GlobalCommands.Update(System.Boolean)">
             <name>Update</name>
-            <syntax>update</syntax>
-            <summary>If there is an update available, installs it and restarts the game. Only applicable if you are using the Dropbox version of TP.</summary>
+            <syntax>update\nupdate force</syntax>
+            <summary>If there is an update available, installs it and restarts the game. Adding the word "force" will update regardless if there is an update available. Only applicable if you are using the Dropbox version of TP.</summary>
             <restriction>SuperUser</restriction>
         </member>
         <member name="M:GlobalCommands.ResetLeaderboard(System.String,System.Boolean)">
@@ -1027,7 +1027,7 @@
             </summary>
         </member>
         <member name="F:System.IO.Compression.ZipStorer.Compression.Store">
-            <summary>Uncompressed storage</summary>
+            <summary>Uncompressed storage</summary> 
         </member>
         <member name="F:System.IO.Compression.ZipStorer.Compression.Deflate">
             <summary>Deflate compression method</summary>
@@ -1063,6 +1063,12 @@
         </member>
         <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.ModifyTime">
             <summary>Last modification time of file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.CreationTime">
+            <summary>Creation time of file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.AccessTime">
+            <summary>Last access time of file</summary>
         </member>
         <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Comment">
             <summary>User comment for file</summary>
@@ -1121,9 +1127,15 @@
             <param name="_method">Compression method</param>
             <param name="_pathname">Full path of file to add to Zip storage</param>
             <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
-            <param name="_comment">Comment for stored file</param>
+            <param name="_comment">Comment for stored file</param>        
         </member>
         <member name="M:System.IO.Compression.ZipStorer.AddStream(System.IO.Compression.ZipStorer.Compression,System.String,System.IO.Stream,System.DateTime,System.String)">
+            <summary>
+            Add full contents of a stream into the Zip storage
+            </summary>
+            <remarks>Same parameters and return value as AddStreamAsync()</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddStreamAsync(System.IO.Compression.ZipStorer.Compression,System.String,System.IO.Stream,System.DateTime,System.String)">
             <summary>
             Add full contents of a stream into the Zip storage
             </summary>
@@ -1133,6 +1145,15 @@
             <param name="_modTime">Modification time of the data to store</param>
             <param name="_comment">Comment for stored file</param>
         </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddDirectory(System.IO.Compression.ZipStorer.Compression,System.String,System.String,System.String)">
+            <summary>
+            Add full contents of a directory into the Zip storage
+            </summary>
+            <param name="_method">Compression method</param>
+            <param name="_pathname">Full path of directory to add to Zip storage</param>
+            <param name="_pathnameInZip">Path name as desired in Zip directory</param>
+            <param name="_comment">Comment for stored directory</param>
+        </member>
         <member name="M:System.IO.Compression.ZipStorer.Close">
             <summary>
             Updates central directory (if pertinent) and close the Zip storage
@@ -1141,7 +1162,7 @@
         </member>
         <member name="M:System.IO.Compression.ZipStorer.ReadCentralDir">
             <summary>
-            Read all the file records in the central directory
+            Read all the file records in the central directory 
             </summary>
             <returns>List of all entries in directory</returns>
         </member>
@@ -1155,6 +1176,12 @@
             <remarks>Unique compression methods are Store and Deflate</remarks>
         </member>
         <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.IO.Stream)">
+            <summary>
+            Copy the contents of a stored file into an opened stream
+            </summary>
+            <remarks>Same parameters and return value as ExtractFileAsync</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFileAsync(System.IO.Compression.ZipStorer.ZipFileEntry,System.IO.Stream)">
             <summary>
             Copy the contents of a stored file into an opened stream
             </summary>

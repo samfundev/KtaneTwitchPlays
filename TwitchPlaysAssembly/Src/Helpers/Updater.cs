@@ -47,8 +47,10 @@ static class Updater
 		if (!UpdateAvailable) buildFolder.Delete(true);
 	}
 
-	public static IEnumerator Update()
+	public static IEnumerator Update(bool forced)
 	{
+		UpdateAvailable |= forced;
+
 		if (!UpdateAvailable) yield return CheckForUpdates();
 
 		if (!UpdateAvailable)

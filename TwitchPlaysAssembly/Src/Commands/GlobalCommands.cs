@@ -1149,11 +1149,11 @@ static class GlobalCommands
 	}
 
 	/// <name>Update</name>
-	/// <syntax>update</syntax>
-	/// <summary>If there is an update available, installs it and restarts the game. Only applicable if you are using the Dropbox version of TP.</summary>
+	/// <syntax>update\nupdate force</syntax>
+	/// <summary>If there is an update available, installs it and restarts the game. Adding the word "force" will update regardless if there is an update available. Only applicable if you are using the Dropbox version of TP.</summary>
 	/// <restriction>SuperUser</restriction>
-	[Command("update(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static IEnumerator Update() => Updater.Update();
+	[Command("update(?:game|tp|twitchplays)?( force)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static IEnumerator Update([Group(1)] bool force) => Updater.Update(force);
 
 	[Command("revert(?:game|tp|twitchplays)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static IEnumerator Revert() => Updater.Revert();
