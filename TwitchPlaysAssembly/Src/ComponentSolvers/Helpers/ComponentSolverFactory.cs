@@ -630,7 +630,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["wire"] = new ModuleInformation { moduleScore = 12, DoesTheRightThing = false };
 		ModComponentSolverInformation["wireSpaghetti"] = new ModuleInformation { moduleScore = 14, DoesTheRightThing = true };
 
-		//samfun123
+		//samfundev
 		ModComponentSolverInformation["BrokenButtonsModule"] = new ModuleInformation { moduleScore = 9, DoesTheRightThing = true };
 		ModComponentSolverInformation["CheapCheckoutModule"] = new ModuleInformation { moduleScore = 10, DoesTheRightThing = true };
 		ModComponentSolverInformation["CreationModule"] = new ModuleInformation { moduleScore = 8, DoesTheRightThing = true };
