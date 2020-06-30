@@ -91,7 +91,7 @@ public abstract class ComponentSolver
 
 		if (Solved != solved || _beforeStrikeCount != StrikeCount)
 		{
-			IRCConnection.SendMessageFormat("Please submit an issue at https://github.com/samfun123/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve / strike prematurely.", Module.Code, Module.HeaderText);
+			IRCConnection.SendMessageFormat("Please submit an issue at https://github.com/samfundev/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve / strike prematurely.", Module.Code, Module.HeaderText);
 			if (ModInfo != null)
 			{
 				ModInfo.DoesTheRightThing = false;
