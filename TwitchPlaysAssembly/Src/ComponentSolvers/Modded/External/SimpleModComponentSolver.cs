@@ -78,7 +78,10 @@ public class SimpleModComponentSolver : ComponentSolver
 		}
 
 		if (selectableSequence?.Any() == false)
+		{
 			yield return null;
+			yield return null;
+		}
 		else
 		{
 			yield return "modsequence";
