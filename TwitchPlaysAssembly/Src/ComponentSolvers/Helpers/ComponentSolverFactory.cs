@@ -896,7 +896,7 @@ public static class ComponentSolverFactory
 
 	public static IEnumerator LoadDefaultInformation(bool reloadData = false)
 	{
-		UnityWebRequest www = UnityWebRequest.Get("https://spreadsheets.google.com/feeds/list/1WEzVOKxOO5CDGoqAHjJKrC-c-ZGgsTPRLXBCs8RrAwU/1/public/values?alt=json");
+		UnityWebRequest www = UnityWebRequest.Get("https://spreadsheets.google.com/feeds/list/1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA/1/public/values?alt=json");
 
 		yield return www.SendWebRequest();
 
