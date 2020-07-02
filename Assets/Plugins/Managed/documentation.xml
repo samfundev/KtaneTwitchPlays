@@ -780,6 +780,15 @@
             <syntax>throw\nthrow 10</syntax>
             <summary>Throws the holdable with an optional strength.</summary>
         </member>
+        <member name="T:DMGCommands">
+            <summary>Commands for the dynamic mission generator.</summary>
+            <prefix>dmg </prefix>
+        </member>
+        <member name="M:DMGCommands.Run(TwitchHoldable,System.String,System.Boolean,System.String)">
+            <name>Run</name>
+            <syntax>run</syntax>
+            <summary>Runs the dynamic mission generator with specific text. Only admins can use this outside of in training mode.</summary>
+        </member>
         <member name="T:FreeplayCommands">
             <summary>Commands for the freeplay briefcase.</summary>
             <prefix>freeplay </prefix>

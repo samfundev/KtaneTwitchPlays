@@ -142,6 +142,7 @@
     <Compile Include="Src\Commands\MissionBinderCommands.cs" />
     <Compile Include="Src\Commands\BombCommands.cs" />
     <Compile Include="Src\Commands\HoldableCommands.cs" />
+    <Compile Include="Src\Commands\DMGCommands.cs" />
     <Compile Include="Src\Commands\FreeplayCommands.cs" />
     <Compile Include="Src\Commands\ModuleCommands.cs" />
     <Compile Include="Src\Commands\PostGameCommands.cs" />
