@@ -265,7 +265,7 @@ public static class CheckSupport
 
 	class KtaneModule
 	{
-		public int? SteamID;
+		public string SteamID;
 		public string Name;
 		public string ModuleID;
 		public Dictionary<string, object> TwitchPlays;
