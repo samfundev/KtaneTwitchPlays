@@ -111,6 +111,8 @@ public static class Votes
 		Voters.Add(user, true);
 		IRCConnection.SendMessage($"Voting has started by {user} to \"{PossibleVotes[CurrentVoteType].name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '.");
 		voteInProgress = TwitchPlaysService.Instance.StartCoroutine(VotingCoroutine());
+		if (TwitchGame.Instance.alertSound != null)
+			TwitchGame.Instance.alertSound.Play();
 		if (TwitchGame.BombActive)
 			TwitchGame.ModuleCameras.SetNotes();
 	}
