@@ -787,7 +787,7 @@
         <member name="M:DMGCommands.Run(TwitchHoldable,System.String,System.Boolean,System.String)">
             <name>Run</name>
             <syntax>run</syntax>
-            <summary>Runs the dynamic mission generator with specific text. Only admins can use this outside of in training mode.</summary>
+            <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>
         </member>
         <member name="T:FreeplayCommands">
             <summary>Commands for the freeplay briefcase.</summary>

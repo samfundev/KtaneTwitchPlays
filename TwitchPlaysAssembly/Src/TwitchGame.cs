@@ -20,6 +20,7 @@ public class TwitchGame : MonoBehaviour
 	public List<TwitchBomb> Bombs = new List<TwitchBomb>();
 	public List<TwitchModule> Modules = new List<TwitchModule>();
 	public int _currentBomb = -1;
+	public AudioSource alertSound = null;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public bool VoteDetonateAttempted = false;
@@ -113,6 +114,7 @@ public class TwitchGame : MonoBehaviour
 		StartCoroutine(CheckForBomb());
 
 		FindClaimUse = TwitchPlaySettings.data.FindClaimLimit;
+		alertSound = gameObject.Traverse<AudioSource>("AlertSound");
 		StartCoroutine(AdjustFindClaimLimit());
 		if (OtherModes.TrainingModeOn) StartCoroutine(EndTrainingModeBomb());
 		try
@@ -765,11 +767,14 @@ public class TwitchGame : MonoBehaviour
 		{
 			if (TrainingModeAlertTimes.Contains(TrainingModeRemainingTime))
 			{
-				//add the alert sound effect here
+				if (alertSound != null)
+					alertSound.Play();
 				IRCConnection.SendMessageFormat("Warning: This bomb will be automatically detonated in {0} minute{1}.", TrainingModeRemainingTime.ToString(), TrainingModeRemainingTime == 1 ? "" : "s");
 			}
 			yield return new WaitForSecondsRealtime(60.0f);
 			TrainingModeRemainingTime--;
+			if (BombActive)
+				ModuleCameras.SetNotes();
 			if (TrainingModeRemainingTime < 1)
 				Bombs[0].CauseExplosionByTrainingModeTimeout();
 		}
