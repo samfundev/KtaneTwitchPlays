@@ -595,7 +595,7 @@ static class GameCommands
 		if (callChanged) IRCConnection.SendMessage($"@{user}, your call has been changed to {name}.", user, !isWhisper);
 		TwitchGame.Instance.CommandQueue.Remove(TwitchGame.Instance.callSend);
 		TwitchGame.ModuleCameras?.SetNotes();
-		IRCConnection.SendMessageFormat("{0} {1}: {2}", TwitchGame.Instance.callWaiting
+		IRCConnection.SendMessageFormat("{0} {1}: {2}", TwitchGame.Instance.callWaiting && string.IsNullOrEmpty(user)
 			? "Call waiting, calling"
 			: now
 				? "Bypassing the required number of calls, calling"
