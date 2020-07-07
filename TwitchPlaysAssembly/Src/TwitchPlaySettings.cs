@@ -88,6 +88,8 @@ public class TwitchPlaySettingsData
 	public bool EnableZenModeForEveryone = false;
 	public bool EnableTrainingModeForEveryone = false;
 	public bool EnableFilledgeworkForEveryone = false;
+	public bool EnableDMGForEveryone = true;
+	public int TrainingModeDetonationTime = 120;
 
 	public int MinTimeLeftForClaims = 60;
 	public int MinUnsolvedModulesLeftForClaims = 3;

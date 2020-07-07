@@ -23,6 +23,8 @@ public class TwitchGame : MonoBehaviour
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public bool VoteDetonateAttempted = false;
+	public int TrainingModeRemainingTime = -1;
+	public int[] TrainingModeAlertTimes = new int[9] { 1, 2, 5, 10, 20, 30, 45, 60, 90 };
 
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
 	public int callsNeeded = 1;
@@ -112,6 +114,7 @@ public class TwitchGame : MonoBehaviour
 
 		FindClaimUse = TwitchPlaySettings.data.FindClaimLimit;
 		StartCoroutine(AdjustFindClaimLimit());
+		if (OtherModes.TrainingModeOn) StartCoroutine(EndTrainingModeBomb());
 		try
 		{
 			string path = Path.Combine(Application.persistentDataPath, "TwitchPlaysLastClaimed.json");
@@ -750,6 +753,25 @@ public class TwitchGame : MonoBehaviour
 		{
 			yield return new WaitForSeconds(_time);
 			FindClaimUse++;
+		}
+	}
+
+	private IEnumerator EndTrainingModeBomb()
+	{
+		TrainingModeRemainingTime = TwitchPlaySettings.data.TrainingModeDetonationTime;
+		if (TrainingModeRemainingTime < 1)
+			yield break;
+		while (true)
+		{
+			if (TrainingModeAlertTimes.Contains(TrainingModeRemainingTime))
+			{
+				//add the alert sound effect here
+				IRCConnection.SendMessageFormat("Warning: This bomb will be automatically detonated in {0} minute{1}.", TrainingModeRemainingTime.ToString(), TrainingModeRemainingTime == 1 ? "" : "s");
+			}
+			yield return new WaitForSecondsRealtime(60.0f);
+			TrainingModeRemainingTime--;
+			if (TrainingModeRemainingTime < 1)
+				Bombs[0].CauseExplosionByTrainingModeTimeout();
 		}
 	}
 

@@ -110,6 +110,8 @@ public class TwitchBomb : MonoBehaviour
 
 	public void CauseExplosionByModuleCommand(string message, string reason) => StartCoroutine(DelayBombExplosionCoroutine(message, reason, 0.1f));
 
+	public void CauseExplosionByTrainingModeTimeout() => StartCoroutine(DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Training Mode Timeout", 1.0f));
+
 	public float CurrentTimer
 	{
 		get => Bomb.GetTimer().TimeRemaining;

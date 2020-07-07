@@ -19,14 +19,22 @@ public static class DMGCommands
 
 	/// <name>Run</name>
 	/// <syntax>run</syntax>
-	/// <summary>Runs the dynamic mission generator with specific text. Only admins can use this outside of in training mode.</summary>
+	/// <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>
 	[Command("run (.+)")]
 	public static IEnumerator Run(TwitchHoldable holdable, string user, bool isWhisper, [Group(1)] string text)
 	{
-		if (!UserAccess.HasAccess(user, AccessLevel.Admin, true) && !OtherModes.TrainingModeOn)
+		if (!UserAccess.HasAccess(user, AccessLevel.Admin, true))
 		{
-			IRCConnection.SendMessage("Only admins can use DMG when not in training mode.");
-			yield break;
+			if (!TwitchPlaySettings.data.EnableDMGForEveryone)
+			{
+				IRCConnection.SendMessage("Only admins can use the DMG.");
+				yield break;
+			}
+			if (!OtherModes.TrainingModeOn)
+			{
+				IRCConnection.SendMessage("Only admins can use DMG when not in training mode.");
+				yield break;
+			}
 		}
 
 		var pageNavigation = UnityEngine.Object.FindObjectOfType(pageNavigationType);
