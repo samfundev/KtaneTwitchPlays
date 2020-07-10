@@ -307,7 +307,7 @@ public class TwitchPlaysService : MonoBehaviour
 			else if (holdable.GetComponent<IRCConnectionManagerHoldable>() != null)
 				Holdables["ircmanager"] = new TwitchHoldable(holdable, commandType: typeof(IRCConnectionManagerCommands));
 			else if (holdable.GetComponent("ModSelectorTablet") != null)
-				Holdables["dmg"] = new TwitchHoldable(holdable, commandType: typeof(DMGCommands));
+				Holdables["dmg"] = new TwitchHoldable(holdable, commandType: typeof(DMGCommands), id: "dmg");
 			else
 			{
 				var id = holdable.name.ToLowerInvariant().Replace("(clone)", "");

@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class TwitchHoldable
 {
-	public TwitchHoldable(FloatingHoldable holdable, Type commandType = null, bool allowModded = false)
+	public TwitchHoldable(FloatingHoldable holdable, Type commandType = null, bool allowModded = false, string id = null)
 	{
 		Holdable = holdable;
 		CommandType = commandType;
-		_defaultId = holdable.name.ToLowerInvariant().Replace("(clone)", "");
+		_defaultId = id ?? holdable.name.ToLowerInvariant().Replace("(clone)", "");
 
 		if (TwitchGame.BombActive)
 		{
