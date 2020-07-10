@@ -407,17 +407,18 @@ public class ModuleCameras : MonoBehaviour
 		float hue = TwitchPlaySettings.data.EnableWhiteList ? .1f : .72f;
 		for (int ix = 0; ix < 4; ix++)
 		{
-			if (OtherModes.TrainingModeOn && TwitchGame.Instance.TrainingModeRemainingTime > 0 && ix == 1)
-			{
-				NotesTexts[ix].text = $"Training Mode Auto-Detonation is enabled. This bomb will be detonated in {TwitchGame.Instance.TrainingModeRemainingTime} minute(s)";
-				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0.38f, .246f, .93f);
-				NotesTextIDs[ix].text = "";
-			}
-			else if (Votes.Active && ix == 2)
+			if (Votes.Active && ix == 2)
 			{
 				NotesTexts[ix].text = $"{Votes.PossibleVotes[Votes.CurrentVoteType].name}: {Votes.NumVoters} vote{(Votes.NumVoters == 1 ? "" : "s")}\n{Votes.TimeLeft} second{(Votes.TimeLeft == 1 ? "" : "s")} left.";
 				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0f, .246f, .93f);
 				NotesTextIDs[ix].text = "!vote";
+			}
+			else if (OtherModes.TrainingModeOn && TwitchGame.Instance.TrainingModeRemainingTime > 0 && ix == 2)
+			{
+				string _plural = TwitchGame.Instance.TrainingModeRemainingTime == 1 ? "" : "s";
+				NotesTexts[ix].text = $"Training Mode Auto-Detonation is enabled. This bomb will be detonated in {TwitchGame.Instance.TrainingModeRemainingTime} minute{_plural}.";
+				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0.38f, .246f, .93f);
+				NotesTextIDs[ix].text = "";
 			}
 			else if (TwitchGame.Instance.CommandQueue.Count > 0 && ix == 3)
 			{
