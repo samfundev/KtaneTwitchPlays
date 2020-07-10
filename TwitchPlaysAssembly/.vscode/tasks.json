@@ -22,6 +22,16 @@
 			},
 			// Use the standard MS compiler pattern to detect errors, warnings and infos
 			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "build and run",
+			"type": "shell",
+			"command": "\"${config:ktanePath}\"",
+			"group": "build",
+			"dependsOn": [
+				"build"
+			],
+			"problemMatcher": []
 		}
 	]
 }

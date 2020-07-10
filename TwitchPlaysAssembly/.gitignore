@@ -3,3 +3,4 @@
 /.vs/
 !*.sln
 !*.csproj
+/.vscode/settings.json
