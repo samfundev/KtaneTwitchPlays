@@ -9,19 +9,16 @@ using UnityEngine.UI;
 /// <prefix>dmg </prefix>
 public static class DMGCommands
 {
-	private static Type pageNavigationType = ReflectionHelper.FindType("PageNavigation");
+	private static readonly Type pageNavigationType = ReflectionHelper.FindType("PageNavigation");
 
 	private static Stack<KMSelectable> _backStack;
-	private static KMSelectable currentPage
-	{
-		get => _backStack.Peek();
-	}
+	private static KMSelectable CurrentPage => _backStack.Peek();
 
 	/// <name>Run</name>
 	/// <syntax>run</syntax>
 	/// <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>
 	[Command("run (.+)")]
-	public static IEnumerator Run(TwitchHoldable holdable, string user, bool isWhisper, [Group(1)] string text)
+	public static IEnumerator Run(string user, [Group(1)] string text)
 	{
 		if (!UserAccess.HasAccess(user, AccessLevel.Admin, true))
 		{
@@ -40,17 +37,13 @@ public static class DMGCommands
 		var pageNavigation = UnityEngine.Object.FindObjectOfType(pageNavigationType);
 		_backStack = pageNavigation.GetValue<Stack<KMSelectable>>("_backStack");
 
-		while (true)
+		while (!CurrentPage.name.EqualsAny("PageOne(Clone)", "Home(Clone)"))
 		{
-			DebugHelper.Log(currentPage.name);
-			if (currentPage.name.EqualsAny("PageOne(Clone)", "Home(Clone)"))
-				break;
-		
 			KTInputManager.Instance.HandleCancel();
 			yield return new WaitForSeconds(0.1f);
 		}
 
-		if (currentPage.name == "Home(Clone)")
+		if (CurrentPage.name == "Home(Clone)")
 		{
 			var entryIndex = ReflectionHelper.FindType("PageManager")
 				.GetValue<IList>("HomePageEntryList")
@@ -63,12 +56,12 @@ public static class DMGCommands
 				yield break;
 			}
 
-			currentPage.Children[entryIndex].OnInteract();
+			CurrentPage.Children[entryIndex].OnInteract();
 			yield return new WaitForSeconds(0.1f);
 		}
 
-		currentPage.gameObject.Traverse<InputField>("Canvas", "InputField").text = text;
+		CurrentPage.gameObject.Traverse<InputField>("Canvas", "InputField").text = text;
 		yield return new WaitForSeconds(0.1f);
-		currentPage.Children.First(button => button.name.Contains("Run")).OnInteract();
+		CurrentPage.Children.First(button => button.name.Contains("Run")).OnInteract();
 	}
 }

@@ -784,7 +784,7 @@
             <summary>Commands for the dynamic mission generator.</summary>
             <prefix>dmg </prefix>
         </member>
-        <member name="M:DMGCommands.Run(TwitchHoldable,System.String,System.Boolean,System.String)">
+        <member name="M:DMGCommands.Run(System.String,System.String)">
             <name>Run</name>
             <syntax>run</syntax>
             <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>

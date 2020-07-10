@@ -157,7 +157,7 @@ public static class CheckSupport
 			if (module.TwitchPlays != null || module.SteamID == null)
 				return false;
 
-			var modPath = Path.Combine(modWorkshopPath, module.SteamID.ToString());
+			var modPath = Path.Combine(modWorkshopPath, module.SteamID);
 			return Directory.Exists(modPath);
 		}).ToArray();
 
@@ -181,7 +181,7 @@ public static class CheckSupport
 			alertText.text = $"Testing compatibility of:\n\"{module.Name}\"";
 			alertProgressBar.localScale = new Vector3((float) progress / total, 1, 1);
 
-			var modPath = Path.Combine(modWorkshopPath, module.SteamID.ToString());
+			var modPath = Path.Combine(modWorkshopPath, module.SteamID);
 			Mod mod = Mod.LoadMod(modPath, Assets.Scripts.Mods.ModInfo.ModSourceEnum.Local);
 			Object[] loadedObjects = new Object[] { };
 			foreach (string fileName in mod.GetAssetBundlePaths())
