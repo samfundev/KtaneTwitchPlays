@@ -208,7 +208,7 @@ public class ModuleCameras : MonoBehaviour
 	[HideInInspector]
 	public bool CameraWallEnabled;
 
-	private Mode _cameraWallMode = TwitchPlaySettings.data.EnableAutomaticCameraWall ? Mode.Automatic : Mode.Disabled;
+	private Mode _cameraWallMode;
 	public Mode CameraWallMode
 	{
 		get => _cameraWallMode;
@@ -314,6 +314,8 @@ public class ModuleCameras : MonoBehaviour
 	private void Start()
 	{
 		Instance = this;
+
+		_cameraWallMode = TwitchPlaySettings.data.EnableAutomaticCameraWall ? Mode.Automatic : Mode.Disabled;
 
 		// Create the first 6 module cameras (more will be created if the camera wall gets enabled)
 		for (int i = 0; i < 6; i++)
