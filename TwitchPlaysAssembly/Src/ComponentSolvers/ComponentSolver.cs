@@ -782,6 +782,14 @@ public abstract class ComponentSolver
 		//string headerText = (string)CommonReflectedTypeInfo.ModuleDisplayNameField.Invoke(BombComponent, null);
 		StrikeCount++;
 
+		// This strike handler runs before a strike is assigned, so we need to set the number of strikes to -1 which will then get incremented to 0.
+		// Ensure strikes are always set to 0 in VS mode, even for strikes not assigned to a team. (Needies, etc.)
+		if (OtherModes.TimeModeOn || OtherModes.TimeModeOn)
+			Module.Bomb.Bomb.NumStrikes = -1;
+
+		if (OtherModes.Unexplodable)
+			Module.Bomb.StrikeLimit += 1;
+
 		if (_disableOnStrike || _disableAnarchyStrike)
 		{
 			TwitchGame.ModuleCameras?.UpdateStrikes(true);
@@ -1120,9 +1128,6 @@ public abstract class ComponentSolver
 				if (hpPenalty != 0)
 					TwitchGame.ModuleCameras.UpdateConfidence();
 			}
-
-			// Ensure strikes are always set to 0 in VS mode, even for strikes not assigned to a team. (Needies, etc.)
-			Module.Bomb.StrikeCount = 0;
 		}
 
 		if (OtherModes.TimeModeOn)
@@ -1155,12 +1160,7 @@ public abstract class ComponentSolver
 				tempMessage += $" reduced by {Math.Round(TwitchPlaySettings.data.TimeModeTimerStrikePenalty * 100, 1)}%. ({easyText} seconds)";
 			}
 			messageParts.Add(tempMessage);
-			Module.Bomb.Bomb.NumStrikes = -1;
-			TwitchGame.ModuleCameras.UpdateStrikes();
 		}
-
-		if (OtherModes.Unexplodable)
-			Module.Bomb.StrikeLimit += strikeCount;
 
 		if (!string.IsNullOrEmpty(userNickName) && !OtherModes.TrainingModeOn)
 		{
