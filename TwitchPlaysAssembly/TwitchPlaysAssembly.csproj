@@ -278,6 +278,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(Copy) "$(TargetPath)" "$(GameFolder)\mods\Twitch Plays\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>mklink "$(OutDir)\Assembly-CSharp.dll" "$(GameFolder)\ktane_Data\Managed\Assembly-CSharp.dll" &gt;nul 2&gt;&amp;1
+$(Copy) "$(TargetPath)" "$(GameFolder)\mods\Twitch Plays\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
