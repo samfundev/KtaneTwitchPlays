@@ -24,7 +24,6 @@ public sealed class ElevatorGameRoom : GameRoom
 
 	private ElevatorGameRoom(Object roomObjects)
 	{
-		DebugHelper.Log("Found gameplay room of type Gameplay Room");
 		_elevatorRoom = (ElevatorRoom) roomObjects;
 		ToggleCamera(false);
 		ResetCamera();
@@ -209,9 +208,6 @@ public sealed class ElevatorGameRoom : GameRoom
 		yield return false;
 		IEnumerator turnBomb = null;
 		int rotation = (int) Math.Round(selectable.transform.localEulerAngles.y, 0);
-		DebugHelper.Log($"selectable.name = {selectable.transform.name}");
-		DebugHelper.Log($"selectable position = {Math.Round(selectable.transform.localPosition.x, 3)},{Math.Round(selectable.transform.localPosition.y, 3)},{Math.Round(selectable.transform.localPosition.z, 3)}");
-		DebugHelper.Log($"selectable rotation = {Math.Round(selectable.transform.localEulerAngles.y, 3)}");
 
 		// ReSharper disable once SwitchStatementMissingSomeCases
 		switch (rotation)

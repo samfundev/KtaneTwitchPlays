@@ -23,7 +23,6 @@ public sealed class Facility : GameRoom
 
 	private Facility(FacilityRoom facilityRoom)
 	{
-		DebugHelper.Log("Found gameplay room of type Facility Room");
 		_facilityRoom = facilityRoom;
 	}
 

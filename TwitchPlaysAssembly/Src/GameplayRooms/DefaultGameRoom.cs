@@ -17,9 +17,4 @@ public sealed class DefaultGameRoom : GameRoom
 		room = new DefaultGameRoom();
 		return true;
 	}
-
-	private DefaultGameRoom()
-	{
-		DebugHelper.Log("Found gameplay room of type Gameplay Room");
-	}
 }

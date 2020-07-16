@@ -138,7 +138,6 @@ public static class FreeplayCommands
 
 		var device = holdable.GetComponent<FreeplayDevice>();
 		int timeIndex = (hours * 120) + (minutes * 2) + (seconds / 30);
-		DebugHelper.Log("Freeplay time doubling section");
 		//Double the available free play time. (The doubling stacks with the Multiple bombs module installed)
 		float originalMaxTime = FreeplayDevice.MAX_SECONDS_TO_SOLVE;
 		int maxModules = (int) _maxModuleField.GetValue(device);
@@ -146,13 +145,11 @@ public static class FreeplayCommands
 		float newMaxTime = 600f + (maxModules - 1) * multiplier * 60;
 		FreeplayDevice.MAX_SECONDS_TO_SOLVE = newMaxTime;
 
-		DebugHelper.Log("Freeplay settings reading section");
 		float currentTime = device.CurrentSettings.Time;
 		int currentTimeIndex = Mathf.FloorToInt(currentTime) / 30;
 		KeypadButton button = timeIndex > currentTimeIndex ? device.TimeIncrement : device.TimeDecrement;
 		Selectable buttonSelectable = button.GetComponent<Selectable>();
 
-		DebugHelper.Log("Freeplay time setting section");
 		for (int hitCount = 0; hitCount < Mathf.Abs(timeIndex - currentTimeIndex); ++hitCount)
 		{
 			currentTime = device.CurrentSettings.Time;

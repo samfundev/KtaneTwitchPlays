@@ -53,7 +53,6 @@ public class TPElevatorSwitch : MonoBehaviour
 		}
 
 		ElevatorSwitch elevatorSwitch = setupRoom.ElevatorSwitch;
-		DebugHelper.Log("Found an Elevator switch, Activating it now");
 		try
 		{
 			elevatorSwitch.GetComponentInChildren<Selectable>(true).SelectableArea.ActivateSelectableArea();
@@ -62,7 +61,6 @@ public class TPElevatorSwitch : MonoBehaviour
 			elevatorSwitch.LEDOff.SetActive(GameplayState.GameplayRoomPrefabOverride == null);
 			elevatorSwitch.Switch.OnToggle += toggleState =>
 			{
-				DebugHelper.Log($"Toggle State = {toggleState}");
 				if (elevatorSwitch.On() && IRCConnection.Instance.State != IRCConnectionState.Connected)
 				{
 					elevatorSwitch.Switch.Toggle();
@@ -134,8 +132,6 @@ public class TPElevatorSwitch : MonoBehaviour
 			yield break;
 		var elevatorSwitch = setupRoom.ElevatorSwitch;
 
-		DebugHelper.Log($"Setting Elevator state to {elevatorState}");
-
 		IEnumerator dropHoldables = TwitchPlaysService.Instance.DropAllHoldables();
 		while (dropHoldables.MoveNext())
 			yield return dropHoldables.Current;
@@ -164,7 +160,6 @@ public class TPElevatorSwitch : MonoBehaviour
 		camera.localPosition = newWallPosition;
 		camera.localEulerAngles = newWallRotation;
 		yield return new WaitForSeconds(0.5f);
-		DebugHelper.Log("Elevator Switch Toggled");
 		if (elevatorState != elevatorSwitch.On())
 			elevatorSwitch.Switch.Toggle();
 		else
@@ -187,7 +182,6 @@ public class TPElevatorSwitch : MonoBehaviour
 		camera.localPosition = currentWallPosition;
 		camera.localEulerAngles = currentWallRotation;
 		yield return null;
-		DebugHelper.Log("Finished");
 		GameRoom.ToggleCamera(true);
 	}
 

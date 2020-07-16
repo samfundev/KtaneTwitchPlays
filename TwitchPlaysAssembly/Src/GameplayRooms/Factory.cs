@@ -52,7 +52,6 @@ public sealed class Factory : GameRoom
 
 	private Factory(Object roomObject)
 	{
-		DebugHelper.Log("Found gameplay room of type Factory Room");
 		_gameroom = _gameModeProperty.GetValue(roomObject, new object[] { });
 		_factoryRoom = Object.FindObjectOfType(_factoryType);
 		if (_gameroom.GetType() == _factoryStaticModeType) return;

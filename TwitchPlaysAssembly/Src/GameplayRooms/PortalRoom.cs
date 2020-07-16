@@ -37,7 +37,6 @@ public sealed class PortalRoom : GameRoom
 
 	private PortalRoom(Object room)
 	{
-		DebugHelper.Log("Portal Room created");
 		_room = room;
 	}
 

@@ -109,7 +109,6 @@ public class MurderComponentSolver : ComponentSolver
 			yield return true;
 		}
 
-		DebugHelper.Log($"Display Values = {DisplayValue[0]}, {DisplayValue[1]}, {DisplayValue[2]},  Solution values = {SolutionValue[0]}, {SolutionValue[1]}, {SolutionValue[2]}");
 		while (DisplayValue[0] != SolutionValue[0] || DisplayValue[1] != SolutionValue[1] || DisplayValue[2] != SolutionValue[2])
 		{
 			if (DisplayValue[0] != SolutionValue[0])

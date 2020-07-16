@@ -25,8 +25,6 @@ public static class ComponentSolverFactory
 
 	static ComponentSolverFactory()
 	{
-		DebugHelper.Log();
-
 		//AT_Bash Modules
 		ModComponentSolverCreators["MotionSense"] = module => new MotionSenseComponentSolver(module);
 		ModComponentSolverCreators["AppreciateArt"] = Module => new AppreciateArtComponentSolver(Module);
