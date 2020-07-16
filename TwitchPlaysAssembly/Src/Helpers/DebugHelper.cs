@@ -1,22 +1,32 @@
-using JetBrains.Annotations;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
 public static class DebugHelper
 {
-	public static void Log(params object[] args) => Debug.Log("[TwitchPlays] " + args.Select(Convert.ToString).Join(" "));
+	public static void Log(params object[] args) => Debug.Log(LogPrefix + args.Select(Convert.ToString).Join(" "));
 
-	public static void LogWarning(params object[] args) => Debug.LogWarning("[TwitchPlays] " + args.Select(Convert.ToString).Join(" "));
+	public static void LogWarning(params object[] args) => Debug.LogWarning(LogPrefix + args.Select(Convert.ToString).Join(" "));
 
-	public static void LogError(params object[] args) => Debug.LogError("[TwitchPlays] " + args.Select(Convert.ToString).Join(" "));
+	public static void LogError(params object[] args) => Debug.LogError(LogPrefix + args.Select(Convert.ToString).Join(" "));
 
 	public static void LogException(Exception ex, string message = "An exception has occurred:")
 	{
 		Log(message);
 		Debug.LogException(ex);
 	}
+
+	private static string LogPrefix => $"[TwitchPlays] [{CallingType}] ";
+
+	private static string CallingType => new System.Diagnostics.StackTrace()
+				.GetFrames()
+				.Skip(3)
+				.Select(frame => frame.GetMethod().DeclaringType)
+				.Select(type => type.IsDefined(typeof(CompilerGeneratedAttribute), false) ? type.DeclaringType : type)
+				.FirstOrDefault(type => type != typeof(DebugHelper))?
+				.Name;
 
 	private static StringBuilder _treeBuilder;
 

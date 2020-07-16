@@ -20,9 +20,6 @@ public class LogUploader : MonoBehaviour
 	[HideInInspector]
 	public bool postOnComplete = false;
 
-	[HideInInspector]
-	public string LOGPREFIX;
-
 	readonly private string[] _blacklistedLogLines =
 	{
 		"[ServicesSteam]",
@@ -60,7 +57,6 @@ public class LogUploader : MonoBehaviour
 
 	public void OnEnable()
 	{
-		LOGPREFIX = "[" + GetType().Name + "] ";
 		Application.logMessageReceived += HandleLog;
 	}
 
@@ -88,12 +84,12 @@ public class LogUploader : MonoBehaviour
 			tooLong = false;
 			if (dataLength >= maxLength)
 			{
-				Debug.LogFormat(LOGPREFIX + "Data ({0}B) is too long for {1} ({2}B)", dataLength, domainName, maxLength);
+				DebugHelper.Log($"Data ({dataLength}B) is too long for {domainName} ({maxLength}B)");
 				tooLong = true;
 				continue;
 			}
 
-			Debug.Log(LOGPREFIX + "Posting new log to " + domainName);
+			DebugHelper.Log("Posting new log to " + domainName);
 
 			if (domainName == "ktane.timwi.de")
 			{
@@ -108,14 +104,14 @@ public class LogUploader : MonoBehaviour
 				if (!www.isNetworkError && !www.isHttpError)
 				{
 					string analysisUrl = www.downloadHandler.text;
-					Debug.Log(LOGPREFIX + "Logfile now available at " + analysisUrl);
+					DebugHelper.Log("Logfile now available at " + analysisUrl);
 
 					callback(analysisUrl);
 
 					break;
 				}
 
-				Debug.Log(LOGPREFIX + "Error: " + www.error);
+				DebugHelper.Log("Error: " + www.error);
 			}
 			else
 			{
@@ -135,14 +131,14 @@ public class LogUploader : MonoBehaviour
 					key = key.Substring(key.LastIndexOf("\"", StringComparison.InvariantCulture) + 1);
 					string rawUrl = "https://" + domainName + "/raw/" + key;
 
-					Debug.Log(LOGPREFIX + "Paste now available at " + rawUrl);
+					DebugHelper.Log("Paste now available at " + rawUrl);
 
 					callback(UrlHelper.LogAnalyserFor(rawUrl));
 
 					break;
 				}
 
-				Debug.Log(LOGPREFIX + "Error: " + www.error);
+				DebugHelper.Log("Error: " + www.error);
 			}
 		}
 

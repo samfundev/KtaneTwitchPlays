@@ -58,7 +58,7 @@ public class OrientationCubeComponentSolver : ComponentSolver
 
 		yield return "Orientation Cube Solve Attempt";
 		string debugStart = "[Orientation Cube TP#" + Code + "]";
-		Debug.LogFormat("{0} Inputted commands: {1}", debugStart, string.Join(", ", _interaction.ToArray()));
+		DebugHelper.Log($"{debugStart} Inputted commands: {string.Join(", ", _interaction.ToArray())}");
 
 		foreach (MonoBehaviour button in buttons)
 		{

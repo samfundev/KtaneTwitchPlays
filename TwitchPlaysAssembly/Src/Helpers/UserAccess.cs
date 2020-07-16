@@ -70,7 +70,7 @@ public static class UserAccess
 		string path = Path.Combine(Application.persistentDataPath, UsersSavePath);
 		try
 		{
-			DebugHelper.Log($"UserAccess: Writing User Access information data to file: {path}");
+			DebugHelper.Log($"Writing User Access information data to file: {path}");
 			File.WriteAllText(path, JsonConvert.SerializeObject(UserAccessData.Instance, Formatting.Indented, new StringEnumConverter()));
 		}
 		catch (Exception ex)
@@ -85,7 +85,7 @@ public static class UserAccess
 		//Try to read old format first.
 		try
 		{
-			DebugHelper.Log($"UserAccess: Loading User Access information data from file: {path}");
+			DebugHelper.Log($"Loading User Access information data from file: {path}");
 			UserAccessData.Instance.UserAccessLevel = JsonConvert.DeserializeObject<Dictionary<string, AccessLevel>>(File.ReadAllText(path), new StringEnumConverter());
 			UserAccessData.Instance.UserAccessLevel = UserAccessData.Instance.UserAccessLevel.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
 			WriteAccessList();
@@ -93,7 +93,7 @@ public static class UserAccess
 		}
 		catch (FileNotFoundException)
 		{
-			DebugHelper.LogWarning($"UserAccess: File {path} was not found.");
+			DebugHelper.LogWarning($"File {path} was not found.");
 			WriteAccessList();
 			return;
 		}

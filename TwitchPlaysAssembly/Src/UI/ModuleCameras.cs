@@ -108,12 +108,12 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.transform.SetParent(t, false);
 			CameraInstance.gameObject.SetActive(true);
 
-			Debug.LogFormat("[ModuleCameras] Component's layer is {0}. Camera's bitmask is {1:X8}", Module.BombComponent.gameObject.layer, unchecked((uint) CameraInstance.cullingMask));
+			DebugHelper.Log($"Component's layer is {Module.BombComponent.gameObject.layer}. Camera's bitmask is {unchecked((uint) CameraInstance.cullingMask):X8}");
 
 			Vector3 lossyScale = CameraInstance.transform.lossyScale;
 			CameraInstance.nearClipPlane = 1.0f * lossyScale.y;
 			CameraInstance.farClipPlane = 3.0f * lossyScale.y;
-			Debug.LogFormat("[ModuleCameras] Camera's lossyScale is {0}; Setting near plane to {1}, far plane to {2}", lossyScale, CameraInstance.nearClipPlane, CameraInstance.farClipPlane);
+			DebugHelper.Log($"Camera's lossyScale is {lossyScale}; Setting near plane to {CameraInstance.nearClipPlane}, far plane to {CameraInstance.farClipPlane}");
 
 			// Light sources in modules don’t show in the camera if we change the layer immediately.
 			// Delaying that by 1 frame by using a coroutine seems to fix that.
@@ -282,7 +282,6 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Private Static Readonlys
-	private const string LogPrefix = "[ModuleCameras] ";
 	private static readonly Vector3 HudScale = new Vector3(0.7f, Mathf.Round(1), Mathf.Round(1));
 	#endregion
 
@@ -461,7 +460,7 @@ public class ModuleCameras : MonoBehaviour
 		_currentSolves = _currentBomb.BombSolvedModules;
 		_currentTotalModules = _currentBomb.BombSolvableModules;
 		string solves = _currentSolves.ToString().PadLeft(_currentTotalModules.ToString().Length, char.Parse("0"));
-		Debug.Log(LogPrefix + "Updating solves to " + solves);
+		DebugHelper.Log("Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";
 	}
 
@@ -743,7 +742,7 @@ public class ModuleCameras : MonoBehaviour
 		_currentStrikes = _currentBomb.StrikeCount;
 		_currentTotalStrikes = _currentBomb.StrikeLimit;
 		string strikesText = _currentStrikes.ToString().PadLeft(_currentTotalStrikes.ToString().Length, char.Parse("0"));
-		Debug.Log(LogPrefix + "Updating strikes to " + strikesText);
+		DebugHelper.Log("Updating strikes to " + strikesText);
 		StrikesPrefab.text = $"{strikesText}<size=25>/{_currentTotalStrikes}</size>";
 	}
 

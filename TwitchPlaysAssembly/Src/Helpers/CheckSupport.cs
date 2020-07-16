@@ -195,7 +195,7 @@ public static class CheckSupport
 					}
 					catch (Exception ex)
 					{
-						Debug.LogErrorFormat("Load of mod \"{0}\" failed: \n{1}\n{2}", mod.ModID, ex.Message, ex.StackTrace);
+						DebugHelper.LogException(ex, $"Load of mod \"{mod.ModID}\" failed:");
 					}
 
 					loadedObjects = mainBundle.LoadAllAssets<Object>();

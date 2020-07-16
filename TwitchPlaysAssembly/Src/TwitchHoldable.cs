@@ -389,7 +389,7 @@ public class TwitchHoldable
 			return MakeSimpleCoroutine(kms);
 
 		if (obj != null)
-			DebugHelper.Log("[TwitchHoldable] ProcessTwitchCommand() returned an object that is neither IEnumerator nor IEnumerable<KMSelectable>.");
+			DebugHelper.Log("ProcessTwitchCommand() returned an object that is neither IEnumerator nor IEnumerable<KMSelectable>.");
 		return null;
 	}
 
@@ -619,10 +619,10 @@ public class TwitchHoldable
 			if (types.Length < 2)
 				continue;
 
-			Debug.LogFormat("[TwitchHoldable] Found {0} types with fullName = \"{1}\"", types.Length, fullName);
+			DebugHelper.Log($"Found {types.Length} types with fullName = \"{fullName}\"");
 			foreach (Type type in types)
 			{
-				Debug.LogFormat("[TwitchHoldable] \ttype.FullName=\"{0}\" type.Assembly.GetName().Name=\"{1}\"", type.FullName, type.Assembly.GetName().Name);
+				DebugHelper.Log($"\ttype.FullName=\"{type.FullName}\" type.Assembly.GetName().Name=\"{type.Assembly.GetName().Name}\"");
 			}
 		}
 	}
@@ -632,31 +632,31 @@ public class TwitchHoldable
 		ParameterInfo[] parameters = candidateMethod.GetParameters();
 		if (parameters.Length == 0)
 		{
-			Debug.LogFormat("[TwitchHoldable] Found a potential candidate ProcessTwitchCommand method in {0}, but the parameter list does not match the expected parameter list (too few parameters).", type.FullName);
+			DebugHelper.Log($"Found a potential candidate ProcessTwitchCommand method in {type.FullName}, but the parameter list does not match the expected parameter list (too few parameters).");
 			return false;
 		}
 
 		if (parameters.Length > 1)
 		{
-			Debug.LogFormat("[TwitchHoldable] Found a potential candidate ProcessTwitchCommand method in {0}, but the parameter list does not match the expected parameter list (too many parameters).", type.FullName);
+			DebugHelper.Log($"Found a potential candidate ProcessTwitchCommand method in {type.FullName}, but the parameter list does not match the expected parameter list (too many parameters).");
 			return false;
 		}
 
 		if (parameters[0].ParameterType != typeof(string))
 		{
-			Debug.LogFormat("[TwitchHoldable] Found a potential candidate ProcessTwitchCommand method in {0}, but the parameter list does not match the expected parameter list (expected a single string parameter, got a single {1} parameter).", type.FullName, parameters[0].ParameterType.FullName);
+			DebugHelper.Log($"Found a potential candidate ProcessTwitchCommand method in {type.FullName}, but the parameter list does not match the expected parameter list (expected a single string parameter, got a single {parameters[0].ParameterType.FullName} parameter).");
 			return false;
 		}
 
 		if (typeof(IEnumerable<KMSelectable>).IsAssignableFrom(candidateMethod.ReturnType))
 		{
-			Debug.LogFormat("[TwitchHoldable] Found a valid candidate ProcessTwitchCommand method in {0} (using easy/simple API).", type.FullName);
+			DebugHelper.Log($"Found a valid candidate ProcessTwitchCommand method in {type.FullName} (using easy/simple API).");
 			return true;
 		}
 
 		if (candidateMethod.ReturnType == typeof(IEnumerator))
 		{
-			Debug.LogFormat("[TwitchHoldable] Found a valid candidate ProcessTwitchCommand method in {0} (using advanced/coroutine API).", type.FullName);
+			DebugHelper.Log($"Found a valid candidate ProcessTwitchCommand method in {type.FullName} (using advanced/coroutine API).");
 			return true;
 		}
 
