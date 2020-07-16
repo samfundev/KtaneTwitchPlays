@@ -386,10 +386,7 @@ public class ModuleCameras : MonoBehaviour
 			camera.ViewModule(module);
 		// If we can and should enable the camera wall, enable it and then view the module.
 		else if (UpdateAutomaticCameraWall())
-		{
-			EnableCameraWall();
 			TryViewModule(module);
-		}
 		// If the camera is already enabled, replace a suitable SAME-priority camera.
 		else
 			camera.ViewModule(module);
@@ -560,7 +557,6 @@ public class ModuleCameras : MonoBehaviour
 			_moduleCameras.RemoveAt(6);
 
 			camera.Deactivate();
-			Destroy(camera.CameraInstance);
 			Destroy(camera.gameObject);
 		}
 		for (int i = 0; i < 6; i++)

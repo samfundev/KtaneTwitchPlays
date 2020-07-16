@@ -480,7 +480,7 @@ static class GameCommands
 	/// <syntax>camerawall [mode]</syntax>
 	/// <summary>Sets the mode of the camera wall to either on, off or auto. If automatic camera wall is enabled, mod rank is required to use.</summary>
 	/// <argument name="mode">The mode of the camera wall. Can be on, off or auto.</argument>
-	[Command(@"(?:camerawall|cw) *(.+)")]
+	[Command(@"(?:camerawall|cw) *(on|enabled?|off|disabled?|auto)")]
 	public static void CameraWall(string user, [Group(1)] string mode)
 	{
 		if (TwitchPlaySettings.data.EnableAutomaticCameraWall && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
@@ -489,18 +489,12 @@ static class GameCommands
 			return;
 		}
 
-		if (mode.EqualsAny("on", "enabled"))
-		{
+		if (mode.EqualsAny("on", "enable", "enabled"))
 			TwitchGame.ModuleCameras.CameraWallMode = ModuleCameras.Mode.Enabled;
-		}
-		else if (mode.EqualsAny("off", "disabled"))
-		{
+		else if (mode.EqualsAny("off", "disable", "disabled"))
 			TwitchGame.ModuleCameras.CameraWallMode = ModuleCameras.Mode.Disabled;
-		}
-		else if (mode.StartsWith("auto") && TwitchPlaySettings.data.EnableAutomaticCameraWall)
-		{
+		else if (mode.StartsWith("auto"))
 			TwitchGame.ModuleCameras.CameraWallMode = ModuleCameras.Mode.Automatic;
-		}
 	}
 
 	/// <name>Queue Named Command</name>
