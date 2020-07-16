@@ -828,9 +828,7 @@ public abstract class ComponentSolver
 
 	public void SolveSilently()
 	{
-		_delegatedSolveUserNickName = null;
-		_currentUserNickName = null;
-		_silentlySolve = true;
+		PrepareSilentSolve();
 		HandleForcedSolve(Module);
 	}
 
@@ -841,9 +839,7 @@ public abstract class ComponentSolver
 
 	protected bool HandleForcedSolve()
 	{
-		_delegatedSolveUserNickName = null;
-		_currentUserNickName = null;
-		_silentlySolve = true;
+		PrepareSilentSolve();
 		_responded = true;
 		IEnumerator forcedSolve = ForcedSolveIEnumerator();
 		if (!forcedSolve.MoveNext()) return false;
