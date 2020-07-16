@@ -787,7 +787,7 @@ public abstract class ComponentSolver
 
 		// This strike handler runs before a strike is assigned, so we need to set the number of strikes to -1 which will then get incremented to 0.
 		// Ensure strikes are always set to 0 in VS mode, even for strikes not assigned to a team. (Needies, etc.)
-		if (OtherModes.TimeModeOn || OtherModes.TimeModeOn)
+		if (OtherModes.TimeModeOn || OtherModes.VSModeOn)
 			Module.Bomb.Bomb.NumStrikes = -1;
 
 		if (OtherModes.Unexplodable)
