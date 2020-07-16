@@ -45,6 +45,9 @@ public abstract class ComponentSolver
 			yield break;
 		}
 
+		StrikeMessage = string.Empty;
+		StrikeMessageConflict = false;
+
 		Module.CameraPriority = Module.CameraPriority > CameraPriority.Interacted ? Module.CameraPriority : CameraPriority.Interacted;
 		_currentUserNickName = userNickName;
 		_beforeStrikeCount = StrikeCount;
@@ -1167,8 +1170,6 @@ public abstract class ComponentSolver
 			Leaderboard.Instance.AddScore(userNickName, strikePenalty);
 			Leaderboard.Instance.AddStrike(userNickName, strikeCount);
 		}
-		StrikeMessage = string.Empty;
-		StrikeMessageConflict = false;
 
 		IRCConnection.SendMessage(messageParts.Join());
 	}
