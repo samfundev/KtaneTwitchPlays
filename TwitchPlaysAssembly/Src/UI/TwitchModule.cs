@@ -261,11 +261,7 @@ public class TwitchModule : MonoBehaviour
 			}
 		}
 
-		// Announce any solvable modules that are marked and needies
-		if (Solver?.ModInfo.announceModule == true || BombComponent.GetComponent<NeedyComponent>() != null)
-		{
-			StartCoroutine(DelayAnnouncement());
-		}
+		StartCoroutine(DelayAnnouncement());
 
 		SetBannerColor(unclaimedBackgroundColor);
 		TakeUser = null;
@@ -275,6 +271,10 @@ public class TwitchModule : MonoBehaviour
 	{
 		yield return null;
 		yield return null;
+		
+		// Don't announce any module that isn't marked for announcement, needy or hidden
+		if (Solver?.ModInfo.announceModule != true && BombComponent.GetComponent<NeedyComponent>() == null && !Hidden)
+			yield break;
 
 		yield return new WaitUntil(() => !Hidden);
 
