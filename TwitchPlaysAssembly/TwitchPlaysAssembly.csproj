@@ -1,48 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B2DBE282-D779-4B15-BDC9-C747EA7EAF72}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TwitchPlaysAssembly</RootNamespace>
-    <AssemblyName>TwitchPlaysAssembly</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyTitle>TwitchPlaysAssembly</AssemblyTitle>
+    <Product>TwitchPlaysAssembly</Product>
+    <LangVersion>latest</LangVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
     <OutputPath>..\Assets\Plugins\Managed\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
     <DocumentationFile>..\docs\documentation.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <GameFolder Condition="'$(GameFolder)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\</GameFolder>
     <Copy Condition="'$(Copy)' == ''">copy</Copy>
   </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="mklink &quot;$(OutDir)Assembly-CSharp.dll&quot; &quot;$(GameFolder)ktane_Data\Managed\Assembly-CSharp.dll&quot;" IgnoreExitCode="true" />
+    <Exec Command="$(Copy) &quot;$(TargetPath)&quot; &quot;$(GameFolder)mods\Twitch Plays\$(TargetFileName)&quot;" />
+  </Target>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Assets\Plugins\Managed\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
       <HintPath>$(GameFolder)\ktane_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
@@ -101,184 +87,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Src\Audio\Audio.cs" />
-    <Compile Include="Src\Audio\InterruptMusic.cs" />
-    <Compile Include="Src\Audio\MusicPlayer.cs" />
-    <Compile Include="Src\ComponentSolvers\Helpers\ReflectionComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\BinaryComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\ShapeMemoryComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\RNGComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\ModulusManipulationComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\AdditionComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\CrypticPasswordComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\ChordProgressionsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\BabaIsWhoComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\NumberNimblenessComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\PrimeEncryptionComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\MysteryModuleShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\AstrologyShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\SquareButtonShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\PlungerButtonShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SimonsStagesComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SkinnyWiresComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\StreetFighterComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\HieroglyphicsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\GroceryStoreShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\BooleanKeypadShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\SwanShim.cs" />
-    <Compile Include="Src\Helpers\LeaderboardController.cs" />
-    <Compile Include="Src\Helpers\ModdedAPI.cs" />
-    <Compile Include="Src\Helpers\TwitchPlaysAPI.cs" />
-    <Compile Include="Src\Votes.cs" />
-    <Compile Include="Src\Extensions\KMBombInfoExtensions.cs" />
-    <Compile Include="Src\Helpers\CheckSupport.cs" />
-    <Compile Include="Src\Helpers\ClaimQueueItem.cs" />
-    <Compile Include="Src\Helpers\CommandQueueItem.cs" />
-    <Compile Include="Src\Commands\GlobalCommands.cs" />
-    <Compile Include="Src\Commands\GameCommands.cs" />
-    <Compile Include="Src\Commands\AlarmClockCommands.cs" />
-    <Compile Include="Src\Commands\IRCConnectionManagerCommands.cs" />
-    <Compile Include="Src\Commands\MissionBinderCommands.cs" />
-    <Compile Include="Src\Commands\BombCommands.cs" />
-    <Compile Include="Src\Commands\HoldableCommands.cs" />
-    <Compile Include="Src\Commands\DMGCommands.cs" />
-    <Compile Include="Src\Commands\FreeplayCommands.cs" />
-    <Compile Include="Src\Commands\ModuleCommands.cs" />
-    <Compile Include="Src\Commands\PostGameCommands.cs" />
-    <Compile Include="Src\ComponentSolvers\ComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Helpers\ComponentSolverFactory.cs" />
-    <Compile Include="Src\ComponentSolvers\Helpers\ComponentSolverFields.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Asimir\MurderComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Asimir\SeaShellsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Asimir\ShapeShiftComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Asimir\ThirdBaseComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\AT_Bash\MotionSenseCompoenentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\AT_Bash\AppreciateArtComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\External\CoroutineModComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\External\SimpleModComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\External\UnsupportedModComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Kaneb\TwoBitsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\NecronomiconComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\MorseWarComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\BooleanMazeComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\LEGOComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\AlchemyComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\EdgeworkComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\EnglishTestComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\ErrorCodesComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\LetterKeysComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\MicrocontrollerComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\NeedyBeerComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\ResistorsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Misc\SpeakEnglishComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Mock Army\AnagramsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Mock Army\EmojiMathComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Mock Army\NeedyMathComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\CrazyTalkComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\CryptographyComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\ForeignExchangeRatesComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\ListeningComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\OrientationCubeComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\ProbingComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyAdvancedComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Perky\TurnTheKeyComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\HangoverComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\CoffeebucksComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\LabyrinthComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\MemorableButtonsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\SimonsOnFirstComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\StainedGlassComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TheMatrixComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TheTrollComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\FestiveJukeboxComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Royal_Flu%24h\TWordsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\AntiTrollShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\ColorGeneratorShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\ComponentSolverShim.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\Shims\ExtendedPasswordComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedButtonComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedModuleHelper.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedMorseCodeComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedNeedyVentComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedPasswordComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Modded\TranslatedModules\TranslatedWhosOnFirstComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\ButtonComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\InvisibleWallsComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\KeypadComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\MemoryComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\MorseCodeComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\NeedyDischargeComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\NeedyKnobComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\NeedyVentComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\PasswordComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\SimonComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\VennWireComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\WhosOnFirstComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\WireSequenceComponentSolver.cs" />
-    <Compile Include="Src\ComponentSolvers\Vanilla\WireSetComponentSolver.cs" />
-    <Compile Include="Src\ConvertedTypes.cs" />
-    <Compile Include="Src\DataBlobs\ModuleCamerasData.cs" />
-    <Compile Include="Src\DataBlobs\TwitchModuleData.cs" />
-    <Compile Include="Src\DataBlobs\IRCConnectionData.cs" />
-    <Compile Include="Src\DataBlobs\TwitchPlaysServiceData.cs" />
-    <Compile Include="Src\Extensions\GeneralExtensions.cs" />
-    <Compile Include="Src\GameplayRooms\DefaultGameRoom.cs" />
-    <Compile Include="Src\GameplayRooms\ElevatorGameRoom.cs" />
-    <Compile Include="Src\GameplayRooms\Facility.cs" />
-    <Compile Include="Src\GameplayRooms\Factory.cs" />
-    <Compile Include="Src\GameplayRooms\GameRoom.cs" />
-    <Compile Include="Src\GameplayRooms\PortalRoom.cs" />
-    <Compile Include="Src\Helpers\CoroutineQueue.cs" />
-    <Compile Include="Src\Helpers\DebugHelper.cs" />
-    <Compile Include="Src\Helpers\FactoryRoomAPI.cs" />
-    <Compile Include="Src\Helpers\InputInterceptor.cs" />
-    <Compile Include="Src\Helpers\IRCConnection.cs" />
-    <Compile Include="Src\Helpers\LogUploader.cs" />
-    <Compile Include="Src\Helpers\MainThreadQueue.cs" />
-    <Compile Include="Src\Helpers\ModCommandType.cs" />
-    <Compile Include="Src\Helpers\MultipleBombs.cs" />
-    <Compile Include="Src\Helpers\ProfileHelper.cs" />
-    <Compile Include="Src\Helpers\PropertiesBehaviour.cs" />
-    <Compile Include="Src\Helpers\ReflectionHelper.cs" />
-    <Compile Include="Src\Helpers\SettingsConverter.cs" />
-    <Compile Include="Src\Helpers\Tuple.cs" />
-    <Compile Include="Src\Helpers\TwitchPlaysProperties.cs" />
-    <Compile Include="Src\Helpers\Updater.cs" />
-    <Compile Include="Src\Helpers\UrlHelper.cs" />
-    <Compile Include="Src\Helpers\UserAccess.cs" />
-    <Compile Include="Src\Helpers\VanillaRuleModifier.cs" />
-    <Compile Include="Src\Helpers\WaitForSecondsWithCancel.cs" />
-    <Compile Include="Src\Helpers\ZipStorer.cs" />
-    <Compile Include="Src\TwitchHoldable.cs" />
-    <Compile Include="Src\UI\IRCConnectionManagerHoldable.cs" />
-    <Compile Include="Src\TPElevatorSwitch.cs" />
-    <Compile Include="Src\Leaderboard.cs" />
-    <Compile Include="Src\TwitchGame.cs" />
-    <Compile Include="Src\Commands\CommandAttribute.cs" />
-    <Compile Include="Src\ModuleData.cs" />
-    <Compile Include="Src\OtherModes.cs" />
-    <Compile Include="Src\TwitchPlaySettings.cs" />
-    <Compile Include="Src\TwitchPlaysService.cs" />
-    <Compile Include="Src\UI\CameraPriority.cs" />
-    <Compile Include="Src\UI\ModuleCameras.cs" />
-    <Compile Include="Src\UI\TwitchBomb.cs" />
-    <Compile Include="Src\UI\TwitchModule.cs" />
-    <Compile Include="Src\UI\TwitchLeaderboard.cs" />
-    <Compile Include="Src\UI\TwitchLeaderboardRow.cs" />
-    <Compile Include="Src\UI\TwitchLeaderboardSoloRow.cs" />
-    <Compile Include="Src\UI\TwitchLeaderboardStats.cs" />
-    <Compile Include="Src\UI\TwitchLeaderboardTable.cs" />
-    <Compile Include="Src\UI\TwitchLeaderboardTableSolo.cs" />
-    <Compile Include="Src\UI\TwitchMessage.cs" />
-    <Compile Include="Src\ModuleDistributions.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include=".editorconfig" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>mklink "$(OutDir)\Assembly-CSharp.dll" "$(GameFolder)\ktane_Data\Managed\Assembly-CSharp.dll" &gt;nul 2&gt;&amp;1
-$(Copy) "$(TargetPath)" "$(GameFolder)\mods\Twitch Plays\$(TargetFileName)"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

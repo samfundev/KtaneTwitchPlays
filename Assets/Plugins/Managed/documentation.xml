@@ -4,58 +4,484 @@
         <name>TwitchPlaysAssembly</name>
     </assembly>
     <members>
-        <member name="T:LeaderboardController">
+        <member name="T:AlarmClockCommands">
+            <summary>Commands for the alarm clock.</summary>
+            <prefix>alarm </prefix>
+        </member>
+        <member name="M:AlarmClockCommands.Snooze(TwitchHoldable,System.String,System.Boolean)">
+            <name>Snooze</name>
+            <syntax>snooze</syntax>
+            <summary>Hits the snooze button on the alarm clock.</summary>
+        </member>
+        <member name="T:BombCommands">
+            <summary>Commands related to the bomb.</summary>
+            <prefix>bomb </prefix>
+        </member>
+        <member name="M:BombCommands.Help(System.String,System.Boolean)">
+            <name>Help</name>
+            <syntax>help</syntax>
+            <summary>Gives you information about various bomb commands.</summary>
+        </member>
+        <member name="M:BombCommands.TurnBomb(TwitchBomb)">
+            <name>Turn</name>
+            <syntax>turn</syntax>
+            <summary>Turns the bomb around.</summary>
+        </member>
+        <member name="M:BombCommands.Hold(TwitchBomb)">
+            <name>Hold</name>
+            <syntax>hold</syntax>
+            <summary>Holds the bomb.</summary>
+        </member>
+        <member name="M:BombCommands.Drop(TwitchBomb)">
+            <name>Drop</name>
+            <syntax>drop</syntax>
+            <summary>Drops the bomb.</summary>
+        </member>
+        <member name="M:BombCommands.Throw(TwitchBomb,System.Nullable{System.Int32})">
+            <name>Throw</name>
+            <syntax>throw (strength)</syntax>
+            <summary>Throws the bomb. (strength) is how much force the bomb is thrown with.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.EdgeworkElevator(TwitchBomb,System.String,System.String,System.Boolean)">
+            <name>Elevator Edgework</name>
+            <syntax>edgework (wall)</syntax>
+            <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
+            <restriction>ElevatorOnly</restriction>
+        </member>
+        <member name="M:BombCommands.Edgework(TwitchBomb,System.String,System.String,System.Boolean)">
+            <name>Edgework</name>
+            <syntax>edgework (edge)\nedgework 45</syntax>
+            <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
+            <restriction>ElevatorDisallowed</restriction>
+        </member>
+        <member name="M:BombCommands.Time(TwitchBomb,System.String,System.Boolean)">
+            <name>Time</name>
+            <syntax>time</syntax>
+            <summary>Sends a message with how much time is left.</summary>
+        </member>
+        <member name="M:BombCommands.Timestamp(TwitchBomb,System.String,System.Boolean)">
+            <name>Timestamp</name>
+            <syntax>timestamp</syntax>
+            <summary>Sends a message with when the bomb started.</summary>
+        </member>
+        <member name="M:BombCommands.Explode(TwitchBomb,System.String,System.Boolean)">
+            <name>End Training Mode</name>
+            <syntax>endtrainingmode</syntax>
+            <summary>Ends a training mode bomb. Requires either Defuser rank or a minimum score.</summary>
+        </member>
+        <member name="M:BombCommands.Explode(TwitchBomb)">
+            <name>Explode</name>
+            <syntax>explode</syntax>
+            <summary>Forces the bomb to explode.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:BombCommands.VoteStart(System.String,System.Boolean)">
+            <name>Start a vote</name>
+            <syntax>vote [action]</syntax>
+            <summary>Starts a vote about doing an action</summary>
+        </member>
+        <member name="M:BombCommands.Vote(System.String,System.Boolean)">
+            <name>Vote</name>
+            <syntax>vote [choice]</syntax>
+            <summary>Vote with yes or no</summary>
+        </member>
+        <member name="M:BombCommands.RemoveVote(System.String)">
+            <name>Remove vote</name>
+            <syntax>vote remove</syntax>
+            <summary>Removes the vote of a user</summary>
+        </member>
+        <member name="M:BombCommands.ShowVoteTime(System.String)">
+            <name>Time left of vote</name>
+            <syntax>vote time</syntax>
+            <summary>Shows remaining voting time</summary>
+        </member>
+        <member name="M:BombCommands.CancelVote(System.String)">
+            <name>Cancel vote</name>
+            <syntax>vote cancel</syntax>
+            <summary>Cancels a voting process</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:BombCommands.ForceEndVote(System.String)">
+            <name>Force-end vote</name>
+            <syntax>vote forceend</syntax>
+            <summary>Skips the countdown of the voting process</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:BombCommands.Status(TwitchBomb,System.String,System.Boolean)">
+            <name>Status</name>
+            <syntax>status</syntax>
+            <summary>Sends a message with the current status of the bomb. Including things like time, strikes and solves.</summary>
+        </member>
+        <member name="M:BombCommands.Pause(TwitchBomb)">
+            <name>Pause</name>
+            <syntax>pause</syntax>
+            <summary>Pauses the bomb timer.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.Unpause(TwitchBomb)">
+            <name>Unpause</name>
+            <syntax>unpause</syntax>
+            <summary>Starts the bomb timer.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.ChangeTimer(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.String)">
+            <name>Change Timer</name>
+            <syntax>add time [time]\nsubstract time [time]\nset time [time]</syntax>
+            <summary>Adds, substracts or sets the bomb time.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:BombCommands.ChangeStrikeParameter(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+            <name>Change Strikes / Strike Limit</name>
+            <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
+            <summary>Adds, substracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="T:CommandAttribute">
+            <summary>Marks a method as a command understood by the Twitch Plays system.</summary>
+        </member>
+        <member name="P:CommandAttribute.Regex">
             <summary>
-            Controls whether or not records will be saved to the leaderboard and if stats can be changed.
-            Call <see cref="M:LeaderboardController.Install"/> to set it up and then call <see cref="M:LeaderboardController.DisableLeaderboards"/> to disable the leaderboards.
-            Leaderboards will re-enabled once the game goes back to the setup state. Make sure to disable them again after that if they should still be disabled.
-            </summary>
+                A regular expression that matches all forms of the command. Note that which part of the command is matched against
+                this regex depends on what type of command it is (global, module, bomb, or holdable).</summary>
         </member>
-        <member name="M:LeaderboardController.Install">
-            <summary>Installs everything necessary to work and only needs to be called once. Records will still be saved if this is not called.</summary>
+        <member name="P:CommandAttribute.AccessLevel">
+            <summary>Access level required to use this command.</summary>
         </member>
-        <member name="M:LeaderboardController.DisableLeaderboards">
-            <summary>
-            Disables records being saved to leaderboards and stat changes.
-            Leaderboards are re-enabled once the game goes back to the setup state.
-            Make sure to disable them again after that if they should still be disabled
-            </summary>
+        <member name="P:CommandAttribute.AccessLevelAnarchy">
+            <summary>Access level required to use this command when anarchy mode is enabled.</summary>
         </member>
-        <member name="T:ModdedAPI">
-            <summary>A class to add and access shared modded APIs for things like exploding the bomb.</summary>
+        <member name="M:CommandAttribute.#ctor(System.String,AccessLevel,AccessLevel)">
+            <summary>Constructor.</summary>
         </member>
-        <member name="M:ModdedAPI.AddProperty(System.String,System.Func{System.Object},System.Action{System.Object})">
-            <summary>
-            Adds a new property with a getter and setter. The getter or setter can be null.
-            If at anytime you can't handle a property, disable the property using <see cref="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)"/>.
-            </summary>
-            <param name="name">The name of the property.</param>
-            <param name="get">The getter of the property.</param>
-            <param name="set">The setter of the property.</param>
-            <returns>An object that represents the property. Used in <see cref="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)"/>.</returns>
+        <member name="T:SolvedAllowedAttribute">
+            <summary>Marks a module command as a command that can be used even if the module is already solved.</summary>
         </member>
-        <member name="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)">
-            <summary>Sets whether or not a property is enabled. This allows other mods to handle the property instead.</summary>
-            <param name="property">The property object from the <see cref="M:ModdedAPI.AddProperty(System.String,System.Func{System.Object},System.Action{System.Object})"/> method.</param>
-            <param name="enabled">Whether or not the property should be enabled or disabled.</param>
+        <member name="T:ElevatorOnlyAttribute">
+            <summary>Specifies a bomb command or game command that can only be used in the Elevator room.</summary>
         </member>
-        <member name="M:ModdedAPI.TryGetAs``1(System.String,``0@)">
-            <summary>Gets a value from a property.</summary>
-            <typeparam name="T">The type of the value.</typeparam>
-            <param name="name">The name of the property.</param>
-            <param name="value">The variable to put the value into.</param>
-            <returns>Whether or not a value was read succesfully.</returns>
+        <member name="T:ElevatorDisallowedAttribute">
+            <summary>Specifies a bomb command or game command that cannot be used in the Elevator room.</summary>
         </member>
-        <member name="M:ModdedAPI.TrySet(System.String,System.Object)">
-            <summary>Sets a value to a property.</summary>
-            <param name="name">The name of the property.</param>
-            <param name="value">The value to put into the property.</param>
-            <returns>Whether or not a value was written sucessfully.</returns>
+        <member name="T:DebuggingOnlyAttribute">
+            <summary>Specifies a command that can only be used if the EnableDebuggingCommands setting is enabled.</summary>
         </member>
-        <member name="T:KModkit.KMBombInfoExtensions">
-            <summary>
-            Some helper extensions methods for the KMBombInfo class.
-            </summary>
+        <member name="T:DMGCommands">
+            <summary>Commands for the dynamic mission generator.</summary>
+            <prefix>dmg </prefix>
+        </member>
+        <member name="M:DMGCommands.Run(System.String,System.String)">
+            <name>Run</name>
+            <syntax>run</syntax>
+            <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>
+        </member>
+        <member name="T:FreeplayCommands">
+            <summary>Commands for the freeplay briefcase.</summary>
+            <prefix>freeplay </prefix>
+        </member>
+        <member name="M:FreeplayCommands.Needy(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
+            <name>Needy</name>
+            <syntax>needy on\nneedy off</syntax>
+            <summary>Enables or disables the needy switch.</summary>
+        </member>
+        <member name="M:FreeplayCommands.Hardcore(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
+            <name>Hardcore</name>
+            <syntax>hardcore on\nhardcore off</syntax>
+            <summary>Enables or disables the hardcore switch.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ModsOnly(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
+            <name>Mods Only</name>
+            <syntax>mods only\nmods only off</syntax>
+            <summary>Enables or disables the mods only.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ChangeTimerHours(FloatingHoldable,System.Int32,System.Int32,System.Int32)">
+            <name>Set Time</name>
+            <syntax>time (hours):[minutes]:[seconds]</syntax>
+            <summary>Sets the amount of time the bomb will have.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ChangeBombCount(FloatingHoldable,System.Int32)">
+            <name>Set Bombs</name>
+            <syntax>bombs [bombs]</syntax>
+            <summary>Sets the number of bombs.</summary>
+        </member>
+        <member name="M:FreeplayCommands.ChangeModuleCount(FloatingHoldable,System.Int32)">
+            <name>Set Modules</name>
+            <syntax>modules [modules]</syntax>
+            <summary>Sets the number of modules each bomb will have.</summary>
+        </member>
+        <member name="M:FreeplayCommands.Start(FloatingHoldable)">
+            <name>Start</name>
+            <syntax>start</syntax>
+            <summary>Start the game.</summary>
+        </member>
+        <member name="M:FreeplayCommands.StartAdvanced(FloatingHoldable,System.String,System.String,System.String,System.Boolean)">
+            <name>Advanced Set / Start</name>
+            <syntax>set [parameters]\nstart [parameters]</syntax>
+            <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, needy, hardcore, needy.</summary>
+        </member>
+        <member name="T:GameCommands">
+            <summary>Commands that can be run during a game.</summary>
+        </member>
+        <member name="M:GameCommands.Cancel">
+            <name>Cancel</name>
+            <syntax>cancel</syntax>
+            <summary>Cancels the current running command.</summary>
+        </member>
+        <member name="M:GameCommands.Stop">
+            <name>Stop</name>
+            <syntax>stop</syntax>
+            <summary>Stops the current and queued commands.</summary>
+        </member>
+        <member name="M:GameCommands.ShowNotes(System.Int32,System.String,System.Boolean)">
+            <name>Get Notes</name>
+            <syntax>notes[note]</syntax>
+            <summary>Sends the contents of a note to chat.</summary>
+            <argument name="note">The note's number.</argument>
+        </member>
+        <member name="M:GameCommands.SetNotes(System.Int32,System.String,System.String,System.Boolean)">
+            <name>Set Notes</name>
+            <syntax>notes[note] [contents]</syntax>
+            <summary>Sets the contents of a note.</summary>
+            <argument name="note">The note's number.</argument>
+            <argument name="contents">New text of the note.</argument>
+        </member>
+        <member name="M:GameCommands.SetNotesAppend(System.Int32,System.String,System.String,System.Boolean)">
+            <name>Append Notes</name>
+            <syntax>notes[note]append [contents]</syntax>
+            <summary>Appends the contents of a note.</summary>
+            <argument name="note">The note's number.</argument>
+            <argument name="contents">The text that will be appended to the note.</argument>
+        </member>
+        <member name="M:GameCommands.SetNotesClear(System.Int32,System.String,System.Boolean)">
+            <name>Clear Notes</name>
+            <syntax>notes[note]clear</syntax>
+            <summary>Clears the contents of a note.</summary>
+            <argument name="note">The note's number.</argument>
+        </member>
+        <member name="M:GameCommands.Snooze">
+            <name>Snooze</name>
+            <syntax>snooze</syntax>
+            <summary>Snoozes the alarm clock.</summary>
+        </member>
+        <member name="M:GameCommands.ShowClaimsOfAnotherPlayer(System.String,System.String,System.Boolean)">
+            <name>Show Claims</name>
+            <syntax>claims [user]</syntax>
+            <summary>Shows the claims of another user.</summary>
+            <argument name="user">The user whose claims you want to see.</argument>
+        </member>
+        <member name="M:GameCommands.ShowClaims(System.String,System.Boolean)">
+            <name>Claims</name>
+            <syntax>claims</syntax>
+            <summary>Shows all of your claims.</summary>
+        </member>
+        <member name="M:GameCommands.ClaimViewPin(System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <name>Claim View Pin</name>
+            <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
+            <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
+            <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
+            <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
+        </member>
+        <member name="M:GameCommands.ClaimAny(System.String,System.String,System.Boolean,System.Boolean,System.String,System.Boolean)">
+            <name>Claim Any</name>
+            <syntax>claim [source]\nclaim [source] view</syntax>
+            <summary>Claims one unsolved and unclaimed module from a source. any, van or mod are acceptable sources.</summary>
+            <argument name="source">The source of the modules to pick from. any for any module, van for vanilla and mod for modded modules.</argument>
+        </member>
+        <member name="M:GameCommands.UnclaimAll(System.String,System.Boolean)">
+            <name>Unclaim All</name>
+            <syntax>unclaim all\nunclaim queued</syntax>
+            <summary>Unclaims all modules you have claimed and queued claims. If queued is used instead of all, then only queued claims will be removed.</summary>
+        </member>
+        <member name="M:GameCommands.UnclaimSpecific(System.String,System.String,System.Boolean)">
+            <name>Unclaim Specific</name>
+            <syntax>unclaim [what]</syntax>
+            <summary>Unclaims a list of module codes.</summary>
+            <argument name="what">A list of module codes to unclaim.</argument>
+        </member>
+        <member name="M:GameCommands.ListUnclaimed(System.String,System.Boolean)">
+            <name>Unclaimed</name>
+            <syntax>unclaimed</syntax>
+            <summary>Sends a maximum of 3 unclaimed modules to chat.</summary>
+        </member>
+        <member name="M:GameCommands.ListUnsolved(System.String,System.Boolean)">
+            <name>Unsolved</name>
+            <syntax>unsolved</syntax>
+            <summary>Sends a maximum of 3 unsolved modules to chat.</summary>
+        </member>
+        <member name="M:GameCommands.FindClaimView(System.String,System.String,System.String,System.Boolean)">
+            <name>Find Claim View</name>
+            <syntax>find (actions) [what]</syntax>
+            <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
+            <argument name="actions">A combination of claim or view seperated by spaces.</argument>
+            <argument name="what">Partial module names seperated by commas or semicolons.</argument>
+        </member>
+        <member name="M:GameCommands.FindPlayer(System.String,System.String,System.Boolean)">
+            <name>Find Player</name>
+            <syntax>findplayer [what]</syntax>
+            <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
+            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+        </member>
+        <member name="M:GameCommands.FindSolved(System.String,System.String,System.Boolean)">
+            <name>Find Solved</name>
+            <syntax>findsolved [what]</syntax>
+            <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
+            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+        </member>
+        <member name="M:GameCommands.FindDuplicate(System.String,System.String,System.Boolean)">
+            <name>Find Duplicate</name>
+            <syntax>findduplicate (what)</syntax>
+            <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
+            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+        </member>
+        <member name="M:GameCommands.NewBomb(System.String,System.Boolean)">
+            <name>New Bomb</name>
+            <syntax>newbomb</syntax>
+            <summary>Starts a new bomb in training mode. Requires either a minimum score or the defuser rank to run.</summary>
+        </member>
+        <member name="M:GameCommands.FillEdgework(System.String,System.Boolean)">
+            <name>Fill Edgework</name>
+            <syntax>filledgework</syntax>
+            <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
+        </member>
+        <member name="M:GameCommands.EdgeworkElevator(System.String,System.String,System.Boolean)">
+            <name>Elevator Edgework</name>
+            <syntax>edgework (wall)</syntax>
+            <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
+            <restriction>ElevatorOnly</restriction>
+        </member>
+        <member name="M:GameCommands.Edgework(System.String,System.String,System.Boolean)">
+            <name>Edgework</name>
+            <syntax>edgework (edge)\nedgework 45</syntax>
+            <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
+            <restriction>ElevatorDisallowed</restriction>
+        </member>
+        <member name="M:GameCommands.CameraWall(System.String,System.String)">
+            <name>Camera Wall</name>
+            <syntax>camerawall [mode]</syntax>
+            <summary>Sets the mode of the camera wall to either on, off or auto. If automatic camera wall is enabled, mod rank is required to use.</summary>
+            <argument name="mode">The mode of the camera wall. Can be on, off or auto.</argument>
+        </member>
+        <member name="M:GameCommands.EnqueueNamedCommand(IRCMessage,System.String,System.String)">
+            <name>Queue Named Command</name>
+            <syntax>queue [name] [command]</syntax>
+            <summary>Queues a command that can be called by name.</summary>
+        </member>
+        <member name="M:GameCommands.EnqueueUnnamedCommand(IRCMessage,System.String)">
+            <name>Queue Command</name>
+            <syntax>queue [command]</syntax>
+            <summary>Queues a command that will be called in order.</summary>
+        </member>
+        <member name="M:GameCommands.UnqueueCommand(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.String)">
+            <name>Unqueue/Show Command</name>
+            <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
+            <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
+            <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
+        </member>
+        <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.Boolean,System.String)">
+            <name>Call Command</name>
+            <syntax>call (name)\ncallnow (name)</syntax>
+            <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
+        </member>
+        <member name="M:GameCommands.CallAllQueuedCommands(System.String,System.Boolean)">
+            <name>Call All</name>
+            <syntax>call all</syntax>
+            <summary>Calls all commands, including named ones.</summary>
+        </member>
+        <member name="M:GameCommands.CallSetCommand(System.String,System.Int32)">
+            <name>Call Set</name>
+            <syntax>callset [minimum]</syntax>
+            <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
+        </member>
+        <member name="M:GameCommands.CallCountCommand">
+            <name>Call Count</name>
+            <syntax>callcount</syntax>
+            <summary>Displays the number of times that the Call Command has been run since a command was last called.</summary>
+        </member>
+        <member name="M:GameCommands.RemoveCalledPlayer(System.String)">
+            <name>Uncall</name>
+            <syntax>uncall</syntax>
+            <summary>Retracts your Call Command when multiple are required.</summary>
+        </member>
+        <member name="M:GameCommands.ListCalledPlayers">
+            <name>Call Players</name>
+            <syntax>callplayers</syntax>
+            <summary>Lists the current players who have called when multiple are required.</summary>
+        </member>
+        <member name="M:GameCommands.SetMultiplier(System.Single)">
+            <name>Set Multiplier</name>
+            <syntax>setmultiplier [multiplier]</syntax>
+            <summary>Sets the time mode multiplier.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GameCommands.SolveBomb">
+            <name>Solve Bomb</name>
+            <syntax>solvebomb</syntax>
+            <summary>Solves the currently held bomb.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GameCommands.EnableClaims">
+            <name>Enable Claims</name>
+            <syntax>enableclaims</syntax>
+            <summary>Enables the ability to claim modules.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GameCommands.DisableClaims">
+            <name>Disable Claims</name>
+            <syntax>disableclaims</syntax>
+            <summary>Disables the ability to claim modules.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GameCommands.AssignModuleTo(System.String,System.String,System.String)">
+            <name>Assign</name>
+            <syntax>assign [user] [codes]</syntax>
+            <summary>Assigns modules to a user based on their module codes.</summary>
+        </member>
+        <member name="M:GameCommands.BotUnclaim">
+            <name>Bot Unclaim</name>
+            <syntax>bot unclaim</syntax>
+            <summary>Makes the bot unclaim any module it has claimed.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GameCommands.DisableInteractive">
+            <name>Disable Interactive</name>
+            <syntax>disableinteractive</syntax>
+            <summary>Disables interactive mode on the cameras. As if the escape key hadn't been pressed.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GameCommands.ReturnToSetup">
+            <name>Return To Setup</name>
+            <syntax>returntosetup</syntax>
+            <summary>Forces the game to return to the setup room.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GameCommands.EnableInteractiveMode">
+            <name>Enable Interactive Mode</name>
+            <syntax>enableinteractivemode</syntax>
+            <summary>Enables interactive mode, allowing the streamer to interact with the bomb.</summary>
+            <restriction>Streamer</restriction>
+        </member>
+        <member name="M:GameCommands.DisableInteractiveMode">
+            <name>Disable Interactive Mode</name>
+            <syntax>disableinteractivemode</syntax>
+            <summary>Disables interactive mode, preventing the streamer from interacting with the bomb.</summary>
+            <restriction>Streamer</restriction>
+        </member>
+        <member name="M:GameCommands.SolveUnsupportedModules">
+            <name>Solve Unsupported Modules</name>
+            <syntax>solveunsupportedmodules</syntax>
+            <summary>Solves modules that aren't supported by TP.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GameCommands.RemoveSolveBasedModules">
+            <name>Remove Solve Based Modules</name>
+            <syntax>removesolvebasedmodules</syntax>
+            <summary>Solves modules that depend on the solve count of the bomb.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GameCommands.DefaultCommand(System.String,System.String,System.Boolean)">
+            <name>Custom Messages</name>
+            <syntax>ttks\nttksleft\nttksright\ninfozen\nqhelp</syntax>
+            <summary>These commands send a predefined message to chat. Streamers can choose their own messages but the ones mentioned here are included by default.</summary>
         </member>
         <member name="T:GlobalCommands">
             <summary>Commands that can generally be used at any time.</summary>
@@ -327,278 +753,28 @@
             <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
             <restriction>SuperUser</restriction>
         </member>
-        <member name="T:GameCommands">
-            <summary>Commands that can be run during a game.</summary>
+        <member name="T:HoldableCommands">
+            <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
         </member>
-        <member name="M:GameCommands.Cancel">
-            <name>Cancel</name>
-            <syntax>cancel</syntax>
-            <summary>Cancels the current running command.</summary>
+        <member name="M:HoldableCommands.Hold(TwitchHoldable)">
+            <name>Hold</name>
+            <syntax>hold</syntax>
+            <summary>Holds the holdable.</summary>
         </member>
-        <member name="M:GameCommands.Stop">
-            <name>Stop</name>
-            <syntax>stop</syntax>
-            <summary>Stops the current and queued commands.</summary>
+        <member name="M:HoldableCommands.Drop(TwitchHoldable)">
+            <name>Drop</name>
+            <syntax>drop</syntax>
+            <summary>Drops the holdable.</summary>
         </member>
-        <member name="M:GameCommands.ShowNotes(System.Int32,System.String,System.Boolean)">
-            <name>Get Notes</name>
-            <syntax>notes[note]</syntax>
-            <summary>Sends the contents of a note to chat.</summary>
-            <argument name="note">The note's number.</argument>
+        <member name="M:HoldableCommands.Flip(TwitchHoldable)">
+            <name>Turn</name>
+            <syntax>turn</syntax>
+            <summary>Turns the holdable around.</summary>
         </member>
-        <member name="M:GameCommands.SetNotes(System.Int32,System.String,System.String,System.Boolean)">
-            <name>Set Notes</name>
-            <syntax>notes[note] [contents]</syntax>
-            <summary>Sets the contents of a note.</summary>
-            <argument name="note">The note's number.</argument>
-            <argument name="contents">New text of the note.</argument>
-        </member>
-        <member name="M:GameCommands.SetNotesAppend(System.Int32,System.String,System.String,System.Boolean)">
-            <name>Append Notes</name>
-            <syntax>notes[note]append [contents]</syntax>
-            <summary>Appends the contents of a note.</summary>
-            <argument name="note">The note's number.</argument>
-            <argument name="contents">The text that will be appended to the note.</argument>
-        </member>
-        <member name="M:GameCommands.SetNotesClear(System.Int32,System.String,System.Boolean)">
-            <name>Clear Notes</name>
-            <syntax>notes[note]clear</syntax>
-            <summary>Clears the contents of a note.</summary>
-            <argument name="note">The note's number.</argument>
-        </member>
-        <member name="M:GameCommands.Snooze">
-            <name>Snooze</name>
-            <syntax>snooze</syntax>
-            <summary>Snoozes the alarm clock.</summary>
-        </member>
-        <member name="M:GameCommands.ShowClaimsOfAnotherPlayer(System.String,System.String,System.Boolean)">
-            <name>Show Claims</name>
-            <syntax>claims [user]</syntax>
-            <summary>Shows the claims of another user.</summary>
-            <argument name="user">The user whose claims you want to see.</argument>
-        </member>
-        <member name="M:GameCommands.ShowClaims(System.String,System.Boolean)">
-            <name>Claims</name>
-            <syntax>claims</syntax>
-            <summary>Shows all of your claims.</summary>
-        </member>
-        <member name="M:GameCommands.ClaimViewPin(System.String,System.Boolean,System.String,System.String,System.Boolean)">
-            <name>Claim View Pin</name>
-            <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
-            <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
-            <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
-            <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
-        </member>
-        <member name="M:GameCommands.ClaimAny(System.String,System.String,System.Boolean,System.Boolean,System.String,System.Boolean)">
-            <name>Claim Any</name>
-            <syntax>claim [source]\nclaim [source] view</syntax>
-            <summary>Claims one unsolved and unclaimed module from a source. any, van or mod are acceptable sources.</summary>
-            <argument name="source">The source of the modules to pick from. any for any module, van for vanilla and mod for modded modules.</argument>
-        </member>
-        <member name="M:GameCommands.UnclaimAll(System.String,System.Boolean)">
-            <name>Unclaim All</name>
-            <syntax>unclaim all\nunclaim queued</syntax>
-            <summary>Unclaims all modules you have claimed and queued claims. If queued is used instead of all, then only queued claims will be removed.</summary>
-        </member>
-        <member name="M:GameCommands.UnclaimSpecific(System.String,System.String,System.Boolean)">
-            <name>Unclaim Specific</name>
-            <syntax>unclaim [what]</syntax>
-            <summary>Unclaims a list of module codes.</summary>
-            <argument name="what">A list of module codes to unclaim.</argument>
-        </member>
-        <member name="M:GameCommands.ListUnclaimed(System.String,System.Boolean)">
-            <name>Unclaimed</name>
-            <syntax>unclaimed</syntax>
-            <summary>Sends a maximum of 3 unclaimed modules to chat.</summary>
-        </member>
-        <member name="M:GameCommands.ListUnsolved(System.String,System.Boolean)">
-            <name>Unsolved</name>
-            <syntax>unsolved</syntax>
-            <summary>Sends a maximum of 3 unsolved modules to chat.</summary>
-        </member>
-        <member name="M:GameCommands.FindClaimView(System.String,System.String,System.String,System.Boolean)">
-            <name>Find Claim View</name>
-            <syntax>find (actions) [what]</syntax>
-            <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
-            <argument name="actions">A combination of claim or view seperated by spaces.</argument>
-            <argument name="what">Partial module names seperated by commas or semicolons.</argument>
-        </member>
-        <member name="M:GameCommands.FindPlayer(System.String,System.String,System.Boolean)">
-            <name>Find Player</name>
-            <syntax>findplayer [what]</syntax>
-            <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-            <argument name="what">A combination of claim or view seperated by spaces.</argument>
-        </member>
-        <member name="M:GameCommands.FindSolved(System.String,System.String,System.Boolean)">
-            <name>Find Solved</name>
-            <syntax>findsolved [what]</syntax>
-            <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-            <argument name="what">A combination of claim or view seperated by spaces.</argument>
-        </member>
-        <member name="M:GameCommands.FindDuplicate(System.String,System.String,System.Boolean)">
-            <name>Find Duplicate</name>
-            <syntax>findduplicate (what)</syntax>
-            <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
-            <argument name="what">A combination of claim or view seperated by spaces.</argument>
-        </member>
-        <member name="M:GameCommands.NewBomb(System.String,System.Boolean)">
-            <name>New Bomb</name>
-            <syntax>newbomb</syntax>
-            <summary>Starts a new bomb in training mode. Requires either a minimum score or the defuser rank to run.</summary>
-        </member>
-        <member name="M:GameCommands.FillEdgework(System.String,System.Boolean)">
-            <name>Fill Edgework</name>
-            <syntax>filledgework</syntax>
-            <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
-        </member>
-        <member name="M:GameCommands.EdgeworkElevator(System.String,System.String,System.Boolean)">
-            <name>Elevator Edgework</name>
-            <syntax>edgework (wall)</syntax>
-            <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
-            <restriction>ElevatorOnly</restriction>
-        </member>
-        <member name="M:GameCommands.Edgework(System.String,System.String,System.Boolean)">
-            <name>Edgework</name>
-            <syntax>edgework (edge)\nedgework 45</syntax>
-            <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
-            <restriction>ElevatorDisallowed</restriction>
-        </member>
-        <member name="M:GameCommands.CameraWall(System.String,System.String)">
-            <name>Camera Wall</name>
-            <syntax>camerawall [mode]</syntax>
-            <summary>Sets the mode of the camera wall to either on, off or auto. If automatic camera wall is enabled, mod rank is required to use.</summary>
-            <argument name="mode">The mode of the camera wall. Can be on, off or auto.</argument>
-        </member>
-        <member name="M:GameCommands.EnqueueNamedCommand(IRCMessage,System.String,System.String)">
-            <name>Queue Named Command</name>
-            <syntax>queue [name] [command]</syntax>
-            <summary>Queues a command that can be called by name.</summary>
-        </member>
-        <member name="M:GameCommands.EnqueueUnnamedCommand(IRCMessage,System.String)">
-            <name>Queue Command</name>
-            <syntax>queue [command]</syntax>
-            <summary>Queues a command that will be called in order.</summary>
-        </member>
-        <member name="M:GameCommands.UnqueueCommand(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.String)">
-            <name>Unqueue/Show Command</name>
-            <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
-            <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
-            <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
-        </member>
-        <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.Boolean,System.String)">
-            <name>Call Command</name>
-            <syntax>call (name)\ncallnow (name)</syntax>
-            <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
-        </member>
-        <member name="M:GameCommands.CallAllQueuedCommands(System.String,System.Boolean)">
-            <name>Call All</name>
-            <syntax>call all</syntax>
-            <summary>Calls all commands, including named ones.</summary>
-        </member>
-        <member name="M:GameCommands.CallSetCommand(System.String,System.Int32)">
-            <name>Call Set</name>
-            <syntax>callset [minimum]</syntax>
-            <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
-        </member>
-        <member name="M:GameCommands.CallCountCommand">
-            <name>Call Count</name>
-            <syntax>callcount</syntax>
-            <summary>Displays the number of times that the Call Command has been run since a command was last called.</summary>
-        </member>
-        <member name="M:GameCommands.RemoveCalledPlayer(System.String)">
-            <name>Uncall</name>
-            <syntax>uncall</syntax>
-            <summary>Retracts your Call Command when multiple are required.</summary>
-        </member>
-        <member name="M:GameCommands.ListCalledPlayers">
-            <name>Call Players</name>
-            <syntax>callplayers</syntax>
-            <summary>Lists the current players who have called when multiple are required.</summary>
-        </member>
-        <member name="M:GameCommands.SetMultiplier(System.Single)">
-            <name>Set Multiplier</name>
-            <syntax>setmultiplier [multiplier]</syntax>
-            <summary>Sets the time mode multiplier.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:GameCommands.SolveBomb">
-            <name>Solve Bomb</name>
-            <syntax>solvebomb</syntax>
-            <summary>Solves the currently held bomb.</summary>
-            <restriction>SuperUser</restriction>
-        </member>
-        <member name="M:GameCommands.EnableClaims">
-            <name>Enable Claims</name>
-            <syntax>enableclaims</syntax>
-            <summary>Enables the ability to claim modules.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:GameCommands.DisableClaims">
-            <name>Disable Claims</name>
-            <syntax>disableclaims</syntax>
-            <summary>Disables the ability to claim modules.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:GameCommands.AssignModuleTo(System.String,System.String,System.String)">
-            <name>Assign</name>
-            <syntax>assign [user] [codes]</syntax>
-            <summary>Assigns modules to a user based on their module codes.</summary>
-        </member>
-        <member name="M:GameCommands.BotUnclaim">
-            <name>Bot Unclaim</name>
-            <syntax>bot unclaim</syntax>
-            <summary>Makes the bot unclaim any module it has claimed.</summary>
-            <restriction>Mod</restriction>
-        </member>
-        <member name="M:GameCommands.DisableInteractive">
-            <name>Disable Interactive</name>
-            <syntax>disableinteractive</syntax>
-            <summary>Disables interactive mode on the cameras. As if the escape key hadn't been pressed.</summary>
-            <restriction>Mod</restriction>
-        </member>
-        <member name="M:GameCommands.ReturnToSetup">
-            <name>Return To Setup</name>
-            <syntax>returntosetup</syntax>
-            <summary>Forces the game to return to the setup room.</summary>
-            <restriction>Mod</restriction>
-        </member>
-        <member name="M:GameCommands.EnableInteractiveMode">
-            <name>Enable Interactive Mode</name>
-            <syntax>enableinteractivemode</syntax>
-            <summary>Enables interactive mode, allowing the streamer to interact with the bomb.</summary>
-            <restriction>Streamer</restriction>
-        </member>
-        <member name="M:GameCommands.DisableInteractiveMode">
-            <name>Disable Interactive Mode</name>
-            <syntax>disableinteractivemode</syntax>
-            <summary>Disables interactive mode, preventing the streamer from interacting with the bomb.</summary>
-            <restriction>Streamer</restriction>
-        </member>
-        <member name="M:GameCommands.SolveUnsupportedModules">
-            <name>Solve Unsupported Modules</name>
-            <syntax>solveunsupportedmodules</syntax>
-            <summary>Solves modules that aren't supported by TP.</summary>
-            <restriction>SuperUser</restriction>
-        </member>
-        <member name="M:GameCommands.RemoveSolveBasedModules">
-            <name>Remove Solve Based Modules</name>
-            <syntax>removesolvebasedmodules</syntax>
-            <summary>Solves modules that depend on the solve count of the bomb.</summary>
-            <restriction>SuperUser</restriction>
-        </member>
-        <member name="M:GameCommands.DefaultCommand(System.String,System.String,System.Boolean)">
-            <name>Custom Messages</name>
-            <syntax>ttks\nttksleft\nttksright\ninfozen\nqhelp</syntax>
-            <summary>These commands send a predefined message to chat. Streamers can choose their own messages but the ones mentioned here are included by default.</summary>
-        </member>
-        <member name="T:AlarmClockCommands">
-            <summary>Commands for the alarm clock.</summary>
-            <prefix>alarm </prefix>
-        </member>
-        <member name="M:AlarmClockCommands.Snooze(TwitchHoldable,System.String,System.Boolean)">
-            <name>Snooze</name>
-            <syntax>snooze</syntax>
-            <summary>Hits the snooze button on the alarm clock.</summary>
+        <member name="M:HoldableCommands.Throw(FloatingHoldable,System.Nullable{System.Int32})">
+            <name>Throw</name>
+            <syntax>throw\nthrow 10</syntax>
+            <summary>Throws the holdable with an optional strength.</summary>
         </member>
         <member name="T:IRCConnectionManagerCommands">
             <summary>Commands for the IRC Connection Holdable.</summary>
@@ -632,206 +808,6 @@
             <name>Search</name>
             <syntax>search [query]</syntax>
             <summary>Searches the binder for a mission.</summary>
-        </member>
-        <member name="T:BombCommands">
-            <summary>Commands related to the bomb.</summary>
-            <prefix>bomb </prefix>
-        </member>
-        <member name="M:BombCommands.Help(System.String,System.Boolean)">
-            <name>Help</name>
-            <syntax>help</syntax>
-            <summary>Gives you information about various bomb commands.</summary>
-        </member>
-        <member name="M:BombCommands.TurnBomb(TwitchBomb)">
-            <name>Turn</name>
-            <syntax>turn</syntax>
-            <summary>Turns the bomb around.</summary>
-        </member>
-        <member name="M:BombCommands.Hold(TwitchBomb)">
-            <name>Hold</name>
-            <syntax>hold</syntax>
-            <summary>Holds the bomb.</summary>
-        </member>
-        <member name="M:BombCommands.Drop(TwitchBomb)">
-            <name>Drop</name>
-            <syntax>drop</syntax>
-            <summary>Drops the bomb.</summary>
-        </member>
-        <member name="M:BombCommands.Throw(TwitchBomb,System.Nullable{System.Int32})">
-            <name>Throw</name>
-            <syntax>throw (strength)</syntax>
-            <summary>Throws the bomb. (strength) is how much force the bomb is thrown with.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:BombCommands.EdgeworkElevator(TwitchBomb,System.String,System.String,System.Boolean)">
-            <name>Elevator Edgework</name>
-            <syntax>edgework (wall)</syntax>
-            <summary>Shows the edgework on the elevator. (wall) is which wall of the elevator to show, ex: right, left or back.</summary>
-            <restriction>ElevatorOnly</restriction>
-        </member>
-        <member name="M:BombCommands.Edgework(TwitchBomb,System.String,System.String,System.Boolean)">
-            <name>Edgework</name>
-            <syntax>edgework (edge)\nedgework 45</syntax>
-            <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
-            <restriction>ElevatorDisallowed</restriction>
-        </member>
-        <member name="M:BombCommands.Time(TwitchBomb,System.String,System.Boolean)">
-            <name>Time</name>
-            <syntax>time</syntax>
-            <summary>Sends a message with how much time is left.</summary>
-        </member>
-        <member name="M:BombCommands.Timestamp(TwitchBomb,System.String,System.Boolean)">
-            <name>Timestamp</name>
-            <syntax>timestamp</syntax>
-            <summary>Sends a message with when the bomb started.</summary>
-        </member>
-        <member name="M:BombCommands.Explode(TwitchBomb,System.String,System.Boolean)">
-            <name>End Training Mode</name>
-            <syntax>endtrainingmode</syntax>
-            <summary>Ends a training mode bomb. Requires either Defuser rank or a minimum score.</summary>
-        </member>
-        <member name="M:BombCommands.Explode(TwitchBomb)">
-            <name>Explode</name>
-            <syntax>explode</syntax>
-            <summary>Forces the bomb to explode.</summary>
-            <restriction>Mod</restriction>
-        </member>
-        <member name="M:BombCommands.VoteStart(System.String,System.Boolean)">
-            <name>Start a vote</name>
-            <syntax>vote [action]</syntax>
-            <summary>Starts a vote about doing an action</summary>
-        </member>
-        <member name="M:BombCommands.Vote(System.String,System.Boolean)">
-            <name>Vote</name>
-            <syntax>vote [choice]</syntax>
-            <summary>Vote with yes or no</summary>
-        </member>
-        <member name="M:BombCommands.RemoveVote(System.String)">
-            <name>Remove vote</name>
-            <syntax>vote remove</syntax>
-            <summary>Removes the vote of a user</summary>
-        </member>
-        <member name="M:BombCommands.ShowVoteTime(System.String)">
-            <name>Time left of vote</name>
-            <syntax>vote time</syntax>
-            <summary>Shows remaining voting time</summary>
-        </member>
-        <member name="M:BombCommands.CancelVote(System.String)">
-            <name>Cancel vote</name>
-            <syntax>vote cancel</syntax>
-            <summary>Cancels a voting process</summary>
-            <restriction>Mod</restriction>
-        </member>
-        <member name="M:BombCommands.ForceEndVote(System.String)">
-            <name>Force-end vote</name>
-            <syntax>vote forceend</syntax>
-            <summary>Skips the countdown of the voting process</summary>
-            <restriction>Mod</restriction>
-        </member>
-        <member name="M:BombCommands.Status(TwitchBomb,System.String,System.Boolean)">
-            <name>Status</name>
-            <syntax>status</syntax>
-            <summary>Sends a message with the current status of the bomb. Including things like time, strikes and solves.</summary>
-        </member>
-        <member name="M:BombCommands.Pause(TwitchBomb)">
-            <name>Pause</name>
-            <syntax>pause</syntax>
-            <summary>Pauses the bomb timer.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:BombCommands.Unpause(TwitchBomb)">
-            <name>Unpause</name>
-            <syntax>unpause</syntax>
-            <summary>Starts the bomb timer.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:BombCommands.ChangeTimer(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.String)">
-            <name>Change Timer</name>
-            <syntax>add time [time]\nsubstract time [time]\nset time [time]</syntax>
-            <summary>Adds, substracts or sets the bomb time.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="M:BombCommands.ChangeStrikeParameter(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
-            <name>Change Strikes / Strike Limit</name>
-            <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
-            <summary>Adds, substracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
-            <restriction>Admin</restriction>
-        </member>
-        <member name="T:HoldableCommands">
-            <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
-        </member>
-        <member name="M:HoldableCommands.Hold(TwitchHoldable)">
-            <name>Hold</name>
-            <syntax>hold</syntax>
-            <summary>Holds the holdable.</summary>
-        </member>
-        <member name="M:HoldableCommands.Drop(TwitchHoldable)">
-            <name>Drop</name>
-            <syntax>drop</syntax>
-            <summary>Drops the holdable.</summary>
-        </member>
-        <member name="M:HoldableCommands.Flip(TwitchHoldable)">
-            <name>Turn</name>
-            <syntax>turn</syntax>
-            <summary>Turns the holdable around.</summary>
-        </member>
-        <member name="M:HoldableCommands.Throw(FloatingHoldable,System.Nullable{System.Int32})">
-            <name>Throw</name>
-            <syntax>throw\nthrow 10</syntax>
-            <summary>Throws the holdable with an optional strength.</summary>
-        </member>
-        <member name="T:DMGCommands">
-            <summary>Commands for the dynamic mission generator.</summary>
-            <prefix>dmg </prefix>
-        </member>
-        <member name="M:DMGCommands.Run(System.String,System.String)">
-            <name>Run</name>
-            <syntax>run</syntax>
-            <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>
-        </member>
-        <member name="T:FreeplayCommands">
-            <summary>Commands for the freeplay briefcase.</summary>
-            <prefix>freeplay </prefix>
-        </member>
-        <member name="M:FreeplayCommands.Needy(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
-            <name>Needy</name>
-            <syntax>needy on\nneedy off</syntax>
-            <summary>Enables or disables the needy switch.</summary>
-        </member>
-        <member name="M:FreeplayCommands.Hardcore(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
-            <name>Hardcore</name>
-            <syntax>hardcore on\nhardcore off</syntax>
-            <summary>Enables or disables the hardcore switch.</summary>
-        </member>
-        <member name="M:FreeplayCommands.ModsOnly(FloatingHoldable,System.Boolean,System.String,System.Boolean)">
-            <name>Mods Only</name>
-            <syntax>mods only\nmods only off</syntax>
-            <summary>Enables or disables the mods only.</summary>
-        </member>
-        <member name="M:FreeplayCommands.ChangeTimerHours(FloatingHoldable,System.Int32,System.Int32,System.Int32)">
-            <name>Set Time</name>
-            <syntax>time (hours):[minutes]:[seconds]</syntax>
-            <summary>Sets the amount of time the bomb will have.</summary>
-        </member>
-        <member name="M:FreeplayCommands.ChangeBombCount(FloatingHoldable,System.Int32)">
-            <name>Set Bombs</name>
-            <syntax>bombs [bombs]</syntax>
-            <summary>Sets the number of bombs.</summary>
-        </member>
-        <member name="M:FreeplayCommands.ChangeModuleCount(FloatingHoldable,System.Int32)">
-            <name>Set Modules</name>
-            <syntax>modules [modules]</syntax>
-            <summary>Sets the number of modules each bomb will have.</summary>
-        </member>
-        <member name="M:FreeplayCommands.Start(FloatingHoldable)">
-            <name>Start</name>
-            <syntax>start</syntax>
-            <summary>Start the game.</summary>
-        </member>
-        <member name="M:FreeplayCommands.StartAdvanced(FloatingHoldable,System.String,System.String,System.String,System.Boolean)">
-            <name>Advanced Set / Start</name>
-            <syntax>set [parameters]\nstart [parameters]</syntax>
-            <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, needy, hardcore, needy.</summary>
         </member>
         <member name="T:ModuleCommands">
             <summary>Commands that can be run on a module.</summary>
@@ -990,6 +966,11 @@
             <param name="directoryInfo">The source directory.</param>
             <param name="destDir">The destination directory path.</param>
         </member>
+        <member name="T:KModkit.KMBombInfoExtensions">
+            <summary>
+            Some helper extensions methods for the KMBombInfo class.
+            </summary>
+        </member>
         <member name="M:IRCMessage.Duplicate(System.String)">
             <summary>
             Creates a duplicate <see cref="T:IRCMessage">Message</see> object with the Text changed.
@@ -1008,6 +989,23 @@
             Attempts to read a line from the <see cref="T:System.IO.Stream"/>. Returns null if a line isn't available.
             </summary>
         </member>
+        <member name="T:LeaderboardController">
+            <summary>
+            Controls whether or not records will be saved to the leaderboard and if stats can be changed.
+            Call <see cref="M:LeaderboardController.Install"/> to set it up and then call <see cref="M:LeaderboardController.DisableLeaderboards"/> to disable the leaderboards.
+            Leaderboards will re-enabled once the game goes back to the setup state. Make sure to disable them again after that if they should still be disabled.
+            </summary>
+        </member>
+        <member name="M:LeaderboardController.Install">
+            <summary>Installs everything necessary to work and only needs to be called once. Records will still be saved if this is not called.</summary>
+        </member>
+        <member name="M:LeaderboardController.DisableLeaderboards">
+            <summary>
+            Disables records being saved to leaderboards and stat changes.
+            Leaderboards are re-enabled once the game goes back to the setup state.
+            Make sure to disable them again after that if they should still be disabled
+            </summary>
+        </member>
         <member name="T:MainThreadQueue">
             <summary>
             Allows the execution of a function with the guarantee that it will run on Unity's mainthread.
@@ -1024,6 +1022,37 @@
             Runs all enqueued functions.
             Must be called from Unity's mainthread to work properly.
             </summary>
+        </member>
+        <member name="T:ModdedAPI">
+            <summary>A class to add and access shared modded APIs for things like exploding the bomb.</summary>
+        </member>
+        <member name="M:ModdedAPI.AddProperty(System.String,System.Func{System.Object},System.Action{System.Object})">
+            <summary>
+            Adds a new property with a getter and setter. The getter or setter can be null.
+            If at anytime you can't handle a property, disable the property using <see cref="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)"/>.
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="get">The getter of the property.</param>
+            <param name="set">The setter of the property.</param>
+            <returns>An object that represents the property. Used in <see cref="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)"/>.</returns>
+        </member>
+        <member name="M:ModdedAPI.SetEnabled(System.Object,System.Boolean)">
+            <summary>Sets whether or not a property is enabled. This allows other mods to handle the property instead.</summary>
+            <param name="property">The property object from the <see cref="M:ModdedAPI.AddProperty(System.String,System.Func{System.Object},System.Action{System.Object})"/> method.</param>
+            <param name="enabled">Whether or not the property should be enabled or disabled.</param>
+        </member>
+        <member name="M:ModdedAPI.TryGetAs``1(System.String,``0@)">
+            <summary>Gets a value from a property.</summary>
+            <typeparam name="T">The type of the value.</typeparam>
+            <param name="name">The name of the property.</param>
+            <param name="value">The variable to put the value into.</param>
+            <returns>Whether or not a value was read succesfully.</returns>
+        </member>
+        <member name="M:ModdedAPI.TrySet(System.String,System.Object)">
+            <summary>Sets a value to a property.</summary>
+            <param name="name">The name of the property.</param>
+            <param name="value">The value to put into the property.</param>
+            <returns>Whether or not a value was written sucessfully.</returns>
         </member>
         <member name="T:System.IO.Compression.ZipStorer">
             <summary>
@@ -1224,35 +1253,6 @@
         </member>
         <member name="T:TwitchGame">
             <summary>Encapsulates an ongoing game, with all its bombs, module cameras, HUDs etc.</summary>
-        </member>
-        <member name="T:CommandAttribute">
-            <summary>Marks a method as a command understood by the Twitch Plays system.</summary>
-        </member>
-        <member name="P:CommandAttribute.Regex">
-            <summary>
-                A regular expression that matches all forms of the command. Note that which part of the command is matched against
-                this regex depends on what type of command it is (global, module, bomb, or holdable).</summary>
-        </member>
-        <member name="P:CommandAttribute.AccessLevel">
-            <summary>Access level required to use this command.</summary>
-        </member>
-        <member name="P:CommandAttribute.AccessLevelAnarchy">
-            <summary>Access level required to use this command when anarchy mode is enabled.</summary>
-        </member>
-        <member name="M:CommandAttribute.#ctor(System.String,AccessLevel,AccessLevel)">
-            <summary>Constructor.</summary>
-        </member>
-        <member name="T:SolvedAllowedAttribute">
-            <summary>Marks a module command as a command that can be used even if the module is already solved.</summary>
-        </member>
-        <member name="T:ElevatorOnlyAttribute">
-            <summary>Specifies a bomb command or game command that can only be used in the Elevator room.</summary>
-        </member>
-        <member name="T:ElevatorDisallowedAttribute">
-            <summary>Specifies a bomb command or game command that cannot be used in the Elevator room.</summary>
-        </member>
-        <member name="T:DebuggingOnlyAttribute">
-            <summary>Specifies a command that can only be used if the EnableDebuggingCommands setting is enabled.</summary>
         </member>
         <member name="F:CameraPriority.Unviewed">
             <summary>This module was explicitly unviewed OR never interacted with.</summary>
