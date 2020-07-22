@@ -89,7 +89,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["AdditionModule"] = module => new AdditionComponentSolver(module);
 		ModComponentSolverCreators["rng"] = module => new RNGComponentSolver(module);
 		ModComponentSolverCreators["needyShapeMemory"] = module => new ShapeMemoryComponentSolver(module);
-		ModComponentSolverCreators["Binary"] = module => new BinaryComponentSolver(module);
 		// Misc [ZekNikZ]
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
