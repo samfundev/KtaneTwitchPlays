@@ -186,7 +186,7 @@ public class TwitchModule : MonoBehaviour
 				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
 				else if (TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty)
 				{
-					float difficulty = Solver.ModInfo.moduleScore / ComponentSolverFactory.GetModuleInformation().Max(modInfo => modInfo.moduleScore);
+					float difficulty = Solver.ModInfo.moduleScore / 20;
 					unclaimedBackgroundColor = Color.HSVToRGB(
 						TwitchPlaySettings.data.ShowModuleType ? BombComponent.ComponentType.ToString().EndsWith("Mod") ? 0.6f : 0.3f : 0.725f,
 						1,
