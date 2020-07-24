@@ -186,11 +186,11 @@ public class TwitchModule : MonoBehaviour
 				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
 				else if (TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty)
 				{
-					float difficulty = Solver.ModInfo.moduleScore / 20;
+					var _vValue = TwitchPlaySettings.data.ShowModuleDifficulty ? Mathf.Lerp(1f, 0.15f, Solver.ModInfo.moduleScore / 20) : 0.637f;
 					unclaimedBackgroundColor = Color.HSVToRGB(
-						TwitchPlaySettings.data.ShowModuleType ? BombComponent.ComponentType.ToString().EndsWith("Mod") ? 0.6f : 0.3f : 0.725f,
-						1,
-						TwitchPlaySettings.data.ShowModuleDifficulty ? Mathf.Lerp(0.95f, 0.30f, difficulty) : 0.637f
+						TwitchPlaySettings.data.ShowModuleType ? BombComponent.ComponentType.ToString().EndsWith("Mod") ? Solver.ModInfo.announceModule ? 0.18f : 0.6f : 0.3f : 0.725f,
+						TwitchPlaySettings.data.ShowModuleType && Solver.ModInfo.announceModule ? 0.84f : 1f,
+						TwitchPlaySettings.data.ShowModuleType ? Solver.ModInfo.unclaimable ? 0 : Solver.ModInfo.announceModule ? 0.92f : _vValue : _vValue
 					);
 				}
 
