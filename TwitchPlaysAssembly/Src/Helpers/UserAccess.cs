@@ -174,7 +174,7 @@ public static class UserAccess
 		}
 		if (timeout <= 0)
 		{
-			IRCConnection.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason].  Timeout must be for at least one second.", moderator, !isWhisper);
+			IRCConnection.SendMessage("Usage: !timeout <user nick name> <time in seconds> [reason]. Timeout must be for at least one second.", moderator, !isWhisper);
 			return;
 		}
 		if (HasAccess(userNickName, AccessLevel.Streamer))
@@ -196,9 +196,9 @@ public static class UserAccess
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 
 		WriteAccessList();
-		IRCConnection.SendMessage($"User {userNickName} was timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
+		IRCConnection.SendMessage($"User {userNickName} was temporarily restricted from using commands for {timeout} seconds{(reason == null ? "." : $", for the following reason: {reason}.")} You can request permission to send commands again by talking to the staff.");
 		if (TwitchPlaySettings.data.EnableWhispers)
-			IRCConnection.SendMessage($"You were timed out from Twitch Plays for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
+			IRCConnection.SendMessage($"You were temporarily restricted from using commands for {timeout} seconds by {moderator}{(reason == null ? "." : $", for the following reason: {reason}.")} You can request permission to send commands again by talking to the staff.", userNickName, false);
 	}
 
 	public static void BanUser(string userNickName, string moderator, string reason, bool isWhisper)
@@ -226,9 +226,9 @@ public static class UserAccess
 		ban.BanExpiry = double.PositiveInfinity;
 		UserAccessData.Instance.Bans[userNickName.ToLowerInvariant()] = ban;
 		WriteAccessList();
-		IRCConnection.SendMessage($"User {userNickName} was banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}");
+		IRCConnection.SendMessage($"User {userNickName} was restricted from using commands{(reason == null ? "." : $", for the following reason: {reason}.")} You can request permission to send commands again by talking to the staff.");
 		if (TwitchPlaySettings.data.EnableWhispers)
-			IRCConnection.SendMessage($"You were banned permanently from Twitch Plays by {moderator}{(reason == null ? "." : $", for the following reason: {reason}")}", userNickName, false);
+			IRCConnection.SendMessage($"You were restricted from using commands by {moderator}{(reason == null ? "." : $", for the following reason: {reason}. You can request permission to send commands again by talking to the staff.")}", userNickName, false);
 	}
 
 	private static void UnbanUser(string userNickName, bool rewrite = true)
