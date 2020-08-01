@@ -16,4 +16,6 @@ public class TwitchModuleData : MonoBehaviour
 	public Color markedBackgroundColor = new Color(0, 0, 0);
 
 	public AudioSource takeModuleSound = null;
+
+	public Image bar = null;
 }

@@ -173,30 +173,45 @@ public class TwitchModule : MonoBehaviour
 			Solver = ComponentSolverFactory.CreateSolver(this);
 			if (Solver != null)
 			{
+				var ModInfo = Solver.ModInfo;
+
 				// Set the display name for built in modules
-				if (Solver.ModInfo.builtIntoTwitchPlays)
+				if (ModInfo.builtIntoTwitchPlays)
 				{
 					var displayName = BombComponent.GetModuleDisplayName();
-					ModuleData.DataHasChanged |= displayName != Solver.ModInfo.moduleDisplayName;
-					Solver.ModInfo.moduleDisplayName = displayName;
+					ModuleData.DataHasChanged |= displayName != ModInfo.moduleDisplayName;
+					ModInfo.moduleDisplayName = displayName;
 
 					ModuleData.WriteDataToFile();
 				}
 
-				if (Solver.ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = Solver.ModInfo.unclaimedColor;
-				else if (TwitchPlaySettings.data.ShowModuleType || TwitchPlaySettings.data.ShowModuleDifficulty)
+				if (ModInfo.ShouldSerializeunclaimedColor()) unclaimedBackgroundColor = ModInfo.unclaimedColor;
+				else if (TwitchPlaySettings.data.ShowModuleType)
 				{
-					var _vValue = TwitchPlaySettings.data.ShowModuleDifficulty ? Mathf.Lerp(1f, 0.15f, Solver.ModInfo.moduleScore / 20) : 0.637f;
 					unclaimedBackgroundColor = Color.HSVToRGB(
-						TwitchPlaySettings.data.ShowModuleType ? BombComponent.ComponentType.ToString().EndsWith("Mod") ? Solver.ModInfo.announceModule ? 0.18f : 0.6f : 0.3f : 0.725f,
-						TwitchPlaySettings.data.ShowModuleType && Solver.ModInfo.announceModule ? 0.84f : 1f,
-						TwitchPlaySettings.data.ShowModuleType ? Solver.ModInfo.unclaimable ? 0 : Solver.ModInfo.announceModule ? 0.92f : _vValue : _vValue
+						BombComponent.ComponentType.ToString().EndsWith("Mod") ? (ModInfo.announceModule ? 0.18f : 0.6f) : 0.3f,
+						ModInfo.announceModule ? 0.84f : 1f,
+						ModInfo.unclaimable ? 0 : (ModInfo.announceModule ? 0.92f : 0.637f)
 					);
 				}
 
+				var bar = _data.bar;
+				bar.transform.parent.gameObject.SetActive(TwitchPlaySettings.data.ShowModuleDifficulty && !ModInfo.unclaimable);
+
+				var value = ModInfo.moduleScore / 20;
+				if (ModInfo.moduleScoreIsDynamic)
+				{
+					if (!ComponentSolverFactory.dynamicScores.TryGetValue(ModInfo.moduleID, out float multiplier))
+						multiplier = 2;
+
+					value = Mathf.InverseLerp(0.25f, 4, multiplier);
+				}
+
+				bar.transform.localScale = new Vector3(value, 1, 1);
+
 				Solver.Code = Code;
 				GetStatusLightY();
-				SetStatusLightPosition(Solver.ModInfo.statusLightPosition);
+				SetStatusLightPosition(ModInfo.statusLightPosition);
 
 				CanvasGroupUnsupported.gameObject.SetActive(Solver.UnsupportedModule);
 
@@ -213,8 +228,8 @@ public class TwitchModule : MonoBehaviour
 				{
 					StartCoroutine(TrackNeedyModule());
 
-					needyComponent.CountdownTime += Solver.ModInfo.additionalNeedyTime;
-					needyComponent.GetValue<NeedyTimer>("timer").TotalTime += Solver.ModInfo.additionalNeedyTime;
+					needyComponent.CountdownTime += ModInfo.additionalNeedyTime;
+					needyComponent.GetValue<NeedyTimer>("timer").TotalTime += ModInfo.additionalNeedyTime;
 				}
 			}
 		}
@@ -271,7 +286,7 @@ public class TwitchModule : MonoBehaviour
 	{
 		yield return null;
 		yield return null;
-		
+
 		// Don't announce any module that isn't marked for announcement, needy or hidden
 		if (Solver?.ModInfo.announceModule != true && BombComponent.GetComponent<NeedyComponent>() == null && !Hidden)
 			yield break;
