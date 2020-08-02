@@ -159,3 +159,9 @@ dotnet_diagnostic.RCS1146.severity = silent
 dotnet_diagnostic.RCS1206.severity = silent
 
 dotnet_diagnostic.RCS1197.severity = silent
+
+dotnet_diagnostic.RCS1018.severity = silent
+dotnet_diagnostic.RCS1110.severity = silent
+dotnet_diagnostic.RCS1003.severity = silent
+dotnet_diagnostic.RCS1001.severity = silent
+dotnet_diagnostic.RCS1123.severity = silent

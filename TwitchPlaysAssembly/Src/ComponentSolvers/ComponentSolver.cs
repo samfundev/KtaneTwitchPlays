@@ -791,7 +791,7 @@ public abstract class ComponentSolver
 			Module.Bomb.Bomb.NumStrikes = -1;
 
 		if (OtherModes.Unexplodable)
-			Module.Bomb.StrikeLimit += 1;
+			Module.Bomb.StrikeLimit++;
 
 		if (_disableOnStrike || _disableAnarchyStrike)
 		{
