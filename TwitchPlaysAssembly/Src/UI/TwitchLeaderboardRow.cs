@@ -33,13 +33,17 @@ public class TwitchLeaderboardRow : MonoBehaviour
 
 		if (leaderboardEntry != null)
 		{
+			var anonymous = leaderboardEntry.OptOut;
+			if (anonymous)
+				positionText.text = "--";
+
 			userNameText.text = leaderboardEntry.UserName;
 			userNameText.color = leaderboardEntry.UserColor;
 			solvesText.text = leaderboardEntry.SolveCount.ToString();
 			strikesText.text = leaderboardEntry.StrikeCount.ToString();
 
 			float SolveScore = leaderboardEntry.SolveScore;
-			rateText.text = float.IsNaN(SolveScore) ? "--" : string.Format("{0}", SolveScore);
+			rateText.text = float.IsNaN(SolveScore) || anonymous ? "--" : string.Format("{0}", SolveScore);
 		}
 
 		yield return new WaitForSeconds(delay);

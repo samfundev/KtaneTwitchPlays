@@ -706,6 +706,11 @@
             <syntax>elevator on\nelevator off\nelevator toggle</syntax>
             <summary>Changes the enabled state of the elevator.</summary>
         </member>
+        <member name="M:GlobalCommands.OptOut(System.String)">
+            <name>Opt out</name>
+            <syntax>optout</syntax>
+            <summary>Opts out of having your rank and points being displayed.</summary>
+        </member>
         <member name="M:GlobalCommands.RestartGame">
             <name>Restart</name>
             <syntax>restart</syntax>
@@ -1250,6 +1255,9 @@
             <summary>
             Closes the Zip file stream
             </summary>
+        </member>
+        <member name="M:Leaderboard.GetTrueRank(System.String)">
+            <summary>Gets a user's true rank. True rank doesn't rank/sort the user differently if they have opted out.</summary>
         </member>
         <member name="T:TwitchGame">
             <summary>Encapsulates an ongoing game, with all its bombs, module cameras, HUDs etc.</summary>

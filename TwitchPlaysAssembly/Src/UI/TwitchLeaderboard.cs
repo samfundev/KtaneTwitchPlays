@@ -8,7 +8,7 @@ public class TwitchLeaderboard : MonoBehaviour
 	public TwitchLeaderboardTableSolo twitchLeaderboardTableSoloPrefab = null;
 	public TwitchLeaderboardStats twitchLeaderboardStatsPrefab = null;
 
-	[Header("Hierachy Management")]
+	[Header("Hierarchy Management")]
 	public RectTransform mainTableTransform = null;
 	public RectTransform altTableTransform = null;
 	public RectTransform promptTransform = null;

@@ -78,6 +78,12 @@ public class Leaderboard
 			set;
 		}
 
+		public bool OptOut
+		{
+			get;
+			set;
+		}
+
 		[JsonConverter(typeof(StringEnumConverter))]
 		public OtherModes.Team? Team { get; set; } = null;
 
@@ -141,6 +147,12 @@ public class Leaderboard
 	{
 		LeaderboardEntry entry = GetEntry(userName);
 		entry.Active = active;
+	}
+
+	public void OptOut(string userName)
+	{
+		var entry = GetEntry(userName);
+		entry.OptOut = true;
 	}
 
 	public LeaderboardEntry AddSoloClear(string userName, float newRecord, out float previousRecord)
@@ -289,10 +301,20 @@ public class Leaderboard
 		return _entryList.IndexOf(entry) + 1;
 	}
 
+	/// <summary>Gets a user's true rank. True rank doesn't rank/sort the user differently if they have opted out.</summary>
+	public int GetTrueRank(string userName)
+	{
+		var trueList = new List<LeaderboardEntry>(_entryList);
+		trueList.Sort((lhs, rhs) => CompareScores(lhs, rhs, true));
+
+		var rank = trueList.IndexOf(entry => entry.UserName == userName) + 1;
+		return rank == 0 ? _entryList.Count + 1 : rank;
+	}
+
 	public List<LeaderboardEntry> GetEntries(int rank)
 	{
 		CheckAndSort();
-		return _entryList.Where(entry => entry.Rank == rank && (entry.SolveCount != 0 || entry.StrikeCount != 0)).ToList();
+		return _entryList.Where(entry => entry.Rank == rank && (entry.SolveCount != 0 || entry.StrikeCount != 0) && !entry.OptOut).ToList();
 	}
 
 	public List<LeaderboardEntry> GetSoloEntries(int rank)
@@ -380,39 +402,49 @@ public class Leaderboard
 
 	private void CheckAndSort()
 	{
-		if (!_sorted)
+		if (_sorted)
+			return;
+
+		_entryList.Sort(CompareScores);
+		_entryListSolo.Sort(CompareSoloTimes);
+		_sorted = true;
+
+		int i = 1;
+		LeaderboardEntry previous = null;
+		foreach (LeaderboardEntry entry in _entryList)
 		{
-			_entryList.Sort(CompareScores);
-			_entryListSolo.Sort(CompareSoloTimes);
-			_sorted = true;
+			entry.Rank = previous == null ? 1 : (CompareScores(entry, previous) == 0) ? previous.Rank : i;
+			previous = entry;
+			i++;
+		}
 
-			int i = 1;
-			LeaderboardEntry previous = null;
-			foreach (LeaderboardEntry entry in _entryList)
-			{
-				entry.Rank = previous == null ? 1 : (CompareScores(entry, previous) == 0) ? previous.Rank : i;
-				previous = entry;
-				i++;
-			}
-
-			i = 1;
-			foreach (LeaderboardEntry entry in _entryListSolo)
-			{
-				entry.SoloRank = i++;
-			}
+		i = 1;
+		foreach (LeaderboardEntry entry in _entryListSolo)
+		{
+			entry.SoloRank = i++;
 		}
 	}
 
-	private static int CompareScores(LeaderboardEntry lhs, LeaderboardEntry rhs)
+	private static int CompareScores(LeaderboardEntry lhs, LeaderboardEntry rhs) => CompareScores(lhs, rhs, false);
+
+	private static int CompareScores(LeaderboardEntry lhs, LeaderboardEntry rhs, bool trueRank)
 	{
+		if (!trueRank)
+		{
+			// People who have opted out of scores get sorted separately to prevent score guessing.
+			if (lhs.OptOut && !rhs.OptOut) return 1;
+			else if (!lhs.OptOut && rhs.OptOut) return -1;
+			else if (lhs.OptOut && rhs.OptOut) return rhs.SolveCount.CompareTo(lhs.SolveCount);
+		}
+
 		if (lhs.SolveScore != rhs.SolveScore)
 		{
-			//Intentially reversed comparison to sort from highest to lowest
+			// Intentionally reversed comparison to sort from highest to lowest
 			return rhs.SolveScore.CompareTo(lhs.SolveScore);
 		}
 
-		//Intentially reversed comparison to sort from highest to lowest
-		return rhs.SolveScore.CompareTo(lhs.SolveScore);
+		// Intentionally reversed comparison to sort from highest to lowest
+		return rhs.SolveCount.CompareTo(lhs.SolveCount);
 	}
 
 	private static int CompareSoloTimes(LeaderboardEntry lhs, LeaderboardEntry rhs) => lhs.RecordSoloTime.CompareTo(rhs.RecordSoloTime);

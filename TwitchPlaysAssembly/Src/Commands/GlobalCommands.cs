@@ -596,8 +596,8 @@ static class GlobalCommands
 			return;
 		}
 
-		Leaderboard.Instance.GetRank(user, out var entry);
-		TwitchGame.Instance.VSModePlayers.Add(entry.Rank, user);
+		var trueRank = Leaderboard.Instance.GetTrueRank(user);
+		TwitchGame.Instance.VSModePlayers.Add(trueRank, user);
 		IRCConnection.SendMessage($"{(_inGame ? "Sorry " : "")}@{user}, {(_inGame ? "the bomb has already started. Y" : "y")}ou have been added to the next VSMode bomb.");
 	}
 
@@ -1096,6 +1096,27 @@ static class GlobalCommands
 		return TPElevatorSwitch.Instance.ToggleSetupRoomElevatorSwitch(on);
 	}
 
+	private static readonly HashSet<string> confirming = new HashSet<string>();
+
+	/// <name>Opt out</name>
+	/// <syntax>optout</syntax>
+	/// <summary>Opts out of having your rank and points being displayed.</summary>
+	[Command(@"opt[- ]?out")]
+	public static void OptOut(string user)
+	{
+		if (!confirming.Contains(user))
+		{
+			confirming.Add(user);
+			IRCConnection.SendMessage("Are you sure that you want to opt out? You cannot undo this action. Use !optout again to confirm.");
+			return;
+		}
+
+		confirming.Remove(user);
+
+		Leaderboard.Instance.OptOut(user);
+		IRCConnection.SendMessage($"{user} has opted out.");
+	}
+
 	/// <name>Restart</name>
 	/// <syntax>restart</syntax>
 	/// <summary>Restarts the game by closing and reopening it. May not work perfectly when running with Steam.</summary>
@@ -1318,7 +1339,7 @@ static class GlobalCommands
 					txtSolver = TwitchPlaySettings.data.SolverAndSolo;
 					txtSolo = string.Format(TwitchPlaySettings.data.SoloRankQuery, entry.SoloRank, (int) recordTimeSpan.TotalMinutes, recordTimeSpan.Seconds);
 				}
-				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.Rank, entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.SolveScore.ToString("0.##")), user, !isWhisper);
+				IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.RankQuery, entry.UserName, entry.OptOut ? "--" : entry.Rank.ToString(), entry.SolveCount, entry.StrikeCount, txtSolver, txtSolo, entry.OptOut ? "--" : entry.SolveScore.ToString("0.##")), user, !isWhisper);
 			}
 		}
 	}
