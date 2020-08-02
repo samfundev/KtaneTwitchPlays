@@ -79,7 +79,7 @@
 					}
 					
 					if (match[1] == "T") {
-						const properName = match[2].replace(/[A-Z]*(?=[A-Z])/g, "$& ");
+						const properName = match[2].toUpperCase() == match[2] ? match[2] : match[2].replace(/[A-Z]*(?=[A-Z])/g, "$& ");
 						content.appendChild(
 							el("div", "section",
 								{ id: match[2] },
