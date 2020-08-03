@@ -198,7 +198,7 @@ public class TwitchModule : MonoBehaviour
 				var bar = _data.bar;
 				bar.transform.parent.gameObject.SetActive(TwitchPlaySettings.data.ShowModuleDifficulty && !ModInfo.unclaimable);
 
-				var value = ModInfo.moduleScore / 20;
+				var value = (ModInfo.moduleScore > 20 ? 20 : ModInfo.moduleScore) / 20;
 				if (ModInfo.moduleScoreIsDynamic)
 				{
 					if (!ComponentSolverFactory.dynamicScores.TryGetValue(ModInfo.moduleID, out float multiplier))
