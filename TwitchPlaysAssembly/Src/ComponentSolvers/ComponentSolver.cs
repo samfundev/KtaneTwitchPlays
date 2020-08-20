@@ -131,6 +131,8 @@ public abstract class ComponentSolver
 			yield break;
 		}
 
+		AppreciateArtComponentSolver.ShowAppreciation(Module);
+
 		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
@@ -471,6 +473,8 @@ public abstract class ComponentSolver
 
 		if (!parseError)
 			yield return new WaitForSeconds(0.5f);
+
+		AppreciateArtComponentSolver.HideAppreciation(Module);
 
 		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Module.Selectable, FrontFace);
 		while (defocusCoroutine.MoveNext())

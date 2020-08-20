@@ -311,7 +311,7 @@ static class ModuleCommands
 			while (zoomCoroutine.MoveNext())
 				yield return zoomCoroutine.Current;
 
-		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
+		yield return yield is float delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 
 		if (CoroutineCanceller.ShouldCancel)
 		{
@@ -449,11 +449,7 @@ static class ModuleCommands
 					routine = Zoom(module, zoomData, routine ?? toYield);
 				}
 
-				// Art Appreciation special handling...
-				var artSolver = module.Solver as AppreciateArtComponentSolver;
-				if (artSolver != null && zooming && !tilt)
-					artSolver.ZoomStarted(user);
-				else if (delay >= 15)
+				if (delay >= 15)
 					musicPlayer = MusicPlayer.StartRandomMusic();
 
 				yield return routine;
@@ -462,9 +458,6 @@ static class ModuleCommands
 					CoroutineCanceller.ResetCancel();
 					IRCConnection.SendMessage($"Sorry @{user}, your request to hold up the bomb for {delay} seconds has been cut short.");
 				}
-
-				if (artSolver != null && zooming && !tilt)
-					artSolver.ZoomEnded();
 
 				if (musicPlayer != null)
 					musicPlayer.StopMusic();
