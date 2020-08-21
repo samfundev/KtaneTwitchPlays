@@ -14,7 +14,9 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 		base(module, "AppreciateArtModule", "Use '!{0} appreciate {0}' to appreciate a module.")
 	{
 		// We set _solved to true, which stops the module's own interactions.
-		SolvedField.SetValue(Module.BombComponent.GetComponent(ComponentType), true);
+		_component.SetValue("_solved", true);
+
+		_componentType = _component.GetType();
 	}
 
 	public override IEnumerator Respond(string[] split, string command)
@@ -27,8 +29,8 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 			yield break;
 
 		if (Art.TryGetValue(targetModule, out Component artComponent)) {
-			LocalAppreciationReqTime = (float) AppreciationTimeRequiredField.GetValue(artComponent);
-			StartAppreciateMethod.Invoke(artComponent, null);
+			LocalAppreciationReqTime = artComponent.GetValue<float>("_appreciationRequiredDuration");
+			artComponent.CallMethod("StartAppreciatingArt");
 		}
 
 		// If we're going to appreciate Art but we are also Art, don't allow the Show/HideAppreciation methods to appreciate ourselves.
@@ -41,21 +43,21 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 		if (CoroutineCanceller.ShouldCancel || artComponent == null)
 		{
 			if (artComponent != null)
-				StopAppreciateMethod.Invoke(artComponent, null);
+				artComponent.CallMethod("StopAppreciatingArt");
 
 			yield return $"sendtochat The appreciation of module ID {split[1]} was cancelled.";
 			yield break;
 		}
 
-		EnlightenMethod.Invoke(artComponent, null);
+		artComponent.CallMethod("Enlighten");
 	}
 
 	// "Art is the Key, Art Appreciation is the Value." - some art guru or something.
 	// Which is to say the key is the module an art appreciation cares about and the value is the Art Appreciation script that cares about it.
 	// So we can know if a module needs to be appreciated and what art appreciation module needs to be solved if we stare about it.
 	private static Dictionary<TwitchModule, Component> Art => TwitchGame.Instance.Modules
-				.Where(module => !module.Solved)
-				.Select(module => module.BombComponent.GetComponent(ComponentType))
+				.Where(module => !module.Solved && _componentType != null)
+				.Select(module => module.BombComponent.GetComponent(_componentType))
 				.Where(component => component != null)
 				.ToDictionary(component => {
 					var bombComponent = component.GetValue<Transform>("_transform").GetComponent<BombComponent>();
@@ -65,19 +67,14 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 	public static void ShowAppreciation(TwitchModule module)
 	{
 		if (Art.TryGetValue(module, out Component artComponent) && !avoidDoubleAppreciation)
-			StartAppreciateMethod.Invoke(artComponent, null);
+			artComponent.CallMethod("StartAppreciatingArt");
 	}
 
 	public static void HideAppreciation(TwitchModule module)
 	{
 		if (Art.TryGetValue(module, out Component artComponent) && !avoidDoubleAppreciation)
-			StopAppreciateMethod.Invoke(artComponent, null);
+			artComponent.CallMethod("StopAppreciatingArt");
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("AppreciateArtModule");
-	private static readonly FieldInfo SolvedField = ComponentType.GetField("_solved", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo AppreciationTimeRequiredField = ComponentType.GetField("_appreciationRequiredDuration", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly MethodInfo StartAppreciateMethod = ComponentType.GetMethod("StartAppreciatingArt", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly MethodInfo StopAppreciateMethod = ComponentType.GetMethod("StopAppreciatingArt", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly MethodInfo EnlightenMethod = ComponentType.GetMethod("Enlighten", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static Type _componentType;
 }

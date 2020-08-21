@@ -424,7 +424,7 @@ static class ModuleCommands
 			if ((!timed || !command) && (zooming || tilt))
 			{
 				MusicPlayer musicPlayer = null;
-				int delay = 2;
+				float delay = 2;
 				if (timed)
 				{
 					delay = groups["time"].Value.TryParseInt() ?? groups["stime"].Value.TryParseInt() ?? 2;
