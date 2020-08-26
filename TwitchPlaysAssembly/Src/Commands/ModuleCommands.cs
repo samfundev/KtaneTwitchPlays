@@ -375,7 +375,7 @@ static class ModuleCommands
 			yield return null;
 		}
 
-		yield return yield is int delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
+		yield return yield is float delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 
 		if (CoroutineCanceller.ShouldCancel)
 		{
