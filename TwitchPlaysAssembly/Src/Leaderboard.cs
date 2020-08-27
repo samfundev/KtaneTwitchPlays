@@ -153,6 +153,7 @@ public class Leaderboard
 	{
 		var entry = GetEntry(userName);
 		entry.OptOut = true;
+		SaveDataToFile();
 	}
 
 	public LeaderboardEntry AddSoloClear(string userName, float newRecord, out float previousRecord)
@@ -354,6 +355,7 @@ public class Leaderboard
 		entry.Team = user.Team;
 		entry.TotalSoloTime = user.TotalSoloTime;
 		entry.TotalSoloClears = user.TotalSoloClears;
+		entry.OptOut = user.OptOut;
 
 		if (entry.TotalSoloClears > 0)
 		{
