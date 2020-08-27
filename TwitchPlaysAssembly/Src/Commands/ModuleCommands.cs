@@ -76,23 +76,25 @@ static class ModuleCommands
 	[Command("(view(?: *pin)?|pin *view)")]
 	public static void View(TwitchModule module, string user, [Group(1)] string cmd) => module.ViewPin(user, cmd.ContainsIgnoreCase("p"));
 
-	/// <name>Show</name>
-	/// <syntax>show</syntax>
-	/// <summary>Selects the module on the bomb.</summary>
-	[Command("show")]
-	public static IEnumerator Show(TwitchModule module)
+	public static IEnumerator Show(TwitchModule module, object yield)
 	{
 		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace);
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
 		yield return new WaitForSeconds(0.5f);
-
+		yield return yield is float delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
+		if (CoroutineCanceller.ShouldCancel)
+		{
+			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace));
+			yield break;
+		}
 		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace);
 		while (defocusCoroutine.MoveNext())
 			yield return defocusCoroutine.Current;
 
 		yield return new WaitForSeconds(0.5f);
+
 	}
 
 	/// <name>Solve</name>
@@ -402,26 +404,33 @@ static class ModuleCommands
 
 		yield return new WaitForSeconds(0.5f);
 	}
-	/// <name>Zoom, Superzoom and Tilt</name>
-	/// <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)</syntax>
+	/// <name>Zoom, Superzoom, Show and Tilt</name>
+	/// <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)\nshow</syntax>
 	/// <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
 	/// Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being top left and bottom right respectively.
 	/// Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
-	/// Zoom and Tilt or Superzoom and Tilt can be put back to back to do both at the same time.
+	/// Show will select the module on the bomb.
+	/// Zoom and Tilt or Superzoom and Tilt or Zoom and Show or Superzoom and Show can be put back to back to do both at the same time.
 	/// </summary>
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)
 	{
-		if (cmd.RegexMatch(out Match match, @"(?:(?<zoom>zoom *(?<time>\d*\.?\d+)?)|(?<superzoom>superzoom *(?<factor>\d*\.?\d+) *(?<x>\d*\.?\d+)? *(?<y>\d*\.?\d+)? *(?<stime>\d*\.?\d+)?))? *(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)? *(?:send *to *module)? *(?<command>.+)?"))
+		if (cmd.RegexMatch(out Match match, @"(?:(?<zoom>zoom *(?<time>\d*\.?\d+)?)|(?<superzoom>superzoom *(?<factor>\d*\.?\d+) *(?<x>\d*\.?\d+)? *(?<y>\d*\.?\d+)? *(?<stime>\d*\.?\d+)?))? *(?:(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)|(?<show>show)?)? *(?:send *to *module)? *(?<command>.+)?"))
 		{
 			var groups = match.Groups;
 			var timed = groups["time"].Success || groups["stime"].Success;
 			var zooming = groups["zoom"].Success || groups["superzoom"].Success;
 			var tilt = groups["tilt"].Success;
+			var show = groups["show"].Success;
 			var command = groups["command"].Success;
 
-			// Both a time and a command can't be entered. And either a zoom or tilt needs to take place otherwise, we should let the command run normally.
-			if ((!timed || !command) && (zooming || tilt))
+			if (!timed && !zooming && !command && show)
+            {
+				yield return Show(module, 0.5);
+				yield break;
+            }
+			// Both a time and a command can't be entered. And either a zoom, show or tilt needs to take place otherwise, we should let the command run normally.
+			if ((!timed || !command) && (zooming || tilt || show))
 			{
 				MusicPlayer musicPlayer = null;
 				float delay = 2;
@@ -434,6 +443,10 @@ static class ModuleCommands
 				object toYield = command ? (object) RunModuleCommand(module, user, groups["command"].Value) : delay;
 
 				IEnumerator routine = null;
+				if (show)
+                {
+					routine = Show(module, toYield);
+                }
 				if (tilt)
 				{
 					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant());
