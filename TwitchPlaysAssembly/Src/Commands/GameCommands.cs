@@ -572,6 +572,13 @@ static class GameCommands
 		}
 	}
 
+	[Command(@"q(?:ueue)?(on|off)")]
+	public static void QueueEnabled([Group(1)] string state)
+	{
+		TwitchGame.Instance.QueueEnabled = state == "on";
+		TwitchGame.ModuleCameras?.SetNotes();
+	}
+
 	/// <name>Call Command</name>
 	/// <syntax>call (name)\ncallnow (name)</syntax>
 	/// <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>

@@ -418,11 +418,15 @@ public class ModuleCameras : MonoBehaviour
 				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0.38f, .246f, .93f);
 				NotesTextIDs[ix].text = "";
 			}
-			else if (TwitchGame.Instance.CommandQueue.Count > 0 && ix == 3)
+			else if ((TwitchGame.Instance.CommandQueue.Count > 0 || TwitchGame.Instance.QueueEnabled) && ix == 3)
 			{
 				var numNameless = TwitchGame.Instance.CommandQueue.Count(c => c.Name == null);
 				var numNamed = TwitchGame.Instance.CommandQueue.Count - numNameless;
-				NotesTexts[ix].text = $"QUEUE: {(numNameless > 0 ? $"{numNameless} item{(numNameless == 1 ? "" : "s")}" : "")}{(numNameless > 0 && numNamed > 0 ? " + " : "")}{TwitchGame.Instance.CommandQueue.Where(c => c.Name != null).Select(c => $"“{c.Name}”").Join(", ")}";
+				NotesTexts[ix].text = "QUEUE: " +
+					(TwitchGame.Instance.CommandQueue.Count == 0 ? "ACTIVE" : "") +
+					(numNameless > 0 ? $"{numNameless} item{(numNameless == 1 ? "" : "s")}" : "") +
+					(numNameless > 0 && numNamed > 0 ? " + " : "") +
+					TwitchGame.Instance.CommandQueue.Where(c => c.Name != null).Select(c => $"“{c.Name}”").Join(", ");
 				NotesTextBackgrounds[ix].color = Color.HSVToRGB(hue, .246f, .93f);
 				NotesTextIDs[ix].text = "!q";
 			}

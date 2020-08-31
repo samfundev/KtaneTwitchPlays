@@ -28,6 +28,7 @@ public class TwitchGame : MonoBehaviour
 	public int[] TrainingModeAlertTimes = new int[9] { 1, 2, 5, 10, 20, 30, 45, 60, 90 };
 
 	public readonly List<CommandQueueItem> CommandQueue = new List<CommandQueueItem>();
+	public bool QueueEnabled;
 	public int callsNeeded = 1;
 	public Dictionary<string, string> CallingPlayers = new Dictionary<string, string>();
 	public bool callWaiting;
