@@ -268,6 +268,7 @@ public class TwitchGame : MonoBehaviour
 		GoodPlayers.Clear();
 		EvilPlayers.Clear();
 		VSSetFlag = false;
+		QueueEnabled = false;
 		Leaderboard.Instance.BombsAttempted++;
 		// ReSharper disable once DelegateSubtraction
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
