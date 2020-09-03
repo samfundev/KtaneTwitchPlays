@@ -20,7 +20,16 @@ public class TwitchMessage : MonoBehaviour
 	{
 		_messageBackground = GetComponent<Image>();
 		_messageText = GetComponentInChildren<Text>();
-		_messageBackground.color = NormalColor;
+		if (!TwitchPlaySettings.data.DarkMode)
+		{
+			_messageBackground.color = NormalColor;
+			_messageText.color = new Color32(0x4F, 0x4F, 0x4F, 0xFF);
+		}
+		else
+		{
+			_messageBackground.color = new Color32(0x3A, 0x3A, 0x3D, 0xFF);
+			_messageText.color = new Color32(0xEF, 0xEF, 0xEC, 0xFF);
+		}
 	}
 
 	public void SetMessage(string text) => _messageText.text = text;

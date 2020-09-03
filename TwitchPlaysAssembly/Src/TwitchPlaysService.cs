@@ -38,6 +38,10 @@ public class TwitchPlaysService : MonoBehaviour
 	private TwitchPlaysServiceData _data;
 	private bool initialLoad;
 
+	public Image HeaderBackground => _data.HeaderBackground;
+	public Text HeaderText => _data.HeaderText;
+	public Image MessagesBackground => _data.MessagesBackground;
+	
 	public RectTransform BombHeader => _data.BombHeader;
 	public TwitchLeaderboard TwitchLeaderboardPrefab => _data.TwitchLeaderboardPrefab;
 
@@ -105,6 +109,20 @@ public class TwitchPlaysService : MonoBehaviour
 			ModManagerManualInstructionScreen.HasShownOnce = true;
 
 		UpdateUiHue();
+
+		if (TwitchPlaySettings.data.DarkMode)
+		{
+			HeaderBackground.color = new Color32(0x0E, 0x0E, 0x10, 0xFF);
+			HeaderText.color = new Color32(0xEF, 0xEF, 0xEC, 0xFF);
+			MessagesBackground.color = new Color32(0x3A, 0x3A, 0x3D, 0xFF);
+		}
+		else
+		{
+			HeaderBackground.color = new Color32(0xEE, 0xEE, 0xEE, 0xFF);
+			HeaderText.color = new Color32(0x4F, 0x4F, 0x4F, 0xFF);
+			MessagesBackground.color = new Color32(0xD8, 0xD8, 0xD8, 0xFF);
+		}
+
 		SetupChatSimulator();
 	}
 

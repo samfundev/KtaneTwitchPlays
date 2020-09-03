@@ -408,14 +408,16 @@ public class ModuleCameras : MonoBehaviour
 			if (Votes.Active && ix == 2)
 			{
 				NotesTexts[ix].text = $"{Votes.PossibleVotes[Votes.CurrentVoteType].name}: {Votes.NumVoters} vote{(Votes.NumVoters == 1 ? "" : "s")}\n{Votes.TimeLeft} second{(Votes.TimeLeft == 1 ? "" : "s")} left.";
-				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0f, .246f, .93f);
+				if (!TwitchPlaySettings.data.DarkMode) NotesTextBackgrounds[ix].color = Color.HSVToRGB(0f, .246f, .93f);
+				else NotesTextBackgrounds[ix].color = new Color32(0xE9, 0x19, 0x16, 0xFF);
 				NotesTextIDs[ix].text = "!vote";
 			}
 			else if (OtherModes.TrainingModeOn && TwitchGame.Instance.TrainingModeRemainingTime > 0 && ix == 2)
 			{
 				string _plural = TwitchGame.Instance.TrainingModeRemainingTime == 1 ? "" : "s";
 				NotesTexts[ix].text = $"Training Mode Auto-Detonation is enabled. This bomb will be detonated in {TwitchGame.Instance.TrainingModeRemainingTime} minute{_plural}.";
-				NotesTextBackgrounds[ix].color = Color.HSVToRGB(0.38f, .246f, .93f);
+				if (!TwitchPlaySettings.data.DarkMode) NotesTextBackgrounds[ix].color = Color.HSVToRGB(0.38f, .246f, .93f);
+				else NotesTextBackgrounds[ix].color = new Color32(0x00, 0xAD, 0x03, 0xFF);
 				NotesTextIDs[ix].text = "";
 			}
 			else if ((TwitchGame.Instance.CommandQueue.Count > 0 || TwitchGame.Instance.QueueEnabled) && ix == 3)
@@ -427,16 +429,19 @@ public class ModuleCameras : MonoBehaviour
 					(numNameless > 0 ? $"{numNameless} item{(numNameless == 1 ? "" : "s")}" : "") +
 					(numNameless > 0 && numNamed > 0 ? " + " : "") +
 					TwitchGame.Instance.CommandQueue.Where(c => c.Name != null).Select(c => $"“{c.Name}”").Join(", ");
-				NotesTextBackgrounds[ix].color = Color.HSVToRGB(hue, .246f, .93f);
+				if (!TwitchPlaySettings.data.DarkMode) NotesTextBackgrounds[ix].color = Color.HSVToRGB(hue, .246f, .93f);
+				else NotesTextBackgrounds[ix].color = TwitchPlaySettings.data.EnableWhiteList ? new Color32(0x64, 0x5E, 0x14, 0xFF) : new Color32(0x3A, 0x3A, 0x3D, 0xFF);
 				NotesTextIDs[ix].text = "!q";
 			}
 			else
 			{
 				NotesTexts[ix].text = TwitchGame.Instance.NotesDictionary.TryGetValue(ix, out var text) ? text : (OtherModes.TrainingModeOn && ix == 3) ? TwitchPlaySettings.data.TrainingModeFreeSpace : TwitchPlaySettings.data.NotesSpaceFree;
-				NotesTextBackgrounds[ix].color = new Color32(0xEE, 0xEE, 0xEE, 0xFF);
+				NotesTextBackgrounds[ix].color = !TwitchPlaySettings.data.DarkMode ? new Color32(0xEE, 0xEE, 0xEE, 0xFF) : new Color32(0x0E, 0x0E, 0x10, 0xFF);
 				NotesTextIDs[ix].text = $"!notes{ix + 1}";
 			}
 			NotesTextIDsBackgrounds[ix].color = Color.HSVToRGB(hue, .6f, .62f);
+			
+			NotesTexts[ix].color = TwitchPlaySettings.data.DarkMode ? new Color32(0xEF, 0xEF, 0xEC, 0xFF) : new Color32(0x4F, 0x4F, 0x4F, 0xFF);
 		}
 	}
 
