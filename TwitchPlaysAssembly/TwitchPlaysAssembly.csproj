@@ -22,7 +22,6 @@
     <Copy Condition="'$(Copy)' == ''">copy</Copy>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mklink &quot;$(OutDir)Assembly-CSharp.dll&quot; &quot;$(GameFolder)ktane_Data\Managed\Assembly-CSharp.dll&quot;" IgnoreExitCode="true" />
     <Exec Command="$(Copy) &quot;$(TargetPath)&quot; &quot;$(GameFolder)mods\Twitch Plays\$(TargetFileName)&quot;" />
   </Target>
   <ItemGroup>
