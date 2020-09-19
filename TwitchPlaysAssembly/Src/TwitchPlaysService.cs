@@ -41,7 +41,7 @@ public class TwitchPlaysService : MonoBehaviour
 	public Image HeaderBackground => _data.HeaderBackground;
 	public Text HeaderText => _data.HeaderText;
 	public Image MessagesBackground => _data.MessagesBackground;
-	
+
 	public RectTransform BombHeader => _data.BombHeader;
 	public TwitchLeaderboard TwitchLeaderboardPrefab => _data.TwitchLeaderboardPrefab;
 
@@ -509,7 +509,7 @@ public class TwitchPlaysService : MonoBehaviour
 		{
 			if (double.IsPositiveInfinity(ban.BanExpiry))
 			{
-				IRCConnection.SendMessage($"Sorry @{msg.UserNickName}, You were banned permanently from Twitch Plays by {ban.BannedBy}{(string.IsNullOrEmpty(ban.BannedReason) ? "." : $", for the following reason: {ban.BannedReason}")}", msg.UserNickName, !msg.IsWhisper);
+				IRCConnection.SendMessage($"Sorry @{msg.UserNickName}, You were restricted from using commands. You can request permission to send commands again by talking to the staff.", msg.UserNickName, !msg.IsWhisper);
 			}
 			else
 			{
@@ -523,7 +523,7 @@ public class TwitchPlaysService : MonoBehaviour
 				else if (hoursRemaining > 0) timeRemaining = $"{hoursRemaining} hours, {minutesRemaining} minutes, {secondsRemaining} seconds.";
 				else if (minutesRemaining > 0) timeRemaining = $"{minutesRemaining} minutes, {secondsRemaining} seconds.";
 
-				IRCConnection.SendMessage($"Sorry @{msg.UserNickName}, You were timed out from Twitch Plays by {ban.BannedBy}{(string.IsNullOrEmpty(ban.BannedReason) ? "." : $", For the following reason: {ban.BannedReason}")} You can participate again in {timeRemaining}", msg.UserNickName, !msg.IsWhisper);
+				IRCConnection.SendMessage($"Sorry @{msg.UserNickName}, You were temporarily restricted from using commands. You can participate again in {timeRemaining} or request permission by talking to the staff.", msg.UserNickName, !msg.IsWhisper);
 			}
 			return true;
 		}
