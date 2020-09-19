@@ -310,10 +310,9 @@ public class IRCConnection : MonoBehaviour
 
 		AddTextToHoldable("[IRC:Connect] Connecting to IRC");
 		Stopwatch stopwatch = new Stopwatch();
-		int[] connectionRetryDelay = { 100, 1000, 2000, 5000, 10000, 20000, 30000, 40000, 50000, 60000 };
 		while (true)
 		{
-			int connectionRetryIndex = 0;
+			int connectionRetries = 0;
 
 			while (_state != IRCConnectionState.Connected)
 			{
@@ -321,10 +320,11 @@ public class IRCConnection : MonoBehaviour
 				everConnected = true;
 
 				stopwatch.Start();
-				while (stopwatch.ElapsedMilliseconds < connectionRetryDelay[connectionRetryIndex])
+				double delay = connectionRetries == 0 ? 100 : Math.Pow(2, connectionRetries - 1) * 1000;
+				while (stopwatch.ElapsedMilliseconds < delay)
 				{
-					alertText.text = $"The bot is currently disconnected. Attempting to connect in {(connectionRetryDelay[connectionRetryIndex] - stopwatch.ElapsedMilliseconds) / 1000f:N1}";
-					alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / (float) connectionRetryDelay[connectionRetryIndex], 1, 1);
+					alertText.text = $"The bot is currently disconnected. Attempting to connect in {(delay - stopwatch.ElapsedMilliseconds) / 1000f:N1}";
+					alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / (float) delay, 1, 1);
 
 					yield return null;
 					if (_state != IRCConnectionState.DoNotRetry) continue;
@@ -338,7 +338,7 @@ public class IRCConnection : MonoBehaviour
 				alertText.text = "Connecting...";
 				alertProgressBar.localScale = new Vector3(0, 1, 1);
 
-				if (++connectionRetryIndex == connectionRetryDelay.Length) connectionRetryIndex--;
+				connectionRetries++;
 
 				if (State != IRCConnectionState.Disabled)
 				{
@@ -369,7 +369,7 @@ public class IRCConnection : MonoBehaviour
 						break;
 					default:
 						_state = IRCConnectionState.Retrying;
-						AddTextToHoldable($"[IRC:Connect] Failed - Retrying in {connectionRetryDelay[connectionRetryIndex] / 1000} seconds.");
+						AddTextToHoldable($"[IRC:Connect] Failed - Retrying in {Math.Pow(2, connectionRetries - 1)} seconds.");
 						break;
 				}
 			}
@@ -823,16 +823,19 @@ public class IRCConnection : MonoBehaviour
 			{
 				if (_state == IRCConnectionState.Connected)
 				{
-					// If the server hasn't sent any data for 6 minutes then begin a ping timeout test.
-					if (stopwatch.ElapsedMilliseconds > 360000 && !pingTimeoutTest)
+					// If the server hasn't sent any data for a minute then begin a ping timeout test.
+					if (stopwatch.ElapsedMilliseconds > 60000 && !pingTimeoutTest)
 					{
 						pingTimeoutTest = true;
 						stopwatch.Reset();
 						stopwatch.Start();
 						SendCommand("PING");
 						MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(true));
+
+						foreach (var bomb in TwitchGame.Instance.Bombs)
+							bomb.Bomb.GetTimer().StopTimer();
 					}
-					else if (pingTimeoutTest)
+					else if (pingTimeoutTest && stopwatch.ElapsedMilliseconds > 500) // Give Twitch half a second to respond before we show that the bot might be disconnected.
 					{
 						alertText.text = $"The bot might be disconnected from the server. Timing out in {10 - stopwatch.ElapsedMilliseconds / 1000f:N1}";
 						alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / 10000f, 1, 1);
@@ -842,6 +845,10 @@ public class IRCConnection : MonoBehaviour
 							AddTextToHoldable("[IRC:Connect] Connection timed out.");
 							stopwatch.Reset();
 							_state = IRCConnectionState.Disconnected;
+
+							// Add a minute to the bomb's timers to account for the minute lost.
+							foreach (var bomb in TwitchGame.Instance.Bombs.Where(bomb => !bomb.IsSolved))
+								bomb.CurrentTimer += !OtherModes.Unexplodable ? 60 : -60;
 							continue;
 						}
 					}
@@ -854,8 +861,14 @@ public class IRCConnection : MonoBehaviour
 					continue;
 				}
 
-				pingTimeoutTest = false;
-				MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(false));
+				if (pingTimeoutTest) {
+					pingTimeoutTest = false;
+					MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(false));
+
+					foreach (var bomb in TwitchGame.Instance.Bombs.Where(bomb => !bomb.IsSolved))
+						bomb.Bomb.GetTimer().StartTimer();
+				}
+
 				stopwatch.Reset();
 				stopwatch.Start();
 				MainThreadQueue.Enqueue(() =>
