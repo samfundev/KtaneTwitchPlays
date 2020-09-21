@@ -830,13 +830,15 @@ public class IRCConnection : MonoBehaviour
 						stopwatch.Reset();
 						stopwatch.Start();
 						SendCommand("PING");
-						MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(true));
 
 						foreach (var bomb in TwitchGame.Instance.Bombs)
 							bomb.Bomb.GetTimer().StopTimer();
 					}
 					else if (pingTimeoutTest && stopwatch.ElapsedMilliseconds > 500) // Give Twitch half a second to respond before we show that the bot might be disconnected.
 					{
+						if (!ConnectionAlert.activeSelf)
+							MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(true));
+
 						alertText.text = $"The bot might be disconnected from the server. Timing out in {10 - stopwatch.ElapsedMilliseconds / 1000f:N1}";
 						alertProgressBar.localScale = new Vector3(1 - stopwatch.ElapsedMilliseconds / 10000f, 1, 1);
 
