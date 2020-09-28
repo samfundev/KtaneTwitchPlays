@@ -961,52 +961,48 @@ public static class ComponentSolverFactory
 				// UN and T is for unchanged and temporary score which are read normally.
 				scoreString = Regex.Replace(scoreString, @"(?:UN )?(\d+)T?", "$1");
 
-				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
-				var dynamicMatch = Regex.Match(scoreString, @"S ([\d.]+)x(?: \+ ([\d.]+))?");
-				defaultInfo.moduleScoreIsDynamic = dynamicMatch.Success;
-				if (dynamicMatch.Success && float.TryParse(dynamicMatch.Groups[1].Value, out float dynamicScore))
-				{
-					// A + after S is for a static addition to the dynamic score.
-					if (dynamicMatch.Groups[2].Success)
-					{
-						if (float.TryParse(dynamicMatch.Groups[2].Value, out float staticScore))
-							defaultInfo.moduleScore = staticScore;
-					}
-					else
-						defaultInfo.moduleScore = 0;
-
-					dynamicScores[moduleID] = dynamicScore * 2; // Multiply the score by two because the default DynamicScorePercentage is 0.5.
-					continue;
-				}
-
-				// PPA is for point per action modules which can be parsed in some cases.
-				var ppaMatch = Regex.Match(scoreString, @"PPA ([\d.]+)x?(?: \+ ([\d.]+))?");
-				if (ppaMatch.Success && float.TryParse(ppaMatch.Groups[1].Value, out float ppaScore))
-				{
-					// A + after S is for a static addition to the dynamic score.
-					if (ppaMatch.Groups[2].Success)
-					{
-						if (float.TryParse(ppaMatch.Groups[2].Value, out float staticScore))
-							defaultInfo.moduleScore = staticScore;
-					}
-					else
-						defaultInfo.moduleScore = 0;
-
-					ppaScores[moduleID] = ppaScore;
-					continue;
-				}
-
 				// Catch any TDB modules which can't be parsed.
 				if (scoreString == "TBD")
 					continue;
 
-				if (float.TryParse(scoreString, out float score))
+				foreach (var factor in scoreString.SplitFull("+"))
 				{
-					defaultInfo.moduleScore = score;
-				}
-				else
-				{
-					DebugHelper.Log($"Unrecognized score \"{scoreString}\" for {moduleName} ({moduleID}).");
+					var split = factor.SplitFull(" ");
+					if (!split.Length.EqualsAny(1, 2))
+					{
+						DebugHelper.Log("Unknown score string:", scoreString);
+						continue;
+					}
+
+					var numberString = split[split.Length - 1];
+					if (numberString.EndsWith("x")) // To parse "5x" we need to remove the x.
+						numberString = numberString.Substring(0, numberString.Length - 1);
+
+					if (!float.TryParse(numberString, out float number)) {
+						DebugHelper.Log("Unknown number:", numberString);
+						continue;
+					}
+
+					switch (split.Length)
+					{
+						case 1:
+							defaultInfo.moduleScore = number;
+							break;
+
+						// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
+						case 2 when split[0] == "S":
+							// Multiply the score by two because the default DynamicScorePercentage is 0.5.
+							dynamicScores[moduleID] = number * 2;
+							break;
+
+						// PPA is for point per action modules which can be parsed in some cases.
+						case 2 when split[0] == "PPA":
+							ppaScores[moduleID] = number;
+							break;
+						default:
+							DebugHelper.Log($"Unrecognized factor \"{factor}\" for {moduleName} ({moduleID}).");
+							break;
+					}
 				}
 			}
 
