@@ -341,6 +341,9 @@ public class ModuleCameras : MonoBehaviour
 	#region Public Methods
 	public IEnumerator ZoomCamera(TwitchModule component, SuperZoomData zoomData, float delay)
 	{
+		if (component.CameraPriority == CameraPriority.Unviewed)
+			component.CameraPriority = CameraPriority.Interacted;
+
 		int existingCamera = CurrentModulesContains(component);
 		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
 		if (existingCamera > -1)
@@ -471,6 +474,11 @@ public class ModuleCameras : MonoBehaviour
 		string solves = _currentSolves.ToString().PadLeft(_currentTotalModules.ToString().Length, char.Parse("0"));
 		DebugHelper.Log("Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";
+
+		if (TwitchGame.Instance.Bombs.Sum(bomb => bomb.BombSolvableModules - bomb.BombSolvedModules) != 1 || _moduleCameras.Count == 0)
+			return;
+
+		StartCoroutine(ZoomCamera(TwitchGame.Instance.Modules.First(module => !module.Solved), new SuperZoomData(1, 0.5f, 0.5f), 1));
 	}
 
 	public void UpdateConfidence()
