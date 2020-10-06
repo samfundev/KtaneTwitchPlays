@@ -478,7 +478,8 @@ public class ModuleCameras : MonoBehaviour
 		if (TwitchGame.Instance.Bombs.Sum(bomb => bomb.BombSolvableModules - bomb.BombSolvedModules) != 1 || _moduleCameras.Count == 0)
 			return;
 
-		StartCoroutine(ZoomCamera(TwitchGame.Instance.Modules.First(module => !module.Solved), new SuperZoomData(1, 0.5f, 0.5f), 1));
+		var module = TwitchGame.Instance.Modules.First(module => !module.Solved);
+		TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(ModuleCommands.Show(module, ZoomCamera(module, new SuperZoomData(1, 0.5f, 0.5f), 1)));
 	}
 
 	public void UpdateConfidence()
