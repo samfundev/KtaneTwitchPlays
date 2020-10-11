@@ -377,6 +377,11 @@
             <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
             <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
         </member>
+        <member name="M:GameCommands.QueueEnabled(System.String)">
+            <name>Queue On/Off</name>
+            <syntax>queue on\nqueue off</syntax>
+            <summary>Turns the queue on or off, letting other users know that they need to use the queue.</summary>
+        </member>
         <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.Boolean,System.String)">
             <name>Call Command</name>
             <syntax>call (name)\ncallnow (name)</syntax>
@@ -397,6 +402,12 @@
             <syntax>callcount</syntax>
             <summary>Displays the number of times that the Call Command has been run since a command was last called.</summary>
         </member>
+        <member name="M:GameCommands.DeleteQueuedPlayer(System.String,System.String)">
+            <name>Delete Call</name>
+            <syntax>delcall [user]</syntax>
+            <summary>Removes a user's call.</summary>
+            <restriction>Mod</restriction>
+        </member>
         <member name="M:GameCommands.RemoveCalledPlayer(System.String)">
             <name>Uncall</name>
             <syntax>uncall</syntax>
@@ -406,6 +417,12 @@
             <name>Call Players</name>
             <syntax>callplayers</syntax>
             <summary>Lists the current players who have called when multiple are required.</summary>
+        </member>
+        <member name="M:GameCommands.DeleteCallInformation(System.Boolean)">
+            <name>Delete All Calls</name>
+            <syntax>delcallall</syntax>
+            <summary>Removes all calls.</summary>
+            <restriction>Mod</restriction>
         </member>
         <member name="M:GameCommands.SetMultiplier(System.Single)">
             <name>Set Multiplier</name>
@@ -761,6 +778,11 @@
         <member name="T:HoldableCommands">
             <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
         </member>
+        <member name="M:HoldableCommands.Help(TwitchHoldable,System.String,System.Boolean)">
+            <name>Help</name>
+            <syntax>help</syntax>
+            <summary>Sends a message to chat with information on what commands you can use to intreact with the holdable.</summary>
+        </member>
         <member name="M:HoldableCommands.Hold(TwitchHoldable)">
             <name>Hold</name>
             <syntax>hold</syntax>
@@ -803,6 +825,11 @@
             <name>Select Index</name>
             <syntax>select [index]</syntax>
             <summary>Selects an item based on it's index on the page.</summary>
+        </member>
+        <member name="M:MissionBinderCommands.SelectSearch(FloatingHoldable,System.String)">
+            <name>Select Text</name>
+            <syntax>select [text]</syntax>
+            <summary>Selects an item based on it's text (subsection or name).</summary>
         </member>
         <member name="M:MissionBinderCommands.Navigate(System.String,System.Nullable{System.Int32})">
             <name>Up / Down</name>
@@ -859,6 +886,11 @@
             <syntax>solve</syntax>
             <summary>Forces a module to solve itself. Requires either Admin rank or the module to not be supported on TP.</summary>
         </member>
+        <member name="M:ModuleCommands.ClaimViewPin(TwitchModule,System.String,System.Boolean,System.String)">
+            <name>Claim View Pin</name>
+            <syntax>claim view pin\ncvp</syntax>
+            <summary>Claims, views and pins a module. You can remove one of three actions as well. (e.g. claim view)</summary>
+        </member>
         <member name="M:ModuleCommands.Unclaim(TwitchModule,System.String,System.String)">
             <name>Unclaim</name>
             <syntax>unclaim\nunclaim unview</syntax>
@@ -884,6 +916,17 @@
             <name>Mine</name>
             <syntax>mine</syntax>
             <summary>Indicates that you are still working on the module. Only the person who has the claim can cancel the take.</summary>
+        </member>
+        <member name="M:ModuleCommands.CancelTake(TwitchModule,System.String,System.Boolean)">
+            <name>Cancel Take</name>
+            <syntax>canceltake</syntax>
+            <summary>Cancels a take attempt on the module. Can only be run by the person who has the claim or a mod.</summary>
+        </member>
+        <member name="M:ModuleCommands.Points(TwitchModule)">
+            <name>Points</name>
+            <syntax>points</syntax>
+            <summary>Tells you how many points a module is worth.</summary>
+            <restrictions>SolvedAllowed</restrictions>
         </member>
         <member name="M:ModuleCommands.Mark(TwitchModule)">
             <name>Mark</name>

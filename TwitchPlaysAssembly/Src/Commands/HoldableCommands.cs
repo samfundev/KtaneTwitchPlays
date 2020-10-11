@@ -5,6 +5,9 @@ using UnityEngine;
 public static class HoldableCommands
 {
 	#region Commands
+	/// <name>Help</name>
+	/// <syntax>help</syntax>
+	/// <summary>Sends a message to chat with information on what commands you can use to intreact with the holdable.</summary>
 	[Command("help")]
 	public static bool Help(TwitchHoldable holdable, string user, bool isWhisper) => holdable.PrintHelp(user, isWhisper);
 

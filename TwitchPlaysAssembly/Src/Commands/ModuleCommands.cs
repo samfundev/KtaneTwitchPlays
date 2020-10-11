@@ -94,7 +94,6 @@ static class ModuleCommands
 			yield return defocusCoroutine.Current;
 
 		yield return new WaitForSeconds(0.5f);
-
 	}
 
 	/// <name>Solve</name>
@@ -112,6 +111,10 @@ static class ModuleCommands
 			module.Solver.SolveModule($"A module ({module.HeaderText}) is being automatically solved.");
 	}
 
+	/// <name>Claim View Pin</name>
+	/// <syntax>claim view pin\ncvp</syntax>
+	/// <summary>Claims, views and pins a module. You can remove one of three actions as well. (e.g. claim view)</summary>
+	[Command("solve")]
 	[Command(@"(claim view|view claim|claimview|viewclaim|cv|vc|claim view pin|view pin claim|claimviewpin|viewpinclaim|cvp|vpc)")]
 	public static void ClaimViewPin(TwitchModule module, string user, bool isWhisper, [Group(1)] string cmd) => ClaimViewOrPin(module, user, isWhisper, view: true, pin: cmd.Contains("p"));
 
@@ -267,6 +270,9 @@ static class ModuleCommands
 		// If the user has a claim on the module but there’s no takeover attempt, just ignore this command
 	}
 
+	/// <name>Cancel Take</name>
+	/// <syntax>canceltake</syntax>
+	/// <summary>Cancels a take attempt on the module. Can only be run by the person who has the claim or a mod.</summary>
 	[Command(@"canceltake")]
 	public static void CancelTake(TwitchModule module, string user, bool isWhisper)
 	{
@@ -289,6 +295,10 @@ static class ModuleCommands
 		module.TakeUser = null;
 	}
 
+	/// <name>Points</name>
+	/// <syntax>points</syntax>
+	/// <summary>Tells you how many points a module is worth.</summary>
+	/// <restrictions>SolvedAllowed</restrictions>
 	[Command(@"(points|score)"), SolvedAllowed]
 	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) score: {module.Solver.ModInfo.ScoreString}");
 

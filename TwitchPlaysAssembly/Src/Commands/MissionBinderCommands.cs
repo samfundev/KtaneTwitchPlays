@@ -22,6 +22,9 @@ public static class MissionBinderCommands
 	[Command(@"select +(\d+)")]
 	public static IEnumerator SelectIndex(FloatingHoldable holdable, [Group(1)] int index) => SelectOnPage(holdable, index: index);
 
+	/// <name>Select Text</name>
+	/// <syntax>select [text]</syntax>
+	/// <summary>Selects an item based on it's text (subsection or name).</summary>
 	[Command(@"select +(?!\d+$)(.+)")]
 	public static IEnumerator SelectSearch(FloatingHoldable holdable, [Group(1)] string search) => SelectOnPage(holdable, search: search.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
 

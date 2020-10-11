@@ -443,7 +443,7 @@ public class ModuleCameras : MonoBehaviour
 				NotesTextIDs[ix].text = $"!notes{ix + 1}";
 			}
 			NotesTextIDsBackgrounds[ix].color = Color.HSVToRGB(hue, .6f, .62f);
-			
+
 			NotesTexts[ix].color = TwitchPlaySettings.data.DarkMode ? new Color32(0xEF, 0xEF, 0xEC, 0xFF) : new Color32(0x4F, 0x4F, 0x4F, 0xFF);
 		}
 	}

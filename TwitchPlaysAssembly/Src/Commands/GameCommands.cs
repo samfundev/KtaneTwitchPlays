@@ -572,6 +572,9 @@ static class GameCommands
 		}
 	}
 
+	/// <name>Queue On/Off</name>
+	/// <syntax>queue on\nqueue off</syntax>
+	/// <summary>Turns the queue on or off, letting other users know that they need to use the queue.</summary>
 	[Command(@"q(?:ueue)?(on|off)")]
 	public static void QueueEnabled([Group(1)] string state)
 	{
@@ -654,6 +657,10 @@ static class GameCommands
 	[Command(@"callcount")]
 	public static void CallCountCommand() => IRCConnection.SendMessageFormat("{0} out of {1} calls needed.", TwitchGame.Instance.CallingPlayers.Count, TwitchGame.Instance.callsNeeded);
 
+	/// <name>Delete Call</name>
+	/// <syntax>delcall [user]</syntax>
+	/// <summary>Removes a user's call.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"delcall +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void DeleteQueuedPlayer([Group(1)] string callUser, string user)
 	{
@@ -702,6 +709,10 @@ static class GameCommands
 		IRCConnection.SendMessageFormat("These players have already called: {0}", builder);
 	}
 
+	/// <name>Delete All Calls</name>
+	/// <syntax>delcallall</syntax>
+	/// <summary>Removes all calls.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"delcallall", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void DeleteCallInformation(bool silent)
 	{
