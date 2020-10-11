@@ -40,7 +40,6 @@ public class TwitchPlaySettingsData
 	public bool AllowSolvingCurrentBombWithCommandsDisabled = true;
 	public int BombLiveMessageDelay = 0;
 	public bool ShowUnrecognizedCommandError = true;
-	public int ClaimCooldownTime = 30;
 	public int ModuleClaimLimit = 2;
 	public int FindClaimLimit = 3;
 	public int FindClaimTerms = 3;
