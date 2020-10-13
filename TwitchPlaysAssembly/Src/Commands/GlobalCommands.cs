@@ -16,7 +16,7 @@ static class GlobalCommands
 {
 	
 	/// <name>Run as</name>
-	///	<syntax>runas [color] [username]#[discrminator] [command]</syntax>
+	/// <syntax>runas [color] [username]#[discrminator] [command]</syntax>
 	/// <summary>Runs a command as the specified Discord user</summary>
 	[Command(@"runas (#.{6}) (.*?)#([0-9]{4}) (!.*?)$", AccessLevel.DiscordPlays, AccessLevel.DiscordPlays)]
 	public static void RunCommandAs([Group(1)] string color, [Group(2)] string username, [Group(3)] string discriminator, [Group(4)] string command) =>
