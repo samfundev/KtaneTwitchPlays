@@ -726,12 +726,6 @@ static class GlobalCommands
 				case "supermod":
 					level |= (stepdown || UserAccess.HasAccess(user, AccessLevel.SuperUser, true)) ? AccessLevel.SuperUser : AccessLevel.User;
 					break;
-					
-				case "dp":
-				case "discord-plays":
-				case "discordplays":
-					level |= AccessLevel.DiscordPlays;
-					break;
 
 				case "defuser":
 					level |= AccessLevel.Defuser;
