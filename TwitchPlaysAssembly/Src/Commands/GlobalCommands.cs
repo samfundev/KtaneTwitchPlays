@@ -14,6 +14,14 @@ using Random = UnityEngine.Random;
 /// <summary>Commands that can generally be used at any time.</summary>
 static class GlobalCommands
 {
+	
+	/// <name>Run as</name>
+	/// <syntax>runas [color] [username]#[discrminator] [command]</syntax>
+	/// <summary>Runs a command as the specified Discord user</summary>
+	[Command(@"runas (#.{6}) (.*?)#([0-9]{4}) (!.*?)$", AccessLevel.Streamer, AccessLevel.Streamer)]
+	public static void RunCommandAs([Group(1)] string color, [Group(2)] string username, [Group(3)] string discriminator, [Group(4)] string command) =>
+		IRCConnection.ReceiveMessage($"{username}#{discriminator}", color, command);
+	
 	/// <name>Help</name>
 	/// <syntax>help</syntax>
 	/// <summary>Gives you some help on how to play TP.</summary>

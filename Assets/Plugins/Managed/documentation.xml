@@ -503,6 +503,11 @@
         <member name="T:GlobalCommands">
             <summary>Commands that can generally be used at any time.</summary>
         </member>
+        <member name="M:GlobalCommands.RunCommandAs(System.String,System.String,System.String,System.String)">
+            <name>Run as</name>
+            <syntax>runas [color] [username]#[discrminator] [command]</syntax>
+            <summary>Runs a command as the specified Discord user</summary>
+        </member>
         <member name="M:GlobalCommands.Help(System.String,System.Boolean)">
             <name>Help</name>
             <syntax>help</syntax>
