@@ -18,7 +18,6 @@ public enum AccessLevel
 	Mod = 0x2000,
 	Admin = 0x4000,
 	SuperUser = 0x8000,
-	DiscordPlays = 0x9000,
 	Streamer = 0x10000
 }
 
@@ -332,7 +331,6 @@ public static class UserAccess
 			AccessLevel.Mod => "Moderator",
 			AccessLevel.Admin => "Admin",
 			AccessLevel.SuperUser => "Super User",
-			AccessLevel.DiscordPlays => "DiscordPlays",
 			AccessLevel.Streamer => "Streamer",
 			_ => null,
 		};
