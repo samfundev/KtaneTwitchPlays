@@ -965,6 +965,7 @@ public static class ComponentSolverFactory
 				if (scoreString == "TBD")
 					continue;
 
+				bool isDynamic = false;
 				foreach (var factor in scoreString.SplitFull("+"))
 				{
 					var split = factor.SplitFull(" ");
@@ -993,6 +994,7 @@ public static class ComponentSolverFactory
 						case 2 when split[0] == "S":
 							// Multiply the score by two because the default DynamicScorePercentage is 0.5.
 							dynamicScores[moduleID] = number * 2;
+							isDynamic = true;
 							break;
 
 						// PPA is for point per action modules which can be parsed in some cases.
@@ -1004,6 +1006,8 @@ public static class ComponentSolverFactory
 							break;
 					}
 				}
+
+				defaultInfo.moduleScoreIsDynamic = isDynamic;
 			}
 
 			if (displayNames.Count > 0)
