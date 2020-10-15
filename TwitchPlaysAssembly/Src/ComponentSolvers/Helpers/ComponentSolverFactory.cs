@@ -966,6 +966,7 @@ public static class ComponentSolverFactory
 					continue;
 
 				bool isDynamic = false;
+				bool hasBase = false;
 				foreach (var factor in scoreString.SplitFull("+"))
 				{
 					var split = factor.SplitFull(" ");
@@ -988,6 +989,7 @@ public static class ComponentSolverFactory
 					{
 						case 1:
 							defaultInfo.moduleScore = number;
+							hasBase = true;
 							break;
 
 						// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
@@ -1008,6 +1010,8 @@ public static class ComponentSolverFactory
 				}
 
 				defaultInfo.moduleScoreIsDynamic = isDynamic;
+				if (!hasBase)
+					defaultInfo.moduleScore = 0;
 			}
 
 			if (displayNames.Count > 0)
