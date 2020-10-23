@@ -242,6 +242,11 @@ public abstract class ComponentSolver
 					HandleModuleException(new Exception(currentString));
 					break;
 				}
+				else if (currentString.StartsWith("nrsolve", StringComparison.InvariantCultureIgnoreCase))
+				{
+					HandleNRSolve(currentString);
+					break;
+				}
 				else if (currentString.RegexMatch(out match, "^(?:detonate|explode)(?: ([0-9.]+))?(?: ((?:.|\\n)+))?$"))
 				{
 					if (!float.TryParse(match.Groups[1].Value, out float explosionTime))
@@ -664,6 +669,14 @@ public abstract class ComponentSolver
 		}
 		DebugHelper.LogException(e, $"While solving a module ({Module.BombComponent.GetModuleDisplayName()}) an exception has occurred! Here's the error:");
 		SolveModule($"Looks like {Module.BombComponent.GetModuleDisplayName()} ran into a problem while running a command, automatically solving module.");
+	}
+
+	protected void HandleNRSolve(string reason)
+	{
+		reason = reason.Remove(0, 7).Trim();
+		string _reason = Module.BombComponent.GetModuleDisplayName() + " has requested to be solved without reward. " + (string.IsNullOrEmpty(reason) ? "No reason was given." : (reason + (!reason.EndsWith(".") ? "." : ""))) + " Solving module.";
+		DebugHelper.Log(_reason);
+		SolveModule(_reason);
 	}
 
 	public void SolveModule(string reason)
