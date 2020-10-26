@@ -40,6 +40,9 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 		yield return null;
 		yield return ModuleCommands.Zoom(targetModule, new SuperZoomData(1, 0.5f, 0.5f), LocalAppreciationReqTime);
 
+		if (targetModule.Solved)
+			ModuleCommands.Unview(targetModule);
+
 		if (CoroutineCanceller.ShouldCancel || artComponent == null)
 		{
 			if (artComponent != null)
