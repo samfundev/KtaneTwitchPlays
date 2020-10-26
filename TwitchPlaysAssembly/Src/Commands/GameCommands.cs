@@ -578,7 +578,7 @@ static class GameCommands
 	[Command(@"q(?:ueue)?(on|off)")]
 	public static void QueueEnabled([Group(1)] string state)
 	{
-		TwitchGame.Instance.QueueEnabled = state == "on";
+		TwitchGame.Instance.QueueEnabled = state.EqualsIgnoreCase("on");
 		TwitchGame.ModuleCameras?.SetNotes();
 	}
 
