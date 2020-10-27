@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -259,7 +258,7 @@ public static class GeneralExtensions
 	/// <param name="match">The string to match.</param>
 	public static bool FirstOrWhole(this string value, string match) => value[0] == match[0] || value == match;
 
-	public static IEnumerable TimedAnimation(this float length)
+	public static IEnumerable<float> TimedAnimation(this float length)
 	{
 		float startTime = Time.time;
 		float alpha = 0;
@@ -282,6 +281,15 @@ public static class GeneralExtensions
 	}
 
 	public static T Traverse<T>(this GameObject currentObject, params string[] names) => currentObject.Traverse(names).GetComponent<T>();
+
+	public static Rect Lerp(this Rect start, Rect end, float alpha)
+	{
+		var vStart = new Vector4(start.x, start.y, start.width, start.height);
+		var vEnd = new Vector4(end.x, end.y, end.width, end.height);
+		var vResult = Vector4.Lerp(vStart, vEnd, alpha);
+
+		return new Rect(vResult.x, vResult.y, vResult.z, vResult.w);
+	}
 
 	/// <summary>
 	/// Safer version of <see cref="DirectoryInfo.MoveTo(string)"/> as it works across drives. Achieved by <see cref="CopyTo(DirectoryInfo, DirectoryInfo)"/> and then <see cref="DirectoryInfo.Delete(bool)"/>.

@@ -280,7 +280,7 @@ public class TwitchGame : MonoBehaviour
 			ParentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
 
 		if (ModuleCameras != null)
-			ModuleCameras.gameObject.SetActive(false);
+			ModuleCameras.StartCoroutine(ModuleCameras.DisableCameras());
 
 		// Award users who maintained needy modules.
 		Dictionary<string, int> AwardedNeedyPoints = new Dictionary<string, int>();

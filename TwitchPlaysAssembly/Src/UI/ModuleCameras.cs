@@ -28,7 +28,7 @@ public class ModuleCameras : MonoBehaviour
 		public bool EscapePressed;
 
 		private static readonly Rect ZoomCameraLocation = new Rect(0.2738095f, 0.12f, 0.452381f, 0.76f);
-		private Rect _originalCameraRect;
+		public Rect OriginalCameraRect;
 
 		public static ModuleCamera CreateModuleCamera(ModuleCameras parentInstance, int cameraIx)
 		{
@@ -41,7 +41,7 @@ public class ModuleCameras : MonoBehaviour
 			camera.depth = 99;
 
 			moduleCamera.CameraInstance = camera;
-			moduleCamera._originalCameraRect = camera.rect;
+			moduleCamera.OriginalCameraRect = camera.rect;
 			moduleCamera.CameraLayer = CameraLayers[cameraIx];
 			return moduleCamera;
 		}
@@ -53,10 +53,10 @@ public class ModuleCameras : MonoBehaviour
 			yield return null;
 			foreach (float lerp in duration.TimedAnimation())
 			{
-				CameraInstance.rect = new Rect(Mathf.Lerp(_originalCameraRect.x, ZoomCameraLocation.x, lerp),
-					Mathf.Lerp(_originalCameraRect.y, ZoomCameraLocation.y, lerp),
-					Mathf.Lerp(_originalCameraRect.width, ZoomCameraLocation.width, lerp),
-					Mathf.Lerp(_originalCameraRect.height, ZoomCameraLocation.height, lerp));
+				CameraInstance.rect = new Rect(Mathf.Lerp(OriginalCameraRect.x, ZoomCameraLocation.x, lerp),
+					Mathf.Lerp(OriginalCameraRect.y, ZoomCameraLocation.y, lerp),
+					Mathf.Lerp(OriginalCameraRect.width, ZoomCameraLocation.width, lerp),
+					Mathf.Lerp(OriginalCameraRect.height, ZoomCameraLocation.height, lerp));
 
 				CameraInstance.fieldOfView = Mathf.Lerp(5, 5 / zoomData.factor, lerp);
 				CameraInstance.transform.localPosition = Vector3.Lerp(new Vector3(0.001f, 2.25f, 0), new Vector3(0.001f + (zoomData.x - 0.5f) * 0.2f, 2.25f, (zoomData.y - 0.5f) * 0.2f), lerp);
@@ -70,10 +70,10 @@ public class ModuleCameras : MonoBehaviour
 			yield return null;
 			foreach (float lerp in duration.TimedAnimation())
 			{
-				CameraInstance.rect = new Rect(Mathf.Lerp(ZoomCameraLocation.x, _originalCameraRect.x, lerp),
-					Mathf.Lerp(ZoomCameraLocation.y, _originalCameraRect.y, lerp),
-					Mathf.Lerp(ZoomCameraLocation.width, _originalCameraRect.width, lerp),
-					Mathf.Lerp(ZoomCameraLocation.height, _originalCameraRect.height, lerp));
+				CameraInstance.rect = new Rect(Mathf.Lerp(ZoomCameraLocation.x, OriginalCameraRect.x, lerp),
+					Mathf.Lerp(ZoomCameraLocation.y, OriginalCameraRect.y, lerp),
+					Mathf.Lerp(ZoomCameraLocation.width, OriginalCameraRect.width, lerp),
+					Mathf.Lerp(ZoomCameraLocation.height, OriginalCameraRect.height, lerp));
 
 				CameraInstance.fieldOfView = Mathf.Lerp(5, 5 / zoomData.factor, 1 - lerp);
 				CameraInstance.transform.localPosition = Vector3.Lerp(new Vector3(0.001f, 2.25f, 0), new Vector3(0.001f + (zoomData.x - 0.5f) * 0.2f, 2.25f, (zoomData.y - 0.5f) * 0.2f), 1 - lerp);
@@ -186,7 +186,7 @@ public class ModuleCameras : MonoBehaviour
 
 			otherCamera.CameraLayer = CameraLayer;
 
-			otherCamera._originalCameraRect = _originalCameraRect;
+			otherCamera.OriginalCameraRect = OriginalCameraRect;
 		}
 	}
 
@@ -744,6 +744,31 @@ public class ModuleCameras : MonoBehaviour
 	{
 		foreach (var camera in _moduleCameras)
 			camera.EscapePressed = false;
+	}
+
+	public IEnumerator DisableCameras()
+	{
+		var zoomCamera = _moduleCameras.Find(camera => camera.ZoomActive);
+		if (zoomCamera != null)
+		{
+			var enumerator = zoomCamera.UnzoomCamera(1, new SuperZoomData(1, 0.5f, 0.5f));
+			while (enumerator.MoveNext())
+				yield return enumerator.Current;
+		}
+
+		foreach (var alpha in 0.5f.TimedAnimation())
+		{
+			foreach (var camera in _moduleCameras)
+			{
+				var original = camera.OriginalCameraRect;
+				var end = new Rect(original.x + original.width / 2, original.y + original.height / 2, 0, 0);
+				camera.CameraInstance.rect = camera.OriginalCameraRect.Lerp(end, alpha);
+			}
+
+			yield return null;
+		}
+
+		gameObject.SetActive(false);
 	}
 	#endregion
 
