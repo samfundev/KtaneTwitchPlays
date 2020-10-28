@@ -35,6 +35,11 @@ public static class DMGCommands
 		}
 
 		var pageNavigation = UnityEngine.Object.FindObjectOfType(pageNavigationType);
+
+		// pageNavigation could be null if this command is run multiple times in the setup room.
+		if (pageNavigation == null)
+			yield break;
+
 		_backStack = pageNavigation.GetValue<Stack<KMSelectable>>("_backStack");
 
 		while (!CurrentPage.name.EqualsAny("PageOne(Clone)", "Home(Clone)"))
