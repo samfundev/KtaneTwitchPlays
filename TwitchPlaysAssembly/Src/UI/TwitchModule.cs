@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TwitchPlays.ScoreMethods;
 using UnityEngine;
 using UnityEngine.UI;
 using static NeedyComponent;
@@ -74,6 +75,9 @@ public class TwitchModule : MonoBehaviour
 	}
 
 	public ComponentSolver Solver { get; private set; } = null;
+
+	public List<ScoreMethod> ScoreMethods;
+	public List<ScoreMethod> RewardBonusMethods;
 
 	public bool IsMod => BombComponent is ModBombComponent || BombComponent is ModNeedyComponent;
 
@@ -175,6 +179,11 @@ public class TwitchModule : MonoBehaviour
 			{
 				var ModInfo = Solver.ModInfo;
 
+				ScoreMethods = ModInfo.GetScoreMethods(this);
+
+				if (ComponentSolverFactory.rewardBonuses.TryGetValue(ModInfo.moduleID, out string scoreString))
+					RewardBonusMethods = ModuleInformation.ConvertScoreString(scoreString, this);
+
 				// Set the display name for built in modules
 				if (ModInfo.builtIntoTwitchPlays)
 				{
@@ -198,13 +207,10 @@ public class TwitchModule : MonoBehaviour
 				var bar = _data.bar;
 				bar.transform.parent.gameObject.SetActive(TwitchPlaySettings.data.ShowModuleDifficulty && !ModInfo.unclaimable);
 
-				var value = Mathf.InverseLerp(4, 25, ModInfo.moduleScore);
-				if (ModInfo.moduleScoreIsDynamic)
+				var value = Mathf.InverseLerp(4, 25, GetPoints<BaseScore>());
+				if (ScoreMethods.Any(method => method.GetType() == typeof(PerModule)))
 				{
-					if (!ComponentSolverFactory.dynamicScores.TryGetValue(ModInfo.moduleID, out float multiplier))
-						multiplier = 2;
-
-					value = Mathf.InverseLerp(0.25f, 4, multiplier);
+					value = Mathf.InverseLerp(0.25f, 4, GetPoints<PerModule>());
 				}
 
 				bar.transform.localScale = new Vector3(value, 1, 1);
@@ -226,8 +232,6 @@ public class TwitchModule : MonoBehaviour
 				var needyComponent = BombComponent.GetComponent<NeedyComponent>();
 				if (needyComponent != null)
 				{
-					StartCoroutine(TrackNeedyModule());
-
 					needyComponent.CountdownTime += ModInfo.additionalNeedyTime;
 					needyComponent.GetValue<NeedyTimer>("timer").TotalTime += ModInfo.additionalNeedyTime;
 				}
@@ -322,52 +326,6 @@ public class TwitchModule : MonoBehaviour
 		needyModule.OnNeedyDeactivation = () => { needyModule.StopAllCoroutines(); needyModule.gameObject.SetActive(false); needyModule.HandlePass(); needyModule.gameObject.SetActive(true); };
 		needyModule.OnTimerExpired = () => { needyModule.StopAllCoroutines(); needyModule.gameObject.SetActive(false); needyModule.HandlePass(); needyModule.gameObject.SetActive(true); };
 		needyModule.WarnAtFiveSeconds = false;
-	}
-
-	public class NeedyStats
-	{
-		public int Solves;
-		public float ActiveTime;
-	}
-
-	public Dictionary<string, NeedyStats> PlayerNeedyStats = new Dictionary<string, NeedyStats>();
-	public IEnumerator TrackNeedyModule()
-	{
-		NeedyComponent needyModule = BombComponent.GetComponent<NeedyComponent>();
-		NeedyStateEnum lastState = needyModule.State;
-		float lastTime = Time.time;
-		while (true)
-		{
-			switch (needyModule.State)
-			{
-				case NeedyStateEnum.BombComplete:
-				case NeedyStateEnum.Terminated:
-					yield break;
-				case NeedyStateEnum.Cooldown when lastState == NeedyStateEnum.Running:
-					if (Claimed)
-					{
-						if (!PlayerNeedyStats.ContainsKey(PlayerName))
-							PlayerNeedyStats[PlayerName] = new NeedyStats();
-
-						PlayerNeedyStats[PlayerName].Solves++;
-					}
-					Solver.AwardRewardBonus();
-					break;
-				case NeedyStateEnum.Running:
-					if (Claimed)
-					{
-						if (!PlayerNeedyStats.ContainsKey(PlayerName))
-							PlayerNeedyStats[PlayerName] = new NeedyStats();
-
-						PlayerNeedyStats[PlayerName].ActiveTime += Time.time - lastTime;
-					}
-					break;
-			}
-
-			lastState = needyModule.State;
-			lastTime = Time.time;
-			yield return new WaitForSeconds(0.1f);
-		}
 	}
 
 	public static bool UnsupportedModulesPresent() => UnsupportedComponents.Any(x => x.Solver == null || !x.Solved);
@@ -643,6 +601,17 @@ public class TwitchModule : MonoBehaviour
 			light.enabled = !light.enabled;
 			light.enabled = !light.enabled;
 		}
+	}
+
+	public float GetPoints<T>() where T : ScoreMethod
+	{
+		foreach (var method in ScoreMethods)
+		{
+			if (method.GetType() == typeof(T))
+				return method.Points;
+		}
+
+		return 0;
 	}
 	#endregion
 

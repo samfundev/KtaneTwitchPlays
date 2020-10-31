@@ -282,33 +282,21 @@ public class TwitchGame : MonoBehaviour
 		if (ModuleCameras != null)
 			ModuleCameras.StartCoroutine(ModuleCameras.DisableCameras());
 
-		// Award users who maintained needy modules.
-		Dictionary<string, int> AwardedNeedyPoints = new Dictionary<string, int>();
-		foreach (TwitchModule twitchModule in Modules)
+		// Award users who maintained modules.
+		var methods = Modules.SelectMany(module => module.ScoreMethods);
+		var awardedPoints = new Dictionary<string, int>();
+		foreach (var player in methods.SelectMany(method => method.Players).Distinct())
 		{
-			ModuleInformation ModInfo = twitchModule.Solver.ModInfo;
-			ScoreMethod scoreMethod = ModInfo.scoreMethod;
-			if (scoreMethod == ScoreMethod.Default) continue;
-
-			foreach (var pair in twitchModule.PlayerNeedyStats)
+			int points = (methods.Sum(method => method.CalculateScore(player)) * OtherModes.ScoreMultiplier).RoundToInt();
+			if (points != 0)
 			{
-				string playerName = pair.Key;
-				var needyStats = pair.Value;
-
-				int points = ((scoreMethod == ScoreMethod.NeedySolves ? needyStats.Solves : needyStats.ActiveTime) * ModInfo.moduleScore * OtherModes.ScoreMultiplier).RoundToInt();
-				if (points != 0)
-				{
-					if (!AwardedNeedyPoints.ContainsKey(playerName))
-						AwardedNeedyPoints[playerName] = 0;
-
-					AwardedNeedyPoints[playerName] += points;
-					Leaderboard.Instance.AddScore(playerName, points);
-				}
+				awardedPoints[player] = points;
+				Leaderboard.Instance.AddScore(player, points);
 			}
 		}
 
-		if (AwardedNeedyPoints.Count > 0)
-			IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {AwardedNeedyPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
+		if (awardedPoints.Count > 0)
+			IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {awardedPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
 
 		GameCommands.unclaimedModules = null;
 		DestroyComponentHandles();

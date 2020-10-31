@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using TwitchPlays.ScoreMethods;
 using UnityEngine;
 
 public abstract class ComponentSolver
@@ -172,7 +173,7 @@ public abstract class ComponentSolver
 				{
 					if (TwitchPlaySettings.data.UnsubmittablePenaltyPercent <= 0) continue;
 
-					int penalty = (int) (Mathf.Max(ModInfo.moduleScore * TwitchPlaySettings.data.UnsubmittablePenaltyPercent, 1) * OtherModes.ScoreMultiplier);
+					int penalty = (int) (Mathf.Max(Module.GetPoints<BaseScore>() * TwitchPlaySettings.data.UnsubmittablePenaltyPercent, 1) * OtherModes.ScoreMultiplier);
 					if (penalty == 0)
 						continue;
 
@@ -320,7 +321,8 @@ public abstract class ComponentSolver
 					if (OtherModes.ScoreMultiplier == 0)
 						continue;
 
-					pointsAwarded = (ComponentSolverFactory.ppaScores.TryGetValue(ModInfo.moduleID, out float ppaScore) ? ppaScore : pointsAwarded * OtherModes.ScoreMultiplier).RoundToInt();
+					var ppaScore = Module.GetPoints<PerAction>();
+					pointsAwarded = (ppaScore != 0 ? ppaScore : pointsAwarded * OtherModes.ScoreMultiplier).RoundToInt();
 
 					if (match.Groups[1].Success)
 					{
@@ -693,24 +695,10 @@ public abstract class ComponentSolver
 		if (_disableOnStrike) return false;
 		if (ModInfo != null)
 		{
-			int moduleScore = (int) ModInfo.moduleScore;
-			if (ModInfo.moduleScoreIsDynamic)
-			{
-				if (!ComponentSolverFactory.dynamicScores.TryGetValue(ModInfo.moduleID, out float multiplier))
-					multiplier = 2;
-
-				moduleScore += ModInfo.moduleID switch
-				{
-					// Cookie Jars
-					"cookieJars" => (int) Mathf.Clamp(Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity),
-					// Forget Everything
-					"HexiEvilFMN" or "forgetEnigma" => (int) (Mathf.Clamp(Module.Bomb.BombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage),
-					_ => (int) (Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage),
-				};
-			}
-
 			if (Module.BombComponent is NeedyComponent)
 				return false;
+
+			int moduleScore = (int) Module.ScoreMethods.Sum(method => method.CalculateScore(Module.PlayerName));
 
 			if (UnsupportedModule)
 				Module?.IDTextUnsupported?.gameObject.SetActive(false);
@@ -1202,23 +1190,15 @@ public abstract class ComponentSolver
 
 	internal void AwardRewardBonus()
 	{
-		if (!ComponentSolverFactory.rewardBonuses.TryGetValue(ModInfo.moduleID, out RewardBonusInfo info))
+		if (Module.RewardBonusMethods == null)
 			return;
 
-		int rewardBonus = 0;
-		switch (info.Type)
-		{
-			case RewardBonusMethod.Fixed:
-				rewardBonus = (int)info.Bonus;
-				break;
-			case RewardBonusMethod.Dynamic:
-				rewardBonus = (int)(info.Bonus * Module.Bomb.BombSolvableModules);
-				break;
-			default:
-				break;
-		}
+		float floatBonus = Module.RewardBonusMethods.Sum(method => {
+			var players = method.Players.ToArray();
+			return players.Length == 0 ? method.CalculateScore(null) : players.Sum(method.CalculateScore);
+		});
 
-		rewardBonus = (rewardBonus * OtherModes.ScoreMultiplier).RoundToInt();
+		int rewardBonus = (floatBonus * OtherModes.ScoreMultiplier).RoundToInt();
 		if (rewardBonus != 0)
 		{
 			TwitchPlaySettings.AddRewardBonus(rewardBonus);

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Mods;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -294,7 +293,7 @@ static class GlobalCommands
 						break;
 					case "points":
 					case "score":
-						IRCConnection.SendMessage($"Module {moduleName} score: {modules[0].ScoreString}", user, !isWhisper);
+						IRCConnection.SendMessage($"Module {moduleName} score string: {modules[0].ScoreExplanation}", user, !isWhisper);
 						break;
 					case "statuslight":
 						IRCConnection.SendMessage($"Module {moduleName} status light position: {modules[0].statusLightPosition}", user, !isWhisper);
@@ -411,9 +410,9 @@ static class GlobalCommands
 						break;
 					case "points":
 					case "score":
-						module.moduleScore = !int.TryParse(changeTo, out int moduleScore) ? defaultModule.moduleScore : moduleScore;
-						module.moduleScoreOverride = true;
-						IRCConnection.SendMessage($"Module {moduleName} score changed to: {module.moduleScore}", user, !isWhisper);
+						module.scoreString = changeTo;
+						module.scoreStringOverride = true;
+						IRCConnection.SendMessage($"Module {moduleName} score string changed to: {module.scoreString}", user, !isWhisper);
 						break;
 					case "statuslight":
 						module.statusLightPosition = (changeTo.ToLowerInvariant()) switch

@@ -300,7 +300,7 @@ static class ModuleCommands
 	/// <summary>Tells you how many points a module is worth.</summary>
 	/// <restrictions>SolvedAllowed</restrictions>
 	[Command(@"(points|score)"), SolvedAllowed]
-	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) score: {module.Solver.ModInfo.ScoreString}");
+	public static void Points(TwitchModule module) => IRCConnection.SendMessage($"{module.HeaderText} ({module.Code}) score: {module.Solver.ModInfo.ScoreExplanation}");
 
 	/// <name>Mark</name>
 	/// <syntax>mark</syntax>

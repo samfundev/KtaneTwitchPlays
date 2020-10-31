@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 using UnityEngine;
+using TwitchPlays.ScoreMethods;
 
 [Serializable]
 public sealed class DistributionPool : ISerializable
@@ -223,9 +224,12 @@ public sealed class DistributionPool : ISerializable
 						return false;
 
 					ModuleInformation info = ComponentSolverFactory.GetModuleInfo(GetTwitchPlaysID(x), false);
-					if (info.moduleScoreIsDynamic || info.announceModule)
+					var baseMethod = info.GetScoreMethod<BaseScore>();
+					if (baseMethod == null || info.announceModule)
 						return false;
-					return info.moduleScore >= ExtraData[0] && info.moduleScore <= ExtraData[1];
+
+					var baseScore = baseMethod.Points;
+					return baseScore >= ExtraData[0] && baseScore <= ExtraData[1];
 				}).ToList();
 
 				if (scoredModules.Count == 0)

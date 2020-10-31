@@ -47,7 +47,7 @@ public class TwitchPlaySettingsData
 	public int VoteCountdownTime = 60;
 	public bool EnableVoting = true;
 	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.GetVoteDict();
-	public float DynamicScorePercentage = 0.5f;
+	public float DynamicScoreMultiplier = 1;
 	public bool EnableTwitchPlayShims = true;
 	public float UnsubmittablePenaltyPercent = 0.3f;
 	public Color UnclaimedColor = new Color(0.39f, 0.25f, 0.64f);
