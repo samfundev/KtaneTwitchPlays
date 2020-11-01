@@ -18,31 +18,18 @@ public class ResistorsComponentSolver : ComponentSolver
 
 	private static int? PinToIndex(string pin)
 	{
-		switch (pin)
+		return pin switch
 		{
-			case "a":
-				return 0;
-			case "b":
-				return 1;
-			case "c":
-				return 2;
-			case "d":
-				return 3;
-			case "tl":
-			case "topleft":
-				return 4;
-			case "tr":
-			case "topright":
-				return 5;
-			case "bl":
-			case "bottomleft":
-				return 6;
-			case "br":
-			case "bottomright":
-				return 7;
-			default:
-				return null;
-		}
+			"a" => 0,
+			"b" => 1,
+			"c" => 2,
+			"d" => 3,
+			"tl" or "topleft" => 4,
+			"tr" or "topright" => 5,
+			"bl" or "bottomleft" => 6,
+			"br" or "bottomright" => 7,
+			_ => null,
+		};
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

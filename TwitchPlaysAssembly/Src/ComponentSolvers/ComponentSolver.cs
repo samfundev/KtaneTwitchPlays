@@ -699,21 +699,14 @@ public abstract class ComponentSolver
 				if (!ComponentSolverFactory.dynamicScores.TryGetValue(ModInfo.moduleID, out float multiplier))
 					multiplier = 2;
 
-				switch (ModInfo.moduleID)
+				moduleScore += ModInfo.moduleID switch
 				{
-					case "cookieJars": // Cookie Jars
-						moduleScore += (int) Mathf.Clamp(Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity);
-						break;
-
-					case "HexiEvilFMN": // Forget Everything
-					case "forgetEnigma": // Forget Enigma
-						moduleScore += (int) (Mathf.Clamp(Module.Bomb.BombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
-						break;
-
-					default:
-						moduleScore += (int) (Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage);
-						break;
-				}
+					// Cookie Jars
+					"cookieJars" => (int) Mathf.Clamp(Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage, 1f, float.PositiveInfinity),
+					// Forget Everything
+					"HexiEvilFMN" or "forgetEnigma" => (int) (Mathf.Clamp(Module.Bomb.BombSolvableModules, 1, 100) * multiplier * TwitchPlaySettings.data.DynamicScorePercentage),
+					_ => (int) (Module.Bomb.BombSolvableModules * multiplier * TwitchPlaySettings.data.DynamicScorePercentage),
+				};
 			}
 
 			if (Module.BombComponent is NeedyComponent)

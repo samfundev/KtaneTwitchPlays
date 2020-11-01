@@ -18,24 +18,14 @@ public class ShapeShiftComponentSolver : ComponentSolver
 
 	private int? ToShapeIndex(string shape)
 	{
-		switch (shape)
+		return shape switch
 		{
-			case "flat":
-			case "rectangle":
-				return 0;
-			case "round":
-			case "pill":
-			case "circle":
-				return 1;
-			case "point":
-			case "triangle":
-				return 2;
-			case "ticket":
-			case "cut":
-				return 3;
-			default:
-				return null;
-		}
+			"flat" or "rectangle" => 0,
+			"round" or "pill" or "circle" => 1,
+			"point" or "triangle" => 2,
+			"ticket" or "cut" => 3,
+			_ => null,
+		};
 	}
 
 	private IEnumerator GetDisplay(object component)

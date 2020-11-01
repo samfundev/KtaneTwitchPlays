@@ -216,7 +216,7 @@ public class TwitchBomb : MonoBehaviour
 		{
 			yield return holdCoroutine.Current;
 		}
-		IEnumerator returnToFace;
+
 		float offset = edge.EqualsAny("45", "-45") ? 0.0f : 45.0f;
 
 		if (edge.EqualsAny(allEdges, "right", "r", "45", "-45"))
@@ -313,47 +313,17 @@ public class TwitchBomb : MonoBehaviour
 			yield return new WaitForSeconds(1f);
 		}
 
-		switch (edge)
+		IEnumerator returnToFace = edge switch
 		{
-			case "right":
-			case "r":
-				returnToFace = DoFreeYRotate(90.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			case "right bottom":
-			case "bottom right":
-			case "br":
-			case "rb":
-				returnToFace = DoFreeYRotate(45.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			case "bottom":
-			case "b":
-				returnToFace = DoFreeYRotate(0.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			case "left bottom":
-			case "bottom left":
-			case "lb":
-			case "bl":
-				returnToFace = DoFreeYRotate(-45.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			case "left":
-			case "l":
-				returnToFace = DoFreeYRotate(-90.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			case "left top":
-			case "top left":
-			case "lt":
-			case "tl":
-				returnToFace = DoFreeYRotate(-135.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			case "top":
-			case "t":
-				returnToFace = DoFreeYRotate(-180.0f, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-			default:
-				returnToFace = DoFreeYRotate(-225.0f + offset, 90.0f, 0.0f, 0.0f, 0.3f);
-				break;
-		}
-
+			"right" or "r" => DoFreeYRotate(90.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			"right bottom" or "bottom right" or "br" or "rb" => DoFreeYRotate(45.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			"bottom" or "b" => DoFreeYRotate(0.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			"left bottom" or "bottom left" or "lb" or "bl" => DoFreeYRotate(-45.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			"left" or "l" => DoFreeYRotate(-90.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			"left top" or "top left" or "lt" or "tl" => DoFreeYRotate(-135.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			"top" or "t" => DoFreeYRotate(-180.0f, 90.0f, 0.0f, 0.0f, 0.3f),
+			_ => DoFreeYRotate(-225.0f + offset, 90.0f, 0.0f, 0.0f, 0.3f),
+		};
 		while (returnToFace.MoveNext())
 		{
 			yield return returnToFace.Current;

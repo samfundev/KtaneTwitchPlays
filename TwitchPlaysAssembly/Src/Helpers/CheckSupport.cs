@@ -134,7 +134,7 @@ public static class CheckSupport
 		int progress = 0;
 
 		// Get local mods that need to be tested
-		if (!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods))
+		if (typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is not Dictionary<string, Mod> loadedMods)
 			yield break;
 
 		var validLocalMods = loadedMods.Values
