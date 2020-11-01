@@ -92,7 +92,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["numberNimbleness"] = module => new NumberNimblenessComponentSolver(module);
 		ModComponentSolverCreators["babaIsWho"] = module => new BabaIsWhoComponentSolver(module);
 		ModComponentSolverCreators["chordProgressions"] = module => new ChordProgressionsComponentSolver(module);
-		ModComponentSolverCreators["AdditionModule"] = module => new AdditionComponentSolver(module);
 		ModComponentSolverCreators["rng"] = module => new RNGComponentSolver(module);
 		ModComponentSolverCreators["needyShapeMemory"] = module => new ShapeMemoryComponentSolver(module);
 		ModComponentSolverCreators["caesarsMaths"] = module => new CaesarsMathsComponentSolver(module);
