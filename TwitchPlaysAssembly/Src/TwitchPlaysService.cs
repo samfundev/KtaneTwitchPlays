@@ -232,7 +232,7 @@ public class TwitchPlaysService : MonoBehaviour
 		if (!transform.gameObject.activeInHierarchy)
 			return;
 
-		StartCoroutine(StopEveryCoroutine());
+		StopEveryCoroutine();
 		Votes.OnStateChange();
 		CheckSupport.Cleanup();
 
@@ -336,9 +336,8 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 	}
 
-	private IEnumerator StopEveryCoroutine()
+	private void StopEveryCoroutine()
 	{
-		yield return new WaitForSeconds(2.0f);
 		_coroutinesToStart.Enqueue(FindHoldables());
 		CoroutineQueue.StopQueue();
 		CoroutineQueue.CancelFutureSubcoroutines();
