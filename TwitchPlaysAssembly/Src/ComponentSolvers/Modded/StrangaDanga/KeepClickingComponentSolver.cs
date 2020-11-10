@@ -21,7 +21,7 @@ public class KeepClickingComponentSolver : ReflectionComponentSolver
 			yield return null;
 			yield return DoInteractionClick(_submitButton, 0);
 		}
-		else if (inputCommand.StartsWith("click"))
+		else if (inputCommand.StartsWith("click") && split.Length == 2)
 		{
 			if (!int.TryParse(split[1], out _)) yield break;
 			if (int.Parse(split[1]) < 1 || int.Parse(split[1]) > 3) yield break;
