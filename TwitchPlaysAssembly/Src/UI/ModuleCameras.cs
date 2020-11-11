@@ -108,12 +108,9 @@ public class ModuleCameras : MonoBehaviour
 			CameraInstance.transform.SetParent(t, false);
 			CameraInstance.gameObject.SetActive(true);
 
-			DebugHelper.Log($"Component's layer is {Module.BombComponent.gameObject.layer}. Camera's bitmask is {unchecked((uint) CameraInstance.cullingMask):X8}");
-
 			Vector3 lossyScale = CameraInstance.transform.lossyScale;
 			CameraInstance.nearClipPlane = 1.0f * lossyScale.y;
 			CameraInstance.farClipPlane = 3.0f * lossyScale.y;
-			DebugHelper.Log($"Camera's lossyScale is {lossyScale}; Setting near plane to {CameraInstance.nearClipPlane}, far plane to {CameraInstance.farClipPlane}");
 
 			// Light sources in modules don’t show in the camera if we change the layer immediately.
 			// Delaying that by 1 frame by using a coroutine seems to fix that.

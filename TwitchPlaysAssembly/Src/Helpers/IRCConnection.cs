@@ -883,7 +883,7 @@ public class IRCConnection : MonoBehaviour
 		}
 		catch (Exception exception)
 		{
-			DebugHelper.LogException(exception, "An exception occured trying to connect to IRC:");
+			DebugHelper.LogException(exception, "An exception occurred trying to connect to IRC:");
 			AddTextToHoldable("[IRC:Disconnect] Connection failed.");
 			_state = IRCConnectionState.Disconnected;
 		}
