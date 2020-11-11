@@ -1330,6 +1330,12 @@
         <member name="F:ModuleCameras.ModuleCamera.CameraLayer">
             <summary>Camera layer used when interactive mode is NOT enabled.</summary>
         </member>
+        <member name="M:ModuleCameras.UpdateAutomaticCameraWall">
+            <summary>Updates the state of the camera wall.
+            7 or more claimed modules and input is disabled, enables the camera wall.
+            4 or fewer claimed modules, or 6 or fewer unsolved modules in total, disables the camera wall.</summary>
+            <returns>Whether or not the camera wall just got enabled because of the update.</returns>
+        </member>
         <member name="T:TwitchBomb">
             <summary>Encapsulates a bomb (of which there may be multiple in a game).</summary>
         </member>

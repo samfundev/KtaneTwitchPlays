@@ -582,6 +582,10 @@ public class ModuleCameras : MonoBehaviour
 		DebugHelper.Log("Camera wall disabled");
 	}
 
+	/// <summary>Updates the state of the camera wall.
+	/// 7 or more claimed modules and input is disabled, enables the camera wall.
+	/// 4 or fewer claimed modules, or 6 or fewer unsolved modules in total, disables the camera wall.</summary>
+	/// <returns>Whether or not the camera wall just got enabled because of the update.</returns>
 	public bool UpdateAutomaticCameraWall()
 	{
 		if (!AutomaticCameraWallEnabled)

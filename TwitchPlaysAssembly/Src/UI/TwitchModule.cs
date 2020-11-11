@@ -412,6 +412,9 @@ public class TwitchModule : MonoBehaviour
 			TakeInProgress = null;
 			TakeUser = null;
 		}
+
+		// The camera wall needs to be updated whenever a module is solved.
+		ModuleCameras.Instance.UpdateAutomaticCameraWall();
 	}
 
 	private void OnDestroy() => StopAllCoroutines();
@@ -715,6 +718,9 @@ public class TwitchModule : MonoBehaviour
 			Image claimedDisplay = ClaimedUserMultiDecker;
 			if (value != null) claimedDisplay.transform.Find("Username").GetComponent<Text>().text = value;
 			claimedDisplay.gameObject.SetActive(value != null);
+
+			// The camera wall needs to be updated whenever a module's claim changes.
+			ModuleCameras.Instance.UpdateAutomaticCameraWall();
 		}
 		get => _playerName;
 	}
