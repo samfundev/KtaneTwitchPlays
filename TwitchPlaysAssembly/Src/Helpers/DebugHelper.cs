@@ -12,10 +12,17 @@ public static class DebugHelper
 
 	public static void LogError(params object[] args) => Debug.LogError(LogPrefix + args.Select(Convert.ToString).Join(" "));
 
+	private static float lastException;
 	public static void LogException(Exception ex, string message = "An exception has occurred:")
 	{
 		Log(message);
 		Debug.LogException(ex);
+
+		// Avoid spamming this message in chat by only posting it at most once every 5 minutes.
+		if (Time.time - lastException >= 5 * 60)
+			IRCConnection.SendMessage("Something has caused an exception to occur. Please report this to the TP developers and include the logfile for more information.");
+
+		lastException = Time.time;
 	}
 
 	private static string LogPrefix => $"[TwitchPlays] [{CallingType}] ";
