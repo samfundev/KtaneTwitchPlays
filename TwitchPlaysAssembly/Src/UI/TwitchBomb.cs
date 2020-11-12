@@ -448,7 +448,7 @@ public class TwitchBomb : MonoBehaviour
 				yield break;
 		}
 
-		selectable.OnDefocus();
+		selectable.OnDefocus?.Invoke();
 
 		Bomb.GetComponent<FloatingHoldable>().Defocus(false, false);
 		if (deselect) selectable.HandleDeselect();
