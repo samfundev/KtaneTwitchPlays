@@ -232,7 +232,6 @@ public class TwitchPlaysService : MonoBehaviour
 		if (!transform.gameObject.activeInHierarchy)
 			return;
 
-		StopEveryCoroutine();
 		Votes.OnStateChange();
 		CheckSupport.Cleanup();
 
@@ -303,6 +302,8 @@ public class TwitchPlaysService : MonoBehaviour
 
 				break;
 		}
+
+		StopEveryCoroutine();
 	}
 
 	public Dictionary<string, TwitchHoldable> Holdables = new Dictionary<string, TwitchHoldable>();

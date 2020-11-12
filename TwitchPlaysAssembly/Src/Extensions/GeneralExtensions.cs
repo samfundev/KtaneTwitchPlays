@@ -282,6 +282,8 @@ public static class GeneralExtensions
 
 	public static T Traverse<T>(this GameObject currentObject, params string[] names) => currentObject.Traverse(names).GetComponent<T>();
 
+	public static string GetModuleID(this BombComponent bombComponent) => bombComponent.GetComponent<KMBombModule>()?.ModuleType ?? bombComponent.GetComponent<KMNeedyModule>()?.ModuleType ?? bombComponent.ComponentType.ToString();
+
 	public static Rect Lerp(this Rect start, Rect end, float alpha)
 	{
 		var vStart = new Vector4(start.x, start.y, start.width, start.height);

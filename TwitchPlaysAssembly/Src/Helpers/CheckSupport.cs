@@ -33,7 +33,7 @@ public static class CheckSupport
 			alertProgressBar = alert.transform.Find("ProgressBar");
 
 			var json = JsonConvert.DeserializeObject<WebsiteJSON>(request.downloadHandler.text);
-			yield return TestComponents(GetUntestedComponents(json));
+			yield return TestComponents(GetUntestedComponents(json), GetNameMap(json));
 
 			Object.Destroy(alert);
 		}
@@ -47,14 +47,14 @@ public static class CheckSupport
 		gameObjects.Clear();
 	}
 
-	static IEnumerator TestComponents(IEnumerable<BombComponent> untestedComponents)
+	static IEnumerator TestComponents(IEnumerable<BombComponent> untestedComponents, Dictionary<string, string> nameMap)
 	{
 		GameObject fakeModule = new GameObject();
 		gameObjects.Add(fakeModule);
 		TwitchModule module = fakeModule.AddComponent<TwitchModule>();
 		module.enabled = false;
 
-		List<string> unsupportedModules = new List<string>();
+		HashSet<string> unsupportedModules = new HashSet<string>();
 		Dictionary<string, bool> supportStatus = new Dictionary<string, bool>();
 		ComponentSolverFactory.SilentMode = true;
 
@@ -95,6 +95,24 @@ public static class CheckSupport
 		ComponentSolverFactory.SilentMode = false;
 		ModuleData.WriteDataToFile();
 		Object.Destroy(fakeModule);
+
+		// Always disable the modules from the spreadsheet
+		var disabledSheet = new GoogleSheet("https://spreadsheets.google.com/feeds/list/1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA/3/public/values?alt=json", "modulename");
+		yield return disabledSheet;
+
+		if (disabledSheet.Success)
+		{
+			foreach (var row in disabledSheet.GetRows())
+			{
+				if (!nameMap.TryGetValue(row["modulename"], out string moduleID))
+				{
+					DebugHelper.Log($"Couldn't map \"{row["modulename"]}\" to a module ID when disabling modules from the spreadsheet.");
+					continue;
+				}
+
+				unsupportedModules.Add(moduleID);
+			}
+		}
 
 		// Using the list of unsupported module IDs stored in unsupportedModules, make a Mod Selector profile.
 		string profilesPath = Path.Combine(Application.persistentDataPath, "ModProfiles");
@@ -177,7 +195,7 @@ public static class CheckSupport
 		// Test loaded mods
 		foreach (var module in validModules)
 		{
-			DebugHelper.Log($"Loading module \"{module.Name}\" to test compatiablity...");
+			DebugHelper.Log($"Loading module \"{module.Name}\" to test compatibility...");
 			alertText.text = $"Testing compatibility of:\n\"{module.Name}\"";
 			alertProgressBar.localScale = new Vector3((float) progress / total, 1, 1);
 
@@ -329,5 +347,22 @@ public static class CheckSupport
 
 			return null;
 		}
+	}
+
+	static Dictionary<string, string> GetNameMap(WebsiteJSON json)
+	{
+		if (typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is not Dictionary<string, Mod> loadedMods)
+			return null;
+
+		var bombComponents = loadedMods.Values.SelectMany(mod => mod.GetModObjects<BombComponent>());
+
+		var nameMap = new Dictionary<string, string>();
+		foreach (var module in json.KtaneModules)
+			nameMap[module.Name] = module.ModuleID;
+
+		foreach (var bombComponent in bombComponents)
+			nameMap[bombComponent.GetModuleDisplayName()] = bombComponent.GetModuleID();
+
+		return nameMap;
 	}
 }
