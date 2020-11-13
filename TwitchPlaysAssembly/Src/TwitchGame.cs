@@ -84,7 +84,7 @@ public class TwitchGame : MonoBehaviour
 			System.Threading.Thread.Sleep(TwitchPlaySettings.data.BombLiveMessageDelay * 1000);
 		}
 
-		TwitchPlaysService.Instance.SetHeaderVisbility(true);
+		StartCoroutine(TwitchPlaysService.Instance.AnimateHeaderVisibility(true));
 
 		IRCConnection.SendMessage(Bombs.Count == 1
 			? TwitchPlaySettings.data.BombLiveMessage
@@ -272,12 +272,12 @@ public class TwitchGame : MonoBehaviour
 		Leaderboard.Instance.BombsAttempted++;
 		// ReSharper disable once DelegateSubtraction
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
-		TwitchPlaysService.Instance.SetHeaderVisbility(false);
+		ParentService.AddStateCoroutine(ParentService.AnimateHeaderVisibility(false));
 
 		LogUploader.Instance.GetBombUrl();
-		ParentService.StartCoroutine(DelayBombResult());
+		ParentService.AddStateCoroutine(DelayBombResult());
 		if (!claimsEnabled)
-			ParentService.StartCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
+			ParentService.AddStateCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
 
 		if (ModuleCameras != null)
 			ModuleCameras.StartCoroutine(ModuleCameras.DisableCameras());
@@ -320,7 +320,7 @@ public class TwitchGame : MonoBehaviour
 	public IEnumerator DelayBombResult()
 	{
 		yield return null;
-		ParentService.StartCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
+		ParentService.AddStateCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
 
 		foreach (var bomb in Bombs.Where(x => x != null))
 			Destroy(bomb.gameObject, 2.0f);

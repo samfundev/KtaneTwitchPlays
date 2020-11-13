@@ -648,12 +648,10 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 	}
 
-	public void SetHeaderVisbility(bool visible) => StartCoroutine(AnimateHeaderVisiblity(visible));
-
-	private IEnumerator AnimateHeaderVisiblity(bool visbile)
+	public IEnumerator AnimateHeaderVisibility(bool visible)
 	{
 		var startPosition = BombHeader.anchoredPosition;
-		var endPosition = new Vector2(0, visbile ? 0 : -24);
+		var endPosition = new Vector2(0, visible ? 0 : -24);
 		float startTime = Time.time;
 		float alpha = 0;
 
@@ -693,4 +691,7 @@ public class TwitchPlaysService : MonoBehaviour
 		foreach (var bomb in TwitchGame.Instance?.Bombs)
 			bomb.EdgeworkID.color = darkBand;
 	}
+
+	/// <summary>Adds a coroutine that will run when the state changes.</summary>
+	public void AddStateCoroutine(IEnumerator coroutine) => _coroutinesToStart.Enqueue(coroutine);
 }

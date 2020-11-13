@@ -1306,6 +1306,9 @@
         <member name="T:TwitchGame">
             <summary>Encapsulates an ongoing game, with all its bombs, module cameras, HUDs etc.</summary>
         </member>
+        <member name="M:TwitchPlaysService.AddStateCoroutine(System.Collections.IEnumerator)">
+            <summary>Adds a coroutine that will run when the state changes.</summary>
+        </member>
         <member name="F:CameraPriority.Unviewed">
             <summary>This module was explicitly unviewed OR never interacted with.</summary>
         </member>
