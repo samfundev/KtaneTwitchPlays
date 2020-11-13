@@ -19,7 +19,11 @@ public class GoogleSheet : CustomYieldInstruction
 
 	public IEnumerable<Dictionary<string, string>> GetRows()
 	{
-		foreach (var entry in JObject.Parse(download.Text)["feed"]["entry"])
+		var entries = JObject.Parse(download.Text)["feed"]["entry"];
+		if (entries == null)
+			yield break;
+
+		foreach (var entry in entries)
 		{
 			var dictionary = new Dictionary<string, string>();
 			foreach (var row in rows)
