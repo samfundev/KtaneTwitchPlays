@@ -100,7 +100,7 @@ public static class CheckSupport
 		var disabledSheet = new GoogleSheet("https://spreadsheets.google.com/feeds/list/1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA/3/public/values?alt=json", "modulename");
 		yield return disabledSheet;
 
-		if (disabledSheet.Success)
+		if (disabledSheet.Success && TwitchPlaySettings.data.AllowSheetDisabledModules)
 		{
 			foreach (var row in disabledSheet.GetRows())
 			{

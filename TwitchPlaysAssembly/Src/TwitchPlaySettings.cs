@@ -63,6 +63,7 @@ public class TwitchPlaySettingsData
 	public int StrikePenalty = 6;
 	public int ModuleToStrikeRatio = 12;
 	public bool PacingEventsOnRunBomb = true;
+	public bool AllowSheetDisabledModules = true;
 
 	public bool EnableTimeModeForEveryone = false;
 	public float TimeModeStartingTime = 5;
