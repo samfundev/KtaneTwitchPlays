@@ -172,7 +172,7 @@ public static class CheckSupport
 		var modWorkshopPath = Path.GetFullPath(new[] { SteamDirectory, "steamapps", "workshop", "content", "341800" }.Aggregate(Path.Combine));
 		var validModules = json.KtaneModules.Where(module =>
 		{
-			if (module.TwitchPlays != null || module.SteamID == null)
+			if (module.TwitchPlays != null || module.SteamID == null || module.Type != "Widget")
 				return false;
 
 			var modPath = Path.Combine(modWorkshopPath, module.SteamID);
@@ -286,6 +286,7 @@ public static class CheckSupport
 		public string SteamID;
 		public string Name;
 		public string ModuleID;
+		public string Type;
 		public Dictionary<string, object> TwitchPlays;
 	}
 #pragma warning restore CS0649
