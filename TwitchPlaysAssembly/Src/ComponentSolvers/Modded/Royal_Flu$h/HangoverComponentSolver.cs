@@ -39,7 +39,7 @@ public class HangoverComponentSolver : ComponentSolver
 				switch (matchingOptions.Count())
 				{
 					case 0:
-						yield return $"sendtochaterror There is no item called \"{item}\".";
+						yield return $"sendtochaterror!f There is no item called \"{item}\".";
 						yield break;
 					case 1:
 						validOptions.Add(matchingOptions.First());
@@ -52,7 +52,7 @@ public class HangoverComponentSolver : ComponentSolver
 							break;
 						}
 
-						yield return $"sendtochaterror There are multiple items that match \"{item}\": {matchingOptions.Take(3).Join(", ")}.";
+						yield return $"sendtochaterror!f There are multiple items that match \"{item}\": {matchingOptions.Take(3).Join(", ")}.";
 						yield break;
 				}
 			}

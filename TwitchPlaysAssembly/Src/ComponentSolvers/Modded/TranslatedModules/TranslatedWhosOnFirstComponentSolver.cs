@@ -48,7 +48,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 				yield return null;
 				yield return buttonLabels.Any(label => label == " ")
 					? "sendtochaterror The module is not ready for input yet."
-					: $"sendtochaterror There isn't any label that contains \"{inputCommand.Replace("\u2003\u2003", "Literally Blank")}\".";
+					: $"sendtochaterror!f There isn't any label that contains \"{inputCommand.Replace("\u2003\u2003", "Literally Blank")}\".";
 				yield break;
 			}
 			yield return null;

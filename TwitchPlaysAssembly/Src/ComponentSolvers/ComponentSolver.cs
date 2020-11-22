@@ -537,18 +537,28 @@ public abstract class ComponentSolver
 
 	protected SendToTwitchChatResponse SendToTwitchChat(string message, string userNickName)
 	{
+		bool skipFormatting = false;
+		if (message.RegexMatch(out Match match2, @"^(\w+)(?:!f)? (.+)$"))
+		{
+			skipFormatting = true;
+			message = match2.Groups[1].Value + " " + match2.Groups[2].Value;
+		}
+
+		if (!skipFormatting)
+			message = EscapeFormatting(message);
+
 		// Within the messages, allow variables:
 		// {0} = user’s nickname
 		// {1} = Code (module number)
 		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9]+)?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
 		{
-			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(EscapeFormatting(match.Groups[2].Value), userNickName, Module.Code)));
+			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, skipFormatting ? match.Groups[2].Value : string.Format(match.Groups[2].Value, userNickName, Module.Code)));
 			return SendToTwitchChatResponse.InstantResponse;
 		}
 
 		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
 
-		string chatMsg = string.Format(EscapeFormatting(match.Groups[2].Value), userNickName, Module.Code);
+		string chatMsg = skipFormatting ? match.Groups[2].Value : string.Format(match.Groups[2].Value, userNickName, Module.Code);
 
 		switch (match.Groups[1].Value)
 		{
@@ -595,7 +605,7 @@ public abstract class ComponentSolver
 			var invalidCommand = Array.Find(commandRoutines, routine => !routine.MoveNext());
 			if (invalidCommand != null)
 			{
-				yield return "sendtochaterror The command \"" + chainedCommands[Array.IndexOf(commandRoutines, invalidCommand)] + "\" is invalid.";
+				yield return "sendtochaterror!f The command \"" + chainedCommands[Array.IndexOf(commandRoutines, invalidCommand)] + "\" is invalid.";
 				yield break;
 			}
 

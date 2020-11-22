@@ -102,7 +102,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 			if (result)
 				yield return responseCoroutine.Current;
 			else if (exception != null)
-				yield return $"sendtochaterror {exception}";
+				yield return $"sendtochaterror!f {exception}";
 		}
 	}
 }

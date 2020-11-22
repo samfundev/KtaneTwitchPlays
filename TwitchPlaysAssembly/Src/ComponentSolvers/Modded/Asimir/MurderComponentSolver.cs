@@ -75,7 +75,7 @@ public class MurderComponentSolver : ComponentSolver
 			yield return null;
 			if (!NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase)))
 			{
-				yield return $"sendtochat {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
+				yield return $"sendtochat!f {string.Format(NameMisspelled[catIndex], value, string.Join(", ", NameSpellings[catIndex]))}";
 				continue;
 			}
 

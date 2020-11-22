@@ -73,7 +73,7 @@ public class SimpleModComponentSolver : ComponentSolver
 
 		if (exception != null)
 		{
-			yield return $"sendtochaterror {exception}";
+			yield return $"sendtochaterror!f {exception}";
 			yield break;
 		}
 

@@ -110,12 +110,12 @@ public class CoffeebucksComponentSolver : ComponentSolver
 			switch (matchingOptions.Count())
 			{
 				case 0:
-					yield return $"sendtochaterror None of the coffees match \"{target}\"";
+					yield return $"sendtochaterror!f None of the coffees match \"{target}\"";
 					yield break;
 				case 1:
 					break;
 				default:
-					yield return $"sendtochaterror Multiple coffees match \"{target}\": {matchingOptions.Take(3).Join(", ")}";
+					yield return $"sendtochaterror!f Multiple coffees match \"{target}\": {matchingOptions.Take(3).Join(", ")}";
 					yield break;
 			}
 

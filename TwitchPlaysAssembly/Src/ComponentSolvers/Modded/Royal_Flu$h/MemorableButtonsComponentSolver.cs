@@ -30,7 +30,7 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 		{
 			if (!interButtonOrder.ContainsKey(command))
 			{
-				yield return $"sendtochaterror I don't know what button '{command}' is. (Note: You're not at the solving stage yet.)";
+				yield return $"sendtochaterror!f I don't know what button '{command}' is. (Note: You're not at the solving stage yet.)";
 				yield break;
 			}
 
@@ -48,7 +48,7 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 			{
 				if (!finalButtonOrder.ContainsKey(sCmd))
 				{
-					yield return $"sendtochaterror I don't know what button '{sCmd}' is. (Note: You're at the solving stage.)";
+					yield return $"sendtochaterror!f I don't know what button '{sCmd}' is. (Note: You're at the solving stage.)";
 					yield break;
 				}
 

@@ -30,7 +30,7 @@ public class WhosOnFirstComponentSolver : ComponentSolver
 			if (!Phrases.Contains(inputCommand))
 			{
 				yield return null;
-				yield return $"sendtochaterror The word \"{inputCommand}\" isn't a valid word.";
+				yield return $"sendtochaterror!f The word \"{inputCommand}\" isn't a valid word.";
 				yield break;
 			}
 

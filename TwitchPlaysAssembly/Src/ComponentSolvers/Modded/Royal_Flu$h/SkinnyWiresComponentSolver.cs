@@ -29,7 +29,7 @@ public class SkinnyWiresComponentSolver : ComponentSolver
 			var wire = selectables[letter * 3 + number];
 			if (!wire.gameObject.activeSelf)
 			{
-				yield return $"sendtochaterror There is no wire that goes between {split[1][0]} and {split[1][0]}.";
+				yield return $"sendtochaterror!f There is no wire that goes between {split[1][0]} and {split[1][0]}.";
 				yield break;
 			}
 

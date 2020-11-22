@@ -41,11 +41,11 @@ public class SeaShellsComponentSolver : ComponentSolver
 							fixedText = matchingLabels.First();
 							break;
 						case 0:
-							yield return $"sendtochaterror There isn't any label that contains \"{text}\".";
+							yield return $"sendtochaterror!f There isn't any label that contains \"{text}\".";
 							yield break;
 						default:
 							yield return
-								$"sendtochaterror There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
+								$"sendtochaterror!f There are multiple labels that contain \"{text}\": {string.Join(", ", matchingLabels.ToArray())}.";
 							yield break;
 					}
 				}
