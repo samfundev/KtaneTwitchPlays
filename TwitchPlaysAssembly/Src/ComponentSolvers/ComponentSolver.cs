@@ -498,6 +498,36 @@ public abstract class ComponentSolver
 	#endregion
 
 	#region Protected Helper Methods
+	static string EscapeFormatting(string text)
+	{
+		int index = -1;
+		int count = 0;
+		for (int i = 0; i < text.Length; i++)
+		{
+			if (text[i] == '{')
+			{
+				count++;
+
+				if (count == 1)
+					index = i;
+			}
+			else if (text[i] == '}')
+			{
+				count--;
+
+				if (count == -1)
+					index = i;
+			}
+		}
+
+		if (index != -1 && count % 2 == 1)
+		{
+			text = text.Substring(0, index) + (count > 0 ? "{" : "}") + text.Substring(index);
+		}
+
+		return text;
+	}
+
 	protected enum SendToTwitchChatResponse
 	{
 		InstantResponse,
@@ -512,13 +542,13 @@ public abstract class ComponentSolver
 		// {1} = Code (module number)
 		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9]+)?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
 		{
-			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(match.Groups[2].Value, userNickName, Module.Code)));
+			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, string.Format(EscapeFormatting(match.Groups[2].Value), userNickName, Module.Code)));
 			return SendToTwitchChatResponse.InstantResponse;
 		}
 
 		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
 
-		string chatMsg = string.Format(match.Groups[2].Value, userNickName, Module.Code);
+		string chatMsg = string.Format(EscapeFormatting(match.Groups[2].Value), userNickName, Module.Code);
 
 		switch (match.Groups[1].Value)
 		{
