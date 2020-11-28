@@ -87,15 +87,24 @@ public class ModuleInformation
 					methods.Add(new BaseScore(number));
 					break;
 
-				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
-				case 2 when split[0] == "S":
-					// Multiply the score by two because the default DynamicScorePercentage is 0.5.
-					methods.Add(new PerModule(number, module));
+				case 2 when split[0] == "T":
+					methods.Add(new ClaimTime(number, module));
+					break;
+
+				// D is for needy deactivations.
+				case 2 when split[0] == "D":
+					methods.Add(new Deactivations(number, module));
 					break;
 
 				// PPA is for point per action modules which can be parsed in some cases.
 				case 2 when split[0] == "PPA":
 					methods.Add(new PerAction(number));
+					break;
+
+				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
+				case 2 when split[0] == "S":
+					// Multiply the score by two because the default DynamicScorePercentage is 0.5.
+					methods.Add(new PerModule(number, module));
 					break;
 
 				default:

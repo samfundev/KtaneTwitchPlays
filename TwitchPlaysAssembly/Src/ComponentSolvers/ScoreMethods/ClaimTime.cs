@@ -10,6 +10,9 @@ namespace TwitchPlays.ScoreMethods
 
 		public ClaimTime(float points, TwitchModule module) : base(points)
 		{
+			if (module == null)
+				return;
+
 			this.module = module;
 
 			module.StartCoroutine(TrackModule());
