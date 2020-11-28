@@ -19,7 +19,7 @@ public static class DebugHelper
 		Debug.LogException(ex);
 
 		// Avoid spamming this message in chat by only posting it at most once every 5 minutes.
-		if (Time.time - lastException >= 5 * 60)
+		if (Time.time - lastException >= 5 * 60 || lastException == 0)
 			IRCConnection.SendMessage("Something has caused an exception to occur. Please report this to the TP developers and include the logfile for more information.");
 
 		lastException = Time.time;
