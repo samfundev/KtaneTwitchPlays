@@ -159,6 +159,10 @@ public class CoroutineQueue : MonoBehaviour
 
 				if (!result)
 				{
+					// The force solve queue can be cleared when the last module is solved.
+					if (_forceSolveQueue.Count == 0)
+						break;
+
 					if (_forceSolveQueue.First.Value.Count > 1)
 						_forceSolveQueue.First.Value.Pop();
 					else
