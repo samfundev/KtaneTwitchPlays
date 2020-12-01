@@ -16,7 +16,7 @@ public class EmojiMathComponentSolver : ComponentSolver
 	{
 		string[] commands = inputCommand.ToLowerInvariant().Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-		if (commands.Length != 2 || commands[0] != "submit") yield break;
+		if (commands.Length != 2 || commands[0] != "submit" || !int.TryParse(commands[1], out int _)) yield break;
 		List<int> buttonIndexes = new List<int>();
 		bool negative = false;
 
