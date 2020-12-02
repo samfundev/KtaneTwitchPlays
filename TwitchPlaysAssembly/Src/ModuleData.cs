@@ -54,7 +54,7 @@ public class ModuleInformation
 	public static List<ScoreMethod> ConvertScoreString(string scoreString, TwitchModule module)
 	{
 		// UN and T is for unchanged and temporary score which are read normally.
-		scoreString = Regex.Replace(scoreString, @"(?:UN )?(\d+)T?", "$1");
+		scoreString = Regex.Replace(scoreString, "(UN|T)", "");
 
 		var methods = new List<ScoreMethod>();
 		foreach (var factor in scoreString.SplitFull("+"))
