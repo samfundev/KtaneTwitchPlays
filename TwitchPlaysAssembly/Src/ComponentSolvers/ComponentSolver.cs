@@ -538,7 +538,7 @@ public abstract class ComponentSolver
 	protected SendToTwitchChatResponse SendToTwitchChat(string message, string userNickName)
 	{
 		bool skipFormatting = false;
-		if (message.RegexMatch(out Match match2, @"^(\w+)(?:!f)? (.+)$"))
+		if (message.RegexMatch(out Match match2, @"^(\w+)(?:!f) (.+)$"))
 		{
 			skipFormatting = true;
 			message = match2.Groups[1].Value + " " + match2.Groups[2].Value;
