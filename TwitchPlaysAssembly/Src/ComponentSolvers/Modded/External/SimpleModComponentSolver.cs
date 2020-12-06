@@ -56,8 +56,6 @@ public class SimpleModComponentSolver : ComponentSolver
 		}
 		catch (Exception ex)
 		{
-			DebugHelper.LogException(ex,
-				$"An exception occurred while trying to invoke {ProcessMethod?.DeclaringType?.FullName}.{ProcessMethod.Name}; the command invocation will not continue.");
 			loop:
 			switch (ex)
 			{
