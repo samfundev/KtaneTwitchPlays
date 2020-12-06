@@ -339,7 +339,7 @@ static class ModuleCommands
 
 	public static IEnumerator Tilt(TwitchModule module, object yield, string direction)
 	{
-		static float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
+		float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
 
 		Dictionary<string[], int> directionNames = new Dictionary<string[], int>()
 		{

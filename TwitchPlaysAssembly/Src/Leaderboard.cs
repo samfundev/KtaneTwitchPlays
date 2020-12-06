@@ -579,5 +579,5 @@ public class Leaderboard
 	public static string usersSavePath = "TwitchPlaysUsers.xml";
 	public static string statsSavePath = "TwitchPlaysStats.json";
 
-	public static Leaderboard Instance => _instance ??= new Leaderboard();
+	public static Leaderboard Instance => _instance ?? (_instance = new Leaderboard());
 }

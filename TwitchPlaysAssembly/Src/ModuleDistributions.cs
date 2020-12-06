@@ -179,24 +179,39 @@ public sealed class DistributionPool : ISerializable
 	{
 		if (moduleInfo.IsMod)
 			return moduleInfo.ModuleId;
-		return moduleInfo.ModuleType switch
+		switch (moduleInfo.ModuleType)
 		{
-			KMComponentPool.ComponentTypeEnum.Wires => "WireSetComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Keypad => "KeypadComponentSolver",
-			KMComponentPool.ComponentTypeEnum.BigButton => "ButtonComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Memory => "MemoryComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Simon => "SimonComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Venn => "VennWireComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Morse => "MorseCodeComponentSolver",
-			KMComponentPool.ComponentTypeEnum.WireSequence => "WireSequenceComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Password => "PasswordComponentSolver",
-			KMComponentPool.ComponentTypeEnum.Maze => "InvisibleWallsComponentSolver",
-			KMComponentPool.ComponentTypeEnum.WhosOnFirst => "WhosOnFirstComponentSolver",
-			KMComponentPool.ComponentTypeEnum.NeedyVentGas => "NeedyVentComponentSolver",
-			KMComponentPool.ComponentTypeEnum.NeedyCapacitor => "NeedyDischargeComponentSolver",
-			KMComponentPool.ComponentTypeEnum.NeedyKnob => "NeedyKnobComponentSolver",
-			_ => moduleInfo.ModuleId,
-		};
+			case KMComponentPool.ComponentTypeEnum.Wires:
+				return "WireSetComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Keypad:
+				return "KeypadComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.BigButton:
+				return "ButtonComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Memory:
+				return "MemoryComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Simon:
+				return "SimonComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Venn:
+				return "VennWireComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Morse:
+				return "MorseCodeComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.WireSequence:
+				return "WireSequenceComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Password:
+				return "PasswordComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.Maze:
+				return "InvisibleWallsComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.WhosOnFirst:
+				return "WhosOnFirstComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.NeedyVentGas:
+				return "NeedyVentComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.NeedyCapacitor:
+				return "NeedyDischargeComponentSolver";
+			case KMComponentPool.ComponentTypeEnum.NeedyKnob:
+				return "NeedyKnobComponentSolver";
+			default:
+				return moduleInfo.ModuleId;
+		}
 	}
 
 	public KMComponentPool ToComponentPool(int count)

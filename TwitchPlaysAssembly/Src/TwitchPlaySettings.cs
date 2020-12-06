@@ -719,10 +719,12 @@ public static class TwitchPlaySettings
 		}
 		try
 		{
-			using StreamWriter file = new StreamWriter(Path.Combine(data.TPSharedFolder, data.TPSolveStrikeLog), true);
-			for (int i = 0; i < copies; i++)
+			using (StreamWriter file = new StreamWriter(Path.Combine(data.TPSharedFolder, data.TPSolveStrikeLog), true))
 			{
-				file.WriteLine(RecordMessageTone);
+				for (int i = 0; i < copies; i++)
+				{
+					file.WriteLine(RecordMessageTone);
+				}
 			}
 		}
 		catch (Exception ex)
@@ -1007,28 +1009,39 @@ public static class TwitchPlaySettings
 			case string settingString:
 				return $"Setting {settingField.Name}: {settingString.Replace("\n", "\\n")}";
 			case List<string> settingListString:
-				return split.Length switch
+				switch (split.Length)
 				{
-					2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count => $"Settings {settingField.Name}[{listIndex}]: {settingListString[listIndex]}",
-					2 when int.TryParse(split[1], out int listIndex) => $"Settings {settingField.Name}[{listIndex}]: Index out of range",
-					_ => $"Setting {settingField.Name}: Count = {settingListString.Count}",
+					case 2 when int.TryParse(split[1], out int listIndex) && listIndex >= 0 && listIndex < settingListString.Count:
+						return $"Settings {settingField.Name}[{listIndex}]: {settingListString[listIndex]}";
+					case 2 when int.TryParse(split[1], out int listIndex):
+						return $"Settings {settingField.Name}[{listIndex}]: Index out of range";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingListString.Count}";
 				};
 			case Dictionary<string, string> settingsDictionaryStringString:
-				return split.Length switch
+				switch (split.Length)
 				{
-					2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString) => $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n", "\\n")}",
-					2 when !string.IsNullOrEmpty(split[1]) => $"Setting {settingField.Name}[{split[1]}]: does not exist",
-					2 => $"Setting {settingField.Name}: The second item cannot be empty or null",
-					_ => $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}",
+					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringString.TryGetValue(split[1], out string settingsDssString):
+						return $"Setting {settingField.Name}[{split[1]}]: {settingsDssString.Replace("\n", "\\n")}";
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
+					case 2:
+						return $"Setting {settingField.Name}: The second item cannot be empty or null";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}";
 				};
 			case Dictionary<string, bool> settingsDictionaryStringBool:
-				return split.Length switch
+				switch (split.Length)
 				{
-					2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDsbBool) => $"Setting {settingField.Name}[{split[1]}]: {settingsDsbBool}",
-					2 when !string.IsNullOrEmpty(split[1]) => $"Setting {settingField.Name}[{split[1]}]: does not exist",
-					2 => $"Setting {settingField.Name}: The second item cannot be empty or null",
-					_ => $"Setting {settingField.Name}: Count = {settingsDictionaryStringBool.Count}",
-				};
+					case 2 when !string.IsNullOrEmpty(split[1]) && settingsDictionaryStringBool.TryGetValue(split[1], out bool settingsDsbBool):
+						return $"Setting {settingField.Name}[{split[1]}]: {settingsDsbBool}";
+					case 2 when !string.IsNullOrEmpty(split[1]):
+						return $"Setting {settingField.Name}[{split[1]}]: does not exist";
+					case 2:
+						return $"Setting {settingField.Name}: The second item cannot be empty or null";
+					default:
+						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringBool.Count}";
+				}
 			case Dictionary<string, ModuleDistributions> settingsDictionaryStringModuleDistributions:
 				switch (split.Length)
 				{
