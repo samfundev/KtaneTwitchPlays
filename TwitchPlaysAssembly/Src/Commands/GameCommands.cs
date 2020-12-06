@@ -216,7 +216,7 @@ static class GameCommands
 			return;
 		}
 
-		static void checkAndWrap()
+		void checkAndWrap()
 		{
 			// We've reached the end, wrap back to the beginning.
 			if (unclaimedModuleIndex >= unclaimedModules.Count)
@@ -589,7 +589,8 @@ static class GameCommands
 	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = name?.Trim();
-		name ??= "";
+		if (name == null)
+			name = "";
 		var response = TwitchGame.Instance.CheckIfCall(false, now, user, name, out bool callChanged);
 		if (response != TwitchGame.CallResponse.Success)
 		{

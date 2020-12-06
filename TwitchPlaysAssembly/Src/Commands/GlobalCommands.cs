@@ -415,15 +415,36 @@ static class GlobalCommands
 						IRCConnection.SendMessage($"Module {moduleName} score string changed to: {module.scoreString}", user, !isWhisper);
 						break;
 					case "statuslight":
-						module.statusLightPosition = (changeTo.ToLowerInvariant()) switch
+						switch (changeTo.ToLowerInvariant())
 						{
-							"bl" or "bottomleft" or "bottom left" => StatusLightPosition.BottomLeft,
-							"br" or "bottomright" or "bottom right" => StatusLightPosition.BottomRight,
-							"tr" or "topright" or "top right" => StatusLightPosition.TopRight,
-							"tl" or "topleft" or "top left" => StatusLightPosition.TopLeft,
-							"c" or "center" => StatusLightPosition.Center,
-							_ => StatusLightPosition.Default,
-						};
+							case "bl":
+							case "bottomleft":
+							case "bottom left":
+								module.statusLightPosition = StatusLightPosition.BottomLeft;
+								break;
+							case "br":
+							case "bottomright":
+							case "bottom right":
+								module.statusLightPosition = StatusLightPosition.BottomRight;
+								break;
+							case "tr":
+							case "topright":
+							case "top right":
+								module.statusLightPosition = StatusLightPosition.TopRight;
+								break;
+							case "tl":
+							case "topleft":
+							case "top left":
+								module.statusLightPosition = StatusLightPosition.TopLeft;
+								break;
+							case "c":
+							case "center":
+								module.statusLightPosition = StatusLightPosition.Center;
+								break;
+							default:
+								module.statusLightPosition = StatusLightPosition.Default;
+								break;
+						}
 						IRCConnection.SendMessage($"Module {moduleName} status light position changed to: {module.statusLightPosition}", user, !isWhisper);
 						break;
 					case "module pin allowed":

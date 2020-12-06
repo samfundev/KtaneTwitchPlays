@@ -42,7 +42,7 @@ public static class UserAccess
 
 		public static UserAccessData Instance
 		{
-			get => _instance ??= new UserAccessData();
+			get => _instance ?? (_instance = new UserAccessData());
 			set => _instance = value;
 		}
 		private static UserAccessData _instance;
@@ -322,18 +322,27 @@ public static class UserAccess
 
 	public static string LevelToString(AccessLevel level)
 	{
-		return level switch
+		switch (level)
 		{
-			AccessLevel.Banned => "Banned",
-			AccessLevel.User => "User",
-			AccessLevel.NoPoints => "No Points",
-			AccessLevel.Defuser => "Defuser",
-			AccessLevel.Mod => "Moderator",
-			AccessLevel.Admin => "Admin",
-			AccessLevel.SuperUser => "Super User",
-			AccessLevel.Streamer => "Streamer",
-			_ => null,
-		};
+			case AccessLevel.Banned:
+				return "Banned";
+			case AccessLevel.User:
+				return "User";
+			case AccessLevel.NoPoints:
+				return "No Points";
+			case AccessLevel.Defuser:
+				return "Defuser";
+			case AccessLevel.Mod:
+				return "Moderator";
+			case AccessLevel.Admin:
+				return "Admin";
+			case AccessLevel.SuperUser:
+				return "Super User";
+			case AccessLevel.Streamer:
+				return "Streamer";
+			default:
+				return null;
+		}
 	}
 }
 

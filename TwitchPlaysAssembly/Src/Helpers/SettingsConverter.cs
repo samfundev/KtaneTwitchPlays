@@ -29,12 +29,15 @@ internal class ColorConverter : JsonConverter
 		if (parts.Any(x => x == null)) return existingValue;
 
 		float[] values = parts.Select(i => (int) i / 255f).ToArray();
-		return values.Length switch
+		switch (values.Length)
 		{
-			3 => new Color(values[0], values[1], values[2]),
-			4 => new Color(values[0], values[1], values[2], values[3]),
-			_ => existingValue,
-		};
+			case 3:
+				return new Color(values[0], values[1], values[2]);
+			case 4:
+				return new Color(values[0], values[1], values[2], values[3]);
+			default:
+				return existingValue;
+		}
 	}
 
 	public override bool CanConvert(Type objectType) => typeof(Color) == objectType;

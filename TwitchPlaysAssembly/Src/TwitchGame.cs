@@ -572,7 +572,7 @@ public class TwitchGame : MonoBehaviour
 		if (TwitchPlaySettings.data.EnableLetterCodes)
 		{
 			// Ignore initial “the” in module names
-			static string SanitizedName(TwitchModule handle) => Regex.Replace(handle.BombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
+			string SanitizedName(TwitchModule handle) => Regex.Replace(handle.BombComponent.GetModuleDisplayName(), @"^the\s+", "", RegexOptions.IgnoreCase);
 
 			// First, assign codes “naively”
 			var dic1 = new Dictionary<string, List<TwitchModule>>();

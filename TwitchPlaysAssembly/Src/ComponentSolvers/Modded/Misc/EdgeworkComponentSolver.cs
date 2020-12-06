@@ -15,13 +15,26 @@ public class EdgeworkComponentSolver : ComponentSolver
 
 	private static int? ButtonToIndex(string button)
 	{
-		return button switch
+		switch (button)
 		{
-			"left" or "l" or "1" => 0,
-			"middle" or "m" or "center" or "centre" or "c" or "2" => 1,
-			"right" or "r" or "3" => 2,
-			_ => null,
-		};
+			case "left":
+			case "l":
+			case "1":
+				return 0;
+			case "middle":
+			case "m":
+			case "center":
+			case "centre":
+			case "c":
+			case "2":
+				return 1;
+			case "right":
+			case "r":
+			case "3":
+				return 2;
+			default:
+				return null;
+		}
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

@@ -933,8 +933,8 @@ public static class ComponentSolverFactory
 				string rewardString = entry["gsx$bombreward"].Value<string>("$t");
 				// (Is allowed to be null or "")
 
-				static string normalize(string value) => value.ToLowerInvariant().Replace('’', '\'');
-				static bool equalNames(string nameA, string nameB) => normalize(nameA) == normalize(nameB);
+				string normalize(string value) => value.ToLowerInvariant().Replace('’', '\'');
+				bool equalNames(string nameA, string nameB) => normalize(nameA) == normalize(nameB);
 
 				string moduleID = null;
 				var bombComponent = ModManager.Instance.GetValue<Dictionary<string, BombComponent>>("loadedBombComponents").Values.FirstOrDefault(module => equalNames(module.GetModuleDisplayName(), moduleName));

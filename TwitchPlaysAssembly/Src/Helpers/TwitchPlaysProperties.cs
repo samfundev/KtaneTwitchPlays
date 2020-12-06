@@ -12,7 +12,7 @@
 
 	private static void SetTimeModeTimeLimit(object timeLimit)
 	{
-		if (timeLimit is not int intTimeLimit) return;
+		if (!(timeLimit is int intTimeLimit)) return;
 		TwitchPlaySettings.data.TimeModeStartingTime = intTimeLimit;
 		TwitchPlaySettings.WriteDataToFile();
 	}
