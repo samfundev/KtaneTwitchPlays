@@ -623,7 +623,7 @@ public class ModuleCameras : MonoBehaviour
 	}
 
 	readonly List<GameObject> edgeworkCameras = new List<GameObject>();
-	void SetupEdgeworkCameras()
+	public void SetupEdgeworkCameras()
 	{
 		foreach (GameObject edgeworkCamera in edgeworkCameras)
 			Destroy(edgeworkCamera);
@@ -633,6 +633,13 @@ public class ModuleCameras : MonoBehaviour
 		var widgetTypes = new[] { "BatteryWidget", "IndicatorWidget", "EncryptedIndicator", "NumberInd", "PortWidget", "DayTimeWidget", "TwoFactorWidget", "MultipleWidgets", null, "SerialNumber", "RuleSeedWidget" };
 		widgets.Sort((w1, w2) =>
 		{
+			var covered1 = w1.transform.Find("Cover(Clone)") != null;
+			var covered2 = w2.transform.Find("Cover(Clone)") != null;
+			if (covered1 && !covered2)
+				return -1;
+			else if (!covered1 && covered2)
+				return 1;
+
 			var i1 = widgetTypes.IndexOf(wt => wt != null && w1.GetComponent(wt) != null);
 			if (i1 == -1)
 				i1 = Array.IndexOf(widgetTypes, null);

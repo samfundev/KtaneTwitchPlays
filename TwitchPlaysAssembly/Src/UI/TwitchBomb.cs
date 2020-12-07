@@ -367,7 +367,7 @@ public class TwitchBomb : MonoBehaviour
 	const string WidgetQueryDay = "day";
 	const string WidgetQueryRandomTime = "time";
 
-	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => Bomb.WidgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<Dictionary<string, T>>);
+	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => MysteryWidgetShim.FilterQuery(queryKey, Bomb.WidgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<Dictionary<string, T>>));
 
 	public string FillEdgework()
 	{
@@ -379,6 +379,14 @@ public class TwitchBomb : MonoBehaviour
 			{ "ComponentVideo", "Component" },
 			{ "CompositeVideo", "Composite" }
 		};
+
+		// Mystery Widget
+		MysteryWidgetShim.ClearUnused();
+
+		foreach(GameObject cover in MysteryWidgetShim.Covers.Where(x => x != null))
+		{
+			edgework.Add("Hidden");
+		}
 
 		Dictionary<string, string> ruleSeed = QueryWidgets<string>("RuleSeedModifier").FirstOrDefault();
 		if (ruleSeed?.ContainsKey("seed") ?? false)
