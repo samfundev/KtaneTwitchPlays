@@ -175,8 +175,8 @@ public static class ModuleData
 							continue;
 
 						var value = field.GetValue(info);
-						if (field.Name == "scoreString" && fileInfo != null)
-							value = fileInfo.scoreString;
+						if (field.Name == "scoreString")
+							value = fileInfo?.scoreString;
 
 						dictionary[field.Name] = value;
 					}
