@@ -687,7 +687,10 @@ public class TwitchPlaysService : MonoBehaviour
 	{
 		var darkBand = Color.HSVToRGB(UiHue, .6f, .62f);
 		BombHeader.GetComponent<Image>().color = darkBand;
-		TwitchGame.ModuleCameras?.SetNotes();
+		var moduleCameras = TwitchGame.ModuleCameras;
+		if (moduleCameras != null)
+			moduleCameras.SetNotes();
+
 		foreach (var bomb in TwitchGame.Instance?.Bombs)
 			bomb.EdgeworkID.color = darkBand;
 	}
