@@ -95,6 +95,8 @@ public class TwitchPlaySettingsData
 	public int MinTimeLeftForClaims = 60;
 	public int MinUnsolvedModulesLeftForClaims = 3;
 
+	public float VSHPMultiplier = 5.0f;
+
 	public string IRCManagerBackgroundImage = Path.Combine(Application.persistentDataPath, "TwitchPlaysIRCManagerBackground.png");
 	public Color IRCManagerTextColor = new Color(1.00f, 0.44f, 0.00f);
 
@@ -298,6 +300,11 @@ public class TwitchPlaySettingsData
 	public string AwardHoldableStrike = "VoteNay Holdable !{0} got {1} strike{2}! {3} points from {4}{5} VoteNay";
 	public string AwardRewardStrike = "VoteNay Module {0} ({3}) got {1} strike{2}{4}! VoteNay";
 
+	public string AwardPPA = "{6} {0} has been {1} {2} point{3} from Module {4} ({5})! {6}";
+	public string AwardVSPPA = "{8} {0} has been {1} {2} point{3} from Module {4} ({5})! -{6} HP from {7}. {8}";
+	public string PosPPAEmote = "PJSugar";
+	public string NegPPAEmote = "PJSalt";
+
 	public string BombLiveMessage = "The next bomb is now live! Start sending your commands! MrDestructoid";
 	public string MultiBombLiveMessage = "The next set of bombs are now live! Start sending your commands! MrDestructoid";
 
@@ -402,7 +409,6 @@ public class TwitchPlaySettingsData
 	public string GiveBonusStrikes = "{0} awarded {1} strikes by {2}";
 
 	public string UnsubmittableAnswerPenalty = "{0}, the answer for module {1} ({2}) couldn't be submitted! You lose {3} point{4}, please only submit correct answers.";
-	public string PointsAwardedByModule = "{0} receives {1} point{2} from module {3} ({4})!";
 
 	public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
