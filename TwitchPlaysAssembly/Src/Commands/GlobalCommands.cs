@@ -589,6 +589,12 @@ static class GlobalCommands
 			IRCConnection.SendMessage($@"{user}, you have already been added to the next VSMode bomb.");
 			return;
 		}
+		if (TwitchGame.Instance.GoodPlayers.Contains(user) || TwitchGame.Instance.EvilPlayers.Contains(user))
+		{
+			string team = TwitchGame.Instance.GoodPlayers.Contains(user) ? "good" : "evil";
+			IRCConnection.SendMessage($@"{user}, you are already on the {team} team.");
+			return;
+		}
 		if (_inGame && !TwitchPlaySettings.data.VSModePlayerLockout)
 		{
 			AddVSPlayer(user);
