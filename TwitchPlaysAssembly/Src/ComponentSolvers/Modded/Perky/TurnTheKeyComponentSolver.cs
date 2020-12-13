@@ -56,7 +56,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		{
 			Module.BombComponent.GetComponent<KMBombModule>().HandleStrike();
 			keyAnimator.SetTrigger("WrongTurn");
-			keyAudio.PlaySoundAtTransform("WrongKeyTurnFK", Module.transform);
+			keyAudio.PlaySoundAtTransform("WrongKeyTurnFX", Module.transform);
 			yield return null;
 			if (!(TwitchPlaySettings.data.AllowTurnTheKeyEarlyLate || bypassSettings) || (bool) SolvedField.GetValue(Module.BombComponent.GetComponent(ComponentType)))
 			{
