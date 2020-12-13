@@ -283,7 +283,7 @@ public class TwitchGame : MonoBehaviour
 			ModuleCameras.StartCoroutine(ModuleCameras.DisableCameras());
 
 		// Award users who maintained modules.
-		var methods = Modules.SelectMany(module => module.ScoreMethods);
+		var methods = Modules.SelectMany(module => module.ScoreMethods).Where(method => method.Players.Count != 0);
 		var awardedPoints = new Dictionary<string, int>();
 		foreach (var player in methods.SelectMany(method => method.Players).Distinct())
 		{
