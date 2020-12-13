@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,6 +7,7 @@ public class StainedGlassComponentSolver : ComponentSolver
 	public StainedGlassComponentSolver(TwitchModule module) :
 		base(module)
 	{
+		component = module.BombComponent.GetComponent(componentType);
 		buttons = Module.BombComponent.GetComponent<KMSelectable>().Children;
 		order = new Dictionary<int, KMSelectable>()
 		{
@@ -65,6 +67,22 @@ public class StainedGlassComponentSolver : ComponentSolver
 			yield return DoInteractionClick(btntopress);
 		}
 	}
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		object[] panes = component.GetValue<object[]>("pane");
+
+		for (int i = 0; i < 25; i++)
+		{
+			if (!panes[i].GetValue<bool>("broken") && panes[i].GetValue<bool>("toBreak"))
+				yield return DoInteractionClick(buttons[i]);
+		}
+	}
+
+	private static readonly Type componentType = ReflectionHelper.FindType("StainedGlassScript");
+
+	private readonly object component;
 
 	private readonly KMSelectable[] buttons;
 	private readonly Dictionary<int, KMSelectable> order;

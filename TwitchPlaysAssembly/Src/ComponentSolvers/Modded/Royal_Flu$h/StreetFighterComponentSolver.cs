@@ -42,6 +42,30 @@ public class StreetFighterComponentSolver : ComponentSolver
 		}
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		if (!_component.GetValue<bool>("player1Selected"))
+		{
+			List<int> indices = new List<int>();
+			string must = _component.GetValue<string>("mustContain");
+			for (int i = 0; i < names.Length; i++)
+			{
+				if (names[i].Contains(must))
+					indices.Add(i);
+			}
+			int rand = UnityEngine.Random.Range(0, indices.Count);
+			DoInteractionHighlight(selectables[indices[rand]]);
+			yield return new WaitForSeconds(0.1f);
+			yield return DoInteractionClick(selectables[indices[rand]]);
+			yield return new WaitForSeconds(0.6f);
+		}
+		string correct = _component.GetValue<string>("correctOpponent");
+		DoInteractionHighlight(selectables[Array.IndexOf(names, correct)]);
+		yield return new WaitForSeconds(0.1f);
+		yield return DoInteractionClick(selectables[Array.IndexOf(names, correct)]);
+	}
+
 	private static readonly Type _componentType = ReflectionHelper.FindType("streetFighterScript");
 	private static readonly FieldInfo fighterButtonsField = _componentType.GetField("fighterButton", BindingFlags.Public | BindingFlags.Instance);
 

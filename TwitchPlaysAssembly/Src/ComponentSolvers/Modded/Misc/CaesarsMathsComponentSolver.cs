@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System;
 using UnityEngine;
 
 public class CaesarsMathsComponentSolver : ReflectionComponentSolver
@@ -11,7 +10,7 @@ public class CaesarsMathsComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (split.Length != 2 || !command.StartsWith("press")) yield break;
+		if (split.Length != 2 || !command.StartsWith("press ")) yield break;
 		if (!split[1].EqualsAny("left", "l", "middle", "m", "right", "r")) yield break;
 
 		yield return null;

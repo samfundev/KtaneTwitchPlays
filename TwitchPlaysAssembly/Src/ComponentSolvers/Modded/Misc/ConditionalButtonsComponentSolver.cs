@@ -11,7 +11,7 @@ public class ConditionalButtonsComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (split.Length < 2 || !command.StartsWith("press")) yield break;
+		if (split.Length < 2 || !command.StartsWith("press ")) yield break;
 		for (int i = 1; i < split.Length; i++)
 		{
 			if (!split[i].EqualsAny("tl", "tm", "tr", "bl", "bm", "br", "1", "2", "3", "4", "5", "6")) yield break;

@@ -10,6 +10,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 	public ForeignExchangeRatesComponentSolver(TwitchModule module) :
 		base(module)
 	{
+		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (MonoBehaviour[]) ButtonsField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
 	}
@@ -56,8 +57,21 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 		yield return DoInteractionClick(button);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!_component.GetValue<bool>("isReadyForInput")) yield return true;
+		int answer = _component.GetValue<int>("answer");
+		if (answer == 0)
+			yield return DoInteractionClick(_buttons[0]);
+		else
+			yield return DoInteractionClick(_buttons[answer - 1]);
+	}
+
 	private static readonly Type ComponentType = ReflectionHelper.FindType("ForeignExchangeRates");
 	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+
+	private readonly object _component;
 
 	private readonly MonoBehaviour[] _buttons;
 }

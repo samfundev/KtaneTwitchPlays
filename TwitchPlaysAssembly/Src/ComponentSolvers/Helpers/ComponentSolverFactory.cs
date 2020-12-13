@@ -99,6 +99,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["gatekeeper"] = module => new GatekeeperComponentSolver(module);
 		ModComponentSolverCreators["stateOfAggregation"] = module => new StateOfAggregationComponentSolver(module);
 		ModComponentSolverCreators["conditionalButtons"] = module => new ConditionalButtonsComponentSolver(module);
+		ModComponentSolverCreators["buttonOrder"] = module => new ButtonOrderComponentSolver(module);
+		ModComponentSolverCreators["strikeSolve"] = module => new StrikeSolveComponentSolver(module);
 		// Misc [ZekNikZ]
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
@@ -264,6 +266,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["conditionalButtons"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", scoreString = "1" };

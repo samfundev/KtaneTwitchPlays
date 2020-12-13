@@ -66,6 +66,40 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 		}
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+
+		while (_component.GetValue<int>("iterationsRemaining") > 0)
+		{
+			TextMesh[] labels = _component.GetValue<TextMesh[]>("buttonLabels");
+			string correct = _component.GetValue<string>("correctLabel");
+			for (int i = 0; i < 4; i++)
+			{
+				if (labels[i].text == correct)
+				{
+					yield return DoInteractionClick(interKeypad[i]);
+					break;
+				}
+			}
+		}
+		string code = _component.GetValue<string>("combinedCode");
+		int start = _component.GetValue<int>("solveStage");
+		int end = _component.GetValue<int>("totalStages");
+		for (int i = start; i < end; i++)
+		{
+			TextMesh[] solveLabels = _component.GetValue<TextMesh[]>("solveButtonLabels");
+			for (int j = 0; j < 12; j++)
+			{
+				if (solveLabels[j].text == code[i].ToString())
+				{
+					yield return DoInteractionClick(finalKeypad[j]);
+					break;
+				}
+			}
+		}
+	}
+
 	static private readonly string[] ordinals = new string[]
 	{
 		"1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",

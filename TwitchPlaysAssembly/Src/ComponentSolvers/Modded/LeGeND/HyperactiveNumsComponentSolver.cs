@@ -11,7 +11,7 @@ public class HyperactiveNumsComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (split.Length != 3 || !command.StartsWith("submit")) yield break;
+		if (split.Length != 3 || !command.StartsWith("submit ")) yield break;
 		if (!_colors.Contains(split[1])) yield break;
 		if (!split[2].EqualsAny("even", "odd")) yield break;
 

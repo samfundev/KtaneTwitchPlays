@@ -87,6 +87,18 @@ public class TheMatrixComponentSolver : ComponentSolver
 		yield return DoInteractionClick(correctButton);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		int corTime = _component.GetValue<int>("pressTime");
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
+
+		if (!_component.GetValue<bool>("outsideTheMatrix")) yield return DoInteractionClick(Switch);
+		while ((int) timerComponent.TimeRemaining % 10 != corTime) yield return true;
+		if (_component.GetValue<string>("correctPill") == "blue pill") yield return DoInteractionClick(bluePill, 0);
+		else yield return DoInteractionClick(redPill, 0);
+	}
+
 	private readonly KMSelectable Switch;
 	private readonly KMSelectable bluePill;
 	private readonly KMSelectable redPill;

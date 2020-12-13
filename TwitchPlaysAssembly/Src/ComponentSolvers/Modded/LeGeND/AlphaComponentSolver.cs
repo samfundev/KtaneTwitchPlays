@@ -9,7 +9,7 @@ public class AlphaComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (split.Length != 2 || !command.StartsWith("submit")) yield break;
+		if (split.Length != 2 || !command.StartsWith("submit ")) yield break;
 		if (!int.TryParse(split[1], out _)) yield break;
 		if (int.Parse(split[1]) < 0 || int.Parse(split[1]) > 20) yield break;
 		if (!_component.GetValue<bool>("active"))

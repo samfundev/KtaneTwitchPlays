@@ -10,7 +10,7 @@ public class MorseIdentificationComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (split.Length != 2 || !command.StartsWith("submit")) yield break;
+		if (split.Length != 2 || !command.StartsWith("submit ")) yield break;
 		if (!split[1].RegexMatch("^[a-z0-9]$")) yield break;
 		if (!_component.GetValue<bool>("needyactive"))
 		{

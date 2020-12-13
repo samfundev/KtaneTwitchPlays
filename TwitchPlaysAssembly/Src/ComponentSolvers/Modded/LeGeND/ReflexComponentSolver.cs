@@ -10,7 +10,7 @@ public class ReflexComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (split.Length != 2 || !command.StartsWith("press")) yield break;
+		if (split.Length != 2 || !command.StartsWith("press ")) yield break;
 		if (!int.TryParse(split[1], out _)) yield break;
 		if (int.Parse(split[1]) < 1 || int.Parse(split[1]) > 7) yield break;
 
