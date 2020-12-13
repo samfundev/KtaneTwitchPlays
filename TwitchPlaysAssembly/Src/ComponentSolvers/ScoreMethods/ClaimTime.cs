@@ -22,19 +22,17 @@ namespace TwitchPlays.ScoreMethods
 
 		private IEnumerator TrackModule()
 		{
-			var lastTime = Time.time;
 			while (!module.Solved)
 			{
-				if (module.Claimed && (needyComponent == null || needyComponent.State != NeedyComponent.NeedyStateEnum.Running))
+				if (module.Claimed && (needyComponent == null || needyComponent.State == NeedyComponent.NeedyStateEnum.Running))
 				{
 					var player = module.PlayerName;
 					if (!Scores.ContainsKey(player))
 						Scores[player] = 0;
 
-					Scores[player] += (Time.time - lastTime) * Points;
+					Scores[player] += Time.deltaTime * Points;
 				}
 
-				lastTime = Time.time;
 				yield return null;
 			}
 		}
