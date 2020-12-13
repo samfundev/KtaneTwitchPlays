@@ -1234,8 +1234,8 @@ public abstract class ComponentSolver
 			return;
 
 		float floatBonus = Module.RewardBonusMethods.Sum(method => {
-			var players = method.Players.ToArray();
-			return players.Length == 0 ? method.CalculateScore(null) : players.Sum(method.CalculateScore);
+			var players = method.Players;
+			return players.Count == 0 ? method.CalculateScore(null) : players.Sum(method.CalculateScore);
 		});
 
 		int rewardBonus = (floatBonus * OtherModes.ScoreMultiplier).RoundToInt();

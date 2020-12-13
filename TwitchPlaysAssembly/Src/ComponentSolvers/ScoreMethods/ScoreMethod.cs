@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TwitchPlays.ScoreMethods
 {
@@ -16,6 +17,6 @@ namespace TwitchPlays.ScoreMethods
 
 		public abstract string Description { get; }
 
-		public IEnumerable<string> Players => Scores.Keys;
+		public List<string> Players => Scores.Keys.ToList();
 	}
 }
