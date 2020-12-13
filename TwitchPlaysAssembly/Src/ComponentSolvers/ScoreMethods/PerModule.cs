@@ -27,6 +27,7 @@ namespace TwitchPlays.ScoreMethods
 					return module.Bomb.BombSolvableModules * Points * TwitchPlaySettings.data.DynamicScoreMultiplier;
 			}
 		}
+
 		public override string Description => Points.Pluralize("point") + " per module";
 	}
 }
