@@ -1033,9 +1033,11 @@ public abstract class ComponentSolver
 		int strikePenalty = -TwitchPlaySettings.data.StrikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		strikePenalty = (strikePenalty * OtherModes.ScoreMultiplier).RoundToInt();
 		bool VSAffect = OtherModes.VSModeOn && !string.IsNullOrEmpty(userNickName);
+		OtherModes.Team? teamDamaged = null;
+		int HPDamage = 0;
 		if (VSAffect)
 		{
-			CalculateVSHP(userNickName, strikePenalty, out OtherModes.Team? teamDamaged, out int HPDamage);
+			CalculateVSHP(userNickName, strikePenalty, out teamDamaged, out HPDamage);
 			messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsStrike, Code,
 				strikeCount == 1 ? "a" : strikeCount.ToString(), strikeCount == 1 ? "" : "s", "0", teamDamaged == OtherModes.Team.Good ? "the good team" : "the evil team",
 				string.IsNullOrEmpty(StrikeMessage) || StrikeMessageConflict ? "" : " caused by " + StrikeMessage, headerText, HPDamage, strikePenalty, userNickName));
@@ -1065,10 +1067,7 @@ public abstract class ComponentSolver
 			messageParts.Add($"Reward {(currentReward > 0 ? "reduced" : "increased")} to {currentReward} points.");
 
 		if (VSAffect)
-		{
-			CalculateVSHP(userNickName, strikePenalty, out OtherModes.Team? teamDamaged, out int HPDamage); //can't run it outside due to userNickName possibly being empty, I don't like running it again but it's the most efficient way
 			VSUpdate(teamDamaged, HPDamage);
-		}
 
 		if (OtherModes.TimeModeOn)
 		{
