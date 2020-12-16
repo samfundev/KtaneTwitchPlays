@@ -812,9 +812,9 @@ public class IRCConnection : MonoBehaviour
 	}
 
 	private int ConnectionTimeout => _state == IRCConnectionState.Connected ? 360000 : 30000;
+	private bool pingTimeoutTest = false; // Keeps track of if we are currently in a ping timeout test.
 	private void InputThreadMethod(NetworkStreamLineReader input)
 	{
-		bool pingTimeoutTest = false; // Keeps track of if we are currently in a ping timeout test.
 		Stopwatch stopwatch = new Stopwatch();
 		try
 		{
