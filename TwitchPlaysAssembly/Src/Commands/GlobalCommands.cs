@@ -1160,7 +1160,7 @@ static class GlobalCommands
 	/// <summary>Quits KTANE.</summary>
 	/// <restriction>SuperUser</restriction>
 	[Command("(?:quit|end)(?:game)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void QuitGame() => SceneManager.Instance.QuitGame();
+	public static void QuitGame() => SceneManager.Instance.Exit();
 
 	/// <name>Check For Updates</name>
 	/// <syntax>checkforupdates</syntax>
