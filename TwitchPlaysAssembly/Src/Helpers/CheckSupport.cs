@@ -33,7 +33,7 @@ public static class CheckSupport
 			alertProgressBar = alert.transform.Find("ProgressBar");
 
 			var json = JsonConvert.DeserializeObject<WebsiteJSON>(request.downloadHandler.text);
-			yield return TestComponents(GetUntestedComponents(json), GetNameMap(json));
+			yield return TestComponents(json);
 
 			Object.Destroy(alert);
 		}
@@ -47,8 +47,11 @@ public static class CheckSupport
 		gameObjects.Clear();
 	}
 
-	static IEnumerator TestComponents(IEnumerable<BombComponent> untestedComponents, Dictionary<string, string> nameMap)
+	static IEnumerator TestComponents(WebsiteJSON json)
 	{
+		IEnumerable<BombComponent> untestedComponents = GetUntestedComponents(json);
+		Dictionary<string, string> nameMap = GetNameMap(json);
+
 		GameObject fakeModule = new GameObject();
 		gameObjects.Add(fakeModule);
 		TwitchModule module = fakeModule.AddComponent<TwitchModule>();
@@ -112,6 +115,15 @@ public static class CheckSupport
 
 				unsupportedModules.Add(moduleID);
 			}
+		}
+
+		// Always disable modules that are not either marked as "Compatible" or "Untested"
+		foreach (var moduleInfo in json.KtaneModules)
+		{
+			if (moduleInfo.Compatibility.EqualsAny("Compatible", "Untested"))
+				continue;
+
+			unsupportedModules.Add(moduleInfo.ModuleID);
 		}
 
 		// Using the list of unsupported module IDs stored in unsupportedModules, make a Mod Selector profile.
@@ -287,6 +299,7 @@ public static class CheckSupport
 		public string Name;
 		public string ModuleID;
 		public string Type;
+		public string Compatibility;
 		public Dictionary<string, object> TwitchPlays;
 	}
 #pragma warning restore CS0649
