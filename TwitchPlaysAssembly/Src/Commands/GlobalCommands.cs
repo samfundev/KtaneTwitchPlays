@@ -1329,10 +1329,13 @@ static class GlobalCommands
 
 	private static void ShowRank(IList<Leaderboard.LeaderboardEntry> entries, string targetUser, string user, bool isWhisper, bool numeric = false)
 	{
-		entries = entries.Where(entry => entry != null).ToList();
-		if (entries.Count == 0)
+		if (entries != null)
 		{
-			entries = null;
+			entries = entries.Where(entry => entry != null).ToList();
+			if (entries.Count == 0)
+			{
+				entries = null;
+			}
 		}
 
 		if (entries == null && numeric)
