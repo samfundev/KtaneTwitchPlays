@@ -34,6 +34,9 @@ public class MysteryModuleShim : ComponentSolverShim
 			yield return null;
 		} while (mystified == null);
 
+		if (component.GetValue<bool>("failsolve"))
+			yield break;
+
 		CoveredModules[mystified.GetComponent<BombComponent>()] = component.GetValue<GameObject>("Cover");
 	}
 }
