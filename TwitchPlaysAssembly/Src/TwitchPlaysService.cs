@@ -63,6 +63,7 @@ public class TwitchPlaysService : MonoBehaviour
 	{
 		_data = GetComponent<TwitchPlaysServiceData>();
 		chatSimulator = gameObject.Traverse("UI", "ChatSimulator");
+		messageTemplate = chatSimulator.Traverse("ChatHistory", "ChatMessage");
 	}
 
 	private void Start()
@@ -167,8 +168,9 @@ public class TwitchPlaysService : MonoBehaviour
 	// Allow users to send commands from in game. Toggle the UI by typing "tpdebug".
 	private const string DebugSequence = "tpdebug";
 	private int _debugSequenceIndex;
-	private readonly Queue<string> chatMessages = new Queue<string>(11);
+	private readonly Queue<GameObject> chatMessages = new Queue<GameObject>(11);
 	private GameObject chatSimulator;
+	private GameObject messageTemplate;
 
 	private void SetupChatSimulator()
 	{
@@ -217,12 +219,16 @@ public class TwitchPlaysService : MonoBehaviour
 		if (message.IsWhisper)
 			return;
 
-		chatMessages.Enqueue($"<color={(string.IsNullOrEmpty(message.UserColorCode) ? message.UserColorCode : "white")}>{message.UserNickName}</color>: {message.Text}");
+		var chatHistory = chatSimulator.Traverse("ChatHistory");
+		var chatMessage = Instantiate(messageTemplate, chatHistory.transform, false);
+		chatMessage.GetComponent<Text>().text = $"<color={(string.IsNullOrEmpty(message.UserColorCode) ? message.UserColorCode : "white")}>{message.UserNickName}</color>: {message.Text}";
+		chatMessage.transform.SetSiblingIndex(chatMessages.Count);
+		chatMessage.SetActive(true);
+
+		chatMessages.Enqueue(chatMessage);
 
 		if (chatMessages.Count > 10)
-			chatMessages.Dequeue();
-
-		chatSimulator.Traverse<Text>("ChatHistory").text = chatMessages.Join("\n");
+			Destroy(chatMessages.Dequeue());
 	}
 
 	private void OnStateChange(KMGameInfo.State state)
