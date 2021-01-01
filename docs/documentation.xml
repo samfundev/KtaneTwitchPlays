@@ -712,6 +712,11 @@
             <summary>Adds or removes a module from a profile. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space. [profile] can be a partial profile name.</summary>
             <restriction>Admin</restriction>
         </member>
+        <member name="M:GlobalCommands.ProfileDisabledBy(System.String,System.String,System.Boolean)">
+            <name>Profile Disabled By</name>
+            <syntax>profile disabled by [name]</syntax>
+            <summary>Gets the modules disabled by a profile.</summary>
+        </member>
         <member name="M:GlobalCommands.ReloadData(System.String,System.Boolean)">
             <name>Reload Data</name>
             <syntax>reloaddata</syntax>

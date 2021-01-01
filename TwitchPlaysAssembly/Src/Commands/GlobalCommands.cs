@@ -1025,6 +1025,18 @@ static class GlobalCommands
 		);
 	}
 
+	/// <name>Profile Disabled By</name>
+	/// <syntax>profile disabled by [name]</syntax>
+	/// <summary>Gets the modules disabled by a profile.</summary>
+	[Command(@"profiles? +disabled +by +(.+)")]
+	public static void ProfileDisabledBy([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
+	{
+		var moduleIDs = ComponentSolverFactory.GetModuleInformation().Select(modInfo => modInfo.moduleID);
+		var profilePath = Path.Combine(ProfileHelper.ProfileFolder, filename + ".json");
+		var modules = ProfileHelper.GetProfile(profilePath).DisabledList.Where(modID => moduleIDs.Contains(modID));
+		IRCConnection.SendMessage($"Modules disabled by {profileString}: {modules.Join(", ")}");
+	});
+
 	[Command(@"holdables")]
 	public static void Holdables(string user, bool isWhisper) => IRCConnection.SendMessage("The following holdables are present: {0}", user, !isWhisper, TwitchPlaysService.Instance.Holdables.Keys.Select(x => $"!{x}").Join(", "));
 
