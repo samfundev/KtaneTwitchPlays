@@ -77,6 +77,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["troll"] = module => new TheTrollComponentSolver(module);
 		ModComponentSolverCreators["tWords"] = module => new TWordsComponentSolver(module);
 		ModComponentSolverCreators["primeEncryption"] = module => new PrimeEncryptionComponentSolver(module);
+		ModComponentSolverCreators["needyMrsBob"] = module => new NeedyMrsBobComponentSolver(module);
+		ModComponentSolverCreators["simonSquawks"] = module => new SimonSquawksComponentSolver(module);
+		ModComponentSolverCreators["rapidButtons"] = module => new RapidButtonsComponentSolver(module);
+
+		//Samloper Modules
+		ModComponentSolverCreators["buttonOrder"] = module => new ButtonOrderComponentSolver(module);
+		ModComponentSolverCreators["pressTheShape"] = module => new PressTheShapeComponentSolver(module);
+		ModComponentSolverCreators["standardButtonMasher"] = module => new StandardButtonMasherComponentSolver(module);
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
@@ -99,8 +107,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["gatekeeper"] = module => new GatekeeperComponentSolver(module);
 		ModComponentSolverCreators["stateOfAggregation"] = module => new StateOfAggregationComponentSolver(module);
 		ModComponentSolverCreators["conditionalButtons"] = module => new ConditionalButtonsComponentSolver(module);
-		ModComponentSolverCreators["buttonOrder"] = module => new ButtonOrderComponentSolver(module);
 		ModComponentSolverCreators["strikeSolve"] = module => new StrikeSolveComponentSolver(module);
+		ModComponentSolverCreators["abstractSequences"] = module => new AbstractSequencesComponentSolver(module);
 		// Misc [ZekNikZ]
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
@@ -111,6 +119,10 @@ public static class ComponentSolverFactory
 		//StrangaDanga Modules
 		ModComponentSolverCreators["keepClicking"] = module => new KeepClickingComponentSolver(module);
 		ModComponentSolverCreators["sixteenCoins"] = module => new SixteenCoinsComponentSolver(module);
+
+		//TheDarkSid3r Modules
+		ModComponentSolverCreators["AlienModule"] = module => new AlienFilingColorsComponentSolver(module);
+		ModComponentSolverCreators["QLModule"] = module => new QuiplashComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -239,6 +251,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["troll"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "8", announceModule = true };
 		ModComponentSolverInformation["tWords"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "5" };
 		ModComponentSolverInformation["primeEncryption"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["needyMrsBob"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["simonSquawks"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["rapidButtons"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", scoreString = "5" };
@@ -267,8 +282,13 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["conditionalButtons"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true };
+
+		//Samloper
+		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["pressTheShape"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["standardButtonMasher"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", scoreString = "1" };
@@ -290,6 +310,10 @@ public static class ComponentSolverFactory
 		//StrangaDanga
 		ModComponentSolverInformation["keepClicking"] = new ModuleInformation { builtIntoTwitchPlays = true };
 		ModComponentSolverInformation["sixteenCoins"] = new ModuleInformation { builtIntoTwitchPlays = true };
+
+		//TheDarkSid3r
+		ModComponentSolverInformation["AlienModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["QLModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", scoreString = "1" };
