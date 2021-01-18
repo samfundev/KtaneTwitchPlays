@@ -12,7 +12,8 @@ public class AlienFilingColorsComponentSolver : ReflectionComponentSolver
 		if (split.Length < 2 || !command.StartsWith("press ")) yield break;
 		for (int i = 1; i < split.Length; i++)
 		{
-			if (!split[i].EqualsAny("1", "2", "3", "4", "5", "6", "7", "8")) yield break;
+			if (!int.TryParse(split[i], out int check)) yield break;
+			if (!check.InRange(1, 8)) yield break;
 		}
 
 		yield return null;

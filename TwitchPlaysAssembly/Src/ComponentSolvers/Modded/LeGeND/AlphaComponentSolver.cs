@@ -10,8 +10,8 @@ public class AlphaComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("submit ")) yield break;
-		if (!int.TryParse(split[1], out _)) yield break;
-		if (int.Parse(split[1]) < 0 || int.Parse(split[1]) > 20) yield break;
+		if (!int.TryParse(split[1], out int check)) yield break;
+		if (check < 0 || check > 20) yield break;
 		if (!_component.GetValue<bool>("active"))
 		{
 			yield return "sendtochaterror You can't interact with the module right now.";
@@ -20,15 +20,15 @@ public class AlphaComponentSolver : ReflectionComponentSolver
 
 		yield return null;
 		int inputValue = _component.GetValue<int>("inputValue");
-		if (int.Parse(split[1]) < inputValue)
+		if (check < inputValue)
 		{
-			int times = inputValue - int.Parse(split[1]);
+			int times = inputValue - check;
 			for (int i = 0; i < times; i++)
 				yield return Click(0);
 		}
-		else if (int.Parse(split[1]) > inputValue)
+		else if (check > inputValue)
 		{
-			int times = int.Parse(split[1]) - inputValue;
+			int times = check - inputValue;
 			for (int i = 0; i < times; i++)
 				yield return Click(1);
 		}

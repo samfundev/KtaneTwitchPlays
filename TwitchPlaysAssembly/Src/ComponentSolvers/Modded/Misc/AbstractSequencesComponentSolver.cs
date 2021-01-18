@@ -9,7 +9,6 @@ public class AbstractSequencesComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (!command.Equals("submit") && !command.StartsWith("press ")) yield break;
 		if (command.Equals("submit"))
 		{
 			if (!_component.GetValue<bool>("canClickAgain")) yield break;
@@ -19,11 +18,12 @@ public class AbstractSequencesComponentSolver : ReflectionComponentSolver
 			yield return "strike";
 			yield return Click(16, 0);
 		}
-		else if (command.StartsWith("press "))
+		else if (command.StartsWith("press ") && split.Length >= 2)
 		{
 			for (int i = 1; i < split.Length; i++)
 			{
-				if (!split[i].EqualsAny("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16")) yield break;
+				if (!int.TryParse(split[i], out int check)) yield break;
+				if (!check.InRange(1, 16)) yield break;
 			}
 			if (!_component.GetValue<bool>("canClickAgain")) yield break;
 
@@ -65,7 +65,7 @@ public class AbstractSequencesComponentSolver : ReflectionComponentSolver
 				}
 			}
 		}
-		while (!((int) bombInfo.GetTime() / 60 % 2 == (waiter ? 1 : 0))) yield return true;
+		while ((int) bombInfo.GetTime() / 60 % 2 != (waiter ? 1 : 0)) yield return true;
 		yield return Click(16, 0);
 		while (!_component.GetValue<bool>("moduleSolved")) yield return null;
 	}

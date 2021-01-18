@@ -12,8 +12,8 @@ public class RapidButtonsComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("press ")) yield break;
-		if (!int.TryParse(split[1], out _)) yield break;
-		if (int.Parse(split[1]) < 1 || int.Parse(split[1]) > 3) yield break;
+		if (!int.TryParse(split[1], out int check)) yield break;
+		if (check < 1 || check > 3) yield break;
 		int[] indexes = new int[3];
 		int ct = 0;
 		for (int i = 0; i < selectables.Length; i++)
@@ -37,7 +37,7 @@ public class RapidButtonsComponentSolver : ReflectionComponentSolver
 			if (indexes.Contains(realPositions[j]))
 			{
 				ct++;
-				if (int.Parse(split[1]) == ct)
+				if (check == ct)
 				{
 					yield return Click(realPositions[j], 0);
 					break;
