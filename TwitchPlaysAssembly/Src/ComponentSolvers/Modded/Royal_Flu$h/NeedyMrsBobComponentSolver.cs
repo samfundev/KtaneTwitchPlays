@@ -11,8 +11,8 @@ public class NeedyMrsBobComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("send ")) yield break;
-		if (!int.TryParse(split[1], out _)) yield break;
-		if (int.Parse(split[1]) < 1 || int.Parse(split[1]) > 24) yield break;
+		if (!int.TryParse(split[1], out int check)) yield break;
+		if (check < 1 || check > 24) yield break;
 		if (!_component.GetValue<GameObject>("responses").activeSelf)
 		{
 			yield return "sendtochaterror You can't interact with the module right now.";
@@ -20,7 +20,7 @@ public class NeedyMrsBobComponentSolver : ReflectionComponentSolver
 		}
 
 		yield return null;
-		yield return Click(int.Parse(split[1]) - 1, 0);
+		yield return Click(check - 1, 0);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()

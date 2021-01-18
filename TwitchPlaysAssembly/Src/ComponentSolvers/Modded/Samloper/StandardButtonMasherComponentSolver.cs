@@ -10,11 +10,11 @@ public class StandardButtonMasherComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("submit ")) yield break;
-		if (!int.TryParse(split[1], out _)) yield break;
-		if (int.Parse(split[1]) < 0 || int.Parse(split[1]) > 99) yield break;
+		if (!int.TryParse(split[1], out int check)) yield break;
+		if (check < 0 || check > 99) yield break;
 
 		yield return null;
-		for (int i = 0; i < int.Parse(split[1]); i++)
+		for (int i = 0; i < check; i++)
 			yield return Click(0);
 		yield return Click(1, 0);
 	}

@@ -12,7 +12,6 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (!command.Equals("cycle temp") && !command.StartsWith("submit ")) yield break;
 		if (command.StartsWith("submit "))
 		{
 			if (split.Length < 3) yield break;

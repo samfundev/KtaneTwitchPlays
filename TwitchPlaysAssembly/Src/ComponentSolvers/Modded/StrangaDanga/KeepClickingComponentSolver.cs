@@ -15,7 +15,6 @@ public class KeepClickingComponentSolver : ReflectionComponentSolver
 
 	public override IEnumerator Respond(string[] split, string inputCommand)
 	{
-		if (!inputCommand.Equals("submit") && !inputCommand.StartsWith("click ")) yield break;
 		if (inputCommand.Equals("submit"))
 		{
 			yield return null;
@@ -23,11 +22,11 @@ public class KeepClickingComponentSolver : ReflectionComponentSolver
 		}
 		else if (inputCommand.StartsWith("click ") && split.Length == 2)
 		{
-			if (!int.TryParse(split[1], out _)) yield break;
-			if (int.Parse(split[1]) < 1 || int.Parse(split[1]) > 3) yield break;
+			if (!int.TryParse(split[1], out int check)) yield break;
+			if (check < 1 || check > 3) yield break;
 
 			yield return null;
-			yield return DoInteractionClick(_buttons[int.Parse(split[1]) - 1], 0);
+			yield return DoInteractionClick(_buttons[check - 1], 0);
 		}
 	}
 
