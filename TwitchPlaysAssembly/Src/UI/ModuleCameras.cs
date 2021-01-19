@@ -476,7 +476,7 @@ public class ModuleCameras : MonoBehaviour
 			return;
 
 		var module = TwitchGame.Instance.Modules.First(m => !m.Solved && m.BombComponent.IsSolvable);
-		TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(ModuleCommands.Show(module, ZoomCamera(module, new SuperZoomData(1, 0.5f, 0.5f), 1)));
+		TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(WaitForZoom(ModuleCommands.Show(module, ZoomCamera(module, new SuperZoomData(1, 0.5f, 0.5f), 1))));
 	}
 
 	public void UpdateConfidence()
@@ -865,6 +865,12 @@ public class ModuleCameras : MonoBehaviour
 		foreach (ModuleCamera camera in _moduleCameras)
 			if (!visible || (camera.Module && camera.Module.CameraPriority > CameraPriority.Unviewed))
 				camera.CameraInstance.gameObject.SetActive(visible);
+	}
+
+	private IEnumerator WaitForZoom(IEnumerator coroutine)
+	{
+		yield return new WaitUntil(() => _moduleCameras.All(camera => !camera.ZoomActive));
+		yield return coroutine;
 	}
 	#endregion
 
