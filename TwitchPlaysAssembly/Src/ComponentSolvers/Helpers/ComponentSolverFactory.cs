@@ -65,7 +65,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["coffeebucks"] = module => new CoffeebucksComponentSolver(module);
 		ModComponentSolverCreators["festiveJukebox"] = module => new FestiveJukeboxComponentSolver(module);
 		ModComponentSolverCreators["hangover"] = module => new HangoverComponentSolver(module);
-		ModComponentSolverCreators["hieroglyphics"] = module => new HieroglyphicsComponentSolver(module);
 		ModComponentSolverCreators["labyrinth"] = module => new LabyrinthComponentSolver(module);
 		ModComponentSolverCreators["matrix"] = module => new TheMatrixComponentSolver(module);
 		ModComponentSolverCreators["memorableButtons"] = module => new MemorableButtonsComponentSolver(module);
@@ -199,132 +198,127 @@ public static class ComponentSolverFactory
 
 		//Asimir
 		ModComponentSolverInformation["murder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Murder", scoreString = "8" };
-		ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Sea Shells", scoreString = "7" };
+		ModComponentSolverInformation["SeaShells"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Sea Shells", scoreString = "8" };
 		ModComponentSolverInformation["shapeshift"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Shift", scoreString = "6" };
-		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base", scoreString = "7" };
+		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base", scoreString = "8" };
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
 		ModComponentSolverInformation["AppreciateArt"] = new ModuleInformation { builtIntoTwitchPlays = true, unclaimable = true, moduleDisplayName = "Art Appreciation" };
 
 		//Perky
-		ModComponentSolverInformation["CrazyTalk"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Crazy Talk", scoreString = "3" };
-		ModComponentSolverInformation["CryptModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptography", scoreString = "9" };
+		ModComponentSolverInformation["CrazyTalk"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Crazy Talk", scoreString = "2" };
+		ModComponentSolverInformation["CryptModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptography", scoreString = "8" };
 		ModComponentSolverInformation["ForeignExchangeRates"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Foreign Exchange Rates", scoreString = "3" };
-		ModComponentSolverInformation["Listening"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Listening", scoreString = "4" };
-		ModComponentSolverInformation["OrientationCube"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Orientation Cube", scoreString = "8" };
+		ModComponentSolverInformation["Listening"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Listening", scoreString = "5" };
+		ModComponentSolverInformation["OrientationCube"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Orientation Cube", scoreString = "7" };
 		ModComponentSolverInformation["Probing"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Probing", scoreString = "7" };
-		ModComponentSolverInformation["TurnTheKey"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Key", scoreString = "3", announceModule = true };
-		ModComponentSolverInformation["TurnTheKeyAdvanced"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Keys", scoreString = "8", announceModule = true };
+		ModComponentSolverInformation["TurnTheKey"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Key", scoreString = "2", announceModule = true };
+		ModComponentSolverInformation["TurnTheKeyAdvanced"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Turn The Keys", scoreString = "5", announceModule = true };
 
 		//Kaneb
-		ModComponentSolverInformation["TwoBits"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Two Bits", scoreString = "6" };
+		ModComponentSolverInformation["TwoBits"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Two Bits", scoreString = "5" };
 
 		//LeGeND
-		ModComponentSolverInformation["lgndAlpha"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["lgndHyperactiveNumbers"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["lgndMorseIdentification"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["lgndReflex"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["lgndAlpha"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alpha", scoreString = "D 0.8" };
+		ModComponentSolverInformation["lgndHyperactiveNumbers"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Hyperactive Numbers", scoreString = "6" };
+		ModComponentSolverInformation["lgndMorseIdentification"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Identification", scoreString = "D 0.4" };
+		ModComponentSolverInformation["lgndReflex"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Reflex", scoreString = "2" };
 
 		//Mock Army
-		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", scoreString = "1" };
+		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", scoreString = "2" };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math", scoreString = "3" };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math", manualCode = "Math", scoreString = "D 1.1" };
-		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", scoreString = "1" };
-
-		//Procyon modules
-		ModComponentSolverInformation["theRule"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "7" };
+		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble", scoreString = "2" };
 
 		//Royal_Flu$h
-		ModComponentSolverInformation["coffeebucks"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "11" };
-		ModComponentSolverInformation["festiveJukebox"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "2" };
-		ModComponentSolverInformation["hangover"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "7" };
-		ModComponentSolverInformation["hieroglyphics"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "10" };
-		ModComponentSolverInformation["labyrinth"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "10" };
-		ModComponentSolverInformation["matrix"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "5" };
-		ModComponentSolverInformation["memorableButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "5" };
-		ModComponentSolverInformation["simonsOnFirst"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "9" };
-		ModComponentSolverInformation["simonsStages"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "S1", CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["skinnyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "6" };
-		ModComponentSolverInformation["stainedGlass"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "8" };
-		ModComponentSolverInformation["streetFighter"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "7" };
-		ModComponentSolverInformation["troll"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "8", announceModule = true };
-		ModComponentSolverInformation["tWords"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "5" };
-		ModComponentSolverInformation["primeEncryption"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["needyMrsBob"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["simonSquawks"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["rapidButtons"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["coffeebucks"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Coffeebucks", scoreString = "12" };
+		ModComponentSolverInformation["festiveJukebox"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Festive Jukebox", scoreString = "2" };
+		ModComponentSolverInformation["hangover"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Hangover", scoreString = "7" };
+		ModComponentSolverInformation["labyrinth"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Labyrinth", scoreString = "10" };
+		ModComponentSolverInformation["matrix"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Matrix", scoreString = "7" };
+		ModComponentSolverInformation["memorableButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Memorable Buttons", scoreString = "9" };
+		ModComponentSolverInformation["simonsOnFirst"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon's On First", scoreString = "8" };
+		ModComponentSolverInformation["simonsStages"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon's Stages", scoreString = "S 1.5x", CameraPinningAlwaysAllowed = true, announceModule = true };
+		ModComponentSolverInformation["skinnyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Skinny Wires", scoreString = "5" };
+		ModComponentSolverInformation["stainedGlass"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Stained Glass", scoreString = "9" };
+		ModComponentSolverInformation["streetFighter"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Street Fighter", scoreString = "8" };
+		ModComponentSolverInformation["troll"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Troll", scoreString = "6", announceModule = true };
+		ModComponentSolverInformation["tWords"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "T-Words", scoreString = "4" };
+		ModComponentSolverInformation["primeEncryption"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Prime Encryption", scoreString = "10" };
+		ModComponentSolverInformation["needyMrsBob"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Mrs Bob" };
+		ModComponentSolverInformation["simonSquawks"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Squawks" };
+		ModComponentSolverInformation["rapidButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Rapid Buttons" };
 
 		//Misc
-		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", scoreString = "5" };
-		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", scoreString = "3" };
-		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", scoreString = "8" };
+		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", scoreString = "4" };
+		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", scoreString = "2" };
+		ModComponentSolverInformation["Microcontroller"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Microcontroller", scoreString = "7" };
 		ModComponentSolverInformation["resistors"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Resistors", scoreString = "7" };
 		ModComponentSolverInformation["speakEnglish"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Speak English" };
-		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", scoreString = "4" };
+		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", scoreString = "5" };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework", scoreString = "D 2.2" };
-		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Refill That Beer!", scoreString = "D 0.3" };
-		ModComponentSolverInformation["numberNimbleness"] = new ModuleInformation { builtIntoTwitchPlays = true, scoreString = "9" };
+		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Refill That Beer!", scoreString = "D 0.2" };
+		ModComponentSolverInformation["numberNimbleness"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Nimbleness", scoreString = "9" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", scoreString = "4" };
 		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", scoreString = "8" };
-		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { scoreString = "14", builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { scoreString = "8", builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { scoreString = "6", builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { scoreString = "12", builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["chordProgressions"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["CrypticPassword"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["AdditionModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["caesarsMaths"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["conditionalButtons"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "LEGOs", scoreString = "16" };
+		ModComponentSolverInformation["boolMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Boolean Maze", scoreString = "8" };
+		ModComponentSolverInformation["MorseWar"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse War", scoreString = "5" };
+		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Necronomicon", scoreString = "11" };
+		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Baba Is Who?", scoreString = "6" };
+		ModComponentSolverInformation["chordProgressions"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Progressions", scoreString = "6" };
+		ModComponentSolverInformation["CrypticPassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptic Password", scoreString = "6" };
+		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Modulus Manipulation", scoreString = "8" };
+		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Random Number Generator", scoreString = "D 0.7" };
+		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Memory", scoreString = "D 0.2" };
+		ModComponentSolverInformation["caesarsMaths"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Caesar's Maths", scoreString = "5" };
+		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gatekeeper", scoreString = "3" };
+		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "State of Aggregation", scoreString = "7" };
+		ModComponentSolverInformation["conditionalButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Conditional Buttons", scoreString = "5" };
+		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Strike Solve", manualCode = "StrikeSolve", scoreString = "2" };
+		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Abstract Sequences" };
 
 		//Samloper
-		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["pressTheShape"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["standardButtonMasher"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
+		ModComponentSolverInformation["pressTheShape"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Press The Shape" };
+		ModComponentSolverInformation["standardButtonMasher"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Standard Button Masher" };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
-		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", scoreString = "1" };
-		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button", scoreString = "1" };
+		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", scoreString = "2" };
+		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button", scoreString = "2" };
 		ModComponentSolverInformation["ButtonComponentModifiedSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button", scoreString = "4" };
 		ModComponentSolverInformation["WireSequenceComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wire Sequence", scoreString = "4" };
-		ModComponentSolverInformation["WhosOnFirstComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First", scoreString = "4" };
-		ModComponentSolverInformation["VennWireComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires", scoreString = "3" };
+		ModComponentSolverInformation["WhosOnFirstComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First", scoreString = "5" };
+		ModComponentSolverInformation["VennWireComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires", scoreString = "4" };
 		ModComponentSolverInformation["SimonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Says", scoreString = "3" };
-		ModComponentSolverInformation["PasswordComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password", scoreString = "2" };
-		ModComponentSolverInformation["NeedyVentComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas", scoreString = "D 0.4" };
-		ModComponentSolverInformation["NeedyKnobComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Knob", scoreString = "0.6" };
+		ModComponentSolverInformation["PasswordComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password", scoreString = "3" };
+		ModComponentSolverInformation["NeedyVentComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas", scoreString = "D 0.25" };
+		ModComponentSolverInformation["NeedyKnobComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Knob", scoreString = "D 0.6" };
 		ModComponentSolverInformation["NeedyDischargeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Capacitor", scoreString = "T 0.02" };
-		ModComponentSolverInformation["MorseCodeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code", scoreString = "3" };
-		ModComponentSolverInformation["MemoryComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Memory", scoreString = "4" };
-		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad", scoreString = "1" };
+		ModComponentSolverInformation["MorseCodeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code", scoreString = "4" };
+		ModComponentSolverInformation["MemoryComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Memory", scoreString = "3" };
+		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad", scoreString = "2" };
 		ModComponentSolverInformation["InvisibleWallsComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Maze", scoreString = "2" };
 
 		//StrangaDanga
-		ModComponentSolverInformation["keepClicking"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["sixteenCoins"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["keepClicking"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keep Clicking", scoreString = "4" };
+		ModComponentSolverInformation["sixteenCoins"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "16 Coins", scoreString = "4" };
 
 		//TheDarkSid3r
-		ModComponentSolverInformation["AlienModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
-		ModComponentSolverInformation["QLModule"] = new ModuleInformation { builtIntoTwitchPlays = true };
+		ModComponentSolverInformation["AlienModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alien Filing Colors" };
+		ModComponentSolverInformation["QLModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Quiplash" };
 
 		//Translated Modules
-		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", scoreString = "1" };
-		ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code Translated", scoreString = "3" };
-		ModComponentSolverInformation["PasswordsTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password Translated", scoreString = "2" };
-		ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First Translated", scoreString = "4" };
-		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Vent Gas Translated", scoreString = "D 0.4" };
+		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", scoreString = "2" };
+		ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code Translated", scoreString = "4" };
+		ModComponentSolverInformation["PasswordsTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password Translated", scoreString = "4" };
+		ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First Translated", scoreString = "6" };
+		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Vent Gas Translated", scoreString = "D 0.25" };
 
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
-		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true, scoreString = "5", helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true };
-		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", scoreString = "7", DoesTheRightThing = true };
+		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true, scoreString = "6", helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true };
+		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", scoreString = "6", DoesTheRightThing = true };
 
 		//These modules have troll commands built in.
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", scoreString = "12" };
