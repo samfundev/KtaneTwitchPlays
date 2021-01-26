@@ -271,7 +271,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["CrypticPassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptic Password", scoreString = "6" };
 		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Modulus Manipulation", scoreString = "8" };
 		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Random Number Generator", scoreString = "D 0.7" };
-		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Shape Memory", scoreString = "D 0.2" };
+		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Shape Memory", manualCode = "Shape Memory", scoreString = "D 0.2" };
 		ModComponentSolverInformation["caesarsMaths"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Caesar's Maths", scoreString = "5" };
 		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gatekeeper", scoreString = "3" };
 		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "State of Aggregation", scoreString = "7" };
