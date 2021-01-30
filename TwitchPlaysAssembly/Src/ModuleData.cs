@@ -103,7 +103,6 @@ public class ModuleInformation
 
 				// S is for special modules which we parse out the multiplier and put it into a dictionary and use later.
 				case 2 when split[0] == "S":
-					// Multiply the score by two because the default DynamicScorePercentage is 0.5.
 					methods.Add(new PerModule(number, module));
 					break;
 
