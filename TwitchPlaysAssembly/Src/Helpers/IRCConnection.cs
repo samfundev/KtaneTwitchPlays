@@ -613,8 +613,8 @@ public class IRCConnection : MonoBehaviour
 			}
 
 			SendCommand(
-				$"PASS {_settings.authToken}{Environment.NewLine}NICK {_settings.userName}{Environment.NewLine}CAP REQ :twitch.tv/tags{Environment.NewLine}CAP REQ :twitch.tv/commands{Environment.NewLine}CAP REQ :twitch.tv/membership");
-			AddTextToHoldable("PASS oauth:*****REDACTED******\nNICK {0}\nCAP REQ :twitch.tv/tags\nCAP REQ :twitch.tv/commands\nCAP REQ :twitch.tv/membership", _settings.userName);
+				$"CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership{Environment.NewLine}CAP END{Environment.NewLine}PASS {_settings.authToken}{Environment.NewLine}NICK {_settings.userName}");
+			AddTextToHoldable("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership\nCAP END\nPASS oauth:*****REDACTED******\nNICK {0}", _settings.userName);
 			while (_state == IRCConnectionState.Connecting)
 				Thread.Sleep(25);
 		}
