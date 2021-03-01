@@ -117,10 +117,10 @@ public static class CheckSupport
 			}
 		}
 
-		// Always disable modules that are not either marked as "Compatible" or "Untested"
+		// Always disable modules that are marked as "Incompatible"
 		foreach (var moduleInfo in json.KtaneModules)
 		{
-			if (moduleInfo.Compatibility.EqualsAny("Compatible", "Untested"))
+			if (moduleInfo.Compatibility != "Incompatible")
 				continue;
 
 			unsupportedModules.Add(moduleInfo.ModuleID);
