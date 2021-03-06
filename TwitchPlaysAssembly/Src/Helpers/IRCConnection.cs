@@ -613,10 +613,21 @@ public class IRCConnection : MonoBehaviour
 			}
 
 			SendCommand(
-				$"CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership{Environment.NewLine}CAP END{Environment.NewLine}PASS {_settings.authToken}{Environment.NewLine}NICK {_settings.userName}");
+				$"CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership\r\nCAP END\r\nPASS {_settings.authToken}\r\nNICK {_settings.userName}");
 			AddTextToHoldable("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership\nCAP END\nPASS oauth:*****REDACTED******\nNICK {0}", _settings.userName);
+
+			float startTime = Time.time;
 			while (_state == IRCConnectionState.Connecting)
+			{
+				// If it takes more than a few seconds for Twitch to authenticate us, something probably went wrong.
+				if (Time.time - startTime >= 3)
+				{
+					AddTextToHoldable("[IRC:Connect] Authentication timed out.");
+					return;
+				}
+
 				Thread.Sleep(25);
+			}
 		}
 		catch (SocketException ex)
 		{
