@@ -90,6 +90,7 @@ static class ModdedAPI
 		if (apiObject == null)
 		{
 			apiObject = new GameObject("ModdedAPI_Info", typeof(ModdedAPIBehaviour));
+			UnityEngine.Object.DontDestroyOnLoad(apiObject);
 		}
 
 		sharedAPI = apiObject.GetComponent<IDictionary<string, object>>();
