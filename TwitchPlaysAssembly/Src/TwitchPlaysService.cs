@@ -102,6 +102,8 @@ public class TwitchPlaysService : MonoBehaviour
 
 		twitchGame.ParentService = this;
 
+		TwitchPlaysAPI.Setup();
+
 		GameObject infoObject = new GameObject("TwitchPlays_Info");
 		infoObject.transform.parent = gameObject.transform;
 		_publicProperties = infoObject.AddComponent<TwitchPlaysProperties>();
