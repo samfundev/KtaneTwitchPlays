@@ -367,6 +367,13 @@ public class TwitchPlaysService : MonoBehaviour
 			var prefix = m.Groups[1].Value.Trim();
 			var restCommand = m.Groups[2].Value.Trim();
 
+			// It's possible to be in the gameplay state but not have the bombs yet, we'll wait for them so that the user's command doesn't get dropped.
+			if (CurrentState == KMGameInfo.State.Gameplay && TwitchGame.Instance.Bombs.Count == 0)
+			{
+				StartCoroutine(WaitForBombs(() => OnMessageReceived(msg)));
+				return;
+			}
+
 			// Commands for bombs by “!bomb X” referring to the current bomb
 			if (CurrentState == KMGameInfo.State.Gameplay && prefix.EqualsIgnoreCase("bomb"))
 				InvokeCommand(msg, restCommand, TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb], typeof(BombCommands));
@@ -689,6 +696,13 @@ public class TwitchPlaysService : MonoBehaviour
 		{
 			IRCConnection.SendMessage("There is a new update to Twitch Plays!");
 		}
+	}
+
+	private IEnumerator WaitForBombs(Action then)
+	{
+		yield return new WaitUntil(() => TwitchGame.Instance.Bombs.Count != 0);
+
+		then();
 	}
 
 	public void UpdateUiHue()
