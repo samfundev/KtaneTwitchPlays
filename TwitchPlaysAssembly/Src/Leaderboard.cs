@@ -293,6 +293,9 @@ public class Leaderboard
 
 	public int GetRank(string userName, out LeaderboardEntry entry)
 	{
+		if (userName.StartsWith("@"))
+			userName = userName.Substring(1);
+
 		if (!GetEntry(userName, out entry))
 		{
 			return _entryList.Count + 1;
@@ -326,6 +329,9 @@ public class Leaderboard
 
 	public int GetSoloRank(string userName, out LeaderboardEntry entry)
 	{
+		if (userName.StartsWith("@"))
+			userName = userName.Substring(1);
+
 		entry = _entryListSolo.Find(x => string.Equals(x.UserName, userName, StringComparison.InvariantCultureIgnoreCase));
 		return entry != null ? _entryListSolo.IndexOf(entry) : 0;
 	}
