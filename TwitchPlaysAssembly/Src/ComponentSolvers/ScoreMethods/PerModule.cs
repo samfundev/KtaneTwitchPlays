@@ -23,6 +23,9 @@ namespace TwitchPlays.ScoreMethods
 				case "HexiEvilFMN":
 				case "forgetEnigma":
 					return Mathf.Clamp(module.Bomb.BombSolvableModules, 1, 100) * Points * TwitchPlaySettings.data.DynamicScoreMultiplier;
+				// The Twin
+				case "TheTwinModule":
+					return Mathf.Clamp(module.Bomb.BombSolvableModules, 1, 101) * Points * TwitchPlaySettings.data.DynamicScoreMultiplier;
 				default:
 					return module.Bomb.BombSolvableModules * Points * TwitchPlaySettings.data.DynamicScoreMultiplier;
 			}
