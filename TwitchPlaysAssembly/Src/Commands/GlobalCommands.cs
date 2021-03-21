@@ -63,6 +63,47 @@ static class GlobalCommands
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
+	[Command(@"srefund +(\S+) +([0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void StrikeRefund([Group(1)] string targetPlayer, [Group(2)] int count, string user)
+	{
+		if (targetPlayer.StartsWith("@"))
+			targetPlayer = targetPlayer.Substring(1);
+		if (count < 1)
+		{
+			IRCConnection.SendMessageFormat("Sorry @{0}, cannot refund less than 1 strike!", user);
+			return;
+		}
+
+		int points = TwitchPlaySettings.data.StrikePenalty * count;
+		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), -1 * count);
+		Leaderboard.Instance.AddScore(targetPlayer, new Color(.31f, .31f, .31f), points);
+
+		IRCConnection.SendMessageFormat("Refunded {0} strike{1} and {2} score from {3}.", count, count != 1 ? "s" : "", points, targetPlayer);
+	}
+
+	[Command(@"stransfer +(\S+) +to +(\S+) +([0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void StrikeTransfer([Group(1)] string fromPlayer, [Group(2)] string toPlayer, [Group(3)] int count, string user)
+	{
+		if (fromPlayer.StartsWith("@"))
+			fromPlayer = fromPlayer.Substring(1);
+		if (toPlayer.StartsWith("@"))
+			toPlayer = toPlayer.Substring(1);
+
+		if (count < 1)
+		{
+			IRCConnection.SendMessageFormat("Sorry @{0}, cannot transfer less than 1 strike!", user);
+			return;
+		}
+
+		int points = TwitchPlaySettings.data.StrikePenalty * count;
+		Leaderboard.Instance.AddStrike(fromPlayer, new Color(.31f, .31f, .31f), -1 * count);
+		Leaderboard.Instance.AddScore(fromPlayer, new Color(.31f, .31f, .31f), points);
+		Leaderboard.Instance.AddStrike(toPlayer, new Color(.31f, .31f, .31f), count);
+		Leaderboard.Instance.AddScore(toPlayer, new Color(.31f, .31f, .31f), -1 * points);
+
+		IRCConnection.SendMessageFormat("Transferred {0} strike{1} and {2} score from {3} to {4}.", count, count != 1 ? "s" : "", points, fromPlayer, toPlayer);
+	}
+
 	/// <name>Set Reward</name>
 	/// <syntax>reward [points]</syntax>
 	/// <summary>Sets the reward that's given out on a succesful defusual.</summary>
