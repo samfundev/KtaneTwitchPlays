@@ -597,7 +597,7 @@ static class GameCommands
 			TwitchGame.Instance.SendCallResponse(user, name, response, callChanged);
 			return;
 		}
-		if (callChanged) IRCConnection.SendMessage($"@{user}, your call has been changed to {name}.", user, !isWhisper);
+		if (callChanged) IRCConnection.SendMessageFormat("@{0}, your call has been changed to {1}.", user, string.IsNullOrEmpty(name) ? "the next queued command" : name);
 		TwitchGame.Instance.CommandQueue.Remove(TwitchGame.Instance.callSend);
 		TwitchGame.ModuleCameras?.SetNotes();
 		IRCConnection.SendMessageFormat("{0} {1}: {2}", TwitchGame.Instance.callWaiting && string.IsNullOrEmpty(user)
