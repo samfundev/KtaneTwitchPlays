@@ -63,11 +63,13 @@ static class GlobalCommands
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
-	[Command(@"srefund +(\S+) +([0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
-	public static void StrikeRefund([Group(1)] string targetPlayer, [Group(2)] int count, string user)
+	[Command(@"srefund +(\S+) *?( +[0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void StrikeRefund([Group(1)] string targetPlayer, [Group(2)] int? _count, string user)
 	{
+		int count = _count ?? 1;
 		if (targetPlayer.StartsWith("@"))
 			targetPlayer = targetPlayer.Substring(1);
+
 		if (count < 1)
 		{
 			IRCConnection.SendMessageFormat("Sorry @{0}, cannot refund less than 1 strike!", user);
@@ -81,9 +83,10 @@ static class GlobalCommands
 		IRCConnection.SendMessageFormat("Refunded {0} strike{1} and {2} score from {3}.", count, count != 1 ? "s" : "", points, targetPlayer);
 	}
 
-	[Command(@"stransfer +(\S+) +to +(\S+) +([0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
-	public static void StrikeTransfer([Group(1)] string fromPlayer, [Group(2)] string toPlayer, [Group(3)] int count, string user)
+	[Command(@"stransfer +(\S+) +to +(\S+) *?( +[0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void StrikeTransfer([Group(1)] string fromPlayer, [Group(2)] string toPlayer, [Group(3)] int? _count, string user)
 	{
+		int count = _count ?? 1;
 		if (fromPlayer.StartsWith("@"))
 			fromPlayer = fromPlayer.Substring(1);
 		if (toPlayer.StartsWith("@"))
