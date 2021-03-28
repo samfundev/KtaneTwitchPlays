@@ -501,6 +501,18 @@ public class TwitchPlaysService : MonoBehaviour
 			}
 		}
 
+		// Check if commands are allowed to be sent to a holdable as they could be disabled in the settings.
+		if (extraObject is TwitchHoldable holdable && !UserAccess.HasAccess(msg.UserNickName, AccessLevel.SuperUser, true) &&
+			(
+				(!TwitchPlaySettings.data.EnableMissionBinder && holdable.CommandType == typeof(MissionBinderCommands)) ||
+				(!TwitchPlaySettings.data.EnableFreeplayBriefcase && holdable.CommandType == typeof(FreeplayCommands))
+			)
+		)
+		{
+			IRCConnection.SendMessage("That holdable is currently disabled and you cannot be interact with it.");
+			return true;
+		}
+
 		Leaderboard.Instance.GetRank(msg.UserNickName, out Leaderboard.LeaderboardEntry entry);
 		if (entry?.Team == null && extraObject is TwitchModule && OtherModes.VSModeOn)
 		{
