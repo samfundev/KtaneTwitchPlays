@@ -103,7 +103,7 @@ public class Leaderboard
 				_activityTimer?.Dispose();
 				_activityTimer = null;
 				if (!value) return;
-				_activityTimer = new Timer(1.8e+6) {AutoReset = false};
+				_activityTimer = new Timer(1.8e+6) { AutoReset = false };
 				_activityTimer.Elapsed += delegate { Active = false; };
 				_activityTimer.Enabled = true;
 			}

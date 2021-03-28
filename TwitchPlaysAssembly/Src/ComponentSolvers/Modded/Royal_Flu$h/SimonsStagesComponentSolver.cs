@@ -36,13 +36,13 @@ public class SimonsStagesComponentSolver : ComponentSolver
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
-        yield return null;
-        while (!_component.GetValue<bool>("readyToSolve"))
-            yield return true;
+		yield return null;
+		while (!_component.GetValue<bool>("readyToSolve"))
+			yield return true;
 
-        // If any past stages were incorrect, we can't solve the module.
-        List<bool> lightsSolved = _component.GetValue<List<bool>>("lightsSolved");
-        if (Enumerable.Range(0, _component.GetValue<int>("totalPresses")).Any(index => !lightsSolved[index]))
+		// If any past stages were incorrect, we can't solve the module.
+		List<bool> lightsSolved = _component.GetValue<List<bool>>("lightsSolved");
+		if (Enumerable.Range(0, _component.GetValue<int>("totalPresses")).Any(index => !lightsSolved[index]))
 			yield break;
 
 		yield return RespondToCommandInternal(_component.GetValue<List<string>>("solutionNames").Select(color => color[0]).Join());

@@ -233,7 +233,8 @@ public static class ModuleData
 			var info = new ModuleInformation();
 			foreach (FieldInfo fileFieldInfo in fileInfoFields)
 			{
-				if (fileFieldInfo.DeclaringType == typeof(ModuleInformation)) {
+				if (fileFieldInfo.DeclaringType == typeof(ModuleInformation))
+				{
 					if (fileInfoFields.Any(field => field.DeclaringType == typeof(FileModuleInformation) && field.Name == fileFieldInfo.Name))
 						continue;
 

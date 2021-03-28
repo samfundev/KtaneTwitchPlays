@@ -2,7 +2,7 @@
 
 class IRCConnectionData : MonoBehaviour
 {
-	#pragma warning disable CS0649
+#pragma warning disable CS0649
 	public TwitchMessage MessagePrefab;
 
 	public CanvasGroup HighlightGroup;
@@ -12,5 +12,5 @@ class IRCConnectionData : MonoBehaviour
 	public RectTransform HighlightTransform;
 
 	public GameObject ConnectionAlert;
-	#pragma warning disable CS0649
+#pragma warning disable CS0649
 }

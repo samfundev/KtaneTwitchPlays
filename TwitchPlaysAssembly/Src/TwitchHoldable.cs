@@ -163,8 +163,8 @@ public class TwitchHoldable
 		}
 
 		DebugHelper.Log("Running RespondToCommandInternal()");
-		if(HandlerMethod != null && processCommand == null)
-			processCommand = MakeCoroutine(HandlerMethod.Invoke(CommandComponent, new object[] {cmdStr}));
+		if (HandlerMethod != null && processCommand == null)
+			processCommand = MakeCoroutine(HandlerMethod.Invoke(CommandComponent, new object[] { cmdStr }));
 
 		bool cancelled = false;
 		bool parseError = false;

@@ -365,7 +365,7 @@ public static class CheckSupport
 
 	static Dictionary<string, string> GetNameMap(WebsiteJSON json)
 	{
-		if(!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods))
+		if (!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods))
 			return null;
 
 		var bombComponents = loadedMods.Values.SelectMany(mod => mod.GetModObjects<BombComponent>());

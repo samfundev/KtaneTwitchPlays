@@ -874,7 +874,8 @@ public class IRCConnection : MonoBehaviour
 					continue;
 				}
 
-				if (pingTimeoutTest) {
+				if (pingTimeoutTest)
+				{
 					pingTimeoutTest = false;
 					MainThreadQueue.Enqueue(() => ConnectionAlert.SetActive(false));
 

@@ -21,7 +21,7 @@ public class PlungerButtonShim : ComponentSolverShim
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		if (Unshimmed.ForcedSolveMethod == null) yield break;
-		var coroutine = (IEnumerator)Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
+		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 		coroutine.MoveNext();
 		yield return coroutine.Current;
 		var idColor = Module.ClaimedUserMultiDecker.color;
@@ -44,6 +44,6 @@ public class PlungerButtonShim : ComponentSolverShim
 		}
 	}
 
-	private readonly Color[] colors = new[] { Color.blue, brown, Color.green, Color.grey, lime, orange, Color.magenta, Color.red, Color.white, Color.yellow  };
-	static Color brown = new Color(165 / 255f, 42 / 255f, 42 / 255f), lime = new Color(50/255f, 205/255f, 50/255f), orange = new Color(1, 0.5f, 0);
+	private readonly Color[] colors = new[] { Color.blue, brown, Color.green, Color.grey, lime, orange, Color.magenta, Color.red, Color.white, Color.yellow };
+	static Color brown = new Color(165 / 255f, 42 / 255f, 42 / 255f), lime = new Color(50 / 255f, 205 / 255f, 50 / 255f), orange = new Color(1, 0.5f, 0);
 }

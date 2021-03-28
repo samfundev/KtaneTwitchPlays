@@ -146,16 +146,16 @@ public sealed class DistributionPool : ISerializable
 	// Deserialization
 	private DistributionPool(SerializationInfo info, StreamingContext context)
 	{
-		PoolDefinition = (string)info.GetValue("Definition", typeof(string));
+		PoolDefinition = (string) info.GetValue("Definition", typeof(string));
 
-		Weight = (float)info.GetValue("Weight", typeof(float));
+		Weight = (float) info.GetValue("Weight", typeof(float));
 
 		// May not be present, and if so leaves RewardPerModule at default
-		try { RewardPerModule = (int)info.GetValue("Reward", typeof(int)); }
+		try { RewardPerModule = (int) info.GetValue("Reward", typeof(int)); }
 		catch (SerializationException) { RewardPerModule = -1; }
 
 		// May not be present, and if so leaves TimePerModule at default
-		try { TimePerModule = (int)info.GetValue("Time", typeof(int)); }
+		try { TimePerModule = (int) info.GetValue("Time", typeof(int)); }
 		catch (SerializationException) { TimePerModule = -1; }
 	}
 
@@ -230,11 +230,12 @@ public sealed class DistributionPool : ISerializable
 					SpecialComponentType = (Type == PoolType.AllSolvable
 						? KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE
 						: KMComponentPool.SpecialComponentTypeEnum.ALL_NEEDY),
-					AllowedSources = (KMComponentPool.ComponentSource)ExtraData[0],
+					AllowedSources = (KMComponentPool.ComponentSource) ExtraData[0],
 					Count = count
 				};
 			case PoolType.Score:
-				List<KMGameInfo.KMModuleInfo> scoredModules = gi.GetAvailableModuleInfo().Where(x => {
+				List<KMGameInfo.KMModuleInfo> scoredModules = gi.GetAvailableModuleInfo().Where(x =>
+				{
 					if (x.IsNeedy)
 						return false;
 
@@ -267,7 +268,7 @@ public sealed class DistributionPool : ISerializable
 				foreach (string module in moduleIDs)
 				{
 					if (Enum.GetNames(typeof(KMComponentPool.ComponentTypeEnum)).Contains(module))
-						poolVanillas.Add((KMComponentPool.ComponentTypeEnum)Enum.Parse(typeof(KMComponentPool.ComponentTypeEnum), module));
+						poolVanillas.Add((KMComponentPool.ComponentTypeEnum) Enum.Parse(typeof(KMComponentPool.ComponentTypeEnum), module));
 					else
 					{
 						if (!availableMods.Contains(module))

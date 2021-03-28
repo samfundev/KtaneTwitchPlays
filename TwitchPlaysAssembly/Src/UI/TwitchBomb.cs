@@ -118,7 +118,7 @@ public class TwitchBomb : MonoBehaviour
 		set => Bomb.GetTimer().TimeRemaining = (value < 0) ? 0 : value;
 	}
 
-	public void CauseVersusExplosion() =>  StartCoroutine(DelayBombExplosionCoroutine(null, "Evil defeated Good", 0.1f));
+	public void CauseVersusExplosion() => StartCoroutine(DelayBombExplosionCoroutine(null, "Evil defeated Good", 0.1f));
 
 	#region Private Methods
 	public IEnumerator DelayBombExplosionCoroutine() => DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Detonate Command", 1.0f);
@@ -353,7 +353,7 @@ public class TwitchBomb : MonoBehaviour
 			default:
 				returnToFace = DoFreeYRotate(-225.0f + offset, 90.0f, 0.0f, 0.0f, 0.3f);
 				break;
-		};
+		}
 		while (returnToFace.MoveNext())
 		{
 			yield return returnToFace.Current;
@@ -383,7 +383,7 @@ public class TwitchBomb : MonoBehaviour
 		// Mystery Widget
 		MysteryWidgetShim.ClearUnused();
 
-		foreach(GameObject cover in MysteryWidgetShim.Covers.Where(x => x != null))
+		foreach (GameObject cover in MysteryWidgetShim.Covers.Where(x => x != null))
 		{
 			edgework.Add("Hidden");
 		}

@@ -691,7 +691,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SynchronizationModule"] = new ModuleInformation { scoreString = "11", DoesTheRightThing = true };
 
 		//Sean Obach
-		ModComponentSolverInformation["blackCipher"] = new ModuleInformation { scoreString = "18",  DoesTheRightThing = true };
+		ModComponentSolverInformation["blackCipher"] = new ModuleInformation { scoreString = "18", DoesTheRightThing = true };
 		ModComponentSolverInformation["blueCipher"] = new ModuleInformation { scoreString = "11", DoesTheRightThing = true };
 		ModComponentSolverInformation["forgetEnigma"] = new ModuleInformation { scoreString = "S1", CameraPinningAlwaysAllowed = true, announceModule = true, DoesTheRightThing = true };
 		ModComponentSolverInformation["grayCipher"] = new ModuleInformation { scoreString = "12", DoesTheRightThing = true };

@@ -40,7 +40,7 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 		else if (command.Equals("cycle temp"))
 		{
 			yield return null;
-			string[] displayedTemps =  _component.GetValue<string[]>("displayedTemps");
+			string[] displayedTemps = _component.GetValue<string[]>("displayedTemps");
 			for (int i = 0; i < displayedTemps.Length; i++)
 			{
 				yield return "trycancel";

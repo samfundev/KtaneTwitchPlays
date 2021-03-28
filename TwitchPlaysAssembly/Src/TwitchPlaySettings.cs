@@ -642,7 +642,7 @@ public static class TwitchPlaySettings
 	public static Dictionary<VoteTypes, int> GetVoteDict()
 	{
 		Dictionary<VoteTypes, int> Dict = new Dictionary<VoteTypes, int>();
-		foreach(VoteTypes Name in Enum.GetValues(typeof(VoteTypes)))
+		foreach (VoteTypes Name in Enum.GetValues(typeof(VoteTypes)))
 		{
 			Dict.Add(Name, 51);
 		}
@@ -1023,7 +1023,7 @@ public static class TwitchPlaySettings
 						return $"Settings {settingField.Name}[{listIndex}]: Index out of range";
 					default:
 						return $"Setting {settingField.Name}: Count = {settingListString.Count}";
-				};
+				}
 			case Dictionary<string, string> settingsDictionaryStringString:
 				switch (split.Length)
 				{
@@ -1035,7 +1035,7 @@ public static class TwitchPlaySettings
 						return $"Setting {settingField.Name}: The second item cannot be empty or null";
 					default:
 						return $"Setting {settingField.Name}: Count = {settingsDictionaryStringString.Count}";
-				};
+				}
 			case Dictionary<string, bool> settingsDictionaryStringBool:
 				switch (split.Length)
 				{

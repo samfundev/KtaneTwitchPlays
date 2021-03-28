@@ -435,10 +435,10 @@ static class ModuleCommands
 			var command = groups["command"].Success;
 
 			if (!timed && !zooming && !command && show)
-            {
+			{
 				yield return Show(module, 0.5);
 				yield break;
-            }
+			}
 			// Both a time and a command can't be entered. And either a zoom, show or tilt needs to take place otherwise, we should let the command run normally.
 			if ((!timed || !command) && (zooming || tilt || show))
 			{
@@ -454,9 +454,9 @@ static class ModuleCommands
 
 				IEnumerator routine = null;
 				if (show)
-                {
+				{
 					routine = Show(module, toYield);
-                }
+				}
 				if (tilt)
 				{
 					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant());

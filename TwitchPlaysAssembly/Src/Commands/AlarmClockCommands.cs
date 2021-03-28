@@ -16,7 +16,7 @@ public static class AlarmClockCommands
 	public static IEnumerator Snooze(AlarmClock clock)
 	{
 		var onField = typeof(AlarmClock).GetField("isOn", BindingFlags.NonPublic | BindingFlags.Instance);
-		if(onField == null) yield break;
+		if (onField == null) yield break;
 
 		if (TwitchPlaySettings.data.AllowSnoozeOnly && !TwitchPlaySettings.data.AnarchyMode && !(bool) onField.GetValue(clock))
 			yield break;

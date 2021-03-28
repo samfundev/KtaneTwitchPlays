@@ -57,7 +57,7 @@ public abstract class GameRoom
 		TwitchGame.Instance.InitializeModuleCodes();
 	}
 
-	protected void InitializeBomb(Bomb bomb, bool reuseTwitchBomb=false)
+	protected void InitializeBomb(Bomb bomb, bool reuseTwitchBomb = false)
 	{
 		if (!reuseTwitchBomb)
 		{

@@ -91,7 +91,7 @@ public static class TranslatedModuleHelper
 			FieldInfo langField = componentType.GetField("lang", BindingFlags.NonPublic | BindingFlags.Instance);
 			object langObject = langField?.GetValue(component);
 			FieldInfo languageField = langObject?.GetType().GetField("languageId", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-			return (string)languageField?.GetValue(langObject);
+			return (string) languageField?.GetValue(langObject);
 		}
 		catch (Exception ex)
 		{

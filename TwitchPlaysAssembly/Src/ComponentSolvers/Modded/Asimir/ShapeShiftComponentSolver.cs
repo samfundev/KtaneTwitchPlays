@@ -71,7 +71,6 @@ public class ShapeShiftComponentSolver : ComponentSolver
 		switch (commands.Length)
 		{
 			case 3 when commands[0].Equals("submit"):
-			{
 				int? shapeL = ToShapeIndex(commands[1]);
 				int? shapeR = ToShapeIndex(commands[2]);
 
@@ -84,7 +83,6 @@ public class ShapeShiftComponentSolver : ComponentSolver
 				}
 
 				break;
-			}
 			case 1 when commands[0].Equals("reset"):
 				yield return null;
 				yield return SetDisplay(_initialL, _initialR);

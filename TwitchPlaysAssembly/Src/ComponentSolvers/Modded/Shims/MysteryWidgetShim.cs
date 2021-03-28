@@ -42,9 +42,9 @@ public class MysteryWidgetShim : ComponentSolverShim
 		if (Covers.Count == 0) return;
 		GameObject[] tmp = new GameObject[Covers.Count];
 		Covers.CopyTo(tmp);
-		foreach(GameObject j in tmp)
+		foreach (GameObject j in tmp)
 		{
-			if(j == null)
+			if (j == null)
 			{
 				Covers.Remove(j);
 				ModuleCameras.Instance.SetupEdgeworkCameras();
@@ -71,7 +71,8 @@ public class MysteryWidgetShim : ComponentSolverShim
 					DCells += cover.transform.parent.GetComponentsInChildren<Transform>().Count(x => x.name.EqualsIgnoreCase("DCell"));
 				}
 
-				return (IEnumerable<Dictionary<string, T>>) batteries.Where(battery => {
+				return (IEnumerable<Dictionary<string, T>>) batteries.Where(battery =>
+				{
 					var numbatteries = battery["numbatteries"];
 					if (AAs != 0 && numbatteries == 2)
 					{
@@ -100,7 +101,8 @@ public class MysteryWidgetShim : ComponentSolverShim
 					.ToList();
 				var portNames = new[] { "RJ", "PS2", "RCA", "DVI", "Serial", "Parallel" };
 
-				return (IEnumerable<Dictionary<string, T>>) plates.Where(plate => !coveredPlates.Any(coveredPlate => {
+				return (IEnumerable<Dictionary<string, T>>) plates.Where(plate => !coveredPlates.Any(coveredPlate =>
+				{
 					var plateFound = plate["presentPorts"].All(port => coveredPlate.Any(coveredPort => port.ContainsIgnoreCase(coveredPort)));
 					if (plateFound)
 						coveredPlates.Remove(coveredPlate);

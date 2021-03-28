@@ -28,7 +28,8 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 		if (targetModule == null)
 			yield break;
 
-		if (Art.TryGetValue(targetModule, out Component artComponent)) {
+		if (Art.TryGetValue(targetModule, out Component artComponent))
+		{
 			LocalAppreciationReqTime = artComponent.GetValue<float>("_appreciationRequiredDuration");
 			artComponent.CallMethod("StartAppreciatingArt");
 		}
@@ -62,7 +63,8 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 				.Where(module => !module.Solved && _componentType != null)
 				.Select(module => module.BombComponent.GetComponent(_componentType))
 				.Where(component => component != null)
-				.ToDictionary(component => {
+				.ToDictionary(component =>
+				{
 					var bombComponent = component.GetValue<Transform>("_transform").GetComponent<BombComponent>();
 					return TwitchGame.Instance.Modules.First(module => module.BombComponent == bombComponent);
 				}, component => component);

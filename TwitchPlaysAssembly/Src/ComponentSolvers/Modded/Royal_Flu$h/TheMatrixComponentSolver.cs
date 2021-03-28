@@ -34,8 +34,8 @@ public class TheMatrixComponentSolver : ComponentSolver
 			// that you have up to a full second less "safe time" than you supposedly do, so we
 			// need to compensate for this.
 			// We'll flip back when there's about 2/10ths of a second remaining, ideally.
-			float flipBackTime = ((int)timerComponent.TimeRemaining - output) + 1.35f;
-			int flipBackDisplayedTime = (int)timerComponent.TimeRemaining - output;
+			float flipBackTime = ((int) timerComponent.TimeRemaining - output) + 1.35f;
+			int flipBackDisplayedTime = (int) timerComponent.TimeRemaining - output;
 			yield return DoInteractionClick(Switch);
 			yield return $"sendtochat Jacking in until {string.Format("{0:D2}:{1:D2}", flipBackDisplayedTime / 60, flipBackDisplayedTime % 60)}!";
 

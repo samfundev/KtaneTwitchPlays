@@ -22,7 +22,6 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 		switch (commands.Length)
 		{
 			case 2 when commands[0].Equals("set"):
-			{
 				int colorIndex = Array.IndexOf(Colors, commands[1]);
 				if (colorIndex > -1)
 				{
@@ -48,9 +47,7 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 				}
 
 				break;
-			}
 			case 1 when commands[0].Equals("cycle"):
-			{
 				yield return null;
 
 				for (int i = 0; i < 6; i++)
@@ -60,7 +57,6 @@ public class MicrocontrollerComponentSolver : ComponentSolver
 				}
 
 				break;
-			}
 		}
 	}
 

@@ -10,7 +10,7 @@ public class StreetFighterComponentSolver : ComponentSolver
 		: base(module)
 	{
 		_component = module.BombComponent.GetComponent(_componentType);
-		selectables = (KMSelectable[])fighterButtonsField.GetValue(_component);
+		selectables = (KMSelectable[]) fighterButtonsField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} select Chun Li, M. Bison [selects Chun Li as player 1, and M. Bison as player 2]");
 	}
 

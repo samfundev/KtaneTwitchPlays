@@ -985,7 +985,7 @@ public abstract class ComponentSolver
 						componentValue, headerText, HPDamage,
 						teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team"));
 				else
-					messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, 
+					messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName,
 						componentValue, headerText));
 			}
 			else
@@ -1201,7 +1201,8 @@ public abstract class ComponentSolver
 		if (Module.RewardBonusMethods == null)
 			return;
 
-		float floatBonus = Module.RewardBonusMethods.Sum(method => {
+		float floatBonus = Module.RewardBonusMethods.Sum(method =>
+		{
 			var players = method.Players;
 			return players.Count == 0 ? method.CalculateScore(null) : players.Sum(method.CalculateScore);
 		});
