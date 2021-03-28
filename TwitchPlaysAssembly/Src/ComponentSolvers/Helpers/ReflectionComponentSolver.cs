@@ -31,6 +31,8 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 
 	public abstract IEnumerator Respond(string[] split, string command);
 
+	protected Dictionary<string, int> buttonMap;
+
 	protected static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>();
 
 	protected readonly object _component;
@@ -38,5 +40,7 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 
 	// Helper methods
 	protected WaitForSeconds Click(int index, float delay = 0.1f) => DoInteractionClick(selectables[index], delay);
+	protected WaitForSeconds Click(string button, float delay = 0.1f) => Click(buttonMap[button], delay);
+	protected WaitForSeconds Click(char button, float delay = 0.1f) => Click(button.ToString(), delay);
 	protected void LogSelectables() => DebugHelper.Log($"Selectables:\n{selectables.Select((selectable, index) => $"{index} = {selectable.name}").Join("\n")}");
 }

@@ -1,46 +1,45 @@
-﻿using System;
-using System.Collections;
-using System.Reflection;
+﻿using System.Collections;
+using System.Collections.Generic;
 
-public class NeedyMathComponentSolver : ComponentSolver
+public class NeedyMathComponentSolver : ReflectionComponentSolver
 {
 	public NeedyMathComponentSolver(TwitchModule module)
-		: base(module)
+		: base(module, "NeedyMathModule", "Submit an answer with !{0} submit -47.")
 	{
-		object component = module.BombComponent.GetComponent(ComponentType);
-		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit an answer with !{0} submit -47.");
+		LogSelectables();
+
+		buttonMap = new Dictionary<string, int>()
+		{
+			{ "1", 0 },
+			{ "2", 1 },
+			{ "3", 2 },
+			{ "0", 3 },
+			{ "4", 4 },
+			{ "5", 5 },
+			{ "6", 6 },
+			{ "-", 7 },
+			{ "7", 8 },
+			{ "8", 9 },
+			{ "9", 10 },
+			{ "Enter", 11 },
+		};
 	}
 
-	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
+	public override IEnumerator Respond(string[] split, string command)
 	{
-		inputCommand = inputCommand.Trim().ToLowerInvariant();
-
-		if (!inputCommand.StartsWith("submit "))
+		if (split.Length != 2 || split[0] != "submit")
 			yield break;
 
-		inputCommand = inputCommand.Substring(7);
-
-		string trimmedCommand = inputCommand.StartsWith("-") ? inputCommand.Substring(1) : inputCommand;
-
-		if (!int.TryParse(trimmedCommand, out _))
+		if (!int.TryParse(split[1], out _))
 			yield break;
 
 		yield return null;
 
-		if (inputCommand.StartsWith("-"))
-			yield return DoInteractionClick(_buttons[10]);
-
-		foreach (char character in trimmedCommand)
+		foreach (char character in split[1])
 		{
-			yield return DoInteractionClick(_buttons[int.Parse(character.ToString())]);
+			yield return Click(character);
 		}
 
-		yield return DoInteractionClick(_buttons[11]);
+		yield return Click("Enter");
 	}
-
-	private static readonly Type ComponentType = ReflectionHelper.FindType("NeedyMathModule");
-	private static readonly FieldInfo ButtonsField = ComponentType.GetField("Buttons", BindingFlags.Public | BindingFlags.Instance);
-
-	private readonly KMSelectable[] _buttons;
 }
