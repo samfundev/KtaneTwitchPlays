@@ -276,6 +276,7 @@ public class ModuleCameras : MonoBehaviour
 	};
 
 	//private float currentSuccess;
+	private bool lastModule;
 	#endregion
 
 	#region Private Static Readonlys
@@ -312,6 +313,8 @@ public class ModuleCameras : MonoBehaviour
 		Instance = this;
 
 		_cameraWallMode = TwitchPlaySettings.data.EnableAutomaticCameraWall ? Mode.Automatic : Mode.Disabled;
+
+		lastModule = false;
 
 		// Create the first 6 module cameras (more will be created if the camera wall gets enabled)
 		for (int i = 0; i < 6; i++)
@@ -472,8 +475,10 @@ public class ModuleCameras : MonoBehaviour
 		DebugHelper.Log("Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";
 
-		if (TwitchGame.Instance.Bombs.Sum(bomb => bomb.BombSolvableModules - bomb.BombSolvedModules) != 1 || _moduleCameras.Count == 0)
+		if (TwitchGame.Instance.Bombs.Sum(bomb => bomb.BombSolvableModules - bomb.BombSolvedModules) != 1 || _moduleCameras.Count == 0 || lastModule)
 			return;
+
+		lastModule = true;
 
 		var module = TwitchGame.Instance.Modules.First(m => !m.Solved && m.BombComponent.IsSolvable);
 		TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(WaitForZoom(ModuleCommands.Show(module, ZoomCamera(module, new SuperZoomData(1, 0.5f, 0.5f), 1))));
