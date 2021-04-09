@@ -15,6 +15,7 @@ public class ListeningComponentSolver : ComponentSolver
 		{
 			throw new NotSupportedException("Could not get Listening Component from bombComponent");
 		}
+		_component = component;
 
 		Type componentType = component.GetType();
 		if (componentType == null)
@@ -70,6 +71,33 @@ public class ListeningComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[button]);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		if (_component == null)
+			yield break;
+		while (!_component.GetValue<bool>("isActivated"))
+			yield return true;
+		int index = _component.GetValue<int>("codeInputPosition");
+		char[] input = _component.GetValue<char[]>("codeInput");
+		string ans = _component.GetValue<object>("sound").GetValue<string>("code");
+		for (int i = 0; i < index; i++)
+		{
+			if (ans[i] != input[i])
+			{
+				while (!_component.GetValue<bool>("canPlayAgain"))
+					yield return true;
+				yield return DoInteractionClick(_play);
+				index = 0;
+				break;
+			}
+		}
+		char[] btnLabels = { '$', '#', '*', '&' };
+		for (int i = index; i < 5; i++)
+			yield return DoInteractionClick(_buttons[Array.IndexOf(btnLabels, ans[i])]);
+	}
+
 	private readonly MonoBehaviour _play;
 	private readonly MonoBehaviour[] _buttons;
+	private readonly object _component;
 }

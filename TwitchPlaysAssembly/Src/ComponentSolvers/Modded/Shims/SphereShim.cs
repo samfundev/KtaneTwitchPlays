@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections;
-using UnityEngine;
 
-public class ColorGeneratorShim : ComponentSolverShim
+public class SphereShim : ComponentSolverShim
 {
-	public ColorGeneratorShim(TwitchModule module)
-		: base(module, "Color Generator")
+	public SphereShim(TwitchModule module)
+		: base(module, "sphere")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
@@ -13,12 +12,7 @@ public class ColorGeneratorShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-		{
-			yield return command.Current;
-			yield return "trycancel";
-		}
+		yield return RespondToCommandUnshimmed(inputCommand);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
@@ -27,12 +21,11 @@ public class ColorGeneratorShim : ComponentSolverShim
 		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 		while (coroutine.MoveNext())
 			yield return coroutine.Current;
-		string ans = _component.GetValue<string>("displayAnswer");
-		while (ans != _component.GetValue<TextMesh>("displayText").text)
+		while (_component.GetValue<bool>("checking"))
 			yield return true;
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("ColorGeneratorModule", "Color Generator");
+	private static readonly Type ComponentType = ReflectionHelper.FindType("theSphereScript", "sphere");
 
 	private readonly object _component;
 }

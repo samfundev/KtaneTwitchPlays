@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class PlungerButtonShim : ComponentSolverShim
@@ -9,41 +8,49 @@ public class PlungerButtonShim : ComponentSolverShim
 		base(module, "plungerButton")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
+		_component = module.BombComponent.GetComponent(ComponentType);
+		_button = _component.GetValue<KMSelectable>("button");
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-			yield return command.Current;
+		yield return RespondToCommandUnshimmed(inputCommand);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
-		if (Unshimmed.ForcedSolveMethod == null) yield break;
-		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-		coroutine.MoveNext();
-		yield return coroutine.Current;
-		var idColor = Module.ClaimedUserMultiDecker.color;
-		var discoRoutine = Module.StartCoroutine(Disco());
-		coroutine.MoveNext();
-		yield return coroutine.Current;
-		Module.StopCoroutine(discoRoutine);
-		Module.SetBannerColor(idColor);
-		coroutine.MoveNext();
-		yield return coroutine.Current;
-	}
+		yield return null;
 
-	IEnumerator Disco()
-	{
-		while (true)
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
+		float pressTime = _component.GetValue<float>("timeOfPress");
+		pressTime = Mathf.FloorToInt(pressTime);
+		if (!_component.GetValue<bool>("pressed"))
 		{
-			int index = UnityEngine.Random.Range(0, colors.Length);
-			Module.SetBannerColor(colors[index]);
-			yield return new WaitForSeconds(0.125f);
+			while ((int) timerComponent.TimeRemaining % 10 != _component.GetValue<int>("targetPressTime"))
+				yield return true;
+			DoInteractionStart(_button);
+			pressTime = _component.GetValue<float>("timeOfPress");
+			pressTime = Mathf.FloorToInt(pressTime);
 		}
+		else if (pressTime != _component.GetValue<int>("targetPressTime"))
+		{
+			((MonoBehaviour) _component).StopAllCoroutines();
+			yield break;
+		}
+		while ((int) timerComponent.TimeRemaining % 10 != _component.GetValue<int>("targetReleaseTime"))
+		{
+			if (pressTime != _component.GetValue<int>("targetPressTime"))
+			{
+				((MonoBehaviour) _component).StopAllCoroutines();
+				yield break;
+			}
+			yield return null;
+		}
+		DoInteractionEnd(_button);
 	}
 
-	private readonly Color[] colors = new[] { Color.blue, brown, Color.green, Color.grey, lime, orange, Color.magenta, Color.red, Color.white, Color.yellow };
-	static Color brown = new Color(165 / 255f, 42 / 255f, 42 / 255f), lime = new Color(50 / 255f, 205 / 255f, 50 / 255f), orange = new Color(1, 0.5f, 0);
+	private static readonly Type ComponentType = ReflectionHelper.FindType("plungerButtonScript", "plungerButton");
+
+	private readonly object _component;
+	private readonly KMSelectable _button;
 }

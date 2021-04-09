@@ -8,7 +8,11 @@ public class CatchphraseShim : ComponentSolverShim
 		base(module, "catchphrase")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-		panels = module.BombComponent.GetComponent(ComponentType).GetValue<KMSelectable[]>("panels");
+		component = module.BombComponent.GetComponent(ComponentType);
+		panels = component.GetValue<KMSelectable[]>("panels");
+		keypad = component.GetValue<KMSelectable[]>("keypads");
+		clear = component.GetValue<KMSelectable>("clearButton");
+		submit = component.GetValue<KMSelectable>("submitButton");
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
@@ -25,7 +29,50 @@ public class CatchphraseShim : ComponentSolverShim
 			yield return command.Current;
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("catchphraseScript");
+	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
+	{
+		yield return null;
 
+		string curr = component.GetValue<TextMesh>("answerBox").text;
+		string ans = component.GetValue<int>("correctAnswer").ToString();
+		bool clrPress = false;
+		if (curr.Length > ans.Length)
+		{
+			yield return DoInteractionClick(clear);
+			clrPress = true;
+		}
+		else
+		{
+			for (int i = 0; i < curr.Length; i++)
+			{
+				if (i == ans.Length)
+					break;
+				if (curr[i] != ans[i])
+				{
+					yield return DoInteractionClick(clear);
+					clrPress = true;
+					break;
+				}
+			}
+		}
+		int start = 0;
+		if (!clrPress)
+			start = curr.Length;
+		for (int j = start; j < ans.Length; j++)
+		{
+			if (ans[j] == '0')
+				yield return DoInteractionClick(keypad[9]);
+			else
+				yield return DoInteractionClick(keypad[int.Parse(ans[j].ToString()) - 1]);
+		}
+		yield return DoInteractionClick(submit, 0);
+	}
+
+	private static readonly Type ComponentType = ReflectionHelper.FindType("catchphraseScript", "catchphrase");
+
+	private readonly object component;
 	private readonly KMSelectable[] panels;
+	private readonly KMSelectable[] keypad;
+	private readonly KMSelectable clear;
+	private readonly KMSelectable submit;
 }

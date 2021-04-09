@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 public class CrazyTalkComponentSolver : ComponentSolver
@@ -9,7 +8,8 @@ public class CrazyTalkComponentSolver : ComponentSolver
 	public CrazyTalkComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		_toggle = (MonoBehaviour) ToggleField.GetValue(module.BombComponent.GetComponent(ComponentType));
+		_component = module.BombComponent.GetComponent(ComponentType);
+		_toggle = _component.GetValue<KMSelectable>("toggleSwitch");
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Toggle the switch down and up with !{0} toggle 4 5. The order is down, then up.");
 	}
 
@@ -38,8 +38,28 @@ public class CrazyTalkComponentSolver : ComponentSolver
 		}
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!_component.GetValue<bool>("bActive"))
+			yield return true;
+		TimerComponent timerComponent = Module.Bomb.Bomb.GetTimer();
+		int start = _component.GetValue<int>("mCorrectSwitches");
+		for (int i = start; i < 2; i++)
+		{
+			int digit;
+			if (_component.GetValue<bool>("bSwitchState"))
+				digit = _component.GetValue<object>("mOption").GetValue<int>("down");
+			else
+				digit = _component.GetValue<object>("mOption").GetValue<int>("up");
+			while ((int) timerComponent.TimeRemaining % 10 != digit)
+				yield return true;
+			yield return DoInteractionClick(_toggle);
+		}
+	}
+
 	private static readonly Type ComponentType = ReflectionHelper.FindType("CrazyTalkModule");
-	private static readonly FieldInfo ToggleField = ComponentType.GetField("toggleSwitch", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly MonoBehaviour _toggle;
+	private readonly object _component;
 }

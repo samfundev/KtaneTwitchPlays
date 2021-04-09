@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 public class ForeignExchangeRatesComponentSolver : ComponentSolver
@@ -11,7 +10,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 		base(module)
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
-		_buttons = (MonoBehaviour[]) ButtonsField.GetValue(module.BombComponent.GetComponent(ComponentType));
+		_buttons = _component.GetValue<MonoBehaviour[]>("buttons");
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
 	}
 
@@ -69,7 +68,6 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 	}
 
 	private static readonly Type ComponentType = ReflectionHelper.FindType("ForeignExchangeRates");
-	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly object _component;
 

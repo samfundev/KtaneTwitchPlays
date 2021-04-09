@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 public class CryptographyComponentSolver : ComponentSolver
@@ -10,7 +9,8 @@ public class CryptographyComponentSolver : ComponentSolver
 	public CryptographyComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		_buttons = (KMSelectable[]) KeysField.GetValue(module.BombComponent.GetComponent(ComponentType));
+		_component = module.BombComponent.GetComponent(ComponentType);
+		_buttons = _component.GetValue<KMSelectable[]>("Keys");
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the cryptography puzzle with !{0} press N B V T K.");
 	}
 
@@ -29,8 +29,32 @@ public class CryptographyComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[button]);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		string ans = _component.GetValue<string>("mTargetText");
+		string curr = _component.GetValue<string>("mEnteredText");
+		for (int i = 0; i < curr.Length; i++)
+		{
+			if (ans[i] != curr[i])
+				yield break;
+		}
+		int start = curr.Length;
+		for (int i = start; i < 5; i++)
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				if (_buttons[j].GetComponentInChildren<TextMesh>().text == ans[i].ToString())
+				{
+					yield return DoInteractionClick(_buttons[j]);
+					break;
+				}
+			}
+		}
+	}
+
 	private static readonly Type ComponentType = ReflectionHelper.FindType("CryptMod");
-	private static readonly FieldInfo KeysField = ComponentType.GetField("Keys", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
+	private readonly object _component;
 }

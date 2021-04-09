@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
 using UnityEngine;
 
 public class ProbingComponentSolver : ComponentSolver
@@ -8,7 +7,8 @@ public class ProbingComponentSolver : ComponentSolver
 	public ProbingComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		_wires = (MonoBehaviour[]) WiresField.GetValue(module.BombComponent.GetComponent(ComponentType));
+		_component = module.BombComponent.GetComponent(ComponentType);
+		_wires = _component.GetValue<MonoBehaviour[]>("selectables");
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
 	}
 
@@ -82,8 +82,30 @@ public class ProbingComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_wires[blue]);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		while (!_component.GetValue<bool>("bActive"))
+			yield return true;
+		WireValues[] ansWires = _component.GetValue<WireValues[]>("mWires");
+		WireValues ansAWire = _component.GetValue<WireValues>("mTargetWireA");
+		WireValues ansBWire = _component.GetValue<WireValues>("mTargetWireB");
+		yield return RespondToCommandInternal($"connect {Array.IndexOf(ansWires, ansAWire) + 1} {Array.IndexOf(ansWires, ansBWire) + 1}");
+		while (!_component.GetValue<bool>("bSolved"))
+			yield return true;
+	}
+
 	private static readonly Type ComponentType = ReflectionHelper.FindType("ProbingModule");
-	private static readonly FieldInfo WiresField = ComponentType.GetField("selectables", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly MonoBehaviour[] _wires;
+	private readonly object _component;
+
+	private enum WireValues
+	{
+		NONE = 0,
+		A = 1,
+		B = 2,
+		C = 4,
+		D = 8
+	}
 }

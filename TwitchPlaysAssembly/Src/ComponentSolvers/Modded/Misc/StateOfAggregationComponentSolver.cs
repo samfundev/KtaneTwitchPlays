@@ -30,12 +30,12 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 
 			yield return null;
 			int current = _component.GetValue<int>("groupCounter");
-			yield return SelectIndex(current, Array.IndexOf(groups, group), groups.Length, selectables[1], selectables[0]);
+			yield return SelectIndex(current, Array.IndexOf(groups, group), groups.Length, selectables[2], selectables[0]);
 
 			current = _component.GetValue<int>("tempCounter");
-			yield return SelectIndex(current, Array.IndexOf(temps, split[split.Length - 1]), temps.Length, selectables[2], selectables[3]);
+			yield return SelectIndex(current, Array.IndexOf(temps, split[split.Length - 1]), temps.Length, selectables[5], selectables[3]);
 
-			yield return Click(4, 0);
+			yield return Click(7, 0);
 		}
 		else if (command.Equals("cycle temp"))
 		{
@@ -45,7 +45,7 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 			{
 				yield return "trycancel";
 				yield return new WaitForSeconds(2f);
-				yield return Click(3, 0);
+				yield return Click(5, 0);
 			}
 		}
 	}

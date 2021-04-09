@@ -84,6 +84,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["buttonOrder"] = module => new ButtonOrderComponentSolver(module);
 		ModComponentSolverCreators["pressTheShape"] = module => new PressTheShapeComponentSolver(module);
 		ModComponentSolverCreators["standardButtonMasher"] = module => new StandardButtonMasherComponentSolver(module);
+		ModComponentSolverCreators["BinaryButtons"] = module => new BinaryButtonsComponentSolver(module);
 
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
@@ -108,6 +109,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["conditionalButtons"] = module => new ConditionalButtonsComponentSolver(module);
 		ModComponentSolverCreators["strikeSolve"] = module => new StrikeSolveComponentSolver(module);
 		ModComponentSolverCreators["abstractSequences"] = module => new AbstractSequencesComponentSolver(module);
+		ModComponentSolverCreators["bridge"] = module => new BridgeComponentSolver(module);
 		// Misc [ZekNikZ]
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
@@ -121,7 +123,7 @@ public static class ComponentSolverFactory
 
 		//TheDarkSid3r Modules
 		ModComponentSolverCreators["AlienModule"] = module => new AlienFilingColorsComponentSolver(module);
-		ModComponentSolverCreators["QLModule"] = module => new QuiplashComponentSolver(module);
+		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -143,6 +145,40 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["mysterymodule"] = module => new MysteryModuleShim(module);
 		ModComponentSolverCreators["widgetModule"] = module => new MysteryWidgetShim(module);
 		ModComponentSolverCreators["catchphrase"] = module => new CatchphraseShim(module);
+		ModComponentSolverCreators["accumulation"] = module => new AccumulationShim(module);
+		ModComponentSolverCreators["wire"] = module => new WireShim(module);
+		ModComponentSolverCreators["moon"] = module => new MoonShim(module);
+		ModComponentSolverCreators["sun"] = module => new SunShim(module);
+		ModComponentSolverCreators["cube"] = module => new CubeShim(module);
+		ModComponentSolverCreators["jackOLantern"] = module => new JackOLanternShim(module);
+		ModComponentSolverCreators["simonsStar"] = module => new SimonStarShim(module);
+		ModComponentSolverCreators["hieroglyphics"] = module => new HieroglyphicsShim(module);
+		ModComponentSolverCreators["sphere"] = module => new SphereShim(module);
+		ModComponentSolverCreators["lightspeed"] = module => new LightspeedShim(module);
+		ModComponentSolverCreators["jukebox"] = module => new JukeboxShim(module);
+		ModComponentSolverCreators["algebra"] = module => new AlgebraShim(module);
+		ModComponentSolverCreators["horribleMemory"] = module => new HorribleMemoryShim(module);
+		ModComponentSolverCreators["Poker"] = module => new PokerShim(module);
+		ModComponentSolverCreators["stopwatch"] = module => new StopwatchShim(module);
+		ModComponentSolverCreators["alphabetNumbers"] = module => new AlphabetNumbersShim(module);
+		ModComponentSolverCreators["combinationLock"] = module => new CombinationLockShim(module);
+		ModComponentSolverCreators["wireSpaghetti"] = module => new WireSpaghettiShim(module);
+		ModComponentSolverCreators["christmasPresents"] = module => new ChristmasPresentsShim(module);
+		ModComponentSolverCreators["numberCipher"] = module => new NumberCipherShim(module);
+		ModComponentSolverCreators["maintenance"] = module => new MaintenanceShim(module);
+		ModComponentSolverCreators["flashingLights"] = module => new FlashingLightsShim(module);
+		ModComponentSolverCreators["sonic"] = module => new SonicShim(module);
+		ModComponentSolverCreators["blockbusters"] = module => new BlockbustersShim(module);
+		ModComponentSolverCreators["taxReturns"] = module => new TaxReturnsShim(module);
+		ModComponentSolverCreators["reverseMorse"] = module => new ReverseMorseShim(module);
+		ModComponentSolverCreators["spinningButtons"] = module => new SpinningButtonsShim(module);
+		ModComponentSolverCreators["symbolicCoordinates"] = module => new SymbolicCoordinatesShim(module);
+		ModComponentSolverCreators["britishSlang"] = module => new BritishSlangShim(module);
+		ModComponentSolverCreators["lgndColoredKeys"] = module => new ColoredKeysShim(module);
+		ModComponentSolverCreators["lgndHiddenColors"] = module => new HiddenColorsShim(module);
+		ModComponentSolverCreators["lgndAudioMorse"] = module => new AudioMorseShim(module);
+		ModComponentSolverCreators["lgndZoni"] = module => new ZoniShim(module);
+		ModComponentSolverCreators["snooker"] = module => new SnookerShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -278,11 +314,13 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["conditionalButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Conditional Buttons", scoreString = "5" };
 		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Strike Solve", manualCode = "StrikeSolve", scoreString = "2" };
 		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Abstract Sequences" };
+		ModComponentSolverInformation["bridge"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Bridge" };
 
 		//Samloper
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
 		ModComponentSolverInformation["pressTheShape"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Press The Shape" };
 		ModComponentSolverInformation["standardButtonMasher"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Standard Button Masher" };
+		ModComponentSolverInformation["BinaryButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Binary Buttons" };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", scoreString = "2" };
@@ -307,7 +345,7 @@ public static class ComponentSolverFactory
 
 		//TheDarkSid3r
 		ModComponentSolverInformation["AlienModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alien Filing Colors" };
-		ModComponentSolverInformation["QLModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Quiplash" };
+		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", scoreString = "2" };

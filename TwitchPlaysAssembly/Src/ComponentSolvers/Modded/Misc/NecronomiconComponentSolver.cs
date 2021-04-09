@@ -79,6 +79,8 @@ public class NecronomiconComponentSolver : ComponentSolver
 	{
 		yield return null;
 		yield return RespondToCommandInternal("page " + _component.GetValue<int>("correctPage"));
+		while (_component.GetValue<bool>("isOpen"))
+			yield return true;
 	}
 
 	private static readonly Type ComponentType = ReflectionHelper.FindType("necronomiconScript");
