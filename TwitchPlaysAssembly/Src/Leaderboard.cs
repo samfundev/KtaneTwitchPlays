@@ -471,9 +471,11 @@ public class Leaderboard
 		{
 			DebugHelper.Log($"Loading leaderboard data from file: {path}");
 			XmlSerializer xml = new XmlSerializer(_entryList.GetType());
-			TextReader reader = new StreamReader(path);
-			List<LeaderboardEntry> entries = (List<LeaderboardEntry>) xml.Deserialize(reader);
-			AddEntries(entries);
+			using (TextReader reader = new StreamReader(path))
+			{
+				List<LeaderboardEntry> entries = (List<LeaderboardEntry>) xml.Deserialize(reader);
+				AddEntries(entries);
+			}
 			ResetSortFlag();
 
 			path = Path.Combine(Application.persistentDataPath, statsSavePath);
@@ -522,8 +524,10 @@ public class Leaderboard
 
 			DebugHelper.Log($"Saving leaderboard data to file: {path}");
 			XmlSerializer xml = new XmlSerializer(_entryList.GetType());
-			TextWriter writer = new StreamWriter(path);
-			xml.Serialize(writer, _entryList);
+			using (TextWriter writer = new StreamWriter(path))
+			{
+				xml.Serialize(writer, _entryList);
+			}
 
 			path = Path.Combine(Application.persistentDataPath, statsSavePath);
 			DebugHelper.Log($"Saving stats data to file: {path}");
