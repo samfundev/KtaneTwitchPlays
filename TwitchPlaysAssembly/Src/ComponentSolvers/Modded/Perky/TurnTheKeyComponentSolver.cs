@@ -168,25 +168,20 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		if (CanTurnEarlyWithoutStrike(timeTarget))
 			yield return $"skiptime {timeTarget + 0.5f:0.00}";
 
-		int waitingTime = (int) (Module.Bomb.CurrentTimer + (OtherModes.Unexplodable ? -0.25f : 0.25f));
-		waitingTime -= timeTarget;
-
-		if (Math.Abs(waitingTime) >= 30)
+		if (Math.Abs(Module.Bomb.CurrentTimer - timeTarget) >= 30)
 		{
 			yield return "elevator music";
 		}
 
-		float timeRemaining = float.PositiveInfinity;
-		while (timeRemaining > 0.0f)
+		while (Module.Bomb.CurrentTimer >= 0)
 		{
-			timeRemaining = (int) (Module.Bomb.CurrentTimer + (OtherModes.Unexplodable ? -0.25f : 0.25f));
-
+			int timeRemaining = (int) Module.Bomb.CurrentTimer;
 			if (!OtherModes.Unexplodable && timeRemaining < timeTarget || OtherModes.Unexplodable && timeRemaining > timeTarget)
 			{
 				yield return "sendtochaterror The bomb timer has already gone past the time specified.";
 				yield break;
 			}
-			if ((int) timeRemaining == timeTarget)
+			if (timeRemaining == timeTarget)
 			{
 				OnKeyTurn(timeTarget);
 				yield return new WaitForSeconds(0.1f);
