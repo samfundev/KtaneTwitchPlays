@@ -41,6 +41,7 @@ public class TwitchPlaySettingsData
 	public int BombLiveMessageDelay = 0;
 	public bool ShowUnrecognizedCommandError = true;
 	public int ModuleClaimLimit = 2;
+	public bool QueuedClaimOverride = true;
 	public int FindClaimLimit = 3;
 	public int FindClaimTerms = 3;
 	public int FindClaimAddTime = 5;
@@ -352,6 +353,7 @@ public class TwitchPlaySettingsData
 	public string TakeInProgress = "@{0}, there is already a takeover attempt for module {1} ({2}) in progress.";
 	public string ModuleIsMine = "{0} confirms he/she is still working on {1} ({2}).";
 	public string TooManyClaimed = "ItsBoshyTime {0}, you may only have {1} claimed modules. The claim has been queued.";
+	public string TooManyClaimedOverride = "ItsBoshyTime {0}, you may only have {1} claimed modules, unless all of your claimed modules are in the command queue. The claim has been queued.";
 	public string NoUnclaimed = "{0}, there are no more unclaimed modules.";
 	public string ModulePlayer = "Module {0} ({2}) was claimed by {1}.";
 	public string AlreadyClaimed = "@{2}, module {0} ({3}) is currently claimed by {1}. If you think they have abandoned it, type !{0} take to free it up.";
