@@ -492,10 +492,12 @@ public class TwitchModule : MonoBehaviour
 
 		// Would violate the claim limit ⇒ queue
 		if (TwitchGame.Instance.Modules.Count(md => md.PlayerName != null && md.PlayerName.EqualsIgnoreCase(userNickName) && !md.Solved) >= TwitchPlaySettings.data.ModuleClaimLimit
+			&& (TwitchGame.Instance.Modules.Any(module => module.PlayerName != null && module.PlayerName.EqualsIgnoreCase(userNickName) && !module.Solved && TwitchGame.Instance.CommandQueue.All(item => !item.Message.Text.StartsWith($"!{module.Code} "))) || !TwitchPlaySettings.data.QueuedClaimOverride)
 			&& (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
 			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.TooManyClaimed, userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
+			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.QueuedClaimOverride ? TwitchPlaySettings.data.TooManyClaimedOverride : TwitchPlaySettings.data.TooManyClaimed, 
+				userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
 
 		// Check the claim cooldown at the start of the bomb
