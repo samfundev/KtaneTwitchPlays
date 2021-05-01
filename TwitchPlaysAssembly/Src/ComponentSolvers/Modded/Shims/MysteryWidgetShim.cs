@@ -15,13 +15,6 @@ public class MysteryWidgetShim : ComponentSolverShim
 		module.StartCoroutine(WaitForMysteryWidget());
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-			yield return command.Current;
-	}
-
 	IEnumerator WaitForMysteryWidget()
 	{
 		var component = Module.BombComponent.GetComponent("WidgetMagic");

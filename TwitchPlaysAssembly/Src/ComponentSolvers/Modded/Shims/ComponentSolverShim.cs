@@ -33,12 +33,7 @@ public abstract class ComponentSolverShim : ComponentSolver
 
 	protected internal sealed override IEnumerator RespondToCommandInternal(string inputCommand) => TwitchPlaySettings.data.EnableTwitchPlayShims ? RespondToCommandShimmed(inputCommand) : RespondToCommandUnshimmed(inputCommand);
 
-	protected abstract IEnumerator RespondToCommandShimmed(string inputCommand);
+	protected virtual IEnumerator RespondToCommandShimmed(string inputCommand) => RespondToCommandUnshimmed(inputCommand);
 
-	protected IEnumerator RespondToCommandUnshimmed(string inputCommand)
-	{
-		IEnumerator e = Unshimmed.RespondToCommandInternal(inputCommand);
-		while (e.MoveNext())
-			yield return e.Current;
-	}
+	protected IEnumerator RespondToCommandUnshimmed(string inputCommand) => Unshimmed.RespondToCommandInternal(inputCommand);
 }

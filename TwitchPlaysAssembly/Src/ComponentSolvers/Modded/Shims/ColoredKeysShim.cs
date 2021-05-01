@@ -11,11 +11,6 @@ public class ColoredKeysShim : ComponentSolverShim
 		_buttons = _component.GetValue<KMSelectable[]>("buttons");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

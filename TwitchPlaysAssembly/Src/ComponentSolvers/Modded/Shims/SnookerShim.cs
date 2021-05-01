@@ -12,11 +12,6 @@ public class SnookerShim : ComponentSolverShim
 		_cue = _component.GetValue<KMSelectable>("cueBall");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

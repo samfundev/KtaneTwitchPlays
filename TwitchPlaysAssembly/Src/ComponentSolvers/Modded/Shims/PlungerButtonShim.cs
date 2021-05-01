@@ -12,11 +12,6 @@ public class PlungerButtonShim : ComponentSolverShim
 		_button = _component.GetValue<KMSelectable>("button");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

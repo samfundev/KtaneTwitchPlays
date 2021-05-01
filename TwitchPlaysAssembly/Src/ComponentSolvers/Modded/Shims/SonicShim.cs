@@ -12,11 +12,6 @@ public class SonicShim : ComponentSolverShim
 		_startButton = _component.GetValue<KMSelectable>("startButton");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

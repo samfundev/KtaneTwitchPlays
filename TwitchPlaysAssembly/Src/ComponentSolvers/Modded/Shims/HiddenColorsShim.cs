@@ -12,11 +12,6 @@ public class HiddenColorsShim : ComponentSolverShim
 		_toggle = _component.GetValue<KMSelectable>("ToggleButton");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

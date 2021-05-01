@@ -13,11 +13,6 @@ public class WireSpaghettiShim : ComponentSolverShim
 		_wires = _component.GetValue<KMSelectable[]>("wireSelectables");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

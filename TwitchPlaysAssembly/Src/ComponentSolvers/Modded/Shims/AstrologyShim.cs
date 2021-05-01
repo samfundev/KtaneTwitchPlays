@@ -13,11 +13,4 @@ public class AstrologyShim : ComponentSolverShim
 			return false;
 		};
 	}
-
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-			yield return command.Current;
-	}
 }

@@ -18,11 +18,6 @@ public class ReverseMorseShim : ComponentSolverShim
 		_reset = _component.GetValue<KMSelectable>("resetButton");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

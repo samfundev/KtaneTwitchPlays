@@ -16,11 +16,6 @@ public class AlgebraShim : ComponentSolverShim
 		_decButton = _component.GetValue<KMSelectable>("decimalBut");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

@@ -11,11 +11,6 @@ public class BritishSlangShim : ComponentSolverShim
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

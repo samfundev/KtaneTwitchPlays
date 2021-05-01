@@ -15,11 +15,6 @@ public class MaintenanceShim : ComponentSolverShim
 		_submit = _component.GetValue<KMSelectable>("repairBut");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

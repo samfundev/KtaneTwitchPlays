@@ -10,11 +10,6 @@ public class LightspeedShim : ComponentSolverShim
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		if (Unshimmed.ForcedSolveMethod == null) yield break;

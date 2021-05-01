@@ -12,11 +12,6 @@ public class ChristmasPresentsShim : ComponentSolverShim
 		_clock = _component.GetValue<KMSelectable>("clockButton");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-    }
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

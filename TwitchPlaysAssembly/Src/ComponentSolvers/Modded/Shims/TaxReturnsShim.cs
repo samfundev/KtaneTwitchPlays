@@ -14,11 +14,6 @@ public class TaxReturnsShim : ComponentSolverShim
 		_submitButton = _component.GetValue<KMSelectable>("submitBut");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

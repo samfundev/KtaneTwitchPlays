@@ -13,11 +13,6 @@ public class WireShim : ComponentSolverShim
 		_wire = _component.GetValue<KMSelectable>("intWire");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

@@ -13,11 +13,6 @@ public class JukeboxShim : ComponentSolverShim
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		// If an incorrect answer has already been submitted, we can't solve it without taking a strike.

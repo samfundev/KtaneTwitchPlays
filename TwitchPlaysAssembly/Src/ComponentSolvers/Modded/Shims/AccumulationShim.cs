@@ -14,11 +14,6 @@ public class AccumulationShim : ComponentSolverShim
 		_submitButton = _component.GetValue<KMSelectable>("submitButton");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

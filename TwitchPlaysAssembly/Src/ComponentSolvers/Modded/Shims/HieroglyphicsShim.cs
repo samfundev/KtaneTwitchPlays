@@ -8,11 +8,6 @@ public class HieroglyphicsShim : ComponentSolverShim
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		if (Unshimmed.ForcedSolveMethod == null) yield break;

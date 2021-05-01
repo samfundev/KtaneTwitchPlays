@@ -13,11 +13,6 @@ public class NumberCipherShim : ComponentSolverShim
 		_submit = _component.GetValue<KMSelectable>("executeButton");
 	}
 
-	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
-	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-	}
-
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;
