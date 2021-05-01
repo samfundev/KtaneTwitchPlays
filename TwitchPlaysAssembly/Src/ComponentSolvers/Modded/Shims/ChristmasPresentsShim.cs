@@ -14,8 +14,10 @@ public class ChristmasPresentsShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		yield return RespondToCommandUnshimmed(inputCommand);
-    }
+		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
+		while (command.MoveNext())
+			yield return command.Current;
+	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
