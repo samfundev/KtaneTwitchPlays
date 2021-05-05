@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -454,9 +454,14 @@ static class GlobalCommands
 						break;
 					case "points":
 					case "score":
-						module.scoreString = changeTo;
-						module.scoreStringOverride = true;
-						IRCConnection.SendMessage($"Module {moduleName} score string changed to: {module.scoreString}", user, !isWhisper);
+						var fileModule = Array.Find(ModuleData.LastRead, info => info.moduleID == module.moduleID);
+						if (fileModule != null)
+						{
+							fileModule.scoreString = changeTo;
+							module.scoreString = changeTo;
+							module.scoreStringOverride = true;
+							IRCConnection.SendMessage($"Module {moduleName} score string changed to: {module.scoreString}", user, !isWhisper);
+						}
 						break;
 					case "statuslight":
 						switch (changeTo.ToLowerInvariant())

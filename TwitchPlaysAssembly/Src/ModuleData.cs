@@ -149,7 +149,7 @@ public enum StatusLightPosition
 public static class ModuleData
 {
 	public static bool DataHasChanged = true;
-	private static FileModuleInformation[] lastRead = new FileModuleInformation[0]; // Used to prevent overriding settings that are only controlled by the file.
+	public static FileModuleInformation[] LastRead = new FileModuleInformation[0]; // Used to prevent overriding settings that are only controlled by the file.
 	private readonly static FieldInfo[] infoFields = typeof(ModuleInformation).GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 	private readonly static FieldInfo[] fileInfoFields = typeof(FileModuleInformation).GetFields();
 	public static void WriteDataToFile()
@@ -166,7 +166,7 @@ public static class ModuleData
 				.ThenBy(info => info.moduleID)
 				.Select(info =>
 				{
-					var fileInfo = Array.Find(lastRead, file => file.moduleID == info.moduleID);
+					var fileInfo = Array.Find(LastRead, file => file.moduleID == info.moduleID);
 					var dictionary = new Dictionary<string, object>();
 					foreach (var field in infoFields)
 					{
@@ -209,7 +209,7 @@ public static class ModuleData
 		{
 			DebugHelper.Log($"Loading Module information data from file: {path}");
 			modInfo = SettingsConverter.Deserialize<FileModuleInformation[]>(File.ReadAllText(path));
-			lastRead = modInfo;
+			LastRead = modInfo;
 		}
 		catch (FileNotFoundException)
 		{
