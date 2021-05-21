@@ -49,7 +49,7 @@ namespace TwitchPlays.ScoreMethods
 
 		public override float CalculateScore(string user)
 		{
-			if (!Scores.TryGetValue(user, out float score))
+			if (user == null || !Scores.TryGetValue(user, out float score))
 				score = 0;
 			else
 				Scores.Remove(user);
