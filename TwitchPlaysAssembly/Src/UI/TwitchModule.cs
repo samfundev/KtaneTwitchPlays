@@ -496,7 +496,7 @@ public class TwitchModule : MonoBehaviour
 			&& (!UserAccess.HasAccess(userNickName, AccessLevel.SuperUser, true) || !TwitchPlaySettings.data.SuperStreamerIgnoreClaimLimit))
 		{
 			AddToClaimQueue(userNickName, viewRequested, viewPinRequested);
-			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.QueuedClaimOverride ? TwitchPlaySettings.data.TooManyClaimedOverride : TwitchPlaySettings.data.TooManyClaimed, 
+			return new ClaimResult(false, string.Format(TwitchPlaySettings.data.QueuedClaimOverride ? TwitchPlaySettings.data.TooManyClaimedOverride : TwitchPlaySettings.data.TooManyClaimed,
 				userNickName, TwitchPlaySettings.data.ModuleClaimLimit));
 		}
 

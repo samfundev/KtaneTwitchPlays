@@ -20,7 +20,6 @@ public class SnookerShim : ComponentSolverShim
 			yield break;
 		object[] balls = _component.GetValue<object[]>("balls");
 		bool[] usedRedBalls = new bool[balls.Length];
-		List<string> breaks = new List<string>();
 		for (int i = 0; i < balls.Length; i++)
 		{
 			if (!balls[i].GetValue<KMSelectable>("selectable").gameObject.activeSelf)
@@ -28,7 +27,7 @@ public class SnookerShim : ComponentSolverShim
 		}
 		for (int i = 1; i < 5; i++)
 		{
-			breaks = _component.GetValue<List<string>>("break"+i+"String");
+			List<string> breaks = _component.GetValue<List<string>>("break" + i + "String");
 			for (int j = 0; j < breaks.Count; j++)
 			{
 				List<object> choices = new List<object>();

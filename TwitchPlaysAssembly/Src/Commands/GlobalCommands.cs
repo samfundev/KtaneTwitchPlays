@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -506,7 +506,7 @@ static class GlobalCommands
 					case "camerapinallowed":
 					case "pinallowed":
 					case "pin allowed":
-						module.CameraPinningAlwaysAllowed = (changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes"));
+						module.CameraPinningAlwaysAllowed = changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes");
 						IRCConnection.SendMessage($"Module {moduleName} Module pinning always allowed changed to: {(modules[0].CameraPinningAlwaysAllowed ? "Yes" : "No")}", user, !isWhisper);
 						break;
 					case "color":
@@ -536,11 +536,11 @@ static class GlobalCommands
 					case "announce module":
 					case "announce":
 					case "announcement":
-						module.announceModule = (changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes"));
+						module.announceModule = changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes");
 						IRCConnection.SendMessage($"Module {moduleName} announce on bomb start changed to: {(modules[0].announceModule ? "Yes" : "No")}", user, !isWhisper);
 						break;
 					case "unclaimable":
-						module.unclaimable = (changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes"));
+						module.unclaimable = changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes");
 						IRCConnection.SendMessage($"Module {moduleName} unclaimable changed to: {(modules[0].unclaimable ? "Yes" : "No")}", user, !isWhisper);
 						break;
 				}

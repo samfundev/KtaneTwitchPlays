@@ -58,7 +58,7 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 		yield return null;
 
 		int numStrikes = _component.GetValue<int>("NumStrikes");
-		float timerTime = _component.GetValue <float>("TimerTime");
+		float timerTime = _component.GetValue<float>("TimerTime");
 		int index, type;
 		if (numStrikes == 0 && edgework.IsIndicatorOn(Indicator.CAR))
 		{
@@ -100,12 +100,12 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 			index = 0;
 			type = 0;
 		}
-		else if (edgework.GetPorts().Contains("Serial") && edgework.GetOnIndicators().Count() >= 1)
+		else if (edgework.GetPorts().Contains("Serial") && edgework.GetOnIndicators().Any())
 		{
 			index = 1;
 			type = 1;
 		}
-		else if (edgework.GetIndicators().Count() == 0)
+		else if (!edgework.GetIndicators().Any())
 		{
 			index = 1;
 			type = 0;
@@ -202,7 +202,7 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 			DoInteractionStart(selectables[index]);
 			while (_component.GetValue<float>("TimeElapsedSinceHold") < needed)
 				yield return true;
-			while (!_component.GetValue<string>("FormattedTime").Contains(digit.ToString().ToCharArray()[0]))
+			while (!_component.GetValue<string>("FormattedTime").Contains(digit.ToString()[0]))
 				yield return true;
 			DoInteractionEnd(selectables[index]);
 		}

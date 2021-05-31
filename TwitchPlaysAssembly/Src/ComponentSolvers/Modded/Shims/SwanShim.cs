@@ -80,7 +80,7 @@ public class SwanShim : ComponentSolverShim
 				input = "7 7";
 		}
 		string[] inputSplit = input.Split(' ');
-		if (input == "")
+		if (input?.Length == 0)
 			inputSplit = new string[0];
 		string[] ansSplit = ans.Split(' ');
 		List<TextMesh> masterLabels = _component.GetValue<List<TextMesh>>("masterLabels");

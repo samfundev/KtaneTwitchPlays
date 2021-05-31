@@ -17,7 +17,7 @@ public class SimonStarShim : ComponentSolverShim
 		KMSelectable[] btns = new KMSelectable[5];
 		string[] pos = { "first", "second", "third", "fourth", "fifth" };
 		for (int i = 0; i < 5; i++)
-			btns[i] = _component.GetValue<object>(pos[i]+"CorrectButton").GetValue<KMSelectable>("selectable");
+			btns[i] = _component.GetValue<object>(pos[i] + "CorrectButton").GetValue<KMSelectable>("selectable");
 		while (_component.GetValue<bool>("striking"))
 			yield return true;
 		int stage = _component.GetValue<int>("stage");

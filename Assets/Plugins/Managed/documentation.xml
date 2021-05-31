@@ -382,7 +382,7 @@
             <syntax>queue on\nqueue off</syntax>
             <summary>Turns the queue on or off, letting other users know that they need to use the queue.</summary>
         </member>
-        <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.Boolean,System.String)">
+        <member name="M:GameCommands.CallQueuedCommand(System.String,System.Boolean,System.String)">
             <name>Call Command</name>
             <syntax>call (name)\ncallnow (name)</syntax>
             <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>

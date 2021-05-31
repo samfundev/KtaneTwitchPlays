@@ -346,7 +346,7 @@ public class TwitchGame : MonoBehaviour
 	{
 		var callResponse = CheckIfCall(true, false, "", commandToCall, out _);
 		if (callResponse == CallResponse.Success)
-			GameCommands.CallQueuedCommand("", false, true, commandToCall);
+			GameCommands.CallQueuedCommand("", true, commandToCall);
 		else if (callResponse == CallResponse.NotPresent)
 			IRCConnection.SendMessageFormat("Waiting for {0} to be queued.", string.IsNullOrEmpty(commandToCall) ? "the next unnamed queued command" : commandToCall.StartsWith("!") ? "module " + commandToCall : "the command named “" + commandToCall + "”");
 		else

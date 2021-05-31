@@ -586,7 +586,7 @@ static class GameCommands
 	/// <syntax>call (name)\ncallnow (name)</syntax>
 	/// <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
 	[Command(@"call( *now)?( +.+)?")]
-	public static void CallQueuedCommand(string user, bool isWhisper, [Group(1)] bool now, [Group(2)] string name)
+	public static void CallQueuedCommand(string user, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = name?.Trim();
 		if (name == null)

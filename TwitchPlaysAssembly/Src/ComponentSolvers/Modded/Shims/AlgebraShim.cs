@@ -62,7 +62,7 @@ public class AlgebraShim : ComponentSolverShim
 			if (i == stage && !clrPress)
 			{
 				start = curr.Length;
-				if ((hasMinus && !hasMinus2) || (!hasMinus && hasMinus2))
+				if (hasMinus ^ hasMinus2)
 					yield return DoInteractionClick(_negButton);
 			}
 			else
