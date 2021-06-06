@@ -110,6 +110,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["strikeSolve"] = module => new StrikeSolveComponentSolver(module);
 		ModComponentSolverCreators["abstractSequences"] = module => new AbstractSequencesComponentSolver(module);
 		ModComponentSolverCreators["bridge"] = module => new BridgeComponentSolver(module);
+		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
+		ModComponentSolverCreators["needyHotate"] = module => new NeedyHotateComponentSolver(module);
+		ModComponentSolverCreators["patternLock"] = module => new PatternLockComponentSolver(module);
 		// Misc [ZekNikZ]
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
@@ -120,10 +123,6 @@ public static class ComponentSolverFactory
 		//StrangaDanga Modules
 		ModComponentSolverCreators["keepClicking"] = module => new KeepClickingComponentSolver(module);
 		ModComponentSolverCreators["sixteenCoins"] = module => new SixteenCoinsComponentSolver(module);
-
-		//TheDarkSid3r Modules
-		ModComponentSolverCreators["AlienModule"] = module => new AlienFilingColorsComponentSolver(module);
-		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -315,6 +314,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Strike Solve", manualCode = "StrikeSolve", scoreString = "2" };
 		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Abstract Sequences" };
 		ModComponentSolverInformation["bridge"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Bridge" };
+		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
+		ModComponentSolverInformation["needyHotate"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Hotate" };
+		ModComponentSolverInformation["patternLock"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pattern Lock" };
 
 		//Samloper
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
@@ -342,10 +344,6 @@ public static class ComponentSolverFactory
 		//StrangaDanga
 		ModComponentSolverInformation["keepClicking"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keep Clicking", scoreString = "4" };
 		ModComponentSolverInformation["sixteenCoins"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "16 Coins", scoreString = "4" };
-
-		//TheDarkSid3r
-		ModComponentSolverInformation["AlienModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alien Filing Colors" };
-		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", scoreString = "2" };
