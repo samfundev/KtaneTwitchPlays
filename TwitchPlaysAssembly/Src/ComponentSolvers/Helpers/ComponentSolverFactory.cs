@@ -112,7 +112,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["bridge"] = module => new BridgeComponentSolver(module);
 		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
 		ModComponentSolverCreators["needyHotate"] = module => new NeedyHotateComponentSolver(module);
-		ModComponentSolverCreators["patternLock"] = module => new PatternLockComponentSolver(module);
 		// Misc [ZekNikZ]
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
@@ -316,7 +315,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["bridge"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Bridge" };
 		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
 		ModComponentSolverInformation["needyHotate"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Hotate" };
-		ModComponentSolverInformation["patternLock"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pattern Lock" };
 
 		//Samloper
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
