@@ -223,7 +223,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 		var chatHistory = chatSimulator.Traverse("ChatHistory");
 		var chatMessage = Instantiate(messageTemplate, chatHistory.transform, false);
-		chatMessage.GetComponent<Text>().text = $"<color={(!string.IsNullOrEmpty(message.UserColorCode) ? message.UserColorCode : "white")}>{message.UserNickName}</color>: {message.Text}";
+		chatMessage.GetComponent<Text>().text = $"<color={(!string.IsNullOrEmpty(message.UserColorCode) ? message.UserColorCode : "white")}>{message.UserNickName}</color>: {message.Text.Replace("<", "<<i></i>")}";
 		chatMessage.transform.SetSiblingIndex(chatMessages.Count);
 		chatMessage.SetActive(true);
 
