@@ -33,6 +33,31 @@ public static class ReflectionHelper
 #pragma warning restore CA1031
 	}
 
+	public static IEnumerable<FieldInfo> GetAllFields(this Type t, BindingFlags bindingFlags)
+	{
+		if (t == null)
+			return Enumerable.Empty<FieldInfo>();
+
+		BindingFlags flags = bindingFlags |
+							 BindingFlags.DeclaredOnly;
+		return t.GetFields(flags).Concat(GetAllFields(t.BaseType, bindingFlags));
+	}
+
+	public static IEnumerable<FieldInfo> GetAllFields(this object obj, BindingFlags bindingFlags)
+	{
+		return GetAllFields(obj.GetType(), bindingFlags);
+	}
+
+	public static FieldInfo GetDeepField(this Type t, string fieldName, BindingFlags bindingFlags)
+	{
+		return GetAllFields(t, bindingFlags).FirstOrDefault(field => field.Name == fieldName);
+	}
+
+	public static FieldInfo GetDeepField(this object obj, string fieldName, BindingFlags bindingFlags)
+	{
+		return GetDeepField(obj.GetType(), fieldName, bindingFlags);
+	}
+
 	static readonly Dictionary<string, MemberInfo> MemberCache = new Dictionary<string, MemberInfo>();
 	public static T GetCachedMember<T>(this Type type, string member) where T : MemberInfo
 	{
