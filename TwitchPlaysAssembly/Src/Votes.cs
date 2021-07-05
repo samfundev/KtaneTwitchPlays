@@ -7,7 +7,8 @@ using UnityEngine;
 public enum VoteTypes
 {
 	Detonation,
-	VSModeToggle
+	VSModeToggle,
+	Solve
 }
 
 public class VoteData
@@ -17,6 +18,38 @@ public class VoteData
 
 	// Action to execute if the vote passes
 	internal Action onSuccess;
+}
+
+public class VotesolveData
+{
+	private readonly TwitchModule module;
+	public readonly Action onSucess;
+	public string Name
+	{
+		get
+		{
+			return $"Solve module {module.Code}";
+		}
+	}
+
+	public readonly List<Tuple<Func<bool>, string>> validityChecks;
+
+	public VotesolveData(TwitchModule module, List<Tuple<Func<bool>, string>> validityChecks)
+	{
+		this.module = module;
+		this.validityChecks = validityChecks;
+		onSucess = () =>
+		{
+			module.Solver.SolveModule($"A module ({module.HeaderText}) is being automatically solved.");
+			if (OtherModes.currentMode == TwitchPlaysMode.Time)
+			{
+				TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
+				IRCConnection.SendMessage(
+					$"Reward decreased by 25% for votesolving module {module.Code}({module.HeaderText})");
+			}
+		};
+
+	}
 }
 
 public static class Votes
@@ -47,6 +80,8 @@ public static class Votes
 		}
 	};
 
+	internal static VotesolveData Votesolve;
+
 	private static readonly Dictionary<string, bool> Voters = new Dictionary<string, bool>();
 
 	private static Coroutine voteInProgress = null;
@@ -57,12 +92,13 @@ public static class Votes
 		{
 			oldTime = TimeLeft;
 			VoteTimeRemaining -= Time.deltaTime;
+			
 			if (TwitchGame.BombActive && TimeLeft != oldTime) // Once a second, update notes.
 				TwitchGame.ModuleCameras.SetNotes();
 			yield return null;
 		}
 
-		if (TwitchGame.BombActive && CurrentVoteType == VoteTypes.Detonation)
+		if (TwitchGame.BombActive && (CurrentVoteType == VoteTypes.Detonation || CurrentVoteType == VoteTypes.Solve))
 		{
 			// Add claimed users who didn't vote as "no"
 			int numAddedNoVotes = 0;
@@ -86,30 +122,69 @@ public static class Votes
 		int yesVotes = Voters.Count(pair => pair.Value);
 		bool votePassed = (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f));
 		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} yes votes. The vote has {(votePassed ? "passed" : "failed")}.");
-
 		if (votePassed)
-			PossibleVotes[CurrentVoteType].onSuccess();
+		{
+			switch (CurrentVoteType)
+			{
+				case VoteTypes.Detonation:
+					PossibleVotes[VoteTypes.Detonation].onSuccess();
+					break;
+				case VoteTypes.Solve:
+					Votesolve.onSucess();
+					break;
+			}
+		}
 
 		DestroyVote();
 	}
 
-	private static void CreateNewVote(string user, VoteTypes act)
+	private static void CreateNewVote(string user, VoteTypes act, TwitchModule module = null)
 	{
-		if (TwitchGame.BombActive && act == VoteTypes.Detonation)
+		if (TwitchGame.BombActive)
 		{
-			if (TwitchGame.Instance.VoteDetonateAttempted)
+			switch (act)
 			{
-				IRCConnection.SendMessage($"Sorry, {user}, a detonation vote was already attempted on this bomb. Another one cannot be started.");
-				return;
+				case VoteTypes.Detonation:
+					if (TwitchGame.Instance.VoteDetonateAttempted)
+					{
+						IRCConnection.SendMessage($"Sorry, {user}, a detonation vote was already attempted on this bomb. Another one cannot be started.");
+						return;
+					}
+					TwitchGame.Instance.VoteDetonateAttempted = true;
+					break;
+				case VoteTypes.Solve:
+					if (module == null)
+						throw new InvalidOperationException("Module is null in a votesolve! This should not happen, please send this logfile to the TP developers!");
+					Votesolve = new VotesolveData(module,
+						new List<Tuple<Func<bool>, string>>
+						{
+							new Tuple<Func<bool>, string>(() => TwitchGame.Instance.VoteSolveCount >= 2, $"Sorry, {user}, two votesolves have already been used. Another one cannot be started."),
+							new Tuple<Func<bool>, string>(() => module.HasStruck, $"Sorry, {user}, the module you're trying to solve has struck. A vote to solve this module cannot be started."),
+							new Tuple<Func<bool>, string>(() => (double)TwitchGame.Instance.Bombs[0].BombSolvedModules / (double)TwitchGame.Instance.Bombs[0].BombSolvableModules <= 0.75f, $"Sorry, {user}, more than 75% of the bomb must be solved to call a votesolve."),
+							new Tuple<Func<bool>, string>(() => module.Claimed, $"Sorry, {user}, the module must be unclaimed for it to be votesolved."),
+							new Tuple<Func<bool>, string>(() => (int)module.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !module.ScoreUnchanged, $"Sorry, {user}, the module must have a score greater than 8."),
+							new Tuple<Func<bool>, string>(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{module.Code}")), $"Sorry, {user}, the module you are trying to solve is in the queue."),
+							new Tuple<Func<bool>, string>(() => MissionID.GetMissionID() != "custom", $"Sorry, {user}, you can't votesolve modules while in a mission bomb.")
+						});
+
+					var validity = Votesolve.validityChecks.FirstOrDefault(x => x.First());
+					if (validity != null)
+					{
+						IRCConnection.SendMessage(validity.Second);
+						return;
+					}
+					TwitchGame.Instance.VoteSolveCount++;
+					break;
 			}
-			TwitchGame.Instance.VoteDetonateAttempted = true;
 		}
 
 		CurrentVoteType = act;
 		VoteTimeRemaining = TwitchPlaySettings.data.VoteCountdownTime;
 		Voters.Clear();
 		Voters.Add(user, true);
-		IRCConnection.SendMessage($"Voting has started by {user} to \"{PossibleVotes[CurrentVoteType].name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '.");
+		IRCConnection.SendMessage(act == VoteTypes.Solve
+			? $"Voting has started by {user} to \"{Votesolve.Name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '."
+			: $"Voting has started by {user} to \"{PossibleVotes[CurrentVoteType].name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '.");
 		voteInProgress = TwitchPlaysService.Instance.StartCoroutine(VotingCoroutine());
 		if (TwitchGame.Instance.alertSound != null)
 			TwitchGame.Instance.alertSound.Play();
@@ -172,11 +247,17 @@ public static class Votes
 	}
 	#endregion
 
-	public static void StartVote(string user, VoteTypes act)
+	public static void StartVote(string user, VoteTypes act, TwitchModule module = null)
 	{
 		if (!TwitchPlaySettings.data.EnableVoting)
 		{
 			IRCConnection.SendMessage($"Sorry, {user}, voting is disabled.");
+			return;
+		}
+
+		if (act == VoteTypes.Solve && !TwitchPlaySettings.data.EnableVotesolve)
+		{
+			IRCConnection.SendMessage($"Sorry, {user}, votesolving is disabled.");
 			return;
 		}
 
@@ -186,7 +267,7 @@ public static class Votes
 			return;
 		}
 
-		CreateNewVote(user, act);
+		CreateNewVote(user, act, module);
 	}
 
 	public static void TimeLeftOnVote(string user)

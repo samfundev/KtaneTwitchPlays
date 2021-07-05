@@ -122,7 +122,7 @@ public class Leaderboard
 
 	private bool GetEntry(string UserName, out LeaderboardEntry entry) => _entryDictionary.TryGetValue(UserName.ToLowerInvariant(), out entry);
 
-	private LeaderboardEntry GetEntry(string userName)
+	public LeaderboardEntry GetEntry(string userName)
 	{
 		if (!GetEntry(userName, out LeaderboardEntry entry))
 		{

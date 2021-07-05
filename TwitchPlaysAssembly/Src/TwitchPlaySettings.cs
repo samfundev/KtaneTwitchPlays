@@ -47,6 +47,7 @@ public class TwitchPlaySettingsData
 	public int FindClaimAddTime = 5;
 	public int VoteCountdownTime = 60;
 	public bool EnableVoting = true;
+	public bool EnableVotesolve = true;
 	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.GetVoteDict();
 	public float DynamicScoreMultiplier = 1;
 	public bool EnableTwitchPlayShims = true;

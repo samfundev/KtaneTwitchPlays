@@ -24,6 +24,7 @@ public class TwitchGame : MonoBehaviour
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 	public bool VoteDetonateAttempted = false;
+	public int VoteSolveCount;
 	public int TrainingModeRemainingTime = -1;
 	public int[] TrainingModeAlertTimes = new int[9] { 1, 2, 5, 10, 20, 30, 45, 60, 90 };
 
@@ -105,6 +106,7 @@ public class TwitchGame : MonoBehaviour
 		CallingPlayers.Clear();
 		callWaiting = false;
 		VoteDetonateAttempted = false;
+		VoteSolveCount = 0;
 		FindClaimPlayers.Clear();
 		MysteryModuleShim.CoveredModules.Clear();
 		RetryAllowed = true;

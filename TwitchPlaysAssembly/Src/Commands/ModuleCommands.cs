@@ -111,6 +111,12 @@ static class ModuleCommands
 			module.Solver.SolveModule($"A module ({module.HeaderText}) is being automatically solved.");
 	}
 
+	/// <name>Votesolve</name>
+	/// <syntax>votesolve</syntax>
+	/// <summary>Starts a vote about solving the module</summary>
+	[Command("votesolve")]
+	public static void VoteSolve(TwitchModule module, string user) => Votes.StartVote(user, VoteTypes.Solve, module);
+	
 	/// <name>Claim View Pin</name>
 	/// <syntax>claim view pin\ncvp</syntax>
 	/// <summary>Claims, views and pins a module. You can remove one of three actions as well. (e.g. claim view)</summary>

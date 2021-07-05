@@ -1028,7 +1028,7 @@ public abstract class ComponentSolver
 	private void AwardStrikes(string userNickName, int strikeCount)
 	{
 		List<string> messageParts = new List<string>();
-
+		Module.HasStruck = true;
 		string headerText = UnsupportedModule ? ModInfo.moduleDisplayName : Module.BombComponent.GetModuleDisplayName();
 		int strikePenalty = -TwitchPlaySettings.data.StrikePenalty * (TwitchPlaySettings.data.EnableRewardMultipleStrikes ? strikeCount : 1);
 		strikePenalty = (strikePenalty * OtherModes.ScoreMultiplier).RoundToInt();
@@ -1145,7 +1145,7 @@ public abstract class ComponentSolver
 	private void CalculateVSHP(string userNickName, int pointsAwarded, out OtherModes.Team? teamDamaged, out int HPDamage)
 	{
 		HPDamage = Mathf.FloorToInt(Math.Abs(pointsAwarded) * TwitchPlaySettings.data.VSHPMultiplier) == 0 ? 1 : Mathf.FloorToInt(Math.Abs(pointsAwarded) * TwitchPlaySettings.data.VSHPMultiplier);
-		Leaderboard.Instance.GetRank(userNickName, out Leaderboard.LeaderboardEntry entry);
+		var entry = Leaderboard.Instance.GetEntry(userNickName);
 		teamDamaged = pointsAwarded > 0 ? (entry.Team == OtherModes.Team.Good ? OtherModes.Team.Evil : OtherModes.Team.Good) : entry.Team;
 
 		switch (teamDamaged)
