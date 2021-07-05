@@ -158,7 +158,7 @@ public static class Votes
 							new Tuple<Func<bool>, string>(() => (double)TwitchGame.Instance.Bombs[0].BombSolvedModules / (double)TwitchGame.Instance.Bombs[0].BombSolvableModules <= 0.75f, $"Sorry, {user}, more than 75% of the bomb must be solved to call a votesolve."),
 							new Tuple<Func<bool>, string>(() => module.Claimed, $"Sorry, {user}, the module must be unclaimed for it to be votesolved."),
 							new Tuple<Func<bool>, string>(() => module.ClaimQueue.Any(), $"Sorry, {user}, the module you are trying to votesolve has a queued claim on it."),
-							new Tuple<Func<bool>, string>(() => (int)module.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !module.ScoreUnchanged, $"Sorry, {user}, the module must have a score greater than 8."),
+							new Tuple<Func<bool>, string>(() => (int)module.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8, $"Sorry, {user}, the module must have a score greater than 8."),
 							new Tuple<Func<bool>, string>(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{module.Code}")), $"Sorry, {user}, the module you are trying to solve is in the queue."),
 							new Tuple<Func<bool>, string>(() => MissionID.GetMissionID() != "custom", $"Sorry, {user}, you can't votesolve modules while in a mission bomb.")
 						});
