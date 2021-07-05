@@ -41,14 +41,9 @@ public class VotesolveData
 		onSucess = () =>
 		{
 			module.Solver.SolveModule($"A module ({module.HeaderText}) is being automatically solved.");
-			if (OtherModes.currentMode == TwitchPlaysMode.Time)
-			{
-				TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
-				IRCConnection.SendMessage(
-					$"Reward decreased by 25% for votesolving module {module.Code}({module.HeaderText})");
-			}
+			TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
+			IRCConnection.SendMessage($"Reward decreased by 25% for votesolving module {module.Code}({module.HeaderText})");
 		};
-
 	}
 }
 
