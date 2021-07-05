@@ -50,9 +50,6 @@ public class TwitchModule : MonoBehaviour
 	[HideInInspector]
 	public bool HasStruck;
 
-	[HideInInspector] 
-	public bool ScoreUnchanged;
-
 	[HideInInspector]
 	public List<ClaimQueueItem> ClaimQueue = new List<ClaimQueueItem>();
 
