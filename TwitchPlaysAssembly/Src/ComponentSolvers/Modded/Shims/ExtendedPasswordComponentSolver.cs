@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 public class ExtendedPasswordComponentSolver : ComponentSolverShim
 {
@@ -10,7 +9,9 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 		base(module, "ExtendedPassword")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} cycle [cycle all columns] | !{0} toggle [move all columns down one letter] | !{0} lambda [try to submit a word]");
-		_buttons = (KMSelectable[]) ButtonsField.GetValue(module.BombComponent.GetComponent(ComponentType));
+		_component = module.BombComponent.GetComponent(ComponentType);
+		_buttons = _component.GetValue<KMSelectable[]>("buttons");
+		_submit = _component.GetValue<KMSelectable>("submitbutton");
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
@@ -59,8 +60,32 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 		}
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");
-	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);
+	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
+	{
+		while (!_component.GetValue<bool>("isActivated"))
+			yield return true;
+		int[] dispPositions = _component.GetValue<int[]>("displaysTextPosition");
+		string[,] displays = _component.GetValue<string[,]>("displaysText");
+		string goal = _component.GetValue<string>("goalword");
+		for (int i = 0; i < 6; i++)
+		{
+			int goalIndex = -1;
+			for (int j = 0; j < 6; j++)
+			{
+				if (displays[i, j].Equals(goal[i].ToString()))
+				{
+					goalIndex = j;
+					break;
+				}
+			}
+			yield return SelectIndex(dispPositions[i], goalIndex, 6, _buttons[i], _buttons[i + 6]);
+		}
+		yield return DoInteractionClick(_submit);
+	}
 
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ExtendedPassword", "ExtendedPassword");
+
+	private readonly object _component;
 	private readonly KMSelectable[] _buttons;
+	private readonly KMSelectable _submit;
 }
