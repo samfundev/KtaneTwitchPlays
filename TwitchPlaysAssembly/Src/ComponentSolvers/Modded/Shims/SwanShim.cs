@@ -7,7 +7,7 @@ using UnityEngine;
 public class SwanShim : ComponentSolverShim
 {
 	public SwanShim(TwitchModule module)
-		: base(module, "theSwan")
+		: base(module)
 	{
 		_component = Module.BombComponent.GetComponent(ComponentType);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());

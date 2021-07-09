@@ -6,7 +6,7 @@ using UnityEngine;
 public class MaintenanceShim : ComponentSolverShim
 {
 	public MaintenanceShim(TwitchModule module)
-		: base(module, "maintenance")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

@@ -4,7 +4,7 @@ using System.Collections;
 public class PokerShim : ComponentSolverShim
 {
 	public PokerShim(TwitchModule module)
-		: base(module, "Poker")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

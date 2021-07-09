@@ -4,7 +4,7 @@ using System.Collections;
 public class SphereShim : ComponentSolverShim
 {
 	public SphereShim(TwitchModule module)
-		: base(module, "sphere")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

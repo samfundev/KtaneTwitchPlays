@@ -4,7 +4,7 @@ using System.Collections;
 public class SymbolicCoordinatesShim : ComponentSolverShim
 {
 	public SymbolicCoordinatesShim(TwitchModule module)
-		: base(module, "symbolicCoordinates")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

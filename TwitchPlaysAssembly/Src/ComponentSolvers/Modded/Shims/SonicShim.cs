@@ -4,7 +4,7 @@ using System.Collections;
 public class SonicShim : ComponentSolverShim
 {
 	public SonicShim(TwitchModule module)
-		: base(module, "sonic")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

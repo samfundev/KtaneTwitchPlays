@@ -4,7 +4,7 @@ using System.Collections;
 public class WireShim : ComponentSolverShim
 {
 	public WireShim(TwitchModule module)
-		: base(module, "wire")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

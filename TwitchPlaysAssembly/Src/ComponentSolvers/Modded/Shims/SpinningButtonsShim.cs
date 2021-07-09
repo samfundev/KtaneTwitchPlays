@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class SpinningButtonsShim : ComponentSolverShim
 {
 	public SpinningButtonsShim(TwitchModule module)
-		: base(module, "spinningButtons")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CatchphraseShim : ComponentSolverShim
 {
 	public CatchphraseShim(TwitchModule module) :
-		base(module, "catchphrase")
+		base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		component = module.BombComponent.GetComponent(ComponentType);

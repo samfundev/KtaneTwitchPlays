@@ -4,7 +4,7 @@ using System.Collections;
 public class HorribleMemoryShim : ComponentSolverShim
 {
 	public HorribleMemoryShim(TwitchModule module)
-		: base(module, "horribleMemory")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

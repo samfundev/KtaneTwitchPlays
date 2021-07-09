@@ -4,7 +4,7 @@ using System.Collections;
 public class JackOLanternShim : ComponentSolverShim
 {
 	public JackOLanternShim(TwitchModule module)
-		: base(module, "jackOLantern")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

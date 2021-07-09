@@ -5,7 +5,7 @@ using UnityEngine;
 public class AccumulationShim : ComponentSolverShim
 {
 	public AccumulationShim(TwitchModule module)
-		: base(module, "accumulation")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

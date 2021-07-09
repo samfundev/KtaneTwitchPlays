@@ -4,10 +4,10 @@ public abstract class ComponentSolverShim : ComponentSolver
 {
 	protected ComponentSolver Unshimmed;
 
-	protected ComponentSolverShim(TwitchModule module, string moduleType) : base(module)
+	protected ComponentSolverShim(TwitchModule module) : base(module)
 	{
 		// Passing null to the BombCommander argument here because Unshimmed is only used to run RespondToCommandInternal(); we don’t want it to award strikes/solves etc. because this object already does that
-		Unshimmed = ComponentSolverFactory.CreateDefaultModComponentSolver(module, moduleType, module.BombComponent.GetModuleDisplayName(), false);
+		Unshimmed = ComponentSolverFactory.CreateDefaultModComponentSolver(module, module.BombComponent.GetModuleID(), module.BombComponent.GetModuleDisplayName(), false);
 		ModInfo = Unshimmed.ModInfo;
 	}
 

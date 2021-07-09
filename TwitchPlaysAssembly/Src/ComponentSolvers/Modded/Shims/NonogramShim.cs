@@ -6,7 +6,7 @@ using UnityEngine;
 public class NonogramShim : ComponentSolverShim
 {
 	public NonogramShim(TwitchModule module)
-		: base(module, "NonogramModule")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

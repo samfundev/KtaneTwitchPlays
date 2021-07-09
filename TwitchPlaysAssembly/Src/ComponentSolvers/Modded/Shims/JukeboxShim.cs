@@ -6,7 +6,7 @@ using UnityEngine;
 public class JukeboxShim : ComponentSolverShim
 {
 	public JukeboxShim(TwitchModule module)
-		: base(module, "jukebox")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;

@@ -4,7 +4,7 @@ using System.Collections;
 public class LightspeedShim : ComponentSolverShim
 {
 	public LightspeedShim(TwitchModule module)
-		: base(module, "lightspeed")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

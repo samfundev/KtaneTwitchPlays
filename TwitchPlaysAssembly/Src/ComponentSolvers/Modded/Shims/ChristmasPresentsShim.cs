@@ -5,7 +5,7 @@ using UnityEngine;
 public class ChristmasPresentsShim : ComponentSolverShim
 {
 	public ChristmasPresentsShim(TwitchModule module)
-		: base(module, "christmasPresents")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

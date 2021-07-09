@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 public class AntiTrollShim : ComponentSolverShim
 {
-	public AntiTrollShim(TwitchModule module, string moduleType, Dictionary<string, string> trollCommands)
-		: base(module, moduleType)
+	public AntiTrollShim(TwitchModule module, Dictionary<string, string> trollCommands)
+		: base(module)
 	{
 		_trollCommands = trollCommands ?? new Dictionary<string, string>();
 	}
 
-	public AntiTrollShim(TwitchModule module, string moduleType, IEnumerable<string> commands, string response)
-		: base(module, moduleType)
+	public AntiTrollShim(TwitchModule module, IEnumerable<string> commands, string response)
+		: base(module)
 	{
 		_trollCommands = new Dictionary<string, string>();
 		foreach (string command in commands)

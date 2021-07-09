@@ -5,7 +5,7 @@ using System.Linq;
 public class AlphabetNumbersShim : ComponentSolverShim
 {
 	public AlphabetNumbersShim(TwitchModule module)
-		: base(module, "alphabetNumbers")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

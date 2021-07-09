@@ -8,7 +8,7 @@ public class MysteryWidgetShim : ComponentSolverShim
 	public static readonly List<GameObject> Covers = new List<GameObject>();
 
 	public MysteryWidgetShim(TwitchModule module)
-		: base(module, "widgetModule")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 

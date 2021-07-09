@@ -3,7 +3,7 @@ using System.Collections;
 public class SquareButtonShim : ComponentSolverShim
 {
 	public SquareButtonShim(TwitchModule module)
-		: base(module, "ButtonV2")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}

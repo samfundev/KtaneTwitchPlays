@@ -6,7 +6,7 @@ using System.Reflection;
 public class GroceryStoreShim : ComponentSolverShim
 {
 	public GroceryStoreShim(TwitchModule module)
-		: base(module, "groceryStore")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

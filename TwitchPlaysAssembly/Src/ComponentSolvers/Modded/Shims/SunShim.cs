@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class SunShim : ComponentSolverShim
 {
 	public SunShim(TwitchModule module)
-		: base(module, "sun")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

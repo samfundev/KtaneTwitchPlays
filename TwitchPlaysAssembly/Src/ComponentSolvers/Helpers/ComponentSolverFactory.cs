@@ -177,8 +177,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["lgndAudioMorse"] = module => new AudioMorseShim(module);
 		ModComponentSolverCreators["lgndZoni"] = module => new ZoniShim(module);
 		ModComponentSolverCreators["snooker"] = module => new SnookerShim(module);
-		ModComponentSolverCreators["Mastermind Simple"] = module => new MastermindSimpleShim(module);
-		ModComponentSolverCreators["Mastermind Cruel"] = module => new MastermindCruelShim(module);
+		ModComponentSolverCreators["Mastermind Simple"] = module => new MastermindShim(module);
+		ModComponentSolverCreators["Mastermind Cruel"] = module => new MastermindShim(module);
 		ModComponentSolverCreators["hunting"] = module => new HuntingShim(module);
 		ModComponentSolverCreators["NonogramModule"] = module => new NonogramShim(module);
 		ModComponentSolverCreators["FlagsModule"] = module => new FlagsShim(module);
@@ -186,7 +186,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["Numbers"] = module => new NumbersShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
-		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, "MazeV2", new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
+		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.

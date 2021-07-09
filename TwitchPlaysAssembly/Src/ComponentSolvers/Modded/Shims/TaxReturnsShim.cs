@@ -5,7 +5,7 @@ using UnityEngine;
 public class TaxReturnsShim : ComponentSolverShim
 {
 	public TaxReturnsShim(TwitchModule module)
-		: base(module, "taxReturns")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

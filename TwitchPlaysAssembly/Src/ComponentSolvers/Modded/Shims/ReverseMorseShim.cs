@@ -7,7 +7,7 @@ using UnityEngine;
 public class ReverseMorseShim : ComponentSolverShim
 {
 	public ReverseMorseShim(TwitchModule module)
-		: base(module, "reverseMorse")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

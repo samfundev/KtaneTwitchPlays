@@ -6,7 +6,7 @@ using UnityEngine;
 public class WireSpaghettiShim : ComponentSolverShim
 {
 	public WireSpaghettiShim(TwitchModule module)
-		: base(module, "wireSpaghetti")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

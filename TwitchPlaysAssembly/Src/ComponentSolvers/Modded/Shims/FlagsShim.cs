@@ -4,7 +4,7 @@ using System.Collections;
 public class FlagsShim : ComponentSolverShim
 {
 	public FlagsShim(TwitchModule module)
-		: base(module, "FlagsModule")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

@@ -7,7 +7,7 @@ public class MysteryModuleShim : ComponentSolverShim
 	public static readonly Dictionary<BombComponent, GameObject> CoveredModules = new Dictionary<BombComponent, GameObject>();
 
 	public MysteryModuleShim(TwitchModule module)
-		: base(module, "mysterymodule")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 

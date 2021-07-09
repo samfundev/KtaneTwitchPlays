@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlungerButtonShim : ComponentSolverShim
 {
 	public PlungerButtonShim(TwitchModule module) :
-		base(module, "plungerButton")
+		base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

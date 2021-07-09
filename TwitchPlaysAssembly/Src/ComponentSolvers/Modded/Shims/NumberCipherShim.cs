@@ -4,7 +4,7 @@ using System.Collections;
 public class NumberCipherShim : ComponentSolverShim
 {
 	public NumberCipherShim(TwitchModule module)
-		: base(module, "numberCipher")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

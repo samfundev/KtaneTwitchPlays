@@ -4,7 +4,7 @@ using System.Collections;
 public class BlockbustersShim : ComponentSolverShim
 {
 	public BlockbustersShim(TwitchModule module)
-		: base(module, "blockbusters")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

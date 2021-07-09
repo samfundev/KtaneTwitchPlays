@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 
-public class MastermindCruelShim : ComponentSolverShim
+public class MastermindShim : ComponentSolverShim
 {
-	public MastermindCruelShim(TwitchModule module)
-		: base(module, "Mastermind Cruel")
+	public MastermindShim(TwitchModule module)
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
@@ -26,7 +26,7 @@ public class MastermindCruelShim : ComponentSolverShim
 		yield return DoInteractionClick(_submit, 0);
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("Mastermind", "Mastermind Cruel");
+	private static readonly Type ComponentType = ReflectionHelper.FindType("Mastermind", "Mastermind Simple");
 
 	private readonly object _component;
 	private readonly KMSelectable[] _slots;

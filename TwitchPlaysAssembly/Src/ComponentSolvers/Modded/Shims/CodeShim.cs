@@ -4,7 +4,7 @@ using System.Collections;
 public class CodeShim : ComponentSolverShim
 {
 	public CodeShim(TwitchModule module)
-		: base(module, "theCodeModule")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

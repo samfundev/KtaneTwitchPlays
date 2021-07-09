@@ -5,7 +5,7 @@ using UnityEngine;
 public class StopwatchShim : ComponentSolverShim
 {
 	public StopwatchShim(TwitchModule module)
-		: base(module, "stopwatch")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

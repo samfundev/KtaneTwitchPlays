@@ -5,7 +5,7 @@ using UnityEngine;
 public class CubeShim : ComponentSolverShim
 {
 	public CubeShim(TwitchModule module)
-		: base(module, "cube")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

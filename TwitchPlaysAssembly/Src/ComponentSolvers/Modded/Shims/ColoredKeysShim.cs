@@ -4,7 +4,7 @@ using System.Collections;
 public class ColoredKeysShim : ComponentSolverShim
 {
 	public ColoredKeysShim(TwitchModule module)
-		: base(module, "lgndColoredKeys")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

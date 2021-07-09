@@ -3,7 +3,7 @@
 public class HieroglyphicsShim : ComponentSolverShim
 {
 	public HieroglyphicsShim(TwitchModule module)
-		: base(module, "hieroglyphics")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}

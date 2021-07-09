@@ -4,7 +4,7 @@ using System.Collections;
 public class BooleanKeypadShim : ComponentSolverShim
 {
 	public BooleanKeypadShim(TwitchModule module)
-		: base(module, "BooleanKeypad")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Use '!{0} press 2 4' to press buttons 2 and 4. | Buttons are indexed 1-4 in reading order.");
 		_component = module.BombComponent.GetComponent(ComponentType);

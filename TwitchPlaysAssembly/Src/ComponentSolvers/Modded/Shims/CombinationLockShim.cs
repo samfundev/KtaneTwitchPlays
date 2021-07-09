@@ -6,7 +6,7 @@ using UnityEngine;
 public class CombinationLockShim : ComponentSolverShim
 {
 	public CombinationLockShim(TwitchModule module)
-		: base(module, "combinationLock")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

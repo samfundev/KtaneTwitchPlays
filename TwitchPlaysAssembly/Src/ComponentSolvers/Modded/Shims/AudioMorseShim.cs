@@ -5,7 +5,7 @@ using UnityEngine;
 public class AudioMorseShim : ComponentSolverShim
 {
 	public AudioMorseShim(TwitchModule module)
-		: base(module, "lgndAudioMorse")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

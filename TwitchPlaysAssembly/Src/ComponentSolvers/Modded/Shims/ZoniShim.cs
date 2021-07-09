@@ -5,7 +5,7 @@ using UnityEngine;
 public class ZoniShim : ComponentSolverShim
 {
 	public ZoniShim(TwitchModule module)
-		: base(module, "lgndZoni")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

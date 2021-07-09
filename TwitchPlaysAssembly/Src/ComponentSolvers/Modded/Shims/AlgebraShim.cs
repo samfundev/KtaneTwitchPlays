@@ -5,7 +5,7 @@ using UnityEngine;
 public class AlgebraShim : ComponentSolverShim
 {
 	public AlgebraShim(TwitchModule module)
-		: base(module, "algebra")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

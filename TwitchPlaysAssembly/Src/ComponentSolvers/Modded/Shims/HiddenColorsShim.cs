@@ -4,7 +4,7 @@ using System.Collections;
 public class HiddenColorsShim : ComponentSolverShim
 {
 	public HiddenColorsShim(TwitchModule module)
-		: base(module, "lgndHiddenColors")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);

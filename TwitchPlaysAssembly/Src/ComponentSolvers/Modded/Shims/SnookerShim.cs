@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class SnookerShim : ComponentSolverShim
 {
 	public SnookerShim(TwitchModule module)
-		: base(module, "snooker")
+		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
