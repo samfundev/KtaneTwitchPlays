@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 public class MastermindShim : ComponentSolverShim
 {
@@ -7,7 +6,8 @@ public class MastermindShim : ComponentSolverShim
 		: base(module)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-		_component = module.BombComponent.GetComponent(ComponentType);
+		var type = ReflectionHelper.FindType("Mastermind", module.BombComponent.GetModuleID());
+		_component = module.BombComponent.GetComponent(type);
 		_slots = _component.GetValue<KMSelectable[]>("Slot");
 		_submit = _component.GetValue<KMSelectable>("Submit");
 	}
@@ -25,8 +25,6 @@ public class MastermindShim : ComponentSolverShim
 		}
 		yield return DoInteractionClick(_submit, 0);
 	}
-
-	private static readonly Type ComponentType = ReflectionHelper.FindType("Mastermind", "Mastermind Simple");
 
 	private readonly object _component;
 	private readonly KMSelectable[] _slots;
