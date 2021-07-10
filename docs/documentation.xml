@@ -127,14 +127,14 @@
         </member>
         <member name="M:BombCommands.ChangeTimer(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.String)">
             <name>Change Timer</name>
-            <syntax>add time [time]\nsubstract time [time]\nset time [time]</syntax>
-            <summary>Adds, substracts or sets the bomb time.</summary>
+            <syntax>add time [time]\nsubtract time [time]\nset time [time]</syntax>
+            <summary>Adds, subtracts or sets the bomb time.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="M:BombCommands.ChangeStrikeParameter(TwitchBomb,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
             <name>Change Strikes / Strike Limit</name>
-            <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
-            <summary>Adds, substracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
+            <syntax>add strikes [strikes]\nsubtract strikes [strikes]\nset strikes [strikes]</syntax>
+            <summary>Adds, subtracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="T:CommandAttribute">
@@ -895,6 +895,11 @@
             <name>Solve</name>
             <syntax>solve</syntax>
             <summary>Forces a module to solve itself. Requires either Admin rank or the module to not be supported on TP.</summary>
+        </member>
+        <member name="M:ModuleCommands.VoteSolve(TwitchModule,System.String)">
+            <name>Votesolve</name>
+            <syntax>votesolve</syntax>
+            <summary>Starts a vote about solving the module</summary>
         </member>
         <member name="M:ModuleCommands.ClaimViewPin(TwitchModule,System.String,System.Boolean,System.String)">
             <name>Claim View Pin</name>

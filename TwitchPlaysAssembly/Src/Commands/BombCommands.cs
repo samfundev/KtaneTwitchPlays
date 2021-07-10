@@ -196,8 +196,8 @@ public static class BombCommands
 	}
 
 	/// <name>Change Timer</name>
-	/// <syntax>add time [time]\nsubstract time [time]\nset time [time]</syntax>
-	/// <summary>Adds, substracts or sets the bomb time.</summary>
+	/// <syntax>add time [time]\nsubtract time [time]\nset time [time]</syntax>
+	/// <summary>Adds, subtracts or sets the bomb time.</summary>
 	/// <restriction>Admin</restriction>
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:time|t) +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ChangeTimer(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] string amount)
@@ -248,8 +248,8 @@ public static class BombCommands
 	}
 
 	/// <name>Change Strikes / Strike Limit</name>
-	/// <syntax>add strikes [strikes]\nsubstract strikes [strikes]\nset strikes [strikes]</syntax>
-	/// <summary>Adds, substracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
+	/// <syntax>add strikes [strikes]\nsubtract strikes [strikes]\nset strikes [strikes]</syntax>
+	/// <summary>Adds, subtracts or sets the number of strikes. Replace strikes with strikelimit to change the strike limit.</summary>
 	/// <restriction>Admin</restriction>
 	[Command(@"(?:add|increase|(subtract|decrease|remove)|(change|set)) +(?:(strikes?|s)|strikelimit|sl|maxstrikes?|ms) +(-?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ChangeStrikeParameter(TwitchBomb bomb, string user, bool isWhisper, [Group(1)] bool negative, [Group(2)] bool direct, [Group(3)] bool isStrikes, [Group(4)] int amount)
