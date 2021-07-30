@@ -20,6 +20,7 @@ public class TwitchGame : MonoBehaviour
 	public List<TwitchBomb> Bombs = new List<TwitchBomb>();
 	public List<TwitchModule> Modules = new List<TwitchModule>();
 	public int _currentBomb = -1;
+	public TwitchBomb CurrentBomb => Bombs[_currentBomb == -1 ? 0 : _currentBomb];
 	public AudioSource alertSound = null;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
