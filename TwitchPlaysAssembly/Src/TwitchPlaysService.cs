@@ -277,6 +277,7 @@ public class TwitchPlaysService : MonoBehaviour
 				{
 					initialLoad = true;
 					_coroutinesToStart.Enqueue(ComponentSolverFactory.LoadDefaultInformation(true));
+					_coroutinesToStart.Enqueue(BossModuleHelper.GetBossMods());
 					if (!TwitchPlaySettings.data.TwitchPlaysDebugEnabled) _coroutinesToStart.Enqueue(CheckSupport.FindSupportedModules());
 				}
 
