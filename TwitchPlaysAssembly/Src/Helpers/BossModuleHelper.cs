@@ -7,7 +7,7 @@ public static class BossModuleHelper
 {
 	private static List<string> _bossmods = new List<string>();
 	
-	public static bool IsBossMod(string mod) => _bossmods.Contains(mod);
+	public static bool IsBossMod(this string mod) => _bossmods.Contains(mod);
 	
 	public static IEnumerator GetBossMods()
 	{
@@ -17,14 +17,14 @@ public static class BossModuleHelper
 
 			if (http.isNetworkError || http.responseCode != 200)
 			{
-				DebugHelper.Log("Failed to load bossmodules. Network error.");
+				DebugHelper.LogError("Failed to load boss modules. Network error.");
 			}
 
 			var mods = JObject.Parse(http.downloadHandler.text)["KtaneModules"] as JArray;
 
 			if (mods == null)
 			{
-				DebugHelper.Log("Failed to load bossmodules. Mods is null.");
+				DebugHelper.LogError("Failed to load boss modules. Mods is null.");
 			}
 
 			var bossMods = new List<string>();
@@ -43,7 +43,7 @@ public static class BossModuleHelper
 						DebugHelper.Log($"Failed to load name for mod {name.Value}.");
 				}
 			}
-			DebugHelper.Log("List off boss modules loaded.");
+			DebugHelper.Log("List of boss modules loaded.");
 			_bossmods = bossMods;
 		}
 	}

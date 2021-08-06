@@ -464,6 +464,9 @@ public class TwitchModule : MonoBehaviour
 
 	public ClaimResult TryClaim(string userNickName, bool viewRequested = false, bool viewPinRequested = false)
 	{
+		if(Votes.Active && Votes.CurrentVoteType == VoteTypes.Solve && Votes.voteModule == this)
+			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) is being votesolved.");
+
 		if (Solver.AttemptedForcedSolve)
 			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) is being solved automatically.");
 
