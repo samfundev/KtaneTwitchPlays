@@ -431,6 +431,11 @@ static class ModuleCommands
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)
 	{
+		if (Votes.Active && Votes.CurrentVoteType == VoteTypes.Solve && Votes.voteModule == module)
+		{
+			IRCConnection.SendMessage($"Sorry @{user}, the module you are trying to interact with is being votesolved.");
+			yield break;
+		}
 		if (cmd.RegexMatch(out Match match, @"(?:(?<zoom>zoom *(?<time>\d*\.?\d+)?)|(?<superzoom>superzoom *(?<factor>\d*\.?\d+) *(?<x>\d*\.?\d+)? *(?<y>\d*\.?\d+)? *(?<stime>\d*\.?\d+)?))? *(?:(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)|(?<show>show)?)? *(?:send *to *module)? *(?<command>.+)?"))
 		{
 			var groups = match.Groups;

@@ -708,6 +708,8 @@ public class TwitchBomb : MonoBehaviour
 
 	public int BombSolvableModules => Bomb.GetSolvableComponentCount();
 	public int BombSolvedModules => Bomb.GetSolvedComponentCount();
+	public List<string> BombSolvableModuleNames => Bomb.BombComponents.Where(x => x.IsSolvable).Select(x => x.GetModuleDisplayName()).ToList();
+	public List<string> BombSolvedModuleNames => Bomb.BombComponents.Where(x => x.IsSolvable && x.IsSolved).Select(x => x.GetModuleDisplayName()).ToList();
 
 	public float BombStartingTimer;
 	#endregion

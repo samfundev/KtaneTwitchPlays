@@ -75,11 +75,19 @@ public static class Votes
 					createCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
 					createCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
 					createCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
-					createCheck(() => BossModuleHelper.IsBossMod(voteModule.HeaderText) && (TwitchGame.Instance.CurrentBomb.BombSolvedModules > 0 || TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < 120), "Sorry, {0}, boss mods may only be votesolved when there are no solves and at least 2 minutes of the bomb has passed."),
-					createCheck(() => (double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules <= 0.75f && !BossModuleHelper.IsBossMod(voteModule.HeaderText), "Sorry, {0}, more than 75% of the bomb must be solved to call a votesolve."),
+					createCheck(() =>
+						voteModule.HeaderText.IsBossMod() && 
+						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= .10f || 
+						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < 120),
+						"Sorry, {0}, boss mods may only be votesolved before 10% of all modules are solved and when at least 2 minutes of the bomb has passed."),
+					createCheck(() => 
+						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleNames.Count(x => !x.IsBossMod()) / 
+						TwitchGame.Instance.CurrentBomb.BombSolvableModuleNames.Count(x => !x.IsBossMod()) <= 0.75f) && 
+						!voteModule.HeaderText.IsBossMod(),
+						"Sorry, {0}, more than 75% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
 					createCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
 					createCheck(() => voteModule.ClaimQueue.Any(), "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
-					createCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !BossModuleHelper.IsBossMod(voteModule.HeaderText), "Sorry, {0}, the module must have a score greater than 8."),
+					createCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.HeaderText.IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
 					createCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code}")), "Sorry, {0}, the module you are trying to solve is in the queue."),
 					createCheck(() => GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
 				},
@@ -133,6 +141,8 @@ public static class Votes
 		int yesVotes = Voters.Count(pair => pair.Value);
 		bool votePassed = (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f));
 		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} yes votes. The vote has {(votePassed ? "passed" : "failed")}.");
+		if(!votePassed && CurrentVoteType == VoteTypes.Solve)
+			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
 		if (votePassed)
 		{
 			PossibleVotes[CurrentVoteType].onSuccess();
@@ -144,7 +154,7 @@ public static class Votes
 	private static void CreateNewVote(string user, VoteTypes act, TwitchModule module = null)
 	{
 		voteModule = module;
-		if (TwitchGame.BombActive)
+		if (TwitchGame.BombActive && act != VoteTypes.VSModeToggle)
 		{
 			if (act == VoteTypes.Solve && module == null)
 				throw new InvalidOperationException("Module is null in a votesolve! This should not happen, please send this logfile to the TP developers!");
@@ -155,11 +165,17 @@ public static class Votes
 				IRCConnection.SendMessage(string.Format(validity.Second, user));
 				return;
 			}
-			
-			if(act == VoteTypes.Detonation)
-				TwitchGame.Instance.VoteDetonateAttempted = true;
-			else
-				TwitchGame.Instance.VoteSolveCount++;
+
+			switch (act)
+			{
+				case VoteTypes.Detonation:
+					TwitchGame.Instance.VoteDetonateAttempted = true;
+					break;
+				case VoteTypes.Solve:
+					TwitchGame.Instance.VoteSolveCount++;
+					voteModule.SetBannerColor(voteModule.MarkedBackgroundColor);
+					break;
+			}
 		}
 
 		CurrentVoteType = act;
@@ -180,6 +196,7 @@ public static class Votes
 			TwitchPlaysService.Instance.StopCoroutine(voteInProgress);
 		voteInProgress = null;
 		Voters.Clear();
+		voteModule = null;
 		if (TwitchGame.BombActive)
 			TwitchGame.ModuleCameras.SetNotes();
 	}
@@ -263,6 +280,8 @@ public static class Votes
 			return;
 		}
 		IRCConnection.SendMessage("The vote has been cancelled.");
+		if(CurrentVoteType == VoteTypes.Solve)
+			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
 		DestroyVote();
 	}
 
