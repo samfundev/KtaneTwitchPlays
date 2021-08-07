@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -277,7 +277,7 @@ public class TwitchPlaysService : MonoBehaviour
 				{
 					initialLoad = true;
 					_coroutinesToStart.Enqueue(ComponentSolverFactory.LoadDefaultInformation(true));
-					_coroutinesToStart.Enqueue(BossModuleHelper.GetBossMods());
+					_coroutinesToStart.Enqueue(Repository.LoadData());
 					if (!TwitchPlaySettings.data.TwitchPlaysDebugEnabled) _coroutinesToStart.Enqueue(CheckSupport.FindSupportedModules());
 				}
 

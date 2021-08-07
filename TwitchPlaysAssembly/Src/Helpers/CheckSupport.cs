@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using static Repository;
 using Object = UnityEngine.Object;
 
 public static class CheckSupport
@@ -32,8 +32,7 @@ public static class CheckSupport
 			alertText = alert.transform.Find("Text").GetComponent<Text>();
 			alertProgressBar = alert.transform.Find("ProgressBar");
 
-			var json = JsonConvert.DeserializeObject<WebsiteJSON>(request.downloadHandler.text);
-			yield return TestComponents(json);
+			yield return TestComponents(Modules);
 
 			Object.Destroy(alert);
 		}
@@ -47,10 +46,10 @@ public static class CheckSupport
 		gameObjects.Clear();
 	}
 
-	static IEnumerator TestComponents(WebsiteJSON json)
+	static IEnumerator TestComponents(List<KtaneModule> modules)
 	{
-		IEnumerable<BombComponent> untestedComponents = GetUntestedComponents(json);
-		Dictionary<string, string> nameMap = GetNameMap(json);
+		IEnumerable<BombComponent> untestedComponents = GetUntestedComponents(modules);
+		Dictionary<string, string> nameMap = GetNameMap(modules);
 
 		GameObject fakeModule = new GameObject();
 		gameObjects.Add(fakeModule);
@@ -118,7 +117,7 @@ public static class CheckSupport
 		}
 
 		// Always disable modules that are marked as "Incompatible"
-		foreach (var moduleInfo in json.KtaneModules)
+		foreach (var moduleInfo in modules)
 		{
 			if (moduleInfo.Compatibility != "Incompatible")
 				continue;
@@ -159,7 +158,7 @@ public static class CheckSupport
 		DebugHelper.Log($"Support testing results:\n{supportStatus.OrderByDescending(pair => pair.Value).Select(pair => $"{pair.Key} - {(pair.Value ? "" : "Not ")}Supported").Join("\n")}");
 	}
 
-	static IEnumerable<BombComponent> GetUntestedComponents(WebsiteJSON json)
+	static IEnumerable<BombComponent> GetUntestedComponents(List<KtaneModule> modules)
 	{
 		int progress = 0;
 
@@ -172,7 +171,7 @@ public static class CheckSupport
 			.Where(bombComponent =>
 			{
 				string moduleID = bombComponent.GetComponent<KMBombModule>()?.ModuleType ?? bombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
-				return json.KtaneModules.Any(module => module.ModuleID == moduleID && module.TwitchPlays == null) || !json.KtaneModules.Any(module => module.ModuleID == moduleID);
+				return modules.Any(module => module.ModuleID == moduleID && module.TwitchPlays == null) || !modules.Any(module => module.ModuleID == moduleID);
 			})
 			.ToArray();
 
@@ -182,7 +181,7 @@ public static class CheckSupport
 		disabledParent.SetActive(false);
 
 		var modWorkshopPath = Path.GetFullPath(new[] { SteamDirectory, "steamapps", "workshop", "content", "341800" }.Aggregate(Path.Combine));
-		var validModules = json.KtaneModules.Where(module =>
+		var validModules = modules.Where(module =>
 		{
 			if (module.TwitchPlays != null || module.SteamID == null || module.Type == "Widget")
 				return false;
@@ -287,23 +286,6 @@ public static class CheckSupport
 		Object.Destroy(disabledParent);
 	}
 
-#pragma warning disable CS0649
-	class WebsiteJSON
-	{
-		public List<KtaneModule> KtaneModules;
-	}
-
-	class KtaneModule
-	{
-		public string SteamID;
-		public string Name;
-		public string ModuleID;
-		public string Type;
-		public string Compatibility;
-		public Dictionary<string, object> TwitchPlays;
-	}
-#pragma warning restore CS0649
-
 	static string SteamDirectory
 	{
 		get
@@ -363,7 +345,7 @@ public static class CheckSupport
 		}
 	}
 
-	static Dictionary<string, string> GetNameMap(WebsiteJSON json)
+	static Dictionary<string, string> GetNameMap(List<KtaneModule> modules)
 	{
 		if (!(typeof(ModManager).GetField("loadedMods", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ModManager.Instance) is Dictionary<string, Mod> loadedMods))
 			return null;
@@ -371,7 +353,7 @@ public static class CheckSupport
 		var bombComponents = loadedMods.Values.SelectMany(mod => mod.GetModObjects<BombComponent>());
 
 		var nameMap = new Dictionary<string, string>();
-		foreach (var module in json.KtaneModules)
+		foreach (var module in modules)
 			nameMap[module.Name] = module.ModuleID;
 
 		foreach (var bombComponent in bombComponents)

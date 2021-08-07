@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,14 +76,14 @@ public static class Votes
 					createCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
 					createCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
 					createCheck(() =>
-						voteModule.HeaderText.IsBossMod() && 
-						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= .10f || 
+						voteModule.BombComponent.GetModuleID().IsBossMod() &&
+						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= .10f ||
 						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < 120),
 						"Sorry, {0}, boss mods may only be votesolved before 10% of all modules are solved and when at least 2 minutes of the bomb has passed."),
 					createCheck(() => 
-						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleNames.Count(x => !x.IsBossMod()) / 
-						TwitchGame.Instance.CurrentBomb.BombSolvableModuleNames.Count(x => !x.IsBossMod()) <= 0.75f) && 
-						!voteModule.HeaderText.IsBossMod(),
+						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
+						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= 0.75f) &&
+						!voteModule.BombComponent.GetModuleID().IsBossMod(),
 						"Sorry, {0}, more than 75% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
 					createCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
 					createCheck(() => voteModule.ClaimQueue.Any(), "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
