@@ -73,6 +73,7 @@ public static class Votes
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
 					createCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
+					createCheck(() => voteModule.VoteSolving, "Sorry, {0}, that module is already being votesolved."),
 					createCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
 					createCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
 					createCheck(() =>
@@ -87,12 +88,13 @@ public static class Votes
 						"Sorry, {0}, more than 75% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
 					createCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
 					createCheck(() => voteModule.ClaimQueue.Any(), "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
-					createCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.HeaderText.IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
+					createCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.BombComponent.GetModuleID().IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
 					createCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code}")), "Sorry, {0}, the module you are trying to solve is in the queue."),
 					createCheck(() => GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
 				},
 				onSuccess = () =>
 				{
+					voteModule.VoteSolving = true;
 					voteModule.Solver.SolveModule($"A module ({voteModule.HeaderText}) is being automatically solved.");
 					TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
 					IRCConnection.SendMessage($"Reward decreased by 25% for votesolving module {voteModule.Code} ({voteModule.HeaderText})");
