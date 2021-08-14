@@ -3,8 +3,9 @@ using UnityEngine.Networking;
 
 public class DownloadText : CustomYieldInstruction
 {
-	readonly UnityWebRequest request;
-	readonly UnityWebRequestAsyncOperation asyncOperation;
+	UnityWebRequest request;
+	UnityWebRequestAsyncOperation asyncOperation;
+	int retryCount;
 
 	public DownloadText(string url)
 	{
@@ -12,7 +13,27 @@ public class DownloadText : CustomYieldInstruction
 		asyncOperation = request.SendWebRequest();
 	}
 
-	public override bool keepWaiting => !asyncOperation.isDone;
+	bool success => !request.isNetworkError && !request.isHttpError;
 
-	public string Text => (!request.isNetworkError && !request.isHttpError) ? request.downloadHandler.text : null;
+	public override bool keepWaiting
+	{
+		get
+		{
+			if (!asyncOperation.isDone)
+				return true;
+
+			if (!success && retryCount < 5)
+			{
+				retryCount++;
+
+				request = UnityWebRequest.Get(request.url);
+				asyncOperation = request.SendWebRequest();
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	public string Text => success ? request.downloadHandler.text : null;
 }
