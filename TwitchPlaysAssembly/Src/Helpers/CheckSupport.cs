@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 using static Repository;
 using Object = UnityEngine.Object;
@@ -20,22 +19,17 @@ public static class CheckSupport
 	{
 		yield return null;
 
-		UnityWebRequest request = UnityWebRequest.Get("https://ktane.timwi.de/json/raw");
+		yield return LoadData();
 
-		yield return request.SendWebRequest();
+		var alert = Object.Instantiate(IRCConnection.Instance.ConnectionAlert, IRCConnection.Instance.ConnectionAlert.transform.parent);
+		gameObjects.Add(alert);
+		alert.SetActive(true);
+		alertText = alert.transform.Find("Text").GetComponent<Text>();
+		alertProgressBar = alert.transform.Find("ProgressBar");
 
-		if (!request.isNetworkError && !request.isHttpError)
-		{
-			var alert = Object.Instantiate(IRCConnection.Instance.ConnectionAlert, IRCConnection.Instance.ConnectionAlert.transform.parent);
-			gameObjects.Add(alert);
-			alert.SetActive(true);
-			alertText = alert.transform.Find("Text").GetComponent<Text>();
-			alertProgressBar = alert.transform.Find("ProgressBar");
+		yield return TestComponents(Modules);
 
-			yield return TestComponents(Modules);
-
-			Object.Destroy(alert);
-		}
+		Object.Destroy(alert);
 	}
 
 	public static void Cleanup()
