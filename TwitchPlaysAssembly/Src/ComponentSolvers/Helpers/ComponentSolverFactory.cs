@@ -978,24 +978,24 @@ public static class ComponentSolverFactory
 
 	public static IEnumerator LoadDefaultInformation(bool reloadData = false)
 	{
-		UnityWebRequest www = UnityWebRequest.Get("https://spreadsheets.google.com/feeds/list/1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA/1/public/values?alt=json");
+		var sheet = new GoogleSheet("https://spreadsheets.google.com/feeds/list/1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA/1/public/values?alt=json", "tpscore", "modulename", "bombreward");
 
-		yield return www.SendWebRequest();
+		yield return sheet;
 
-		if (!www.isNetworkError && !www.isHttpError)
+		if (sheet.Success)
 		{
 			var displayNames = new List<string>();
-			foreach (var entry in JObject.Parse(www.downloadHandler.text)["feed"]["entry"])
+			foreach (var entry in sheet.GetRows())
 			{
-				string scoreString = entry["gsx$tpscore"]["$t"]?.Value<string>();
+				string scoreString = entry["tpscore"];
 				if (string.IsNullOrEmpty(scoreString))
 					continue;
 
-				string moduleName = entry["gsx$modulename"].Value<string>("$t");
+				string moduleName = entry["modulename"];
 				if (string.IsNullOrEmpty(moduleName) || moduleName == "NEEDIES")
 					continue;
 
-				string rewardString = entry["gsx$bombreward"].Value<string>("$t");
+				string rewardString = entry["bombreward"];
 				// (Is allowed to be null or "")
 
 				string normalize(string value) => value.ToLowerInvariant().Replace('’', '\'');
