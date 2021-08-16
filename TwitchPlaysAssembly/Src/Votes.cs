@@ -73,7 +73,7 @@ public static class Votes
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
 					createCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
-					createCheck(() => voteModule.VoteSolving, "Sorry, {0}, that module is already being votesolved."),
+					createCheck(() => voteModule.Solver.AttemptedForcedSolve, "Sorry, {0}, that module is already being votesolved."),
 					createCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
 					createCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
 					createCheck(() =>
@@ -94,7 +94,6 @@ public static class Votes
 				},
 				onSuccess = () =>
 				{
-					voteModule.VoteSolving = true;
 					voteModule.Solver.SolveModule($"A module ({voteModule.HeaderText}) is being automatically solved.");
 					TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
 					IRCConnection.SendMessage($"Reward decreased by 25% for votesolving module {voteModule.Code} ({voteModule.HeaderText})");

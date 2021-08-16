@@ -48,9 +48,6 @@ public class TwitchModule : MonoBehaviour
 	public bool Unsupported;
 
 	[HideInInspector]
-	public bool VoteSolving;
-
-	[HideInInspector]
 	public List<ClaimQueueItem> ClaimQueue = new List<ClaimQueueItem>();
 
 	public string Code { get; set; }
