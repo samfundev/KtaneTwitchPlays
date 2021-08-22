@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,19 +16,13 @@ public class VoteData
 	// Name of the vote (Displayed over !notes3 when in game)
 	internal string name
 	{
-		get
-		{
-			return Votes.CurrentVoteType == VoteTypes.Solve ? $"Solve module {Votes.voteModule.Code}" : _name;
-		}
-		set
-		{
-			_name = value;
-		}
+		get => Votes.CurrentVoteType == VoteTypes.Solve ? $"Solve module {Votes.voteModule.Code}" : _name;
+		set => _name = value;
 	}
 
 	// Action to execute if the vote passes
 	internal Action onSuccess;
-	
+
 	// Checks the validity of a vote
 	internal List<Tuple<Func<bool>, string>> validityChecks;
 
@@ -81,13 +75,13 @@ public static class Votes
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= .10f ||
 						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < 120),
 						"Sorry, {0}, boss mods may only be votesolved before 10% of all modules are solved and when at least 2 minutes of the bomb has passed."),
-					createCheck(() => 
+					createCheck(() =>
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
 						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= 0.75f) &&
 						!voteModule.BombComponent.GetModuleID().IsBossMod(),
 						"Sorry, {0}, more than 75% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
 					createCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
-					createCheck(() => voteModule.ClaimQueue.Any(), "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
+					createCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
 					createCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.BombComponent.GetModuleID().IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
 					createCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to solve is in the queue."),
 					createCheck(() => GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
@@ -112,7 +106,7 @@ public static class Votes
 		{
 			oldTime = TimeLeft;
 			VoteTimeRemaining -= Time.deltaTime;
-			
+
 			if (TwitchGame.BombActive && TimeLeft != oldTime) // Once a second, update notes.
 				TwitchGame.ModuleCameras.SetNotes();
 			yield return null;
@@ -142,7 +136,7 @@ public static class Votes
 		int yesVotes = Voters.Count(pair => pair.Value);
 		bool votePassed = (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f));
 		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} yes votes. The vote has {(votePassed ? "passed" : "failed")}.");
-		if(!votePassed && CurrentVoteType == VoteTypes.Solve)
+		if (!votePassed && CurrentVoteType == VoteTypes.Solve)
 			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
 		if (votePassed)
 		{
@@ -159,8 +153,8 @@ public static class Votes
 		{
 			if (act == VoteTypes.Solve && module == null)
 				throw new InvalidOperationException("Module is null in a votesolve! This should not happen, please send this logfile to the TP developers!");
-			
-			var validity = PossibleVotes[act].validityChecks.FirstOrDefault(x => x.First());
+
+			var validity = PossibleVotes[act].validityChecks.Find(x => x.First());
 			if (validity != null)
 			{
 				IRCConnection.SendMessage(string.Format(validity.Second, user));
@@ -281,7 +275,7 @@ public static class Votes
 			return;
 		}
 		IRCConnection.SendMessage("The vote has been cancelled.");
-		if(CurrentVoteType == VoteTypes.Solve)
+		if (CurrentVoteType == VoteTypes.Solve)
 			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
 		DestroyVote();
 	}
@@ -296,6 +290,6 @@ public static class Votes
 		IRCConnection.SendMessage("The vote is being ended now.");
 		VoteTimeRemaining = 0f;
 	}
-	
+
 	private static Tuple<Func<bool>, string> createCheck(Func<bool> func, string str) => new Tuple<Func<bool>, string>(func, str);
 }

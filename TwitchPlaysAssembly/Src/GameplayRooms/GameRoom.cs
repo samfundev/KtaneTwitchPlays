@@ -81,7 +81,7 @@ public abstract class GameRoom
 		while (TwitchPlaysService.Instance.CurrentState == KMGameInfo.State.Gameplay)
 		{
 			bool targetState = !OtherModes.Unexplodable &&
-			                   TwitchGame.Instance.Bombs.Any(bomb => !bomb.Bomb.IsSolved() && bomb.CurrentTimer < 60f);
+							   TwitchGame.Instance.Bombs.Any(bomb => !bomb.Bomb.IsSolved() && bomb.CurrentTimer < 60f);
 			if (targetState != lastState)
 			{
 				foreach (Assets.Scripts.Props.EmergencyLight emergencyLight in Object.FindObjectsOfType<Assets.Scripts.Props.EmergencyLight>())

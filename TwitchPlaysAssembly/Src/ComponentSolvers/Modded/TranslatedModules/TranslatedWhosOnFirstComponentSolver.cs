@@ -39,7 +39,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 			if (inputCommand.Equals("literally blank", StringComparison.InvariantCultureIgnoreCase))
 				inputCommand = "\u2003\u2003";
 
-			if (languageCode == "he")	// The Hebrew version expects the input back-to-front
+			if (languageCode == "he")   // The Hebrew version expects the input back-to-front
 				inputCommand = inputCommand.Reverse().Join();
 
 			int index = buttonLabels.IndexOf(inputCommand.ToUpperInvariant());

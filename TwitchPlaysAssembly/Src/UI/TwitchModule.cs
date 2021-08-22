@@ -5,7 +5,6 @@ using System.Linq;
 using TwitchPlays.ScoreMethods;
 using UnityEngine;
 using UnityEngine.UI;
-using static NeedyComponent;
 
 public class TwitchModule : MonoBehaviour
 {
@@ -464,7 +463,7 @@ public class TwitchModule : MonoBehaviour
 
 	public ClaimResult TryClaim(string userNickName, bool viewRequested = false, bool viewPinRequested = false)
 	{
-		if(Votes.Active && Votes.CurrentVoteType == VoteTypes.Solve && Votes.voteModule == this)
+		if (Votes.Active && Votes.CurrentVoteType == VoteTypes.Solve && Votes.voteModule == this)
 			return new ClaimResult(false, $"@{userNickName}, module {Code} ({HeaderText}) is being votesolved.");
 
 		if (Solver.AttemptedForcedSolve)

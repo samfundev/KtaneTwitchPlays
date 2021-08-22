@@ -410,7 +410,7 @@ public class ModuleCameras : MonoBehaviour
 		{
 			if (Votes.Active && ix == 2)
 			{
-				NotesTexts[ix].text = $"{(Votes.PossibleVotes[Votes.CurrentVoteType].name)}: {Votes.NumVoters} vote{(Votes.NumVoters == 1 ? "" : "s")}\n{Votes.TimeLeft} second{(Votes.TimeLeft == 1 ? "" : "s")} left.";
+				NotesTexts[ix].text = $"{Votes.PossibleVotes[Votes.CurrentVoteType].name}: {Votes.NumVoters} vote{(Votes.NumVoters == 1 ? "" : "s")}\n{Votes.TimeLeft} second{(Votes.TimeLeft == 1 ? "" : "s")} left.";
 				if (!TwitchPlaySettings.data.DarkMode) NotesTextBackgrounds[ix].color = Votes.CurrentVoteType == VoteTypes.Detonation ? Color.HSVToRGB(0f, .246f, .93f) : Color.HSVToRGB(0.38f, .246f, .93f);
 				else NotesTextBackgrounds[ix].color = Votes.CurrentVoteType == VoteTypes.Detonation ? new Color32(0xE9, 0x19, 0x16, 0xFF) : new Color32(0x00, 0xAD, 0x03, 0xFF);
 				NotesTextIDs[ix].text = "!vote";

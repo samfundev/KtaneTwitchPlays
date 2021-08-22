@@ -8,7 +8,7 @@ public class GoogleSheet : CustomYieldInstruction
 {
 	readonly DownloadText download;
 
-	private string[] columnNames;
+	private readonly string[] columnNames;
 
 	public GoogleSheet(string sheetID, string gid = "0", params string[] columns)
 	{

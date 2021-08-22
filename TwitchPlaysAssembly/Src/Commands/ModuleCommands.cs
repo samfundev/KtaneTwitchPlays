@@ -116,7 +116,7 @@ static class ModuleCommands
 	/// <summary>Starts a vote about solving the module</summary>
 	[Command("votesolve")]
 	public static void VoteSolve(TwitchModule module, string user) => Votes.StartVote(user, VoteTypes.Solve, module);
-	
+
 	/// <name>Claim View Pin</name>
 	/// <syntax>claim view pin\ncvp</syntax>
 	/// <summary>Claims, views and pins a module. You can remove one of three actions as well. (e.g. claim view)</summary>

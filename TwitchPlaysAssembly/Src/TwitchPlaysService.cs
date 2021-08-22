@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -6,9 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Props;
-using Assets.Scripts.Records;
-using Assets.Scripts.Services;
-using Assets.Scripts.Stats;
 using UnityEngine;
 using UnityEngine.UI;
 
