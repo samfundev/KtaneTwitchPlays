@@ -63,6 +63,10 @@ static class GlobalCommands
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
 
+	/// <name>Strike Refund</name>
+	/// <syntax>srefund [user] (count)</syntax>
+	/// <summary>Refunds a strike that happens to the user.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"srefund +(\S+) *?( +[0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void StrikeRefund([Group(1)] string targetPlayer, [Group(2)] int? _count, string user)
 	{
@@ -83,6 +87,10 @@ static class GlobalCommands
 		IRCConnection.SendMessageFormat("Refunded {0} strike{1} and {2} score from {3}.", count, count != 1 ? "s" : "", points, targetPlayer);
 	}
 
+	/// <name>Strike Transfer</name>
+	/// <syntax>stransfer [user] to [user] (count)</syntax>
+	/// <summary>Transfers a strike from the first user to the second.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"stransfer +(\S+) +to +(\S+) *?( +[0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void StrikeTransfer([Group(1)] string fromPlayer, [Group(2)] string toPlayer, [Group(3)] int? _count, string user)
 	{
@@ -286,9 +294,17 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"Date and time this version of TP was built: {date:yyyy-MM-dd HH:mm:ss} UTC", user, !isWhisper);
 	}
 
+	/// <name>Read Setting</name>
+	/// <syntax>readsetting [setting]</syntax>
+	/// <summary>Reads a setting.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"(?:read|write|change|set) *settings? +(\S+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void ReadSetting([Group(1)] string settingName, string user, bool isWhisper) => IRCConnection.SendMessage(TwitchPlaySettings.GetSetting(settingName), user, !isWhisper);
 
+	/// <name>Write Setting</name>
+	/// <syntax>writesetting [setting] [value]</syntax>
+	/// <summary>Writes a setting to a specified value.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"(?:write|change|set) *settings? +(\S+) +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void WriteSetting([Group(1)] string settingName, [Group(2)] string newValue, string user, bool isWhisper)
 	{
@@ -298,6 +314,9 @@ static class GlobalCommands
 			TwitchPlaySettings.WriteDataToFile();
 	}
 
+	/// <name>Read Module Information</name>
+	/// <syntax>readmodule [information] [module]</syntax>
+	/// <summary>Reads the information for a module.</summary>
 	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands|unclaimable|announce(?:ment| *module)?) +(.+)")]
 	public static void ReadModuleInformation([Group(1)] string command, [Group(2)] string parameter, string user, bool isWhisper)
 	{
@@ -391,6 +410,10 @@ static class GlobalCommands
 		}
 	}
 
+	/// <name>Write Module Information</name>
+	/// <syntax>writemodule [information] [module] [value]</syntax>
+	/// <summary>Writes the information for a module to a specified value.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|unclaimable|announce(?:ment| *module)?) +(.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void WriteModuleInformation([Group(1)] string command, [Group(2)] string search, [Group(3)] string changeTo, string user, bool isWhisper)
 	{
@@ -561,6 +584,10 @@ static class GlobalCommands
 		}
 	}
 
+	/// <name>Reset Setting</name>
+	/// <syntax>resetsetting [setting]</syntax>
+	/// <summary>Resets a setting back to it's default value.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"(?:erase|remove|reset) ?settings? (\S+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetSetting([Group(1)] string parameter, string user, bool isWhisper)
 	{
@@ -570,16 +597,47 @@ static class GlobalCommands
 			TwitchPlaySettings.WriteDataToFile();
 	}
 
+	/// <name>Timeout User with Reason</name>
+	/// <syntax>timeout [user] [length] [reason]</syntax>
+	/// <summary>Temporarily bans a user from TP including a reason for the ban.</summary>
+	/// <argument name="length">How long the user should be banned for in seconds.</argument>
+	/// <restriction>Mod</restriction>
 	[Command(@"timeout +(\S+) +(\d+) +(.+)")]
 	public static void BanUser([Group(1)] string userToBan, [Group(2)] int banTimeout, [Group(3)] string reason, string user, bool isWhisper) => UserAccess.TimeoutUser(userToBan, user, reason, banTimeout, isWhisper);
+
+	/// <name>Timeout User</name>
+	/// <syntax>timeout [user] [length]</syntax>
+	/// <summary>Temporarily bans a user from TP.</summary>
+	/// <argument name="length">How long the user should be banned for in seconds.</argument>
+	/// <restriction>Mod</restriction>
 	[Command(@"timeout +(\S+) +(\d+)")]
 	public static void BanUserForNoReason([Group(1)] string userToBan, [Group(2)] int banTimeout, string user, bool isWhisper) => UserAccess.TimeoutUser(userToBan, user, null, banTimeout, isWhisper);
+
+	/// <name>Ban User with Reason</name>
+	/// <syntax>ban [user] [reason]</syntax>
+	/// <summary>Bans a user from TP including a reason for the ban.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"ban +(\S+) +(.+)")]
 	public static void BanUser([Group(1)] string userToBan, [Group(2)] string reason, string user, bool isWhisper) => UserAccess.BanUser(userToBan, user, reason, isWhisper);
+
+	/// <name>Ban User</name>
+	/// <syntax>ban [user]</syntax>
+	/// <summary>Bans a user from TP.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"ban +(\S+)")]
 	public static void BanUserForNoReason([Group(1)] string userToBan, string user, bool isWhisper) => UserAccess.BanUser(userToBan, user, null, isWhisper);
+
+	/// <name>Unban User</name>
+	/// <syntax>unban [user]</syntax>
+	/// <summary>Unbans a user from TP.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"unban +(\S+)")]
 	public static void UnbanUser([Group(1)] string userToUnban, string user, bool isWhisper) => UserAccess.UnbanUser(userToUnban, user, isWhisper);
+
+	/// <name>Is Banned</name>
+	/// <syntax>isbanned [users]</syntax>
+	/// <summary>Checks if the specified users are banned.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"(isbanned|banstats|bandata) +(\S+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void IsBanned([Group(1)] string usersToCheck, string user, bool isWhisper)
 	{
@@ -602,6 +660,10 @@ static class GlobalCommands
 			IRCConnection.SendMessage("The specified user has no ban data.", user, !isWhisper);
 	}
 
+	/// <name>Add Good Player</name>
+	/// <syntax>addgood [user]</syntax>
+	/// <summary>Adds a player to the good team for versus mode.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"addgood (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddGood([Group(1)] string targetUser)
 	{
@@ -610,6 +672,10 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"@{targetUser} added to the Good Team.");
 	}
 
+	/// <name>Add Evil Player</name>
+	/// <syntax>addevil [user]</syntax>
+	/// <summary>Adds a player to the evil team for versus mode.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"addevil (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddEvil([Group(1)] string targetUser)
 	{
@@ -618,6 +684,9 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"@{targetUser} added to the Evil Team.");
 	}
 
+	/// <name>Join Versus</name>
+	/// <syntax>join</syntax>
+	/// <summary>Joins either versus mode team.</summary>
 	[Command(@"join")]
 	public static void JoinAnyTeam(string user)
 	{
@@ -655,6 +724,10 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"{(_inGame ? "Sorry " : "")}@{user}, {(_inGame ? "the bomb has already started. Y" : "y")}ou have been added to the next VSMode bomb.");
 	}
 
+	/// <name>Clear Versus Players</name>
+	/// <syntax>clearvsplayers</syntax>
+	/// <summary>Clears out the players for versus mode.</summary>
+	/// <restriction>Admin</restriction>
 	[Command(@"clearvsplayers", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ClearVSPlayers()
 	{
@@ -662,6 +735,9 @@ static class GlobalCommands
 		IRCConnection.SendMessage("VSMode Players have been cleared.");
 	}
 
+	/// <name>Versus Players</name>
+	/// <syntax>players</syntax>
+	/// <summary>Sends a message to chat with the players in each team.</summary>
 	[Command(@"players")]
 	public static void ReadTeams()
 	{
@@ -690,6 +766,9 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"{_eCount} Evil players joined, they are: @{_ePlayers}");
 	}
 
+	/// <name>Join Team</name>
+	/// <syntax>join [team]</syntax>
+	/// <summary>Joins either the good or evil team for versus mode.</summary>
 	[Command(@"join (evil|good)")]
 	public static void JoinWantedTeam([Group(1)] string team, string user, bool isWhisper)
 	{
@@ -833,6 +912,10 @@ static class GlobalCommands
 		IRCConnection.SendMessage(finalMessage, user, !isWhisper);
 	}
 
+	/// <name>Get Access</name>
+	/// <syntax>getaccess [users]</syntax>
+	/// <summary>Gets the access levels of the specified users.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"(getaccess|accessstats|accessdata) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void GetAccess([Group(2)] string targetUsers, string user, bool isWhisper)
 	{
@@ -840,6 +923,9 @@ static class GlobalCommands
 			IRCConnection.SendMessage(string.Format("User {0} access level: {1}", person, UserAccess.LevelToString(UserAccess.HighestAccessLevel(person))), user, !isWhisper);
 	}
 
+	/// <name>Run Help</name>
+	/// <syntax>run</syntax>
+	/// <summary>Sends information about how to use the run command to chat.</summary>
 	[Command(@"run")]
 	public static void RunHelp()
 	{
@@ -849,70 +935,77 @@ static class GlobalCommands
 			: "Sorry, !run has been disabled.");
 	}
 
+	/// <name>Run VS</name>
+	/// <syntax>run [modules] [distribution] [goodhp] [evilhp]</syntax>
+	/// <summary>Runs a versus mode bomb.</summary>
 	[Command(@"run +(\d+) +(.*) +(\d+) +(\d+)")]
 	public static IEnumerator RunVSHP(string user, bool isWhisper, [Group(1)] int modules,
-		[Group(2)] string distributionName, [Group(3)] int GoodHP, [Group(4)] int EvilHP, KMGameInfo inf) => RunWrapper(
-		user, isWhisper,
-		() =>
+	[Group(2)] string distributionName, [Group(3)] int GoodHP, [Group(4)] int EvilHP, KMGameInfo inf) => RunWrapper(
+	user, isWhisper,
+	() =>
+	{
+		if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
 		{
-			if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
+			IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
+			return null;
+		}
+		if (TwitchPlaySettings.data.AutoSetVSModeTeams)
+		{
+			if (TwitchGame.Instance.VSModePlayers.Count < 2)
 			{
-				IRCConnection.SendMessage($"Sorry, there is no distribution called \"{distributionName}\".");
+				IRCConnection.SendMessage("Not enough players for VSMode");
 				return null;
 			}
-			if (TwitchPlaySettings.data.AutoSetVSModeTeams)
+
+			string[] allPlayers = TwitchGame.Instance.VSModePlayers.Values.ToArray();
+
+			if (TwitchPlaySettings.data.VSModeBalancedTeams)
 			{
-				if (TwitchGame.Instance.VSModePlayers.Count < 2)
-				{
-					IRCConnection.SendMessage("Not enough players for VSMode");
-					return null;
-				}
-
-				string[] allPlayers = TwitchGame.Instance.VSModePlayers.Values.ToArray();
-
-				if (TwitchPlaySettings.data.VSModeBalancedTeams)
-				{
-					for (int i = 0; i < allPlayers.Length; i++) AddVSPlayer(allPlayers[i]);
-				}
-				else
-				{
-					int goodCount = allPlayers.Length * TwitchPlaySettings.data.VSModeGoodSplit / 100;
-
-					if (allPlayers.Length < 4)
-					{
-						AddGood(allPlayers[0]);
-					}
-					else
-					{
-						for (int i = 0; i < goodCount; i++) AddGood(allPlayers[i]);
-					}
-
-					for (int i = TwitchGame.Instance.GoodPlayers.Count; i < allPlayers.Length; i++) AddEvil(allPlayers[i]);
-				}
-				TwitchGame.Instance.VSSetFlag = true;
-				TwitchGame.Instance.VSModePlayers.Clear();
+				for (int i = 0; i < allPlayers.Length; i++) AddVSPlayer(allPlayers[i]);
 			}
 			else
 			{
-				if (!Leaderboard.Instance.IsAnyEvil())
+				int goodCount = allPlayers.Length * TwitchPlaySettings.data.VSModeGoodSplit / 100;
+
+				if (allPlayers.Length < 4)
 				{
-					IRCConnection.SendMessage("There are no evil players designated, the VS bomb cannot be run");
-					return null;
+					AddGood(allPlayers[0]);
+				}
+				else
+				{
+					for (int i = 0; i < goodCount; i++) AddGood(allPlayers[i]);
 				}
 
-				if (!Leaderboard.Instance.IsAnyGood())
-				{
-					IRCConnection.SendMessage("There are no good players designated, the VS bomb cannot be run");
-					return null;
-				}
+				for (int i = TwitchGame.Instance.GoodPlayers.Count; i < allPlayers.Length; i++) AddEvil(allPlayers[i]);
+			}
+			TwitchGame.Instance.VSSetFlag = true;
+			TwitchGame.Instance.VSModePlayers.Clear();
+		}
+		else
+		{
+			if (!Leaderboard.Instance.IsAnyEvil())
+			{
+				IRCConnection.SendMessage("There are no evil players designated, the VS bomb cannot be run");
+				return null;
 			}
 
-			OtherModes.goodHealth = GoodHP;
-			OtherModes.evilHealth = EvilHP;
+			if (!Leaderboard.Instance.IsAnyGood())
+			{
+				IRCConnection.SendMessage("There are no good players designated, the VS bomb cannot be run");
+				return null;
+			}
+		}
 
-			return RunDistribution(user, modules, inf, distribution);
-		}, true);
+		OtherModes.goodHealth = GoodHP;
+		OtherModes.evilHealth = EvilHP;
 
+		return RunDistribution(user, modules, inf, distribution);
+	}, true);
+
+	/// <name>Assign Any</name>
+	/// <syntax>assignany [user]</syntax>
+	/// <summary>Assigns a user to a versus mode team. Tries to keep the teams balanced.</summary>
+	/// <restriction>Mod</restriction>
 	[Command(@"assignany (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddVSPlayer([Group(1)] string targetUser)
 	{
@@ -1086,15 +1179,27 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"Modules disabled by {profileString}: {modules.Join(", ")}");
 	});
 
+	/// <name>Holdables</name>
+	/// <syntax>holdables</syntax>
+	/// <summary>Sends the list of available holdables to chat.</summary>
 	[Command(@"holdables")]
 	public static void Holdables(string user, bool isWhisper) => IRCConnection.SendMessage("The following holdables are present: {0}", user, !isWhisper, TwitchPlaysService.Instance.Holdables.Keys.Select(x => $"!{x}").Join(", "));
 
+	/// <name>Disable Moderators</name>
+	/// <syntax>disablemods</syntax>
+	/// <summary>Disables all permission granted by the moderator rank.</summary>
+	/// <restriction>Streamer</restriction>
 	[Command(@"disablemods", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void DisableModerators()
 	{
 		UserAccess.ModeratorsEnabled = false;
 		IRCConnection.SendMessage("All moderators temporarily disabled.");
 	}
+
+	/// <name>Enable Moderators</name>
+	/// <syntax>enablemods</syntax>
+	/// <summary>Enables all permission granted by the moderator rank.</summary>
+	/// <restriction>Streamer</restriction>
 	[Command(@"enablemods", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void EnableModerators()
 	{
@@ -1126,9 +1231,17 @@ static class GlobalCommands
 		IRCConnection.SendMessage("Data reloaded", user, !isWhisper);
 	}
 
+	/// <name>Silence Mode</name>
+	/// <syntax>silencemode</syntax>
+	/// <summary>Toggles silence mode. Silence mode prevents TP from sending messages to chat.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"silencemode", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SilenceMode() => IRCConnection.ToggleSilenceMode();
 
+	/// <name>Elevator</name>
+	/// <syntax>elevator</syntax>
+	/// <summary>Sends the current state of the elevator into the chat.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command(@"elevator", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Elevator() => TPElevatorSwitch.Instance?.ReportState();
 
@@ -1303,6 +1416,10 @@ static class GlobalCommands
 		IRCConnection.ReceiveMessage(targetPlayer, message.UserColorCode, newMessage);
 	}
 
+	/// <name>Skip Command</name>
+	/// <syntax>skipcommand</syntax>
+	/// <summary>Forcibly skips the currently running command. It is only recommended to use this to skip a command that is stuck. This may cause issues and should be used with caution.</summary>
+	/// <restriction>SuperUser</restriction>
 	[Command("skip(?:coroutine|command|cmd)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Skip()
 	{
@@ -1312,6 +1429,7 @@ static class GlobalCommands
 	/// <name>Run as</name>
 	/// <syntax>runas [color] [username]#[discrminator] [command]</syntax>
 	/// <summary>Runs a command as the specified Discord user</summary>
+	/// <restriction>Streamer</restriction>
 	[Command(@"runas (#.{6}) (.*?)#([0-9]{4}) (!.*?)$", AccessLevel.Streamer, AccessLevel.Streamer)]
 	public static void RunCommandAs([Group(1)] string color, [Group(2)] string username, [Group(3)] string discriminator, [Group(4)] string command) =>
 		IRCConnection.ReceiveMessage($"{username}#{discriminator}", color, command);

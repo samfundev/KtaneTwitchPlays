@@ -526,6 +526,18 @@
             <summary>Adds strikes to a player.</summary>
             <restriction>SuperUser</restriction>
         </member>
+        <member name="M:GlobalCommands.StrikeRefund(System.String,System.Nullable{System.Int32},System.String)">
+            <name>Strike Refund</name>
+            <syntax>srefund [user] (count)</syntax>
+            <summary>Refunds a strike that happens to the user.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GlobalCommands.StrikeTransfer(System.String,System.String,System.Nullable{System.Int32},System.String)">
+            <name>Strike Transfer</name>
+            <syntax>stransfer [user] to [user] (count)</syntax>
+            <summary>Transfers a strike from the first user to the second.</summary>
+            <restriction>Admin</restriction>
+        </member>
         <member name="M:GlobalCommands.SetReward(System.Int32)">
             <name>Set Reward</name>
             <syntax>reward [points]</syntax>
@@ -648,6 +660,106 @@
             <syntax>builddate</syntax>
             <summary>Sends a message with the build date of TP.</summary>
         </member>
+        <member name="M:GlobalCommands.ReadSetting(System.String,System.String,System.Boolean)">
+            <name>Read Setting</name>
+            <syntax>readsetting [setting]</syntax>
+            <summary>Reads a setting.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.WriteSetting(System.String,System.String,System.String,System.Boolean)">
+            <name>Write Setting</name>
+            <syntax>writesetting [setting] [value]</syntax>
+            <summary>Writes a setting to a specified value.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.ReadModuleInformation(System.String,System.String,System.String,System.Boolean)">
+            <name>Read Module Information</name>
+            <syntax>readmodule [information] [module]</syntax>
+            <summary>Reads the information for a module.</summary>
+        </member>
+        <member name="M:GlobalCommands.WriteModuleInformation(System.String,System.String,System.String,System.String,System.Boolean)">
+            <name>Write Module Information</name>
+            <syntax>writemodule [information] [module] [value]</syntax>
+            <summary>Writes the information for a module to a specified value.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GlobalCommands.ResetSetting(System.String,System.String,System.Boolean)">
+            <name>Reset Setting</name>
+            <syntax>resetsetting [setting]</syntax>
+            <summary>Resets a setting back to it's default value.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.BanUser(System.String,System.Int32,System.String,System.String,System.Boolean)">
+            <name>Timeout User with Reason</name>
+            <syntax>timeout [user] [length] [reason]</syntax>
+            <summary>Temporarily bans a user from TP including a reason for the ban.</summary>
+            <argument name="length">How long the user should be banned for in seconds.</argument>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.BanUserForNoReason(System.String,System.Int32,System.String,System.Boolean)">
+            <name>Timeout User</name>
+            <syntax>timeout [user] [length]</syntax>
+            <summary>Temporarily bans a user from TP.</summary>
+            <argument name="length">How long the user should be banned for in seconds.</argument>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.BanUser(System.String,System.String,System.String,System.Boolean)">
+            <name>Ban User with Reason</name>
+            <syntax>ban [user] [reason]</syntax>
+            <summary>Bans a user from TP including a reason for the ban.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.BanUserForNoReason(System.String,System.String,System.Boolean)">
+            <name>Ban User</name>
+            <syntax>ban [user]</syntax>
+            <summary>Bans a user from TP.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.UnbanUser(System.String,System.String,System.Boolean)">
+            <name>Unban User</name>
+            <syntax>unban [user]</syntax>
+            <summary>Unbans a user from TP.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.IsBanned(System.String,System.String,System.Boolean)">
+            <name>Is Banned</name>
+            <syntax>isbanned [users]</syntax>
+            <summary>Checks if the specified users are banned.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.AddGood(System.String)">
+            <name>Add Good Player</name>
+            <syntax>addgood [user]</syntax>
+            <summary>Adds a player to the good team for versus mode.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.AddEvil(System.String)">
+            <name>Add Evil Player</name>
+            <syntax>addevil [user]</syntax>
+            <summary>Adds a player to the evil team for versus mode.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.JoinAnyTeam(System.String)">
+            <name>Join Versus</name>
+            <syntax>join</syntax>
+            <summary>Joins either versus mode team.</summary>
+        </member>
+        <member name="M:GlobalCommands.ClearVSPlayers">
+            <name>Clear Versus Players</name>
+            <syntax>clearvsplayers</syntax>
+            <summary>Clears out the players for versus mode.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GlobalCommands.ReadTeams">
+            <name>Versus Players</name>
+            <syntax>players</syntax>
+            <summary>Sends a message to chat with the players in each team.</summary>
+        </member>
+        <member name="M:GlobalCommands.JoinWantedTeam(System.String,System.String,System.Boolean)">
+            <name>Join Team</name>
+            <syntax>join [team]</syntax>
+            <summary>Joins either the good or evil team for versus mode.</summary>
+        </member>
         <member name="M:GlobalCommands.AddRemoveRole(System.String,System.String,System.String,System.String,System.Boolean)">
             <name>Add/Remove Rank</name>
             <syntax>add [username] [rank]\nremove [username] [rank]</syntax>
@@ -658,6 +770,28 @@
             <name>Moderators</name>
             <syntax>moderators</syntax>
             <summary>If enabled, sends to chat a list of users who have the moderator rank or above.</summary>
+        </member>
+        <member name="M:GlobalCommands.GetAccess(System.String,System.String,System.Boolean)">
+            <name>Get Access</name>
+            <syntax>getaccess [users]</syntax>
+            <summary>Gets the access levels of the specified users.</summary>
+            <restriction>Mod</restriction>
+        </member>
+        <member name="M:GlobalCommands.RunHelp">
+            <name>Run Help</name>
+            <syntax>run</syntax>
+            <summary>Sends information about how to use the run command to chat.</summary>
+        </member>
+        <member name="M:GlobalCommands.RunVSHP(System.String,System.Boolean,System.Int32,System.String,System.Int32,System.Int32,KMGameInfo)">
+            <name>Run VS</name>
+            <syntax>run [modules] [distribution] [goodhp] [evilhp]</syntax>
+            <summary>Runs a versus mode bomb.</summary>
+        </member>
+        <member name="M:GlobalCommands.AddVSPlayer(System.String)">
+            <name>Assign Any</name>
+            <syntax>assignany [user]</syntax>
+            <summary>Assigns a user to a versus mode team. Tries to keep the teams balanced.</summary>
+            <restriction>Mod</restriction>
         </member>
         <member name="M:GlobalCommands.RunSpecific(System.String,System.Boolean,System.String,System.Int32,KMGameInfo)">
             <name>Run Specific</name>
@@ -717,10 +851,39 @@
             <syntax>profile disabled by [name]</syntax>
             <summary>Gets the modules disabled by a profile.</summary>
         </member>
+        <member name="M:GlobalCommands.Holdables(System.String,System.Boolean)">
+            <name>Holdables</name>
+            <syntax>holdables</syntax>
+            <summary>Sends the list of available holdables to chat.</summary>
+        </member>
+        <member name="M:GlobalCommands.DisableModerators">
+            <name>Disable Moderators</name>
+            <syntax>disablemods</syntax>
+            <summary>Disables all permission granted by the moderator rank.</summary>
+            <restriction>Streamer</restriction>
+        </member>
+        <member name="M:GlobalCommands.EnableModerators">
+            <name>Enable Moderators</name>
+            <syntax>enablemods</syntax>
+            <summary>Enables all permission granted by the moderator rank.</summary>
+            <restriction>Streamer</restriction>
+        </member>
         <member name="M:GlobalCommands.ReloadData(System.String,System.Boolean)">
             <name>Reload Data</name>
             <syntax>reloaddata</syntax>
             <summary>Reloads all the data that TP uses. Like settings, access levels, etc.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.SilenceMode">
+            <name>Silence Mode</name>
+            <syntax>silencemode</syntax>
+            <summary>Toggles silence mode. Silence mode prevents TP from sending messages to chat.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
+        <member name="M:GlobalCommands.Elevator">
+            <name>Elevator</name>
+            <syntax>elevator</syntax>
+            <summary>Sends the current state of the elevator into the chat.</summary>
             <restriction>SuperUser</restriction>
         </member>
         <member name="M:GlobalCommands.Elevator(System.String)">
@@ -780,10 +943,17 @@
             <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
             <restriction>SuperUser</restriction>
         </member>
+        <member name="M:GlobalCommands.Skip">
+            <name>Skip Command</name>
+            <syntax>skipcommand</syntax>
+            <summary>Forcibly skips the currently running command. It is only recommended to use this to skip a command that is stuck. This may cause issues and should be used with caution.</summary>
+            <restriction>SuperUser</restriction>
+        </member>
         <member name="M:GlobalCommands.RunCommandAs(System.String,System.String,System.String,System.String)">
             <name>Run as</name>
             <syntax>runas [color] [username]#[discrminator] [command]</syntax>
             <summary>Runs a command as the specified Discord user</summary>
+            <restriction>Streamer</restriction>
         </member>
         <member name="T:HoldableCommands">
             <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
