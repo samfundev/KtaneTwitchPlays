@@ -8,7 +8,7 @@ public class ExtendedPasswordComponentSolver : ComponentSolverShim
 	public ExtendedPasswordComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} cycle [cycle all columns] | !{0} toggle [move all columns down one letter] | !{0} lambda [try to submit a word]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} cycle 6 [cycle through the letters in column 6] | !{0} toggle [move all columns down one letter] | !{0} lambda [try to submit a word]");
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = _component.GetValue<KMSelectable[]>("buttons");
 		_submit = _component.GetValue<KMSelectable>("submitbutton");
