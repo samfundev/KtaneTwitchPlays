@@ -16,7 +16,7 @@ public class VoteData
 	// Name of the vote (Displayed over !notes3 when in game)
 	internal string name
 	{
-		get => Votes.CurrentVoteType == VoteTypes.Solve ? $"Solve module {Votes.voteModule.Code}" : _name;
+		get => Votes.CurrentVoteType == VoteTypes.Solve ? $"Solve module {Votes.voteModule.Code} ({Votes.voteModule.HeaderText})" : _name;
 		set => _name = value;
 	}
 
