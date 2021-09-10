@@ -5,7 +5,7 @@ using KModkit;
 public class RNGComponentSolver : ReflectionComponentSolver
 {
 	public RNGComponentSolver(TwitchModule module) :
-		base(module, "rngScript", "!{0} generate [press generate] | !{0} accept [press accept]")
+		base(module, "rngScript", "!{0} generate [press generate] | !{0} accept [press accept] | On Twitch Plays this module has an additional 30 seconds")
 	{
 	}
 

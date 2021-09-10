@@ -80,6 +80,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["simonSquawks"] = module => new SimonSquawksComponentSolver(module);
 		ModComponentSolverCreators["rapidButtons"] = module => new RapidButtonsComponentSolver(module);
 
+		//Hockeygoalie78 Modules
+		ModComponentSolverCreators["CrypticPassword"] = module => new CrypticPasswordComponentSolver(module);
+		ModComponentSolverCreators["modulusManipulation"] = module => new ModulusManipulationComponentSolver(module);
+		ModComponentSolverCreators["triangleButtons"] = module => new TriangleButtonsComponentSolver(module);
+
 		//Samloper Modules
 		ModComponentSolverCreators["buttonOrder"] = module => new ButtonOrderComponentSolver(module);
 		ModComponentSolverCreators["pressTheShape"] = module => new PressTheShapeComponentSolver(module);
@@ -112,12 +117,20 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["bridge"] = module => new BridgeComponentSolver(module);
 		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
 		ModComponentSolverCreators["needyHotate"] = module => new NeedyHotateComponentSolver(module);
-		// Misc [ZekNikZ]
+		ModComponentSolverCreators["pinkArrows"] = module => new PinkArrowsComponentSolver(module);
+		ModComponentSolverCreators["CactusPConundram"] = module => new CactiConundrumComponentSolver(module);
+		ModComponentSolverCreators["weekDays"] = module => new WeekdaysComponentSolver(module);
+		ModComponentSolverCreators["draw"] = module => new DrawComponentSolver(module);
+		ModComponentSolverCreators["overKilo"] = module => new OverKiloComponentSolver(module);
+
+		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
 		ModComponentSolverCreators["LEGOModule"] = module => new LEGOComponentSolver(module);
-		// Misc [hockeygoalie78]
-		ModComponentSolverCreators["CrypticPassword"] = module => new CrypticPasswordComponentSolver(module);
-		ModComponentSolverCreators["modulusManipulation"] = module => new ModulusManipulationComponentSolver(module);
+
+		//Speakingevil Modules
+		ModComponentSolverCreators["runeMatchI"] = module => new RuneMatchIComponentSolver(module);
+		ModComponentSolverCreators["runeMatchII"] = module => new RuneMatchIIComponentSolver(module);
+		ModComponentSolverCreators["runeMatchIII"] = module => new RuneMatchIIIComponentSolver(module);
 
 		//StrangaDanga Modules
 		ModComponentSolverCreators["keepClicking"] = module => new KeepClickingComponentSolver(module);
@@ -184,6 +197,18 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["FlagsModule"] = module => new FlagsShim(module);
 		ModComponentSolverCreators["theCodeModule"] = module => new CodeShim(module);
 		ModComponentSolverCreators["Numbers"] = module => new NumbersShim(module);
+		ModComponentSolverCreators["periodicTable"] = module => new PeriodicTableShim(module);
+		ModComponentSolverCreators["vexillology"] = module => new VexillologyShim(module);
+		ModComponentSolverCreators["ColorfulMadness"] = module => new ColorfulMadnessShim(module);
+		ModComponentSolverCreators["ColorfulInsanity"] = module => new ColorfulInsanityShim(module);
+		ModComponentSolverCreators["SueetWall"] = module => new SueetWallShim(module);
+		ModComponentSolverCreators["FlashMemory"] = module => new FlashMemoryShim(module);
+		ModComponentSolverCreators["ShapesBombs"] = module => new ShapesAndBombsShim(module);
+		ModComponentSolverCreators["Wavetapping"] = module => new WavetappingShim(module);
+		ModComponentSolverCreators["ColourFlash"] = module => new ColourFlashShim(module);
+		ModComponentSolverCreators["ColourFlashPL"] = module => new ColourFlashShim(module);
+		ModComponentSolverCreators["ColourFlashES"] = module => new ColourFlashESShim(module);
+		ModComponentSolverCreators["Semaphore"] = module => new SemaphoreShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -291,6 +316,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["simonSquawks"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Squawks" };
 		ModComponentSolverInformation["rapidButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Rapid Buttons" };
 
+		//Hockeygoalie78
+		ModComponentSolverInformation["CrypticPassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptic Password", scoreString = "6" };
+		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Modulus Manipulation", scoreString = "8" };
+		ModComponentSolverInformation["triangleButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Triangle Buttons" };
+
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", scoreString = "4" };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", scoreString = "2" };
@@ -309,8 +339,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["necronomicon"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Necronomicon", scoreString = "11" };
 		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Baba Is Who?", scoreString = "6" };
 		ModComponentSolverInformation["chordProgressions"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Progressions", scoreString = "6" };
-		ModComponentSolverInformation["CrypticPassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cryptic Password", scoreString = "6" };
-		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Modulus Manipulation", scoreString = "8" };
 		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Random Number Generator", scoreString = "D 0.7", additionalNeedyTime = 30 };
 		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Shape Memory", manualCode = "Shape Memory", scoreString = "D 0.2" };
 		ModComponentSolverInformation["caesarsMaths"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Caesar's Maths", scoreString = "5" };
@@ -322,6 +350,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["bridge"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Bridge" };
 		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
 		ModComponentSolverInformation["needyHotate"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Hotate" };
+		ModComponentSolverInformation["pinkArrows"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pink Arrows" };
+		ModComponentSolverInformation["CactusPConundram"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cacti's Conundrum" };
+		ModComponentSolverInformation["weekDays"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Weekdays" };
+		ModComponentSolverInformation["draw"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Draw" };
+		ModComponentSolverInformation["overKilo"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Over Kilo" };
 
 		//Samloper
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
@@ -346,6 +379,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad", scoreString = "2" };
 		ModComponentSolverInformation["InvisibleWallsComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Maze", scoreString = "2" };
 
+		//Speakingevil
+		ModComponentSolverInformation["runeMatchI"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Rune Match I", additionalNeedyTime = 15 };
+		ModComponentSolverInformation["runeMatchII"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Rune Match II" };
+		ModComponentSolverInformation["runeMatchIII"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Rune Match III" };
+
 		//StrangaDanga
 		ModComponentSolverInformation["keepClicking"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keep Clicking", scoreString = "4" };
 		ModComponentSolverInformation["sixteenCoins"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "16 Coins", scoreString = "4" };
@@ -360,6 +398,7 @@ public static class ComponentSolverFactory
 		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
 		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true, scoreString = "6", helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true };
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", scoreString = "6", DoesTheRightThing = true };
+		ModComponentSolverInformation["ColourFlashES"] = new ModuleInformation { moduleDisplayName = "Colour Flash ES", DoesTheRightThing = true, scoreString = "7", helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", helpTextOverride = true };
 
 		//These modules have troll commands built in.
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", scoreString = "12" };
