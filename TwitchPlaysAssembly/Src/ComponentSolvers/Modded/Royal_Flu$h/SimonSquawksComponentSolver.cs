@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
 public class SimonSquawksComponentSolver : ReflectionComponentSolver
 {
 	public SimonSquawksComponentSolver(TwitchModule module) :
-		base(module, "SimonSquawksScript", "!{0} press <colour> <colour> [Presses the buttons with the specified colours] | Valid colours are blue, cyan, green, orange, purple, red, white, and yellow")
+		base(module, "SimonSquawksScript", "!{0} press <colour> <colour> [Presses the buttons with the specified colours] | Valid colours are (b)lue, (c)yan, (g)reen, (o)range, (p)urple, (r)ed, (w)hite, and (y)ellow")
 	{
 	}
 
@@ -13,7 +14,10 @@ public class SimonSquawksComponentSolver : ReflectionComponentSolver
 	{
 		if (split.Length != 3 || !command.StartsWith("press ")) yield break;
 		string[] colours = _component.GetValue<string[]>("colourNameOptions");
-		if (!colours.Contains(split[1]) || !colours.Contains(split[2])) yield break;
+		string[] coloursAbb = new string[colours.Length];
+		for (int i = 0; i < coloursAbb.Length; i++)
+			coloursAbb[i] = colours[i][0].ToString();
+		if ((!colours.Contains(split[1]) && !coloursAbb.Contains(split[1])) || (!colours.Contains(split[2]) && !coloursAbb.Contains(split[2]))) yield break;
 		if (!_component.GetValue<bool>("active"))
 		{
 			yield return "sendtochaterror You can't interact with the module right now.";
@@ -22,7 +26,7 @@ public class SimonSquawksComponentSolver : ReflectionComponentSolver
 
 		yield return null;
 		object[] buttons = _component.GetValue<object[]>("buttons");
-		string[] btnColours = new string[] { split[1], split[2] };
+		string[] btnColours = new string[] { split[1].Length == 1 ? colours[Array.IndexOf(coloursAbb, split[1])] : split[1], split[2].Length == 1 ? colours[Array.IndexOf(coloursAbb, split[2])] : split[2] };
 		for (int i = 0; i < 2; i++)
 		{
 			for (int j = 0; j < buttons.Length; j++)

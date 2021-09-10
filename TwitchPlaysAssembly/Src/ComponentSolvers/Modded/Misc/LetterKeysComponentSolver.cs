@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using KModkit;
 using UnityEngine;
 
 public class LetterKeysComponentSolver : ComponentSolver
@@ -13,7 +15,7 @@ public class LetterKeysComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		if (!inputCommand.StartsWith("press ", System.StringComparison.InvariantCultureIgnoreCase)) yield break;
+		if (!inputCommand.StartsWith("press ", StringComparison.InvariantCultureIgnoreCase)) yield break;
 		Match match = Regex.Match(inputCommand, "[1-4a-d]", RegexOptions.IgnoreCase);
 		if (!match.Success)
 			yield break;
@@ -28,11 +30,22 @@ public class LetterKeysComponentSolver : ComponentSolver
 		foreach (KMSelectable button in _buttons)
 		{
 			if (!match.Value.Equals(button.GetComponentInChildren<TextMesh>().text,
-				System.StringComparison.InvariantCultureIgnoreCase)) continue;
+				StringComparison.InvariantCultureIgnoreCase)) continue;
 			yield return null;
 			yield return DoInteractionClick(button);
 			yield break;
 		}
+	}
+
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		Type letterKeysType = ReflectionHelper.FindType("LetterKeys");
+		if (letterKeysType == null) yield break;
+
+		object component = Module.BombComponent.GetComponent(letterKeysType);
+		var edgework = Module.BombComponent.GetComponent<KMBombInfo>();
+
+		yield return RespondToCommandInternal("press " + component.CallMethod<string>("getCorrectButton", edgework.GetBatteryCount(), edgework.GetSerialNumber()));
 	}
 
 	private readonly KMSelectable[] _buttons;

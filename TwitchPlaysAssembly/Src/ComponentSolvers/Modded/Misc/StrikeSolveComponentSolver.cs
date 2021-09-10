@@ -22,7 +22,7 @@ public class StrikeSolveComponentSolver : ReflectionComponentSolver
 	{
 		yield return null;
 
-		string[] btns = new string[] { "solve", "strike" };
+		string[] btns = new string[] { "Solve", "Strike" };
 		string correctButton = _component.GetValue<string>("buttonToPress");
 		yield return Click(correctButton == "any" ? UnityEngine.Random.Range(0, 2) : Array.IndexOf(btns, correctButton));
 	}
