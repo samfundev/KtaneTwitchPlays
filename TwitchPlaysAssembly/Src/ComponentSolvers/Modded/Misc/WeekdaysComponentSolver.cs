@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 
 public class WeekdaysComponentSolver : ReflectionComponentSolver
 {
@@ -11,10 +12,11 @@ public class WeekdaysComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("press ")) yield break;
-		if (!split[1].EqualsAny("monday", "mon", "tuesday", "tues", "wednesday", "wednes", "thursday", "thurs", "friday", "fri", "saturday", "satur", "sunday", "sun")) yield break;
+		string[] btnLabels = { "mon", "tues", "wednes", "thurs", "fri", "satur", "sun" };
+		var day = split[1].Replace("day", "");
+		if (!btnLabels.Contains(day)) yield break;
 
 		yield return null;
-		string[] btnLabels = { "mon", "tues", "wednes", "thurs", "fri", "satur", "sun" };
-		yield return Click(Array.IndexOf(btnLabels, split[1].Replace("day", "")), 0);
+		yield return Click(Array.IndexOf(btnLabels, day), 0);
 	}
 }

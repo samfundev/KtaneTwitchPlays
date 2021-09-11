@@ -24,16 +24,23 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 			if (!groups.Contains(group)) yield break;
 
 			string[] temps = new string[_component.GetValue<string[]>("displayedTemps").Length];
+			string[] temps2 = new string[_component.GetValue<string[]>("displayedTemps").Length];
 			for (int i = 0; i < temps.Length; i++)
+			{
 				temps[i] = _component.GetValue<string[]>("displayedTemps")[i].ToLower();
-			if (!temps.Contains(split[split.Length - 1])) yield break;
+				temps2[i] = _component.GetValue<string[]>("displayedTemps")[i].ToLower().Replace("°", "");
+			}
+			if (!temps.Contains(split[split.Length - 1]) && !temps2.Contains(split[split.Length - 1])) yield break;
 
 			yield return null;
 			int current = _component.GetValue<int>("groupCounter");
 			yield return SelectIndex(current, Array.IndexOf(groups, group), groups.Length, selectables[2], selectables[0]);
 
 			current = _component.GetValue<int>("tempCounter");
-			yield return SelectIndex(current, Array.IndexOf(temps, split[split.Length - 1]), temps.Length, selectables[5], selectables[3]);
+			if (temps.Contains(split[split.Length - 1]))
+				yield return SelectIndex(current, Array.IndexOf(temps, split[split.Length - 1]), temps.Length, selectables[5], selectables[3]);
+			else
+				yield return SelectIndex(current, Array.IndexOf(temps2, split[split.Length - 1]), temps2.Length, selectables[5], selectables[3]);
 
 			yield return Click(7, 0);
 		}

@@ -24,7 +24,7 @@ public class WavetappingShim : ComponentSolverShim
 			string nowPattern = _component.GetValue<string>("nowPattern");
 			for (int j = 0; j < correctPatterns[i].Length; j++)
 			{
-				if ((correctPatterns[i][j] == 'X' && nowPattern[j] == 'O') || (correctPatterns[i][j] == 'O' && nowPattern[j] == 'X'))
+				if (correctPatterns[i][j] != nowPattern[j])
 				{
 					yield return DoInteractionClick(_buttons[j]);
 				}

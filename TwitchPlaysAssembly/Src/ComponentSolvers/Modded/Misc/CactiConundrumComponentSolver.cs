@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 
 public class CactiConundrumComponentSolver : ReflectionComponentSolver
 {
@@ -11,10 +12,10 @@ public class CactiConundrumComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("press ")) yield break;
-		if (!split[1].EqualsAny("jeeves", "hammer", "chicken", "cactus", "shark", "spoon")) yield break;
+		string[] btnLabels = { "jeeves", "hammer", "chicken", "shark", "spoon", "cactus" };
+		if (!btnLabels.Contains(split[1])) yield break;
 
 		yield return null;
-		string[] btnLabels = { "jeeves", "hammer", "chicken", "shark", "spoon", "cactus" };
 		yield return Click(Array.IndexOf(btnLabels, split[1]), 0);
 	}
 
