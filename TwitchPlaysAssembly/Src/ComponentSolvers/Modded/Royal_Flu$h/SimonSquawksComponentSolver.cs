@@ -14,10 +14,17 @@ public class SimonSquawksComponentSolver : ReflectionComponentSolver
 	{
 		if (split.Length != 3 || !command.StartsWith("press ")) yield break;
 		string[] colours = _component.GetValue<string[]>("colourNameOptions");
-		string[] coloursAbb = new string[colours.Length];
-		for (int i = 0; i < coloursAbb.Length; i++)
-			coloursAbb[i] = colours[i][0].ToString();
-		if ((!colours.Contains(split[1]) && !coloursAbb.Contains(split[1])) || (!colours.Contains(split[2]) && !coloursAbb.Contains(split[2]))) yield break;
+		bool[] coloursFnd = new bool[2];
+		for (int i = 0; i < colours.Length; i++)
+		{
+			if (split[1].FirstOrWhole(colours[i]))
+				coloursFnd[0] = true;
+			if (split[2].FirstOrWhole(colours[i]))
+				coloursFnd[1] = true;
+			if (!coloursFnd.Contains(false))
+				break;
+		}
+		if (coloursFnd.Contains(false)) yield break;
 		if (!_component.GetValue<bool>("active"))
 		{
 			yield return "sendtochaterror You can't interact with the module right now.";
@@ -26,7 +33,7 @@ public class SimonSquawksComponentSolver : ReflectionComponentSolver
 
 		yield return null;
 		object[] buttons = _component.GetValue<object[]>("buttons");
-		string[] btnColours = new string[] { split[1].Length == 1 ? colours[Array.IndexOf(coloursAbb, split[1])] : split[1], split[2].Length == 1 ? colours[Array.IndexOf(coloursAbb, split[2])] : split[2] };
+		string[] btnColours = new string[] { split[1].Length == 1 ? colours.Where(x => x.FirstOrWhole(split[1])).First() : split[1], split[2].Length == 1 ? colours.Where(x => x.FirstOrWhole(split[2])).First() : split[2] };
 		for (int i = 0; i < 2; i++)
 		{
 			for (int j = 0; j < buttons.Length; j++)

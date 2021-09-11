@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System;
+using System.Linq;
 
 public class OverKiloComponentSolver : ReflectionComponentSolver
 {
@@ -11,10 +12,10 @@ public class OverKiloComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		if (split.Length != 2 || !command.StartsWith("press ")) yield break;
-		if (!split[1].EqualsAny("left", "ok", "right")) yield break;
+		string[] btnTypes = { "left", "ok", "right" };
+		if (!btnTypes.Contains(split[1])) yield break;
 
 		yield return null;
-		string[] btnTypes = { "left", "ok", "right" };
 		yield return Click(Array.IndexOf(btnTypes, split[1]), 0);
 	}
 

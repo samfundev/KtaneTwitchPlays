@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DrawComponentSolver : ReflectionComponentSolver
@@ -7,7 +6,6 @@ public class DrawComponentSolver : ReflectionComponentSolver
 	public DrawComponentSolver(TwitchModule module) :
 		base(module, "DrawBehav", "!{0} go [Presses the go button] | !{0} fire [Presses the fire button] | On Twitch Plays the screen will stay green for an extra 5 seconds and the screen change will be announced in chat")
 	{
-		tpAPI = GameObject.Find("TwitchPlays_Info").GetComponent<IDictionary<string, object>>();
 	}
 
 	public override IEnumerator Respond(string[] split, string command)
@@ -77,7 +75,7 @@ public class DrawComponentSolver : ReflectionComponentSolver
 				yield break;
 		}
 		((MonoBehaviour) _component).StopAllCoroutines();
-		tpAPI["ircConnectionSendMessage"] = "The screen has turned green on Module " + Module.Code + " (Draw)!";
+		IRCConnection.SendMessage("The screen has turned green on Module " + Module.Code + " (Draw)!");
 		yield return new WaitForSeconds(5.25f);
 		if (!_component.GetValue<bool>("_isActive")) yield break;
 		Material passed = _component.GetValue<Material>("screenMat");
@@ -90,6 +88,5 @@ public class DrawComponentSolver : ReflectionComponentSolver
 		componentTypes["DrawBehav"].SetValue("_pressedGo", false, _component);
 	}
 
-	private IDictionary<string, object> tpAPI;
 	private Coroutine process;
 }

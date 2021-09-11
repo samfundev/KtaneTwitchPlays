@@ -98,12 +98,20 @@ public class VexillologyShim : ComponentSolverShim
 					break;
 			}
 		}
+		char[] digits = null;
 		if (_component.GetValue<bool>("_ChadRomania"))
-			while ((edgework.GetTime() >= 60 && !edgework.GetFormattedTime().Contains('0') && !edgework.GetFormattedTime().Contains('5')) || (edgework.GetTime() < 60 && !edgework.GetFormattedTime().Remove(2).Contains('0') && !edgework.GetFormattedTime().Remove(2).Contains('5'))) yield return true;
+			digits = new[] { '0', '5' };
 		else if (SubmitTime != 10)
-			while ((edgework.GetTime() >= 60 && !edgework.GetFormattedTime().Contains(SubmitTime.ToString()[0])) || (edgework.GetTime() < 60 && !edgework.GetFormattedTime().Remove(2).Contains(SubmitTime.ToString()[0]))) yield return true;
+			digits = new[] { SubmitTime.ToString()[0] };
 		else
-			while ((edgework.GetTime() >= 60 && !edgework.GetFormattedTime().Contains(edgework.GetSerialNumberNumbers().Last().ToString()[0])) || (edgework.GetTime() < 60 && !edgework.GetFormattedTime().Remove(2).Contains(edgework.GetSerialNumberNumbers().Last().ToString()[0]))) yield return true;
+			digits = new[] { edgework.GetSerialNumberNumbers().Last().ToString()[0] };
+		while (true)
+		{
+			var time = edgework.GetTime() >= 60 ? edgework.GetFormattedTime() : edgework.GetFormattedTime().Remove(2);
+			if (digits.Any(time.Contains))
+				break;
+			yield return true;
+		}
 		yield return DoInteractionClick(_submit, 0);
 	}
 
