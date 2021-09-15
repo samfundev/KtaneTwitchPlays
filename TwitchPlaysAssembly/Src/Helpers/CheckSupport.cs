@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -174,10 +174,10 @@ public static class CheckSupport
 		gameObjects.Add(disabledParent);
 		disabledParent.SetActive(false);
 
-		var modWorkshopPath = Path.GetFullPath(new[] { SteamDirectory, "steamapps", "workshop", "content", "341800" }.Aggregate(Path.Combine));
+		var modWorkshopPath = SteamDirectory == null ? null : Path.GetFullPath(new[] { SteamDirectory, "steamapps", "workshop", "content", "341800" }.Aggregate(Path.Combine));
 		var validModules = modules.Where(module =>
 		{
-			if (module.TwitchPlays != null || module.SteamID == null || module.Type == "Widget")
+			if (module.TwitchPlays != null || module.SteamID == null || module.Type == "Widget" || modWorkshopPath == null)
 				return false;
 
 			var modPath = Path.Combine(modWorkshopPath, module.SteamID);
