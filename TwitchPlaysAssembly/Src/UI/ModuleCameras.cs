@@ -40,6 +40,11 @@ public class ModuleCameras : MonoBehaviour
 			camera.aspect = 1f;
 			camera.depth = 99;
 
+			var light = camera.gameObject.AddComponent<Light>();
+			light.type = LightType.Directional;
+			light.spotAngle = 7.25f;
+			light.enabled = true;
+
 			moduleCamera.CameraInstance = camera;
 			moduleCamera.OriginalCameraRect = camera.rect;
 			moduleCamera.CameraLayer = CameraLayers[cameraIx];
@@ -149,6 +154,12 @@ public class ModuleCameras : MonoBehaviour
 					Module.SetRenderLayer(layer);
 				}
 			}
+
+			var light = CameraInstance.GetComponent<Light>();
+			light.cullingMask = CameraInstance.cullingMask;
+
+			var cameraDirection = Camera.main.transform.rotation * Vector3.forward;
+			light.intensity = 0.5f * (Vector3.Dot(Module.transform.rotation * Vector3.up, cameraDirection) + 1) / 2;
 		}
 
 		public void Deactivate()
