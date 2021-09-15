@@ -31,7 +31,9 @@
 			"dependsOn": [
 				"build"
 			],
-			"problemMatcher": []
+			"linux": {
+				"command": "cd \"$(dirname \"${config:ktanePath}\")\"; \"${config:ktanePath}\"",
+			}
 		}
 	]
 }
