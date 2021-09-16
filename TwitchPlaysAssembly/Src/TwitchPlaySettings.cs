@@ -106,6 +106,8 @@ public class TwitchPlaySettingsData
 	public string TwitchPlaysDebugUsername = "_TPDEBUG";
 	public Color TwitchPlaysDebugUsernameColor = new Color(0.00f, 0.00f, 0.875f);
 
+	public bool TestModuleCompatibility = true;
+
 	public int InstantModuleClaimCooldown = 20;
 	public int InstantModuleClaimCooldownExpiry = 3600;
 
