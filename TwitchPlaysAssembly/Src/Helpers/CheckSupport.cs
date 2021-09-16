@@ -325,13 +325,13 @@ public static class CheckSupport
 
 			foreach (var path in new[]
 			{
-				"~/Library/Application Support/Steam",
-				"~/.steam/steam",
+				"/Library/Application Support/Steam",
+				"/.steam/steam",
 			})
 			{
-				if (Directory.Exists(path))
+				if (Directory.Exists(Environment.GetEnvironmentVariable("HOME") + path))
 				{
-					return path;
+					return Environment.GetEnvironmentVariable("HOME") + path;
 				}
 			}
 
