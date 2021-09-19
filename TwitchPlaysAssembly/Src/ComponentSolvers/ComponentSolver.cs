@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -228,7 +228,7 @@ public abstract class ComponentSolver
 					OnStrike(null);
 				else if (currentString.Equals("multiple strikes", StringComparison.InvariantCultureIgnoreCase))
 					_disableOnStrike = true;
-				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase))
+				else if (currentString.Equals("end multiple strikes", StringComparison.InvariantCultureIgnoreCase) && _disableOnStrike)
 				{
 					if (_beforeStrikeCount == StrikeCount && !TwitchPlaySettings.data.AnarchyMode)
 					{
