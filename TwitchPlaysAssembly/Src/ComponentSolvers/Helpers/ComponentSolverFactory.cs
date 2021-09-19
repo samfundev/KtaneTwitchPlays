@@ -118,7 +118,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
 		ModComponentSolverCreators["needyHotate"] = module => new NeedyHotateComponentSolver(module);
 		ModComponentSolverCreators["pinkArrows"] = module => new PinkArrowsComponentSolver(module);
-		ModComponentSolverCreators["CactusPConundram"] = module => new CactiConundrumComponentSolver(module);
+		ModComponentSolverCreators["CactusPConundrum"] = module => new CactiConundrumComponentSolver(module);
 		ModComponentSolverCreators["weekDays"] = module => new WeekdaysComponentSolver(module);
 		ModComponentSolverCreators["draw"] = module => new DrawComponentSolver(module);
 		ModComponentSolverCreators["overKilo"] = module => new OverKiloComponentSolver(module);
@@ -351,7 +351,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
 		ModComponentSolverInformation["needyHotate"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Hotate" };
 		ModComponentSolverInformation["pinkArrows"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pink Arrows" };
-		ModComponentSolverInformation["CactusPConundram"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cacti's Conundrum" };
+		ModComponentSolverInformation["CactusPConundrum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cacti's Conundrum" };
 		ModComponentSolverInformation["weekDays"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Weekdays" };
 		ModComponentSolverInformation["draw"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Draw" };
 		ModComponentSolverInformation["overKilo"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Over Kilo" };
