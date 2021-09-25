@@ -85,7 +85,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["modulusManipulation"] = module => new ModulusManipulationComponentSolver(module);
 		ModComponentSolverCreators["triangleButtons"] = module => new TriangleButtonsComponentSolver(module);
 
-		//Samloper Modules
+		//GoodHood Modules
 		ModComponentSolverCreators["buttonOrder"] = module => new ButtonOrderComponentSolver(module);
 		ModComponentSolverCreators["pressTheShape"] = module => new PressTheShapeComponentSolver(module);
 		ModComponentSolverCreators["standardButtonMasher"] = module => new StandardButtonMasherComponentSolver(module);
@@ -356,11 +356,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["draw"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Draw" };
 		ModComponentSolverInformation["overKilo"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Over Kilo" };
 
-		//Samloper
+		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
-		ModComponentSolverInformation["pressTheShape"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Press The Shape" };
-		ModComponentSolverInformation["standardButtonMasher"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Standard Button Masher" };
-		ModComponentSolverInformation["BinaryButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Binary Buttons" };
+		ModComponentSolverInformation["pressTheShape"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Press The Shape", scoreString = "2" };
+		ModComponentSolverInformation["standardButtonMasher"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Standard Button Masher", scoreString = "2" };
+		ModComponentSolverInformation["BinaryButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Binary Buttons", scoreString = "2" };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
 		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires", scoreString = "2" };

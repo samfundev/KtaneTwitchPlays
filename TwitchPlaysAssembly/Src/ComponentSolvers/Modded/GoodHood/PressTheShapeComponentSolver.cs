@@ -5,7 +5,7 @@ using System.Linq;
 public class PressTheShapeComponentSolver : ReflectionComponentSolver
 {
 	public PressTheShapeComponentSolver(TwitchModule module) :
-		base(module, "pressTheShape", "!{0} press <shape> [Presses the button with the specified shape] | Valid shapes are triangle, square, and circle")
+		base(module, "PressTheShape", "!{0} press <shape> [Presses the button with the specified shape] | Valid shapes are triangle, square, and circle")
 	{
 	}
 
@@ -21,8 +21,13 @@ public class PressTheShapeComponentSolver : ReflectionComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		_component.GetValue<KMSelectable>("correctButton").OnInteract();
+		int correct = _component.GetValue<int>("CorrectShape");
+		if (correct == 1)
+			correct = 2;
+		else if (correct == 2)
+			correct = 1;
+		yield return Click(correct, 0);
 	}
 
-	private readonly string[] _shapes = new string[] { "triangle", "square", "circle" };
+	private readonly string[] _shapes = new string[] { "triangle", "circle", "square" };
 }
