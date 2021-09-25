@@ -326,7 +326,7 @@ public class TwitchPlaysService : MonoBehaviour
 				continue;
 			else if (holdable.GetComponent<FreeplayDevice>() != null)
 				Holdables["freeplay"] = new TwitchHoldable(holdable, commandType: typeof(FreeplayCommands));
-			else if (holdable.GetComponent<BombBinder>() != null)
+			else if (holdable.GetComponent<BombBinder>() != null && CurrentState == KMGameInfo.State.Setup)
 				Holdables["binder"] = new TwitchHoldable(holdable, commandType: typeof(MissionBinderCommands));
 			else if (holdable.GetComponent<AlarmClock>() != null)
 				Holdables["alarm"] = new TwitchHoldable(holdable, commandType: typeof(AlarmClockCommands));
