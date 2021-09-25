@@ -4,7 +4,7 @@ using UnityEngine;
 public class BinaryButtonsComponentSolver : ReflectionComponentSolver
 {
 	public BinaryButtonsComponentSolver(TwitchModule module) :
-		base(module, "BinaryButtonsScript", "!{0} submit <#####> [Submits the specified 5-digit binary number]")
+		base(module, "BinaryButtons", "!{0} submit <#####> [Submits the specified 5-digit binary number]")
 	{
 	}
 
@@ -25,19 +25,19 @@ public class BinaryButtonsComponentSolver : ReflectionComponentSolver
 			if (split[1][i].ToString() != texts[i].text)
 				yield return Click(i);
 		}
-		yield return Click(5, 0);
+		yield return Click(7, 0);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		TextMesh[] texts = _component.GetValue<TextMesh[]>("Texts");
-		string ans = _component.GetValue<string>("answer");
+		int[] cur = _component.GetValue<int[]>("yourpresses");
+		int[] ans = _component.GetValue<int[]>("correctpresses");
 		for (int i = 0; i < 5; i++)
 		{
-			if (ans[i].ToString() != texts[i].text)
+			if (ans[i] != cur[i])
 				yield return Click(i);
 		}
-		yield return Click(5, 0);
+		yield return Click(7, 0);
 	}
 }

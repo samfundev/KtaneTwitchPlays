@@ -3,7 +3,7 @@
 public class StandardButtonMasherComponentSolver : ReflectionComponentSolver
 {
 	public StandardButtonMasherComponentSolver(TwitchModule module) :
-		base(module, "standardButtonMasher", "!{0} submit <##> [Presses the push button '##' times and presses submit]")
+		base(module, "ButtonMash", "!{0} submit <##> [Presses the push button '##' times and presses submit]")
 	{
 	}
 
@@ -22,8 +22,8 @@ public class StandardButtonMasherComponentSolver : ReflectionComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		int current = _component.GetValue<int>("number");
-		int goal = _component.GetValue<int>("correctSubmit");
+		int current = _component.GetValue<int>("Mashes");
+		int goal = _component.GetValue<int>("CorrectMashes");
 		if (current > goal)
 			yield break;
 		while (current < goal)
