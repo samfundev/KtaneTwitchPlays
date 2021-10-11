@@ -506,13 +506,7 @@ public class TwitchGame : MonoBehaviour
 
 	private IEnumerator AddFindClaimDelay()
 	{
-		var delay = TwitchPlaySettings.data.FindClaimDelay;
-		var currentTime = 0f;
-		while (currentTime < delay)
-		{
-			currentTime += Time.deltaTime;
-			yield return null;
-		}
+		yield return new WaitForSeconds(TwitchPlaySettings.data.FindClaimDelay);
 		FindClaimEnabled = true;
 	}
 
