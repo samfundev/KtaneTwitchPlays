@@ -43,6 +43,7 @@ public class TwitchGame : MonoBehaviour
 	public List<string> EvilPlayers = new List<string>();
 
 	public int FindClaimUse = 0;
+	public bool FindClaimEnabled;
 	public Dictionary<string, int> FindClaimPlayers = new Dictionary<string, int>();
 
 #pragma warning disable 169
@@ -87,6 +88,7 @@ public class TwitchGame : MonoBehaviour
 		}
 
 		StartCoroutine(TwitchPlaysService.Instance.AnimateHeaderVisibility(true));
+		StartCoroutine(AddFindClaimDelay());
 
 		IRCConnection.SendMessage(Bombs.Count == 1
 			? TwitchPlaySettings.data.BombLiveMessage
@@ -272,6 +274,7 @@ public class TwitchGame : MonoBehaviour
 		EvilPlayers.Clear();
 		VSSetFlag = false;
 		QueueEnabled = false;
+		FindClaimEnabled = false;
 		Leaderboard.Instance.BombsAttempted++;
 		// ReSharper disable once DelegateSubtraction
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
@@ -499,6 +502,12 @@ public class TwitchGame : MonoBehaviour
 					bomb.FillEdgework();
 			yield return new WaitForSeconds(0.1f);
 		}
+	}
+
+	private IEnumerator AddFindClaimDelay()
+	{
+		yield return new WaitForSeconds(TwitchPlaySettings.data.FindClaimDelay);
+		FindClaimEnabled = true;
 	}
 
 	private IEnumerator CheckForBomb()

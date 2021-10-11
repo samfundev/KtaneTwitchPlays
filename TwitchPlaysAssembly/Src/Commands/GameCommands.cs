@@ -328,6 +328,11 @@ static class GameCommands
 
 		if (claim)
 		{
+			if (!TwitchGame.Instance.FindClaimEnabled && !OtherModes.TrainingModeOn)
+			{
+				IRCConnection.SendMessageFormat("@{0}, the findclaim command may only be used after {1} seconds have passed.", user, TwitchPlaySettings.data.FindClaimDelay); // Prevents findclaim spam at the start of a bomb
+				return;
+			}
 			if (!TwitchGame.Instance.FindClaimPlayers.ContainsKey(user)) TwitchGame.Instance.FindClaimPlayers.Add(user, 0);
 
 			var _prevClaims = TwitchGame.Instance.FindClaimPlayers[user];

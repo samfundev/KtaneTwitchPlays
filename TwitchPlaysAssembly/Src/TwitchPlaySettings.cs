@@ -45,6 +45,7 @@ public class TwitchPlaySettingsData
 	public int FindClaimLimit = 3;
 	public int FindClaimTerms = 3;
 	public int FindClaimAddTime = 5;
+	public int FindClaimDelay = 30;
 	public int VoteCountdownTime = 60;
 	public bool EnableVoting = true;
 	public bool EnableVoteSolve = true;
