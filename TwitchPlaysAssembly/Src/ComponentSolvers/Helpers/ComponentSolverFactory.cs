@@ -115,13 +115,16 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["strikeSolve"] = module => new StrikeSolveComponentSolver(module);
 		ModComponentSolverCreators["abstractSequences"] = module => new AbstractSequencesComponentSolver(module);
 		ModComponentSolverCreators["bridge"] = module => new BridgeComponentSolver(module);
-		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
 		ModComponentSolverCreators["needyHotate"] = module => new NeedyHotateComponentSolver(module);
 		ModComponentSolverCreators["pinkArrows"] = module => new PinkArrowsComponentSolver(module);
 		ModComponentSolverCreators["CactusPConundrum"] = module => new CactiConundrumComponentSolver(module);
 		ModComponentSolverCreators["weekDays"] = module => new WeekdaysComponentSolver(module);
 		ModComponentSolverCreators["draw"] = module => new DrawComponentSolver(module);
 		ModComponentSolverCreators["overKilo"] = module => new OverKiloComponentSolver(module);
+		ModComponentSolverCreators["gemory"] = module => new GemoryComponentSolver(module);
+		ModComponentSolverCreators["xModule"] = module => new XandYComponentSolver(module);
+		ModComponentSolverCreators["yModule"] = module => new XandYComponentSolver(module);
+		ModComponentSolverCreators["parliament"] = module => new ParliamentComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -135,6 +138,16 @@ public static class ComponentSolverFactory
 		//StrangaDanga Modules
 		ModComponentSolverCreators["keepClicking"] = module => new KeepClickingComponentSolver(module);
 		ModComponentSolverCreators["sixteenCoins"] = module => new SixteenCoinsComponentSolver(module);
+
+		//TheDarkSid3r Modules
+		ModComponentSolverCreators["NotTimerModule"] = module => new NotTimerComponentSolver(module);
+		ModComponentSolverCreators["TDSAmogus"] = module => new AmogusComponentSolver(module);
+		ModComponentSolverCreators["TDSNya"] = module => new NyaComponentSolver(module);
+		ModComponentSolverCreators["IconReveal"] = module => new IconRevealComponentSolver(module);
+		ModComponentSolverCreators["FreePassword"] = module => new FreePasswordComponentSolver(module);
+		ModComponentSolverCreators["LargeFreePassword"] = module => new FreePasswordComponentSolver(module);
+		ModComponentSolverCreators["LargeVanillaPassword"] = module => new LargePasswordComponentSolver(module);
+		ModComponentSolverCreators["TDSNeedyWires"] = module => new NeedyWiresComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -209,6 +222,20 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["ColourFlashPL"] = module => new ColourFlashShim(module);
 		ModComponentSolverCreators["ColourFlashES"] = module => new ColourFlashESShim(module);
 		ModComponentSolverCreators["Semaphore"] = module => new SemaphoreShim(module);
+		//ModComponentSolverCreators["Tangrams"] = module => new TangramsShim(module);
+		ModComponentSolverCreators["BinaryLeds"] = module => new BinaryLEDsShim(module);
+		ModComponentSolverCreators["timezone"] = module => new TimezoneShim(module);
+		ModComponentSolverCreators["quintuples"] = module => new QuintuplesShim(module);
+		ModComponentSolverCreators["identityParade"] = module => new IdentityParadeShim(module);
+		ModComponentSolverCreators["graffitiNumbers"] = module => new GraffitiNumbersShim(module);
+		ModComponentSolverCreators["mortalKombat"] = module => new MortalKombatShim(module);
+		ModComponentSolverCreators["ledGrid"] = module => new LEDGridShim(module);
+		ModComponentSolverCreators["RGBSequences"] = module => new RGBSequencesShim(module);
+		ModComponentSolverCreators["stars"] = module => new StarsShim(module);
+		//ModComponentSolverCreators["shikaku"] = module => new ShikakuShim(module);
+		ModComponentSolverCreators["osu"] = module => new OsuShim(module);
+		ModComponentSolverCreators["minecraftParody"] = module => new MinecraftParodyShim(module);
+		ModComponentSolverCreators["minecraftCipher"] = module => new MinecraftCipherShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -348,13 +375,16 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Strike Solve", manualCode = "StrikeSolve", scoreString = "2" };
 		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Abstract Sequences" };
 		ModComponentSolverInformation["bridge"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Bridge" };
-		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
 		ModComponentSolverInformation["needyHotate"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Hotate" };
 		ModComponentSolverInformation["pinkArrows"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pink Arrows" };
 		ModComponentSolverInformation["CactusPConundrum"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Cacti's Conundrum" };
 		ModComponentSolverInformation["weekDays"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Weekdays" };
 		ModComponentSolverInformation["draw"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Draw" };
 		ModComponentSolverInformation["overKilo"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Over Kilo" };
+		ModComponentSolverInformation["gemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gemory", announceModule = true };
+		ModComponentSolverInformation["xModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "X" };
+		ModComponentSolverInformation["yModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Y" };
+		ModComponentSolverInformation["parliament"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Parliament" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };
@@ -387,6 +417,16 @@ public static class ComponentSolverFactory
 		//StrangaDanga
 		ModComponentSolverInformation["keepClicking"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keep Clicking", scoreString = "4" };
 		ModComponentSolverInformation["sixteenCoins"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "16 Coins", scoreString = "4" };
+
+		//TheDarkSid3r
+		ModComponentSolverInformation["NotTimerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Not Timer" };
+		ModComponentSolverInformation["TDSAmogus"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "amogus" };
+		ModComponentSolverInformation["TDSNya"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "nya~" };
+		ModComponentSolverInformation["IconReveal"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Icon Reveal" };
+		ModComponentSolverInformation["FreePassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Free Password" };
+		ModComponentSolverInformation["LargeFreePassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Large Free Password" };
+		ModComponentSolverInformation["LargeVanillaPassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Large Password" };
+		ModComponentSolverInformation["TDSNeedyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Wires" };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated", scoreString = "2" };
