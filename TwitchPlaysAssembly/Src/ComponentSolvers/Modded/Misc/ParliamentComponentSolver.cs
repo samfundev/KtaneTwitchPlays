@@ -436,6 +436,7 @@ public class ParliamentComponentSolver : ReflectionComponentSolver
 			int numberOfConsonants = _component.GetValue<int>("numberOfConsonants");
 			int litIndicators = Module.BombComponent.GetComponent<KMBombInfo>().GetOnIndicators().Count();
 			Party party = _component.GetValue<Party>("party");
+			// Copy-pasted press handling code for the fptp and mmp button from Parliament
 			if (numberOfVowels >= (numberOfConsonants - 2))
 			{
 				if (litIndicators % 2 != 0)
@@ -468,6 +469,7 @@ public class ParliamentComponentSolver : ReflectionComponentSolver
 			int numberOfBatteries = Module.BombComponent.GetComponent<KMBombInfo>().GetBatteryCount();
 			int numberOfPorts = Module.BombComponent.GetComponent<KMBombInfo>().GetPortCount();
 			Party party = _component.GetValue<Party>("party");
+			// Copy-pasted press handling code for the win and lose button from Parliament
 			if (electionMethod == 0)
 			{
 				if (((numberOfBatteries + numberOfPorts) * 10) > currentPoll)
