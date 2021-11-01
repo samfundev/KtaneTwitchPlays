@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using KModkit;
+using UnityEngine;
 
 public class ParliamentComponentSolver : ReflectionComponentSolver
 {
@@ -110,294 +112,43 @@ public class ParliamentComponentSolver : ReflectionComponentSolver
 				}
 				else
 				{
-					int letterPosition = 0;
-					switch (billOpener)
+					Dictionary<Party, int[]> positions = new Dictionary<Party, int[]>()
 					{
-						case BillOpener.prevent:
-							switch (billEnding)
-							{
-								case BillEnding.veterans:
-									letterPosition = 0;
-									break;
-								case BillEnding.children:
-									letterPosition = 1;
-									break;
-								case BillEnding.dogs:
-									letterPosition = 2;
-									break;
-								case BillEnding.waterfowl:
-									letterPosition = 3;
-									break;
-								case BillEnding.liberals:
-									letterPosition = 4;
-									break;
-							}
-							break;
-						case BillOpener.promote:
-							switch (billEnding)
-							{
-								case BillEnding.veterans:
-									letterPosition = 5;
-									break;
-								case BillEnding.children:
-									letterPosition = 6;
-									break;
-								case BillEnding.dogs:
-									letterPosition = 7;
-									break;
-								case BillEnding.waterfowl:
-									letterPosition = 8;
-									break;
-								case BillEnding.liberals:
-									letterPosition = 9;
-									break;
-							}
-							break;
-						case BillOpener.fund:
-							switch (billEnding)
-							{
-								case BillEnding.veterans:
-									letterPosition = 10;
-									break;
-								case BillEnding.children:
-									letterPosition = 11;
-									break;
-								case BillEnding.dogs:
-									letterPosition = 12;
-									break;
-								case BillEnding.waterfowl:
-									letterPosition = 13;
-									break;
-								case BillEnding.liberals:
-									letterPosition = 14;
-									break;
-							}
-							break;
-						case BillOpener.endorse:
-							switch (billEnding)
-							{
-								case BillEnding.veterans:
-									letterPosition = 15;
-									break;
-								case BillEnding.children:
-									letterPosition = 16;
-									break;
-								case BillEnding.dogs:
-									letterPosition = 17;
-									break;
-								case BillEnding.waterfowl:
-									letterPosition = 18;
-									break;
-								case BillEnding.liberals:
-									letterPosition = 19;
-									break;
-							}
-							break;
-						case BillOpener.oppose:
-							switch (billEnding)
-							{
-								case BillEnding.veterans:
-									letterPosition = 20;
-									break;
-								case BillEnding.children:
-									letterPosition = 21;
-									break;
-								case BillEnding.dogs:
-									letterPosition = 22;
-									break;
-								case BillEnding.waterfowl:
-									letterPosition = 23;
-									break;
-								case BillEnding.liberals:
-									letterPosition = 24;
-									break;
-							}
-							break;
-					}
-					switch (party)
+						{ Party.republican,   new[] { 2, 1, 0, -1, -3, 5 } },
+						{ Party.democratic,   new[] { 4, 3, 2, -3,  3, 0 } },
+						{ Party.conservative, new[] { 6, 5, 4, -5, -2, 4 } },
+						{ Party.liberal,      new[] { 8, 7, 6, -7,  2, 1 } },
+						{ Party.socialist,    new[] { 1, 2, 1,  0, -1, 4 } },
+						{ Party.communist,    new[] { 3, 4, 3, -3, -2, 3 } },
+						{ Party.birthday,     new[] { 5, 6, 6, -2, -1, 2 } },
+						{ Party.lan,          new[] { 7, 8, 4, -4, -2, 1 } },
+					};
+
+					int billOpenerInt = (int) billOpener;
+					int billEndingInt = (int) billEnding;
+
+					// Swap condemn and oppose
+					if (billOpenerInt == 4)
 					{
-						case Party.republican:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 2;
-									break;
-								case BillMiddle.support:
-									letterPosition += 1;
-									break;
-								case BillMiddle.hats:
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 1;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition -= 3;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 5;
-									break;
-							}
-							break;
-						case Party.democratic:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 4;
-									break;
-								case BillMiddle.support:
-									letterPosition += 3;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 2;
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 3;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition += 3;
-									break;
-								case BillMiddle.rights:
-									break;
-							}
-							break;
-						case Party.conservative:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 6;
-									break;
-								case BillMiddle.support:
-									letterPosition += 5;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 4;
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 5;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition -= 2;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 4;
-									break;
-							}
-							break;
-						case Party.liberal:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 8;
-									break;
-								case BillMiddle.support:
-									letterPosition += 7;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 6;
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 7;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition += 2;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 1;
-									break;
-							}
-							break;
-						case Party.socialist:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 1;
-									break;
-								case BillMiddle.support:
-									letterPosition += 2;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 1;
-									break;
-								case BillMiddle.freedom:
-									break;
-								case BillMiddle.vaccines:
-									letterPosition -= 1;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 4;
-									break;
-							}
-							break;
-						case Party.communist:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 3;
-									break;
-								case BillMiddle.support:
-									letterPosition += 4;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 3;
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 3;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition -= 2;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 3;
-									break;
-							}
-							break;
-						case Party.birthday:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 5;
-									break;
-								case BillMiddle.support:
-									letterPosition += 6;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 6;
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 2;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition -= 1;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 2;
-									break;
-							}
-							break;
-						case Party.lan:
-							switch (billMiddle)
-							{
-								case BillMiddle.healthcare:
-									letterPosition += 7;
-									break;
-								case BillMiddle.support:
-									letterPosition += 8;
-									break;
-								case BillMiddle.hats:
-									letterPosition += 4;
-									break;
-								case BillMiddle.freedom:
-									letterPosition -= 4;
-									break;
-								case BillMiddle.vaccines:
-									letterPosition -= 2;
-									break;
-								case BillMiddle.rights:
-									letterPosition += 1;
-									break;
-							}
-							break;
+						billOpenerInt++;
 					}
+					else if (billOpenerInt == 5)
+					{
+						billOpenerInt--;
+					}
+
+					// Move cats to the end of the enum.
+					if (billEndingInt == 3)
+					{
+						billEndingInt += 2;
+					}
+					else if (billEndingInt > 3)
+					{
+						billEndingInt--;
+					}
+
+					int letterPosition = billOpenerInt * 5 + billEndingInt + positions[party][(int)billMiddle];
+					Debug.Log(letterPosition);
 					if (letterPosition < 0)
 						letterPosition = 26 - letterPosition;
 					else if (letterPosition > 25)

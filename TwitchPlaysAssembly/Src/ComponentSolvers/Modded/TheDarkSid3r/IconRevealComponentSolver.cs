@@ -14,7 +14,7 @@ public class IconRevealComponentSolver : ReflectionComponentSolver
 	{
 		if (split.Length != 2 || !command.StartsWith("submit ")) yield break;
 		List<string> symbols = _component.GetValue<List<string>>("Symbols");
-		if (symbols.Count(x => x.Equals(split[1], StringComparison.OrdinalIgnoreCase)) == 0) yield break;
+		if (!symbols.Any(x => x.Equals(split[1], StringComparison.OrdinalIgnoreCase))) yield break;
 
 		yield return null;
 		yield return SelectIndex(_component.GetValue<int>("NumCounter"), symbols.FindIndex(x => x.Equals(split[1], StringComparison.OrdinalIgnoreCase)), symbols.Count, _component.GetValue<KMSelectable>("RightButton"), _component.GetValue<KMSelectable>("LeftButton"));

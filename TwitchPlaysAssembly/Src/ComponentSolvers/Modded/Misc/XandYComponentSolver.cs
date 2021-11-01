@@ -22,17 +22,9 @@ public class XandYComponentSolver : ComponentSolver
 		Type xyType = ReflectionHelper.FindType("XScript");
 		if (xyType == null) yield break;
 
-		FloatingHoldable alarm = null;
-		foreach (var holdable in UnityEngine.Object.FindObjectsOfType<FloatingHoldable>())
-		{
-			if (holdable.GetComponent<AlarmClock>() != null)
-				alarm = holdable;
-		}
-		if (alarm == null) yield break;
-
 		yield return null;
 
-		Selectable snooze = alarm.GetComponent<AlarmClock>().SnoozeButton.GetComponent<Selectable>();
+		Selectable snooze = UnityEngine.Object.FindObjectOfType<AlarmClock>().SnoozeButton.GetComponent<Selectable>();
 		object component = Module.BombComponent.GetComponent(xyType);
 
 		int answer = 11 + component.GetValue<int>("val");

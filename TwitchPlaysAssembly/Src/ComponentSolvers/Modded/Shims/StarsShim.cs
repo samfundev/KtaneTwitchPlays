@@ -50,7 +50,7 @@ public class StarsShim : ComponentSolverShim
 					break;
 				}
 			}
-			if (input.Count(x => x != 0) == 10)
+			if (input.All(x => x != 0))
 				start = 10;
 			for (int i = start; i < 10; i++)
 			{

@@ -17,10 +17,10 @@ public static class AlarmClockCommands
 	/// <syntax>snooze [times]</syntax>
 	/// <summary>Hits the snooze button on the alarm clock. [times] is the number of times to press the snooze button (up to 50).</summary>
 	[Command(@"snooze +(\d+)")]
-	public static IEnumerator SnoozeMultiple(TwitchHoldable holdable, string user, bool isWhisper, [Group(1)] string times) =>
-		holdable.RespondToCommand(user, "", isWhisper, Snooze(holdable.Holdable.GetComponent<AlarmClock>(), int.Parse(times)));
+	public static IEnumerator SnoozeMultiple(TwitchHoldable holdable, string user, bool isWhisper, [Group(1)] int times) =>
+		holdable.RespondToCommand(user, "", isWhisper, Snooze(holdable.Holdable.GetComponent<AlarmClock>(), times));
 
-	public static IEnumerator Snooze(AlarmClock clock, int times)
+	public static IEnumerator Snooze(AlarmClock clock, int times = 1)
 	{
 		var onField = typeof(AlarmClock).GetField("isOn", BindingFlags.NonPublic | BindingFlags.Instance);
 		if (onField == null) yield break;

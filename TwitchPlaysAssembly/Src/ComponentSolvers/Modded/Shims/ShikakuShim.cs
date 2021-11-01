@@ -23,28 +23,25 @@ public class ShikakuShim : ComponentSolverShim
 		int[] current = _component.GetValue<int[]>("_grid");
 		for (int h = 0; h < hints.Length; h++)
 		{
-			if (hints[h].text != "")
+			if (hints[h].text == "")
+				continue;
+			IList shapes = _component.GetValue<IList>("_shapes");
+			int curNumber = solution[h];
+			for (int c = 0; c < shapes.Count; c++)
 			{
-				IList shapes = _component.GetValue<IList>("_shapes");
-				int curNumber = solution[h];
-				for (int c = 0; c < shapes.Count; c++)
+				if (shapes[c].GetValue<int>("HintNode") != h)
+					continue;
+				for (int index = 0; index < 36; index++)
 				{
-					if (shapes[c].GetValue<int>("HintNode") == h)
-					{
-						for (int index = 0; index < 36; index++)
-						{
-							if (solution[index] == curNumber && current[index] != curNumber && index != h)
-							{
-								if (_component.GetValue<int>("_activeShape") != curNumber)
-									yield return DoInteractionClick(_buttons[h]);
-								if (!shapes[c].GetValue<bool>("CurrentHintCorrect") && !shapes[c].GetValue<object>("ShapeType").GetValue<bool>("IsNumber"))
-									yield return DoInteractionClick(_buttons[h]);
-								yield return DoInteractionClick(_buttons[index]);
-							}
-						}
-						break;
-					}
+					if (solution[index] != curNumber || current[index] == curNumber || index == h)
+						continue;
+					if (_component.GetValue<int>("_activeShape") != curNumber)
+						yield return DoInteractionClick(_buttons[h]);
+					if (!shapes[c].GetValue<bool>("CurrentHintCorrect") && !shapes[c].GetValue<object>("ShapeType").GetValue<bool>("IsNumber"))
+						yield return DoInteractionClick(_buttons[h]);
+					yield return DoInteractionClick(_buttons[index]);
 				}
+				break;
 			}
 		}
 	}

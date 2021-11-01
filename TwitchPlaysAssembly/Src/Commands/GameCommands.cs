@@ -89,7 +89,7 @@ static class GameCommands
 		while (e.MoveNext())
 			yield return e.Current;
 
-		e = AlarmClockCommands.Snooze(alarmClock.Holdable.GetComponent<AlarmClock>(), 1);
+		e = AlarmClockCommands.Snooze(alarmClock.Holdable.GetComponent<AlarmClock>());
 		while (e.MoveNext())
 			yield return e.Current;
 	}

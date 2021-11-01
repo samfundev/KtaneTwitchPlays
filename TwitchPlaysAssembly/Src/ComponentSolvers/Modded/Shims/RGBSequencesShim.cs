@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 
 public class RGBSequencesShim : ComponentSolverShim
 {
@@ -15,12 +16,12 @@ public class RGBSequencesShim : ComponentSolverShim
 	{
 		yield return null;
 
-		int[] answer = _component.GetValue<int[]>("Random");
+		int[] answer = _component.GetValue<int[]>("Random").Select(x => x + 1).ToArray();
 		bool Vwl = _component.GetValue<bool>("Vowel");
 		bool Const = _component.GetValue<bool>("Consonant");
 		for (int i = 0; i < 10; i++)
 		{
-			if ((i == (((((answer[0] + 1) * (answer[1] + 1) * (answer[2] + 1)) - 1) % 9) + 1) && Vwl == true && Const == true) || (i == (((answer[0] + 1) * (answer[1] + 1) * (answer[2] + 1)) % 10) && ((Vwl == true && Const == false) || (Vwl == false && Const == true) || (Vwl == false && Const == false))))
+			if ((i == ((((answer[0] * answer[1] * answer[2]) - 1) % 9) + 1) && Vwl == true && Const == true) || (i == (answer[0] * answer[1] * answer[2] % 10) && ((Vwl == true && Const == false) || (Vwl == false && Const == true) || (Vwl == false && Const == false))))
 			{
 				yield return DoInteractionClick(_btns[i]);
 				yield break;
