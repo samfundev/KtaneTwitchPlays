@@ -315,6 +315,12 @@ public class TwitchPlaysService : MonoBehaviour
 
 	public Dictionary<string, TwitchHoldable> Holdables = new Dictionary<string, TwitchHoldable>();
 
+	/// <summary>Adds a holdable, ensuring that the ID in <see cref="Holdables"/> is the same as the one in it's <see cref="TwitchHoldable"/>.</summary>
+	private void AddHoldable(string id, FloatingHoldable holdable, Type commandType = null, bool allowModded = false)
+	{
+		Holdables[id] = new TwitchHoldable(holdable, commandType, allowModded, id);
+	}
+
 	private IEnumerator FindHoldables()
 	{
 		Holdables.Clear();
@@ -325,21 +331,21 @@ public class TwitchPlaysService : MonoBehaviour
 			if (holdable.GetComponentInChildren<KMBomb>() != null)
 				continue;
 			else if (holdable.GetComponent<FreeplayDevice>() != null)
-				Holdables["freeplay"] = new TwitchHoldable(holdable, commandType: typeof(FreeplayCommands));
+				AddHoldable("freeplay", holdable, commandType: typeof(FreeplayCommands));
 			else if (holdable.GetComponent<BombBinder>() != null && CurrentState == KMGameInfo.State.Setup)
-				Holdables["binder"] = new TwitchHoldable(holdable, commandType: typeof(MissionBinderCommands));
+				AddHoldable("binder", holdable, commandType: typeof(MissionBinderCommands));
 			else if (holdable.GetComponent<AlarmClock>() != null)
-				Holdables["alarm"] = new TwitchHoldable(holdable, commandType: typeof(AlarmClockCommands));
+				AddHoldable("alarm", holdable, commandType: typeof(AlarmClockCommands));
 			else if (holdable.GetComponent<IRCConnectionManagerHoldable>() != null)
-				Holdables["ircmanager"] = new TwitchHoldable(holdable, commandType: typeof(IRCConnectionManagerCommands));
+				AddHoldable("ircmanager", holdable, commandType: typeof(IRCConnectionManagerCommands));
 			else if (holdable.GetComponent("ModSelectorTablet") != null)
-				Holdables["dmg"] = new TwitchHoldable(holdable, commandType: typeof(DMGCommands), id: "dmg");
+				AddHoldable("dmg", holdable, commandType: typeof(DMGCommands));
 			else
 			{
 				var id = holdable.name.ToLowerInvariant().Replace("(clone)", "");
 				// Make sure a modded holdable can’t override a built-in
 				if (!Holdables.ContainsKey(id))
-					Holdables[id] = new TwitchHoldable(holdable, allowModded: true);
+					AddHoldable(id, holdable, allowModded: true);
 			}
 		}
 	}
