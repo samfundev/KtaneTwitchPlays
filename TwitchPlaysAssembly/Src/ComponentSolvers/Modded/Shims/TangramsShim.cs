@@ -17,11 +17,11 @@ public class TangramsShim : ComponentSolverShim
 		yield return null;
 
 		KMSelectable[] pins = _component.GetValue<object>("_chip").GetValue<KMSelectable[]>("PinSelectables");
-		if (_component.GetValue<object>("_displayBar").GetValue<float>("Progress") != 0.0f && !_component.GetValue<object>("_tangram").GetType().CallMethod<bool>("IsValidConnection", _component.GetValue<object>("_selectedConnection")))
+		if (_component.GetValue<object>("_displayBar").GetValue<float>("Progress") != 0.0f && !ComponentType.CallMethod<bool>("IsValidConnection", _component, _component.GetValue<object>("_selectedConnection")))
 		{
 			((MonoBehaviour) _component).StopAllCoroutines();
-			_component.GetValue<object>("_displayBar").GetType().SetValue("Progress", 0.0f, _component);
-			ComponentType.CallMethod("ModuleFinish", true);
+			ComponentType.SetValue("Progress", 0.0f, _component.GetValue<object>("_displayBar"));
+			ComponentType.CallMethod("ModuleFinish", _component, true);
 			yield break;
 		}
 		else
@@ -37,7 +37,7 @@ public class TangramsShim : ComponentSolverShim
 			}
 			if (!selectedValid)
 			{
-				ComponentType.CallMethod("ModuleFinish", true);
+				ComponentType.CallMethod("ModuleFinish", _component, true);
 				yield break;
 			}
 		}

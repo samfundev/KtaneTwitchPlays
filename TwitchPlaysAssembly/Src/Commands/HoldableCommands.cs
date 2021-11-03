@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 /// <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
@@ -53,9 +54,6 @@ public static class HoldableCommands
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchHoldable holdable, string user, bool isWhisper, string cmd)
 	{
-		if (holdable.CommandType == typeof(AlarmClockCommands))
-			return AlarmClockCommands.Snooze(holdable, user, isWhisper);
-
 		if (holdable.CommandType != null)
 			return holdable.RespondToCommand(user, isWhisper);
 
