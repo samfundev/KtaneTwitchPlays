@@ -5,9 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Missions;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public static class ComponentSolverFactory
 {
@@ -48,6 +46,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["lgndHyperactiveNumbers"] = module => new HyperactiveNumsComponentSolver(module);
 		ModComponentSolverCreators["lgndMorseIdentification"] = module => new MorseIdentificationComponentSolver(module);
 		ModComponentSolverCreators["lgndReflex"] = module => new ReflexComponentSolver(module);
+		ModComponentSolverCreators["lgndPayRespects"] = module => new PayRespectsComponentSolver(module);
 
 		//Asimir Modules
 		ModComponentSolverCreators["murder"] = module => new MurderComponentSolver(module);
@@ -91,6 +90,15 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["standardButtonMasher"] = module => new StandardButtonMasherComponentSolver(module);
 		ModComponentSolverCreators["BinaryButtons"] = module => new BinaryButtonsComponentSolver(module);
 
+		//Elias Modules
+		ModComponentSolverCreators["numberNimbleness"] = module => new NumberNimblenessComponentSolver(module);
+		ModComponentSolverCreators["matchmaker"] = module => new MatchmakerComponentSolver(module);
+
+		//BakersDozenBagels Modules
+		ModComponentSolverCreators["xModule"] = module => new XandYComponentSolver(module);
+		ModComponentSolverCreators["yModule"] = module => new XandYComponentSolver(module);
+		ModComponentSolverCreators["imbalance"] = module => new ImbalanceComponentSolver(module);
+
 		//Misc Modules
 		ModComponentSolverCreators["EnglishTest"] = module => new EnglishTestComponentSolver(module);
 		ModComponentSolverCreators["LetterKeys"] = module => new LetterKeysComponentSolver(module);
@@ -103,7 +111,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["boolMaze"] = module => new BooleanMazeComponentSolver(module);
 		ModComponentSolverCreators["MorseWar"] = module => new MorseWarComponentSolver(module);
 		ModComponentSolverCreators["necronomicon"] = module => new NecronomiconComponentSolver(module);
-		ModComponentSolverCreators["numberNimbleness"] = module => new NumberNimblenessComponentSolver(module);
 		ModComponentSolverCreators["babaIsWho"] = module => new BabaIsWhoComponentSolver(module);
 		ModComponentSolverCreators["chordProgressions"] = module => new ChordProgressionsComponentSolver(module);
 		ModComponentSolverCreators["rng"] = module => new RNGComponentSolver(module);
@@ -122,9 +129,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["draw"] = module => new DrawComponentSolver(module);
 		ModComponentSolverCreators["overKilo"] = module => new OverKiloComponentSolver(module);
 		ModComponentSolverCreators["gemory"] = module => new GemoryComponentSolver(module);
-		ModComponentSolverCreators["xModule"] = module => new XandYComponentSolver(module);
-		ModComponentSolverCreators["yModule"] = module => new XandYComponentSolver(module);
 		ModComponentSolverCreators["parliament"] = module => new ParliamentComponentSolver(module);
+		ModComponentSolverCreators["12321"] = module => new OneTwoThreeComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -317,6 +323,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["lgndHyperactiveNumbers"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Hyperactive Numbers", scoreString = "6" };
 		ModComponentSolverInformation["lgndMorseIdentification"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Identification", scoreString = "D 0.4" };
 		ModComponentSolverInformation["lgndReflex"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Reflex", scoreString = "2" };
+		ModComponentSolverInformation["lgndPayRespects"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pay Respects" };
 
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams", scoreString = "2" };
@@ -348,6 +355,15 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["modulusManipulation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Modulus Manipulation", scoreString = "8" };
 		ModComponentSolverInformation["triangleButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Triangle Buttons" };
 
+		//Elias
+		ModComponentSolverInformation["numberNimbleness"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Nimbleness", scoreString = "9" };
+		ModComponentSolverInformation["matchmaker"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Matchmaker" };
+
+		//BakersDozenBagels
+		ModComponentSolverInformation["xModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "X" };
+		ModComponentSolverInformation["yModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Y" };
+		ModComponentSolverInformation["imbalance"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Imbalance" };
+
 		//Misc
 		ModComponentSolverInformation["EnglishTest"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "English Test", scoreString = "4" };
 		ModComponentSolverInformation["LetterKeys"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Letter Keys", scoreString = "2" };
@@ -357,7 +373,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["switchModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Switches", scoreString = "5" };
 		ModComponentSolverInformation["EdgeworkModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Edgework", scoreString = "D 2.2" };
 		ModComponentSolverInformation["NeedyBeer"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Refill That Beer!", scoreString = "D 0.2" };
-		ModComponentSolverInformation["numberNimbleness"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Number Nimbleness", scoreString = "9" };
 		ModComponentSolverInformation["errorCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Error Codes", scoreString = "4" };
 		ModComponentSolverInformation["JuckAlchemy"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Alchemy", scoreString = "8" };
 		ModComponentSolverInformation["LEGOModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "LEGOs", scoreString = "16" };
@@ -382,9 +397,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["draw"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Draw" };
 		ModComponentSolverInformation["overKilo"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Over Kilo" };
 		ModComponentSolverInformation["gemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gemory", announceModule = true };
-		ModComponentSolverInformation["xModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "X" };
-		ModComponentSolverInformation["yModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Y" };
 		ModComponentSolverInformation["parliament"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Parliament" };
+		ModComponentSolverInformation["12321"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "1-2-3-2-1" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order", scoreString = "1" };

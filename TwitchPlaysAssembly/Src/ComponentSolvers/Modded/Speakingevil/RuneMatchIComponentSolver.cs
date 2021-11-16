@@ -47,6 +47,7 @@ public class RuneMatchIComponentSolver : ReflectionComponentSolver
 				continue;
 			}
 
+			yield return null;
 			bool[] active = _component.GetValue<bool[]>("activeorbs");
 			int[] runes = _component.GetValue<int[]>("activerunes");
 			int[] targets = _component.GetValue<int[]>("targets");

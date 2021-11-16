@@ -165,7 +165,6 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 			}
 			else
 			{
-				redo:
 				if (timerTime < 60f)
 				{
 					needed = 1f;
@@ -193,10 +192,8 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 				}
 				else
 				{
-					while (_component.GetValue<float>("TimerTime") >= 10800f)
-						yield return true;
-					timerTime = _component.GetValue<float>("TimerTime");
-					goto redo;
+					needed = 14f;
+					digit = 3;
 				}
 			}
 			DoInteractionStart(selectables[index]);

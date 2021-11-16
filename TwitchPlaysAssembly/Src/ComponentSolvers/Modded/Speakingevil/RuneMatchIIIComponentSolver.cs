@@ -59,6 +59,7 @@ public class RuneMatchIIIComponentSolver : ComponentSolver
 				continue;
 			}
 
+			yield return null;
 			int[] disporbs = _component.GetValue<int[]>("disporbs");
 			bool[] active = _component.GetValue<bool[]>("activeorbs");
 			for (int i = 0; i < 9; i++)

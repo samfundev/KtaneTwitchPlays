@@ -59,6 +59,7 @@ public class DrawComponentSolver : ReflectionComponentSolver
 				continue;
 			}
 
+			yield return null;
 			if (!_component.GetValue<bool>("_pressedGo"))
 				yield return Click(1, 0);
 			while (!_component.GetValue<bool>("_canShoot")) yield return null;

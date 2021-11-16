@@ -65,6 +65,7 @@ public class RuneMatchIIComponentSolver : ComponentSolver
 				continue;
 			}
 
+			yield return null;
 			bool[] active = _component.GetValue<bool[]>("activeorbs");
 			int[] orbshuff = _component.GetValue<int[]>("orbshuff");
 			int breakCt = _component.GetValue<int>("breakcount");
