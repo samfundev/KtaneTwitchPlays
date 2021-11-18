@@ -242,6 +242,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["osu"] = module => new OsuShim(module);
 		ModComponentSolverCreators["minecraftParody"] = module => new MinecraftParodyShim(module);
 		ModComponentSolverCreators["minecraftCipher"] = module => new MinecraftCipherShim(module);
+		ModComponentSolverCreators["PressX"] = module => new PressXShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -453,6 +454,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", DoesTheRightThing = true, scoreString = "6", helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true };
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password", scoreString = "6", DoesTheRightThing = true };
 		ModComponentSolverInformation["ColourFlashES"] = new ModuleInformation { moduleDisplayName = "Colour Flash ES", DoesTheRightThing = true, scoreString = "7", helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", helpTextOverride = true };
+		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleDisplayName = "Press X", DoesTheRightThing = true, scoreString = "5", helpText = "Submit button presses using !{0} press x on 1 or !{0} press y on 23 or !{0} press a on 8 28 48. Acceptable buttons are a, b, x and y.", helpTextOverride = true };
 
 		//These modules have troll commands built in.
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { DoesTheRightThing = true, moduleDisplayName = "Plumbing", scoreString = "12" };
@@ -902,7 +904,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NandMs"] = new ModuleInformation { scoreString = "3", DoesTheRightThing = true };
 
 		//ThatGuyCalledJules
-		ModComponentSolverInformation["PressX"] = new ModuleInformation { scoreString = "6", DoesTheRightThing = true };
+		//Press X, which is shimmed above.
 		ModComponentSolverInformation["synonyms"] = new ModuleInformation { scoreString = "6", DoesTheRightThing = true };
 
 		//Theta
