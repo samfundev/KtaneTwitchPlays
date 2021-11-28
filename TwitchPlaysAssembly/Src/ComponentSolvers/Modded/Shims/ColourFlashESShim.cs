@@ -16,12 +16,11 @@ public class ColourFlashESShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		Match modulesMatch = Regex.Match(inputCommand, "^press (yes|sí|y|s) ([1-8]|any|cualq)$", RegexOptions.IgnoreCase);
+		Match modulesMatch = Regex.Match(inputCommand, "^press (yes|sï¿½|y|s) ([1-8]|any|cualq)$", RegexOptions.IgnoreCase);
 		if (modulesMatch.Success)
 		{
 			string position = modulesMatch.Groups[2].Value;
-			int positionIndex = int.MinValue;
-			if (int.TryParse(position, out positionIndex))
+			if (int.TryParse(position, out int positionIndex))
 			{
 				positionIndex--;
 				while (positionIndex != _component.GetValue<int>("_currentColourSequenceIndex"))
@@ -53,7 +52,7 @@ public class ColourFlashESShim : ComponentSolverShim
 
 		var _ruleButtonPressHandler = _component.GetValue<Delegate>("_ruleButtonPressHandler");
 		while (_ruleButtonPressHandler == null) yield return true;
-		while (!(bool)_ruleButtonPressHandler.DynamicInvoke(true) && !(bool)_ruleButtonPressHandler.DynamicInvoke(false)) yield return true;
+		while (!(bool) _ruleButtonPressHandler.DynamicInvoke(true) && !(bool) _ruleButtonPressHandler.DynamicInvoke(false)) yield return true;
 		if ((bool) _ruleButtonPressHandler.DynamicInvoke(true))
 			yield return DoInteractionClick(_yes, 0);
 		else

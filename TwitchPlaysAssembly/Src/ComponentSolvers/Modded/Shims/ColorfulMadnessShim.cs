@@ -23,7 +23,7 @@ public class ColorfulMadnessShim : ComponentSolverShim
 		int[] topHalfTextures = _component.GetValue<int[]>("topHalfTextures");
 		for (int i = 0; i < 20; i++)
 		{
-			if (digits.Contains(i) || (i >= 10 && digits.Any(digit => bottomHalfTextures[i - 10] == topHalfTextures[digit])) && !pressedButtons.Contains(i))
+			if (digits.Contains(i) || i >= 10 && digits.Any(digit => bottomHalfTextures[i - 10] == topHalfTextures[digit]) && !pressedButtons.Contains(i))
 				yield return DoInteractionClick(_buttons[i]);
 		}
 	}

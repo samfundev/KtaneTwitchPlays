@@ -16,9 +16,7 @@ public class MortalKombatShim : ComponentSolverShim
 		yield return null;
 
 		char[] moves = { '⇧', '⇩', '⇦', '⇨', 'A', 'B', 'C' };
-		string input = _component.GetValue<string>("move");
-		if (input == null)
-			input = "";
+		string input = _component.GetValue<string>("move") ?? "";
 		int stage = _component.GetValue<int>("stage");
 		string answer = GetStageAnswer(stage);
 		for (int i = 0; i < input.Length; i++)

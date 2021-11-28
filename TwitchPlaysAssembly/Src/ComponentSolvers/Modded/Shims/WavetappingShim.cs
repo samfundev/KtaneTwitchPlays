@@ -20,7 +20,7 @@ public class WavetappingShim : ComponentSolverShim
 		int start = _component.GetValue<int>("nowStage");
 		for (int i = start; i < 3; i++)
 		{
-			while (_component.GetValue<bool>("beatStage")) { yield return true; };
+			while (_component.GetValue<bool>("beatStage")) { yield return true; }
 			string nowPattern = _component.GetValue<string>("nowPattern");
 			for (int j = 0; j < correctPatterns[i].Length; j++)
 			{

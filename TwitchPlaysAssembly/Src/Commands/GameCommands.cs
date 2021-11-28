@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -593,9 +593,7 @@ static class GameCommands
 	[Command(@"call( *now)?( +.+)?")]
 	public static void CallQueuedCommand(string user, [Group(1)] bool now, [Group(2)] string name)
 	{
-		name = name?.Trim();
-		if (name == null)
-			name = "";
+		name = (name?.Trim()) ?? "";
 		var response = TwitchGame.Instance.CheckIfCall(false, now, user, name, out bool callChanged);
 		if (response != TwitchGame.CallResponse.Success)
 		{

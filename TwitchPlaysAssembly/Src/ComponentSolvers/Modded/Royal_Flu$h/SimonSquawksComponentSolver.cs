@@ -33,7 +33,7 @@ public class SimonSquawksComponentSolver : ReflectionComponentSolver
 
 		yield return null;
 		object[] buttons = _component.GetValue<object[]>("buttons");
-		string[] btnColours = new string[] { split[1].Length == 1 ? colours.Where(x => x.FirstOrWhole(split[1])).First() : split[1], split[2].Length == 1 ? colours.Where(x => x.FirstOrWhole(split[2])).First() : split[2] };
+		string[] btnColours = new string[] { split[1].Length == 1 ? colours.First(x => x.FirstOrWhole(split[1])) : split[1], split[2].Length == 1 ? colours.First(x => x.FirstOrWhole(split[2])) : split[2] };
 		for (int i = 0; i < 2; i++)
 		{
 			for (int j = 0; j < buttons.Length; j++)

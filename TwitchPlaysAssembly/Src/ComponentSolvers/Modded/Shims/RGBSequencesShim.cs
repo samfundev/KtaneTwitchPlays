@@ -21,7 +21,7 @@ public class RGBSequencesShim : ComponentSolverShim
 		bool Const = _component.GetValue<bool>("Consonant");
 		for (int i = 0; i < 10; i++)
 		{
-			if ((i == ((((answer[0] * answer[1] * answer[2]) - 1) % 9) + 1) && Vwl == true && Const == true) || (i == (answer[0] * answer[1] * answer[2] % 10) && ((Vwl == true && Const == false) || (Vwl == false && Const == true) || (Vwl == false && Const == false))))
+			if ((i == ((((answer[0] * answer[1] * answer[2]) - 1) % 9) + 1) && Vwl && Const) || (i == (answer[0] * answer[1] * answer[2] % 10) && (Vwl ^ Const || (!Vwl && !Const))))
 			{
 				yield return DoInteractionClick(_btns[i]);
 				yield break;

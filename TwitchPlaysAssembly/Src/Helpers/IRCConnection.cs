@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -474,7 +474,7 @@ public class IRCConnection : MonoBehaviour
 
 	/// <summary>
 	/// A <see cref="TextReader"/> that reads lines from a <see cref="NetworkStream"/> and will check to see if any data is available to avoid blocking.
-	/// Allows you specify a seperate stream to read from if you have another stream (like a <see cref="SslStream"/>) wrapping your <see cref="NetworkStream"/>.
+	/// Allows you specify a separate stream to read from if you have another stream (like a <see cref="SslStream"/>) wrapping your <see cref="NetworkStream"/>.
 	/// </summary>
 	class NetworkStreamLineReader : TextReader, IDisposable
 	{

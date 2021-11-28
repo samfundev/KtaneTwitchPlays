@@ -25,6 +25,6 @@ public class IconRevealComponentSolver : ReflectionComponentSolver
 	{
 		yield return null;
 
-		yield return RespondToCommandInternal($"submit " + _component.GetValue<string>("SelectedModuleSymbol"));
+		yield return RespondToCommandInternal($"submit {_component.GetValue<string>("SelectedModuleSymbol")}");
 	}
 }

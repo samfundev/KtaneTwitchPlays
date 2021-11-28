@@ -14,7 +14,7 @@ public enum VoteTypes
 public class VoteData
 {
 	// Name of the vote (Displayed over !notes3 when in game)
-	internal string name
+	internal string Name
 	{
 		get => Votes.CurrentVoteType == VoteTypes.Solve ? $"Solve module {Votes.voteModule.Code} ({Votes.voteModule.HeaderText})" : _name;
 		set => _name = value;
@@ -44,17 +44,17 @@ public static class Votes
 	{
 		{
 			VoteTypes.Detonation, new VoteData {
-				name = "Detonate the bomb",
+				Name = "Detonate the bomb",
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
-					createCheck(() => TwitchGame.Instance.VoteDetonateAttempted, "Sorry, {0}, a detonation vote was already attempted on this bomb. Another one cannot be started.")
+					CreateCheck(() => TwitchGame.Instance.VoteDetonateAttempted, "Sorry, {0}, a detonation vote was already attempted on this bomb. Another one cannot be started.")
 				},
 				onSuccess = () => TwitchGame.Instance.Bombs[0].CauseExplosionByVote()
 			}
 		},
 		{
 			VoteTypes.VSModeToggle, new VoteData {
-				name = "Toggle VS mode",
+				Name = "Toggle VS mode",
 				validityChecks = null,
 				onSuccess = () => {
 					OtherModes.Toggle(TwitchPlaysMode.VS);
@@ -66,25 +66,25 @@ public static class Votes
 			VoteTypes.Solve, new VoteData {
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
-					createCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
-					createCheck(() => voteModule.Solver.AttemptedForcedSolve, "Sorry, {0}, that module is already being votesolved."),
-					createCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
-					createCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
-					createCheck(() =>
+					CreateCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
+					CreateCheck(() => voteModule.Solver.AttemptedForcedSolve, "Sorry, {0}, that module is already being votesolved."),
+					CreateCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
+					CreateCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
+					CreateCheck(() =>
 						voteModule.BombComponent.GetModuleID().IsBossMod() &&
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= .10f ||
 						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < 120),
 						"Sorry, {0}, boss mods may only be votesolved before 10% of all modules are solved and when at least 2 minutes of the bomb has passed."),
-					createCheck(() =>
+					CreateCheck(() =>
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
 						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= 0.75f) &&
 						!voteModule.BombComponent.GetModuleID().IsBossMod(),
 						"Sorry, {0}, more than 75% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
-					createCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
-					createCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
-					createCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.BombComponent.GetModuleID().IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
-					createCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to solve is in the queue."),
-					createCheck(() => GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
+					CreateCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
+					CreateCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
+					CreateCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.BombComponent.GetModuleID().IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
+					CreateCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to solve is in the queue."),
+					CreateCheck(() => GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
 				},
 				onSuccess = () =>
 				{
@@ -177,7 +177,7 @@ public static class Votes
 		VoteTimeRemaining = TwitchPlaySettings.data.VoteCountdownTime;
 		Voters.Clear();
 		Voters.Add(user, true);
-		IRCConnection.SendMessage($"Voting has started by {user} to \"{PossibleVotes[CurrentVoteType].name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '.");
+		IRCConnection.SendMessage($"Voting has started by {user} to \"{PossibleVotes[CurrentVoteType].Name}\"! Vote with '!vote VoteYea ' or '!vote VoteNay '.");
 		voteInProgress = TwitchPlaysService.Instance.StartCoroutine(VotingCoroutine());
 		if (TwitchGame.Instance.alertSound != null)
 			TwitchGame.Instance.alertSound.Play();
@@ -264,7 +264,7 @@ public static class Votes
 			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
 			return;
 		}
-		IRCConnection.SendMessage($"The current vote to \"{PossibleVotes[CurrentVoteType].name}\" lasts for {TimeLeft} more seconds.");
+		IRCConnection.SendMessage($"The current vote to \"{PossibleVotes[CurrentVoteType].Name}\" lasts for {TimeLeft} more seconds.");
 	}
 
 	public static void CancelVote(string user)
@@ -291,5 +291,5 @@ public static class Votes
 		VoteTimeRemaining = 0f;
 	}
 
-	private static Tuple<Func<bool>, string> createCheck(Func<bool> func, string str) => new Tuple<Func<bool>, string>(func, str);
+	private static Tuple<Func<bool>, string> CreateCheck(Func<bool> func, string str) => new Tuple<Func<bool>, string>(func, str);
 }

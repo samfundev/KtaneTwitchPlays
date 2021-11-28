@@ -23,7 +23,7 @@ public class ShikakuShim : ComponentSolverShim
 		int[] current = _component.GetValue<int[]>("_grid");
 		for (int h = 0; h < hints.Length; h++)
 		{
-			if (hints[h].text == "")
+			if (hints[h].text?.Length == 0)
 				continue;
 			IList shapes = _component.GetValue<IList>("_shapes");
 			int curNumber = solution[h];

@@ -13,7 +13,7 @@ public class DownloadText : CustomYieldInstruction
 		asyncOperation = request.SendWebRequest();
 	}
 
-	bool success => !request.isNetworkError && !request.isHttpError;
+	bool Success => !request.isNetworkError && !request.isHttpError;
 
 	public override bool keepWaiting
 	{
@@ -22,7 +22,7 @@ public class DownloadText : CustomYieldInstruction
 			if (!asyncOperation.isDone)
 				return true;
 
-			if (!success && retryCount < 5)
+			if (!Success && retryCount < 5)
 			{
 				retryCount++;
 
@@ -35,5 +35,5 @@ public class DownloadText : CustomYieldInstruction
 		}
 	}
 
-	public string Text => success ? request.downloadHandler.text : null;
+	public string Text => Success ? request.downloadHandler.text : null;
 }

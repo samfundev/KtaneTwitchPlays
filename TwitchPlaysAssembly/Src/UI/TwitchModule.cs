@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -302,7 +302,7 @@ public class TwitchModule : MonoBehaviour
 	private void GetStatusLightY()
 	{
 		Vector3 pos = CanvasGroupMultiDecker.transform.localPosition;
-		// This sets the Y position of ID tag to be right above the status light forfor modules where the status light has been moved.
+		// This sets the Y position of ID tag to be right above the status light for modules where the status light has been moved.
 		// Which is done by getting the status light's position in world space, converting it to the tag's local space, taking the Y and adding 0.03514.
 		StatusLightParent statusLightParent = BombComponent.GetComponentInChildren<StatusLightParent>();
 		if (statusLightParent != null)

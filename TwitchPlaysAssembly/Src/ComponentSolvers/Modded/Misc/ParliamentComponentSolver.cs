@@ -147,12 +147,12 @@ public class ParliamentComponentSolver : ReflectionComponentSolver
 						billEndingInt--;
 					}
 
-					int letterPosition = billOpenerInt * 5 + billEndingInt + positions[party][(int)billMiddle];
+					int letterPosition = billOpenerInt * 5 + billEndingInt + positions[party][(int) billMiddle];
 					Debug.Log(letterPosition);
 					if (letterPosition < 0)
 						letterPosition = 26 - letterPosition;
 					else if (letterPosition > 25)
-						letterPosition = letterPosition - 26;
+						letterPosition -= 26;
 					if (letterPosition < 5)
 						yield return Click(0, .2f);
 					else if (letterPosition >= 5 && letterPosition < 10)
@@ -192,7 +192,7 @@ public class ParliamentComponentSolver : ReflectionComponentSolver
 			{
 				if (litIndicators % 2 != 0)
 				{
-					if ((party == Party.socialist || party == Party.lan || party == Party.birthday || party == Party.conservative))
+					if (party == Party.socialist || party == Party.lan || party == Party.birthday || party == Party.conservative)
 						yield return Click(3, .2f);
 					else
 						yield return Click(1, .2f);

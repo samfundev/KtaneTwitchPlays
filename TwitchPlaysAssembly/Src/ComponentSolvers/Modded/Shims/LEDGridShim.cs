@@ -16,9 +16,7 @@ public class LEDGridShim : ComponentSolverShim
 		yield return null;
 
 		char[] labels = { 'A', 'B', 'C', 'D' };
-		string input = _component.GetValue<string>("input");
-		if (input == null)
-			input = "";
+		string input = _component.GetValue<string>("input") ?? "";
 		string answer = _component.GetValue<string>("correctAnswer");
 		for (int i = 0; i < input.Length; i++)
 		{

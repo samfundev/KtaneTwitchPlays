@@ -13,6 +13,11 @@
             <syntax>snooze</syntax>
             <summary>Hits the snooze button on the alarm clock.</summary>
         </member>
+        <member name="M:AlarmClockCommands.SnoozeMultiple(TwitchHoldable,System.String,System.Boolean,System.Int32)">
+            <name>Snooze Multiple</name>
+            <syntax>snooze [times]</syntax>
+            <summary>Hits the snooze button on the alarm clock. [times] is the number of times to press the snooze button (up to 50).</summary>
+        </member>
         <member name="T:BombCommands">
             <summary>Commands related to the bomb.</summary>
             <prefix>bomb </prefix>
@@ -1210,7 +1215,7 @@
         <member name="T:IRCConnection.NetworkStreamLineReader">
             <summary>
             A <see cref="T:System.IO.TextReader"/> that reads lines from a <see cref="T:System.Net.Sockets.NetworkStream"/> and will check to see if any data is available to avoid blocking.
-            Allows you specify a seperate stream to read from if you have another stream (like a <see cref="T:System.Net.Security.SslStream"/>) wrapping your <see cref="T:System.Net.Sockets.NetworkStream"/>.
+            Allows you specify a separate stream to read from if you have another stream (like a <see cref="T:System.Net.Security.SslStream"/>) wrapping your <see cref="T:System.Net.Sockets.NetworkStream"/>.
             </summary>
         </member>
         <member name="M:IRCConnection.NetworkStreamLineReader.ReadLine">
@@ -1485,6 +1490,9 @@
         </member>
         <member name="T:TwitchGame">
             <summary>Encapsulates an ongoing game, with all its bombs, module cameras, HUDs etc.</summary>
+        </member>
+        <member name="M:TwitchPlaysService.AddHoldable(System.String,FloatingHoldable,System.Type,System.Boolean)">
+            <summary>Adds a holdable, ensuring that the ID in <see cref="F:TwitchPlaysService.Holdables"/> is the same as the one in it's <see cref="T:TwitchHoldable"/>.</summary>
         </member>
         <member name="M:TwitchPlaysService.AddStateCoroutine(System.Collections.IEnumerator)">
             <summary>Adds a coroutine that will run when the state changes.</summary>
