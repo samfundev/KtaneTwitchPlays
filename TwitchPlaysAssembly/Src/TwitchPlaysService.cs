@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -254,7 +254,11 @@ public class TwitchPlaysService : MonoBehaviour
 		bool hourPassed = DateTime.Now.Subtract(Updater.LastCheck).TotalHours >= 1;
 		if ((state == KMGameInfo.State.PostGame || state == KMGameInfo.State.Setup) && hourPassed && !Updater.UpdateAvailable)
 		{
-			_coroutinesToStart.Enqueue(AutomaticUpdateCheck());
+			_coroutinesToStart.Enqueue(Updater.CheckForUpdates().Yield(() =>
+			{
+				if (Updater.UpdateAvailable)
+					IRCConnection.SendMessage("There is a new update to Twitch Plays!");
+			}));
 		}
 
 		switch (state)
@@ -375,7 +379,7 @@ public class TwitchPlaysService : MonoBehaviour
 			// It's possible to be in the gameplay state but not have the bombs yet, we'll wait for them so that the user's command doesn't get dropped.
 			if (CurrentState == KMGameInfo.State.Gameplay && TwitchGame.Instance.Bombs.Count == 0)
 			{
-				StartCoroutine(WaitForBombs(() => OnMessageReceived(msg)));
+				StartCoroutine(new WaitUntil(() => TwitchGame.Instance.Bombs.Count != 0).Yield(() => OnMessageReceived(msg)));
 				return;
 			}
 
@@ -703,23 +707,6 @@ public class TwitchPlaysService : MonoBehaviour
 			while (drop != null && drop.MoveNext())
 				yield return drop.Current;
 		}
-	}
-
-	private static IEnumerator AutomaticUpdateCheck()
-	{
-		yield return Updater.CheckForUpdates();
-
-		if (Updater.UpdateAvailable)
-		{
-			IRCConnection.SendMessage("There is a new update to Twitch Plays!");
-		}
-	}
-
-	private IEnumerator WaitForBombs(Action then)
-	{
-		yield return new WaitUntil(() => TwitchGame.Instance.Bombs.Count != 0);
-
-		then();
 	}
 
 	public void UpdateUiHue()

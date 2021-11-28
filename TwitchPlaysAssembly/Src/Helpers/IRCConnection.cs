@@ -733,6 +733,15 @@ public class IRCConnection : MonoBehaviour
 		}
 	}
 
+	public static void SendDelayedMessage(string message, float delay, Action callback = null)
+	{
+		Instance.StartCoroutine(new WaitForSeconds(delay).Yield(() =>
+		{
+			SendMessage(message);
+			callback?.Invoke();
+		}));
+	}
+
 	public static void ToggleSilenceMode()
 	{
 		if (Instance == null) return;

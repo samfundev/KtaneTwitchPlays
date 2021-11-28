@@ -399,16 +399,9 @@ public class TwitchModule : MonoBehaviour
 		SetUnclaimed();
 	}
 
-	public IEnumerator ProcessClaimCooldown()
-	{
-		if (TwitchPlaySettings.data.InstantModuleClaimCooldown > 0)
-			yield return new WaitForSeconds(TwitchPlaySettings.data.InstantModuleClaimCooldown);
-		_claimCooldown = false;
-	}
-
 	public IEnumerator ProcessClaimQueue()
 	{
-		StartCoroutine(ProcessClaimCooldown());
+		StartCoroutine(new WaitForSeconds(TwitchPlaySettings.data.InstantModuleClaimCooldown).Yield(() => _claimCooldown = false));
 
 		// Cause the modules on the bomb to process their claim queues in random order.
 		// This way, !claimall doesn’t give players all the modules in the same order every time.

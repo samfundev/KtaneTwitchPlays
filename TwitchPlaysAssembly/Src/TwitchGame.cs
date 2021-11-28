@@ -88,7 +88,7 @@ public class TwitchGame : MonoBehaviour
 		}
 
 		StartCoroutine(TwitchPlaysService.Instance.AnimateHeaderVisibility(true));
-		StartCoroutine(AddFindClaimDelay());
+		StartCoroutine(new WaitForSeconds(TwitchPlaySettings.data.FindClaimDelay).Yield(() => FindClaimEnabled = true));
 
 		IRCConnection.SendMessage(Bombs.Count == 1
 			? TwitchPlaySettings.data.BombLiveMessage
@@ -239,7 +239,7 @@ public class TwitchGame : MonoBehaviour
 						soloMessage += string.Format(TwitchPlaySettings.data.BombSoloDefusalNewRecordMessage, (int) previousTimeSpan.TotalMinutes, previousTimeSpan.Seconds);
 					}
 					soloMessage += TwitchPlaySettings.data.BombSoloDefusalFooter;
-					ParentService.StartCoroutine(SendDelayedMessage(1.0f, soloMessage));
+					IRCConnection.SendDelayedMessage(soloMessage, 1);
 				}
 				else
 				{
@@ -282,7 +282,7 @@ public class TwitchGame : MonoBehaviour
 
 		ParentService.AddStateCoroutine(DelayBombResult());
 		if (!claimsEnabled)
-			ParentService.AddStateCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
+			IRCConnection.SendDelayedMessage("Claims have been enabled.", 1.1f);
 
 		if (ModuleCameras != null)
 			ModuleCameras.StartCoroutine(ModuleCameras.DisableCameras());
@@ -327,7 +327,7 @@ public class TwitchGame : MonoBehaviour
 	{
 		yield return null;
 		LogUploader.Instance.GetBombUrl();
-		ParentService.AddStateCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
+		IRCConnection.SendDelayedMessage(GetBombResult(), 1, SendAnalysisLink);
 
 		foreach (var bomb in Bombs.Where(x => x != null))
 			Destroy(bomb.gameObject, 2.0f);
@@ -503,12 +503,6 @@ public class TwitchGame : MonoBehaviour
 					bomb.FillEdgework();
 			yield return new WaitForSeconds(0.1f);
 		}
-	}
-
-	private IEnumerator AddFindClaimDelay()
-	{
-		yield return new WaitForSeconds(TwitchPlaySettings.data.FindClaimDelay);
-		FindClaimEnabled = true;
 	}
 
 	private IEnumerator CheckForBomb()
@@ -739,14 +733,6 @@ public class TwitchGame : MonoBehaviour
 		// Ensures that the relevant dictionaries exist
 		GetLastClaimedTime(moduleID, userNickName);
 		LastClaimedModule[moduleID][userNickName] = timestamp;
-	}
-
-	private static IEnumerator SendDelayedMessage(float delay, string message, Action callback = null)
-	{
-		yield return new WaitForSeconds(delay);
-		IRCConnection.SendMessage(message);
-
-		callback?.Invoke();
 	}
 
 	private IEnumerator AdjustFindClaimLimit()
