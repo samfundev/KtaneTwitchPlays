@@ -56,6 +56,33 @@ public class TwitchGame : MonoBehaviour
 	public static TwitchGame Instance;
 	public static bool RetryAllowed = true;
 
+	public bool ClaimCooldown = true;
+
+	public bool ProcessingClaimQueue;
+	public IEnumerator ProcessClaimQueue()
+	{
+		if (ProcessingClaimQueue)
+			yield break;
+
+		ProcessingClaimQueue = true;
+
+		// Cause the modules on the bomb to process their claim queues in random order.
+		// This way, !claimall doesn’t give players all the modules in the same order every time.
+		var shuffledModules = Modules.Shuffle();
+
+		while (Modules.Any(module => module.ClaimQueue.Count > 0))
+		{
+			foreach (var module in shuffledModules)
+			{
+				module.ProcessClaimQueue();
+			}
+
+			yield return new WaitForSeconds(0.1f);
+		}
+
+		ProcessingClaimQueue = false;
+	}
+
 	public static bool EnableDisableInput()
 	{
 		if (IRCConnection.Instance.State == IRCConnectionState.Connected && !TwitchPlaySettings.data.EnableInteractiveMode && BombActive)
@@ -118,6 +145,8 @@ public class TwitchGame : MonoBehaviour
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange += OnLightsChange;
 
 		StartCoroutine(CheckForBomb());
+
+		StartCoroutine(new WaitForSeconds(TwitchPlaySettings.data.InstantModuleClaimCooldown).Yield(() => ClaimCooldown = false));
 
 		FindClaimUse = TwitchPlaySettings.data.FindClaimLimit;
 		alertSound = gameObject.Traverse<AudioSource>("AlertSound");

@@ -99,7 +99,6 @@ public class TwitchModule : MonoBehaviour
 	#region Private Fields
 	public Color unclaimedBackgroundColor = new Color(0, 0, 0);
 	private TwitchModuleData _data;
-	private bool _claimCooldown = true;
 	private StatusLightPosition _statusLightPosition;
 	private Vector3 _originalIDPosition = Vector3.zero;
 	private bool _anarchyMode;
@@ -225,8 +224,6 @@ public class TwitchModule : MonoBehaviour
 					: $"To disarm this\nneedy, use\n!{Code} solve";
 				if (Solver.UnsupportedModule)
 					UnsupportedComponents.Add(this);
-
-				StartCoroutine(ProcessClaimQueue());
 
 				var needyComponent = BombComponent.GetComponent<NeedyComponent>();
 				if (needyComponent != null)
@@ -381,7 +378,11 @@ public class TwitchModule : MonoBehaviour
 	public void AddToClaimQueue(string userNickname, bool viewRequested = false, bool viewPinRequested = false)
 	{
 		if (!ClaimQueue.Any(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase)))
+		{
 			ClaimQueue.Add(new ClaimQueueItem(userNickname, viewRequested, viewPinRequested));
+
+			TwitchGame.Instance.StartCoroutine(TwitchGame.Instance.ProcessClaimQueue());
+		}
 	}
 
 	public void RemoveFromClaimQueue(string userNickname) => ClaimQueue.RemoveAll(x => x.UserNickname.Equals(userNickname, StringComparison.InvariantCultureIgnoreCase));
@@ -399,46 +400,42 @@ public class TwitchModule : MonoBehaviour
 		SetUnclaimed();
 	}
 
-	public IEnumerator ProcessClaimQueue()
+	public void ProcessClaimQueue()
 	{
-		StartCoroutine(new WaitForSeconds(TwitchPlaySettings.data.InstantModuleClaimCooldown).Yield(() => _claimCooldown = false));
-
-		// Cause the modules on the bomb to process their claim queues in random order.
-		// This way, !claimall doesn’t give players all the modules in the same order every time.
-		yield return new WaitForSeconds(UnityEngine.Random.Range(.1f, .5f));
-
-		while (!Solved && !Solver.AttemptedForcedSolve)
+		if (Solved || Solver.AttemptedForcedSolve)
 		{
-			yield return new WaitForSeconds(0.1f);
+			ClaimQueue.Clear();
+			return;
+		}
 
-			// Module is already claimed
-			if (PlayerName != null)
-				continue;
+		// Module is already claimed
+		if (PlayerName != null)
+			return;
 
-			// Give priority to a player trying to take over the module
-			if (TakeUser != null && TryClaim(TakeUser) is ClaimResult result && result.Claimed)
+		// Give priority to a player trying to take over the module
+		if (TakeUser != null && TryClaim(TakeUser) is ClaimResult result && result.Claimed)
+		{
+			if (TakeInProgress != null)
 			{
-				if (TakeInProgress != null)
-				{
-					StopCoroutine(TakeInProgress);
-					TakeInProgress = null;
-				}
-				TakeUser = null;
-				IRCConnection.SendMessage(result.Message);
-				continue;
+				StopCoroutine(TakeInProgress);
+				TakeInProgress = null;
 			}
+			TakeUser = null;
+			IRCConnection.SendMessage(result.Message);
+			return;
+		}
 
-			// Check if the claim queue contains a suitable player
-			for (int i = 0; i < ClaimQueue.Count; i++)
+		// Check if the claim queue contains a suitable player
+		for (int i = 0; i < ClaimQueue.Count; i++)
+		{
+			var item = ClaimQueue[i];
+			if (TryClaim(item.UserNickname, item.ViewRequested, item.ViewPinRequested) is ClaimResult claimResult && claimResult.Claimed)
 			{
-				if (TryClaim(ClaimQueue[i].UserNickname, ClaimQueue[i].ViewRequested, ClaimQueue[i].ViewPinRequested) is ClaimResult claimResult && claimResult.Claimed)
-				{
-					if (ClaimQueue[i].ViewRequested)
-						ViewPin(ClaimQueue[i].UserNickname, ClaimQueue[i].ViewPinRequested);
-					ClaimQueue.RemoveAt(i);
-					IRCConnection.SendMessage(claimResult.Message);
-					break;
-				}
+				if (item.ViewRequested)
+					ViewPin(item.UserNickname, item.ViewPinRequested);
+				ClaimQueue.RemoveAt(i);
+				IRCConnection.SendMessage(claimResult.Message);
+				break;
 			}
 		}
 	}
@@ -496,7 +493,7 @@ public class TwitchModule : MonoBehaviour
 		}
 
 		// Check the claim cooldown at the start of the bomb
-		if (_claimCooldown)
+		if (TwitchGame.Instance.ClaimCooldown)
 		{
 			var lastClaimedTime = TwitchGame.Instance.GetLastClaimedTime(Solver.ModInfo.moduleID, userNickName);
 			if (lastClaimedTime != null && DateTime.UtcNow.TotalSeconds() < TwitchPlaySettings.data.InstantModuleClaimCooldownExpiry + lastClaimedTime.Value)
