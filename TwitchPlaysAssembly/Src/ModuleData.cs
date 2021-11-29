@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 using System.Reflection;
-using TwitchPlays.ScoreMethods;
 using System.Text.RegularExpressions;
+using TwitchPlays.ScoreMethods;
+using UnityEngine;
 
 public class ModuleInformation
 {
@@ -27,7 +27,7 @@ public class ModuleInformation
 
 	public bool validCommandsOverride;
 	public string[] validCommands;
-	public bool DoesTheRightThing;
+	public bool DoesTheRightThing = true;
 
 	public bool builtIntoTwitchPlays;
 
