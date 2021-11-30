@@ -582,6 +582,7 @@ public class TwitchModule : MonoBehaviour
 
 	public void SetRenderLayer(int? layer)
 	{
+		KMBombModule module = BombComponent.gameObject.GetComponent<KMBombModule>();
 		_currentLayer = layer;
 		foreach (var kvp in _originalLayers)
 		{
@@ -590,6 +591,12 @@ public class TwitchModule : MonoBehaviour
 				var setToLayer = _currentLayer ?? kvp.Value;
 				if (kvp.Key.gameObject.layer != setToLayer)
 					kvp.Key.gameObject.layer = setToLayer;
+				// Changes the culling mask of the camera Wendithap'n uses to account for layering changes
+				if (module.ModuleType == "Wendithapn" && kvp.Key.gameObject.name == "Camera")
+				{
+					var setCullingMask = (1 << _currentLayer) ?? 1;
+					kvp.Key.gameObject.GetComponent<Camera>().cullingMask = setCullingMask;
+				}
 			}
 			catch
 			{

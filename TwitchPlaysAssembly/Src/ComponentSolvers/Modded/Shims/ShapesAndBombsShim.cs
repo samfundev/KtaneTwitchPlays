@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class ShapesAndBombsShim : ComponentSolverShim
@@ -10,7 +11,28 @@ public class ShapesAndBombsShim : ComponentSolverShim
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = _component.GetValue<KMSelectable[]>("ModuleButtons");
+		_display = _component.GetValue<KMSelectable>("NumScreen");
 		_submit = _component.GetValue<KMSelectable>("SubmitButton");
+	}
+
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
+	{
+		Match modulesMatch = Regex.Match(inputCommand, "^(display|disp|d) (([0-1])?[0-9])$", RegexOptions.IgnoreCase);
+		if (modulesMatch.Success)
+		{
+			int number = int.Parse(modulesMatch.Groups[2].Value);
+			if (number < 0 || number > 14) yield break;
+
+			yield return null;
+			while (_display.transform.GetChild(0).GetComponent<TextMesh>().text != number.ToString())
+				yield return DoInteractionClick(_display);
+		}
+		else
+		{
+			IEnumerator command = RespondToCommandUnshimmed(inputCommand);
+			while (command.MoveNext())
+				yield return command.Current;
+		}
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
@@ -38,5 +60,6 @@ public class ShapesAndBombsShim : ComponentSolverShim
 	private readonly object _component;
 
 	private readonly KMSelectable[] _buttons;
+	private readonly KMSelectable _display;
 	private readonly KMSelectable _submit;
 }
