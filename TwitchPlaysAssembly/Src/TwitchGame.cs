@@ -280,7 +280,6 @@ public class TwitchGame : MonoBehaviour
 		ParentService.GetComponent<KMGameInfo>().OnLightsChange -= OnLightsChange;
 		ParentService.AddStateCoroutine(ParentService.AnimateHeaderVisibility(false));
 
-		LogUploader.Instance.GetBombUrl();
 		ParentService.AddStateCoroutine(DelayBombResult());
 		if (!claimsEnabled)
 			ParentService.AddStateCoroutine(SendDelayedMessage(1.1f, "Claims have been enabled."));
@@ -323,9 +322,11 @@ public class TwitchGame : MonoBehaviour
 	}
 
 	// We need to delay the bomb result by one frame so we don't award the solve bonus before the person who solved the last module is added to the Players list.
+	// Delaying the log being uploaded by one frame also captures module that log after calling HandleStrike().
 	public IEnumerator DelayBombResult()
 	{
 		yield return null;
+		LogUploader.Instance.GetBombUrl();
 		ParentService.AddStateCoroutine(SendDelayedMessage(1.0f, GetBombResult(), SendAnalysisLink));
 
 		foreach (var bomb in Bombs.Where(x => x != null))
