@@ -16,10 +16,9 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 		// Both of the functions below depend on actually having the module or they'll throw an exception.
 		if (module.enabled)
 		{
-			GetValues();
 			AssignNumbers();
 		}
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Use '!{0} press <buttons>' to press the buttons. Valid button formats are: Directional: T, TR, R, BR, B, BL, L, TL; The numbers associated with each button; Colours (Use lime for light green and green for dark green.)");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Use '!{0} press <buttons>' to press the buttons. Valid button formats are: Directional: T, TR, R, BR, B, BL, L, TL; Colours (Use lime for light green and green for dark green.)");
 	}
 
 	private void GetValues()
@@ -55,7 +54,6 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
 	{
-		AssignNumbers();
 		string[] chars = inputCommand.ToLowerInvariant().Replace("press ", "").SplitFull(' ', ';', ',');
 		List<KMSelectable> buttons = new List<KMSelectable>();
 		buttons.Clear();
@@ -70,30 +68,6 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 
 			switch (item)
 			{
-				case "1":
-					buttons.Add(numbers[0]);
-					break;
-				case "2":
-					buttons.Add(numbers[1]);
-					break;
-				case "3":
-					buttons.Add(numbers[2]);
-					break;
-				case "4":
-					buttons.Add(numbers[3]);
-					break;
-				case "5":
-					buttons.Add(numbers[4]);
-					break;
-				case "6":
-					buttons.Add(numbers[5]);
-					break;
-				case "7":
-					buttons.Add(numbers[6]);
-					break;
-				case "8":
-					buttons.Add(numbers[7]);
-					break;
 				case "t":
 					buttons.Add(objects[4]);
 					break;
@@ -139,8 +113,11 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 			while (_component.GetValue<bool>("checking"))
 				yield return true;
 
-			string correctSequence = _component.GetValue<string>("correctSequence").ToCharArray().Join();
-			yield return RespondToCommandInternal($"press {correctSequence}");
+			AssignNumbers();
+			char[] correctSequence = _component.GetValue<string>("correctSequence").ToCharArray();
+			int start = _component.GetValue<int>("numberOfPresses");
+			for (int i = start; i < correctSequence.Length; i++)
+				yield return DoInteractionClick(numbers[correctSequence[i] - '0' - 1]);
 		}
 	}
 

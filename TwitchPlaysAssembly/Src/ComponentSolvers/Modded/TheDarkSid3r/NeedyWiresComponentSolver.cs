@@ -34,6 +34,7 @@ public class NeedyWiresComponentSolver : ReflectionComponentSolver
 				continue;
 			}
 
+			yield return null;
 			yield return Click(_component.GetValue<int>("correctWire"));
 		}
 	}

@@ -26,15 +26,13 @@ public class ColourFlashESShim : ComponentSolverShim
 				while (positionIndex != _component.GetValue<int>("_currentColourSequenceIndex"))
 					yield return new WaitForSeconds(0.1f);
 
-				yield return _yes;
-				yield return new WaitForSeconds(0.1f);
-				yield return _yes;
+				yield return null;
+				_yes.OnInteract();
 			}
 			else if (position.ToLowerInvariant().EqualsAny("any", "cualq"))
 			{
-				yield return _yes;
-				yield return new WaitForSeconds(0.1f);
-				yield return _yes;
+				yield return null;
+				_yes.OnInteract();
 			}
 		}
 		else

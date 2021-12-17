@@ -418,6 +418,8 @@ public class TwitchPlaySettingsData
 
 	public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
+	public string TechSupportBlock = "@{1}, module {0} ({2}) has been interrupted by Tech Support and is completely inoperable.";
+
 	private static bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
 	{
 		MatchCollection matches = Regex.Matches(input, @"(?<!\{)\{([0-9]+).*?\}(?!})");

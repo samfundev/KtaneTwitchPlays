@@ -36,6 +36,7 @@ public class TriangleButtonsComponentSolver : ReflectionComponentSolver
 				continue;
 			}
 
+			yield return null;
 			yield return Click(_component.GetValue<Dictionary<string, int>>("solutions")[_component.GetValue<string>("buttonOrientation")]);
 		}
 	}
