@@ -515,13 +515,10 @@ static class ModuleCommands
 		}
 
 		Transform tsLight = module.BombComponent.StatusLightParent.transform.Find("statusLight(Clone)").Find("Component_LED_ERROR(Clone)");
-		if (tsLight != null)
+		if (tsLight != null && tsLight.gameObject.activeSelf)
 		{
-			if (tsLight.gameObject.activeSelf)
-			{
-				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TechSupportBlock, module.Code, user, module.HeaderText);
-				yield break;
-			}
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TechSupportBlock, module.Code, user, module.HeaderText);
+			yield break;
 		}
 
 		// We’re allowed to interact with this module if either:

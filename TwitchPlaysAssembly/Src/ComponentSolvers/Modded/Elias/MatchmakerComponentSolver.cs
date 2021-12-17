@@ -51,21 +51,10 @@ public class MatchmakerComponentSolver : ReflectionComponentSolver
 			if (!split[1].EqualsAny("top", "bottom")) yield break;
 
 			yield return null;
-			if (split[1].Equals("top"))
+			for (int i = 0; i < 5; i++)
 			{
-				for (int i = 0; i < 5; i++)
-				{
-					yield return "trycancel";
-					yield return Click(1, 1.75f);
-				}
-			}
-			else
-			{
-				for (int i = 0; i < 5; i++)
-				{
-					yield return "trycancel";
-					yield return Click(3, 1.75f);
-				}
+				yield return "trycancel";
+				yield return Click(split[1].Equals("top") ? 1 : 3, 1.75f);
 			}
 		}
 		else if (command.Equals("cycle"))
