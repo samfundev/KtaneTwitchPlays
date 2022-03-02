@@ -22,11 +22,11 @@ public class ColourFlashESShim : ComponentSolverShim
 			string position = modulesMatch.Groups[2].Value;
 			if (int.TryParse(position, out int positionIndex))
 			{
+				yield return null;
 				positionIndex--;
 				while (positionIndex != _component.GetValue<int>("_currentColourSequenceIndex"))
 					yield return new WaitForSeconds(0.1f);
 
-				yield return null;
 				_yes.OnInteract();
 			}
 			else if (position.ToLowerInvariant().EqualsAny("any", "cualq"))
