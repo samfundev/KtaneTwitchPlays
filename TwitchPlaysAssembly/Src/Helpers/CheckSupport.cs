@@ -198,6 +198,11 @@ public static class CheckSupport
 		}
 
 		// Test loaded mods
+		if (!ModdedAPI.TryGetAs("LoadMod", out Func<string, Mod> loadMod))
+		{
+			loadMod = new Func<string, Mod>((path) => Mod.LoadMod(path, Assets.Scripts.Mods.ModInfo.ModSourceEnum.Local));
+		}
+
 		foreach (var module in validModules)
 		{
 			DebugHelper.Log($"Loading module \"{module.Name}\" to test compatibility...");
@@ -205,7 +210,7 @@ public static class CheckSupport
 			alertProgressBar.localScale = new Vector3((float) progress / total, 1, 1);
 
 			var modPath = Path.Combine(modWorkshopPath, module.SteamID);
-			Mod mod = Mod.LoadMod(modPath, Assets.Scripts.Mods.ModInfo.ModSourceEnum.Local);
+			Mod mod = loadMod(modPath);
 			Object[] loadedObjects = new Object[] { };
 			foreach (string fileName in mod.GetAssetBundlePaths())
 			{
