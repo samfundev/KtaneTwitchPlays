@@ -19,7 +19,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <GameFolder Condition="'$(GameFolder)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody Explodes\</GameFolder>
-    <Copy Condition="'$(Copy)' == ''">copy</Copy>
+    <Copy>copy</Copy>
+    <Copy Condition=" '$(OS)' != 'Windows_NT' ">cp</Copy>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="$(Copy) &quot;$(TargetPath)&quot; &quot;$(GameFolder)mods\Twitch Plays\$(TargetFileName)&quot;" />
