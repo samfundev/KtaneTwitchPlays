@@ -598,7 +598,9 @@ public abstract class ComponentSolver
 
 	protected IEnumerator ChainCommand(string command)
 	{
-		string[] chainedCommands = command.SplitFull(';', ',');
+		string[] chainedCommands = command.SplitFull(';', ',')
+			.Where(chained => chained.Trim().Length != 0)
+			.ToArray();
 		if (chainedCommands.Length > 1)
 		{
 			var commandRoutines = chainedCommands.Select(RespondToCommandInternal).ToArray();
