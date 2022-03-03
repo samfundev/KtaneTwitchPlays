@@ -5,15 +5,13 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public class MurderComponentSolver : ComponentSolver
+public class MurderComponentSolver : CommandComponentSolver
 {
 	public MurderComponentSolver(TwitchModule module) :
-		base(module)
+		base(module, "MurderModule", "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.")
 	{
-		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
 		_display = (TextMesh[]) DisplayField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle the options with !{0} cycle or !{0} cycle people (also weapons and rooms). Make an accusation with !{0} It was Peacock, with the candlestick, in the kitchen. Or you can set the options individually, and accuse with !{0} accuse.");
 	}
 
 	private IEnumerable CycleThroughCategory(int index, string search = null)
@@ -33,44 +31,45 @@ public class MurderComponentSolver : ComponentSolver
 		}
 	}
 
-	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
+	private IEnumerator Accuse(CommandParser _)
 	{
-		inputCommand = inputCommand.ToLowerInvariant().Trim();
+		_.Literal("accuse");
 
-		if (inputCommand.Equals("accuse"))
-		{
-			yield return "accuse";
-			yield return DoInteractionClick(_buttons[6]);
-			yield break;
-		}
+		yield return "accuse";
+		yield return DoInteractionClick(_buttons[6]);
+	}
 
-		if (inputCommand.StartsWith("cycle"))
+	private IEnumerator Cycle(CommandParser _)
+	{
+		_.Literal("cycle");
+		_.OptionalOptions(out string option, NameTypes);
+
+		for (int i = 0; i < 3; i++)
 		{
-			bool cycleAll = inputCommand.Equals("cycle");
-			for (int i = 0; i < 3; i++)
+			if (option != null && option != NameTypes[i]) continue;
+
+			yield return option;
+			yield return null;
+			foreach (object item in CycleThroughCategory(i))
 			{
-				if (!cycleAll && !inputCommand.EndsWith(NameTypes[i])) continue;
-
-				yield return inputCommand;
-				yield return null;
-				foreach (object item in CycleThroughCategory(i))
-				{
-					double j = i == 2 ? 0.8 : 1.5;
-					yield return DoInteractionClick((MonoBehaviour) item);
-					yield return "trywaitcancel " + j + " The murder cycle command was cancelled";
-				}
+				double j = i == 2 ? 0.8 : 1.5;
+				yield return DoInteractionClick((MonoBehaviour) item);
+				yield return "trywaitcancel " + j + " The murder cycle command was cancelled";
 			}
-			yield break;
 		}
+	}
 
-		var matches = Regex.Matches(inputCommand, @"(" + string.Join("|", Commands) + ") ([a-z ]+)");
+	private IEnumerator SetAccusation(CommandParser _)
+	{
 		var present = new bool[3];
-		for (int i = 0; i < matches.Count; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			int catIndex = Array.IndexOf(Commands, matches[i].Groups[1].ToString());
+			_.Regex("(" + string.Join("|", Commands) + ") ([a-z ]+)", out Match match);
+
+			int catIndex = Array.IndexOf(Commands, match.Groups[1].ToString());
 			if (catIndex == -1)
 				continue;
-			string value = matches[i].Groups[2].ToString().Trim();
+			string value = match.Groups[2].ToString().Trim();
 
 			yield return null;
 			if (!NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase)))
@@ -138,7 +137,6 @@ public class MurderComponentSolver : ComponentSolver
 	private static readonly string[][] NameSpellings = { People, Weapons, Rooms };
 	private static readonly string[] NameMisspelled = { "Who the hell is {0}? The only people I know about are {1}", "What the hell is a {0}? The only weapons I know about are {1}.", "Where in the hell is {0}? The only rooms I know about are {1}." };
 
-	private readonly object _component;
 	private readonly KMSelectable[] _buttons;
 	private readonly TextMesh[] _display;
 

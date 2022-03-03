@@ -1159,6 +1159,9 @@
         <member name="M:ComponentSolverFactory.CreateDefaultModComponentSolver(TwitchModule,System.String,System.String,System.Boolean)">
             <summary>Returns a solver that relies on the module’s own implementation, bypassing built-in solvers and shims.</summary>
         </member>
+        <member name="M:GeneralExtensions.Flatten(System.Collections.IEnumerator)">
+            <summary>Enumerates an IEnumerator while flattening any nested IEnumerators.</summary>
+        </member>
         <member name="M:GeneralExtensions.AddSafe``2(System.Collections.Generic.IDictionary{``0,System.Collections.Generic.List{``1}},``0,``1)">
             <summary>
                 Adds an element to a List&lt;V&gt; stored in the current IDictionary&lt;K, List&lt;V&gt;&gt;. If the specified key

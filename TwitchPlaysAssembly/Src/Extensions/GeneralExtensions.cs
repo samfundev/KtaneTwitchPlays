@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,6 +56,34 @@ public static class GeneralExtensions
 	}
 
 	public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.OrderBy(_ => UnityEngine.Random.value);
+
+	/// <summary>Enumerates an IEnumerator while flattening any nested IEnumerators.</summary>
+	public static IEnumerator Flatten(this IEnumerator source)
+	{
+		var stack = new Stack<IEnumerator>();
+		stack.Push(source);
+
+		while (stack.Count != 0)
+		{
+			var enumerator = stack.Peek();
+			if (enumerator.MoveNext())
+			{
+				var current = enumerator.Current;
+				if (current is IEnumerator nestedEnumerator)
+				{
+					stack.Push(nestedEnumerator);
+				}
+				else
+				{
+					yield return enumerator.Current;
+				}
+			}
+			else
+			{
+				stack.Pop();
+			}
+		}
+	}
 
 	//String wrapping code from http://www.java2s.com/Code/CSharp/Data-Types/ForcesthestringtowordwrapsothateachlinedoesntexceedthemaxLineLength.htm
 
