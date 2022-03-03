@@ -41,7 +41,7 @@ public class ModuleCameras : MonoBehaviour
 			camera.depth = 99;
 
 			var light = camera.gameObject.AddComponent<Light>();
-			light.type = LightType.Directional;
+			light.type = LightType.Spot;
 			light.spotAngle = 7.25f;
 			light.enabled = true;
 
