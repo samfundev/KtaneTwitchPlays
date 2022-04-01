@@ -27,6 +27,7 @@ public static class ComponentSolverFactory
 		//AT_Bash Modules
 		ModComponentSolverCreators["MotionSense"] = module => new MotionSenseComponentSolver(module);
 		ModComponentSolverCreators["AppreciateArt"] = Module => new AppreciateArtComponentSolver(Module);
+		ModComponentSolverCreators["Painting"] = Module => new PaintingShim(Module);
 
 		//Perky Modules
 		ModComponentSolverCreators["CrazyTalk"] = module => new CrazyTalkComponentSolver(module);

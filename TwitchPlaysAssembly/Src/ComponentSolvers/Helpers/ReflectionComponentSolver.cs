@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 
 		_component = module.BombComponent.GetComponent(componentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
+		if (helpMessage != null) ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

@@ -6,27 +6,54 @@ using System.Text.RegularExpressions;
 public class CommandParser
 {
 	private Queue<string> parts = new Queue<string>();
+	public string OriginalCommand;
 
 	public CommandParser(string command)
 	{
 		parts = new Queue<string>(command.ToLowerInvariant().SplitFull(' '));
+		OriginalCommand = command;
 	}
 
-	public CommandParser Literal(string literal)
+	public CommandParser Literal(params string[] literals)
 	{
-		Assert(DequeuePart() == literal);
+		Assert(DequeuePart().EqualsAny(literals));
 		return this;
 	}
 
-	public CommandParser OptionalLiteral(string literal, out bool success)
+	public CommandParser OptionalLiteral(out bool success, params string[] literals)
 	{
 		try
 		{
-			success = DequeuePart() == literal;
+			success = DequeuePart().EqualsAny(literals);
 		}
 		catch (ParsingFailedException)
 		{
 			success = false;
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+
+		return this;
+	}
+
+	public CommandParser String(out string value)
+	{
+		value = DequeuePart();
+		return this;
+	}
+
+	public CommandParser OptionalString(out string value)
+	{
+		try
+		{
+			String(out string value2);
+			value = value2;
+		}
+		catch (ParsingFailedException)
+		{
+			value = null;
 		}
 		catch (Exception)
 		{
