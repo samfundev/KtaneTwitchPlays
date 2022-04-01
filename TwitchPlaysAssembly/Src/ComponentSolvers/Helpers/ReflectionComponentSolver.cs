@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,13 +6,13 @@ using UnityEngine;
 
 public abstract class ReflectionComponentSolver : ComponentSolver
 {
-	protected ReflectionComponentSolver(TwitchModule module, string componentString, string helpMessage) :
+	protected ReflectionComponentSolver(TwitchModule module, string componentTypeString, string helpMessage) :
 		base(module)
 	{
-		if (!componentTypes.ContainsKey(componentString))
-			componentTypes[componentString] = ReflectionHelper.FindType(componentString);
+		if (!componentTypes.ContainsKey(componentTypeString))
+			componentTypes[componentTypeString] = ReflectionHelper.FindType(componentTypeString);
 
-		var componentType = componentTypes[componentString];
+		var componentType = componentTypes[componentTypeString];
 
 		_component = module.BombComponent.GetComponent(componentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;

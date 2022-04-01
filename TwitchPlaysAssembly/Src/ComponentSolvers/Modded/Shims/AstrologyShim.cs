@@ -1,5 +1,3 @@
-using System.Collections;
-
 public class AstrologyShim : ComponentSolverShim
 {
 	public AstrologyShim(TwitchModule module)
