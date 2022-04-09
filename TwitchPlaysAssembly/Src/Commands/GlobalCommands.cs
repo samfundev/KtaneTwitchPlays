@@ -1230,6 +1230,19 @@ static class GlobalCommands
 		IRCConnectionManagerHoldable.TwitchPlaysDataRefreshed = true;
 		IRCConnection.SendMessage("Data reloaded", user, !isWhisper);
 	}
+	
+	/// <name>Reload Score Info</name>
+	/// <syntax>reloadscoreinfo</syntax>
+	/// <summary>Reloads the scoring info of all modules.</summary>
+	/// <restriction>ScoringManager</restriction>
+	[Command("reloadscoreinfo", AccessLevel.ScoringManager, AccessLevel.ScoringManager)]
+	public static IEnumerator ReloadScoreInfo(string user, bool isWhisper)
+	{
+		yield return ComponentSolverFactory.LoadDefaultInformation();
+
+		IRCConnection.SendMessage("Score info reloaded", user, !isWhisper);
+	}
+
 
 	/// <name>Silence Mode</name>
 	/// <syntax>silencemode</syntax>
