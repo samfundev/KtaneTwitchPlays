@@ -14,7 +14,8 @@ public enum AccessLevel
 	NoPoints = 0x0001,
 	Banned = 0x0002,
 	Defuser = 0x0004,
-
+	ScoringManager = 0x0008,
+	
 	Mod = 0x2000,
 	Admin = 0x4000,
 	SuperUser = 0x8000,
@@ -332,6 +333,8 @@ public static class UserAccess
 				return "No Points";
 			case AccessLevel.Defuser:
 				return "Defuser";
+			case AccessLevel.ScoringManager:
+				return "Scoring Manager";
 			case AccessLevel.Mod:
 				return "Moderator";
 			case AccessLevel.Admin:
