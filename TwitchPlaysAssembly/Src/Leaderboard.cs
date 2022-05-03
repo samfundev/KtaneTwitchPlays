@@ -500,6 +500,7 @@ public class Leaderboard
 		catch (FileNotFoundException)
 		{
 			DebugHelper.LogWarning($"File {path} was not found.");
+			_loaded = true;
 		}
 		catch (Exception ex)
 		{
