@@ -382,8 +382,8 @@ public class TwitchPlaySettingsData
 	public string TrainingModeCommandDisabled = "@{0}, Only authorized users may enable/disable Training Mode";
 	public string RunCommandDisabled = "@{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "@{0}, profile management is currently disabled.";
-	public string RetryInactive = "Retry is inactive. Returning to hallway instead.";
-	public string RetryModeOrProfileChange = "There has been a change to profiles and/or game modes since the last bomb. Returning to hallway instead.";
+	public string RetryInactive = "Retry is inactive. Returning to the office instead.";
+	public string RetryModeOrProfileChange = "There has been a change to profiles and/or game modes since the last bomb. Returning to the office instead.";
 
 	public string ProfileActionUseless = "That profile ({0}) is already {1}.";
 	public string ProfileNotWhitelisted = "That profile ({0}) cannot be enabled/disabled.";
