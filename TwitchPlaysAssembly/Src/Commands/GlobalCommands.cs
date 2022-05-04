@@ -1219,8 +1219,7 @@ static class GlobalCommands
 
 		TwitchPlaySettings.LoadDataFromFile();
 		UserAccess.LoadAccessList();
-		yield return ComponentSolverFactory.LoadDefaultInformation();
-		ModuleData.LoadDataFromFile();
+		yield return ComponentSolverFactory.LoadDefaultInformation(true);
 
 		if (streamer)
 			UserAccess.AddUser(user, AccessLevel.Streamer);
@@ -1230,7 +1229,7 @@ static class GlobalCommands
 		IRCConnectionManagerHoldable.TwitchPlaysDataRefreshed = true;
 		IRCConnection.SendMessage("Data reloaded", user, !isWhisper);
 	}
-	
+
 	/// <name>Reload Score Info</name>
 	/// <syntax>reloadscoreinfo</syntax>
 	/// <summary>Reloads the scoring info of all modules.</summary>

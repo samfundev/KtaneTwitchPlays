@@ -879,6 +879,12 @@
             <summary>Reloads all the data that TP uses. Like settings, access levels, etc.</summary>
             <restriction>SuperUser</restriction>
         </member>
+        <member name="M:GlobalCommands.ReloadScoreInfo(System.String,System.Boolean)">
+            <name>Reload Score Info</name>
+            <syntax>reloadscoreinfo</syntax>
+            <summary>Reloads the scoring info of all modules.</summary>
+            <restriction>ScoringManager</restriction>
+        </member>
         <member name="M:GlobalCommands.SilenceMode">
             <name>Silence Mode</name>
             <syntax>silencemode</syntax>
