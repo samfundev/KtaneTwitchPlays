@@ -14,10 +14,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} what? [press the button that says \"WHAT?\"] | !{0} press 3 [press the third button in english reading order] | The phrase must match exactly | Not case sensitive | If the language used asks for pressing a literally blank button, use \"!{0} literally blank\"").Clone();
 
-		languageCode = TranslatedModuleHelper.GetLanguageCode(component, ComponentType);
-		string language = TranslatedModuleHelper.GetManualCodeAddOn(component, ComponentType);
-		if (language != null)
-			ManualCode = $"Who%E2%80%99s%20on%20First{language}";
+		LanguageCode = TranslatedModuleHelper.GetLanguageCode(component, ComponentType);
 		ModInfo.moduleDisplayName = $"Who's on First Translated{TranslatedModuleHelper.GetModuleDisplayNameAddon(component, ComponentType)}";
 		Module.HeaderText = ModInfo.moduleDisplayName;
 	}
@@ -39,7 +36,7 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 			if (inputCommand.Equals("literally blank", StringComparison.InvariantCultureIgnoreCase))
 				inputCommand = "\u2003\u2003";
 
-			if (languageCode == "he")   // The Hebrew version expects the input back-to-front
+			if (LanguageCode == "he")   // The Hebrew version expects the input back-to-front
 				inputCommand = inputCommand.Reverse().Join();
 
 			int index = buttonLabels.IndexOf(inputCommand.ToUpperInvariant());
@@ -55,8 +52,6 @@ public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 			yield return DoInteractionClick(_buttons[index]);
 		}
 	}
-
-	private readonly string languageCode;
 
 	private static readonly Type ComponentType = ReflectionHelper.FindType("WhosOnFirstTranslatedModule");
 	private static readonly FieldInfo ButtonsField = ComponentType.GetField("buttons", BindingFlags.Public | BindingFlags.Instance);

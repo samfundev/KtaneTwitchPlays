@@ -9,7 +9,6 @@ public class ComponentSolverFields
 	public ModuleInformation ModuleInformation;
 
 	public FieldInfo HelpMessageField;
-	public FieldInfo ManualCodeField;
 	public FieldInfo ZenModeField;
 	public FieldInfo TimeModeField;
 	public FieldInfo AbandonModuleField;

@@ -268,8 +268,6 @@ public static class ComponentSolverFactory
 				"moduleScoreIsDynamic": false,
 				"helpTextOverride": false,
 				"helpText": "Cycle the buttons with !{0} cycle. (Cycle presses each button 3 times, in the order of vert1, horiz1, horiz2, vert2, submit.) Submit your answer with !{0} press vert1 horiz1 horiz2 vert2 submit.",
-				"manualCodeOverride": false,
-				"manualCode": null,
 				"statusLightPosition": "Default",
 				"validCommandsOverride": false,
 				"validCommands": null,
@@ -286,9 +284,6 @@ public static class ComponentSolverFactory
 		 * 
 		 * helpTextOverride - If true, the help text will not be overwritten by the help text in the module.
 		 * helpText - Instructions on how to interact with the module in twitch plays.
-		 * 
-		 * manualCodeOverride - If true, the manual code will not be overwritten by the manual code in the module.
-		 * manualCode - If defined, is used instead of moduleDisplayName to look up the html/pdf manual.
 		 * 
 		 * Finally, validCommands, DoesTheRightThing and all of the override flags will only show up in modules not built into Twitch plays.
 		 * validCommandsOverride - Specifies whether the valid regular expression list should not be updated from the module.
@@ -337,7 +332,7 @@ public static class ComponentSolverFactory
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams" };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math" };
-		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math", manualCode = "Math" };
+		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math" };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble" };
 
 		//Royal_Flu$h
@@ -396,12 +391,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Baba Is Who?" };
 		ModComponentSolverInformation["chordProgressions"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Progressions" };
 		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Random Number Generator", additionalNeedyTime = 30 };
-		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Shape Memory", manualCode = "Shape Memory" };
+		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Shape Memory" };
 		ModComponentSolverInformation["caesarsMaths"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Caesar's Maths" };
 		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gatekeeper" };
 		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "State of Aggregation" };
 		ModComponentSolverInformation["conditionalButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Conditional Buttons" };
-		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Strike Solve", manualCode = "StrikeSolve" };
+		ModComponentSolverInformation["strikeSolve"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Strike Solve" };
 		ModComponentSolverInformation["abstractSequences"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Abstract Sequences" };
 		ModComponentSolverInformation["bridge"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Bridge" };
 		ModComponentSolverInformation["needyHotate"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Hotate" };
@@ -531,7 +526,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["PasswordV2"] = new ModuleInformation { moduleDisplayName = "Safety Safe" };
 		ModComponentSolverInformation["MorseV2"] = new ModuleInformation { moduleDisplayName = "Morsematics" };
 		ModComponentSolverInformation["HexiEvilFMN"] = new ModuleInformation { moduleDisplayName = "Forget Everything", CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { moduleDisplayName = "Needy Answering Questions", manualCode = "Answering Questions" };
+		ModComponentSolverInformation["NeedyVentV2"] = new ModuleInformation { moduleDisplayName = "Needy Answering Questions" };
 		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { moduleDisplayName = "Needy Rotary Phone" };
 
 		//JerryErris
@@ -614,7 +609,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["DividedSquaresModule"] = new ModuleInformation { announceModule = true };
 		ModComponentSolverInformation["HogwartsModule"] = new ModuleInformation { announceModule = true };
 		ModComponentSolverInformation["NumberPad"] = new ModuleInformation { moduleDisplayName = "Number Pad" };
-		ModComponentSolverInformation["RockPaperScissorsLizardSpockModule"] = new ModuleInformation { manualCode = "Rock-Paper-Scissors-Lizard-Spock" };
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true };
 
 		//Trainzack
@@ -634,7 +628,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["symbolicPasswordModule"] = new ModuleInformation { helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!" };
 
 		//Other modded modules not built into Twitch Plays
-		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20", manualCode = "Button Masher" };
+		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20" };
 		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
 		ModComponentSolverInformation["EternitySDec"] = new ModuleInformation { DoesTheRightThing = false };
 		ModComponentSolverInformation["forgetUsNot"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, DoesTheRightThing = false };
@@ -734,8 +728,6 @@ public static class ComponentSolverFactory
 				DoesTheRightThing = info.DoesTheRightThing,
 				helpText = info.helpText,
 				helpTextOverride = false,
-				manualCode = info.manualCode,
-				manualCodeOverride = false,
 				moduleDisplayName = info.moduleDisplayName,
 				moduleID = info.moduleID,
 				scoreString = info.scoreString,
@@ -748,14 +740,13 @@ public static class ComponentSolverFactory
 		}
 	}
 
-	private static void AddDefaultModuleInformation(string moduleType, string moduleDisplayName, string helpText, string manualCode, string[] regexList)
+	private static void AddDefaultModuleInformation(string moduleType, string moduleDisplayName, string helpText, string[] regexList)
 	{
 		if (string.IsNullOrEmpty(moduleType)) return;
 		AddDefaultModuleInformation(GetModuleInfo(moduleType));
 		ModuleInformation info = DefaultModComponentSolverInformation[moduleType];
 		info.moduleDisplayName = moduleDisplayName;
 		if (!string.IsNullOrEmpty(helpText)) info.helpText = helpText;
-		if (!string.IsNullOrEmpty(manualCode)) info.manualCode = manualCode;
 		info.validCommands = regexList;
 	}
 
@@ -817,7 +808,7 @@ public static class ComponentSolverFactory
 		return ModComponentSolverInformation[moduleType];
 	}
 
-	public static ModuleInformation GetModuleInfo(string moduleType, string helpText, string manualCode = null)
+	public static ModuleInformation GetModuleInfo(string moduleType, string helpText)
 	{
 		ModuleInformation info = GetModuleInfo(moduleType, false);
 		ModuleInformation defInfo = GetDefaultInformation(moduleType);
@@ -827,14 +818,8 @@ public static class ComponentSolverFactory
 			ModuleData.DataHasChanged |= !info.helpText.TryEquals(helpText);
 			info.helpText = helpText;
 		}
-		if (!info.manualCodeOverride)
-		{
-			ModuleData.DataHasChanged |= !info.manualCode.TryEquals(manualCode);
-			info.manualCode = manualCode;
-		}
 
 		defInfo.helpText = helpText;
-		defInfo.manualCode = manualCode;
 
 		ModuleData.WriteDataToFile();
 
@@ -1000,12 +985,6 @@ public static class ComponentSolverFactory
 			info.helpText = help;
 		}
 
-		if (FindManualCode(module.BombComponent, commandComponentType, out string manual) && !info.manualCodeOverride)
-		{
-			ModuleData.DataHasChanged |= !manual.TryEquals(info.manualCode);
-			info.manualCode = manual;
-		}
-
 		if (FindModuleScore(module.BombComponent, commandComponentType, out int score) && !info.scoreStringOverride)
 		{
 			ModuleData.DataHasChanged |= !score.Equals(info.scoreString);
@@ -1044,7 +1023,7 @@ public static class ComponentSolverFactory
 		info.moduleDisplayName = displayName;
 		ModuleData.WriteDataToFile();
 
-		AddDefaultModuleInformation(moduleType, displayName, help, manual, regexList);
+		AddDefaultModuleInformation(moduleType, displayName, help, regexList);
 
 		if (commandComponentType == null) return null;
 		ComponentSolverFields componentSolverFields = new ComponentSolverFields
@@ -1055,7 +1034,6 @@ public static class ComponentSolverFactory
 			ModuleInformation = info,
 
 			HelpMessageField = FindHelpMessage(commandComponentType),
-			ManualCodeField = FindManualCode(commandComponentType),
 			ZenModeField = FindZenModeBool(commandComponentType),
 			TimeModeField = FindTimeModeBool(commandComponentType),
 			AbandonModuleField = FindAbandonModuleList(commandComponentType),
@@ -1132,23 +1110,6 @@ public static class ComponentSolverFactory
 		return true;
 	}
 
-	private static bool FindManualCode(Component bombComponent, Type commandComponentType, out string manualCode)
-	{
-		FieldInfo candidateString = FindManualCode(commandComponentType);
-		if (candidateString == null)
-		{
-			manualCode = null;
-			return false;
-		}
-		if (!(candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType)) is string))
-		{
-			manualCode = null;
-			return false;
-		}
-		manualCode = (string) candidateString.GetValue(candidateString.IsStatic ? null : bombComponent.GetComponent(commandComponentType));
-		return true;
-	}
-
 	private static bool FindModuleScore(Component bombComponent, Type commandComponentType, out int moduleScore)
 	{
 		FieldInfo candidateInt = commandComponentType?.GetDeepField("TwitchModuleScore", fieldFlags);
@@ -1203,12 +1164,6 @@ public static class ComponentSolverFactory
 	private static FieldInfo FindHelpMessage(Type commandComponentType)
 	{
 		FieldInfo cancelField = commandComponentType?.GetDeepField("TwitchHelpMessage", fieldFlags);
-		return cancelField?.FieldType == typeof(string) ? cancelField : null;
-	}
-
-	private static FieldInfo FindManualCode(Type commandComponentType)
-	{
-		FieldInfo cancelField = commandComponentType?.GetDeepField("TwitchManualCode", fieldFlags);
 		return cancelField?.FieldType == typeof(string) ? cancelField : null;
 	}
 

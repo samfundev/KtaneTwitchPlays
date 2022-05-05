@@ -695,7 +695,7 @@ public abstract class ComponentSolver
 			catch (Exception ex)
 			{
 				if (j != 0)
-					DebugHelper.Log($"Index at { j - 1 } was out of range.");
+					DebugHelper.Log($"Index at {j - 1} was out of range.");
 				DebugHelper.LogException(ex, "While attempting to process an issue with Manometers, an exception has occurred. Here's the error:");
 			}
 			//Stop the audio from playing, but separate it out from the previous try/catch to identify errors better
@@ -1242,6 +1242,8 @@ public abstract class ComponentSolver
 
 	public bool UnsupportedModule { get; set; } = false;
 
+	public string LanguageCode;
+
 	#region Protected Properties
 
 	protected string StrikeMessage
@@ -1282,23 +1284,14 @@ public abstract class ComponentSolver
 		}
 	}
 
-	protected FieldInfo ManualCodeField { get; set; }
-	private string _manualCode = null;
 	public string ManualCode
 	{
 		get
 		{
-			if (!(ManualCodeField?.GetValue(ManualCodeField.IsStatic ? null : CommandComponent) is string))
-				return _manualCode ?? ModInfo.manualCode;
-			return ModInfo.manualCodeOverride
-				? ModInfo.manualCode
-				: (string) ManualCodeField.GetValue(ManualCodeField.IsStatic ? null : CommandComponent);
-		}
-		protected set
-		{
-			if (ManualCodeField?.GetValue(ManualCodeField.IsStatic ? null : CommandComponent) is string)
-				ManualCodeField.SetValue(ManualCodeField.IsStatic ? null : CommandComponent, value);
-			else _manualCode = value;
+			if (ModInfo.manualCodeOverride) return ModInfo.manualCode;
+
+			var bombComponent = Module.BombComponent;
+			return (Repository.GetManual(bombComponent.GetModuleID()) ?? bombComponent.GetModuleDisplayName()) + TranslatedModuleHelper.GetManualCodeAddOn(LanguageCode);
 		}
 	}
 

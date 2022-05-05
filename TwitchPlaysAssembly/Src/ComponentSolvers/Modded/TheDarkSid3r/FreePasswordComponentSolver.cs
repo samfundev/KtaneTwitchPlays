@@ -6,7 +6,7 @@ public class FreePasswordComponentSolver : ComponentSolver
 		base(module)
 	{
 		string modType = GetModuleType();
-		ModInfo = ComponentSolverFactory.GetModuleInfo(modType, "!{0} submit [Presses the submit button]", null);
+		ModInfo = ComponentSolverFactory.GetModuleInfo(modType, "!{0} submit [Presses the submit button]");
 		_submit = module.BombComponent.GetComponent<KMSelectable>().Children[modType == "FreePassword" ? 10 : 40];
 	}
 

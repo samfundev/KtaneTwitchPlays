@@ -17,12 +17,10 @@ static class ModuleCommands
 	{
 		string manualType = pdf ? "pdf" : "html";
 
-		string manualText = string.IsNullOrEmpty(module.Solver.ManualCode) ? module.HeaderText : module.Solver.ManualCode;
+		string manualText = (Repository.GetManual(module.BombComponent.GetModuleID()) ?? module.BombComponent.GetModuleDisplayName()) + TranslatedModuleHelper.GetManualCodeAddOn(module.Solver.LanguageCode);
 		string helpText = string.IsNullOrEmpty(module.Solver.HelpMessage) ? string.Empty : string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
 
-		IRCConnection.SendMessage(Regex.IsMatch(manualText, @"^https?://", RegexOptions.IgnoreCase)
-			? $"{module.HeaderText} : {helpText} : {manualText}"
-			: $"{module.HeaderText} : {helpText} : {UrlHelper.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
+		IRCConnection.SendMessage($"{module.HeaderText} : {helpText} : {UrlHelper.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
 	}
 
 	/// <name>Player</name>
@@ -420,6 +418,7 @@ static class ModuleCommands
 
 		yield return new WaitForSeconds(0.5f);
 	}
+
 	/// <name>Zoom, Superzoom, Show and Tilt</name>
 	/// <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)\nshow</syntax>
 	/// <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.

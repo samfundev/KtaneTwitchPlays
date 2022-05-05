@@ -22,6 +22,12 @@ public static class Repository
 
 	public static bool IsBossMod(this string moduleID) => Modules.Any(module => module.ModuleID == moduleID && module.Ignore != null);
 
+	public static string GetManual(string moduleID)
+	{
+		var match = Modules.FirstOrDefault(module => module.ModuleID == moduleID);
+		return match?.FileName ?? match?.Name;
+	}
+
 #pragma warning disable CS0649
 	public class WebsiteJSON
 	{
@@ -35,6 +41,7 @@ public static class Repository
 		public string ModuleID;
 		public string Type;
 		public string Compatibility;
+		public string FileName;
 		public Dictionary<string, object> TwitchPlays;
 
 		public List<string> Ignore;
