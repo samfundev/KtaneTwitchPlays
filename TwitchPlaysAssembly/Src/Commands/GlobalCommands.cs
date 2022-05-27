@@ -1237,7 +1237,7 @@ static class GlobalCommands
 	[Command("reloadscoreinfo", AccessLevel.ScoringManager, AccessLevel.ScoringManager)]
 	public static IEnumerator ReloadScoreInfo(string user, bool isWhisper)
 	{
-		yield return ComponentSolverFactory.LoadDefaultInformation();
+		yield return ComponentSolverFactory.LoadDefaultInformation(true);
 
 		IRCConnection.SendMessage("Score info reloaded", user, !isWhisper);
 	}
