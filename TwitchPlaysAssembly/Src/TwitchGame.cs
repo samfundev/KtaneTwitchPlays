@@ -136,6 +136,7 @@ public class TwitchGame : MonoBehaviour
 		CallingPlayers.Clear();
 		callWaiting = false;
 		VoteDetonateAttempted = false;
+		ProcessingClaimQueue = false;
 		VoteSolveCount = 0;
 		FindClaimPlayers.Clear();
 		MysteryModuleShim.CoveredModules.Clear();
