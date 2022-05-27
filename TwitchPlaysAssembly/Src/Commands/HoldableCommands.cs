@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 /// <summary>Contains commands for all holdables (including the freeplay case and the missions binder).</summary>
