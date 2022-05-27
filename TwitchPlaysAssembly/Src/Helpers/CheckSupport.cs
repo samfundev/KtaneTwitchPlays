@@ -138,7 +138,7 @@ public static class CheckSupport
 		if (supportStatus.Values.Count(status => status) > 0)
 		{
 			var supportedList = supportStatus.Where(pair => pair.Value).Select(pair => pair.Key).Join(", ");
-			IRCConnection.SendMessage($"Let the Scoring Team know that the following modules have TP support: {supportedList}");
+			IRCConnection.SendMessage($"These modules have TP support: {supportedList}");
 			alertText.text = $"These modules have TP support: {supportedList}";
 			yield return new WaitForSeconds(4);
 		}
