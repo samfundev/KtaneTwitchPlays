@@ -910,7 +910,7 @@
         <member name="M:GlobalCommands.RestartGame">
             <name>Restart</name>
             <syntax>restart</syntax>
-            <summary>Restarts the game by closing and reopening it. May not work perfectly when running with Steam.</summary>
+            <summary>Restarts the game by closing and reopening it.</summary>
             <restriction>SuperUser</restriction>
         </member>
         <member name="M:GlobalCommands.QuitGame">

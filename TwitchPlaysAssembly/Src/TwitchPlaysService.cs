@@ -124,6 +124,13 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 
 		SetupChatSimulator();
+
+		// Delete the steam_appid.txt since it was created for a one-time steam boot.
+		// Steam will have initialized before this.
+		if (File.Exists("steam_appid.txt"))
+		{
+			File.Delete("steam_appid.txt");
+		}
 	}
 
 	public void OnDisable()
