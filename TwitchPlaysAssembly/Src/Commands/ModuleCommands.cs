@@ -430,7 +430,7 @@ static class ModuleCommands
 	[Command(null)]
 	public static IEnumerator DefaultCommand(TwitchModule module, string user, string cmd)
 	{
-		if (Votes.Active && Votes.CurrentVoteType == VoteTypes.Solve && Votes.voteModule == module)
+		if ((Votes.Active && Votes.CurrentVoteType == VoteTypes.Solve && Votes.voteModule == module) || module.Votesolving)
 		{
 			IRCConnection.SendMessage($"Sorry @{user}, the module you are trying to interact with is being votesolved.");
 			yield break;

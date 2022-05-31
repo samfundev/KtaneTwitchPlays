@@ -46,6 +46,9 @@ public class TwitchModule : MonoBehaviour
 	[HideInInspector]
 	public bool Unsupported;
 
+	[HideInInspector] 
+	public bool Votesolving;
+
 	[HideInInspector]
 	public List<ClaimQueueItem> ClaimQueue = new List<ClaimQueueItem>();
 
@@ -607,6 +610,16 @@ public class TwitchModule : MonoBehaviour
 
 		return 0;
 	}
+
+	public void SetClaimedUserMultidecker(string playerName)
+	{
+		Image claimedDisplay = ClaimedUserMultiDecker;
+		if (playerName != null) claimedDisplay.transform.Find("Username").GetComponent<Text>().text = playerName;
+		claimedDisplay.gameObject.SetActive(playerName != null);
+
+		// The camera wall needs to be updated whenever a module's claim changes.
+		ModuleCameras.Instance.UpdateAutomaticCameraWall();
+	}
 	#endregion
 
 	#region Private Methods
@@ -677,13 +690,7 @@ public class TwitchModule : MonoBehaviour
 		set
 		{
 			_playerName = value;
-
-			Image claimedDisplay = ClaimedUserMultiDecker;
-			if (value != null) claimedDisplay.transform.Find("Username").GetComponent<Text>().text = value;
-			claimedDisplay.gameObject.SetActive(value != null);
-
-			// The camera wall needs to be updated whenever a module's claim changes.
-			ModuleCameras.Instance.UpdateAutomaticCameraWall();
+			SetClaimedUserMultidecker(value);
 		}
 		get => _playerName;
 	}
