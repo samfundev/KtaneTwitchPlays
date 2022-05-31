@@ -67,7 +67,7 @@ public static class Votes
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
 					CreateCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
-					CreateCheck(() => voteModule.Solver.AttemptedForcedSolve, "Sorry, {0}, that module is already being votesolved."),
+					CreateCheck(() => voteModule.Votesolving, "Sorry, {0}, that module is already being votesolved."),
 					CreateCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
 					CreateCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
 					CreateCheck(() =>
@@ -89,6 +89,8 @@ public static class Votes
 				onSuccess = () =>
 				{
 					voteModule.Solver.SolveModule($"A module ({voteModule.HeaderText}) is being automatically solved.");
+					voteModule.SetClaimedUserMultidecker("VOTESOLVING");
+					voteModule.Votesolving = true;
 					TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
 					IRCConnection.SendMessage($"Reward decreased by 25% for votesolving module {voteModule.Code} ({voteModule.HeaderText})");
 				}
@@ -98,13 +100,12 @@ public static class Votes
 
 	private static readonly Dictionary<string, bool> Voters = new Dictionary<string, bool>();
 
-	private static Coroutine voteInProgress = null;
+	private static Coroutine voteInProgress;
 	private static IEnumerator VotingCoroutine()
 	{
-		int oldTime;
 		while (VoteTimeRemaining >= 0f)
 		{
-			oldTime = TimeLeft;
+			var oldTime = TimeLeft;
 			VoteTimeRemaining -= Time.deltaTime;
 
 			if (TwitchGame.BombActive && TimeLeft != oldTime) // Once a second, update notes.
@@ -137,7 +138,10 @@ public static class Votes
 		bool votePassed = (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f));
 		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} yes votes. The vote has {(votePassed ? "passed" : "failed")}.");
 		if (!votePassed && CurrentVoteType == VoteTypes.Solve)
+		{
 			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
+			voteModule.SetClaimedUserMultidecker(null);
+		}
 		if (votePassed)
 		{
 			PossibleVotes[CurrentVoteType].onSuccess();
@@ -167,8 +171,11 @@ public static class Votes
 					TwitchGame.Instance.VoteDetonateAttempted = true;
 					break;
 				case VoteTypes.Solve:
+					if (voteModule is null)
+						throw new InvalidOperationException("Votemodule cannot be null");
 					TwitchGame.Instance.VoteSolveCount++;
 					voteModule.SetBannerColor(voteModule.MarkedBackgroundColor);
+					voteModule.SetClaimedUserMultidecker("VOTE IN PROGRESS");
 					break;
 			}
 		}
@@ -276,7 +283,10 @@ public static class Votes
 		}
 		IRCConnection.SendMessage("The vote has been cancelled.");
 		if (CurrentVoteType == VoteTypes.Solve)
+		{
 			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
+			voteModule.SetClaimedUserMultidecker(null);
+		}
 		DestroyVote();
 	}
 
