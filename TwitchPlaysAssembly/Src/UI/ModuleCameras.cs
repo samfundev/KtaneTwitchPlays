@@ -320,6 +320,10 @@ public class ModuleCameras : MonoBehaviour
 		NotesTextBackgrounds = _data.NotesTextBackgrounds;
 		NotesTextIDs = _data.NotesTextIDs;
 		NotesTextIDsBackgrounds = _data.NotesTextIDsBackgrounds;
+
+		// Allow modules that use collisions to still work even when their layer is changed for a Camera
+		foreach (int layer in CameraLayers)
+			Physics.IgnoreLayerCollision(layer, layer, false);
 	}
 
 	private void Start()
