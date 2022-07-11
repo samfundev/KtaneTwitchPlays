@@ -56,7 +56,7 @@ public abstract class ComponentSolver
 
 		try
 		{
-			subcoroutine = ChainableCommands ? ChainCommand(command) : RespondToCommandInternal(command);
+			subcoroutine = (ChainableCommands ? ChainCommand(command) : RespondToCommandInternal(command)).Flatten();
 		}
 		catch (Exception e)
 		{
