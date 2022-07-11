@@ -712,6 +712,14 @@ public static class ComponentSolverFactory
 			DebugHelper.Log("Failed to load the default module information.");
 		}
 
+		// Announceable modules
+		yield return Repository.LoadData();
+		foreach (var item in Repository.Modules)
+		{
+			var defaultInfo = GetDefaultInformation(item.ModuleID);
+			defaultInfo.announceModule |= item.ModuleID.IsBossMod();
+		}
+
 		if (reloadData)
 			ModuleData.LoadDataFromFile();
 	}
@@ -801,6 +809,8 @@ public static class ComponentSolverFactory
 			ModuleData.DataHasChanged |= !info.manualCode.TryEquals(defInfo.manualCode);
 			info.manualCode = defInfo.manualCode;
 		}
+
+		info.announceModule |= defInfo.announceModule;
 
 		if (writeData && !info.builtIntoTwitchPlays)
 			ModuleData.WriteDataToFile();
