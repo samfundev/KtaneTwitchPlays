@@ -46,7 +46,7 @@ public class TwitchModule : MonoBehaviour
 	[HideInInspector]
 	public bool Unsupported;
 
-	[HideInInspector] 
+	[HideInInspector]
 	public bool Votesolving;
 
 	[HideInInspector]
@@ -300,6 +300,9 @@ public class TwitchModule : MonoBehaviour
 		yield return new WaitUntil(() => !Hidden);
 
 		IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
+
+		CameraPriority |= CameraPriority.Viewed;
+		CameraPriority |= CameraPriority.Pinned;
 	}
 
 	private void GetStatusLightY()
