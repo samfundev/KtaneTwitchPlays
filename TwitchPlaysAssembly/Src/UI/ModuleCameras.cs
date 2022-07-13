@@ -355,8 +355,7 @@ public class ModuleCameras : MonoBehaviour
 	#region Public Methods
 	public IEnumerator ZoomCamera(TwitchModule component, SuperZoomData zoomData, float delay)
 	{
-		if (component.CameraPriority == CameraPriority.Unviewed)
-			component.CameraPriority = CameraPriority.Interacted;
+		component.CameraPriority |= CameraPriority.Interacted;
 
 		int existingCamera = CurrentModulesContains(component);
 		if (existingCamera == -1) existingCamera = BorrowCameraForZoom(component);
@@ -464,7 +463,7 @@ public class ModuleCameras : MonoBehaviour
 
 	public void UnviewModule(TwitchModule handle)
 	{
-		handle.CameraPriority = handle.Solved ? CameraPriority.Unviewed : handle.Claimed ? CameraPriority.Claimed : CameraPriority.Unviewed;
+		handle.CameraPriority &= ~(CameraPriority.Viewed | CameraPriority.Pinned | CameraPriority.Interacted);
 		TwitchPlaysService.Instance.StartCoroutine(UnviewModuleCoroutine(handle));
 	}
 

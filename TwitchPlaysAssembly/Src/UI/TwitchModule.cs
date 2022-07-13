@@ -69,10 +69,13 @@ public class TwitchModule : MonoBehaviour
 	{
 		if (Solved && !TwitchPlaySettings.data.AnarchyMode) return;
 
-		CameraPriority =
-			pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || BombComponent is NeedyComponent || TwitchPlaySettings.data.AnarchyMode)
-				? CameraPriority.Pinned
-				: CameraPriority.Viewed;
+		CameraPriority |= CameraPriority.Viewed;
+
+		if (pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || BombComponent is NeedyComponent || TwitchPlaySettings.data.AnarchyMode))
+			CameraPriority |= CameraPriority.Pinned;
+		else
+			CameraPriority &= ~CameraPriority.Pinned;
+
 		LastUsed = DateTime.UtcNow;
 	}
 
@@ -518,8 +521,7 @@ public class TwitchModule : MonoBehaviour
 		TwitchGame.Instance.SetLastClaimedTime(Solver.ModInfo.moduleID, userNickName, DateTime.UtcNow.TotalSeconds());
 		SetBannerColor(ClaimedBackgroundColour);
 		PlayerName = userNickName;
-		if (CameraPriority < CameraPriority.Claimed)
-			CameraPriority = CameraPriority.Claimed;
+		CameraPriority |= CameraPriority.Claimed;
 	}
 
 	public void SetUnclaimed()
@@ -530,8 +532,7 @@ public class TwitchModule : MonoBehaviour
 		RemoveFromClaimQueue(PlayerName);
 		SetBannerColor(unclaimedBackgroundColor);
 		PlayerName = null;
-		if (CameraPriority > CameraPriority.Interacted)
-			CameraPriority = CameraPriority.Interacted;
+		CameraPriority &= ~CameraPriority.Claimed;
 	}
 
 	public void CommandError(string userNickName, string message) => IRCConnection.SendMessageFormat(TwitchPlaySettings.data.CommandError, userNickName, Code, HeaderText, message);

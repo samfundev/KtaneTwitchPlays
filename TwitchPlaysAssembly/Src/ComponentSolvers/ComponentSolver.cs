@@ -49,7 +49,7 @@ public abstract class ComponentSolver
 		StrikeMessage = string.Empty;
 		StrikeMessageConflict = false;
 
-		Module.CameraPriority = Module.CameraPriority > CameraPriority.Interacted ? Module.CameraPriority : CameraPriority.Interacted;
+		Module.CameraPriority |= CameraPriority.Interacted;
 		_currentUserNickName = userNickName;
 		_beforeStrikeCount = StrikeCount;
 		IEnumerator subcoroutine;

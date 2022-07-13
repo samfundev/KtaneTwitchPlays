@@ -1507,16 +1507,16 @@
             <summary>Adds a coroutine that will run when the state changes.</summary>
         </member>
         <member name="F:CameraPriority.Unviewed">
-            <summary>This module was explicitly unviewed OR never interacted with.</summary>
+            <summary>This module is unviewed.</summary>
         </member>
         <member name="F:CameraPriority.Interacted">
-            <summary>This module was interacted with but not claimed or explicitly viewed.</summary>
+            <summary>This module has been interacted with.</summary>
         </member>
         <member name="F:CameraPriority.Claimed">
-            <summary>This module was claimed, but not explicitly viewed.</summary>
+            <summary>This module is claimed.</summary>
         </member>
         <member name="F:CameraPriority.Viewed">
-            <summary>This module was explicitly viewed.</summary>
+            <summary>This module is explicitly viewed.</summary>
         </member>
         <member name="F:CameraPriority.Pinned">
             <summary>This module is pinned.</summary>
