@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using UnityEngine;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -15,7 +15,7 @@ public enum AccessLevel
 	Banned = 0x0002,
 	Defuser = 0x0004,
 	ScoringManager = 0x0008,
-	
+
 	Mod = 0x2000,
 	Admin = 0x4000,
 	SuperUser = 0x8000,
@@ -130,7 +130,7 @@ public static class UserAccess
 
 	public static bool HasAccess(string userNickName, AccessLevel accessLevel, bool orHigher = false)
 	{
-		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername || userNickName == "Bomb Factory")
+		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername)
 			return true;
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
 			out AccessLevel userAccessLevel))
@@ -153,7 +153,7 @@ public static class UserAccess
 	{
 		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername) return AccessLevel.Streamer;
 
-		if (userNickName.EqualsAny("Bomb Factory") || TwitchGame.Instance.Bombs.Any(x => x.BombName == userNickName)) return AccessLevel.Streamer;
+		if (TwitchGame.Instance.Bombs.Any(x => x.BombName == userNickName)) return AccessLevel.Streamer;
 
 		if (!UserAccessData.Instance.UserAccessLevel.TryGetValue(userNickName.ToLowerInvariant(),
 			out AccessLevel userAccessLevel))

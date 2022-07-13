@@ -809,7 +809,7 @@ public class TwitchGame : MonoBehaviour
 
 	public static bool IsAuthorizedDefuser(string userNickName, bool isWhisper, bool silent = false)
 	{
-		if (userNickName.EqualsAny("Bomb Factory", TwitchPlaySettings.data.TwitchPlaysDebugUsername) || Instance.Bombs.Any(x => x.BombName == userNickName))
+		if (userNickName == TwitchPlaySettings.data.TwitchPlaysDebugUsername || Instance.Bombs.Any(x => x.BombName == userNickName))
 			return true;
 
 		bool result = !TwitchPlaySettings.data.EnableWhiteList || UserAccess.HasAccess(userNickName, AccessLevel.Defuser, true);
