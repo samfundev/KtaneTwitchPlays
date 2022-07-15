@@ -1121,14 +1121,14 @@ public abstract class ComponentSolver
 		Leaderboard.Instance?.AddScore(userNickName, pointsAwarded);
 		if (!OtherModes.VSModeOn)
 			messageParts.Add(string.Format(TwitchPlaySettings.data.AwardPPA, userNickName,
-				pointsAwarded > 0 ? "awarded" : "deducted", pointsAwarded, Math.Abs(pointsAwarded) > 1 ? "s" : "",
+				pointsAwarded > 0 ? "awarded" : "deducted", Math.Abs(pointsAwarded), Math.Abs(pointsAwarded) > 1 ? "s" : "",
 				Code, ModInfo.moduleDisplayName, pointsAwarded > 0 ? TwitchPlaySettings.data.PosPPAEmote : TwitchPlaySettings.data.NegPPAEmote));
 		else
 		{
 			CalculateVSHP(userNickName, pointsAwarded, out OtherModes.Team? teamDamaged, out int HPDamage);
 
 			messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVSPPA, userNickName,
-				pointsAwarded > 0 ? "awarded" : "deducted", pointsAwarded, Math.Abs(pointsAwarded) > 1 ? "s" : "",
+				pointsAwarded > 0 ? "awarded" : "deducted", Math.Abs(pointsAwarded), Math.Abs(pointsAwarded) > 1 ? "s" : "",
 				Code, ModInfo.moduleDisplayName, HPDamage, teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team",
 				pointsAwarded > 0 ? TwitchPlaySettings.data.PosPPAEmote : TwitchPlaySettings.data.NegPPAEmote));
 
