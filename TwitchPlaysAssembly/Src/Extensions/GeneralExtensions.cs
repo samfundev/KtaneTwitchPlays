@@ -69,9 +69,9 @@ public static class GeneralExtensions
 			if (enumerator.MoveNext())
 			{
 				var current = enumerator.Current;
-				if (current?.GetType() == typeof(IEnumerator))
+				if (current is IEnumerator nested && nested.GetType().GetInterfaces().Contains(typeof(IEnumerator<object>)))
 				{
-					stack.Push((IEnumerator) current);
+					stack.Push(nested);
 				}
 				else
 				{
