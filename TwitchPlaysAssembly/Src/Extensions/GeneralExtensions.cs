@@ -368,5 +368,7 @@ public static class GeneralExtensions
 		}
 	}
 
+	public static string FormatUsername(this string name) => name.StartsWith("@") ? name.Substring(1) : name;
+
 	public static bool Search<T>(this IEnumerable<T> source, string query, Func<T, string> toSearch, out T result, out string message) => source.Search(query, toSearch, toSearch, out result, out message);
 }

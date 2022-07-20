@@ -826,17 +826,13 @@ public class TwitchGame : MonoBehaviour
 		SetCurrentBomb();
 	}
 
-	private static readonly string[] solveBased = {
-		"MemoryV2", "SouvenirModule", "TurnTheKeyAdvanced", "HexiEvilFMN", "simonsStages", "forgetThemAll",
-		"tallorderedKeys", "forgetEnigma", "forgetUsNot", "qkForgetPerspective", "organizationModule", "ForgetMeNow"
-	};
-	private bool removedSolveBasedModules = false;
-	public void RemoveSolveBasedModules()
+	private bool solveBossModules = false;
+	public void SolveBossModules()
 	{
-		if (removedSolveBasedModules) return;
-		removedSolveBasedModules = true;
+		if (solveBossModules) return;
+		solveBossModules = true;
 
-		foreach (var module in Modules.Where(x => !x.Solved && solveBased.Contains(x.BombComponent.GetModuleDisplayName())))
+		foreach (var module in Modules.Where(x => !x.Solved && x.BombComponent.GetModuleID().IsBossMod()))
 		{
 			ComponentSolver.HandleForcedSolve(module);
 
