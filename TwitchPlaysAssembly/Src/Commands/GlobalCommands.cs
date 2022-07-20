@@ -33,10 +33,11 @@ static class GlobalCommands
 	/// <name>Bonus Points</name>
 	/// <syntax>bonuspoints [player] [points]</syntax>
 	/// <summary>Adds points to a player's score.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"bonus(?:score|points) (\S+) (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void BonusPoints([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
+		targetPlayer = targetPlayer.FormatUsername();
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusPoints, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddScore(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
@@ -44,10 +45,11 @@ static class GlobalCommands
 	/// <name>Bonus Solves</name>
 	/// <syntax>bonussolves [player] [solves]</syntax>
 	/// <summary>Adds solves to a player.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"bonussolves? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"bonussolves? (\S+) (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void BonusSolves([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
+		targetPlayer = targetPlayer.FormatUsername();
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusSolves, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddSolve(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
@@ -55,10 +57,11 @@ static class GlobalCommands
 	/// <name>Bonus Strikes</name>
 	/// <syntax>bonusstrikes [player] [strikes]</syntax>
 	/// <summary>Adds strikes to a player.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"bonusstrikes? (\S+) (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"bonusstrikes? (\S+) (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void BonusStrikes([Group(1)] string targetPlayer, [Group(2)] int bonus, string user)
 	{
+		targetPlayer = targetPlayer.FormatUsername();
 		IRCConnection.SendMessageFormat(TwitchPlaySettings.data.GiveBonusStrikes, targetPlayer, bonus, user);
 		Leaderboard.Instance.AddStrike(targetPlayer, new Color(.31f, .31f, .31f), bonus);
 	}
@@ -71,9 +74,7 @@ static class GlobalCommands
 	public static void StrikeRefund([Group(1)] string targetPlayer, [Group(2)] int? _count, string user)
 	{
 		int count = _count ?? 1;
-		if (targetPlayer.StartsWith("@"))
-			targetPlayer = targetPlayer.Substring(1);
-
+		targetPlayer = targetPlayer.FormatUsername();
 		if (count < 1)
 		{
 			IRCConnection.SendMessageFormat("Sorry @{0}, cannot refund less than 1 strike!", user);
@@ -95,10 +96,8 @@ static class GlobalCommands
 	public static void StrikeTransfer([Group(1)] string fromPlayer, [Group(2)] string toPlayer, [Group(3)] int? _count, string user)
 	{
 		int count = _count ?? 1;
-		if (fromPlayer.StartsWith("@"))
-			fromPlayer = fromPlayer.Substring(1);
-		if (toPlayer.StartsWith("@"))
-			toPlayer = toPlayer.Substring(1);
+		fromPlayer = fromPlayer.FormatUsername();
+		toPlayer = toPlayer.FormatUsername();
 
 		if (count < 1)
 		{
@@ -118,15 +117,15 @@ static class GlobalCommands
 	/// <name>Set Reward</name>
 	/// <syntax>reward [points]</syntax>
 	/// <summary>Sets the reward that's given out on a succesful defusual.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"reward (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"reward (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetReward([Group(1)] int reward) => TwitchPlaySettings.SetRewardBonus(reward);
 
 	/// <name>Add Reward</name>
 	/// <syntax>bonusreward [points]</syntax>
 	/// <summary>Adds to the reward that's given out on a succesful defusual.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"bonusreward (-?[0-9]+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"bonusreward (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void AddReward([Group(1)] int reward) => TwitchPlaySettings.AddRewardBonus(reward);
 
 	/// <name>Time Mode</name>
@@ -1417,6 +1416,7 @@ static class GlobalCommands
 	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, IRCMessage message)
 	{
+		targetPlayer = targetPlayer.FormatUsername();
 		if (message.IsWhisper)
 		{
 			IRCConnection.SendMessage($"Sorry {message.UserNickName}, issuing commands as other users is not allowed in whispers", message.UserNickName, false);

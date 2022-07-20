@@ -853,23 +853,23 @@ static class GameCommands
 	/// <name>Solve Unsupported Modules</name>
 	/// <syntax>solveunsupportedmodules</syntax>
 	/// <summary>Solves modules that aren't supported by TP.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"solveunsupportedmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"solveunsupportedmodules", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SolveUnsupportedModules()
 	{
 		IRCConnection.SendMessage("Solving unsupported modules.");
 		TwitchModule.SolveUnsupportedModules();
 	}
 
-	/// <name>Remove Solve Based Modules</name>
-	/// <syntax>removesolvebasedmodules</syntax>
-	/// <summary>Solves modules that depend on the solve count of the bomb.</summary>
+	/// <name>Solve Boss Modules</name>
+	/// <syntax>solvebossmodules</syntax>
+	/// <summary>Solves modules that depend on the solve count of the bomb or are considered boss modules according to the repository of manual pages.</summary>
 	/// <restriction>SuperUser</restriction>
-	[Command(@"removesolvebasedmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
-	public static void RemoveSolveBasedModules()
+	[Command(@"solvebossmodules", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	public static void SolveBossModules()
 	{
-		IRCConnection.SendMessage("Removing solve based modules");
-		TwitchGame.Instance.RemoveSolveBasedModules();
+		IRCConnection.SendMessage("Solving boss modules");
+		TwitchGame.Instance.SolveBossModules();
 	}
 
 	/// <name>Custom Messages</name>
@@ -917,6 +917,7 @@ static class GameCommands
 
 	private static void ShowClaimsOfUser(string targetUser, string user, bool isWhisper, string ownedListMsg, string noOwnedMsg)
 	{
+		targetUser = targetUser.FormatUsername();
 		var claimed = TwitchGame.Instance.Modules
 			.Where(module => module.PlayerName != null && module.PlayerName.EqualsIgnoreCase(targetUser) && !module.Solved)
 			.Select(module => string.Format(TwitchPlaySettings.data.OwnedModule, module.Code, module.HeaderText))

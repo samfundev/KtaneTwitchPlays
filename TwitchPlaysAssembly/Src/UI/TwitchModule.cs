@@ -352,10 +352,6 @@ public class TwitchModule : MonoBehaviour
 			handle.SolveSilently();
 		}
 
-		// Forget Me Not and Forget Everything become unsolvable if more than one module is solved at once.
-		if (componentsToRemove.Count > 1)
-			TwitchGame.Instance.RemoveSolveBasedModules();
-
 		UnsupportedComponents.Clear();
 		return true;
 	}
