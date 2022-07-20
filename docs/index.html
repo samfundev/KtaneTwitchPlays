@@ -89,12 +89,17 @@
 							)
 						);
 
+						const colgroup = el("colgroup", null, 
+							el("col", null, { width: "10%" }),
+							el("col", null, { width: "25%" })
+						);
+
 						const headerRow = el("tr");
 						const headers = ["Command", "Usage", "Description"];
 						for (let header of headers)
 							headerRow.appendChild(el("th", null, header));
 
-						section = el("table", null, headerRow);
+						section = el("table", null, colgroup, headerRow);
 						content.appendChild(section);
 
 						const prefixTags = member.getElementsByTagName("prefix");
@@ -180,6 +185,7 @@
 
 			table {
 				border-collapse: collapse;
+				width: 100%;
 			}
 
 			table, td, th {
@@ -195,6 +201,7 @@
 			}
 			
 			pre {
+				white-space: pre-wrap;
 				margin: 0;
 				font-family: monospace, monospace;
 			}
