@@ -121,7 +121,7 @@
 								el("td", null, parseArguments(el("pre", null, member.getElementsByTagName("syntax")[0].textContent.split(/\\n/g).map(command => "!" + commandPrefix + command).join("\n") ), args)),
 								el("td", null, 
 									parseArguments(el("span", null, member.getElementsByTagName("summary")[0].textContent), args),
-									restrictions == "" ? null : el("div", null, ...restrictions.split(", ").map(restriction => el("span", `restriction ${restriction}`, restriction, { title: restrictionDescriptions[restriction] || "" })))
+									...(restrictions == "" ? [] : restrictions.split(", ").flatMap(restriction => [" ", el("span", `restriction ${restriction}`, restriction, { title: restrictionDescriptions[restriction] || "" })]))
 								)
 							)
 						);
