@@ -86,7 +86,7 @@ public static class FreeplayCommands
 
 	/// <name>Advanced Set / Start</name>
 	/// <syntax>set [parameters]\nstart [parameters]</syntax>
-	/// <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, needy, hardcore, needy.</summary>
+	/// <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, hardcore, modsonly, needy.</summary>
 	[Command(@"(set|start) +(.*)")]
 	public static IEnumerator StartAdvanced(FloatingHoldable holdable, [Group(1)] string command, [Group(2)] string parameters, string user, bool isWhisper)
 	{

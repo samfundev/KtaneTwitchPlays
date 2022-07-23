@@ -222,7 +222,7 @@
         <member name="M:FreeplayCommands.StartAdvanced(FloatingHoldable,System.String,System.String,System.String,System.Boolean)">
             <name>Advanced Set / Start</name>
             <syntax>set [parameters]\nstart [parameters]</syntax>
-            <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, needy, hardcore, needy.</summary>
+            <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, hardcore, modsonly, needy.</summary>
         </member>
         <member name="T:GameCommands">
             <summary>Commands that can be run during a game.</summary>
@@ -492,12 +492,12 @@
             <name>Solve Unsupported Modules</name>
             <syntax>solveunsupportedmodules</syntax>
             <summary>Solves modules that aren't supported by TP.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
-        <member name="M:GameCommands.RemoveSolveBasedModules">
-            <name>Remove Solve Based Modules</name>
-            <syntax>removesolvebasedmodules</syntax>
-            <summary>Solves modules that depend on the solve count of the bomb.</summary>
+        <member name="M:GameCommands.SolveBossModules">
+            <name>Solve Boss Modules</name>
+            <syntax>solvebossmodules</syntax>
+            <summary>Solves modules that depend on the solve count of the bomb or are considered boss modules according to the repository of manual pages.</summary>
             <restriction>SuperUser</restriction>
         </member>
         <member name="M:GameCommands.DefaultCommand(System.String,System.String,System.Boolean)">
@@ -517,19 +517,19 @@
             <name>Bonus Points</name>
             <syntax>bonuspoints [player] [points]</syntax>
             <summary>Adds points to a player's score.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.BonusSolves(System.String,System.Int32,System.String)">
             <name>Bonus Solves</name>
             <syntax>bonussolves [player] [solves]</syntax>
             <summary>Adds solves to a player.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.BonusStrikes(System.String,System.Int32,System.String)">
             <name>Bonus Strikes</name>
             <syntax>bonusstrikes [player] [strikes]</syntax>
             <summary>Adds strikes to a player.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.StrikeRefund(System.String,System.Nullable{System.Int32},System.String)">
             <name>Strike Refund</name>
@@ -547,13 +547,13 @@
             <name>Set Reward</name>
             <syntax>reward [points]</syntax>
             <summary>Sets the reward that's given out on a succesful defusual.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.AddReward(System.Int32)">
             <name>Add Reward</name>
             <syntax>bonusreward [points]</syntax>
             <summary>Adds to the reward that's given out on a succesful defusual.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.TimeMode(System.Boolean,System.Boolean,System.String,System.Boolean)">
             <name>Time Mode</name>
