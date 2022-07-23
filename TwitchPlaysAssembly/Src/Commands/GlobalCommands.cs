@@ -666,6 +666,7 @@ static class GlobalCommands
 	[Command(@"addgood (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddGood([Group(1)] string targetUser)
 	{
+		targetUser = targetUser.FormatUsername();
 		Leaderboard.Instance.MakeGood(targetUser);
 		if (TwitchPlaySettings.data.AutoSetVSModeTeams) TwitchGame.Instance.GoodPlayers.Add(targetUser);
 		IRCConnection.SendMessage($"@{targetUser} added to the Good Team.");
@@ -678,6 +679,7 @@ static class GlobalCommands
 	[Command(@"addevil (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddEvil([Group(1)] string targetUser)
 	{
+		targetUser = targetUser.FormatUsername();
 		Leaderboard.Instance.MakeEvil(targetUser);
 		if (TwitchPlaySettings.data.AutoSetVSModeTeams) TwitchGame.Instance.EvilPlayers.Add(targetUser);
 		IRCConnection.SendMessage($"@{targetUser} added to the Evil Team.");
@@ -825,7 +827,8 @@ static class GlobalCommands
 	[Command(@"(add|remove) +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddRemoveRole([Group(1)] string command, [Group(2)] string targetUser, [Group(3)] string roles, string user, bool isWhisper)
 	{
-		bool stepdown = command.Equals("remove", StringComparison.InvariantCultureIgnoreCase) && targetUser.Equals(user, StringComparison.InvariantCultureIgnoreCase);
+		targetUser = targetUser.FormatUsername();
+		var stepdown = command.Equals("remove", StringComparison.InvariantCultureIgnoreCase) && targetUser.Equals(user, StringComparison.InvariantCultureIgnoreCase);
 		if (!stepdown && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 			return;
 

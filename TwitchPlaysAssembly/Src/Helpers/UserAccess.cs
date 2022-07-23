@@ -168,6 +168,7 @@ public static class UserAccess
 
 	public static void TimeoutUser(string userNickName, string moderator, string reason, int timeout, bool isWhisper)
 	{
+		userNickName = userNickName.FormatUsername();
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForTimeoutCommand, true))
 		{
 			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
@@ -204,6 +205,7 @@ public static class UserAccess
 
 	public static void BanUser(string userNickName, string moderator, string reason, bool isWhisper)
 	{
+		userNickName = userNickName.FormatUsername();
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForBanCommand, true))
 		{
 			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
@@ -243,6 +245,7 @@ public static class UserAccess
 
 	public static void UnbanUser(string userNickName, string moderator, bool isWhisper)
 	{
+		userNickName = userNickName.FormatUsername();
 		if (!HasAccess(moderator, UserAccessData.Instance.MinimumAccessLevelForUnbanCommand, true))
 		{
 			IRCConnection.SendMessage($"Sorry @{moderator}, you do not have sufficient privileges for this command.", moderator, !isWhisper);
@@ -256,6 +259,7 @@ public static class UserAccess
 
 	public static BanData IsBanned(string userNickName)
 	{
+		userNickName = userNickName.FormatUsername();
 		if (!UserAccessData.Instance.Bans.TryGetValue(userNickName.ToLowerInvariant(), out BanData ban) || !HasAccess(userNickName, AccessLevel.Banned))
 		{
 			bool rewrite = ban != null;
