@@ -105,7 +105,7 @@ static class GameCommands
 		else if (isWhisper && TwitchPlaySettings.data.EnableWhispers)
 			IRCConnection.SendMessage("Checking other people's claims in whispers is not supported.", user, false);
 		else
-			ShowClaimsOfUser(targetUser, targetUser, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.NoOwnedModulesOther);
+			ShowClaimsOfUser(targetUser, isWhisper, TwitchPlaySettings.data.OwnedModuleListOther, TwitchPlaySettings.data.NoOwnedModulesOther);
 	}
 
 	/// <name>Claims</name>
@@ -117,7 +117,7 @@ static class GameCommands
 		if (TwitchPlaySettings.data.AnarchyMode)
 			IRCConnection.SendMessage($"Sorry {user}, claiming modules is not available in anarchy mode.", user, !isWhisper);
 		else
-			ShowClaimsOfUser(user, user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.NoOwnedModules);
+			ShowClaimsOfUser(user, isWhisper, TwitchPlaySettings.data.OwnedModuleList, TwitchPlaySettings.data.NoOwnedModules);
 	}
 
 	/// <name>Claim View Pin</name>
@@ -357,7 +357,8 @@ static class GameCommands
 		else
 			// Neither claim nor view: just “find”, so output top 3 search results
 			IRCConnection.SendMessage("{0}, modules ({2} total) are: {1}", user, !isWhisper, user,
-				modules.Take(3).Select(handle => string.Format("{0} ({1}) - {2}", handle.HeaderText, handle.Code, handle.Solved ? "solved" : handle.PlayerName == null ? "unclaimed" : "claimed by " + handle.PlayerName)).Join(", "),
+				modules.Take(3).Select(handle =>
+					$"{handle.HeaderText} ({handle.Code}) - {(handle.Solved ? "solved" : handle.PlayerName == null ? "unclaimed" : "claimed by " + handle.PlayerName)}").Join(", "),
 				modules.Count);
 	}
 
@@ -667,6 +668,7 @@ static class GameCommands
 	[Command(@"delcall +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void DeleteQueuedPlayer([Group(1)] string callUser, string user)
 	{
+		callUser = callUser.FormatUsername();
 		if (string.IsNullOrEmpty(callUser)) IRCConnection.SendMessageFormat("@{0}, please specify a call to remove!", user);
 		else if (!TwitchGame.Instance.CallingPlayers.Keys.Contains(user)) IRCConnection.SendMessageFormat("@{0}, @{1} has not called!", user, callUser);
 		else
@@ -777,6 +779,7 @@ static class GameCommands
 	[Command(@"assign +(\S+) +(.+)")]
 	public static void AssignModuleTo([Group(1)] string targetUser, [Group(2)] string queries, string user)
 	{
+		targetUser = targetUser.FormatUsername();
 		if (TwitchPlaySettings.data.AnarchyMode)
 		{
 			IRCConnection.SendMessage($"{user}, assigning modules is not allowed in anarchy mode.");
@@ -787,7 +790,7 @@ static class GameCommands
 		var denied = new List<string>();
 		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && GameRoom.Instance.IsCurrentBomb(m.BombID) && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
 		{
-			if ((module.PlayerName != user || !module.ClaimQueue.Any(q => q.UserNickname != targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
+			if ((module.PlayerName != user || module.ClaimQueue.All(q => q.UserNickname == targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 				denied.Add(module.Code);
 			else
 				ModuleCommands.Assign(module, user, targetUser);
@@ -915,7 +918,7 @@ static class GameCommands
 			.ThenBy(handle => handle.Solved)
 			.ThenBy(handle => handle.PlayerName != null);
 
-	private static void ShowClaimsOfUser(string targetUser, string user, bool isWhisper, string ownedListMsg, string noOwnedMsg)
+	private static void ShowClaimsOfUser(string targetUser, bool isWhisper, string ownedListMsg, string noOwnedMsg)
 	{
 		targetUser = targetUser.FormatUsername();
 		var claimed = TwitchGame.Instance.Modules
@@ -925,13 +928,13 @@ static class GameCommands
 			.ToList();
 		if (claimed.Count > 0)
 		{
-			string newMessage = string.Format(ownedListMsg, user, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
+			string newMessage = string.Format(ownedListMsg, targetUser, string.Join(", ", claimed.ToArray(), 0, Math.Min(claimed.Count, 5)));
 			if (claimed.Count > 5)
-				newMessage += string.Format(", and {0} more.", claimed.Count - 5);
-			IRCConnection.SendMessage(newMessage, user, !isWhisper);
+				newMessage += $", and {claimed.Count - 5} more.";
+			IRCConnection.SendMessage(newMessage, targetUser, !isWhisper);
 		}
 		else
-			IRCConnection.SendMessage(string.Format(noOwnedMsg, user), user, !isWhisper);
+			IRCConnection.SendMessage(string.Format(noOwnedMsg, targetUser), targetUser, !isWhisper);
 	}
 	#endregion
 }
