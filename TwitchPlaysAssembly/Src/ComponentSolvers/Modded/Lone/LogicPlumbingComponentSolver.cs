@@ -4,13 +4,12 @@ using System.Text.RegularExpressions;
 public class LogicPlumbingComponentSolver : ReflectionComponentSolver
 {
 	public LogicPlumbingComponentSolver(TwitchModule module) :
-		base(module, "logicPlumbing", "!{0} swap <coord1> <coord2> [Swaps the tiles at the specified coordinates (letter = column, number = row)] | !{0} check [Holds the top left button briefly] | Swaps can be chained using spaces, commas, or semicolons")
+		base(module, "logicPlumbing", "!{0} swap <coord1> <coord2> [Swaps the tiles at the specified coordinates] | !{0} check [Holds the top left button briefly] | Valid coordinates are A1-F6 with letters as column and numbers as row | Swaps can be chained using spaces, commas, or semicolons")
 	{
 	}
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		if (_component.GetValue<bool>("solved")) yield break;
 		if (command.StartsWith("swap "))
 		{
 			if (split.Length < 3 || split.Length % 2 == 0) yield break;

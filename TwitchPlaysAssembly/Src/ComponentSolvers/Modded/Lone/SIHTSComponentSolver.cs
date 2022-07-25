@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
 
 public class SIHTSComponentSolver : CommandComponentSolver
 {
 	public SIHTSComponentSolver(TwitchModule module) :
 		base(module, "SIHTS", "!{0} underhand/flick [Set whether you will flick or underhand toss the coin] | !{0} increased/decreased/unchanged [Sets the coin acceleration]")
 	{
-		_underhand = (KMSelectable) UnderhandField.GetValue(_component);
-		_flick = (KMSelectable) FlickField.GetValue(_component);
-		_unchanged = (KMSelectable) UnchangedField.GetValue(_component);
-		_increased = (KMSelectable) IncreasedField.GetValue(_component);
-		_decreased = (KMSelectable) DecreasedField.GetValue(_component);
 	}
 
 	private IEnumerator Underhand(CommandParser _)
@@ -19,7 +13,7 @@ public class SIHTSComponentSolver : CommandComponentSolver
 		_.Literal("underhand");
 
 		yield return null;
-		yield return DoInteractionClick(_underhand);
+		yield return Click(3);
 	}
 
 	private IEnumerator Flick(CommandParser _)
@@ -27,14 +21,14 @@ public class SIHTSComponentSolver : CommandComponentSolver
 		_.Literal("flick");
 
 		yield return null;
-		yield return DoInteractionClick(_flick);
+		yield return Click(4);
 	}
 	private IEnumerator Unchanged(CommandParser _)
 	{
 		_.Literal("unchanged");
 
 		yield return null;
-		yield return DoInteractionClick(_unchanged);
+		yield return Click(0);
 	}
 
 	private IEnumerator Increased(CommandParser _)
@@ -42,7 +36,7 @@ public class SIHTSComponentSolver : CommandComponentSolver
 		_.Literal("increased");
 
 		yield return null;
-		yield return DoInteractionClick(_increased);
+		yield return Click(1);
 	}
 
 	private IEnumerator Decreased(CommandParser _)
@@ -50,55 +44,28 @@ public class SIHTSComponentSolver : CommandComponentSolver
 		_.Literal("decreased");
 
 		yield return null;
-		yield return DoInteractionClick(_decreased);
+		yield return Click(2);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
 
-		if (TossTypeValue == 0 && !UHPressedValue)
-			yield return DoInteractionClick(_underhand);
-		else if (TossTypeValue == 1 && !FPressedValue)
-			yield return DoInteractionClick(_flick);
+		int tossType = _component.GetValue<int>("requiredTossType");
+		double tossValue = _component.GetValue<double>("requiredToss");
+		bool vegemite = _component.GetValue<bool>("vegemite");
+		if (tossType == 0 && !_component.GetValue<bool>("UHPressed"))
+			yield return Click(3);
+		else if (tossType == 1 && !_component.GetValue<bool>("FPressed"))
+			yield return Click(4);
 
-		if (ComponentType.CallMethod<double>("floatToEV", _component, UHNoIntValue % 1.0) == TossValue || ComponentType.CallMethod<double>("floatToEV", _component, FNoIntValue % 1.0) == TossValue)
-			yield return DoInteractionClick(_unchanged);
-		else if (ComponentType.CallMethod<double>("floatToEV", _component, UHDecAccValue % 1.0) == TossValue || ComponentType.CallMethod<double>("floatToEV", _component, FDecAccValue % 1.0) == TossValue)
-			yield return DoInteractionClick(VegemiteValue ? _increased : _decreased);
+		if (ComponentType.CallMethod<double>("floatToEV", _component, _component.GetValue<double>("UH_noIntRot") % 1.0) == tossValue || ComponentType.CallMethod<double>("floatToEV", _component, _component.GetValue<double>("F_noIntRot") % 1.0) == tossValue)
+			yield return Click(0);
+		else if (ComponentType.CallMethod<double>("floatToEV", _component, _component.GetValue<double>("UH_decAccRot") % 1.0) == tossValue || ComponentType.CallMethod<double>("floatToEV", _component, _component.GetValue<double>("F_decAccRot") % 1.0) == tossValue)
+			yield return Click(vegemite ? 1 : 2);
 		else
-			yield return DoInteractionClick(VegemiteValue ? _decreased : _increased);
+			yield return Click(vegemite ? 2 : 1);
 	}
 
 	private static readonly Type ComponentType = ReflectionHelper.FindType("SIHTS");
-	private static readonly FieldInfo UnderhandField = ComponentType.GetField("underhandSel", BindingFlags.Public | BindingFlags.Instance);
-	private static readonly FieldInfo FlickField = ComponentType.GetField("flickSel", BindingFlags.Public | BindingFlags.Instance);
-	private static readonly FieldInfo UnchangedField = ComponentType.GetField("noIntSel", BindingFlags.Public | BindingFlags.Instance);
-	private static readonly FieldInfo IncreasedField = ComponentType.GetField("incAccSel", BindingFlags.Public | BindingFlags.Instance);
-	private static readonly FieldInfo DecreasedField = ComponentType.GetField("decAccSel", BindingFlags.Public | BindingFlags.Instance);
-	private static readonly FieldInfo VegemiteField = ComponentType.GetField("vegemite", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo UHPressedField = ComponentType.GetField("UHPressed", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo FPressedField = ComponentType.GetField("FPressed", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo TossTypeField = ComponentType.GetField("requiredTossType", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo TossField = ComponentType.GetField("requiredToss", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo UHNoIntField = ComponentType.GetField("UH_noIntRot", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo FNoIntField = ComponentType.GetField("F_noIntRot", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo UHDecAccField = ComponentType.GetField("UH_decAccRot", BindingFlags.NonPublic | BindingFlags.Instance);
-	private static readonly FieldInfo FDecAccField = ComponentType.GetField("F_decAccRot", BindingFlags.NonPublic | BindingFlags.Instance);
-
-	private readonly KMSelectable _underhand;
-	private readonly KMSelectable _flick;
-	private readonly KMSelectable _unchanged;
-	private readonly KMSelectable _increased;
-	private readonly KMSelectable _decreased;
-
-	private bool VegemiteValue => (bool) VegemiteField.GetValue(_component);
-	private bool UHPressedValue => (bool) UHPressedField.GetValue(_component);
-	private bool FPressedValue => (bool) FPressedField.GetValue(_component);
-	private int TossTypeValue => (int) TossTypeField.GetValue(_component);
-	private double TossValue => (int) TossField.GetValue(_component);
-	private double UHNoIntValue => (double) UHNoIntField.GetValue(_component);
-	private double FNoIntValue => (double) FNoIntField.GetValue(_component);
-	private double UHDecAccValue => (double) UHDecAccField.GetValue(_component);
-	private double FDecAccValue => (double) FDecAccField.GetValue(_component);
 }
