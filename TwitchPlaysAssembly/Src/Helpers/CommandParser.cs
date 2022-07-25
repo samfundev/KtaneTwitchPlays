@@ -71,7 +71,7 @@ public class CommandParser
 		Assert(possibleInteger != null);
 
 		integer = (int) possibleInteger;
-		Assert(!(min != null && integer <= min) || (max != null && integer >= max));
+		Assert((min == null || integer >= min) && (max == null || integer <= max));
 
 		return this;
 	}
