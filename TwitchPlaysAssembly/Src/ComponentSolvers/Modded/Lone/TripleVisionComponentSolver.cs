@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Text.RegularExpressions;
 
 public class TripleVisionComponentSolver : CommandComponentSolver
@@ -14,13 +13,9 @@ public class TripleVisionComponentSolver : CommandComponentSolver
 		_.Literal("press");
 		_.Regex("[a-h][1-8]", out Match match);
 
-		if (match.Success)
-		{
-			yield return null;
-			char[] letters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
-			int letIndex = Array.IndexOf(letters, match.Groups[0].Value[0]);
-			yield return Click((int.Parse(match.Groups[0].Value[1].ToString()) - 1) * 8 + letIndex);
-		}
+		yield return null;
+		int letIndex = match.Groups[0].Value[0].ToIndex();
+		yield return Click(match.Groups[0].Value[1].ToIndex() * 8 + letIndex);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()

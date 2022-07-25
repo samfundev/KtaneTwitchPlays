@@ -469,17 +469,21 @@ public class ModuleCameras : MonoBehaviour
 		TwitchPlaysService.Instance.StartCoroutine(UnviewModuleCoroutine(handle));
 	}
 
-	public List<ModuleCamera> GetCameras() { return _moduleCameras; }
-
-	public List<GameObject> GetEdgeworkCameras() { return edgeworkCameras; }
-
 	public void Hide() => SetCameraVisibility(false);
 
 	public void Show() => SetCameraVisibility(true);
 
-	public void HideNotes() => SetNotesVisibility(false);
+	public void SetCameraVisibility(bool visible)
+	{
+		foreach (ModuleCamera camera in _moduleCameras)
+			camera.CameraInstance.enabled = visible;
+	}
 
-	public void ShowNotes() => SetNotesVisibility(true);
+	public void SetEdgeworkCameraVisibility(bool visible)
+	{
+		foreach (GameObject camera in edgeworkCameras)
+			camera.SetActive(visible);
+	}
 
 	public void HideHud() => BombStatus.gameObject.SetActive(false);
 
@@ -663,6 +667,7 @@ public class ModuleCameras : MonoBehaviour
 	{
 		foreach (GameObject edgeworkCamera in edgeworkCameras)
 			Destroy(edgeworkCamera);
+		edgeworkCameras.Clear();
 
 		// Create widget cameras
 		var widgets = _currentBomb.Bomb.WidgetManager.GetWidgets();
@@ -894,25 +899,6 @@ public class ModuleCameras : MonoBehaviour
 
 		//Could not even borrow an unpinned camera, to allow the requested zoom to happen.
 		return -1;
-	}
-
-	private void SetCameraVisibility(bool visible)
-	{
-		foreach (ModuleCamera camera in _moduleCameras)
-			if (!visible || (camera.Module && camera.Module.CameraPriority > CameraPriority.Unviewed))
-				camera.CameraInstance.gameObject.SetActive(visible);
-	}
-
-	private void SetNotesVisibility(bool visible)
-	{
-		foreach (Text txt in NotesTexts)
-			txt.gameObject.SetActive(visible);
-		foreach (Image img in NotesTextBackgrounds)
-			img.gameObject.SetActive(visible);
-		foreach (Text txt in NotesTextIDs)
-			txt.gameObject.SetActive(visible);
-		foreach (Image img in NotesTextIDsBackgrounds)
-			img.gameObject.SetActive(visible);
 	}
 
 	private IEnumerator WaitForZoom(IEnumerator coroutine)

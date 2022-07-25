@@ -610,6 +610,7 @@ public class TwitchModule : MonoBehaviour
 				var setToLayer = _currentLayer ?? kvp.Value;
 				if (kvp.Key.gameObject.layer != setToLayer)
 					kvp.Key.gameObject.layer = setToLayer;
+
 				Camera cam = kvp.Key.gameObject.GetComponent<Camera>();
 				if (BombComponent.GetModuleDisplayName() == "Backdoor Hacking" && cam != null)
 					cam.cullingMask = (1 << setToLayer) | (1 << 31);

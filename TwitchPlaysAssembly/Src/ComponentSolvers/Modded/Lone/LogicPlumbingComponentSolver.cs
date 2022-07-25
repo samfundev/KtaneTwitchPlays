@@ -21,7 +21,7 @@ public class LogicPlumbingComponentSolver : ReflectionComponentSolver
 			yield return null;
 			for (int i = 1; i < split.Length; i++)
 			{
-				yield return Click((int.Parse(split[i][1].ToString()) - 1) * 6 + "abcdef".IndexOf(split[i][0]));
+				yield return Click(split[i][1].ToIndex() * 6 + split[i][0].ToIndex());
 			}
 		}
 		else if (command.Equals("check"))

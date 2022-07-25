@@ -180,6 +180,25 @@
             <syntax>run</syntax>
             <summary>Runs the dynamic mission generator with specific text. If enabled, players can only use this in Training Mode. Otherwise, only admins can access the DMG.</summary>
         </member>
+        <member name="T:DossierCommands">
+            <summary>Commands that can be used in the dossier menu.</summary>
+            <prefix>dossier </prefix>
+        </member>
+        <member name="M:DossierCommands.Select(FloatingHoldable)">
+            <name>Select</name>
+            <syntax>select</syntax>
+            <summary>Selects the currently highlighted item.</summary>
+        </member>
+        <member name="M:DossierCommands.SelectIndex(FloatingHoldable,System.Int32)">
+            <name>Select Index</name>
+            <syntax>select [index]</syntax>
+            <summary>Selects an item based on it's index on the menu.</summary>
+        </member>
+        <member name="M:DossierCommands.Navigate(System.String,System.Nullable{System.Int32})">
+            <name>Up / Down</name>
+            <syntax>up (amount)\ndown (amount)</syntax>
+            <summary>Moves up or down the menu by a number items.</summary>
+        </member>
         <member name="T:FreeplayCommands">
             <summary>Commands for the freeplay briefcase.</summary>
             <prefix>freeplay </prefix>

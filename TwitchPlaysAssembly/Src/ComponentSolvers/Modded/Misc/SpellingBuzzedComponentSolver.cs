@@ -36,6 +36,6 @@ public class SpellingBuzzedComponentSolver : ReflectionComponentSolver
 		}
 	}
 
-	private string _displayedLetters;
-	private List<KMSelectable> _keypadButtons;
+	private readonly string _displayedLetters;
+	private readonly List<KMSelectable> _keypadButtons;
 }

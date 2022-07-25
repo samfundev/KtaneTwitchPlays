@@ -31,19 +31,19 @@ public class HeraldryShim : ComponentSolverShim
 			sol = 4;
 		while (_component.GetValue<int>("currentCrest") + 1 < order[sol])
 		{
-			while (_component.GetValue<int>("animating") < 0) { if (sol == 1) yield return true; else yield return null; }
+			while (_component.GetValue<int>("animating") < 0) yield return sol == 1 ? true : (object) null;
 			if (curSolves != Module.Bomb.Bomb.GetSolvedComponentCount() && sol != 1)
 				goto reCalc;
 			yield return DoInteractionClick(_pageTurn[1]);
 		}
 		while (_component.GetValue<int>("currentCrest") > order[sol])
 		{
-			while (_component.GetValue<int>("animating") > 0) { if (sol == 1) yield return true; else yield return null; }
+			while (_component.GetValue<int>("animating") > 0) yield return sol == 1 ? true : (object) null;
 			if (curSolves != Module.Bomb.Bomb.GetSolvedComponentCount() && sol != 1)
 				goto reCalc;
 			yield return DoInteractionClick(_pageTurn[0]);
 		}
-		while (_component.GetValue<int>("animating") != 0) { if (sol == 1) yield return true; else yield return null; }
+		while (_component.GetValue<int>("animating") != 0) yield return sol == 1 ? true : (object) null;
 		if (curSolves != Module.Bomb.Bomb.GetSolvedComponentCount() && sol != 1)
 			goto reCalc;
 		yield return DoInteractionClick(_crests[order[sol] % 2], 0);

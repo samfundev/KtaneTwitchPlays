@@ -89,61 +89,24 @@ public class TwitchBomb : MonoBehaviour
 		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
 		CanvasGroup.alpha = BombID == 0 ? 1 : 0;
-
-		Type ComponentType = ReflectionHelper.FindType("BackdoorHacking");
-		if (ComponentType != null)
-		{
-			foreach (BombComponent mod in Bomb.BombComponents)
-			{
-				object component = mod.GetComponent(ComponentType);
-				if (component != null)
-				{
-					BackdoorComponent = component;
-					break;
-				}
-			}
-		}
 	}
 
 	private void Update()
 	{
-		if (BackdoorComponent != null)
-		{
-			if (BackdoorComponent.GetValue<bool>("BeingHacked"))
-			{
-				for (int i = 0; i < TwitchGame.ModuleCameras?.GetCameras().Count; i++)
-					TwitchGame.ModuleCameras?.GetCameras()[i].CameraInstance.gameObject.SetActive(false);
-				if (!BackdoorHandleHack)
-				{
-					BackdoorHandleHack = true;
-					for (int i = 0; i < TwitchGame.ModuleCameras?.GetEdgeworkCameras().Count; i++)
-					{
-						if (TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i] != null)
-							TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i].SetActive(false);
-					}
-					TwitchGame.ModuleCameras?.HideHud();
-					TwitchGame.ModuleCameras?.HideNotes();
-					StartCoroutine(HideMainUIWindow());
-				}
-			}
-			else
-			{
-				if (BackdoorHandleHack)
-				{
-					BackdoorHandleHack = false;
-					for (int i = 0; i < TwitchGame.ModuleCameras?.GetCameras().Count; i++)
-						TwitchGame.ModuleCameras?.GetCameras()[i].CameraInstance.gameObject.SetActive(true);
-					for (int i = 0; i < TwitchGame.ModuleCameras?.GetEdgeworkCameras().Count; i++)
-					{
-						if (TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i] != null)
-							TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i].SetActive(true);
-					}
-					TwitchGame.ModuleCameras?.ShowHud();
-					TwitchGame.ModuleCameras?.ShowNotes();
-					StartCoroutine(ShowMainUIWindow());
-				}
-			}
-		}
+		if (BackdoorComponent == null) return;
+
+		bool newState = BackdoorComponent.GetValue<bool>("BeingHacked");
+		if (BackdoorHandleHack == newState) return;
+		BackdoorHandleHack = newState;
+
+		var moduleCameras = TwitchGame.ModuleCameras;
+		if (moduleCameras == null) return;
+
+		bool visible = !BackdoorHandleHack;
+		moduleCameras.SetCameraVisibility(visible);
+		moduleCameras.SetEdgeworkCameraVisibility(visible);
+		moduleCameras.gameObject.SetActive(visible);
+		SetMainUIWindowVisibility(visible);
 	}
 
 	private void OnDestroy() => StopAllCoroutines();
@@ -165,6 +128,16 @@ public class TwitchBomb : MonoBehaviour
 		IRCConnection.Instance.MainWindowTransform.localScale = Vector3.one;
 		IRCConnection.Instance.HighlightTransform.localScale = Vector3.one;
 		yield return null;
+	}
+
+	public void SetMainUIWindowVisibility(bool visible)
+	{
+		Vector3 scale = visible ? Vector3.one : Vector3.zero;
+
+		EdgeworkWindowTransform.localScale = scale;
+		EdgeworkHighlightTransform.localScale = scale;
+		IRCConnection.Instance.MainWindowTransform.localScale = scale;
+		IRCConnection.Instance.HighlightTransform.localScale = scale;
 	}
 
 	public void CauseExplosionByVote() => StartCoroutine(DelayBombExplosionCoroutine(TwitchPlaySettings.data.BombDetonateCommand, "Voted detonation", 1.0f));
