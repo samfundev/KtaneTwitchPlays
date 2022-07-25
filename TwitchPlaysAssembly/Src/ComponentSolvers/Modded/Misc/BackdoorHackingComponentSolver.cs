@@ -25,7 +25,7 @@ public class BackdoorHackingComponentSolver : CommandComponentSolver
 		_.Integer(out int index, 1, 3);
 
 		yield return null;
-		yield return Click(index - 1);
+		yield return Click(index);
 	}
 
 	private IEnumerator AnyKeyPress(CommandParser _)

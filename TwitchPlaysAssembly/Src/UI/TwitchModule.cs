@@ -611,6 +611,7 @@ public class TwitchModule : MonoBehaviour
 				if (kvp.Key.gameObject.layer != setToLayer)
 					kvp.Key.gameObject.layer = setToLayer;
 
+				// Sets the camera layers of the cameras in Backdoor Hacking to the proper new TP layer to prevent blackscreening
 				Camera cam = kvp.Key.gameObject.GetComponent<Camera>();
 				if (BombComponent.GetModuleDisplayName() == "Backdoor Hacking" && cam != null)
 					cam.cullingMask = (1 << setToLayer) | (1 << 31);
