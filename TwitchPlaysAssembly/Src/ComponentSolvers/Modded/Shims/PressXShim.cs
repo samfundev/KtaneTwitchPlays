@@ -19,7 +19,7 @@ public class PressXShim : ComponentSolverShim
 	{
 		var match = Regex.Match(inputCommand.ToLowerInvariant(),
 			"^(?:press |tap )?(x|y|a|b)(?:(?: at| on)?([0-9: ]+))?$");
-		if (!match.Success || inputCommand.ToLowerInvariant().EqualsAny("press a", "press b", "press x", "press y")) yield break;
+		if (!match.Success || inputCommand.ToLowerInvariant().EqualsAny("press a", "press b", "press x", "press y", "a", "b", "x", "y")) yield break;
 		int index = "xyab".IndexOf(match.Groups[1].Value, StringComparison.Ordinal);
 		if (index < 0) yield break;
 

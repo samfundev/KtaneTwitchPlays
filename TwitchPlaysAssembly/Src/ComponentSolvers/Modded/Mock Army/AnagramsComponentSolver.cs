@@ -10,6 +10,7 @@ public class AnagramsComponentSolver : ComponentSolver
 	{
 		_buttons = module.BombComponent.GetComponent<KMSelectable>().Children;
 		string modType = GetModuleType();
+		_component = Module.BombComponent.GetComponent(ReflectionHelper.FindType(modType));
 		ModInfo = ComponentSolverFactory.GetModuleInfo(modType, "Submit your answer with !{0} submit poodle");
 	}
 
@@ -61,5 +62,52 @@ public class AnagramsComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_buttons[7]);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		string curr = _component.GetValue<TextMesh>("AnswerDisplay").text;
+		IList ans = new List<string>();
+		if (GetModuleType().Equals("AnagramsModule"))
+		{
+			IList temp = _component.GetValue<IList>("_solution");
+			for (int i = 0; i < temp.Count; i++)
+				ans.Add(temp[i]);
+		}
+		else
+			ans.Add(_component.GetValue<string>("_solution"));
+		if (curr.Length > 6)
+		{
+			yield return DoInteractionClick(_buttons[3]);
+			curr = "";
+		}
+		for (int j = 0; j < ans.Count; j++)
+		{
+			for (int i = 0; i < curr.Length; i++)
+			{
+				if (curr[i] != ans[j].ToString()[i])
+				{
+					ans.RemoveAt(j);
+					j--;
+					break;
+				}
+			}
+		}
+		if (ans.Count == 0)
+		{
+			yield return DoInteractionClick(_buttons[3]);
+			if (GetModuleType().Equals("AnagramsModule"))
+				ans = _component.GetValue<IList>("_solution");
+			else
+				ans.Add(_component.GetValue<string>("_solution"));
+			curr = "";
+		}
+		int start = curr.Length;
+		int ansIndex = Random.Range(0, ans.Count);
+		for (int j = start; j < 6; j++)
+			yield return DoInteractionClick(_buttons.Where(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant() == ans[ansIndex].ToString()[j].ToString().ToLowerInvariant()).ToList()[0]);
+		yield return DoInteractionClick(_buttons[7], 0);
+	}
+
+	private readonly object _component;
 	private readonly KMSelectable[] _buttons;
 }

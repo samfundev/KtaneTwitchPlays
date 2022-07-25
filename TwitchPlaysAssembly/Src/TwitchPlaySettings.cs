@@ -30,8 +30,12 @@ public class TwitchPlaySettingsData
 	public bool EnableInteractiveMode = false;
 	public bool EnableAutomaticEdgework = true;
 	public bool EnableEdgeworkCommand = false;
+	public bool EnableBossAutoViewPin = true;
 	public bool EnableAutomaticCameraWall = true;
 	public bool EnableEdgeworkCameras = true;
+	public bool EnableModuleCameraLights = true;
+	public float ModuleCameraLightIntensity = 0.5f;
+	public bool EnableLastModuleZoom = true;
 	public string RepositoryUrl = "https://ktane.timwi.de/";
 	public string AnalyzerUrl = "https://ktane.timwi.de/More/Logfile%20Analyzer.html";
 	public bool EnableModeratorsCommand = true;
@@ -419,6 +423,7 @@ public class TwitchPlaySettingsData
 	public string UnsupportedNeedyWarning = "Found an unsupported Needy Component. Disabling it.";
 
 	public string TechSupportBlock = "@{1}, module {0} ({2}) has been interrupted by Tech Support and is completely inoperable.";
+	public string BackdoorHackingBlock = "@{1}, module {0} ({2}) is completely inoperable while you are being hacked.";
 
 	private static bool ValidateString(ref string input, string def, int parameters, bool forceUpdate = false)
 	{

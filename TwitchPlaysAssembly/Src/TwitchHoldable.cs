@@ -450,7 +450,11 @@ public class TwitchHoldable
 		}
 		else if (CommandType == typeof(IRCConnectionManagerCommands))
 		{
-			HelpMessage = "sendtochat Disconnect the IRC from Twitch Plays with “!{0} disconnect”. For obvious reasons, only the streamer may do this.";
+			HelpMessage = "Disconnect the IRC from Twitch Plays with “!{0} disconnect”. For obvious reasons, only the streamer may do this.";
+		}
+		else if (CommandType == typeof(DossierCommands))
+		{
+			HelpMessage = "Move up in the dossier menu with “!{0} up”. Move down in the dossier menu 3 times with “!{0} down 3”. Select the current menu item with “!{0} select”. Select 2nd menu item from the top with “!{0} select 2”.";
 		}
 
 		if (string.IsNullOrEmpty(HelpMessage)) return false;
@@ -514,6 +518,8 @@ public class TwitchHoldable
 
 			if (CommandType == typeof(MissionBinderCommands))
 				MissionBinderCommands.InitializePage(Holdable);
+			else if (CommandType == typeof(DossierCommands))
+				DossierCommands.InitializePage(Holdable);
 		}
 		else if (frontFace != _heldFrontFace)
 		{

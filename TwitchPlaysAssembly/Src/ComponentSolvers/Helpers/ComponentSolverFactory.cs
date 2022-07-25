@@ -49,6 +49,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["lgndReflex"] = module => new ReflexComponentSolver(module);
 		ModComponentSolverCreators["lgndPayRespects"] = module => new PayRespectsComponentSolver(module);
 
+		//Lone Modules
+		ModComponentSolverCreators["tripleVision"] = module => new TripleVisionComponentSolver(module);
+		ModComponentSolverCreators["SIHTS"] = module => new SIHTSComponentSolver(module);
+		ModComponentSolverCreators["doubleMaze"] = module => new DoubleMazeComponentSolver(module);
+		ModComponentSolverCreators["logicPlumbing"] = module => new LogicPlumbingComponentSolver(module);
+
 		//Asimir Modules
 		ModComponentSolverCreators["murder"] = module => new MurderComponentSolver(module);
 		ModComponentSolverCreators["SeaShells"] = module => new SeaShellsComponentSolver(module);
@@ -99,6 +105,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["xModule"] = module => new XandYComponentSolver(module);
 		ModComponentSolverCreators["yModule"] = module => new XandYComponentSolver(module);
 		ModComponentSolverCreators["imbalance"] = module => new ImbalanceComponentSolver(module);
+		ModComponentSolverCreators["shaker"] = module => new ShakerComponentSolver(module);
 
 		//TheCrazyCodr Modules
 		ModComponentSolverCreators["sqlBasic"] = module => new SQLBasicComponentSolver(module);
@@ -139,6 +146,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["12321"] = module => new OneTwoThreeComponentSolver(module);
 		ModComponentSolverCreators["TechSupport"] = module => new TechSupportComponentSolver(module);
 		ModComponentSolverCreators["factoryCode"] = module => new FactoryCodeComponentSolver(module);
+		ModComponentSolverCreators["SpellingBuzzed"] = module => new SpellingBuzzedComponentSolver(module);
+		ModComponentSolverCreators["BackdoorHacking"] = module => new BackdoorHackingComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -162,6 +171,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["LargeFreePassword"] = module => new FreePasswordComponentSolver(module);
 		ModComponentSolverCreators["LargeVanillaPassword"] = module => new LargePasswordComponentSolver(module);
 		ModComponentSolverCreators["TDSNeedyWires"] = module => new NeedyWiresComponentSolver(module);
+		ModComponentSolverCreators["TDSDossierModifier"] = module => new DossierModifierComponentSolver(module);
+		ModComponentSolverCreators["ManualCodes"] = module => new ManualCodesComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -251,6 +262,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["minecraftParody"] = module => new MinecraftParodyShim(module);
 		ModComponentSolverCreators["minecraftCipher"] = module => new MinecraftCipherShim(module);
 		ModComponentSolverCreators["PressX"] = module => new PressXShim(module);
+		ModComponentSolverCreators["iPhone"] = module => new IPhoneShim(module);
+		ModComponentSolverCreators["constellations"] = module => new ConstellationsShim(module);
+		ModComponentSolverCreators["giantsDrink"] = module => new GiantsDrinkShim(module);
+		ModComponentSolverCreators["heraldry"] = module => new HeraldryShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -329,6 +344,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["lgndReflex"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Reflex" };
 		ModComponentSolverInformation["lgndPayRespects"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pay Respects" };
 
+		//Lone
+		ModComponentSolverInformation["tripleVision"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Triple Vision" };
+		ModComponentSolverInformation["SIHTS"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "SI-HTS" };
+		ModComponentSolverInformation["doubleMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Double Maze" };
+		ModComponentSolverInformation["logicPlumbing"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Logic Plumbing" };
+
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams" };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math" };
@@ -367,6 +388,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["xModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "X" };
 		ModComponentSolverInformation["yModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Y" };
 		ModComponentSolverInformation["imbalance"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Imbalance" };
+		ModComponentSolverInformation["shaker"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Shaker" };
 
 		//TheCrazyCodr
 		ModComponentSolverInformation["sqlBasic"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "SQL - Basic" };
@@ -410,6 +432,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["12321"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "1-2-3-2-1" };
 		ModComponentSolverInformation["TechSupport"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Tech Support" };
 		ModComponentSolverInformation["factoryCode"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Factory Code" };
+		ModComponentSolverInformation["SpellingBuzzed"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Spelling Buzzed" };
+		ModComponentSolverInformation["BackdoorHacking"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Backdoor Hacking" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
@@ -452,6 +476,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["LargeFreePassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Large Free Password" };
 		ModComponentSolverInformation["LargeVanillaPassword"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Large Password" };
 		ModComponentSolverInformation["TDSNeedyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Wires" };
+		ModComponentSolverInformation["TDSDossierModifier"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Dossier Modifier" };
+		ModComponentSolverInformation["ManualCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Manual Codes" };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated" };
@@ -460,12 +486,13 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["WhosOnFirstTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First Translated" };
 		ModComponentSolverInformation["VentGasTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Vent Gas Translated" };
 
-		//Shim added in between Twitch Plays and module (This allows overriding a specific command, or for enforcing unsubmittable penalty)
+		//Shim added in between Twitch Plays and module (This allows overriding a specific command, adding a new command, or for fixes such as enforcing unsubmittable penalty)
 		ModComponentSolverInformation["Color Generator"] = new ModuleInformation { moduleDisplayName = "Color Generator", helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true };
 		ModComponentSolverInformation["ExtendedPassword"] = new ModuleInformation { moduleDisplayName = "Extended Password" };
 		ModComponentSolverInformation["ColourFlashES"] = new ModuleInformation { moduleDisplayName = "Colour Flash ES", helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", helpTextOverride = true };
 		ModComponentSolverInformation["PressX"] = new ModuleInformation { moduleDisplayName = "Press X", helpText = "Submit button presses using !{0} press x on 1 or !{0} press y on 23 or !{0} press a on 8 28 48. Acceptable buttons are a, b, x and y.", helpTextOverride = true };
 		ModComponentSolverInformation["ShapesBombs"] = new ModuleInformation { moduleDisplayName = "Shapes And Bombs", helpText = "!{0} press A1 B39 C123... (column [A to E] and row [1 to 8] to press [you can input multiple rows in the same column]) | !{0} display/disp/d 4 (displays sequence number [0 to 14]) | !{0} reset/res/r (resets initial letter) | !{0} empty/emp/e (empties lit squares) | !{0} submit/sub/s (submits current shape) | !{0} colorblind/cb (enables colorblind mode)", helpTextOverride = true };
+		ModComponentSolverInformation["taxReturns"] = new ModuleInformation { moduleDisplayName = "Tax Returns", helpText = "Submit your taxes using !{0} submit <number>. Page left and right using !{0} left (number) and !{0} right (number). Briefly view the HRMC terminal to see the deadline with !{0} deadline.", helpTextOverride = true, announceModule = true };
 
 		//These modules have troll commands built in.
 		ModComponentSolverInformation["MazeV2"] = new ModuleInformation { moduleDisplayName = "Plumbing" };
@@ -574,7 +601,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["modulo"] = new ModuleInformation { DoesTheRightThing = false };
 		ModComponentSolverInformation["numberCipher"] = new ModuleInformation { DoesTheRightThing = false };
 		ModComponentSolverInformation["retirement"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["taxReturns"] = new ModuleInformation { announceModule = true };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["wire"] = new ModuleInformation { DoesTheRightThing = false };
 

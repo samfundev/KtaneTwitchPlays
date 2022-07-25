@@ -351,6 +351,8 @@ public class TwitchPlaysService : MonoBehaviour
 				AddHoldable("ircmanager", holdable, commandType: typeof(IRCConnectionManagerCommands));
 			else if (holdable.GetComponent("ModSelectorTablet") != null)
 				AddHoldable("dmg", holdable, commandType: typeof(DMGCommands));
+			else if (holdable.GetComponent<MainMenu>())
+				AddHoldable("dossier", holdable, commandType: typeof(DossierCommands));
 			else
 			{
 				var id = holdable.name.ToLowerInvariant().Replace("(clone)", "");
@@ -525,7 +527,7 @@ public class TwitchPlaysService : MonoBehaviour
 			)
 		)
 		{
-			IRCConnection.SendMessage("That holdable is currently disabled and you cannot be interact with it.");
+			IRCConnection.SendMessage("That holdable is currently disabled and cannot be interacted with.");
 			return true;
 		}
 

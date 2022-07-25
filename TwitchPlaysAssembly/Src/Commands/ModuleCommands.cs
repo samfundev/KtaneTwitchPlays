@@ -514,6 +514,12 @@ static class ModuleCommands
 			yield break;
 		}
 
+		if (module.Bomb.BackdoorComponent != null && module.Bomb.BackdoorComponent.GetValue<bool>("BeingHacked") && module.BombComponent.GetModuleDisplayName() != "Backdoor Hacking")
+		{
+			IRCConnection.SendMessageFormat(TwitchPlaySettings.data.BackdoorHackingBlock, module.Code, user, module.HeaderText);
+			yield break;
+		}
+
 		Transform tsLight = module.BombComponent.StatusLightParent?.transform.Find("statusLight(Clone)").Find("Component_LED_ERROR(Clone)");
 		if (tsLight != null && tsLight.gameObject.activeSelf)
 		{

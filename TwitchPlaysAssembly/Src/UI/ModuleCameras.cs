@@ -40,10 +40,13 @@ public class ModuleCameras : MonoBehaviour
 			camera.aspect = 1f;
 			camera.depth = 99;
 
-			var light = camera.gameObject.AddComponent<Light>();
-			light.type = LightType.Spot;
-			light.spotAngle = 7.25f;
-			light.enabled = true;
+			if (TwitchPlaySettings.data.EnableModuleCameraLights)
+			{
+				var light = camera.gameObject.AddComponent<Light>();
+				light.type = LightType.Spot;
+				light.spotAngle = 7.25f;
+				light.enabled = true;
+			}
 
 			moduleCamera.CameraInstance = camera;
 			moduleCamera.OriginalCameraRect = camera.rect;
@@ -155,13 +158,16 @@ public class ModuleCameras : MonoBehaviour
 				}
 			}
 
-			var light = CameraInstance.GetComponent<Light>();
-			light.cullingMask = CameraInstance.cullingMask;
-
-			if (Module != null)
+			if (TwitchPlaySettings.data.EnableModuleCameraLights)
 			{
-				var cameraDirection = Camera.main.transform.rotation * Vector3.forward;
-				light.intensity = 0.5f * (Vector3.Dot(Module.transform.rotation * Vector3.up, cameraDirection) + 1) / 2;
+				var light = CameraInstance.GetComponent<Light>();
+				light.cullingMask = CameraInstance.cullingMask;
+
+				if (Module != null)
+				{
+					var cameraDirection = Camera.main.transform.rotation * Vector3.forward;
+					light.intensity = TwitchPlaySettings.data.ModuleCameraLightIntensity * (Vector3.Dot(Module.transform.rotation * Vector3.up, cameraDirection) + 1) / 2;
+				}
 			}
 		}
 
@@ -291,10 +297,6 @@ public class ModuleCameras : MonoBehaviour
 
 	//private float currentSuccess;
 	private bool lastModule;
-	#endregion
-
-	#region Private Static Readonlys
-	private static readonly Vector3 HudScale = new Vector3(0.7f, Mathf.Round(1), Mathf.Round(1));
 	#endregion
 
 	#region Unity Lifecycle
@@ -467,13 +469,21 @@ public class ModuleCameras : MonoBehaviour
 		TwitchPlaysService.Instance.StartCoroutine(UnviewModuleCoroutine(handle));
 	}
 
+	public List<ModuleCamera> GetCameras() { return _moduleCameras; }
+
+	public List<GameObject> GetEdgeworkCameras() { return edgeworkCameras; }
+
 	public void Hide() => SetCameraVisibility(false);
 
 	public void Show() => SetCameraVisibility(true);
 
-	public void HideHud() => BombStatus.localScale = Vector3.zero;
+	public void HideNotes() => SetNotesVisibility(false);
 
-	public void ShowHud() => BombStatus.localScale = HudScale;
+	public void ShowNotes() => SetNotesVisibility(true);
+
+	public void HideHud() => BombStatus.gameObject.SetActive(false);
+
+	public void ShowHud() => BombStatus.gameObject.SetActive(true);
 
 	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.BombName;
 
@@ -488,7 +498,7 @@ public class ModuleCameras : MonoBehaviour
 		DebugHelper.Log("Updating solves to " + solves);
 		SolvesPrefab.text = $"{solves}<size=25>/{_currentTotalModules}</size>";
 
-		if (TwitchGame.Instance.Bombs.Sum(bomb => bomb.BombSolvableModules - bomb.BombSolvedModules) != 1 || _moduleCameras.Count == 0 || lastModule)
+		if (TwitchGame.Instance.Bombs.Sum(bomb => bomb.BombSolvableModules - bomb.BombSolvedModules) != 1 || _moduleCameras.Count == 0 || lastModule || !TwitchPlaySettings.data.EnableLastModuleZoom)
 			return;
 
 		lastModule = true;
@@ -631,6 +641,14 @@ public class ModuleCameras : MonoBehaviour
 		UpdateStrikes();
 		UpdateSolves();
 		UpdateConfidence();
+
+		if (lastModule)
+		{
+			lastModule = false;
+			var zoomCamera = _moduleCameras.Find(camera => camera.ZoomActive);
+			if (zoomCamera != null)
+				StartCoroutine(zoomCamera.UnzoomCamera(1, new SuperZoomData(1, 0.5f, 0.5f)));
+		}
 
 		int needies = _currentBomb.Bomb.BombComponents.Count(bombComponent => bombComponent.GetComponent<NeedyComponent>() != null);
 		NeediesPrefab.gameObject.SetActive(needies > 0);
@@ -883,6 +901,18 @@ public class ModuleCameras : MonoBehaviour
 		foreach (ModuleCamera camera in _moduleCameras)
 			if (!visible || (camera.Module && camera.Module.CameraPriority > CameraPriority.Unviewed))
 				camera.CameraInstance.gameObject.SetActive(visible);
+	}
+
+	private void SetNotesVisibility(bool visible)
+	{
+		foreach (Text txt in NotesTexts)
+			txt.gameObject.SetActive(visible);
+		foreach (Image img in NotesTextBackgrounds)
+			img.gameObject.SetActive(visible);
+		foreach (Text txt in NotesTextIDs)
+			txt.gameObject.SetActive(visible);
+		foreach (Image img in NotesTextIDsBackgrounds)
+			img.gameObject.SetActive(visible);
 	}
 
 	private IEnumerator WaitForZoom(IEnumerator coroutine)

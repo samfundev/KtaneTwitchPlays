@@ -14,6 +14,22 @@ public class TaxReturnsShim : ComponentSolverShim
 		_submitButton = _component.GetValue<KMSelectable>("submitBut");
 	}
 
+	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
+	{
+		if (inputCommand.EqualsIgnoreCase("deadline"))
+		{
+			yield return null;
+			yield return DoInteractionClick(_toggleButton, 2);
+			yield return DoInteractionClick(_toggleButton, 0);
+		}
+		else
+		{
+			IEnumerator command = RespondToCommandUnshimmed(inputCommand);
+			while (command.MoveNext())
+				yield return command.Current;
+		}
+	}
+
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
 	{
 		yield return null;

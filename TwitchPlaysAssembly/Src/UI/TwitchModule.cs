@@ -220,8 +220,14 @@ public class TwitchModule : MonoBehaviour
 				bar.transform.localScale = new Vector3(value, 1, 1);
 
 				Solver.Code = Code;
-				GetStatusLightY();
-				SetStatusLightPosition(ModInfo.statusLightPosition);
+				// Account for modules whose status lights change on the y-axis
+				if (ModInfo.moduleID.EqualsAny("Coinage"))
+					StartCoroutine(RepeatStatusLightY(ModInfo));
+				else
+				{
+					GetStatusLightY();
+					SetStatusLightPosition(ModInfo.statusLightPosition);
+				}
 
 				CanvasGroupUnsupported.gameObject.SetActive(Solver.UnsupportedModule);
 
@@ -301,19 +307,22 @@ public class TwitchModule : MonoBehaviour
 
 		IRCConnection.SendMessage($"Module {Code} is {HeaderText}");
 
-		CameraPriority |= CameraPriority.Viewed;
-		CameraPriority |= CameraPriority.Pinned;
+		if (TwitchPlaySettings.data.EnableBossAutoViewPin)
+		{
+			CameraPriority |= CameraPriority.Viewed;
+			CameraPriority |= CameraPriority.Pinned;
+		}
 	}
 
-	private void GetStatusLightY()
+	private void GetStatusLightY(float offset = 0.03514f)
 	{
 		Vector3 pos = CanvasGroupMultiDecker.transform.localPosition;
 		// This sets the Y position of ID tag to be right above the status light for modules where the status light has been moved.
-		// Which is done by getting the status light's position in world space, converting it to the tag's local space, taking the Y and adding 0.03514.
+		// Which is done by getting the status light's position in world space, converting it to the tag's local space, taking the Y and adding 0.03514 (unless otherwise specified).
 		StatusLightParent statusLightParent = BombComponent.GetComponentInChildren<StatusLightParent>();
 		if (statusLightParent != null)
 		{
-			float y = CanvasGroupMultiDecker.transform.parent.InverseTransformPoint(statusLightParent.transform.position).y + 0.03514f;
+			float y = CanvasGroupMultiDecker.transform.parent.InverseTransformPoint(statusLightParent.transform.position).y + offset;
 			if (y >= 0) // Make sure the Y position wouldn't be inside the module.
 			{
 				pos.y = y;
@@ -321,6 +330,24 @@ public class TwitchModule : MonoBehaviour
 		}
 
 		_originalIDPosition = pos;
+	}
+
+	private IEnumerator RepeatStatusLightY(ModuleInformation ModInfo)
+	{
+		while (true)
+		{
+			switch (ModInfo.moduleID)
+			{
+				case "Coinage":
+					GetStatusLightY(0.0432f);
+					break;
+				default:
+					GetStatusLightY();
+					break;
+			}
+			SetStatusLightPosition(ModInfo.statusLightPosition);
+			yield return null;
+		}
 	}
 
 	public static void DeactivateNeedyModule(TwitchModule handle)
@@ -583,6 +610,9 @@ public class TwitchModule : MonoBehaviour
 				var setToLayer = _currentLayer ?? kvp.Value;
 				if (kvp.Key.gameObject.layer != setToLayer)
 					kvp.Key.gameObject.layer = setToLayer;
+				Camera cam = kvp.Key.gameObject.GetComponent<Camera>();
+				if (BombComponent.GetModuleDisplayName() == "Backdoor Hacking" && cam != null)
+					cam.cullingMask = (1 << setToLayer) | (1 << 31);
 			}
 			catch
 			{

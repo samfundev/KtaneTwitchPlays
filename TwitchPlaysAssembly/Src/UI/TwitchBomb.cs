@@ -28,6 +28,12 @@ public class TwitchBomb : MonoBehaviour
 	[HideInInspector]
 	public DateTime BombTimeStamp;
 
+	[HideInInspector]
+	public object BackdoorComponent;
+
+	[HideInInspector]
+	public bool BackdoorHandleHack;
+
 	public string Code;
 	#endregion
 
@@ -83,6 +89,61 @@ public class TwitchBomb : MonoBehaviour
 		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
 		CanvasGroup.alpha = BombID == 0 ? 1 : 0;
+
+		Type ComponentType = ReflectionHelper.FindType("BackdoorHacking");
+		if (ComponentType != null)
+		{
+			foreach (BombComponent mod in Bomb.BombComponents)
+			{
+				object component = mod.GetComponent(ComponentType);
+				if (component != null)
+				{
+					BackdoorComponent = component;
+					break;
+				}
+			}
+		}
+	}
+
+	private void Update()
+	{
+		if (BackdoorComponent != null)
+		{
+			if (BackdoorComponent.GetValue<bool>("BeingHacked"))
+			{
+				for (int i = 0; i < TwitchGame.ModuleCameras?.GetCameras().Count; i++)
+					TwitchGame.ModuleCameras?.GetCameras()[i].CameraInstance.gameObject.SetActive(false);
+				if (!BackdoorHandleHack)
+				{
+					BackdoorHandleHack = true;
+					for (int i = 0; i < TwitchGame.ModuleCameras?.GetEdgeworkCameras().Count; i++)
+					{
+						if (TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i] != null)
+							TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i].SetActive(false);
+					}
+					TwitchGame.ModuleCameras?.HideHud();
+					TwitchGame.ModuleCameras?.HideNotes();
+					StartCoroutine(HideMainUIWindow());
+				}
+			}
+			else
+			{
+				if (BackdoorHandleHack)
+				{
+					BackdoorHandleHack = false;
+					for (int i = 0; i < TwitchGame.ModuleCameras?.GetCameras().Count; i++)
+						TwitchGame.ModuleCameras?.GetCameras()[i].CameraInstance.gameObject.SetActive(true);
+					for (int i = 0; i < TwitchGame.ModuleCameras?.GetEdgeworkCameras().Count; i++)
+					{
+						if (TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i] != null)
+							TwitchGame.ModuleCameras?.GetEdgeworkCameras()[i].SetActive(true);
+					}
+					TwitchGame.ModuleCameras?.ShowHud();
+					TwitchGame.ModuleCameras?.ShowNotes();
+					StartCoroutine(ShowMainUIWindow());
+				}
+			}
+		}
 	}
 
 	private void OnDestroy() => StopAllCoroutines();
@@ -366,6 +427,7 @@ public class TwitchBomb : MonoBehaviour
 	const string WidgetQueryManufacture = "manufacture";
 	const string WidgetQueryDay = "day";
 	const string WidgetQueryRandomTime = "time";
+	const string WidgetQueryVoltage = "volt";
 
 	public IEnumerable<Dictionary<string, T>> QueryWidgets<T>(string queryKey, string queryInfo = null) => MysteryWidgetShim.FilterQuery(queryKey, Bomb.WidgetManager.GetWidgetQueryResponses(queryKey, queryInfo).Select(JsonConvert.DeserializeObject<Dictionary<string, T>>));
 
@@ -424,6 +486,9 @@ public class TwitchBomb : MonoBehaviour
 		edgework.Add(indicators.OrderBy(x => x["label"]).ThenBy(x => x["on"]).Select(x => x["on"] + x["label"]).Join());
 		edgework.Add(QueryWidgets<List<string>>(KMBombInfo.QUERYKEY_GET_PORTS).Select(x => x["presentPorts"].Select(port => portNames.ContainsKey(port) ? portNames[port] : port).OrderBy(y => y).Join(", ")).Select(x => x?.Length == 0 ? "Empty" : x).Select(x => "[" + x + "]").Join());
 		edgework.Add(QueryWidgets<int>(WidgetQueryTwofactor).Select(x => x["twofactor_key"].ToString()).Join(", "));
+		Dictionary<string, string> voltageMeter = QueryWidgets<string>("volt").FirstOrDefault();
+		if (voltageMeter?.ContainsKey("voltage") ?? false)
+			edgework.Add($"{voltageMeter["voltage"]}V");
 		edgework.Add(QueryWidgets<string>(WidgetQueryManufacture).Select(x => x["month"] + " - " + x["year"]).Join());
 		edgework.Add(QueryWidgets<string>(WidgetQueryDay).Select(x =>
 		{
