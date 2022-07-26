@@ -193,14 +193,6 @@ public class TwitchPlaySettingsData
 			},
 			MinModules = 2
 		}},
-		{ "fair+baseneedy", new ModuleDistributions {
-			DisplayName = "Fair + Base Needy",
-			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE"),
-				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY, BASE"),
-			},
-			MinModules = 2
-		}},
 		{ "fair+needy", new ModuleDistributions {
 			DisplayName = "Fair + Needy",
 			Pools = new List<DistributionPool> {
