@@ -185,11 +185,59 @@ public class TwitchPlaySettingsData
 				new DistributionPool(1.0f, "ALL_SOLVABLE"),
 			}
 		}},
+		{ "fair+modneedy", new ModuleDistributions {
+			DisplayName = "Fair + Mod Needy",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY, MODS"),
+			},
+			MinModules = 2
+		}},
+		{ "fair+baseneedy", new ModuleDistributions {
+			DisplayName = "Fair + Base Needy",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY, BASE"),
+			},
+			MinModules = 2
+		}},
 		{ "fair+needy", new ModuleDistributions {
 			DisplayName = "Fair + Needy",
 			Pools = new List<DistributionPool> {
 				new DistributionPool(1.0f, "ALL_SOLVABLE"),
-				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY, MODS"),
+				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY"),
+			},
+			MinModules = 2
+		}},
+		{ "fair+2needies", new ModuleDistributions {
+			DisplayName = "Fair + 2 Needies",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY"),
+				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY"),
+			},
+			MinModules = 3
+		}},
+		{ "fair+needysometimes", new ModuleDistributions {
+			DisplayName = "Fair + Needy Sometimes",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+				new DistributionPool(0.0f, "ALL_MODULES"),
+			},
+			MinModules = 2
+		}},
+		{ "fair+neediessometimes", new ModuleDistributions {
+			DisplayName = "Fair + Needies Sometimes",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.8f, "ALL_SOLVABLE"),
+				new DistributionPool(0.2f, "ALL_MODULES"),
+			},
+		}},
+		{ "chaos", new ModuleDistributions {
+			DisplayName = "Chaos",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.0f, "ALL_SOLVABLE"),
+				new DistributionPool(1.0f, "ALL_MODULES"),
 			},
 			MinModules = 2
 		}},

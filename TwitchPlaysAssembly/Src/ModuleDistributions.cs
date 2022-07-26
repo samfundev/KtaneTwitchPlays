@@ -18,6 +18,7 @@ public sealed class DistributionPool : ISerializable
 		Invalid,
 		AllSolvable,
 		AllNeedy,
+		AllModules,
 		Score,
 		Fixed,
 	}
@@ -73,6 +74,15 @@ public sealed class DistributionPool : ISerializable
 				case "ALL_NEEDY":
 					IsNeedy = true;
 					goto case "ALL_SOLVABLE";
+
+				// Examples:
+				//     ALL_MODULES (fair mix including needies)
+				case "ALL_MODULES":
+				case "ALLMODULES":
+					ComponentSource = (int) KMComponentPool.ComponentSource.Mods | (int) KMComponentPool.ComponentSource.Base;
+					Type = PoolType.AllModules;
+					ExtraData.Add(ComponentSource);
+					break;
 
 				// Examples:
 				//     SCORE, =10
@@ -231,6 +241,14 @@ public sealed class DistributionPool : ISerializable
 						? KMComponentPool.SpecialComponentTypeEnum.ALL_SOLVABLE
 						: KMComponentPool.SpecialComponentTypeEnum.ALL_NEEDY),
 					AllowedSources = (KMComponentPool.ComponentSource) ExtraData[0],
+					Count = count
+				};
+			case PoolType.AllModules:
+				List<KMGameInfo.KMModuleInfo> allModules = gi.GetAvailableModuleInfo().ToList();
+				return new KMComponentPool()
+				{
+					ComponentTypes = allModules.Where(x => !x.IsMod).Select(x => x.ModuleType).ToList(),
+					ModTypes = allModules.Where(x => x.IsMod).Select(x => x.ModuleId).ToList(),
 					Count = count
 				};
 			case PoolType.Score:
