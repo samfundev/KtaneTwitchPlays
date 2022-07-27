@@ -59,66 +59,111 @@ static class ProfileHelper
 		return true;
 	}
 
-	public static IEnumerator LoadNeedyProfiles()
+	public static IEnumerator LoadAutoProfiles()
 	{
 		yield return LoadData();
-		var needyModules = Modules.Where(x => x.Type == "Needy" && x.TwitchPlays != null);
-		var parsedModuleInfo = new List<Tuple<string, string[]>>();
-		foreach (var needyModule in needyModules)
+		
+		var modules = Modules.Where(x => (x.Type == "Needy" || x.Type == "Regular") && x.TwitchPlays != null).ToList();
+		var parsedNeedyModules = new List<Tuple<string, string[]>>();
+		foreach (var needyModule in modules.Where(x => x.Type == "Needy"))
 		{
 			var info = ComponentSolverFactory.GetDefaultInformation(needyModule.ModuleID, false);
 			if (info == null)
 				continue;
-			parsedModuleInfo.Add(new Tuple<string, string[]>(info.moduleID, Regex.Replace(info.scoreString, @"(UN|(?<=\d)T)", "").SplitFull(" ")));
+			parsedNeedyModules.Add(new Tuple<string, string[]>(info.moduleID, Regex.Replace(info.scoreString, @"(UN|(?<=\d)T)", "").SplitFull(" ")));
 		}
 
-		var zeroScoreMods = new List<string>();
-		var staticScoreMods = new List<string>();
 		var activationBasedMods = new List<Tuple<string, double>>();
-		var timeBasedMods = new List<string>();
-		var otherMods = new List<string>();
+		var needyProfiles = new Dictionary<string, HashSet<string>>();
 
-		foreach (var module in parsedModuleInfo)
+		foreach (var module in parsedNeedyModules)
 		{
+			string s;
 			switch (module.Second.Length)
 			{
 				case 1 when module.Second[0] == "0":
-					zeroScoreMods.Add(module.First);
-					continue;
+					s = "No0";
+					break;
 				case 1:
-					staticScoreMods.Add(module.First);
-					continue;
+					s = "NoStaticNeedies";
+					break;
 				case 2 when module.Second[0] == "D":
 					activationBasedMods.Add(new Tuple<string, double>(module.First, double.Parse(module.Second[1])));
 					continue;
 				case 2 when module.Second[0] == "T":
-					timeBasedMods.Add(module.First);
-					continue;
+					s = "NoTimeNeedies";
+					break;
 				default:
-					otherMods.Add(module.First);
-					continue;
+					s = "NoOtherNeedies";
+					break;
 			}
+
+			if (!needyProfiles.ContainsKey(s))
+			{
+				needyProfiles.Add(s, new HashSet<string>{module.First});
+				continue;
+			}
+			needyProfiles[s].Add(module.First);
 		}
-		
-		var groupedMods = new Dictionary<string, List<string>>();
 
 		foreach (var mod in activationBasedMods)
 		{
+			if (mod.Second == 0)
+			{
+				if (!needyProfiles.ContainsKey("No0"))
+					needyProfiles.Add("No0", new HashSet<string>{mod.First});
+				else
+					needyProfiles["No0"].Add(mod.First);
+				continue;
+			}
 			var score = Math.Floor(mod.Second);
-			if (groupedMods.ContainsKey($"No{score}"))
-				groupedMods[$"No{score}"].Add(mod.First);
+			var scoreString = $"No{score}";
+			if (score == 0)
+				scoreString = scoreString + "+";
+
+			if (!needyProfiles.ContainsKey(scoreString))
+				needyProfiles.Add(scoreString, new HashSet<string>{mod.First});
 			else
-				groupedMods.Add($"No{score}", new List<string>{mod.First});
+				needyProfiles[scoreString].Add(mod.First);
 		}
 
-		foreach (var mod in groupedMods)
+		var bossModules = new HashSet<string>();
+		foreach (var module in modules.Where(x => x.Type == "Regular" && x.ModuleID.IsBossMod()))
 		{
-			Debug.LogFormat(mod.Key);
-			Debug.LogFormat(mod.Value.Join("|"));
-			Debug.LogFormat("-------------------------------------------------");
+			var info = ComponentSolverFactory.GetDefaultInformation(module.ModuleID, false);
+			if (info == null)
+				continue;
+			bossModules.Add(info.moduleID);
 		}
-		
-		yield return null;
+
+		var profilesPath = Path.Combine(Application.persistentDataPath, "ModProfiles");
+		if (Directory.Exists(profilesPath))
+		{
+			foreach (var profile in needyProfiles)
+			{
+				var foo = new Dictionary<string, object>
+				{
+					{ "DisabledList", profile.Value }, { "Operation", 1 }
+				};
+
+				File.WriteAllText(Path.Combine(profilesPath, $"{profile.Key}.json"), SettingsConverter.Serialize(foo));
+			}
+			var bossProfile = new Dictionary<string, object>
+			{
+				{ "DisabledList", bossModules }, { "Operation", 1 }
+			};
+			File.WriteAllText(Path.Combine(profilesPath, "NoBossModules.json"), SettingsConverter.Serialize(bossProfile));
+
+			foreach (var profile in needyProfiles.Where(x => !TwitchPlaySettings.data.ProfileWhitelist.Contains(x.Key)))
+				TwitchPlaySettings.data.ProfileWhitelist.Add(profile.Key);
+			if (!TwitchPlaySettings.data.ProfileWhitelist.Contains("NoBossModules"))
+				TwitchPlaySettings.data.ProfileWhitelist.Add("NoBossModules");
+			TwitchPlaySettings.WriteDataToFile();
+		}
+		else
+		{
+			DebugHelper.LogError("Could not find ProfilesPath");
+		}
 	}
 
 	public static bool SetState(string profilePath, string module, bool state)
@@ -145,7 +190,7 @@ static class ProfileHelper
 
 		return success;
 	}
-
+	
 	public static Profile GetProfile(string profilePath) => JsonConvert.DeserializeObject<Profile>(File.ReadAllText(profilePath));
 
 	public class Profile
