@@ -1,9 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
+
+using static Repository;
 
 static class ProfileHelper
 {
@@ -52,6 +57,68 @@ static class ProfileHelper
 
 		TwitchGame.RetryAllowed = false;
 		return true;
+	}
+
+	public static IEnumerator LoadNeedyProfiles()
+	{
+		yield return LoadData();
+		var needyModules = Modules.Where(x => x.Type == "Needy" && x.TwitchPlays != null);
+		var parsedModuleInfo = new List<Tuple<string, string[]>>();
+		foreach (var needyModule in needyModules)
+		{
+			var info = ComponentSolverFactory.GetDefaultInformation(needyModule.ModuleID, false);
+			if (info == null)
+				continue;
+			parsedModuleInfo.Add(new Tuple<string, string[]>(info.moduleID, Regex.Replace(info.scoreString, @"(UN|(?<=\d)T)", "").SplitFull(" ")));
+		}
+
+		var zeroScoreMods = new List<string>();
+		var staticScoreMods = new List<string>();
+		var activationBasedMods = new List<Tuple<string, double>>();
+		var timeBasedMods = new List<string>();
+		var otherMods = new List<string>();
+
+		foreach (var module in parsedModuleInfo)
+		{
+			switch (module.Second.Length)
+			{
+				case 1 when module.Second[0] == "0":
+					zeroScoreMods.Add(module.First);
+					continue;
+				case 1:
+					staticScoreMods.Add(module.First);
+					continue;
+				case 2 when module.Second[0] == "D":
+					activationBasedMods.Add(new Tuple<string, double>(module.First, double.Parse(module.Second[1])));
+					continue;
+				case 2 when module.Second[0] == "T":
+					timeBasedMods.Add(module.First);
+					continue;
+				default:
+					otherMods.Add(module.First);
+					continue;
+			}
+		}
+		
+		var groupedMods = new Dictionary<string, List<string>>();
+
+		foreach (var mod in activationBasedMods)
+		{
+			var score = Math.Floor(mod.Second);
+			if (groupedMods.ContainsKey($"No{score}"))
+				groupedMods[$"No{score}"].Add(mod.First);
+			else
+				groupedMods.Add($"No{score}", new List<string>{mod.First});
+		}
+
+		foreach (var mod in groupedMods)
+		{
+			Debug.LogFormat(mod.Key);
+			Debug.LogFormat(mod.Value.Join("|"));
+			Debug.LogFormat("-------------------------------------------------");
+		}
+		
+		yield return null;
 	}
 
 	public static bool SetState(string profilePath, string module, bool state)

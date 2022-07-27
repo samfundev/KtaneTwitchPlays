@@ -784,10 +784,12 @@ public static class ComponentSolverFactory
 		info.validCommands = regexList;
 	}
 
-	public static ModuleInformation GetDefaultInformation(string moduleType)
+	public static ModuleInformation GetDefaultInformation(string moduleType, bool addIfNotExist = true)
 	{
-		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType))
+		if (!DefaultModComponentSolverInformation.ContainsKey(moduleType) && addIfNotExist)
 			AddDefaultModuleInformation(new ModuleInformation { moduleID = moduleType });
+		else if (!DefaultModComponentSolverInformation.ContainsKey(moduleType))
+			return null;
 		return DefaultModComponentSolverInformation[moduleType];
 	}
 
