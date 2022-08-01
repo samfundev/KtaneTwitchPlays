@@ -46,19 +46,14 @@ public class CommandParser
 
 	public CommandParser OptionalString(out string value)
 	{
-		try
-		{
-			String(out string value2);
-			value = value2;
-		}
-		catch (ParsingFailedException)
+		if (parts.Count == 0)
 		{
 			value = null;
+			return this;
 		}
-		catch (Exception)
-		{
-			throw;
-		}
+
+		String(out string value2);
+		value = value2;
 
 		return this;
 	}
@@ -78,19 +73,14 @@ public class CommandParser
 
 	public CommandParser OptionalInteger(out int? integer, int? min = null, int? max = null)
 	{
-		try
-		{
-			Integer(out int integer2, min, max);
-			integer = integer2;
-		}
-		catch (ParsingFailedException)
+		if (parts.Count == 0)
 		{
 			integer = null;
+			return this;
 		}
-		catch (Exception)
-		{
-			throw;
-		}
+
+		Integer(out int integer2, min, max);
+		integer = integer2;
 
 		return this;
 	}
@@ -109,19 +99,14 @@ public class CommandParser
 
 	public CommandParser OptionalFloat(out float? number, float? min = null, float? max = null)
 	{
-		try
-		{
-			Float(out float number2, min, max);
-			number = number2;
-		}
-		catch (ParsingFailedException)
+		if (parts.Count == 0)
 		{
 			number = null;
+			return this;
 		}
-		catch (Exception)
-		{
-			throw;
-		}
+
+		Float(out float number2, min, max);
+		number = number2;
 
 		return this;
 	}
@@ -144,19 +129,14 @@ public class CommandParser
 
 	public CommandParser OptionalOptions(out string option, params string[] options)
 	{
-		try
-		{
-			Options(out string option2, options);
-			option = option2;
-		}
-		catch (ParsingFailedException)
+		if (parts.Count == 0)
 		{
 			option = null;
+			return this;
 		}
-		catch (Exception)
-		{
-			throw;
-		}
+
+		Options(out string option2, options);
+		option = option2;
 
 		return this;
 	}
@@ -173,19 +153,14 @@ public class CommandParser
 
 	public CommandParser OptionalRegex(string pattern, out Match match)
 	{
-		try
-		{
-			Regex(pattern, out Match match2);
-			match = match2;
-		}
-		catch (ParsingFailedException)
+		if (parts.Count == 0)
 		{
 			match = null;
+			return this;
 		}
-		catch (Exception)
-		{
-			throw;
-		}
+
+		Regex(pattern, out Match match2);
+		match = match2;
 
 		return this;
 	}
