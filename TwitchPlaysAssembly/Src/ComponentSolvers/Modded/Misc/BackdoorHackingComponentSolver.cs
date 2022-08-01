@@ -8,7 +8,8 @@ public class BackdoorHackingComponentSolver : CommandComponentSolver
 		base(module, "BackdoorHacking", "!{0} reconnect [Presses the reconnect button] | !{0} buy <1-3> [Presses the specified buy button from top to bottom] | !{0} _ [Presses the spacebar] | !{0} qwerty [Presses keys on the keyboard]")
 	{
 		UsableKeysValue = _component.GetValue<string>("TheLetters");
-		module.Bomb.BackdoorComponent = _component;
+		if (module.Bomb != null)
+			module.Bomb.BackdoorComponent = _component;
 	}
 
 	private IEnumerator Reconnect(CommandParser _)

@@ -110,10 +110,10 @@ public static class CheckSupport
 			}
 		}
 
-		// Always disable modules that are marked as "Incompatible"
+		// Always disable modules that are marked as "Unplayable"
 		foreach (var moduleInfo in modules)
 		{
-			if (moduleInfo.Compatibility != "Incompatible")
+			if (moduleInfo.Compatibility != "Unplayable")
 				continue;
 
 			unsupportedModules.Add(moduleInfo.ModuleID);
