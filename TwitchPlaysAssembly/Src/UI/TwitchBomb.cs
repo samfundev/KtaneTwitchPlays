@@ -89,6 +89,10 @@ public class TwitchBomb : MonoBehaviour
 		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
 		CanvasGroup.alpha = BombID == 0 ? 1 : 0;
+
+		var floatingHoldable = Bomb.GetComponent<FloatingHoldable>();
+		floatingHoldable.OnHold += () => TwitchGame.ModuleCameras?.ChangeBomb(this);
+		floatingHoldable.OnLetGo += () => TwitchGame.ModuleCameras?.ChangeBomb(null);
 	}
 
 	private void Update()
@@ -190,7 +194,6 @@ public class TwitchBomb : MonoBehaviour
 		{
 			Bomb.GetComponent<Selectable>().Trigger();
 			doForceRotate = true;
-			TwitchGame.ModuleCameras?.ChangeBomb(this);
 		}
 		else if (frontFace != HeldFrontFace)
 		{

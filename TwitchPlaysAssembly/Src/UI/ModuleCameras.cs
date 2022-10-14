@@ -640,13 +640,24 @@ public class ModuleCameras : MonoBehaviour
 		if (_currentBomb != null) _currentBomb.CanvasGroup.alpha = 0;
 		if (bomb != null) bomb.CanvasGroup.alpha = 1;
 
+		bool wasHidden = _currentBomb == null;
+
 		_currentBomb = bomb;
+
+		bool visible = _currentBomb != null;
+		SetCameraVisibility(visible);
+		SetEdgeworkCameraVisibility(visible);
+		gameObject.SetActive(visible);
+
+		if (_currentBomb == null)
+			return;
+
 		UpdateHeader();
 		UpdateStrikes();
 		UpdateSolves();
 		UpdateConfidence();
 
-		if (lastModule)
+		if (lastModule && !wasHidden)
 		{
 			lastModule = false;
 			var zoomCamera = _moduleCameras.Find(camera => camera.ZoomActive);
