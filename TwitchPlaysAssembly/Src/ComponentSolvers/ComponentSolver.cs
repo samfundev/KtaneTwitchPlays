@@ -857,7 +857,7 @@ public abstract class ComponentSolver
 		return false;
 	}
 
-	protected void ForceAwardSolveToNickName(string nickname) => _delegatedSolveUserNickName = nickname;
+	public void ForceAwardSolveToNickName(string nickname) => _delegatedSolveUserNickName = nickname;
 
 	protected void PrepareSilentSolve()
 	{

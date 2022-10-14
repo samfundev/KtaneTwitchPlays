@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>Commands that can be used in the dossier menu.</summary>
@@ -10,13 +11,13 @@ public static class DossierCommands
 	/// <syntax>select</syntax>
 	/// <summary>Selects the currently highlighted item.</summary>
 	[Command(@"select")]
-	public static IEnumerator Select(FloatingHoldable holdable) => SelectOnPage(holdable);
+	public static IEnumerator Select(FloatingHoldable holdable, string user) => SelectOnPage(holdable, user);
 
 	/// <name>Select Index</name>
 	/// <syntax>select [index]</syntax>
 	/// <summary>Selects an item based on it's index on the menu.</summary>
 	[Command(@"select +(\d+)")]
-	public static IEnumerator SelectIndex(FloatingHoldable holdable, [Group(1)] int index) => SelectOnPage(holdable, index: index);
+	public static IEnumerator SelectIndex(FloatingHoldable holdable, string user, [Group(1)] int index) => SelectOnPage(holdable, user, index: index);
 
 	/// <name>Up / Down</name>
 	/// <syntax>up (amount)\ndown (amount)</syntax>
@@ -64,10 +65,14 @@ public static class DossierCommands
 		_currentSelectableIndex = oldSelectableIndex;
 	}
 
-	private static IEnumerator SelectOnPage(FloatingHoldable holdable, int index = 0)
+	private static IEnumerator SelectOnPage(FloatingHoldable holdable, string user, int index = 0)
 	{
 		if (TwitchPlaysService.Instance.CurrentState != KMGameInfo.State.Gameplay)
 			yield break;
+
+		// If the dossier page changes while we're holding the menu, we need to reinitialize the menu.
+		// Dossier Modifier can do this.
+		InitializePage(holdable);
 
 		if (index > 0)
 		{
@@ -113,6 +118,13 @@ public static class DossierCommands
 			Audio.PlaySound(KMSoundOverride.SoundEffect.Strike, _currentSelectable.transform);
 			IRCConnection.SendMessage("This option is not accessable to Twitch Plays users.");
 			yield break;
+		}
+
+		// Award any Dossier Modifier solves to the user who ran the command
+		var dossierModifiers = TwitchGame.Instance.Modules.Select(module => module.Solver).Where(solver => solver.ModInfo.moduleID == "TDSDossierModifier");
+		foreach (ComponentSolver solver in dossierModifiers)
+		{
+			solver.ForceAwardSolveToNickName(user);
 		}
 
 		KTInputManager.Instance.SelectableManager.HandleInteract();
