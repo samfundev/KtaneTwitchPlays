@@ -62,15 +62,21 @@ static class ProfileHelper
 	public static IEnumerator LoadAutoProfiles()
 	{
 		yield return LoadData();
-		
+
 		var modules = Modules.Where(x => (x.Type == "Needy" || x.Type == "Regular") && x.TwitchPlays != null).ToList();
-		var parsedNeedyModules = new List<Tuple<string, string[]>>();
+		var parsedNeedyModules = new List<Tuple<string, List<string>>>();
 		foreach (var needyModule in modules.Where(x => x.Type == "Needy"))
 		{
-			var info = ComponentSolverFactory.GetDefaultInformation(needyModule.ModuleID, false);
+			var info = ComponentSolverFactory.GetDefaultInformation(needyModule.ModuleID.ConvertNeedyString(), false);
 			if (info == null)
 				continue;
-			parsedNeedyModules.Add(new Tuple<string, string[]>(info.moduleID, Regex.Replace(info.scoreString, @"(UN|(?<=\d)T)", "").SplitFull(" ")));
+			var scoreParts = info.scoreString.Trim().Split(' ').ToList();
+			if (scoreParts.First() == "UN")
+			{
+				scoreParts.RemoveAt(0);
+			}
+			
+			parsedNeedyModules.Add(new Tuple<string, List<string>>(info.moduleID, scoreParts));
 		}
 
 		var activationBasedMods = new List<Tuple<string, double>>();
@@ -79,7 +85,7 @@ static class ProfileHelper
 		foreach (var module in parsedNeedyModules)
 		{
 			string s;
-			switch (module.Second.Length)
+			switch (module.Second.Count)
 			{
 				case 1 when module.Second[0] == "0":
 					s = "No0";
@@ -141,12 +147,12 @@ static class ProfileHelper
 		{
 			foreach (var profile in needyProfiles)
 			{
-				var foo = new Dictionary<string, object>
+				var data = new Dictionary<string, object>
 				{
 					{ "DisabledList", profile.Value }, { "Operation", 1 }
 				};
 
-				File.WriteAllText(Path.Combine(profilesPath, $"{profile.Key}.json"), SettingsConverter.Serialize(foo));
+				File.WriteAllText(Path.Combine(profilesPath, $"{profile.Key}.json"), SettingsConverter.Serialize(data));
 			}
 			var bossProfile = new Dictionary<string, object>
 			{
@@ -159,10 +165,39 @@ static class ProfileHelper
 			if (!TwitchPlaySettings.data.ProfileWhitelist.Contains("NoBossModules"))
 				TwitchPlaySettings.data.ProfileWhitelist.Add("NoBossModules");
 			TwitchPlaySettings.WriteDataToFile();
+
+			var profileWhitelist = TwitchPlaySettings.data.ProfileWhitelist.Where(x =>
+					new Regex(@"^No(?:(?:\d+\+?)|(?:StaticNeedies)|(?:TimeNeedies)|(?:OtherNeedies))$").Match(x)
+						.Success)
+				.ToList();
+			foreach (var profile in profileWhitelist)
+			{
+				if (!needyProfiles.ContainsKey(profile))
+				{
+					var path = Path.Combine(profilesPath, $"{profile}.json");
+					File.Delete(path);
+					TwitchPlaySettings.data.ProfileWhitelist.Remove(profile);
+				}
+			}
+			TwitchPlaySettings.WriteDataToFile();
 		}
 		else
 		{
 			DebugHelper.LogError("Could not find ProfilesPath");
+		}
+	}
+
+	private static string ConvertNeedyString(this string s)
+	{
+		switch (s)
+		{
+			case "NeedyCapacitor":
+				return "NeedyDischargeComponentSolver";
+			case "NeedyKnob":
+				return "NeedyKnobComponentSolver";
+			case "NeedyVentGas":
+				return "NeedyVentComponentSolver";
+			default: return s;
 		}
 	}
 

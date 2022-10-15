@@ -53,6 +53,7 @@ public class TwitchPlaySettingsData
 	public int VoteCountdownTime = 60;
 	public bool EnableVoting = true;
 	public bool EnableVoteSolve = true;
+	public bool EnableAutoProfiles = true;
 	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.GetVoteDict();
 	public float DynamicScoreMultiplier = 1;
 	public bool EnableTwitchPlayShims = true;
