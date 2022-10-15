@@ -1222,6 +1222,10 @@ static class GlobalCommands
 		TwitchPlaySettings.LoadDataFromFile();
 		UserAccess.LoadAccessList();
 		yield return ComponentSolverFactory.LoadDefaultInformation(true);
+		if (TwitchPlaySettings.data.EnableAutoProfiles)
+		{
+			yield return ProfileHelper.LoadAutoProfiles();	
+		}
 
 		if (streamer)
 			UserAccess.AddUser(user, AccessLevel.Streamer);
@@ -1240,7 +1244,10 @@ static class GlobalCommands
 	public static IEnumerator ReloadScoreInfo(string user, bool isWhisper)
 	{
 		yield return ComponentSolverFactory.LoadDefaultInformation(true);
-
+		if (TwitchPlaySettings.data.EnableAutoProfiles)
+		{
+			yield return ProfileHelper.LoadAutoProfiles();	
+		}
 		IRCConnection.SendMessage("Score info reloaded", user, !isWhisper);
 	}
 
