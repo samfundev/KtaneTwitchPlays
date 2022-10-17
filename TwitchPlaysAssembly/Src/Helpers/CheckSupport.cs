@@ -134,7 +134,7 @@ public static class CheckSupport
 		}
 		else
 		{
-			alertText.text = "Support checks passed succesfully!";
+			alertText.text = "Support checks passed successfully!";
 			yield return new WaitForSeconds(2);
 		}
 
