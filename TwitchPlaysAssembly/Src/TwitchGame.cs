@@ -135,6 +135,7 @@ public class TwitchGame : MonoBehaviour
 		callsNeeded = 1;
 		CallingPlayers.Clear();
 		callWaiting = false;
+		GameCommands.calledCommands.Clear();
 		VoteDetonateAttempted = false;
 		ProcessingClaimQueue = false;
 		VoteSolveCount = 0;

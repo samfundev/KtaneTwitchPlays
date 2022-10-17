@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Props;
+using UnityEngine;
 
 /// <summary>Commands that can be run during a game.</summary>
 static class GameCommands
 {
+	public static List<IRCMessage> calledCommands = new List<IRCMessage>();
+
 	#region Commands during the game
 	/// <name>Cancel</name>
 	/// <syntax>cancel</syntax>
@@ -611,7 +614,15 @@ static class GameCommands
 					? "Required calls reached, calling"
 					: "Calling", TwitchGame.Instance.callSend.Message.UserNickName, TwitchGame.Instance.callSend.Message.Text);
 		DeleteCallInformation(true);
-		IRCConnection.ReceiveMessage(TwitchGame.Instance.callSend.Message);
+		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
+			IRCConnection.SendMessage("Hack detected, waiting until the hack is over to execute this command.");
+		if (calledCommands.Count == 0)
+		{
+			calledCommands.Add(TwitchGame.Instance.callSend.Message);
+			TwitchGame.Instance.StartCoroutine(WaitForCall());
+		}
+		else
+			calledCommands.Add(TwitchGame.Instance.callSend.Message);
 	}
 
 	/// <name>Call All</name>
@@ -630,12 +641,22 @@ static class GameCommands
 		var allCommands = TwitchGame.Instance.CommandQueue.ToList();
 		TwitchGame.Instance.CommandQueue.Clear();
 		TwitchGame.ModuleCameras?.SetNotes();
+		List<IRCMessage> cmdsToExecute = new List<IRCMessage>();
 		foreach (var call in allCommands)
 		{
 			IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
-			IRCConnection.ReceiveMessage(call.Message);
+			if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
+				IRCConnection.SendMessage("Hack detected, waiting until the hack is over to execute this command.");
+			cmdsToExecute.Add(call.Message);
 		}
 		DeleteCallInformation(true);
+		if (calledCommands.Count == 0)
+		{
+			calledCommands.AddRange(cmdsToExecute);
+			TwitchGame.Instance.StartCoroutine(WaitForCall());
+		}
+		else
+			calledCommands.AddRange(cmdsToExecute);
 	}
 
 	/// <name>Call Set</name>
@@ -935,6 +956,20 @@ static class GameCommands
 		}
 		else
 			IRCConnection.SendMessage(string.Format(noOwnedMsg, targetUser), targetUser, !isWhisper);
+	}
+
+	// Makes sure that all called commands are not executed until you are done being hacked by Backdoor Hacking
+	private static IEnumerator WaitForCall()
+	{
+		bool wasHacked = false;
+		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
+			wasHacked = true;
+		yield return new WaitUntil(() => TwitchGame.Instance.Bombs.All(x => !x.BackdoorHandleHack));
+		if (wasHacked)
+			IRCConnection.SendMessage("The hack is over, executing all commands held up due to a hack.");
+		foreach (IRCMessage m in calledCommands)
+			IRCConnection.ReceiveMessage(m);
+		calledCommands.Clear();
 	}
 	#endregion
 }
