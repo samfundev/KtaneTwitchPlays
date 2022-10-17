@@ -61,8 +61,7 @@ static class ProfileHelper
 
 	public static IEnumerator LoadAutoProfiles()
 	{
-		yield return LoadData();
-
+		yield return null;
 		var modules = Modules.Where(x => (x.Type == "Needy" || x.Type == "Regular") && x.TwitchPlays != null).ToList();
 		var parsedNeedyModules = new List<Tuple<string, List<string>>>();
 		foreach (var needyModule in modules.Where(x => x.Type == "Needy"))
@@ -154,17 +153,18 @@ static class ProfileHelper
 
 				File.WriteAllText(Path.Combine(profilesPath, $"{profile.Key}.json"), SettingsConverter.Serialize(data));
 			}
+			
 			var bossProfile = new Dictionary<string, object>
 			{
 				{ "DisabledList", bossModules }, { "Operation", 1 }
 			};
+			
 			File.WriteAllText(Path.Combine(profilesPath, "NoBossModules.json"), SettingsConverter.Serialize(bossProfile));
-
 			foreach (var profile in needyProfiles.Where(x => !TwitchPlaySettings.data.ProfileWhitelist.Contains(x.Key)))
 				TwitchPlaySettings.data.ProfileWhitelist.Add(profile.Key);
+			
 			if (!TwitchPlaySettings.data.ProfileWhitelist.Contains("NoBossModules"))
 				TwitchPlaySettings.data.ProfileWhitelist.Add("NoBossModules");
-			TwitchPlaySettings.WriteDataToFile();
 
 			var profileWhitelist = TwitchPlaySettings.data.ProfileWhitelist.Where(x =>
 					new Regex(@"^No(?:(?:\d+\+?)|(?:StaticNeedies)|(?:TimeNeedies)|(?:OtherNeedies))$").Match(x)
@@ -179,11 +179,13 @@ static class ProfileHelper
 					TwitchPlaySettings.data.ProfileWhitelist.Remove(profile);
 				}
 			}
+			
 			TwitchPlaySettings.WriteDataToFile();
+			DebugHelper.Log("Auto Profiles loaded successfully!");
 		}
 		else
 		{
-			DebugHelper.LogError("Could not find ProfilesPath");
+			DebugHelper.LogError("Could not find ProfilesPath!");
 		}
 	}
 
@@ -225,7 +227,7 @@ static class ProfileHelper
 
 		return success;
 	}
-	
+
 	public static Profile GetProfile(string profilePath) => JsonConvert.DeserializeObject<Profile>(File.ReadAllText(profilePath));
 
 	public class Profile
