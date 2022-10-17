@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using UnityEngine;
-
 using static Repository;
 
 static class ProfileHelper
@@ -59,6 +58,19 @@ static class ProfileHelper
 		return true;
 	}
 
+	public static void Write(string profile, object modules)
+	{
+		if (!Directory.Exists(ProfileFolder)) return;
+
+		File.WriteAllText(Path.Combine(ProfileFolder, $"{profile}.json"), SettingsConverter.Serialize(
+			new Dictionary<string, object>()
+			{
+				{ "DisabledList", modules },
+				{ "Operation", 1 }
+			}
+		));
+	}
+
 	public static IEnumerator LoadAutoProfiles()
 	{
 		yield return null;
@@ -66,15 +78,15 @@ static class ProfileHelper
 		var parsedNeedyModules = new List<Tuple<string, List<string>>>();
 		foreach (var needyModule in modules.Where(x => x.Type == "Needy"))
 		{
-			var info = ComponentSolverFactory.GetDefaultInformation(needyModule.ModuleID.ConvertNeedyString(), false);
+			var info = ComponentSolverFactory.GetDefaultInformation(needyModule.ModuleID, false);
 			if (info == null)
 				continue;
 			var scoreParts = info.scoreString.Trim().Split(' ').ToList();
-			if (scoreParts.First() == "UN")
+			if (scoreParts[0] == "UN")
 			{
 				scoreParts.RemoveAt(0);
 			}
-			
+
 			parsedNeedyModules.Add(new Tuple<string, List<string>>(info.moduleID, scoreParts));
 		}
 
@@ -105,7 +117,7 @@ static class ProfileHelper
 
 			if (!needyProfiles.ContainsKey(s))
 			{
-				needyProfiles.Add(s, new HashSet<string>{module.First});
+				needyProfiles.Add(s, new HashSet<string> { module.First });
 				continue;
 			}
 			needyProfiles[s].Add(module.First);
@@ -116,7 +128,7 @@ static class ProfileHelper
 			if (mod.Second == 0)
 			{
 				if (!needyProfiles.ContainsKey("No0"))
-					needyProfiles.Add("No0", new HashSet<string>{mod.First});
+					needyProfiles.Add("No0", new HashSet<string> { mod.First });
 				else
 					needyProfiles["No0"].Add(mod.First);
 				continue;
@@ -124,10 +136,10 @@ static class ProfileHelper
 			var score = Math.Floor(mod.Second);
 			var scoreString = $"No{score}";
 			if (score == 0)
-				scoreString = scoreString + "+";
+				scoreString += "+";
 
 			if (!needyProfiles.ContainsKey(scoreString))
-				needyProfiles.Add(scoreString, new HashSet<string>{mod.First});
+				needyProfiles.Add(scoreString, new HashSet<string> { mod.First });
 			else
 				needyProfiles[scoreString].Add(mod.First);
 		}
@@ -145,24 +157,12 @@ static class ProfileHelper
 		if (Directory.Exists(profilesPath))
 		{
 			foreach (var profile in needyProfiles)
-			{
-				var data = new Dictionary<string, object>
-				{
-					{ "DisabledList", profile.Value }, { "Operation", 1 }
-				};
+				Write(profile.Key, profile.Value);
 
-				File.WriteAllText(Path.Combine(profilesPath, $"{profile.Key}.json"), SettingsConverter.Serialize(data));
-			}
-			
-			var bossProfile = new Dictionary<string, object>
-			{
-				{ "DisabledList", bossModules }, { "Operation", 1 }
-			};
-			
-			File.WriteAllText(Path.Combine(profilesPath, "NoBossModules.json"), SettingsConverter.Serialize(bossProfile));
+			Write("NoBossModules", bossModules);
 			foreach (var profile in needyProfiles.Where(x => !TwitchPlaySettings.data.ProfileWhitelist.Contains(x.Key)))
 				TwitchPlaySettings.data.ProfileWhitelist.Add(profile.Key);
-			
+
 			if (!TwitchPlaySettings.data.ProfileWhitelist.Contains("NoBossModules"))
 				TwitchPlaySettings.data.ProfileWhitelist.Add("NoBossModules");
 
@@ -179,27 +179,13 @@ static class ProfileHelper
 					TwitchPlaySettings.data.ProfileWhitelist.Remove(profile);
 				}
 			}
-			
+
 			TwitchPlaySettings.WriteDataToFile();
 			DebugHelper.Log("Auto Profiles loaded successfully!");
 		}
 		else
 		{
 			DebugHelper.LogError("Could not find ProfilesPath!");
-		}
-	}
-
-	private static string ConvertNeedyString(this string s)
-	{
-		switch (s)
-		{
-			case "NeedyCapacitor":
-				return "NeedyDischargeComponentSolver";
-			case "NeedyKnob":
-				return "NeedyKnobComponentSolver";
-			case "NeedyVentGas":
-				return "NeedyVentComponentSolver";
-			default: return s;
 		}
 	}
 

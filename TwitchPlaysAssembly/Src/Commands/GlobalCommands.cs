@@ -1224,7 +1224,7 @@ static class GlobalCommands
 		yield return ComponentSolverFactory.LoadDefaultInformation(true);
 		if (TwitchPlaySettings.data.EnableAutoProfiles)
 		{
-			yield return ProfileHelper.LoadAutoProfiles();	
+			yield return ProfileHelper.LoadAutoProfiles();
 		}
 
 		if (streamer)
@@ -1246,7 +1246,7 @@ static class GlobalCommands
 		yield return ComponentSolverFactory.LoadDefaultInformation(true);
 		if (TwitchPlaySettings.data.EnableAutoProfiles)
 		{
-			yield return ProfileHelper.LoadAutoProfiles();	
+			yield return ProfileHelper.LoadAutoProfiles();
 		}
 		IRCConnection.SendMessage("Score info reloaded", user, !isWhisper);
 	}
