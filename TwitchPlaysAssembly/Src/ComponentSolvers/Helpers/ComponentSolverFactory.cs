@@ -442,21 +442,21 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["BinaryButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Binary Buttons" };
 
 		//Steel Crate Games (Need these in place even for the Vanilla modules)
-		ModComponentSolverInformation["WireSetComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires" };
-		ModComponentSolverInformation["ButtonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button" };
-		ModComponentSolverInformation["ButtonComponentModifiedSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button" };
-		ModComponentSolverInformation["WireSequenceComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wire Sequence" };
-		ModComponentSolverInformation["WhosOnFirstComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First" };
-		ModComponentSolverInformation["VennWireComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires" };
-		ModComponentSolverInformation["SimonComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Says" };
-		ModComponentSolverInformation["PasswordComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password" };
-		ModComponentSolverInformation["NeedyVentComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas" };
-		ModComponentSolverInformation["NeedyKnobComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Knob" };
-		ModComponentSolverInformation["NeedyDischargeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Capacitor" };
-		ModComponentSolverInformation["MorseCodeComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code" };
-		ModComponentSolverInformation["MemoryComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Memory" };
-		ModComponentSolverInformation["KeypadComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad" };
-		ModComponentSolverInformation["InvisibleWallsComponentSolver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Maze" };
+		ModComponentSolverInformation["Wires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wires" };
+		ModComponentSolverInformation["BigButton"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button" };
+		ModComponentSolverInformation["BigButtonModified"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Button" };
+		ModComponentSolverInformation["WireSequence"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Wire Sequence" };
+		ModComponentSolverInformation["WhosOnFirst"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Who's on First" };
+		ModComponentSolverInformation["Venn"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Complicated Wires" };
+		ModComponentSolverInformation["Simon"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Simon Says" };
+		ModComponentSolverInformation["Password"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Password" };
+		ModComponentSolverInformation["NeedyVentGas"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Vent Gas" };
+		ModComponentSolverInformation["NeedyKnob"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Knob" };
+		ModComponentSolverInformation["NeedyCapacitor"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Capacitor" };
+		ModComponentSolverInformation["Morse"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code" };
+		ModComponentSolverInformation["Memory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Memory" };
+		ModComponentSolverInformation["Keypad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Keypad" };
+		ModComponentSolverInformation["Maze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Maze" };
 
 		//Speakingevil
 		ModComponentSolverInformation["runeMatchI"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Rune Match I", additionalNeedyTime = 15 };

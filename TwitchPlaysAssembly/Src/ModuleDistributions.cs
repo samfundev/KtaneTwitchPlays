@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Collections.Generic;
-using UnityEngine;
+using System.Text.RegularExpressions;
 using TwitchPlays.ScoreMethods;
+using UnityEngine;
 
 [Serializable]
 public sealed class DistributionPool : ISerializable
@@ -187,41 +187,7 @@ public sealed class DistributionPool : ISerializable
 
 	private static string GetTwitchPlaysID(KMGameInfo.KMModuleInfo moduleInfo)
 	{
-		if (moduleInfo.IsMod)
-			return moduleInfo.ModuleId;
-		switch (moduleInfo.ModuleType)
-		{
-			case KMComponentPool.ComponentTypeEnum.Wires:
-				return "WireSetComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Keypad:
-				return "KeypadComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.BigButton:
-				return "ButtonComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Memory:
-				return "MemoryComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Simon:
-				return "SimonComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Venn:
-				return "VennWireComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Morse:
-				return "MorseCodeComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.WireSequence:
-				return "WireSequenceComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Password:
-				return "PasswordComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.Maze:
-				return "InvisibleWallsComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.WhosOnFirst:
-				return "WhosOnFirstComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.NeedyVentGas:
-				return "NeedyVentComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.NeedyCapacitor:
-				return "NeedyDischargeComponentSolver";
-			case KMComponentPool.ComponentTypeEnum.NeedyKnob:
-				return "NeedyKnobComponentSolver";
-			default:
-				return moduleInfo.ModuleId;
-		}
+		return moduleInfo.IsMod ? moduleInfo.ModuleId : moduleInfo.ModuleType.ToString();
 	}
 
 	public KMComponentPool ToComponentPool(int count)

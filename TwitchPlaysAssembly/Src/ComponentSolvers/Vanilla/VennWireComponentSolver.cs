@@ -10,7 +10,7 @@ public class VennWireComponentSolver : ComponentSolver
 		base(module)
 	{
 		_wires = ((VennWireComponent) module.BombComponent).ActiveWires;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("VennWireComponentSolver", "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("Venn", "!{0} cut 3 [cut wire 3] | !{0} cut 2 3 6 [cut multiple wires] | Wires are ordered from left to right | Empty spaces are not counted");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

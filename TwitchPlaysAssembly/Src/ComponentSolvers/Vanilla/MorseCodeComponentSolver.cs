@@ -11,7 +11,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 		_upButton = morseModule.UpButton;
 		_downButton = morseModule.DownButton;
 		_transmitButton = morseModule.TransmitButton;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("MorseCodeComponentSolver", "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
+		ModInfo = ComponentSolverFactory.GetModuleInfo("Morse", "!{0} transmit 3.573, !{0} trans 573, !{0} transmit 3.573 MHz, !{0} tx 573 [transmit frequency 3.573]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
