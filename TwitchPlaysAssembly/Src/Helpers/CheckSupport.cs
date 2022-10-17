@@ -120,17 +120,7 @@ public static class CheckSupport
 		}
 
 		// Using the list of unsupported module IDs stored in unsupportedModules, make a Mod Selector profile.
-		string profilesPath = Path.Combine(Application.persistentDataPath, "ModProfiles");
-		if (Directory.Exists(profilesPath))
-		{
-			Dictionary<string, object> profileData = new Dictionary<string, object>()
-			{
-				{ "DisabledList", unsupportedModules },
-				{ "Operation", 1 }
-			};
-
-			File.WriteAllText(Path.Combine(profilesPath, "TP_Supported.json"), SettingsConverter.Serialize(profileData));
-		}
+		ProfileHelper.Write("TP_Supported", unsupportedModules);
 
 		alertProgressBar.localScale = Vector3.one;
 
