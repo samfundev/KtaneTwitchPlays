@@ -966,7 +966,7 @@ static class GameCommands
 			wasHacked = true;
 		yield return new WaitUntil(() => TwitchGame.Instance.Bombs.All(x => !x.BackdoorHandleHack));
 		if (wasHacked)
-			IRCConnection.SendMessage("The hack is over, executing all commands held up due to a hack.");
+			IRCConnection.SendMessage("The hack is over, executing all commands held up due to the hack.");
 		foreach (IRCMessage m in calledCommands)
 			IRCConnection.ReceiveMessage(m);
 		calledCommands.Clear();
