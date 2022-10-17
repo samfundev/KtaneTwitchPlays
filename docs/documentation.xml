@@ -184,12 +184,12 @@
             <summary>Commands that can be used in the dossier menu.</summary>
             <prefix>dossier </prefix>
         </member>
-        <member name="M:DossierCommands.Select(FloatingHoldable)">
+        <member name="M:DossierCommands.Select(FloatingHoldable,System.String)">
             <name>Select</name>
             <syntax>select</syntax>
             <summary>Selects the currently highlighted item.</summary>
         </member>
-        <member name="M:DossierCommands.SelectIndex(FloatingHoldable,System.Int32)">
+        <member name="M:DossierCommands.SelectIndex(FloatingHoldable,System.String,System.Int32)">
             <name>Select Index</name>
             <syntax>select [index]</syntax>
             <summary>Selects an item based on it's index on the menu.</summary>

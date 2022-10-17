@@ -42,10 +42,10 @@ public class TechSupportComponentSolver : ReflectionComponentSolver
 			if (_component.GetValue<IList>("options").Count == 2)
 				yield return Click(0);
 			int curIndex = _component.GetValue<int>("selectedOption");
-			int answer = -1;
 			while (!_component.GetValue<bool>("moduleResolved"))
 			{
 				var temp = _component.GetValue<IList>("options")[0];
+				int answer;
 				if (temp.GetValue<string>("A") == "Version 1")
 					answer = _component.CallMethod<int>("CorrectVersion", _component.GetValue<object>("errorData"));
 				else if (temp.GetValue<string>("A") == "prle.cba")

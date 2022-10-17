@@ -43,7 +43,7 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 			{
 				for (int j = 0; j < vars.Length; j++)
 				{
-					if (split[i].EqualsAny("min("+vars[j]+")", "max(" + vars[j] + ")", "avg(" + vars[j] + ")", "sum(" + vars[j] + ")", "count(" + vars[j] + ")", vars[j]))
+					if (split[i].EqualsAny("min(" + vars[j] + ")", "max(" + vars[j] + ")", "avg(" + vars[j] + ")", "sum(" + vars[j] + ")", "count(" + vars[j] + ")", vars[j]))
 					{
 						passed[i - 1] = true;
 						break;
@@ -67,7 +67,7 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 				}
 				else
 				{
-					while (changers[i].GetComponentInChildren<TextMesh>().text.ToLower() != "none")
+					while (changers[i].GetComponentInChildren<TextMesh>().text.EqualsIgnoreCase("none"))
 						yield return DoInteractionClick(changers[i]);
 				}
 				while (changers2[i].GetComponentInChildren<TextMesh>().text.ToLower() != cur)

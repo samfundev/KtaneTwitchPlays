@@ -1418,4 +1418,3 @@ public abstract class ComponentSolver
 	public Component CommandComponent = null;
 	#endregion
 }
-

@@ -1244,7 +1244,6 @@ static class GlobalCommands
 		IRCConnection.SendMessage("Score info reloaded", user, !isWhisper);
 	}
 
-
 	/// <name>Silence Mode</name>
 	/// <syntax>silencemode</syntax>
 	/// <summary>Toggles silence mode. Silence mode prevents TP from sending messages to chat.</summary>

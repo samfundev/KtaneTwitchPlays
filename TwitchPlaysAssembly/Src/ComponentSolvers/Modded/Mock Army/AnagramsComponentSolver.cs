@@ -98,7 +98,7 @@ public class AnagramsComponentSolver : ComponentSolver
 		int start = curr.Length;
 		int ansIndex = Random.Range(0, ans.Count);
 		for (int j = start; j < 6; j++)
-			yield return DoInteractionClick(_buttons.Where(button => button.GetComponentInChildren<TextMesh>().text.ToLowerInvariant() == ans[ansIndex][j].ToString().ToLowerInvariant()).ToList()[0]);
+			yield return DoInteractionClick(_buttons.Where(button => button.GetComponentInChildren<TextMesh>().text.EqualsIgnoreCase(ans[ansIndex][j].ToString())).ToList()[0]);
 		yield return DoInteractionClick(_buttons[7], 0);
 	}
 

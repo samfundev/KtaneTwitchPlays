@@ -26,7 +26,7 @@ public class PressXShim : ComponentSolverShim
 		string[] times = match.Groups[2].Value.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 		List<int> result = new List<int>();
 
-		if (!times.Any() || index >= 2)
+		if (times.Length == 0 || index >= 2)
 		{
 			for (int i = 0; i < 60; i++)
 				result.Add(i);
@@ -77,7 +77,7 @@ public class PressXShim : ComponentSolverShim
 		else
 			index = 2;
 		reEval:
-		int localSolves = edgework.GetSolvedModuleNames().Count();
+		int localSolves = edgework.GetSolvedModuleNames().Count;
 		int btn = table[index][localSolves % 4];
 		if (edgework.IsIndicatorOn(Indicator.CAR) && btn == 0 && edgework.GetBatteryCount() < 2)
 		{
@@ -90,7 +90,7 @@ public class PressXShim : ComponentSolverShim
 			while ((int) timerComponent.TimeRemaining % 10 != target)
 			{
 				yield return true;
-				if (localSolves != edgework.GetSolvedModuleNames().Count())
+				if (localSolves != edgework.GetSolvedModuleNames().Count)
 					goto reEval;
 			}
 		}
@@ -99,7 +99,7 @@ public class PressXShim : ComponentSolverShim
 			while ((int) timerComponent.TimeRemaining % 60 != 5 && (int) timerComponent.TimeRemaining % 60 != 30)
 			{
 				yield return true;
-				if (localSolves != edgework.GetSolvedModuleNames().Count())
+				if (localSolves != edgework.GetSolvedModuleNames().Count)
 					goto reEval;
 			}
 		}
@@ -108,7 +108,7 @@ public class PressXShim : ComponentSolverShim
 			while ((int) timerComponent.TimeRemaining % 60 % 11 != 0)
 			{
 				yield return true;
-				if (localSolves != edgework.GetSolvedModuleNames().Count())
+				if (localSolves != edgework.GetSolvedModuleNames().Count)
 					goto reEval;
 			}
 		}
@@ -117,7 +117,7 @@ public class PressXShim : ComponentSolverShim
 			while ((((int) timerComponent.TimeRemaining % 60 / 10) + ((int) timerComponent.TimeRemaining % 60 % 10)) != 9)
 			{
 				yield return true;
-				if (localSolves != edgework.GetSolvedModuleNames().Count())
+				if (localSolves != edgework.GetSolvedModuleNames().Count)
 					goto reEval;
 			}
 		}
