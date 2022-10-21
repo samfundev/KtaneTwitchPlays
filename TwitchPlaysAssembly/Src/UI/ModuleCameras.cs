@@ -485,9 +485,14 @@ public class ModuleCameras : MonoBehaviour
 			camera.SetActive(visible);
 	}
 
-	public void HideHud() => BombStatus.gameObject.SetActive(false);
+	public void SetHudVisibility(bool visible) => BombStatus.gameObject.SetActive(visible);
 
-	public void ShowHud() => BombStatus.gameObject.SetActive(true);
+	public void SetBombUIVisibility(bool visible)
+	{
+		SetCameraVisibility(visible);
+		SetEdgeworkCameraVisibility(visible);
+		SetHudVisibility(visible);
+	}
 
 	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.BombName;
 
@@ -644,10 +649,7 @@ public class ModuleCameras : MonoBehaviour
 
 		_currentBomb = bomb;
 
-		bool visible = _currentBomb != null;
-		SetCameraVisibility(visible);
-		SetEdgeworkCameraVisibility(visible);
-		gameObject.SetActive(visible);
+		SetBombUIVisibility(_currentBomb != null);
 
 		if (_currentBomb == null)
 			return;

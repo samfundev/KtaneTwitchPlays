@@ -107,9 +107,7 @@ public class TwitchBomb : MonoBehaviour
 		if (moduleCameras == null) return;
 
 		bool visible = !BackdoorHandleHack;
-		moduleCameras.SetCameraVisibility(visible);
-		moduleCameras.SetEdgeworkCameraVisibility(visible);
-		moduleCameras.gameObject.SetActive(visible);
+		moduleCameras.SetBombUIVisibility(visible);
 		SetMainUIWindowVisibility(visible);
 	}
 

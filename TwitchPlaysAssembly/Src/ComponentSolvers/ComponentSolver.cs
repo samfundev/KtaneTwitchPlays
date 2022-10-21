@@ -289,7 +289,7 @@ public abstract class ComponentSolver
 					if (!hideCamera)
 					{
 						TwitchGame.ModuleCameras?.Hide();
-						TwitchGame.ModuleCameras?.HideHud();
+						TwitchGame.ModuleCameras?.SetHudVisibility(false);
 						IEnumerator hideUI = Module.Bomb.HideMainUIWindow();
 						while (hideUI.MoveNext())
 							yield return hideUI.Current;
@@ -451,7 +451,7 @@ public abstract class ComponentSolver
 		if (hideCamera)
 		{
 			TwitchGame.ModuleCameras?.Show();
-			TwitchGame.ModuleCameras?.ShowHud();
+			TwitchGame.ModuleCameras?.SetHudVisibility(true);
 			IEnumerator showUI = Module.Bomb.ShowMainUIWindow();
 			while (showUI.MoveNext())
 				yield return showUI.Current;
