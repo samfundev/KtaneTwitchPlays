@@ -616,13 +616,7 @@ static class GameCommands
 		DeleteCallInformation(true);
 		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
 			IRCConnection.SendMessage("Hack detected, waiting until the hack is over to execute this command.");
-		if (calledCommands.Count == 0)
-		{
-			calledCommands.Add(TwitchGame.Instance.callSend.Message);
-			TwitchGame.Instance.StartCoroutine(WaitForCall());
-		}
-		else
-			calledCommands.Add(TwitchGame.Instance.callSend.Message);
+		TwitchGame.Instance.StartCoroutine(WaitForCall(new List<IRCMessage>(){ TwitchGame.Instance.callSend.Message }));
 	}
 
 	/// <name>Call All</name>
@@ -645,18 +639,12 @@ static class GameCommands
 		foreach (var call in allCommands)
 		{
 			IRCConnection.SendMessageFormat("Calling {0}: {1}", call.Message.UserNickName, call.Message.Text);
-			if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
-				IRCConnection.SendMessage("Hack detected, waiting until the hack is over to execute this command.");
 			cmdsToExecute.Add(call.Message);
 		}
 		DeleteCallInformation(true);
-		if (calledCommands.Count == 0)
-		{
-			calledCommands.AddRange(cmdsToExecute);
-			TwitchGame.Instance.StartCoroutine(WaitForCall());
-		}
-		else
-			calledCommands.AddRange(cmdsToExecute);
+		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
+			IRCConnection.SendMessageFormat("Hack detected, waiting until the hack is over to execute {0} command{1}.", cmdsToExecute.Count == 1 ? "this" : "these", cmdsToExecute.Count == 1 ? string.Empty : "s");
+		TwitchGame.Instance.StartCoroutine(WaitForCall(cmdsToExecute));
 	}
 
 	/// <name>Call Set</name>
@@ -959,14 +947,16 @@ static class GameCommands
 	}
 
 	// Makes sure that all called commands are not executed until you are done being hacked by Backdoor Hacking
-	private static IEnumerator WaitForCall()
+	private static IEnumerator WaitForCall(List<IRCMessage> cmdsToExecute)
 	{
-		bool wasHacked = false;
-		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
-			wasHacked = true;
-		yield return new WaitUntil(() => TwitchGame.Instance.Bombs.All(x => !x.BackdoorHandleHack));
-		if (wasHacked)
+		bool alreadyExecuting = calledCommands.Count != 0;
+		calledCommands.AddRange(cmdsToExecute);
+		if (alreadyExecuting) yield break;
+
+		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack)) {
+			yield return new WaitUntil(() => TwitchGame.Instance.Bombs.All(x => !x.BackdoorHandleHack));
 			IRCConnection.SendMessage("The hack is over, executing all commands held up due to the hack.");
+		}
 		foreach (IRCMessage m in calledCommands)
 			IRCConnection.ReceiveMessage(m);
 		calledCommands.Clear();
