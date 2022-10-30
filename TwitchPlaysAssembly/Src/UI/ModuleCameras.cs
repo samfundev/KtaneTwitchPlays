@@ -297,6 +297,7 @@ public class ModuleCameras : MonoBehaviour
 
 	//private float currentSuccess;
 	private bool lastModule;
+	private bool bombUI;
 	#endregion
 
 	#region Unity Lifecycle
@@ -489,9 +490,17 @@ public class ModuleCameras : MonoBehaviour
 
 	public void SetBombUIVisibility(bool visible)
 	{
+		bombUI = visible;
 		SetCameraVisibility(visible);
 		SetEdgeworkCameraVisibility(visible);
 		SetHudVisibility(visible);
+		UpdateMainCamera();
+	}
+
+	public void UpdateMainCamera()
+	{
+		if (CameraWallEnabled && bombUI) GameRoom.HideCamera();
+		else GameRoom.ShowCamera();
 	}
 
 	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.BombName;
@@ -565,7 +574,7 @@ public class ModuleCameras : MonoBehaviour
 		}
 		DebugHelper.Log("Enabling camera wall");
 		CameraWallEnabled = true;
-		GameRoom.HideCamera();
+		UpdateMainCamera();
 
 		for (int i = 6; i < _cameraLocations.Length; i++)
 			_moduleCameras.Add(ModuleCamera.CreateModuleCamera(this, i));
@@ -588,7 +597,7 @@ public class ModuleCameras : MonoBehaviour
 		}
 		DebugHelper.Log("Disabling camera wall");
 		CameraWallEnabled = false;
-		GameRoom.ShowCamera();
+		UpdateMainCamera();
 
 		while (_moduleCameras.Count > 6)
 		{
