@@ -24,7 +24,7 @@ public static class Repository
 
 	public static string GetManual(string moduleID)
 	{
-		var match = Modules.Find(module => module.ModuleID == moduleID);
+		var match = Modules?.Find(module => module.ModuleID == moduleID);
 		return match?.FileName ?? match?.Name;
 	}
 
