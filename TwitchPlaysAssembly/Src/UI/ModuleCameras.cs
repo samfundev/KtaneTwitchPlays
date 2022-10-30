@@ -531,17 +531,14 @@ public class ModuleCameras : MonoBehaviour
 		{
 			float timedMultiplier = OtherModes.GetAdjustedMultiplier();
 			ConfidencePrefab.color = Color.yellow;
-			string conf = "x" + $"{timedMultiplier:0.0}";
-			string pts = "+" + $"{TwitchPlaySettings.GetRewardBonus():0}";
-			ConfidencePrefab.text = pts;
+			ConfidencePrefab.text = $"+{TwitchPlaySettings.GetRewardBonus():0}";
 			StrikesPrefab.color = Color.yellow;
-			StrikesPrefab.text = conf;
+			StrikesPrefab.text = $"x{timedMultiplier:0.0}";
 		}
 		else if (OtherModes.Unexplodable)
 		{
 			ConfidencePrefab.color = Color.yellow;
-			string pts = "+" + $"{TwitchPlaySettings.GetRewardBonus():0}";
-			ConfidencePrefab.text = pts;
+			ConfidencePrefab.text = $"+{TwitchPlaySettings.GetRewardBonus():0}";
 			StrikesPrefab.color = Color.red;
 			if (_currentBomb != null)
 				StrikesPrefab.text = _currentBomb.StrikeCount.ToString();
@@ -558,8 +555,7 @@ public class ModuleCameras : MonoBehaviour
 		else
 		{
 			ConfidencePrefab.color = Color.yellow;
-			string pts = $"+{TwitchPlaySettings.GetRewardBonus():0}";
-			ConfidencePrefab.text = pts;
+			ConfidencePrefab.text = $"+{TwitchPlaySettings.GetRewardBonus():0}";
 		}
 
 		ConfidencePrefab.enabled = OtherModes.ScoreMultiplier != 0;
