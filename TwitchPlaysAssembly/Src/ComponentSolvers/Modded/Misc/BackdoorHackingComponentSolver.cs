@@ -32,13 +32,13 @@ public class BackdoorHackingComponentSolver : CommandComponentSolver
 	private IEnumerator AnyKeyPress(CommandParser _)
 	{
 		_.Regex("[a-z0-9_<^>/]+", out Match match);
-		string input = match.Groups[0].Value.ToUpper();
+		string input = match.Groups[0].Value.ToUpper().Replace("_", " ");
 
 		yield return null;
 		foreach (char key in input)
 		{
 			int state = _component.GetValue<int>("CurrentState");
-			if (state == 2 && key == '_')
+			if (state == 2 && key == ' ')
 				_component.CallMethod("ZoneWallPress");
 			else if (state == 3)
 				_component.CallMethod("MemoryFraggerPress", UsableKeysValue.IndexOf(key));
@@ -52,7 +52,7 @@ public class BackdoorHackingComponentSolver : CommandComponentSolver
 				_component.CallMethod("StackPusherDown");
 			else if (state == 5 && key.EqualsAny('>', 'D') && _component.GetValue<int>("ActualSelection") % 5 != 4)
 				_component.CallMethod("StackPusherRight");
-			else if (state == 5 && key == '_')
+			else if (state == 5 && key == ' ')
 				_component.CallMethod("StackPusherSpace");
 			yield return new WaitForSeconds(.1f);
 		}
