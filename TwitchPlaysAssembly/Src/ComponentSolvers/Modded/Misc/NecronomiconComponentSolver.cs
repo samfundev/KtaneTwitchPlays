@@ -17,17 +17,18 @@ public class NecronomiconComponentSolver : ComponentSolver
 		inputCommand = inputCommand.ToLowerInvariant().Trim();
 		string[] split = inputCommand.SplitFull(' ', ',', ';');
 
-		if (split.Length == 1 && split[0].EqualsAny("cycle", "c", "pages"))
+		if (split.Length == 1 && split[0].EqualsAny("cycle", "c", "pages", "fastcycle", "fc"))
 		{
 			yield return null;
 
 			yield return DoInteractionClick(selectables[0]);
 
+			bool fast = split[0].EqualsAny("fastcycle", "fc");
 			int pagesTurned = 0;
 			for (int i = 0; i < 8; i++)
 			{
 				yield return new WaitUntil(() => !_component.GetValue<bool>("animating"));
-				yield return new WaitForSecondsWithCancel(2.25f, false, this);
+				yield return new WaitForSecondsWithCancel(fast ? 1.25f : 2.25f, false, this);
 				if (CoroutineCanceller.ShouldCancel)
 					break;
 
