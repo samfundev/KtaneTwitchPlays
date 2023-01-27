@@ -1668,7 +1668,7 @@ static class GlobalCommands
 		}
 
 		int maxModules = GetMaximumModules(inf, distribution.MaxModules);
-		if (modules > maxModules)
+		if (modules > maxModules && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 		{
 			if (modules > distribution.MaxModules)
 				IRCConnection.SendMessage($"Sorry, the maximum number of modules for {distribution.DisplayName} is {distribution.MaxModules}.");
