@@ -360,9 +360,17 @@ public class TwitchGame : MonoBehaviour
 		LogUploader.Instance.GetBombUrl();
 		IRCConnection.SendDelayedMessage(GetBombResult(), 1, SendAnalysisLink);
 
+		bool trainingExploded = OtherModes.TrainingModeOn && Bombs.Any(bomb => bomb.Bomb.HasDetonated);
+
 		foreach (var bomb in Bombs.Where(x => x != null))
 			Destroy(bomb.gameObject, 2.0f);
 		Bombs.Clear();
+
+		// If training mode is enabled and the bomb exploded, return to the setup state.
+		if (trainingExploded)
+		{
+			SceneManager.Instance.ReturnToSetupState();
+		}
 	}
 
 	public void DestroyComponentHandles()
