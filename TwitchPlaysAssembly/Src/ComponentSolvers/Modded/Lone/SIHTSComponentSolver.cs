@@ -36,7 +36,7 @@ public class SIHTSComponentSolver : CommandComponentSolver
 		_.Literal("increased");
 
 		yield return null;
-		yield return Click(1);
+		yield return Click(2);
 	}
 
 	private IEnumerator Decreased(CommandParser _)
@@ -44,7 +44,7 @@ public class SIHTSComponentSolver : CommandComponentSolver
 		_.Literal("decreased");
 
 		yield return null;
-		yield return Click(2);
+		yield return Click(1);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
