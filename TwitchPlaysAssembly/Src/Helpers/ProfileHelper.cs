@@ -134,9 +134,7 @@ static class ProfileHelper
 				continue;
 			}
 			var score = Math.Floor(mod.Second);
-			var scoreString = $"No{score}";
-			if (score == 0)
-				scoreString += "+";
+			var scoreString = $"No{(score == 0 ? score + "+" : score >= 10 ? "10+" : score.ToString())}";
 
 			if (!needyProfiles.ContainsKey(scoreString))
 				needyProfiles.Add(scoreString, new HashSet<string> { mod.First });
@@ -167,7 +165,7 @@ static class ProfileHelper
 				TwitchPlaySettings.data.ProfileWhitelist.Add("NoBossModules");
 
 			var profileWhitelist = TwitchPlaySettings.data.ProfileWhitelist.Where(x =>
-					new Regex(@"^No(?:(?:\d+\+?)|(?:StaticNeedies)|(?:TimeNeedies)|(?:OtherNeedies))$").Match(x)
+					new Regex(@"^No(?:(?:[0-9]0?\+?)|(?:StaticNeedies)|(?:TimeNeedies)|(?:OtherNeedies))$").Match(x)
 						.Success)
 				.ToList();
 			foreach (var profile in profileWhitelist)
