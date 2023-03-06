@@ -9,7 +9,7 @@ public class NecronomiconComponentSolver : ComponentSolver
 	{
 		_component = Module.BombComponent.GetComponent(ComponentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle all the pages using !{0} cycle. Submit a specific page using !{0} page 3.");
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Cycle all the pages using !{0} cycle or !{0} fastcycle. Submit a specific page using !{0} page 3.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
