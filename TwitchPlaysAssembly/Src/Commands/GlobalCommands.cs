@@ -1169,6 +1169,34 @@ static class GlobalCommands
 		);
 	}
 
+	/// <name>Profile Create</name>
+	/// <syntax>profile create [profile] [module]</syntax>
+	/// <summary>Creates a new profile with a disabled module. [profile] must be a new profile name. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space.</summary>
+	/// <restriction>Admin</restriction>
+	[Command("profiles? +create +(\"?)(.+)\\1 +(\"?)(.+)\\3", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void ProfileCreate(string user, bool isWhisper, [Group(2)] string profileName, [Group(4)] string module)
+	{
+		if (!ComponentSolverFactory.GetModuleInformation().Search(module, modInfo => modInfo.moduleDisplayName, out ModuleInformation moduleInfo, out string message) &&
+			!ComponentSolverFactory.GetModuleInformation().Search(module, modInfo => modInfo.moduleID, out moduleInfo, out message))
+		{
+			IRCConnection.SendMessage(message);
+			return;
+		}
+
+		string fileName = profileName.Replace(' ', '_');
+		string profilePath = Path.Combine(ProfileHelper.ProfileFolder, $"{fileName}.json");
+		if (File.Exists(profilePath))
+		{
+			IRCConnection.SendMessage(message);
+			return;
+		}
+
+		ProfileHelper.Write(fileName, new[] { module });
+		IRCConnection.SendMessage($"Created \"{profileName}\" with module \"{moduleInfo.moduleDisplayName}\".",
+			user, !isWhisper
+		);
+	}
+
 	/// <name>Profile Disabled By</name>
 	/// <syntax>profile disabled by [name]</syntax>
 	/// <summary>Gets the modules disabled by a profile.</summary>
