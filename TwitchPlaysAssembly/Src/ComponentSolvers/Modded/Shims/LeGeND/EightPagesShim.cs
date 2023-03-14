@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using UnityEngine;
 
 public class EightPagesShim : ComponentSolverShim
 {
@@ -16,17 +15,22 @@ public class EightPagesShim : ComponentSolverShim
 	{
 		var needyComponent = Module.BombComponent.GetComponent<NeedyComponent>();
 
+		if (needyComponent.State == NeedyComponent.NeedyStateEnum.Running && _component.GetValue<bool>("pickedUpPage") && _component.GetValue<bool>("Trapped"))
+		{
+			Module.BombComponent.GetComponent<KMNeedyModule>().HandlePass();
+			_component.CallMethod("HandleSolve");
+		}
+
 		while (true)
 		{
-			if (needyComponent.State != NeedyComponent.NeedyStateEnum.Running || _component.GetValue<bool>("pickedUpPage"))
+			if (needyComponent.State != NeedyComponent.NeedyStateEnum.Running || _component.GetValue<bool>("pickedUpPage") || _component.GetValue<bool>("Trapped"))
 			{
 				yield return true;
 				continue;
 			}
 
 			yield return null;
-			if (!_component.GetValue<bool>("pickedUpPage") && !_component.GetValue<bool>("Trapped"))
-				yield return DoInteractionClick(_page);
+			yield return DoInteractionClick(_page);
 		}
 	}
 

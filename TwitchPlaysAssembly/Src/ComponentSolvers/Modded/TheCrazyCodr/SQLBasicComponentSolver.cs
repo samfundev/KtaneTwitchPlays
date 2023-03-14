@@ -41,6 +41,11 @@ public class SQLBasicComponentSolver : ReflectionComponentSolver
 				if (!split[i].EqualsAny("a", "b", "c", "d", "e", "f", "g", "-"))
 					yield break;
 			}
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable[] changers = { _component.GetValue<KMSelectable>("selection1Button"), _component.GetValue<KMSelectable>("selection2Button"), _component.GetValue<KMSelectable>("selection3Button") };
@@ -60,6 +65,11 @@ public class SQLBasicComponentSolver : ReflectionComponentSolver
 					yield break;
 				if (!split[3].EqualsAny("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"))
 					yield break;
+				if (!_component.GetValue<bool>("isEditorMode"))
+				{
+					yield return "sendtochaterror You must be in the editor to do this!";
+					yield break;
+				}
 
 				yield return null;
 				KMSelectable[] changers = { _component.GetValue<KMSelectable>("where1LeftOperandButton"), _component.GetValue<KMSelectable>("where1OperatorButton"), _component.GetValue<KMSelectable>("where1RightOperandButton"), _component.GetValue<KMSelectable>("whereCombinationOperatorButton") };
@@ -79,6 +89,11 @@ public class SQLBasicComponentSolver : ReflectionComponentSolver
 					yield break;
 				if (!split[4].EqualsAny("and", "or"))
 					yield break;
+				if (!_component.GetValue<bool>("isEditorMode"))
+				{
+					yield return "sendtochaterror You must be in the editor to do this!";
+					yield break;
+				}
 
 				yield return null;
 				KMSelectable[] changers = { _component.GetValue<KMSelectable>("where1LeftOperandButton"), _component.GetValue<KMSelectable>("where1OperatorButton"), _component.GetValue<KMSelectable>("where1RightOperandButton"), _component.GetValue<KMSelectable>("whereCombinationOperatorButton"), _component.GetValue<KMSelectable>("where2LeftOperandButton"), _component.GetValue<KMSelectable>("where2OperatorButton"), _component.GetValue<KMSelectable>("where2RightOperandButton") };
@@ -96,6 +111,11 @@ public class SQLBasicComponentSolver : ReflectionComponentSolver
 				yield break;
 			if (!split[2].EqualsAny("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"))
 				yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable[] changers = { _component.GetValue<KMSelectable>("limitTakeButton"), _component.GetValue<KMSelectable>("limitSkipButton") };

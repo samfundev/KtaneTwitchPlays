@@ -54,6 +54,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["SIHTS"] = module => new SIHTSComponentSolver(module);
 		ModComponentSolverCreators["doubleMaze"] = module => new DoubleMazeComponentSolver(module);
 		ModComponentSolverCreators["logicPlumbing"] = module => new LogicPlumbingComponentSolver(module);
+		ModComponentSolverCreators["flashingCube"] = module => new FlashingCubeComponentSolver(module);
 
 		//Asimir Modules
 		ModComponentSolverCreators["murder"] = module => new MurderComponentSolver(module);
@@ -148,6 +149,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["factoryCode"] = module => new FactoryCodeComponentSolver(module);
 		ModComponentSolverCreators["SpellingBuzzed"] = module => new SpellingBuzzedComponentSolver(module);
 		ModComponentSolverCreators["BackdoorHacking"] = module => new BackdoorHackingComponentSolver(module);
+		ModComponentSolverCreators["forget_fractal"] = module => new ForgetFractalComponentSolver(module);
+		ModComponentSolverCreators["NeedyPong"] = module => new PongComponentSolver(module);
+		ModComponentSolverCreators["needycrafting"] = module => new CraftingTableComponentSolver(module);
+		ModComponentSolverCreators["bigeggs"] = module => new PerspectiveEggsComponentSolver(module);
+		ModComponentSolverCreators["GL_nokiaModule"] = module => new NokiaComponentSolver(module);
+		ModComponentSolverCreators["lookLookAway"] = module => new LookLookAwayComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -173,6 +180,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["TDSNeedyWires"] = module => new NeedyWiresComponentSolver(module);
 		ModComponentSolverCreators["TDSDossierModifier"] = module => new DossierModifierComponentSolver(module);
 		ModComponentSolverCreators["ManualCodes"] = module => new ManualCodesComponentSolver(module);
+		ModComponentSolverCreators["jackboxServerModule"] = module => new JackboxTVComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -266,6 +274,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["constellations"] = module => new ConstellationsShim(module);
 		ModComponentSolverCreators["giantsDrink"] = module => new GiantsDrinkShim(module);
 		ModComponentSolverCreators["heraldry"] = module => new HeraldryShim(module);
+		ModComponentSolverCreators["Color Decoding"] = module => new ColorDecodingShim(module);
+		ModComponentSolverCreators["TableMadness"] = module => new TableMadnessShim(module);
+		ModComponentSolverCreators["harmonySequence"] = module => new HarmonySequenceShim(module);
+		ModComponentSolverCreators["coopharmonySequence"] = module => new CoopHarmonySequenceShim(module);
+		ModComponentSolverCreators["safetySquare"] = module => new SafetySquareShim(module);
+		ModComponentSolverCreators["lgndEightPages"] = module => new EightPagesShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -349,6 +363,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SIHTS"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "SI-HTS" };
 		ModComponentSolverInformation["doubleMaze"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Double Maze" };
 		ModComponentSolverInformation["logicPlumbing"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Logic Plumbing" };
+		ModComponentSolverInformation["flashingCube"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Flashing Cube" };
 
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams" };
@@ -434,6 +449,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["factoryCode"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Factory Code" };
 		ModComponentSolverInformation["SpellingBuzzed"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Spelling Buzzed" };
 		ModComponentSolverInformation["BackdoorHacking"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Backdoor Hacking" };
+		ModComponentSolverInformation["forget_fractal"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Forget Fractal", announceModule = true };
+		ModComponentSolverInformation["NeedyPong"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pong" };
+		ModComponentSolverInformation["needycrafting"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Crafting Table" };
+		ModComponentSolverInformation["bigeggs"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "perspective eggs" };
+		ModComponentSolverInformation["GL_nokiaModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Nokia" };
+		ModComponentSolverInformation["lookLookAway"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Look, Look Away" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
@@ -478,6 +499,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TDSNeedyWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Wires" };
 		ModComponentSolverInformation["TDSDossierModifier"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Dossier Modifier" };
 		ModComponentSolverInformation["ManualCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Manual Codes" };
+		ModComponentSolverInformation["jackboxServerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jackbox.TV", unclaimable = true };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated" };
