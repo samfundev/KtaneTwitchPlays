@@ -51,6 +51,11 @@ public class SQLEvilComponentSolver : ReflectionComponentSolver
 				}
 			}
 			if (passed.Contains(false)) yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable[] changers = { _component.GetValue<KMSelectable>("selection1GroupButton"), _component.GetValue<KMSelectable>("selection2GroupButton"), _component.GetValue<KMSelectable>("selection3GroupButton") };
@@ -79,6 +84,11 @@ public class SQLEvilComponentSolver : ReflectionComponentSolver
 			if (split.Length != 3) yield break;
 			if (!split[2].EqualsAny("a", "b", "c", "d", "e", "f", "g", "-"))
 				yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable changer = _component.GetValue<KMSelectable>("groupBy1Button");

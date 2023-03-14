@@ -76,7 +76,8 @@ static class ModuleCommands
 
 	public static IEnumerator Show(TwitchModule module, object yield)
 	{
-		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace);
+		bool select = !module.BombComponent.GetModuleID().EqualsAny("lookLookAway");
+		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace, select);
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
@@ -84,10 +85,10 @@ static class ModuleCommands
 		yield return yield is float delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
 		if (CoroutineCanceller.ShouldCancel)
 		{
-			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace));
+			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace, select));
 			yield break;
 		}
-		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace);
+		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace, select);
 		while (defocusCoroutine.MoveNext())
 			yield return defocusCoroutine.Current;
 

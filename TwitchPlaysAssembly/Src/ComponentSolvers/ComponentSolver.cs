@@ -93,6 +93,8 @@ public abstract class ComponentSolver
 			}
 		}
 
+		bool select = !Module.BombComponent.GetModuleID().EqualsAny("lookLookAway");
+
 		if (Solved != solved || _beforeStrikeCount != StrikeCount)
 		{
 			IRCConnection.SendMessageFormat("Please submit an issue at https://github.com/samfundev/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve / strike prematurely.", Module.Code, Module.HeaderText);
@@ -105,13 +107,13 @@ public abstract class ComponentSolver
 
 			if (!TwitchPlaySettings.data.AnarchyMode)
 			{
-				IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
+				IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
 				while (focusDefocus.MoveNext())
 					yield return focusDefocus.Current;
 
 				yield return new WaitForSeconds(0.5f);
 
-				focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace);
+				focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace, select);
 				while (focusDefocus.MoveNext())
 					yield return focusDefocus.Current;
 
@@ -134,7 +136,7 @@ public abstract class ComponentSolver
 
 		AppreciateArtComponentSolver.ShowAppreciation(Module);
 
-		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace);
+		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
@@ -483,7 +485,7 @@ public abstract class ComponentSolver
 
 		AppreciateArtComponentSolver.HideAppreciation(Module);
 
-		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Module.Selectable, FrontFace);
+		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Module.Selectable, FrontFace, select);
 		while (defocusCoroutine.MoveNext())
 			yield return defocusCoroutine.Current;
 

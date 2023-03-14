@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MysteryModuleShim : ComponentSolverShim
+public class MysteryModuleShim : ReflectionComponentSolverShim
 {
 	public static readonly Dictionary<BombComponent, GameObject> CoveredModules = new Dictionary<BombComponent, GameObject>();
 
 	public MysteryModuleShim(TwitchModule module)
-		: base(module)
+		: base(module, "MysteryModuleScript")
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 
@@ -18,18 +18,16 @@ public class MysteryModuleShim : ComponentSolverShim
 
 	IEnumerator WaitForMysteryModule()
 	{
-		var component = Module.BombComponent.GetComponent("MysteryModuleScript");
-
 		KMBombModule mystified;
 		do
 		{
-			mystified = component.GetValue<KMBombModule>("mystifiedModule");
+			mystified = _component.GetValue<KMBombModule>("mystifiedModule");
 			yield return null;
 		} while (mystified == null);
 
-		if (component.GetValue<bool>("failsolve"))
+		if (_component.GetValue<bool>("failsolve"))
 			yield break;
 
-		CoveredModules[mystified.GetComponent<BombComponent>()] = component.GetValue<GameObject>("Cover");
+		CoveredModules[mystified.GetComponent<BombComponent>()] = _component.GetValue<GameObject>("Cover");
 	}
 }

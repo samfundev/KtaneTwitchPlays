@@ -51,6 +51,11 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 				}
 			}
 			if (passed.Contains(false)) yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable[] changers = { _component.GetValue<KMSelectable>("selection1GroupButton"), _component.GetValue<KMSelectable>("selection2GroupButton"), _component.GetValue<KMSelectable>("selection3GroupButton") };
@@ -83,6 +88,11 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 				yield break;
 			if (!split[3].EqualsAny("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"))
 				yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable[] changers = { _component.GetValue<KMSelectable>("where1LeftOperandButton"), _component.GetValue<KMSelectable>("where1OperatorButton"), _component.GetValue<KMSelectable>("where1RightOperandButton") };
@@ -97,6 +107,11 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 			if (split.Length != 3) yield break;
 			if (!split[2].EqualsAny("a", "b", "c", "d", "e", "f", "g", "-"))
 				yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable changer = _component.GetValue<KMSelectable>("groupBy1Button");
@@ -110,6 +125,11 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 				yield break;
 			if (!split[2].EqualsAny("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"))
 				yield break;
+			if (!_component.GetValue<bool>("isEditorMode"))
+			{
+				yield return "sendtochaterror You must be in the editor to do this!";
+				yield break;
+			}
 
 			yield return null;
 			KMSelectable[] changers = { _component.GetValue<KMSelectable>("limitTakeButton"), _component.GetValue<KMSelectable>("limitSkipButton") };
