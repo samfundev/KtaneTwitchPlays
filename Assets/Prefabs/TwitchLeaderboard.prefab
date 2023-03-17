@@ -414,7 +414,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Return to the office
+  m_Text: to the office
 --- !u!114 &114000010763755190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -628,7 +628,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Start a new bomb
+  m_Text: a new bomb
 --- !u!114 &114000012953259696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -825,7 +825,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Attempt this bomb again
+  m_Text: this bomb
 --- !u!114 &114599699151589096
 MonoBehaviour:
   m_ObjectHideFlags: 1
