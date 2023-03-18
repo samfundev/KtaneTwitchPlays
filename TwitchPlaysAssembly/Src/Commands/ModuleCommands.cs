@@ -17,7 +17,7 @@ static class ModuleCommands
 	{
 		string manualType = pdf ? "pdf" : "html";
 
-		string manualText = (Repository.GetManual(module.BombComponent.GetModuleID()) ?? module.BombComponent.GetModuleDisplayName()) + TranslatedModuleHelper.GetManualCodeAddOn(module.Solver.LanguageCode);
+		string manualText = module.Solver.ManualCode;
 		string helpText = string.IsNullOrEmpty(module.Solver.HelpMessage) ? string.Empty : string.Format(module.Solver.HelpMessage, module.Code, module.HeaderText);
 
 		IRCConnection.SendMessage($"{module.HeaderText} : {helpText} : {UrlHelper.ManualFor(manualText, manualType, VanillaRuleModifier.GetModuleRuleSeed(module.Solver.ModInfo.moduleID) != 1)}");
