@@ -11,6 +11,11 @@ public abstract class CommandComponentSolver : ReflectionComponentSolver
 	{
 	}
 
+	protected CommandComponentSolver(TwitchModule module, string assemblyName, string componentString, string helpMessage) :
+		base(module, assemblyName, componentString, helpMessage)
+	{
+	}
+
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		var methods = GetType()
