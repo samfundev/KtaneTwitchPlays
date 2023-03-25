@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -273,8 +273,8 @@ static class GlobalCommands
 	/// <name>Get Log</name>
 	/// <syntax>lognow</syntax>
 	/// <summary>Sends a message with the current log.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command("(log|analysis)now", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command("(log|analysis)now", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void LogNow(string user, bool isWhisper) => LogUploader.Instance.GetAnalyzerUrl(url => IRCConnection.SendMessage(url, user, !isWhisper));
 
 	/// <name>Toggle Short URLs</name>
@@ -1059,15 +1059,15 @@ static class GlobalCommands
 	/// <name>Run Raw</name>
 	/// <syntax>runraw [mission id]</syntax>
 	/// <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"runraw +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"runraw +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static IEnumerator RunRaw([Group(1)] string missionName) => RunMissionCoroutine(missionName);
 
 	/// <name>Run Raw Seed</name>
 	/// <syntax>runrawseed [seed] [mission id]</syntax>
 	/// <summary>The same as Run Raw but allows you to specify a seed.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"runrawseed +(\d+) +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"runrawseed +(\d+) +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static IEnumerator RunRawSeed([Group(1)] string seed, [Group(2)] string missionName) => RunMissionCoroutine(missionName, seed);
 
 	/// <name>Profile Help</name>
@@ -1420,8 +1420,8 @@ static class GlobalCommands
 	/// <name>Mimic</name>
 	/// <syntax>mimic [player] [command]</syntax>
 	/// <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, IRCMessage message)
 	{
 		targetPlayer = targetPlayer.FormatUsername();
@@ -1443,8 +1443,8 @@ static class GlobalCommands
 	/// <name>Skip Command</name>
 	/// <syntax>skipcommand</syntax>
 	/// <summary>Forcibly skips the currently running command. It is only recommended to use this to skip a command that is stuck. This may cause issues and should be used with caution.</summary>
-	/// <restriction>SuperUser</restriction>
-	[Command("skip(?:coroutine|command|cmd)?", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	/// <restriction>Admin</restriction>
+	[Command("skip(?:coroutine|command|cmd)?", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void Skip()
 	{
 		TwitchPlaysService.Instance.CoroutineQueue.SkipCurrentCoroutine = true;
