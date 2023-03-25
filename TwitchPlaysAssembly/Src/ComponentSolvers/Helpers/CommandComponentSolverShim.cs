@@ -11,6 +11,11 @@ public abstract class CommandComponentSolverShim : ReflectionComponentSolverShim
 	{
 	}
 
+	protected CommandComponentSolverShim(TwitchModule module, string assemblyName, string componentString) :
+		base(module, assemblyName, componentString)
+	{
+	}
+
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		var methods = GetType()

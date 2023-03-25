@@ -7,12 +7,18 @@ using UnityEngine;
 public abstract class ReflectionComponentSolver : ComponentSolver
 {
 	protected ReflectionComponentSolver(TwitchModule module, string componentTypeString, string helpMessage) :
+		this(module, null, componentTypeString, helpMessage)
+	{
+	}
+
+	protected ReflectionComponentSolver(TwitchModule module, string assemblyName, string componentTypeString, string helpMessage) :
 		base(module)
 	{
-		if (!componentTypes.ContainsKey(componentTypeString))
-			componentTypes[componentTypeString] = ReflectionHelper.FindType(componentTypeString);
+		string typeKey = $"{assemblyName}.{componentTypeString}";
+		if (!componentTypes.ContainsKey(typeKey))
+			componentTypes[typeKey] = ReflectionHelper.FindType(componentTypeString, assemblyName);
 
-		var componentType = componentTypes[componentTypeString];
+		var componentType = componentTypes[typeKey];
 
 		_component = module.BombComponent.GetComponent(componentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;

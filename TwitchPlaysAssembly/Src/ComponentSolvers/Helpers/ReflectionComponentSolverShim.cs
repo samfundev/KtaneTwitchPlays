@@ -4,7 +4,11 @@ public abstract class ReflectionComponentSolverShim : ReflectionComponentSolver
 {
 	protected ComponentSolver Unshimmed;
 
-	protected ReflectionComponentSolverShim(TwitchModule module, string componentTypeString) : base(module, componentTypeString, null)
+	protected ReflectionComponentSolverShim(TwitchModule module, string componentTypeString) : this(module, null, componentTypeString)
+	{
+	}
+
+	protected ReflectionComponentSolverShim(TwitchModule module, string assemblyName, string componentTypeString) : base(module, assemblyName, componentTypeString, null)
 	{
 		// Passing null to the BombCommander argument here because Unshimmed is only used to run RespondInternal(); we don’t want it to award strikes/solves etc. because this object already does that
 		Unshimmed = ComponentSolverFactory.CreateDefaultModComponentSolver(module, module.BombComponent.GetModuleID(), module.BombComponent.GetModuleDisplayName(), false);
