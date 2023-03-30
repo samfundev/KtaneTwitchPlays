@@ -72,7 +72,7 @@ public class SQLCruelComponentSolver : ReflectionComponentSolver
 				}
 				else
 				{
-					while (changers[i].GetComponentInChildren<TextMesh>().text.EqualsIgnoreCase("none"))
+					while (!changers[i].GetComponentInChildren<TextMesh>().text.EqualsIgnoreCase("none"))
 						yield return DoInteractionClick(changers[i]);
 				}
 				while (changers2[i].GetComponentInChildren<TextMesh>().text.ToLower() != cur)
