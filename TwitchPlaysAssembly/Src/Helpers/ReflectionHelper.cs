@@ -12,7 +12,7 @@ public static class ReflectionHelper
 
 	public static Type FindType(string fullName, string assemblyName)
 	{
-		return AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetSafeTypes).FirstOrDefault(t => t.FullName != null && t.FullName.Equals(fullName) && t.Assembly.GetName().Name.Equals(assemblyName));
+		return AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetSafeTypes).FirstOrDefault(t => t.FullName != null && t.FullName.Equals(fullName) && (assemblyName == null || t.Assembly.GetName().Name.Equals(assemblyName)));
 	}
 
 	public static IEnumerable<Type> GetSafeTypes(this Assembly assembly)
