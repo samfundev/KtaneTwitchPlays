@@ -5,7 +5,7 @@ using System.Linq;
 public class TechSupportComponentSolver : ReflectionComponentSolver
 {
 	public TechSupportComponentSolver(TwitchModule module) :
-		base(module, "TechSupport", "!{0} <0/1/2> [Presses the button with the specified label] | Presses can be chained with or without spaces")
+		base(module, "TechSupportController", "!{0} <0/1/2> [Presses the button with the specified label] | Presses can be chained with or without spaces")
 	{
 	}
 
@@ -15,7 +15,7 @@ public class TechSupportComponentSolver : ReflectionComponentSolver
 		string inputs = command.Replace(" ", "");
 		foreach (char c in inputs)
 			if (!btns.Contains(c)) yield break;
-		if (Module.BombComponent.GetComponent<NeedyComponent>().State != NeedyComponent.NeedyStateEnum.Running || _component.GetValue<bool>("moduleResolved"))
+		if (Module.BombComponent.GetComponent<NeedyComponent>().State != NeedyComponent.NeedyStateEnum.Running)
 		{
 			yield return "sendtochaterror You can't interact with the module right now.";
 			yield break;
@@ -26,7 +26,8 @@ public class TechSupportComponentSolver : ReflectionComponentSolver
 			yield return Click(Array.IndexOf(btns, c));
 	}
 
-	protected override IEnumerator ForcedSolveIEnumerator()
+	// TODO: Rewrite this method as module was completely refactored by the author
+	/*protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		var needyComponent = Module.BombComponent.GetComponent<NeedyComponent>();
 
@@ -66,5 +67,5 @@ public class TechSupportComponentSolver : ReflectionComponentSolver
 				curIndex = 0;
 			}
 		}
-	}
+	}*/
 }
