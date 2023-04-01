@@ -21,6 +21,8 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 		var componentType = componentTypes[typeKey];
 
 		_component = module.BombComponent.GetComponent(componentType);
+		if (_component == null) _component = module.BombComponent.GetComponentInChildren(componentType);
+
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
 		if (helpMessage != null) ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
 	}
