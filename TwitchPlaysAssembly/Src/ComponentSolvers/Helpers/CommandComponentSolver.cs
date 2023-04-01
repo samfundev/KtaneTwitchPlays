@@ -11,8 +11,8 @@ public abstract class CommandComponentSolver : ReflectionComponentSolver
 	{
 	}
 
-	protected CommandComponentSolver(TwitchModule module, string assemblyName, string componentString, string helpMessage) :
-		base(module, assemblyName, componentString, helpMessage)
+	protected CommandComponentSolver(TwitchModule module, string componentString, string assemblyName, string helpMessage) :
+		base(module, componentString, assemblyName, helpMessage)
 	{
 	}
 

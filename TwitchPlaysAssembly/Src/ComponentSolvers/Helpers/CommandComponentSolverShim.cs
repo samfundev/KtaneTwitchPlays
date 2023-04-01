@@ -11,8 +11,8 @@ public abstract class CommandComponentSolverShim : ReflectionComponentSolverShim
 	{
 	}
 
-	protected CommandComponentSolverShim(TwitchModule module, string assemblyName, string componentString) :
-		base(module, assemblyName, componentString)
+	protected CommandComponentSolverShim(TwitchModule module, string componentString, string assemblyName) :
+		base(module, componentString, assemblyName)
 	{
 	}
 

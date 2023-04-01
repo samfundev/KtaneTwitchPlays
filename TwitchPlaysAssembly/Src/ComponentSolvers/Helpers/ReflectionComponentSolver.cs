@@ -7,11 +7,11 @@ using UnityEngine;
 public abstract class ReflectionComponentSolver : ComponentSolver
 {
 	protected ReflectionComponentSolver(TwitchModule module, string componentTypeString, string helpMessage) :
-		this(module, null, componentTypeString, helpMessage)
+		this(module, componentTypeString, null, helpMessage)
 	{
 	}
 
-	protected ReflectionComponentSolver(TwitchModule module, string assemblyName, string componentTypeString, string helpMessage) :
+	protected ReflectionComponentSolver(TwitchModule module, string componentTypeString, string assemblyName, string helpMessage) :
 		base(module)
 	{
 		string typeKey = $"{assemblyName}.{componentTypeString}";
