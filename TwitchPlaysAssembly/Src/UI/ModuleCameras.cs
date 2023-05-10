@@ -687,8 +687,45 @@ public class ModuleCameras : MonoBehaviour
 			Destroy(edgeworkCamera);
 		edgeworkCameras.Clear();
 
-		// Create widget cameras
+		// Get and sort bomb widgets and any Widgetry widgets
 		var widgets = _currentBomb.Bomb.WidgetManager.GetWidgets();
+		foreach (BombComponent mod in _currentBomb.Bomb.BombComponents)
+		{
+			if (mod.GetModuleID() == "widgetry")
+			{
+				for (int i = 3; i < 6; i++)
+				{
+					GameObject extraWidget = mod.transform.GetChild(i).gameObject;
+					if (!extraWidget.name.EndsWith("Widgetry"))
+					{
+						if (i == 3)
+							extraWidget.name = "TwoFactorWidgetWidgetry";
+						else if (i == 4)
+						{
+							if (extraWidget.transform.GetChild(1).gameObject.activeSelf || extraWidget.transform.GetChild(2).gameObject.activeSelf)
+								extraWidget.name = "BatteryWidgetWidgetry";
+							else if (extraWidget.transform.GetChild(3).gameObject.activeSelf)
+								extraWidget.name = "IndicatorWidgetWidgetry";
+							else if (extraWidget.transform.GetChild(4).gameObject.activeSelf || extraWidget.transform.GetChild(5).gameObject.activeSelf)
+								extraWidget.name = "PortWidgetWidgetry";
+						}
+						else
+						{
+							if (extraWidget.transform.GetChild(1).gameObject.activeSelf)
+								extraWidget.name = "MultipleWidgetsWidgetry";
+							else if (extraWidget.transform.GetChild(2).gameObject.activeSelf)
+								extraWidget.name = "EncryptedIndicatorWidgetry";
+							else if (extraWidget.transform.GetChild(3).gameObject.activeSelf)
+								extraWidget.name = "VoltageMeterWidgetry";
+						}
+						extraWidget.AddComponent<Widget>();
+						((Widget) extraWidget.GetComponent("Widget")).SizeX = 2;
+						((Widget) extraWidget.GetComponent("Widget")).SizeZ = 1;
+						widgets.Add((Widget) extraWidget.GetComponent("Widget"));
+					}
+				}
+			}
+		}
 		var widgetTypes = new[] { "BatteryWidget", "IndicatorWidget", "EncryptedIndicator", "NumberInd", "PortWidget", "DayTimeWidget", "TwoFactorWidget", "MultipleWidgets", null, "SerialNumber", "RuleSeedWidget" };
 		widgets.Sort((w1, w2) =>
 		{
@@ -699,10 +736,10 @@ public class ModuleCameras : MonoBehaviour
 			else if (!covered1 && covered2)
 				return 1;
 
-			var i1 = widgetTypes.IndexOf(wt => wt != null && w1.GetComponent(wt) != null);
+			var i1 = widgetTypes.IndexOf(wt => wt != null && (w1.GetComponent(wt) != null || (w1.name.EndsWith("Widgetry") && w1.name.StartsWith(wt))));
 			if (i1 == -1)
 				i1 = Array.IndexOf(widgetTypes, null);
-			var i2 = widgetTypes.IndexOf(wt => wt != null && w2.GetComponent(wt) != null);
+			var i2 = widgetTypes.IndexOf(wt => wt != null && (w2.GetComponent(wt) != null || (w2.name.EndsWith("Widgetry") && w2.name.StartsWith(wt))));
 			if (i2 == -1)
 				i2 = Array.IndexOf(widgetTypes, null);
 
@@ -710,6 +747,9 @@ public class ModuleCameras : MonoBehaviour
 				return -1;
 			if (i1 > i2)
 				return 1;
+
+			if (w1.GetType().Name == "Widget" || w2.GetType().Name == "Widget")
+				return w1.name.CompareTo(w2.name);
 
 			switch (w1)
 			{
@@ -763,15 +803,16 @@ public class ModuleCameras : MonoBehaviour
 			rowHeight = newRowHeight;
 		}
 
-		// Move all lights off layer 2 to prevent them from affecting the widgets
+		// Move all lights off layer 2 and 3 to prevent them from affecting the widgets
 		foreach (Light light in FindObjectsOfType<Light>())
 		{
+			light.cullingMask &= ~(1 << 3);
 			light.cullingMask &= ~(1 << 2);
 		}
 
 		for (int i = 0; i < widgets.Count; i++)
 		{
-			// Setup the camera, using layer 2
+			// Setup the camera, using layer 2 for bomb widgets and layer 3 for Widgetry widgets
 			var camera = Instantiate(CameraPrefab);
 			edgeworkCameras.Add(camera.gameObject);
 			var row = cutOffPoints.IndexOf(ix => ix > i);
@@ -780,29 +821,31 @@ public class ModuleCameras : MonoBehaviour
 			camera.rect = new Rect(.5f - totalWidthInThisRow / 2 + widthBeforeThis, 1 - (row + 1) * rowHeight, widgetWidths[i] * rowHeight, rowHeight);
 			camera.aspect = (float) widgets[i].SizeX / widgets[i].SizeZ;
 			camera.depth = 99;
-			camera.fieldOfView = 3.25f;
+			camera.fieldOfView = widgets[i].name == "TwoFactorWidgetWidgetry" ? 47.5f : widgets[i].name.EndsWith("Widgetry") ? 2.65f : 3.25f;
 			camera.transform.SetParent(widgets[i].transform, false);
-			camera.transform.localPosition = new Vector3(.001f, 2.26f / widgets[i].SizeX * widgets[i].SizeZ, 0);
+			camera.transform.localPosition = new Vector3(.001f, (widgets[i].name == "TwoFactorWidgetWidgetry" ? 12.3f : 2.26f) / widgets[i].SizeX * widgets[i].SizeZ, 0);
 			if (widgets[i] is PortWidget || (widgets[i] is ModWidget mw && mw.name == "NumberInd(Clone)"))
 				camera.transform.localEulerAngles = new Vector3(90, 180, 0);
+			else if (widgets[i].name.EndsWith("Widgetry") && widgets[i].name != "TwoFactorWidgetWidgetry")
+				camera.transform.localEulerAngles = new Vector3(90, 90, 0);
 			var lossyScale = camera.transform.lossyScale;
 			camera.nearClipPlane = 1f * lossyScale.y;
 			camera.farClipPlane = 3f / widgets[i].SizeX * widgets[i].SizeZ * lossyScale.y;
-			camera.cullingMask = 1 << 2;
+			camera.cullingMask = 1 << (widgets[i].name.EndsWith("Widgetry") ? 3 : 2);
 			camera.gameObject.SetActive(true);
 
-			// Move the widget’s GameObjects to Layer 2
+			// Move the widget’s GameObjects to Layer 2 or 3
 			foreach (var obj in widgets[i].gameObject.GetComponentsInChildren<Transform>(true))
 				if (obj.gameObject.name != "LightGlow")
-					obj.gameObject.layer = 2;
+					obj.gameObject.layer = widgets[i].name.EndsWith("Widgetry") ? 3 : 2;
 
 			// Add a light source
 			var light = camera.gameObject.AddComponent<Light>();
 			light.type = LightType.Spot;
-			light.cullingMask = 1 << 2;
-			light.range = (camera.transform.localPosition.y + 0.05f) * lossyScale.z;
-			light.spotAngle = 7.25f;
-			light.intensity = 75;
+			light.cullingMask = 1 << (widgets[i].name.EndsWith("Widgetry") ? 3 : 2);
+			light.range = widgets[i].name == "TwoFactorWidgetWidgetry" ? 0.095f : ((camera.transform.localPosition.y + 0.05f) * lossyScale.z);
+			light.spotAngle = widgets[i].name == "TwoFactorWidgetWidgetry" ? 100 : 7.25f;
+			light.intensity = widgets[i].name == "TwoFactorWidgetWidgetry" ? 15 : 75;
 			light.enabled = true;
 		}
 	}
