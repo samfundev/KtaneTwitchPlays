@@ -503,7 +503,9 @@ public class ModuleCameras : MonoBehaviour
 		else GameRoom.ShowCamera();
 	}
 
-	public void UpdateHeader() => HeaderPrefab.text = _currentBomb.BombName;
+	public void UpdateHeader() {
+		if (_currentBomb != null) HeaderPrefab.text = _currentBomb.BombName;
+	}
 
 	public void UpdateStrikes(bool delay = false) => StartCoroutine(UpdateStrikesCoroutine(delay));
 
