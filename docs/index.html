@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
 		<title>Twitch Plays: KTANE reference</title>
-		<script>			
+		<script>
 			function el(tagName, className, ...args)
 			{
 				const element = document.createElement(tagName);
@@ -26,7 +26,7 @@
 				}
 				return element;
 			}
-			
+
 			fetch("documentation.xml").then(response => {
 				if (!response.ok)
 					throw Error(`Failed to get resource: ${response.status}`);
@@ -59,7 +59,7 @@
 				element.innerHTML = element.textContent.replace(/[\[(](.+?)[)\]]/g, (match, argument) => {
 					return `<i class="argument" title="${ (args.hasOwnProperty(argument) ? args[argument] + " " : "") + (match.startsWith("[") ? "Required argument." : "Optional argument.") }">${match}</i>`;
 				});
-				
+
 				return element;
 			}
 
@@ -74,11 +74,11 @@
 					const member = members.children[i];
 					const name = member.getAttribute("name");
 					const match = name.match(/([TM]):(.+)Commands/);
-					
+
 					if (match === null) {
 						continue;
 					}
-					
+
 					if (match[1] == "T") {
 						const properName = match[2].toUpperCase() == match[2] ? match[2] : match[2].replace(/[A-Z]*(?=[A-Z])/g, "$& ");
 						content.appendChild(
@@ -203,7 +203,7 @@
 			h2 {
 				margin: 0;
 			}
-			
+
 			pre {
 				white-space: pre-wrap;
 				margin: 0;
@@ -223,7 +223,7 @@
 				text-decoration: 2px underline;
 				cursor: help;
 			}
-			
+
 			span.Streamer { text-decoration-color: purple }
 			span.SuperUser { text-decoration-color: red }
 			span.Admin { text-decoration-color: orange }
