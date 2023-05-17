@@ -20,7 +20,17 @@ public class TwitchBomb : MonoBehaviour
 	public RectTransform EdgeworkHighlightTransform;
 
 	[HideInInspector]
-	public Bomb Bomb;
+	private Bomb _bomb;
+	public Bomb Bomb {
+		get => _bomb;
+		set {
+			_bomb = value;
+
+			var floatingHoldable = Bomb.GetComponent<FloatingHoldable>();
+			floatingHoldable.OnHold += () => TwitchGame.ModuleCameras?.ChangeBomb(this);
+			floatingHoldable.OnLetGo += () => TwitchGame.ModuleCameras?.ChangeBomb(null);
+		}
+	}
 
 	[HideInInspector]
 	public int BombID = -1;
@@ -89,10 +99,6 @@ public class TwitchBomb : MonoBehaviour
 		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
 		CanvasGroup.alpha = BombID == 0 ? 1 : 0;
-
-		var floatingHoldable = Bomb.GetComponent<FloatingHoldable>();
-		floatingHoldable.OnHold += () => TwitchGame.ModuleCameras?.ChangeBomb(this);
-		floatingHoldable.OnLetGo += () => TwitchGame.ModuleCameras?.ChangeBomb(null);
 	}
 
 	private void Update()
