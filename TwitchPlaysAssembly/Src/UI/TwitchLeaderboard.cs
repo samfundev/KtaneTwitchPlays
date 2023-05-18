@@ -83,13 +83,7 @@ public class TwitchLeaderboard : MonoBehaviour
 			mainTable.transform.SetParent(mainTableTransform, false);
 		}
 
-		StartCoroutine(DelayPrompt(10.0f));
-	}
-
-	private IEnumerator<WaitForSeconds> DelayPrompt(float seconds)
-	{
-		yield return new WaitForSeconds(seconds);
-		promptTransform.gameObject.SetActive(true);
+		StartCoroutine(new WaitForSeconds(10.0f).Yield(() => promptTransform.gameObject.SetActive(true)));
 	}
 
 	private void OnDisable()
