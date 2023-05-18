@@ -451,18 +451,21 @@ static class ModuleCommands
 				yield return Show(module, 0.5);
 				yield break;
 			}
-			// Both a time and a command can't be entered. And either a zoom, show or tilt needs to take place otherwise, we should let the command run normally.
-			if ((!timed || !command) && (zooming || tilt || show))
+			// Either a zoom, show or tilt needs to take place otherwise, we should let the command run normally.
+			if (zooming || tilt || show)
 			{
 				MusicPlayer musicPlayer = null;
 				float delay = 2;
 				if (timed)
 				{
-					delay = groups["time"].Value.TryParseInt() ?? groups["stime"].Value.TryParseInt() ?? 2;
+					delay = groups["time"].Value.TryParseFloat() ?? groups["stime"].Value.TryParseFloat() ?? 2;
 					delay = Math.Max(2, delay);
 				}
 
-				object toYield = command ? (object) RunModuleCommand(module, user, groups["command"].Value) : delay;
+				List<object> yields = new List<object>();
+				if (command) yields.Add(RunModuleCommand(module, user, groups["command"].Value));
+				if (timed || !command) yields.Add(new WaitForSecondsWithCancel(delay, false, module.Solver));
+				IEnumerator toYield = yields.GetEnumerator();
 
 				IEnumerator routine = null;
 				if (show)
