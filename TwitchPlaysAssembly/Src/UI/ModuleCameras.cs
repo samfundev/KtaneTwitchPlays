@@ -930,7 +930,7 @@ public class ModuleCameras : MonoBehaviour
 
 	#region Properties
 	public TwitchModule PreferredToView => TwitchGame.Instance.Modules
-				.Where(module => !module.Solved && !module.Hidden && _moduleCameras.All(cam => cam.Module != module && cam.PreviousModule != module))
+				.Where(module => module.BombComponent != null && !module.Solved && !module.Hidden && _moduleCameras.All(cam => cam.Module != module && cam.PreviousModule != module))
 				.OrderByDescending(module => module.CameraPriority).ThenBy(module => module.LastUsed)
 				.FirstOrDefault();
 

@@ -18,7 +18,9 @@ public class ForgetFractalComponentSolver : ReflectionComponentSolver
 				yield break;
 			}
 			yield return null;
+			yield return "multiple strikes";
 			yield return Click(0, 0);
+			yield return "end multiple strikes";
 		}
 		else if (split.Length % 2 == 0)
 		{
