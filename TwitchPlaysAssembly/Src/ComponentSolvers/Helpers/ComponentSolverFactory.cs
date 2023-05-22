@@ -65,6 +65,7 @@ public static class ComponentSolverFactory
 		//Mock Army Modules
 		ModComponentSolverCreators["AnagramsModule"] = module => new AnagramsComponentSolver(module);
 		ModComponentSolverCreators["Emoji Math"] = module => new EmojiMathComponentSolver(module);
+		ModComponentSolverCreators["Filibuster"] = module => new FilibusterComponentSolver(module);
 		ModComponentSolverCreators["Needy Math"] = module => new NeedyMathComponentSolver(module);
 		ModComponentSolverCreators["WordScrambleModule"] = module => new AnagramsComponentSolver(module);
 
@@ -368,6 +369,7 @@ public static class ComponentSolverFactory
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams" };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math" };
+		ModComponentSolverInformation["Filibuster"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Filibuster", unclaimable = true };
 		ModComponentSolverInformation["Needy Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Math" };
 		ModComponentSolverInformation["WordScrambleModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Word Scramble" };
 

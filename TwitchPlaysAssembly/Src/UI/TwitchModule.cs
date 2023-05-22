@@ -100,6 +100,8 @@ public class TwitchModule : MonoBehaviour
 	public Coroutine TakeInProgress;
 	public string TakeUser;
 	public static List<string> ClaimedList = new List<string>();
+
+	public Action OnDestroyed;
 	#endregion
 
 	#region Private Fields
@@ -403,7 +405,10 @@ public class TwitchModule : MonoBehaviour
 		ModuleCameras.Instance.UpdateAutomaticCameraWall();
 	}
 
-	private void OnDestroy() => StopAllCoroutines();
+	private void OnDestroy() {
+		StopAllCoroutines();
+		OnDestroyed?.Invoke();
+	}
 	#endregion
 
 	#region Public Methods
