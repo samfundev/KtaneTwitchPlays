@@ -15,7 +15,7 @@ public class LookLookAwayComponentSolver : ReflectionComponentSolver
 	{
 		if (command.StartsWith("submit "))
 		{
-			string[] dirs = { "u", "ur", "r", "dr", "d", "dl", "l" };
+			string[] dirs = { "u", "ur", "r", "dr", "d", "dl", "l", "ul" };
 			for (int i = 1; i < split.Length; i++)
 			{
 				if (!dirs.Contains(split[i])) yield break;
