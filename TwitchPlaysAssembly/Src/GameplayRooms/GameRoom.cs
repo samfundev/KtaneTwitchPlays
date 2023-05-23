@@ -57,22 +57,6 @@ public abstract class GameRoom
 		TwitchGame.Instance.InitializeModuleCodes();
 	}
 
-	protected void InitializeBomb(Bomb bomb, bool reuseTwitchBomb = false)
-	{
-		if (!reuseTwitchBomb)
-		{
-			TwitchGame.Instance.SetBomb(bomb, BombCount);
-			return;
-		}
-
-		TwitchBomb tb = TwitchGame.Instance.Bombs[0];
-		tb.Bomb = bomb;
-		tb.BombTimeStamp = DateTime.Now;
-		tb.BombStartingTimer = bomb.GetTimer().TimeRemaining;
-		TwitchGame.Instance.CreateComponentHandlesForBomb(tb);
-		TwitchGame.Instance.InitializeModuleCodes();
-	}
-
 	public virtual IEnumerator InterruptLights()
 	{
 		SceneManager.Instance.GameplayState.Room.PacingActions.RemoveAll(pacingAction =>

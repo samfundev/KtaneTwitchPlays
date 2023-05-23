@@ -197,7 +197,11 @@ public sealed class Factory : GameRoom
 
 			if (GetBomb == null) continue;
 			Bomb bomb = (Bomb) _internalBombProperty.GetValue(GetBomb, null);
-			InitializeBomb(bomb, true);
+			Object.Destroy(bombHandle);
+			TwitchGame.Instance.Bombs.Clear();
+			TwitchGame.Instance.DestroyComponentHandles();
+			InitializeBombs(new List<Bomb>() { bomb });
+			bombHandle = TwitchGame.Instance.Bombs[0];
 		}
 	}
 
