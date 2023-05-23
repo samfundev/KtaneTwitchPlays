@@ -9,8 +9,8 @@ public class FilibusterComponentSolver : ReflectionComponentSolver
 		((MonoBehaviour) _component).enabled = false;
 		Module.StartCoroutine(UpdateFilibuster());
 
-		IRCConnection.Instance.OnMessageReceived.AddListener(AddToMicLevel);
-		Module.OnDestroyed += () => IRCConnection.Instance.OnMessageReceived.RemoveListener(AddToMicLevel);
+		IRCConnection.Instance.OnMessageReceived += AddToMicLevel;
+		Module.OnDestroyed += () => IRCConnection.Instance.OnMessageReceived -= AddToMicLevel;
 	}
 
 	public override IEnumerator Respond(string[] split, string command)

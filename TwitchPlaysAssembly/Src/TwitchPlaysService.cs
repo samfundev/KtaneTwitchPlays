@@ -95,7 +95,7 @@ public class TwitchPlaysService : MonoBehaviour
 
 		MusicPlayer.LoadMusic();
 
-		IRCConnection.Instance.OnMessageReceived.AddListener(OnMessageReceived);
+		IRCConnection.Instance.OnMessageReceived += OnMessageReceived;
 
 		twitchGame.ParentService = this;
 

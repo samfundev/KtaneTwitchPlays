@@ -13,7 +13,6 @@ using System.Threading;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class IRCMessage
@@ -61,10 +60,6 @@ public class IRCConnection : MonoBehaviour
 	Transform alertProgressBar;
 
 	#region Nested Types
-	public class MessageEvent : UnityEvent<IRCMessage>
-	{
-	}
-
 	private class IRCCommand
 	{
 		public IRCCommand(string command)
@@ -1094,7 +1089,7 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Public Fields
-	public readonly MessageEvent OnMessageReceived = new MessageEvent();
+	public Action<IRCMessage> OnMessageReceived;
 	public string ColorOnDisconnect;
 	public static IRCConnection Instance { get; private set; }
 	public IRCConnectionState State => gameObject.activeInHierarchy ? _state : IRCConnectionState.Disabled;
