@@ -59,7 +59,7 @@ public class AppreciateArtComponentSolver : ReflectionComponentSolver
 	// Which is to say the key is the module an art appreciation cares about and the value is the Art Appreciation script that cares about it.
 	// So we can know if a module needs to be appreciated and what art appreciation module needs to be solved if we stare about it.
 	private static Dictionary<TwitchModule, Component> Art => TwitchGame.Instance.Modules
-				.Where(module => module.BombComponent != null && !module.Solved && _componentType != null)
+				.Where(module => !module.Solved && _componentType != null)
 				.Select(module => module.BombComponent.GetComponent(_componentType))
 				.Where(component => component != null)
 				.ToDictionary(component =>

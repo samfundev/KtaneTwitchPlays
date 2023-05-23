@@ -756,7 +756,7 @@ static class GameCommands
 			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID))
 			.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes"));
 		foreach (var module in modules)
-			if (module.BombComponent != null && !module.Solved)
+			if (!module.Solved)
 				module.SolveSilently();
 	}
 
