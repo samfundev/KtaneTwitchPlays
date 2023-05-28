@@ -200,7 +200,8 @@ public sealed class Factory : GameRoom
 			Object.Destroy(bombHandle);
 			TwitchGame.Instance.Bombs.Clear();
 			TwitchGame.Instance.DestroyComponentHandles();
-			InitializeBombs(new List<Bomb>() { bomb });
+			TwitchGame.Instance.SetBomb(bomb, -1);
+			TwitchGame.Instance.InitializeModuleCodes();
 			bombHandle = TwitchGame.Instance.Bombs[0];
 		}
 	}
