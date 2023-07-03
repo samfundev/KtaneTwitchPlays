@@ -449,9 +449,9 @@ public class IRCConnection : MonoBehaviour
 				if (!IsUsernameValid(settings.channelName))
 					AddTextToHoldable("channelName");
 				if (string.IsNullOrEmpty(settings.serverName))
-					AddTextToHoldable("serverName - Most likely to be irc.twitch.tv");
+					AddTextToHoldable("serverName - Most likely to be irc.chat.twitch.tv");
 				if (settings.serverPort < 1 || settings.serverPort > 65535)
-					AddTextToHoldable("serverPort - Most likely to be 6697");
+					AddTextToHoldable("serverPort - Most likely to be 6667");
 				AddTextToHoldable("\nOpen up the Mod manager holdable, and select \"open mod settings folder\".");
 				return;
 			}
@@ -551,61 +551,32 @@ public class IRCConnection : MonoBehaviour
 			AddTextToHoldable("[IRC:Connect] Connection to chat IRC successful.");
 
 			NetworkStream networkStream = sock.GetStream();
-			try
+
+			// Twitch has dropped support for TLS 1.0, so we can no longer connect securely.
+			if (_settings.serverPort == 6697)
 			{
-				AddTextToHoldable("[IRC:Connect] Attempting to set up SSL connection.");
-				SslStream sslStream = new SslStream(networkStream, true, VerifyServerCertificate);
-				sslStream.AuthenticateAsClient(_settings.serverName);
-
-				DebugHelper.Log($"SSL encrypted: {sslStream.IsEncrypted}, authenticated: {sslStream.IsAuthenticated}, signed: {sslStream.IsSigned} and mutually authenticated: {sslStream.IsMutuallyAuthenticated}.");
-
-				NetworkStreamLineReader inputStream = new NetworkStreamLineReader(networkStream, sslStream);
-				StreamWriter outputStream = new StreamWriter(sslStream);
-
-				if (_state == IRCConnectionState.DoNotRetry)
-				{
-					SetDebugUsername(true);
-					sslStream.Close();
-					networkStream.Close();
-					sock.Close();
-					return;
-				}
-
-				NetworkStream stream = networkStream;
-				_inputThread = new Thread(() => InputThreadMethod(inputStream));
-				_inputThread.Start();
-
-				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
-				_outputThread.Start();
-
-				AddTextToHoldable("[IRC:Connect] SSL setup completed with no errors.");
-			}
-			catch (Exception ex)
-			{
-				AddTextToHoldable("[IRC:Connect] SSL connection failed, defaulting to insecure connection.");
-				if (_settings.serverPort == 6667)
-					AddTextToHoldable("[IRC:Connect] The configured port does not use SSL, please change it to 6697 if you wish to use SSL.");
-				DebugHelper.LogException(ex, "An Exception has occurred when attempting to connect using SSL, using insecure stream instead:");
 				_settings.serverPort = 6667;
-				sock = new TcpClient(_settings.serverName, _settings.serverPort);
-				networkStream = sock.GetStream();
-				NetworkStreamLineReader inputStream = new NetworkStreamLineReader(networkStream);
-				StreamWriter outputStream = new StreamWriter(networkStream);
-
-				if (_state == IRCConnectionState.DoNotRetry)
-				{
-					SetDebugUsername(true);
-					networkStream.Close();
-					sock.Close();
-					return;
-				}
-
-				_inputThread = new Thread(() => InputThreadMethod(inputStream));
-				_inputThread.Start();
-
-				_outputThread = new Thread(() => OutputThreadMethod(outputStream));
-				_outputThread.Start();
+				AddTextToHoldable("[IRC:Connect] Cannot connect securely, connecting insecurely over port 6667.");
 			}
+
+			sock = new TcpClient(_settings.serverName, _settings.serverPort);
+			networkStream = sock.GetStream();
+			NetworkStreamLineReader inputStream = new NetworkStreamLineReader(networkStream);
+			StreamWriter outputStream = new StreamWriter(networkStream);
+
+			if (_state == IRCConnectionState.DoNotRetry)
+			{
+				SetDebugUsername(true);
+				networkStream.Close();
+				sock.Close();
+				return;
+			}
+
+			_inputThread = new Thread(() => InputThreadMethod(inputStream));
+			_inputThread.Start();
+
+			_outputThread = new Thread(() => OutputThreadMethod(outputStream));
+			_outputThread.Start();
 
 			SendCommand(
 				$"CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership\r\nCAP END\r\nPASS {_settings.authToken}\r\nNICK {_settings.userName}");
