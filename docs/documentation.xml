@@ -1522,6 +1522,9 @@
         <member name="M:Leaderboard.GetTrueRank(System.String)">
             <summary>Gets a user's true rank. True rank doesn't rank/sort the user differently if they have opted out.</summary>
         </member>
+        <member name="M:Leaderboard.GetVSEntries">
+            <summary>Gets all leaderboard entries that have a non-null team set for VS mode.</summary>
+        </member>
         <member name="T:TwitchGame">
             <summary>Encapsulates an ongoing game, with all its bombs, module cameras, HUDs etc.</summary>
         </member>

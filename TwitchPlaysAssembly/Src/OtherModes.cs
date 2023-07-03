@@ -22,8 +22,9 @@ public static class OtherModes
 
 	public enum Team
 	{
-		Good,
-		Evil
+		Good = 1,
+		Evil = -1,
+		Undecided = 0
 	}
 
 	public static bool Set(TwitchPlaysMode mode, bool state = true)

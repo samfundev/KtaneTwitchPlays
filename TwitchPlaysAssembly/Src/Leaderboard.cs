@@ -331,6 +331,12 @@ public class Leaderboard
 		return _entryListSolo.Where(entry => entry.Rank == rank && (entry.SolveCount != 0 || entry.StrikeCount != 0)).ToList();
 	}
 
+	/// <summary>Gets all leaderboard entries that have a non-null team set for VS mode.</summary>
+	public List<LeaderboardEntry> GetVSEntries()
+	{
+		return _entryList.Where(entry => entry.Team != null).ToList();
+	}
+
 	public int GetSoloRank(string userName, out LeaderboardEntry entry)
 	{
 		if (userName.StartsWith("@"))

@@ -38,9 +38,6 @@ public class TwitchGame : MonoBehaviour
 	public CommandQueueItem callSend;
 
 	public bool VSSetFlag = false;
-	public SortedDictionary<int, string> VSModePlayers = new SortedDictionary<int, string>();
-	public List<string> GoodPlayers = new List<string>();
-	public List<string> EvilPlayers = new List<string>();
 
 	public int FindClaimUse = 0;
 	public bool FindClaimEnabled;
@@ -301,8 +298,6 @@ public class TwitchGame : MonoBehaviour
 		if (!claimsEnabled)
 			TwitchModule.ClaimsEnabled = true;
 		StopAllCoroutines();
-		GoodPlayers.Clear();
-		EvilPlayers.Clear();
 		VSSetFlag = false;
 		QueueEnabled = false;
 		FindClaimEnabled = false;

@@ -668,7 +668,6 @@ static class GlobalCommands
 	{
 		targetUser = targetUser.FormatUsername();
 		Leaderboard.Instance.MakeGood(targetUser);
-		if (TwitchPlaySettings.data.AutoSetVSModeTeams) TwitchGame.Instance.GoodPlayers.Add(targetUser);
 		IRCConnection.SendMessage($"@{targetUser} added to the Good Team.");
 	}
 
@@ -681,7 +680,6 @@ static class GlobalCommands
 	{
 		targetUser = targetUser.FormatUsername();
 		Leaderboard.Instance.MakeEvil(targetUser);
-		if (TwitchPlaySettings.data.AutoSetVSModeTeams) TwitchGame.Instance.EvilPlayers.Add(targetUser);
 		IRCConnection.SendMessage($"@{targetUser} added to the Evil Team.");
 	}
 
@@ -703,15 +701,10 @@ static class GlobalCommands
 			IRCConnection.SendMessage($"@{user}, teams are being manually set. Please specify a team.");
 			return;
 		}
-		if (TwitchGame.Instance.VSModePlayers.Values.Contains(user))
+		OtherModes.Team? team = Leaderboard.Instance.GetTeam(user);
+		if (team != null)
 		{
-			IRCConnection.SendMessage($@"{user}, you have already been added to the next VSMode bomb.");
-			return;
-		}
-		if (TwitchGame.Instance.GoodPlayers.Contains(user) || TwitchGame.Instance.EvilPlayers.Contains(user))
-		{
-			string team = TwitchGame.Instance.GoodPlayers.Contains(user) ? "good" : "evil";
-			IRCConnection.SendMessage($@"{user}, you are already on the {team} team.");
+			IRCConnection.SendMessage($@"{user}, you are already on the {team.ToString().ToLower()} team.");
 			return;
 		}
 		if (_inGame && !TwitchPlaySettings.data.VSModePlayerLockout)
@@ -720,8 +713,7 @@ static class GlobalCommands
 			return;
 		}
 
-		var trueRank = Leaderboard.Instance.GetTrueRank(user);
-		TwitchGame.Instance.VSModePlayers.Add(trueRank, user);
+		Leaderboard.Instance.GetEntry(user).Team = OtherModes.Team.Undecided;
 		IRCConnection.SendMessage($"{(_inGame ? "Sorry " : "")}@{user}, {(_inGame ? "the bomb has already started. Y" : "y")}ou have been added to the next VSMode bomb.");
 	}
 
@@ -732,7 +724,8 @@ static class GlobalCommands
 	[Command(@"clearvsplayers", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ClearVSPlayers()
 	{
-		TwitchGame.Instance.VSModePlayers.Clear();
+		foreach (var entry in Leaderboard.Instance.GetVSEntries())
+			entry.Team = null;
 		IRCConnection.SendMessage("VSMode Players have been cleared.");
 	}
 
@@ -747,24 +740,12 @@ static class GlobalCommands
 			IRCConnection.SendMessage("You cannot use this command in this mode.");
 			return;
 		}
-		else if (!TwitchGame.Instance.VSSetFlag || TwitchGame.Instance.GoodPlayers.Count == 0 || TwitchGame.Instance.EvilPlayers.Count == 0)
-		{
-			var _vsCount = TwitchGame.Instance.VSModePlayers.Count;
-			if (_vsCount < 2) IRCConnection.SendMessage($"Currently {_vsCount} players, not enough to play!");
-			else
-			{
-				string _vsPlayers = string.Join(", @", TwitchGame.Instance.VSModePlayers.Values.ToArray());
-				IRCConnection.SendMessage($"{_vsCount} players joined for VSMode, they are: {_vsPlayers}");
-			}
-			return;
-		}
 
-		var _gCount = TwitchGame.Instance.GoodPlayers.Count;
-		var _eCount = TwitchGame.Instance.EvilPlayers.Count;
-		string _gPlayers = string.Join(", @", TwitchGame.Instance.GoodPlayers.ToArray());
-		string _ePlayers = string.Join(", @", TwitchGame.Instance.EvilPlayers.ToArray());
-		IRCConnection.SendMessage($"{_gCount} Good players joined, they are: @{_gPlayers}");
-		IRCConnection.SendMessage($"{_eCount} Evil players joined, they are: @{_ePlayers}");
+		var byTeam = Leaderboard.Instance.GetVSEntries().ToDictionary(entry => entry.Team, entry => entry.UserName);
+		foreach (var pair in byTeam)
+		{
+			IRCConnection.SendMessage($"${pair.Value.Length} {pair.Key} players joined, they are: @{pair.Value.Join(", @")}");
+		}
 	}
 
 	/// <name>Join Team</name>
@@ -953,13 +934,12 @@ static class GlobalCommands
 		}
 		if (TwitchPlaySettings.data.AutoSetVSModeTeams)
 		{
-			if (TwitchGame.Instance.VSModePlayers.Count < 2)
+			string[] allPlayers = Leaderboard.Instance.GetVSEntries().Select(entry => entry.UserName).OrderBy(Leaderboard.Instance.GetTrueRank).ToArray();
+			if (allPlayers.Length < 2)
 			{
 				IRCConnection.SendMessage("Not enough players for VSMode");
 				return null;
 			}
-
-			string[] allPlayers = TwitchGame.Instance.VSModePlayers.Values.ToArray();
 
 			if (TwitchPlaySettings.data.VSModeBalancedTeams)
 			{
@@ -967,21 +947,12 @@ static class GlobalCommands
 			}
 			else
 			{
-				int goodCount = allPlayers.Length * TwitchPlaySettings.data.VSModeGoodSplit / 100;
+				int goodCount = allPlayers.Length < 4 ? 1 : allPlayers.Length * TwitchPlaySettings.data.VSModeGoodSplit / 100;
 
-				if (allPlayers.Length < 4)
-				{
-					AddGood(allPlayers[0]);
-				}
-				else
-				{
-					for (int i = 0; i < goodCount; i++) AddGood(allPlayers[i]);
-				}
-
-				for (int i = TwitchGame.Instance.GoodPlayers.Count; i < allPlayers.Length; i++) AddEvil(allPlayers[i]);
+				for (int i = 0; i < goodCount; i++) AddGood(allPlayers[i]);
+				for (int i = goodCount; i < allPlayers.Length; i++) AddEvil(allPlayers[i]);
 			}
 			TwitchGame.Instance.VSSetFlag = true;
-			TwitchGame.Instance.VSModePlayers.Clear();
 		}
 		else
 		{
@@ -1011,7 +982,7 @@ static class GlobalCommands
 	[Command(@"assignany (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddVSPlayer([Group(1)] string targetUser)
 	{
-		int diff = TwitchGame.Instance.GoodPlayers.Count - TwitchGame.Instance.EvilPlayers.Count;
+		int diff = Leaderboard.Instance.GetVSEntries().Sum(entry => (int) entry.Team);
 		if (diff > 1)
 		{
 			AddEvil(targetUser);
