@@ -74,6 +74,7 @@ static class ProfileHelper
 	public static IEnumerator LoadAutoProfiles()
 	{
 		yield return null;
+		yield return LoadData();
 		var modules = Modules.Where(x => (x.Type == "Needy" || x.Type == "Regular") && x.TwitchPlays != null).ToList();
 		var parsedNeedyModules = new List<Tuple<string, List<string>>>();
 		foreach (var needyModule in modules.Where(x => x.Type == "Needy"))
