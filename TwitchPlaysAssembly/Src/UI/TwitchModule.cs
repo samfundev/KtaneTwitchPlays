@@ -73,8 +73,6 @@ public class TwitchModule : MonoBehaviour
 
 		if (pin && (UserAccess.HasAccess(user, AccessLevel.Mod, true) || Solver.ModInfo.CameraPinningAlwaysAllowed || BombComponent is NeedyComponent || TwitchPlaySettings.data.AnarchyMode))
 			CameraPriority |= CameraPriority.Pinned;
-		else
-			CameraPriority &= ~CameraPriority.Pinned;
 
 		LastUsed = DateTime.UtcNow;
 	}
@@ -405,7 +403,8 @@ public class TwitchModule : MonoBehaviour
 		ModuleCameras.Instance.UpdateAutomaticCameraWall();
 	}
 
-	private void OnDestroy() {
+	private void OnDestroy()
+	{
 		StopAllCoroutines();
 		OnDestroyed?.Invoke();
 	}
