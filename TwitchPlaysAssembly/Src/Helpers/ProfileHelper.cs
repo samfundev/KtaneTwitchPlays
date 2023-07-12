@@ -37,7 +37,7 @@ static class ProfileHelper
 
 	public static string GetProperProfileName(string profile) => TwitchPlaySettings.data.ProfileWhitelist.Find(str => string.Equals(str, profile, StringComparison.InvariantCultureIgnoreCase));
 
-	public static bool Add(string profile)
+	public static bool Enable(string profile)
 	{
 		List<string> temp = Profiles;
 		if (temp.Contains(profile)) return false;
@@ -48,7 +48,7 @@ static class ProfileHelper
 		return true;
 	}
 
-	public static bool Remove(string profile)
+	public static bool Disable(string profile)
 	{
 		List<string> temp = Profiles;
 		if (!temp.Remove(profile)) return false;
@@ -69,6 +69,13 @@ static class ProfileHelper
 				{ "Operation", 1 }
 			}
 		));
+	}
+	
+	public static void Delete(string profile)
+	{
+		if (!Directory.Exists(ProfileFolder)) return;
+
+		File.Delete(Path.Combine(ProfileFolder, $"{profile}.json"));
 	}
 
 	public static IEnumerator LoadAutoProfiles()
