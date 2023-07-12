@@ -1083,7 +1083,7 @@ static class GlobalCommands
 	[Command(@"profiles? +(?:enable|activate) +(.+)")]
 	public static void ProfileEnable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
-		IRCConnection.SendMessage(ProfileHelper.Add(filename) ?
+		IRCConnection.SendMessage(ProfileHelper.Enable(filename) ?
 			$"Enabled profile: {profileString}." :
 			string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "enabled"), user, !isWhisper);
 	});
@@ -1094,7 +1094,7 @@ static class GlobalCommands
 	[Command(@"profiles? +(?:disable|deactivate) +(.+)")]
 	public static void ProfileDisable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
-		IRCConnection.SendMessage(ProfileHelper.Remove(filename) ?
+		IRCConnection.SendMessage(ProfileHelper.Disable(filename) ?
 			$"Disabled profile: {profileString}." :
 			string.Format(TwitchPlaySettings.data.ProfileActionUseless, profileString, "disabled"), user, !isWhisper);
 	});
@@ -1154,8 +1154,8 @@ static class GlobalCommands
 			return;
 		}
 
-		string fileName = profileName.Replace(' ', '_');
-		string profilePath = Path.Combine(ProfileHelper.ProfileFolder, $"{fileName}.json");
+		var fileName = profileName.Replace(' ', '_');
+		var profilePath = Path.Combine(ProfileHelper.ProfileFolder, $"{fileName}.json");
 		if (File.Exists(profilePath))
 		{
 			IRCConnection.SendMessage(message);
@@ -1163,7 +1163,36 @@ static class GlobalCommands
 		}
 
 		ProfileHelper.Write(fileName, new[] { module });
+		TwitchPlaySettings.data.ProfileWhitelist.Add(profileName);
+		TwitchPlaySettings.WriteDataToFile();
 		IRCConnection.SendMessage($"Created \"{profileName}\" with module \"{moduleInfo.moduleDisplayName}\".",
+			user, !isWhisper
+		);
+	}
+	
+	// <name>Profile Delete</name>
+	/// <syntax>profile delete [profile]</syntax>
+	/// <summary>Deletes a profile with the specified name.</summary>
+	/// <restriction>Admin</restriction>
+	[Command("profiles? +delete +(\"?)(.+)\\1", AccessLevel.Admin, AccessLevel.Admin)]
+	public static void ProfileDelete(string user, bool isWhisper, [Group(2)] string profileName)
+	{
+		var fileName = profileName.Replace(' ', '_');
+		var profilePath = Path.Combine(ProfileHelper.ProfileFolder, $"{fileName}.json");
+		if (!File.Exists(profilePath))
+		{
+			IRCConnection.SendMessage($"The specified profile {profileName} does not exist.");
+			return;
+		}
+
+		ProfileHelper.Delete(fileName);
+		if (TwitchPlaySettings.data.ProfileWhitelist.Contains(profileName))
+		{
+			TwitchPlaySettings.data.ProfileWhitelist.Remove(profileName);
+			TwitchPlaySettings.WriteDataToFile();
+		}
+
+		IRCConnection.SendMessage($"Removed a profile with the name {profileName}.",
 			user, !isWhisper
 		);
 	}
