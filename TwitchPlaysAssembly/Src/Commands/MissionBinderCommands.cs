@@ -10,6 +10,7 @@ using UnityEngine;
 /// <prefix>binder </prefix>
 public static class MissionBinderCommands
 {
+	#region Binder Commands
 	/// <name>Select</name>
 	/// <syntax>select</syntax>
 	/// <summary>Selects the currently highlighted item.</summary>
@@ -119,6 +120,7 @@ public static class MissionBinderCommands
 		_currentSelectables = currentPage?.Children;
 		_currentSelectableIndex = _currentSelectables?.IndexOf(sel => sel == _currentSelectable) ?? -1;
 	}
+	#endregion
 
 	#region Private Methods
 	private static void MoveOnPage(int offset)

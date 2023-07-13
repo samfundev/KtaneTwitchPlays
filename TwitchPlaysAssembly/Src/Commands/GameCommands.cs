@@ -897,6 +897,25 @@ static class GameCommands
 		}
 		return false;
 	}
+
+	/// <name>Show Mission Name</name>
+	/// <syntax>status\nmission</syntax>
+	/// <summary>View currently running mission name, if any.</summary>
+	[Command(@"(?:status|mission)")]
+	public static void Mission(string cmd, string user, bool isWhisper)
+	{
+		if (GameplayState.MissionToLoad.EqualsAny(Assets.Scripts.Missions.FreeplayMissionGenerator.FREEPLAY_MISSION_ID, ModMission.CUSTOM_MISSION_ID))
+		{
+			IRCConnection.SendMessage(TwitchPlaySettings.data.CurrentMissionNull, user, !isWhisper);
+			return;
+		}
+
+		var missionTerm = SceneManager.Instance.GameplayState.Mission.DisplayNameTerm;
+		string missionName = Localization.GetLocalizedString(missionTerm);
+		string missionLink = "https://bombs.samfun.dev/mission/" + Uri.EscapeDataString(missionName);
+		IRCConnection.SendMessage(TwitchPlaySettings.data.CurrentMission, user, !isWhisper, missionName, missionLink);
+	}
+
 	#endregion
 
 	#region Private methods
