@@ -454,6 +454,8 @@ public class TwitchPlaySettingsData
 	public string NotesTaken = "Notes Taken for Note Slot {0}: {1}";
 	public string NotesAppended = "Notes appended to Note Slot {0}: {1}";
 	public string NoteSlotCleared = "Note Slot {0} Cleared.";
+	public string CurrentMission = "Current mission: {0}. {1}";
+	public string CurrentMissionNull = "There is no mission running.";
 
 	public string GiveBonusPoints = "{0} awarded {1} points by {2}";
 	public string GiveBonusSolves = "{0} awarded {1} solves by {2}";
@@ -653,6 +655,8 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref NotesTaken, data.NotesTaken, 2);
 		valid &= ValidateString(ref NotesAppended, data.NotesTaken, 2);
 		valid &= ValidateString(ref NoteSlotCleared, data.NoteSlotCleared, 1);
+		valid &= ValidateString(ref CurrentMission, data.CurrentMission, 2);
+		valid &= ValidateString(ref CurrentMissionNull, data.CurrentMissionNull, 0);
 
 		valid &= ValidateString(ref GiveBonusPoints, data.GiveBonusPoints, 3);
 		valid &= ValidateString(ref GiveBonusSolves, data.GiveBonusSolves, 3);
