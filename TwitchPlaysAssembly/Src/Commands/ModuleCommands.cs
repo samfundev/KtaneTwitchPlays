@@ -467,11 +467,7 @@ static class ModuleCommands
 				if (timed || !command) yields.Add(new WaitForSecondsWithCancel(delay, false, module.Solver));
 				IEnumerator toYield = yields.GetEnumerator();
 
-				IEnumerator routine = null;
-				if (show)
-				{
-					routine = Show(module, toYield);
-				}
+				IEnumerator routine = Show(module, toYield);
 				if (tilt)
 				{
 					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant());
