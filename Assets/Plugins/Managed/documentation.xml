@@ -1168,10 +1168,10 @@
         </member>
         <member name="M:ModuleCommands.DefaultCommand(TwitchModule,System.String,System.String)">
             <name>Zoom, Superzoom, Show and Tilt</name>
-            <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)\nshow</syntax>
+            <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (angle) (command)\nshow</syntax>
             <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
             Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being bottom left and top right respectively.
-            Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
+            Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft, or any number where 0 is the top of the module and goes clockwise. (angle) is the tilt angle and can be any number between 0 to 90.
             Show will select the module on the bomb.
             Zoom and Tilt or Superzoom and Tilt or Zoom and Show or Superzoom and Show can be put back to back to do both at the same time.
             </summary>
