@@ -343,7 +343,7 @@ static class ModuleCommands
 				yield return unzoomCoroutine.Current;
 	}
 
-	public static IEnumerator Tilt(TwitchModule module, object yield, string direction)
+	public static IEnumerator Tilt(TwitchModule module, object yield, string direction, float tiltAngle)
 	{
 		float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
 
@@ -383,7 +383,7 @@ static class ModuleCommands
 
 		yield return new WaitForSeconds(0.5f);
 
-		var targetAngle = Quaternion.Euler(new Vector3(-Mathf.Cos(targetRotation * Mathf.Deg2Rad), 0, Mathf.Sin(targetRotation * Mathf.Deg2Rad)) * (module.FrontFace ? 60 : -60));
+		var targetAngle = Quaternion.Euler(new Vector3(-Mathf.Cos(targetRotation * Mathf.Deg2Rad), 0, Mathf.Sin(targetRotation * Mathf.Deg2Rad)) * (module.FrontFace ? tiltAngle : -tiltAngle));
 		foreach (float alpha in 1f.TimedAnimation())
 		{
 			var lerp = Quaternion.Lerp(Quaternion.identity, targetAngle, easeCubic(alpha));
@@ -422,10 +422,10 @@ static class ModuleCommands
 	}
 
 	/// <name>Zoom, Superzoom, Show and Tilt</name>
-	/// <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (command)\ntilt (angle) (command)\nshow</syntax>
+	/// <syntax>zoom (duration) (command)\nsuperzoom (factor) (x) (y) (duration) (command)\ntilt (direction) (angle) (command)\nshow</syntax>
 	/// <summary>Zooms into a module for (duration) seconds. (command) allows you to send a command to the module while it's zooming.
 	/// Superzoom allows you more control over the zoom. (factor) controls how much it's zoomed in with 2 being a 2x zoom. (x) and (y) controls where the camera points with (0, 0) and (1, 1) being bottom left and top right respectively.
-	/// Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft. (angle) can be any number where 0 is the top of the module and goes clockwise.
+	/// Tilt will tilt the camera around the module in a direction so you can get better angle to look at the module. (direction) can be up, right, down or left and combinations like upleft, or any number where 0 is the top of the module and goes clockwise. (angle) is the tilt angle and can be any number between 0 to 90.
 	/// Show will select the module on the bomb.
 	/// Zoom and Tilt or Superzoom and Tilt or Zoom and Show or Superzoom and Show can be put back to back to do both at the same time.
 	/// </summary>
@@ -437,7 +437,7 @@ static class ModuleCommands
 			IRCConnection.SendMessage($"Sorry @{user}, the module you are trying to interact with is being votesolved.");
 			yield break;
 		}
-		if (cmd.RegexMatch(out Match match, @"(?:(?<zoom>zoom *(?<time>\d*\.?\d+)?)|(?<superzoom>superzoom *(?<factor>\d*\.?\d+) *(?<x>\d*\.?\d+)? *(?<y>\d*\.?\d+)? *(?<stime>\d*\.?\d+)?))? *(?:(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)?)|(?<show>show)?)? *(?:send *to *module)? *(?<command>.+)?"))
+		if (cmd.RegexMatch(out Match match, @"(?:(?<zoom>zoom *(?<time>\d*\.?\d+)?)|(?<superzoom>superzoom *(?<factor>\d*\.?\d+) *(?<x>\d*\.?\d+)? *(?<y>\d*\.?\d+)? *(?<stime>\d*\.?\d+)?))? *(?:(?<tilt>tilt *(?<direction>[uptobmdwnlefrigh]+|-?\d+)? *(?<angle>\d*\.?\d+)?)|(?<show>show)?)? *(?:send *to *module)? *(?<command>.+)?"))
 		{
 			var groups = match.Groups;
 			var timed = groups["time"].Success || groups["stime"].Success;
@@ -470,7 +470,8 @@ static class ModuleCommands
 				IEnumerator routine = Show(module, toYield);
 				if (tilt)
 				{
-					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant());
+					var tiltAngle = Mathf.Min(groups["angle"].Value.TryParseFloat() ?? 60, 90);
+					routine = Tilt(module, toYield, groups["direction"].Value.ToLowerInvariant(), tiltAngle);
 				}
 
 				if (zooming)
