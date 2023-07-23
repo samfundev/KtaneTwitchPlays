@@ -229,6 +229,10 @@ static class ModuleCommands
 		else if (module.PlayerName == null)
 			IRCConnection.SendMessage(module.TryClaim(user).Message);
 
+		// Module has a queued command, likely a solve: forbid taking, that would interfere with the queue
+		else if (TwitchGame.Instance.CommandQueue.Any(c => c.Message.Text.StartsWith($"!{module.Code} ")))
+			IRCConnection.SendMessage($"@{user}, the module you are trying to take has a command in the queue.");
+
 		// Attempt to take over from another user
 		else
 		{
