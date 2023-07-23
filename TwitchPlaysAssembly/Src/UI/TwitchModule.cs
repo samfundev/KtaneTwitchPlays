@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,6 +97,7 @@ public class TwitchModule : MonoBehaviour
 
 	public Coroutine TakeInProgress;
 	public string TakeUser;
+	public bool TakeConfirmationShown; // Confirmation on taking a module that has a queued claim
 	public static List<string> ClaimedList = new List<string>();
 
 	public Action OnDestroyed;
@@ -552,6 +553,7 @@ public class TwitchModule : MonoBehaviour
 		SetBannerColor(ClaimedBackgroundColour);
 		PlayerName = userNickName;
 		CameraPriority |= CameraPriority.Claimed;
+		TakeConfirmationShown = false;
 	}
 
 	public void SetUnclaimed()

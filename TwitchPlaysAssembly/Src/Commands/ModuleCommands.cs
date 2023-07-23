@@ -229,13 +229,19 @@ static class ModuleCommands
 		else if (module.PlayerName == null)
 			IRCConnection.SendMessage(module.TryClaim(user).Message);
 
-		// Module has a queued command, likely a solve: forbid taking, that would interfere with the queue
-		else if (TwitchGame.Instance.CommandQueue.Any(c => c.Message.Text.StartsWith($"!{module.Code} ")))
-			IRCConnection.SendMessage($"@{user}, the module you are trying to take has a command in the queue.");
+		// If there's already a queued command for the module, it could be problematic to take it.
+		// However there still may be reasons to take it anyway, so ask for confirmation.
+		else if (!module.TakeConfirmationShown && TwitchGame.Instance.CommandQueue.Any(c => c.Message.Text.StartsWith($"!{module.Code} ")))
+		{
+			IRCConnection.SendMessage($"@{user}, the module you are trying to take has a command in the queue already. Please use '!{module.Code} take' again to confirm you want to do this.");
+			module.TakeConfirmationShown = true;
+		}
 
 		// Attempt to take over from another user
 		else
 		{
+			module.TakeConfirmationShown = false;
+
 			module.AddToClaimQueue(user);
 			if (module.TakeInProgress != null)
 				IRCConnection.SendMessageFormat(TwitchPlaySettings.data.TakeInProgress, user, module.Code, module.HeaderText);
@@ -267,6 +273,7 @@ static class ModuleCommands
 			module.StopCoroutine(module.TakeInProgress);
 			module.TakeInProgress = null;
 			module.TakeUser = null;
+			module.TakeConfirmationShown = false;
 		}
 
 		// The module isn’t claimed: just claim it
@@ -303,6 +310,7 @@ static class ModuleCommands
 		module.StopCoroutine(module.TakeInProgress);
 		module.TakeInProgress = null;
 		module.TakeUser = null;
+		module.TakeConfirmationShown = false;
 	}
 
 	/// <name>Points</name>
