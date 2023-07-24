@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -620,10 +620,10 @@ static class GameCommands
 	}
 
 	/// <name>Call All</name>
-	/// <syntax>call all</syntax>
-	/// <summary>Calls all commands, including named ones.</summary>
-	[Command(@"callall")]
-	public static void CallAllQueuedCommands(string user, bool isWhisper)
+	/// <syntax>callall\ncallall force</syntax>
+	/// <summary>Calls all unnamed commands in the queue. If force is specified, named commands are included too.</summary>
+	[Command(@"callall( *force)?")]
+	public static void CallAllQueuedCommands(string user, bool isWhisper, [Group(1)] bool force)
 	{
 		if (TwitchGame.Instance.CommandQueue.Count == 0)
 		{
@@ -632,8 +632,14 @@ static class GameCommands
 		}
 
 		// Take a copy of the list in case executing one of the commands modifies the command queue
-		var allCommands = TwitchGame.Instance.CommandQueue.ToList();
-		TwitchGame.Instance.CommandQueue.Clear();
+		var allCommands = TwitchGame.Instance.CommandQueue.Where(item => force || item.Name == null).ToList();
+		if (allCommands.Count == 0)
+		{
+			IRCConnection.SendMessage($"{user}, the queue only contains named commands. Use '!callall force' to call them.", user, !isWhisper);
+			return;
+		}
+
+		TwitchGame.Instance.CommandQueue.RemoveAll(item => allCommands.Contains(item));
 		TwitchGame.ModuleCameras?.SetNotes();
 		List<IRCMessage> cmdsToExecute = new List<IRCMessage>();
 		foreach (var call in allCommands)
