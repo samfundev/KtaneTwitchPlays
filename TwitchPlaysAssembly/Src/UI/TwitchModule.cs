@@ -212,12 +212,7 @@ public class TwitchModule : MonoBehaviour
 				var bar = _data.bar;
 				bar.transform.parent.gameObject.SetActive(TwitchPlaySettings.data.ShowModuleDifficulty && !ModInfo.unclaimable);
 
-				var value = Mathf.InverseLerp(4, 25, GetPoints<BaseScore>());
-				if (ScoreMethods.Any(method => method.GetType() == typeof(PerModule)))
-				{
-					value = Mathf.InverseLerp(0.25f, 4, GetPoints<PerModule>());
-				}
-
+				var value = ScoreMethods.ConvertAll<float>(method => method.CalculateDifficulty()).DefaultIfEmpty(0f).Max();
 				bar.transform.localScale = new Vector3(value, 1, 1);
 
 				Solver.Code = Code;

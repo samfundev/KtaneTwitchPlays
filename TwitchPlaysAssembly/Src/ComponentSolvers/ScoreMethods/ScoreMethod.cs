@@ -15,6 +15,8 @@ namespace TwitchPlays.ScoreMethods
 
 		public abstract float CalculateScore(string user);
 
+		public abstract float CalculateDifficulty();
+
 		public abstract string Description { get; }
 
 		public List<string> Players => Scores.Keys.ToList();
