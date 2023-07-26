@@ -9,5 +9,7 @@ namespace TwitchPlays.ScoreMethods
 		public override string Description => Points.Pluralize("point") + " per action";
 
 		public override float CalculateScore(string user) => 0;
+
+		public override float CalculateDifficulty() => 0;
 	}
 }

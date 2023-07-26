@@ -31,6 +31,8 @@ namespace TwitchPlays.ScoreMethods
 			}
 		}
 
+		public override float CalculateDifficulty() => Mathf.InverseLerp(0.25f, 4.0f, Points);
+
 		public override string Description => Points.Pluralize("point") + " per module";
 	}
 }
