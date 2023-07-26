@@ -303,6 +303,7 @@ public class TwitchPlaysService : MonoBehaviour
 				if (_leaderboardDisplay == null)
 					_leaderboardDisplay = Instantiate(TwitchLeaderboardPrefab);
 				Leaderboard.Instance.SaveDataToFile();
+				_coroutinesToStart.Enqueue(PostGameCommands.AutoContinue());
 				break;
 
 			case KMGameInfo.State.Transitioning:

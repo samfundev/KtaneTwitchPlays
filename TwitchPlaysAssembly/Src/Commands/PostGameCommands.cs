@@ -47,4 +47,14 @@ public static class PostGameCommands
 		// Therefore, just press the button a second time.
 		btn.Trigger();
 	}
+
+	public static IEnumerator AutoContinue()
+	{
+		if (TwitchPlaySettings.data.AutoReturnToSetupMinutes <= 0f)
+			yield break;
+		yield return new WaitForSeconds(TwitchPlaySettings.data.AutoReturnToSetupMinutes * 60f);
+
+		IRCConnection.SendMessage(TwitchPlaySettings.data.ReturningAutomatically);
+		yield return Continue();
+	}
 }
