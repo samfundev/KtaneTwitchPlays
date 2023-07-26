@@ -38,6 +38,7 @@ public class TwitchPlaySettingsData
 	public bool EnableLastModuleZoom = true;
 	public string RepositoryUrl = "https://ktane.timwi.de/";
 	public string AnalyzerUrl = "https://ktane.timwi.de/More/Logfile%20Analyzer.html";
+	public int AutoReturnToSetupMinutes = 0;
 	public bool EnableModeratorsCommand = true;
 	public bool EnableTrollCommands = false;
 	public bool EnableLetterCodes = false;
@@ -427,6 +428,7 @@ public class TwitchPlaySettingsData
 	public string TrainingModeCommandDisabled = "@{0}, Only authorized users may enable/disable Training Mode";
 	public string RunCommandDisabled = "@{0}, Only authorized users may use the !run command.";
 	public string ProfileCommandDisabled = "@{0}, profile management is currently disabled.";
+	public string ReturningAutomatically = "Automatically returning to the office due to inactivity.";
 	public string RetryInactive = "Retry is inactive. Returning to the office instead.";
 	public string RetryModeOrProfileChange = "There has been a change to profiles and/or game modes since the last bomb. Returning to the office instead.";
 
@@ -635,7 +637,9 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref TimeModeCommandDisabled, data.TimeModeCommandDisabled, 1);
 		valid &= ValidateString(ref VsModeCommandDisabled, data.VsModeCommandDisabled, 1);
 		valid &= ValidateString(ref ZenModeCommandDisabled, data.ZenModeCommandDisabled, 1);
+		valid &= ValidateString(ref ReturningAutomatically, data.ReturningAutomatically, 0);
 		valid &= ValidateString(ref RetryInactive, data.RetryInactive, 0);
+		valid &= ValidateString(ref RetryModeOrProfileChange, data.RetryModeOrProfileChange, 0);
 
 		valid &= ValidateString(ref AddedUserPower, data.AddedUserPower, 2, SettingsVersion < 1);
 		valid &= ValidateString(ref RemoveUserPower, data.RemoveUserPower, 2, SettingsVersion < 1);
