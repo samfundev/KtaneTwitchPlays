@@ -915,10 +915,9 @@ static class GameCommands
 			IRCConnection.SendMessage(TwitchPlaySettings.data.CurrentMissionNull, user, !isWhisper);
 			return;
 		}
-
 		var missionTerm = SceneManager.Instance.GameplayState.Mission.DisplayNameTerm;
 		string missionName = Localization.GetLocalizedString(missionTerm);
-		string missionLink = "https://bombs.samfun.dev/mission/" + Uri.EscapeDataString(missionName);
+		string missionLink = UrlHelper.MissionLink(missionName);
 		IRCConnection.SendMessage(TwitchPlaySettings.data.CurrentMission, user, !isWhisper, missionName, missionLink);
 	}
 

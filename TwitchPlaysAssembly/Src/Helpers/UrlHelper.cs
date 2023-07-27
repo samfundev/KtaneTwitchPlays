@@ -28,6 +28,10 @@ public class UrlHelper : MonoBehaviour
 
 	public static string ManualFor(string module, string type = "html", bool useVanillaRuleModifier = false) => string.Format(TwitchPlaySettings.data.RepositoryUrl + "{0}/{1}.{2}{3}", type.ToUpper(), NameToUrl(module), type, (useVanillaRuleModifier && type.Equals("html")) ? $"#{VanillaRuleModifier.GetRuleSeed()}" : "");
 
+	public static string MissionLink(string mission) => "https://bombs.samfun.dev/mission/" + TwitchUrlEscape(mission);
+
+	private static string TwitchUrlEscape(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name)).Replace("*", "%2A").Replace("!", "%21");
+	
 	private static string NameToUrl(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name).Replace("'", "’").Split(InvalidCharacters).Join("")).Replace("*", "%2A").Replace("!", "%21");
 
 	private static readonly char[] InvalidCharacters = Path.GetInvalidFileNameChars().Where(c => c != '*').ToArray();
