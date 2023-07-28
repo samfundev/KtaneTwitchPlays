@@ -281,9 +281,11 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["coopharmonySequence"] = module => new CoopHarmonySequenceShim(module);
 		ModComponentSolverCreators["safetySquare"] = module => new SafetySquareShim(module);
 		ModComponentSolverCreators["lgndEightPages"] = module => new EightPagesShim(module);
+		ModComponentSolverCreators["KritLockpickMaze"] = module => new LockpickMazeShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
+		ModComponentSolverCreators["danielDice"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "rdrts", "Sorry, the secret gambler's room is off limits to you." } });
 
 		//Module Information
 		//Information declared here will be used to generate ModuleInformation.json if it doesn't already exist, and will be overwritten by ModuleInformation.json if it does exist.
