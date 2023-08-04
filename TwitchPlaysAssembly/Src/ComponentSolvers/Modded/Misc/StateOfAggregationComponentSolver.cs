@@ -35,9 +35,9 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 
 			List<string> matchedCGs = allCGs.Where(g => g.ToLower().Replace(" ","").StartsWith(targetCG)).ToList();
 			if (matchedCGs.Count() == 0)
-				yield return $"sendtochaterror!f No chemical group matches \"{mt.Groups[1].ToString()}\".";
+				yield return $"sendtochaterror!hf No chemical group matches \"{mt.Groups[1].ToString()}\".";
 			else if (matchedCGs.Count() > 1)
-				yield return $"sendtochaterror!f Multiple chemical groups match \"{mt.Groups[1].ToString()}\": {matchedCGs.Join(", ")}";
+				yield return $"sendtochaterror!hf Multiple chemical groups match \"{mt.Groups[1].ToString()}\": {matchedCGs.Join(", ")}";
 
 			// Capture group 2: Temperature
 			// Groups 3, 4, 5 detect Celsius, Farenheit, and Kelvin respectively.
