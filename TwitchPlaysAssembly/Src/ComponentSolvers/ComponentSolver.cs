@@ -985,15 +985,26 @@ public abstract class ComponentSolver
 			if (OtherModes.VSModeOn)
 			{
 				if (!UnsupportedModule)
-					messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
-						componentValue, headerText, HPDamage,
-						teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team"));
-				else
+				{
+					if (componentValue != 0)
+						messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsSolve, Code, userNickName,
+							componentValue, headerText, HPDamage,
+							teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team"));
+					else
+						messageParts.Add(string.Format(TwitchPlaySettings.data.AwardVsSolveNoPoints, Code, userNickName,
+							headerText, HPDamage,
+							teamDamaged == OtherModes.Team.Evil ? "the evil team" : "the good team"));
+				}
+				else if (componentValue != 0)
 					messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName,
 						componentValue, headerText));
+				else
+					messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolveNoPoints, Code, userNickName, headerText));
 			}
-			else
+			else if (componentValue != 0)
 				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolve, Code, userNickName, componentValue, headerText));
+			else
+				messageParts.Add(string.Format(TwitchPlaySettings.data.AwardSolveNoPoints, Code, userNickName, headerText));
 			string recordMessageTone = $"Module ID: {Code} | Player: {userNickName} | Module Name: {headerText} | Value: {componentValue}";
 			if (!OtherModes.TrainingModeOn) Leaderboard.Instance?.AddSolve(userNickName);
 			if (!UserAccess.HasAccess(userNickName, AccessLevel.NoPoints))
