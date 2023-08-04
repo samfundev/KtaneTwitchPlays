@@ -411,10 +411,10 @@
             <syntax>call (name)\ncallnow (name)</syntax>
             <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
         </member>
-        <member name="M:GameCommands.CallAllQueuedCommands(System.String,System.Boolean)">
+        <member name="M:GameCommands.CallAllQueuedCommands(System.String,System.Boolean,System.Boolean)">
             <name>Call All</name>
-            <syntax>call all</syntax>
-            <summary>Calls all commands, including named ones.</summary>
+            <syntax>callall\ncallall force</syntax>
+            <summary>Calls all unnamed commands in the queue. If force is specified, named commands are included too.</summary>
         </member>
         <member name="M:GameCommands.CallSetCommand(System.String,System.Int32)">
             <name>Call Set</name>
@@ -677,7 +677,7 @@
             <name>Get Log</name>
             <syntax>lognow</syntax>
             <summary>Sends a message with the current log.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.ShortURL(System.String,System.Boolean)">
             <name>Toggle Short URLs</name>
@@ -836,13 +836,13 @@
             <name>Run Raw</name>
             <syntax>runraw [mission id]</syntax>
             <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.RunRawSeed(System.String,System.String)">
             <name>Run Raw Seed</name>
             <syntax>runrawseed [seed] [mission id]</syntax>
             <summary>The same as Run Raw but allows you to specify a seed.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.ProfileHelp(System.String,System.Boolean)">
             <name>Profile Help</name>
@@ -879,6 +879,11 @@
             <name>Profile Create</name>
             <syntax>profile create [profile] [module]</syntax>
             <summary>Creates a new profile with a disabled module. [profile] must be a new profile name. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space.</summary>
+            <restriction>Admin</restriction>
+        </member>
+        <member name="M:GlobalCommands.ProfileDelete(System.String,System.Boolean,System.String)">
+            <syntax>profile delete [profile]</syntax>
+            <summary>Deletes a profile with the specified name.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.ProfileDisabledBy(System.String,System.String,System.Boolean)">
@@ -982,13 +987,13 @@
             <name>Mimic</name>
             <syntax>mimic [player] [command]</syntax>
             <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.Skip">
             <name>Skip Command</name>
             <syntax>skipcommand</syntax>
             <summary>Forcibly skips the currently running command. It is only recommended to use this to skip a command that is stuck. This may cause issues and should be used with caution.</summary>
-            <restriction>SuperUser</restriction>
+            <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.RunCommandAs(System.String,System.String,System.String,System.String)">
             <name>Run as</name>
