@@ -345,7 +345,9 @@ public class TwitchPlaySettingsData
 	public string HoldableCommandError = "@{1}, Holdable !{0} responded with the following error: {2}";
 
 	public string AwardSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. VoteYea";
+	public string AwardSolveNoPoints = "VoteYea {1} solved Module {0} ({2})! VoteYea";
 	public string AwardVsSolve = "VoteYea {1} solved Module {0} ({3})! +{2} points. -{4} HP from {5}. VoteYea";
+	public string AwardVsSolveNoPoints = "VoteYea {1} solved Module {0} ({2})! -{3} HP from {4}. VoteYea";
 	public string AwardStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! {7} points from {4}{5} VoteNay";
 	public string AwardVsStrike = "VoteNay Module {0} ({6}) got {1} strike{2}! -{7} HP from {4}. {8} points from {9}{5} VoteNay";
 	public string AwardHoldableStrike = "VoteNay Holdable !{0} got {1} strike{2}! {3} points from {4}{5} VoteNay";
@@ -566,7 +568,9 @@ public class TwitchPlaySettingsData
 		valid &= ValidateString(ref HoldableCommandError, data.HoldableCommandError, 3);
 
 		valid &= ValidateString(ref AwardSolve, data.AwardSolve, 4);
+		valid &= ValidateString(ref AwardSolveNoPoints, data.AwardSolveNoPoints, 3);
 		valid &= ValidateString(ref AwardVsSolve, data.AwardVsSolve, 6);
+		valid &= ValidateString(ref AwardVsSolveNoPoints, data.AwardVsSolveNoPoints, 5);
 		valid &= ValidateString(ref AwardStrike, data.AwardStrike, 8);
 		valid &= ValidateString(ref AwardVsStrike, data.AwardVsStrike, 10);
 		valid &= ValidateString(ref AwardHoldableStrike, data.AwardHoldableStrike, 6);
