@@ -23,10 +23,7 @@ public class TheMatrixComponentSolver : ComponentSolver
 		{
 			command = command.Replace("flip ", "").Replace("jack in ", "").Replace("for ", "");
 			if (!int.TryParse(command, out int output) || output <= 0 || output > 60)
-			{
-				yield return "sendtochaterror Number not valid!";
-				yield break;
-			}
+				yield return "sendtochaterror!h Time to stay in the Matrix should be between 1 and 60 seconds.";
 			yield return null;
 
 			// The module strikes as soon as the integer difference between the starting time and
@@ -70,10 +67,7 @@ public class TheMatrixComponentSolver : ComponentSolver
 			yield break;
 
 		if (!int.TryParse(command, out int num) || num < 0 || num > 9)
-		{
-			yield return "sendtochaterror Number not valid!";
-			yield break;
-		}
+			yield return "sendtochaterror!h Time to press the pill should be between 0 and 9.";
 
 		yield return null;
 

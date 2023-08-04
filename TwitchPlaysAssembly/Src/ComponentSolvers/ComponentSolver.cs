@@ -78,8 +78,7 @@ public abstract class ComponentSolver
 					switch (subcoroutine.Current)
 					{
 						case string currentString:
-							if (SendToTwitchChat(currentString, userNickName) ==
-								SendToTwitchChatResponse.InstantResponse)
+							if (SendToTwitchChat(currentString, userNickName) <= SendToTwitchChatResponse.HandledHaltIfUnfocused)
 								yield break;
 							break;
 					}
@@ -149,6 +148,7 @@ public abstract class ComponentSolver
 		bool hideCamera = false;
 		bool exceptionThrown = false;
 		bool trycancelsequence = false;
+		SendToTwitchChatResponse chatResponse;
 
 		while ((_beforeStrikeCount == StrikeCount && !Solved || _disableOnStrike || TwitchPlaySettings.data.AnarchyMode) && !Detonated)
 		{
@@ -221,12 +221,11 @@ public abstract class ComponentSolver
 					}
 				}
 				// Commands that allow messages to be sent to the chat.
-				else if (SendToTwitchChat(currentString, userNickName) != SendToTwitchChatResponse.NotHandled)
+				else if ((chatResponse = SendToTwitchChat(currentString, userNickName)) != SendToTwitchChatResponse.NotHandled)
 				{
-					if (currentString.StartsWith("antitroll") && !TwitchPlaySettings.data.EnableTrollCommands &&
-						!TwitchPlaySettings.data.AnarchyMode)
-						break;
-					//handled
+					if (chatResponse == SendToTwitchChatResponse.HandledMustHalt)
+						break; // Antitroll, requested stop with "sendtochat!h", etc.
+					// otherwise handled, continue
 				}
 				else if (currentString.StartsWith("add strike", StringComparison.InvariantCultureIgnoreCase))
 					OnStrike(null);
@@ -534,18 +533,30 @@ public abstract class ComponentSolver
 
 	protected enum SendToTwitchChatResponse
 	{
-		InstantResponse,
-		Handled,
+		HandledMustHalt,
+		HandledHaltIfUnfocused,
+		HandledContinue,
 		NotHandled
 	}
 
 	protected SendToTwitchChatResponse SendToTwitchChat(string message, string userNickName)
 	{
+		// Default behavior is to halt if the module is unfocused, as it has always been
+		SendToTwitchChatResponse instantResponseReturn = SendToTwitchChatResponse.HandledHaltIfUnfocused;
 		bool skipFormatting = false;
-		if (message.RegexMatch(out Match match2, @"^(\w+)(?:!f) (.+)$"))
+
+		// Catch the following flags (which can be combined):
+		// !f = Skip formatting
+		// !h = Execution must halt
+		if (message.RegexMatch(out Match match2, @"^(\w+)!([fh]+) (.+)$"))
 		{
-			skipFormatting = true;
-			message = match2.Groups[1].Value + " " + match2.Groups[2].Value;
+			string flagsList = match2.Groups[2].ToString().ToLowerInvariant();
+			if (flagsList.Contains('f'))
+				skipFormatting = true;
+			if (flagsList.Contains('h'))
+				instantResponseReturn = SendToTwitchChatResponse.HandledMustHalt;
+
+			message = match2.Groups[1].Value + " " + match2.Groups[3].Value;
 		}
 
 		if (!skipFormatting)
@@ -557,7 +568,7 @@ public abstract class ComponentSolver
 		if (message.RegexMatch(out Match match, @"^senddelayedmessage ([0-9]+(?:\.[0-9]+)?) (\S(?:\S|\s)*)$") && float.TryParse(match.Groups[1].Value, out float messageDelayTime))
 		{
 			Module.StartCoroutine(SendDelayedMessage(messageDelayTime, skipFormatting ? match.Groups[2].Value : string.Format(match.Groups[2].Value, userNickName, Module.Code)));
-			return SendToTwitchChatResponse.InstantResponse;
+			return instantResponseReturn;
 		}
 
 		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
@@ -568,17 +579,21 @@ public abstract class ComponentSolver
 		{
 			case "sendtochat":
 				IRCConnection.SendMessage(chatMsg);
-				return SendToTwitchChatResponse.InstantResponse;
+				return instantResponseReturn;
 			case "antitroll":
-				if (TwitchPlaySettings.data.EnableTrollCommands || TwitchPlaySettings.data.AnarchyMode) return SendToTwitchChatResponse.Handled;
-				goto case "sendtochaterror";
+				if (TwitchPlaySettings.data.EnableTrollCommands || TwitchPlaySettings.data.AnarchyMode)
+					return SendToTwitchChatResponse.HandledContinue;
+
+				// Absolutely ensure that we don't continue executing troll commands.
+				Module.CommandError(userNickName, chatMsg);
+				return SendToTwitchChatResponse.HandledMustHalt;
 			case "sendtochaterror":
 				Module.CommandError(userNickName, chatMsg);
-				return SendToTwitchChatResponse.InstantResponse;
+				return instantResponseReturn;
 			case "strikemessage":
 				StrikeMessageConflict |= StrikeCount != _beforeStrikeCount && !string.IsNullOrEmpty(StrikeMessage) && !StrikeMessage.Equals(chatMsg);
 				StrikeMessage = chatMsg;
-				return SendToTwitchChatResponse.Handled;
+				return SendToTwitchChatResponse.HandledContinue;
 			default:
 				return SendToTwitchChatResponse.NotHandled;
 		}
