@@ -71,7 +71,7 @@ public abstract class ComponentSolver
 			try
 			{
 				moved = subcoroutine.MoveNext();
-				if (moved && (ModInfo.DoesTheRightThing || ModInfo.builtIntoTwitchPlays))
+				if (moved && (!ModInfo.CompatibilityMode || ModInfo.builtIntoTwitchPlays))
 				{
 					//Handle No-focus API commands. In order to focus the module, the first thing yielded cannot be one of the things handled here, as the solver will yield break if
 					//it is one of these API commands returned.
@@ -97,10 +97,12 @@ public abstract class ComponentSolver
 
 		if (Solved != solved || _beforeStrikeCount != StrikeCount)
 		{
-			IRCConnection.SendMessageFormat("Please submit an issue at https://github.com/samfundev/KtaneTwitchPlays/issues regarding module !{0} ({1}) attempting to solve / strike prematurely.", Module.Code, Module.HeaderText);
+			IRCConnection.SendMessageFormat("Warning: Module !{0} ({1}) attempted to {2} in response to a command before Twitch Plays could focus on it. Compatibility mode has been enabled for this module.",
+				Module.Code, Module.HeaderText, (Solved != solved) ? "solve" : "strike");
+
 			if (ModInfo != null)
 			{
-				ModInfo.DoesTheRightThing = false;
+				ModInfo.CompatibilityMode = true;
 				ModuleData.DataHasChanged = true;
 				ModuleData.WriteDataToFile();
 			}

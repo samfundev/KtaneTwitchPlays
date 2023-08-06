@@ -316,7 +316,7 @@ static class GlobalCommands
 	/// <name>Read Module Information</name>
 	/// <syntax>readmodule [information] [module]</syntax>
 	/// <summary>Reads the information for a module.</summary>
-	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands|unclaimable|announce(?:ment| *module)?) +(.+)")]
+	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|compatibility(?: *mode)?|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands|unclaimable|announce(?:ment| *module)?) +(.+)")]
 	public static void ReadModuleInformation([Group(1)] string command, [Group(2)] string parameter, string user, bool isWhisper)
 	{
 		var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(parameter)).ToList();
@@ -393,6 +393,11 @@ static class GlobalCommands
 					case "unclaimable":
 						IRCConnection.SendMessage($"Module {moduleName} unclaimable: {(modules[0].unclaimable ? "Yes" : "No")}", user, !isWhisper);
 						break;
+					case "compatibility":
+					case "compatibility mode":
+					case "compatibilitymode":
+						IRCConnection.SendMessage($"Module {moduleName} compatibility mode: {(modules[0].CompatibilityMode ? "Enabled" : "Disabled")}", user, !isWhisper);
+						break;
 				}
 				break;
 
@@ -413,7 +418,7 @@ static class GlobalCommands
 	/// <syntax>writemodule [information] [module] [value]</syntax>
 	/// <summary>Writes the information for a module to a specified value.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|unclaimable|announce(?:ment| *module)?) +(.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|compatibility(?: *mode)?|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|unclaimable|announce(?:ment| *module)?) +(.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void WriteModuleInformation([Group(1)] string command, [Group(2)] string search, [Group(3)] string changeTo, string user, bool isWhisper)
 	{
 		var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(search)).ToList();
@@ -564,6 +569,17 @@ static class GlobalCommands
 					case "unclaimable":
 						module.unclaimable = changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes");
 						IRCConnection.SendMessage($"Module {moduleName} unclaimable changed to: {(modules[0].unclaimable ? "Yes" : "No")}", user, !isWhisper);
+						break;
+					case "compatibility":
+					case "compatibility mode":
+					case "compatibilitymode":
+						if (module.builtIntoTwitchPlays)
+						{
+							IRCConnection.SendMessage($"Module {moduleName} is built into Twitch Plays; compatibility mode can't be changed. If there's a problem with this module's TP support, please submit an issue at https://github.com/samfundev/KtaneTwitchPlays/issues.", user, !isWhisper);
+							break;
+						}
+						module.CompatibilityMode = changeTo.ContainsIgnoreCase("true") || changeTo.ContainsIgnoreCase("yes") || changeTo.ContainsIgnoreCase("enable");
+						IRCConnection.SendMessage($"Module {moduleName} compatibility mode changed to: {(modules[0].CompatibilityMode ? "Enabled" : "Disabled")}", user, !isWhisper);
 						break;
 				}
 				ModuleData.DataHasChanged = true;
