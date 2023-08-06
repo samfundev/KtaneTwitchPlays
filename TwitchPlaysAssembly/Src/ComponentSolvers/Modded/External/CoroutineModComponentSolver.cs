@@ -69,7 +69,7 @@ public class CoroutineModComponentSolver : ComponentSolver
 		//code would never be executed until absolutely necessary.
 		//There is the side-effect though that invalid commands sent to the module will appear as if they were 'correctly' processed, by executing the focus.
 		//I'd rather have interactions that are not broken by timing mismatches, even if the tradeoff is that it looks like it accepted invalid commands.
-		if (!ModInfo.DoesTheRightThing)
+		if (ModInfo.CompatibilityMode)
 		{
 			yield return "modcoroutine";
 		}

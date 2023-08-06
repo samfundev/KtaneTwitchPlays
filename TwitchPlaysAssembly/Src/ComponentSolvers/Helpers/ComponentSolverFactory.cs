@@ -303,7 +303,6 @@ public static class ComponentSolverFactory
 				"statusLightPosition": "Default",
 				"validCommandsOverride": false,
 				"validCommands": null,
-				"DoesTheRightThing": true,
 				"CameraPinningAlwaysAllowed": false
 			},
 		 * 
@@ -317,12 +316,14 @@ public static class ComponentSolverFactory
 		 * helpTextOverride - If true, the help text will not be overwritten by the help text in the module.
 		 * helpText - Instructions on how to interact with the module in twitch plays.
 		 * 
-		 * Finally, validCommands, DoesTheRightThing and all of the override flags will only show up in modules not built into Twitch plays.
+		 * Finally, validCommands, CompatibilityMode and all of the override flags will only show up in modules not built into Twitch plays.
 		 * validCommandsOverride - Specifies whether the valid regular expression list should not be updated from the module.
 		 * validCommands - A list of valid regular expression commands that define if the command should be passed onto the modules Twitch plays handler.
 		 *      If null, the command will always be passed on.
 		 *      
-		 * DoesTheRightThing - Specifies whether the module properly yields return something BEFORE interacting with any buttons.
+		 * CompatibilityMode - Set to true if the module does not 'yield return' something before interacting with any objects.
+		 *      Forces the module to be focused before commands are processed at all.
+		 *      This is what "DoesTheRightThing = false" used to be, but it was renamed to shake off years of cruft.
 		 * 
 		 * CameraPinningAlwaysAllowed - Defines if a normal user is allowed to use view pin on this module.
 		 * 
@@ -530,19 +531,16 @@ public static class ComponentSolverFactory
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5." };
-		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
-		ModComponentSolverInformation["FestivePianoKeys"] = new ModuleInformation { helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
+		ModComponentSolverInformation["CruelPianoKeys"] = new ModuleInformation { helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", CompatibilityMode = true };
+		ModComponentSolverInformation["FestivePianoKeys"] = new ModuleInformation { helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", CompatibilityMode = true };
 		ModComponentSolverInformation["LightsOut"] = new ModuleInformation { helpText = "Press the buttons with !{0} press 1 2 3. Buttons ordered from top to bottom, then left to right." };
-		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", DoesTheRightThing = false };
+		ModComponentSolverInformation["PianoKeys"] = new ModuleInformation { helpText = "Submit your answer with !{0} press Bb Bb Bb Bb Gb Ab Bb Ab Bb.", CompatibilityMode = true };
 		ModComponentSolverInformation["Semaphore"] = new ModuleInformation { helpText = "Move to the next flag with !{0} move right or !{0} press right. Move to previous flag with !{0} move left or !{0} press left. Submit with !{0} press ok." };
 
 		//billy_bao
-		ModComponentSolverInformation["greekCalculus"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["greekCalculus"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Blananas2
-		ModComponentSolverInformation["cheepCheckout"] = new ModuleInformation {/*, DoesTheRightThing = ??? */ };
-		ModComponentSolverInformation["hyperlink"] = new ModuleInformation {/*, DoesTheRightThing = ??? */ };
-		ModComponentSolverInformation["spellingBee"] = new ModuleInformation {/*, DoesTheRightThing = ??? */ };
 		ModComponentSolverInformation["timingIsEverything"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 
 		//clutterArranger
@@ -551,12 +549,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { helpText = "Press either button with “!{ 0 } press left / right | Left and Right can be abbreviated to(L) & (R)" };
 
 		//EpicToast
-		ModComponentSolverInformation["brushStrokes"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["brushStrokes"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["cookieJars"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["krazyTalk"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["krazyTalk"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Espik
-		ModComponentSolverInformation["ForgetMeNow"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, DoesTheRightThing = false };
+		ModComponentSolverInformation["ForgetMeNow"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, CompatibilityMode = true };
 
 		//eXish
 		ModComponentSolverInformation["organizationModule"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
@@ -564,12 +562,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["blinkstopModule"] = new ModuleInformation { statusLightPosition = StatusLightPosition.TopLeft };
 
 		//Flamanis
-		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", DoesTheRightThing = false };
+		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", CompatibilityMode = true };
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa" };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit." };
 
 		//Goofy
-		ModComponentSolverInformation["megaMan2"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["megaMan2"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Hexicube
 		ModComponentSolverInformation["MemoryV2"] = new ModuleInformation { moduleDisplayName = "Forget Me Not", CameraPinningAlwaysAllowed = true, announceModule = true };
@@ -583,36 +581,36 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["NeedyKnobV2"] = new ModuleInformation { moduleDisplayName = "Needy Rotary Phone" };
 
 		//JerryErris
-		ModComponentSolverInformation["desertBus"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["footnotes"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["desertBus"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["footnotes"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["forgetThis"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 
 		//KingBranBran
-		ModComponentSolverInformation["intervals"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["intervals"] = new ModuleInformation { CompatibilityMode = true };
 		//Kritzy
-		ModComponentSolverInformation["KritMicroModules"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["KritRadio"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["KritMicroModules"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["KritRadio"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Maca
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleDisplayName = "Playfair Cipher" };
 
 		//McNiko67
-		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { CompatibilityMode = true };
 
 		//MrMelon
-		ModComponentSolverInformation["colourcode"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["colourcode"] = new ModuleInformation { CompatibilityMode = true };
 
 		//MrSpekCraft
-		ModComponentSolverInformation["vexillology"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["vexillology"] = new ModuleInformation { CompatibilityMode = true };
 
 		//NoahCoolBoy
 		ModComponentSolverInformation["pigpenRotations"] = new ModuleInformation { helpTextOverride = true, helpText = "To submit abcdefhijklm use '!{0} abcdefhijklm'." };
 
 		//Piggered
-		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Procyon
-		ModComponentSolverInformation["alphaBits"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["alphaBits"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Qkrisi
 		ModComponentSolverInformation["qkForgetPerspective"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
@@ -621,14 +619,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["encryptionBingo"] = new ModuleInformation { announceModule = true, CameraPinningAlwaysAllowed = true };
 
 		//Royal_Flu$h
-		ModComponentSolverInformation["christmasPresents"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["europeanTravel"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["maintenance"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["modulo"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["numberCipher"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["retirement"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["christmasPresents"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["europeanTravel"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["maintenance"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["modulo"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["numberCipher"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["retirement"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["theSwan"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["wire"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["wire"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Sean Obach
 		ModComponentSolverInformation["forgetEnigma"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
@@ -638,22 +636,14 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["spwizAdventureGame"] = new ModuleInformation { helpTextOverride = true, helpText = "Cycle the stats with !{0} cycle stats. Cycle the Weapons/Items with !{0} cycle items. Cycle everything with !{0} cycle all. Use weapons/Items with !{0} use potion. Use multiple items with !{0} use ticket, crystal ball, caber. (spell out the item name completely. not case sensitive)" };
 
 		//Speakingevil
-		ModComponentSolverInformation["affineCycle"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["caesarCycle"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["crypticCycle"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["crypticCycle"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["forgetMeLater"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["hillCycle"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["jumbleCycle"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["pigpenCycle"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["playfairCycle"] = new ModuleInformation { DoesTheRightThing = false };
 		ModComponentSolverInformation["tallorderedKeys"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["veryAnnoyingButton"] = new ModuleInformation { announceModule = true };
 
-		//TasThing
-		ModComponentSolverInformation["loopover"] = new ModuleInformation { /*, DoesTheRightThing = ??? */ };
 		//TheThirdMan
 		ModComponentSolverInformation["forgetThemAll"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["treasureHunt"] = new ModuleInformation { DoesTheRightThing = false };
+		ModComponentSolverInformation["treasureHunt"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo/Riverbui modules maintained by Timwi)
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet" };
@@ -664,7 +654,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["SouvenirModule"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true };
 
 		//Trainzack
-		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", DoesTheRightThing = false };
+		ModComponentSolverInformation["MusicRhythms"] = new ModuleInformation { helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", CompatibilityMode = true };
 
 		//Virepri
 		ModComponentSolverInformation["BitOps"] = new ModuleInformation { helpText = "Submit the correct answer with !{0} submit 10101010.", validCommands = new[] { "^submit [0-1]{8}$" } };
@@ -681,12 +671,12 @@ public static class ComponentSolverFactory
 
 		//Other modded modules not built into Twitch Plays
 		ModComponentSolverInformation["buttonMasherNeedy"] = new ModuleInformation { moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20" };
-		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { helpText = "Submit the code using !{0} submit 1 2 3.", DoesTheRightThing = false };
-		ModComponentSolverInformation["EternitySDec"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["forgetUsNot"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, DoesTheRightThing = false };
+		ModComponentSolverInformation["combinationLock"] = new ModuleInformation { helpText = "Submit the code using !{0} submit 1 2 3.", CompatibilityMode = true };
+		ModComponentSolverInformation["EternitySDec"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["forgetUsNot"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, CompatibilityMode = true };
 		ModComponentSolverInformation["groceryStore"] = new ModuleInformation { helpText = "Use !{0} add item to cart | Adds an item to the cart. Use !{0} pay and leave | Pays and leaves | Commands can be abbreviated with !{0} add & !{0} pay" };
-		ModComponentSolverInformation["needyPiano"] = new ModuleInformation { DoesTheRightThing = false };
-		ModComponentSolverInformation["mysterymodule"] = new ModuleInformation { DoesTheRightThing = false, CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true };
+		ModComponentSolverInformation["needyPiano"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["mysterymodule"] = new ModuleInformation { CompatibilityMode = true, CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true };
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
 		{
@@ -785,7 +775,7 @@ public static class ComponentSolverFactory
 			{
 				builtIntoTwitchPlays = info.builtIntoTwitchPlays,
 				CameraPinningAlwaysAllowed = info.CameraPinningAlwaysAllowed,
-				DoesTheRightThing = info.DoesTheRightThing,
+				CompatibilityMode = info.CompatibilityMode,
 				helpText = info.helpText,
 				helpTextOverride = false,
 				moduleDisplayName = info.moduleDisplayName,
@@ -928,7 +918,7 @@ public static class ComponentSolverFactory
 			if (!i.builtIntoTwitchPlays)
 			{
 				i.validCommandsOverride = info.validCommandsOverride;
-				i.DoesTheRightThing |= info.DoesTheRightThing;
+				i.CompatibilityMode |= info.CompatibilityMode;
 				i.validCommands = info.validCommands;
 			}
 

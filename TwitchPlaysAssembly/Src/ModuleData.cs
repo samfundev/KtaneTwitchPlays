@@ -27,7 +27,7 @@ public class ModuleInformation
 
 	public bool validCommandsOverride;
 	public string[] validCommands;
-	public bool DoesTheRightThing = true;
+	public bool CompatibilityMode = false;
 
 	public bool builtIntoTwitchPlays;
 
@@ -41,7 +41,7 @@ public class ModuleInformation
 	public bool ShouldSerializeunclaimedColor() => unclaimedColor != new Color();
 	public static bool ShouldSerializebuiltIntoTwitchPlays() => false;
 	public bool ShouldSerializevalidCommands() => !builtIntoTwitchPlays;
-	public bool ShouldSerializeDoesTheRightThing() => !builtIntoTwitchPlays;
+	public bool ShouldSerializeCompatibilityMode() => CompatibilityMode != false && !builtIntoTwitchPlays;
 	public bool ShouldSerializevalidCommandsOverride() => !builtIntoTwitchPlays;
 	public static bool ShouldSerializeScoreExplanation() => false;
 
