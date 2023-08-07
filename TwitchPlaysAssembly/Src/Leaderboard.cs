@@ -272,6 +272,9 @@ public class Leaderboard
 			if (GetEntry(name, out LeaderboardEntry entry))
 				entries.Add(entry);
 
+		//always add the top three in the leaderboard
+		entries.AddRange(GetSortedEntries(3).Except(entries));
+
 		if (entries.Count < count)
 		{
 			entries.AddRange(GetSortedEntries(count).Except(entries).Take(count - entries.Count));
