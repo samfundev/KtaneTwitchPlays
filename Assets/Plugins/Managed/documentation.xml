@@ -537,6 +537,11 @@
             <syntax>help</syntax>
             <summary>Gives you some help on how to play TP.</summary>
         </member>
+        <member name="M:GlobalCommands.Manual(System.String,System.String,System.Boolean)">
+            <name>Manual</name>
+            <syntax>manual [module]</syntax>
+            <summary>Gives the manual link for the specified module.</summary>
+        </member>
         <member name="M:GlobalCommands.BonusPoints(System.String,System.Int32,System.String)">
             <name>Bonus Points</name>
             <syntax>bonuspoints [player] [points]</syntax>
