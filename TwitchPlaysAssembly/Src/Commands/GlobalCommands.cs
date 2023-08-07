@@ -16,7 +16,7 @@ static class GlobalCommands
 	/// <name>Help</name>
 	/// <syntax>help</syntax>
 	/// <summary>Gives you some help on how to play TP.</summary>
-	[Command(@"(manual|help)")]
+	[Command(@"(help)")]
 	public static void Help(string user, bool isWhisper)
 	{
 		string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
@@ -28,6 +28,27 @@ static class GlobalCommands
 
 		IRCConnection.SendMessage(string.Format("!{0} manual [link to module {0}'s manual] | Go to {1} to get manuals for KTaNE", randomCodes[0], TwitchPlaySettings.data.RepositoryUrl), user, !isWhisper);
 		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple sections, see the menu on the left)", randomCodes[1], UrlHelper.CommandReference), user, !isWhisper);
+	}
+
+	/// <name>Manual</name>
+	/// <syntax>manual [module]</syntax>
+	/// <summary>Gives the manual link for the specified module.</summary>
+	[Command(@"(manual) (\S+)")]
+	public static void Manual([Group(1)] string moduleName, string user, bool isWhisper)
+	{
+		List<ModuleInformation> moduleInformation = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(moduleName)).ToList();
+		int count = moduleInformation.Count();
+
+		//prevents issues where typing the exact name gives modules with the exact name + an addition
+		if (moduleInformation.Any(x => x.moduleDisplayName.ToLowerInvariant() == moduleName.Trim().ToLowerInvariant()))
+			moduleInformation = moduleInformation.Where(x => x.moduleDisplayName.ToLowerInvariant() == moduleName.Trim().ToLowerInvariant()).ToList();
+
+		if (count == 0)
+			IRCConnection.SendMessage($"Sorry, there were no modules with the name “{moduleName}”.", user, !isWhisper);
+		else if (count == 1)
+			IRCConnection.SendMessage($"{moduleInformation[0].moduleDisplayName} manual: {UrlHelper.ManualFor(moduleInformation[0].manualCode)}", user, !isWhisper);
+		else
+			IRCConnection.SendMessage($"Sorry, there is more than one module matching your search term. They are: {moduleInformation.Take(5).Select(x => $"“{x.moduleDisplayName}”").Join(", ")}");
 	}
 
 	/// <name>Bonus Points</name>
