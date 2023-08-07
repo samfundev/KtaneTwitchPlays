@@ -51,6 +51,9 @@ public class TwitchBomb : MonoBehaviour
 	private string _edgeworkCode;
 
 	private string _bombName;
+
+	private bool _flipEnabled = true;
+
 	public string BombName
 	{
 		get => _bombName;
@@ -694,8 +697,17 @@ public class TwitchBomb : MonoBehaviour
 		}
 	}
 
+	private IEnumerator FlipBombCooldown() //Ideally this would be done with a System.Timers.Timer, but that's explicitly multithreaded, and unity doesn't play well with it
+	{
+		yield return new WaitForSeconds(TwitchPlaySettings.data.BombFlipCooldown);
+		_flipEnabled = true;
+	}
+
 	public IEnumerator TurnBomb()
 	{
+		if (TwitchPlaySettings.data.BombFlipCooldownEnabled && !_flipEnabled)
+			yield break;
+
 		var gameRoomTurnBomb = GameRoom.Instance?.BombCommanderTurnBomb(Bomb);
 		if (gameRoomTurnBomb != null && gameRoomTurnBomb.MoveNext() && gameRoomTurnBomb.Current is bool continueInvoke)
 		{
@@ -709,6 +721,12 @@ public class TwitchBomb : MonoBehaviour
 		var holdBombCoroutine = HoldBomb(KTInputManager.Instance.SelectableManager.GetActiveFace() != FaceEnum.Front);
 		while (holdBombCoroutine.MoveNext())
 			yield return holdBombCoroutine.Current;
+
+		if (TwitchPlaySettings.data.BombFlipCooldownEnabled)
+		{
+			_flipEnabled = false;
+			StartCoroutine(FlipBombCooldown()); //don't wait on this coroutine to finish the current one
+		}
 	}
 
 	public IEnumerator KeepAlive()
