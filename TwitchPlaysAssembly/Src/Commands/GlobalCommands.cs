@@ -1465,8 +1465,8 @@ static class GlobalCommands
 	/// <name>Mimic</name>
 	/// <syntax>mimic [player] [command]</syntax>
 	/// <summary>Makes it seem like another player ran the specified command. Only works with players of the same rank or lower.</summary>
-	/// <restriction>Admin</restriction>
-	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.Admin, AccessLevel.Admin)]
+	/// <restriction>SuperUser</restriction>
+	[Command(@"(?:issue|say|mimic)(?: ?commands?)?(?: ?as)? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void Mimic([Group(1)] string targetPlayer, [Group(2)] string newMessage, IRCMessage message)
 	{
 		targetPlayer = targetPlayer.FormatUsername();
