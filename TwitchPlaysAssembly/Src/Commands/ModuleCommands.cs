@@ -336,6 +336,9 @@ static class ModuleCommands
 
 	public static IEnumerator Zoom(TwitchModule module, SuperZoomData zoomData, object yield)
 	{
+		float alpha = module.CanvasGroupMultiDecker.alpha;
+		module.CanvasGroupMultiDecker.alpha = 0.0f;
+
 		var zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(module, zoomData, 1);
 		if (zoomCoroutine != null)
 			while (zoomCoroutine.MoveNext())
@@ -345,9 +348,12 @@ static class ModuleCommands
 
 		if (CoroutineCanceller.ShouldCancel)
 		{
+			module.CanvasGroupMultiDecker.alpha = alpha;
 			module.StartCoroutine(TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 0));
 			yield break;
 		}
+
+		module.CanvasGroupMultiDecker.alpha = alpha;
 
 		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 1);
 		if (unzoomCoroutine != null)
@@ -393,6 +399,10 @@ static class ModuleCommands
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
+		float moduleAlpha = module.CanvasGroupMultiDecker.alpha;
+		if (moduleAlpha != 0.0f)
+			module.CanvasGroupMultiDecker.alpha = 0.0f;
+
 		yield return new WaitForSeconds(0.5f);
 
 		var targetAngle = Quaternion.Euler(new Vector3(-Mathf.Cos(targetRotation * Mathf.Deg2Rad), 0, Mathf.Sin(targetRotation * Mathf.Deg2Rad)) * (module.FrontFace ? tiltAngle : -tiltAngle));
@@ -414,6 +424,8 @@ static class ModuleCommands
 			module.Bomb.RotateByLocalQuaternion(bombAngle);
 			TwitchBomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, angle);
 			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace, false));
+			if (moduleAlpha != 0.0f)
+				module.CanvasGroupMultiDecker.alpha = moduleAlpha;
 			yield break;
 		}
 
@@ -425,6 +437,9 @@ static class ModuleCommands
 			TwitchBomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, lerp);
 			yield return null;
 		}
+
+		if (moduleAlpha != 0.0f)
+			module.CanvasGroupMultiDecker.alpha = moduleAlpha;
 
 		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace, false);
 		while (defocusCoroutine.MoveNext())
