@@ -470,6 +470,22 @@ public class TwitchGame : MonoBehaviour
 					return CallResponse.DifferentName;
 			}
 		}
+		else if (int.TryParse(name, out _)) //call a specific module by number
+		{
+			if (CommandQueue.Any(item => name.EqualsIgnoreCase(item.Name))) //first check if there isn't a nammed command as such
+				call = CommandQueue.Find(item => name.EqualsIgnoreCase(item.Name));
+			else //if there isn't, call by module id
+			{
+				name += ' ';
+				call = CommandQueue.Find(item => item.Message.Text.TrimStart('!').StartsWith(name) && item.Name == null);
+				if (call == null)
+				{
+					call = CommandQueue.Find(item => item.Message.Text.TrimStart('!').StartsWith(name));
+					if (call != null)
+						return CallResponse.DifferentName;
+				}
+			}
+		}
 		else //call a named command
 		{
 			call = CommandQueue.Find(item => name.EqualsIgnoreCase(item.Name));
