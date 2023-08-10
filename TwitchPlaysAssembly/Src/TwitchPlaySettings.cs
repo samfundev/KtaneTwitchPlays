@@ -295,27 +295,31 @@ public class TwitchPlaySettingsData
 			DisplayName = "Light Hard Mix",
 			Pools = new List<DistributionPool> {
 				new DistributionPool(0.7f, "ALL_SOLVABLE"),
-				new DistributionPool(0.3f, 10, 240, "SCORE, > 14, <= 25")
+				new DistributionPool(0.2f, 10, 240, "SCORE, > 14, <= 25"),
+				new DistributionPool(0.1f, 10, 240, "SCORE, > 14")
 			}
 		}},
 		{ "hard", new ModuleDistributions {
 			DisplayName = "Hard Mix",
 			Pools = new List<DistributionPool> {
 				new DistributionPool(0.5f, "ALL_SOLVABLE"),
-				new DistributionPool(0.5f, 10, 240, "SCORE, > 14, <= 25")
+				new DistributionPool(0.3f, 10, 240, "SCORE, > 14, <= 25"),
+				new DistributionPool(0.2f, 10, 240, "SCORE, > 14")
 			}
 		}},
 		{ "heavyhard", new ModuleDistributions {
 			DisplayName = "Heavy Hard Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.8f, "ALL_SOLVABLE"),
-				new DistributionPool(0.2f, 10, 240, "SCORE, > 14, <= 25")
+				new DistributionPool(0.2f, "ALL_SOLVABLE"),
+				new DistributionPool(0.5f, 10, 240, "SCORE, > 14, <= 25"),
+				new DistributionPool(0.3f, 10, 240, "SCORE, > 14")
 			}
 		}},
 		{ "allhard", new ModuleDistributions {
 			DisplayName = "All Hard",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, 10, 240, "SCORE, > 14, <= 25")
+				new DistributionPool(0.6f, 10, 240, "SCORE, > 14, <= 25"),
+				new DistributionPool(0.4f, 10, 240, "SCORE, > 14")
 			}
 		}},
 		{ "variety", new ModuleDistributions {
