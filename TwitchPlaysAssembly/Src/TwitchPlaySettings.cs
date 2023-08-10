@@ -74,7 +74,6 @@ public class TwitchPlaySettingsData
 	public bool PacingEventsOnRunBomb = true;
 	public bool AllowSheetDisabledModules = true;
 
-	public bool BombFlipCooldownEnabled = true;
 	public int BombFlipCooldown = 5;
 
 	public bool EnableTimeModeForEveryone = false;

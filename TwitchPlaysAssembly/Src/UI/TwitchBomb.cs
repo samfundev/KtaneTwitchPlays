@@ -697,15 +697,9 @@ public class TwitchBomb : MonoBehaviour
 		}
 	}
 
-	private IEnumerator FlipBombCooldown() //Ideally this would be done with a System.Timers.Timer, but that's explicitly multithreaded, and unity doesn't play well with it
-	{
-		yield return new WaitForSeconds(TwitchPlaySettings.data.BombFlipCooldown);
-		_flipEnabled = true;
-	}
-
 	public IEnumerator TurnBomb()
 	{
-		if (TwitchPlaySettings.data.BombFlipCooldownEnabled && !_flipEnabled)
+		if (TwitchPlaySettings.data.BombFlipCooldown > float.Epsilon && !_flipEnabled)
 			yield break;
 
 		var gameRoomTurnBomb = GameRoom.Instance?.BombCommanderTurnBomb(Bomb);
@@ -722,10 +716,10 @@ public class TwitchBomb : MonoBehaviour
 		while (holdBombCoroutine.MoveNext())
 			yield return holdBombCoroutine.Current;
 
-		if (TwitchPlaySettings.data.BombFlipCooldownEnabled)
+		if (TwitchPlaySettings.data.BombFlipCooldown > float.Epsilon)
 		{
 			_flipEnabled = false;
-			StartCoroutine(FlipBombCooldown()); //don't wait on this coroutine to finish the current one
+			StartCoroutine(new WaitForSeconds(TwitchPlaySettings.data.BombFlipCooldown).Yield(() => _flipEnabled = true)); //don't wait on this coroutine to finish the current one
 		}
 	}
 
