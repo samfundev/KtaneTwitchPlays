@@ -159,7 +159,7 @@ public static class Votes
 				throw new InvalidOperationException("Module is null in a votesolve! This should not happen, please send this logfile to the TP developers!");
 
 			var validity = PossibleVotes[act].validityChecks.Find(x => x.First());
-			if (validity != null)
+			if (validity != null && !(TwitchPlaySettings.data.AnarchyMode && !voteModule.Votesolving))
 			{
 				IRCConnection.SendMessage(string.Format(validity.Second, user));
 				return;
