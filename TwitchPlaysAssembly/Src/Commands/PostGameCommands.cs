@@ -23,7 +23,7 @@ public static class PostGameCommands
 			IRCConnection.SendMessage(TwitchPlaySettings.data.RetryModeOrProfileChange, user, isWhisper);
 			return DoButton(resultPage.ContinueButton);
 		}
-		if (!TwitchPlaySettings.data.EnableRetryButton || resultPage.RetryButton == null)
+		if ((!TwitchPlaySettings.data.EnableRetryButton && !TwitchPlaySettings.data.AnarchyMode) || resultPage.RetryButton == null)
 		{
 			IRCConnection.SendMessage(TwitchPlaySettings.data.RetryInactive, user, isWhisper);
 			return DoButton(resultPage.ContinueButton);

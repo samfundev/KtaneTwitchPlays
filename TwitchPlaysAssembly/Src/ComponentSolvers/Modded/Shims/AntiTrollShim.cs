@@ -19,7 +19,7 @@ public class AntiTrollShim : ComponentSolverShim
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)
 	{
-		if (!TwitchPlaySettings.data.EnableTrollCommands && _trollCommands.TryGetValue(inputCommand.ToLowerInvariant().Trim().Replace(" ", ""), out string trollResponse))
+		if ((!TwitchPlaySettings.data.EnableTrollCommands && !TwitchPlaySettings.data.AnarchyMode) && _trollCommands.TryGetValue(inputCommand.ToLowerInvariant().Trim().Replace(" ", ""), out string trollResponse))
 		{
 			yield return $"sendtochaterror {trollResponse}";
 		}
