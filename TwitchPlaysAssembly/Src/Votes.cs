@@ -47,7 +47,7 @@ public static class Votes
 				Name = "Detonate the bomb",
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
-					CreateCheck(() => TwitchGame.Instance.VoteDetonateAttempted, "Sorry, {0}, a detonation vote was already attempted on this bomb. Another one cannot be started.")
+					CreateCheck(() => TwitchPlaySettings.data.MaxVoteDetonatesPerBomb >= 0 && TwitchGame.Instance.VoteDetonateAttempts >= TwitchPlaySettings.data.MaxVoteDetonatesPerBomb, "Sorry, {0}, the maximum detonation vote attempts have been reached this bomb. Another one cannot be started.")
 				},
 				onSuccess = () => TwitchGame.Instance.Bombs[0].CauseExplosionByVote()
 			}
@@ -66,33 +66,39 @@ public static class Votes
 			VoteTypes.Solve, new VoteData {
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
-					CreateCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
-					CreateCheck(() => voteModule.Votesolving, "Sorry, {0}, that module is already being votesolved."),
-					CreateCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS, "Sorry, {0}, votesolving is disabled during vsmode bombs."),
-					CreateCheck(() => TwitchGame.Instance.VoteSolveCount >= 2, "Sorry, {0}, two votesolves have already been used. Another one cannot be started."),
+					CreateCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, VoteSolving is disabled."),
+					CreateCheck(() => voteModule.Votesolving, "Sorry, {0}, that module is already being VoteSolved."),
+					CreateCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS && !TwitchPlaySettings.data.EnableVSVoteSolve, "Sorry, {0}, VoteSolving is disabled during VS mode bombs."),
+					CreateCheck(() => TwitchPlaySettings.data.MaxVoteSolvesPerBomb >= 0 && TwitchGame.Instance.VoteSolveCount >= TwitchPlaySettings.data.MaxVoteSolvesPerBomb, "Sorry, {0}, the maximum amount of VoteSolves has already been reached. Another one cannot be started."),
 					CreateCheck(() =>
+						TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio >= float.Epsilon &&
+						TwitchPlaySettings.data.VoteSolveBossMinSeconds > 0 &&
 						voteModule.BombComponent.GetModuleID().IsBossMod() &&
-						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= .10f ||
-						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < 120),
-						"Sorry, {0}, boss mods may only be votesolved before 10% of all modules are solved and when at least 2 minutes of the bomb has passed."),
+						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio ||
+						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < TwitchPlaySettings.data.VoteSolveBossMinSeconds),
+						$"Sorry, {{0}}, boss modules may only be VoteSolved before {TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio * 100}% of all modules are solved and when at least {TwitchPlaySettings.data.VoteSolveBossMinSeconds} seconds of the bomb has passed."),
 					CreateCheck(() =>
+						TwitchPlaySettings.data.VoteSolveNonBossRatio >= float.Epsilon &&
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
-						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= 0.75f) &&
+						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= TwitchPlaySettings.data.VoteSolveNonBossRatio) &&
 						!voteModule.BombComponent.GetModuleID().IsBossMod(),
-						"Sorry, {0}, more than 75% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
-					CreateCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
-					CreateCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
-					CreateCheck(() => (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= 8 && !voteModule.BombComponent.GetModuleID().IsBossMod(), "Sorry, {0}, the module must have a score greater than 8."),
-					CreateCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to solve is in the queue."),
-					CreateCheck(() => GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
+						$"Sorry, {{0}}, more than {TwitchPlaySettings.data.VoteSolveNonBossRatio * 100}% of all non-boss modules on the bomb must be solved in order to call a VoteSolve."),
+					CreateCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be VoteSolved."),
+					CreateCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to VoteSolve has a queued claim on it."),
+					CreateCheck(() => TwitchPlaySettings.data.MinScoreForVoteSolve > 0 && (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= TwitchPlaySettings.data.MinScoreForVoteSolve && !voteModule.BombComponent.GetModuleID().IsBossMod(), $"Sorry, {{0}}, the module must have a score greater than {TwitchPlaySettings.data.MinScoreForVoteSolve} to be VoteSolved."),
+					CreateCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to VoteSolve is in the queue."),
+					CreateCheck(() => !TwitchPlaySettings.data.EnableMissionVoteSolve && GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't VoteSolve modules while in a mission bomb.")
 				},
 				onSuccess = () =>
 				{
 					voteModule.Solver.SolveModule($"A module ({voteModule.HeaderText}) is being automatically solved.");
 					voteModule.SetClaimedUserMultidecker("VOTESOLVING");
 					voteModule.Votesolving = true;
-					TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * 0.75f).RoundToInt());
-					IRCConnection.SendMessage($"Reward decreased by 25% for votesolving module {voteModule.Code} ({voteModule.HeaderText})");
+					if (TwitchPlaySettings.data.VoteSolveRewardDecrease >= float.Epsilon)
+					{
+						TwitchPlaySettings.SetRewardBonus((TwitchPlaySettings.GetRewardBonus() * (1f - TwitchPlaySettings.data.VoteSolveRewardDecrease)).RoundToInt());
+						IRCConnection.SendMessage($"Reward decreased by {TwitchPlaySettings.data.VoteSolveRewardDecrease * 100}% for votesolving module {voteModule.Code} ({voteModule.HeaderText})");
+					}
 				}
 			}
 		}
@@ -129,14 +135,14 @@ public static class Votes
 			}
 
 			if (numAddedNoVotes == 1)
-				IRCConnection.SendMessage("1 no vote was added on the behalf of users with claims that did not vote.");
+				IRCConnection.SendMessage("1 \"No\" vote was added on the behalf of users with claims that did not vote.");
 			else if (numAddedNoVotes > 1)
-				IRCConnection.SendMessage($"{numAddedNoVotes} no votes were added on the behalf of users with claims that did not vote.");
+				IRCConnection.SendMessage($"{numAddedNoVotes} \"No\" votes were added on the behalf of users with claims that did not vote.");
 		}
 
 		int yesVotes = Voters.Count(pair => pair.Value);
-		bool votePassed = (yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f));
-		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} yes votes. The vote has {(votePassed ? "passed" : "failed")}.");
+		bool votePassed = yesVotes >= Voters.Count * (TwitchPlaySettings.data.MinimumYesVotes[CurrentVoteType] / 100f);
+		IRCConnection.SendMessage($"Voting has ended with {yesVotes}/{Voters.Count} \"Yes\" votes. The vote has {(votePassed ? "passed" : "failed")}.");
 		if (!votePassed && CurrentVoteType == VoteTypes.Solve)
 		{
 			voteModule.SetBannerColor(voteModule.unclaimedBackgroundColor);
@@ -168,7 +174,7 @@ public static class Votes
 			switch (act)
 			{
 				case VoteTypes.Detonation:
-					TwitchGame.Instance.VoteDetonateAttempted = true;
+					TwitchGame.Instance.VoteDetonateAttempts++;
 					break;
 				case VoteTypes.Solve:
 					if (voteModule is null)
@@ -220,12 +226,12 @@ public static class Votes
 
 		if (Voters.ContainsKey(user) && Voters[user] == vote)
 		{
-			IRCConnection.SendMessage($"{user}, you've already voted {(vote ? "yes" : "no")}.");
+			IRCConnection.SendMessage($"{user}, you've already voted {(vote ? "\"Yes\"" : "\"No\"")}.");
 			return;
 		}
 
 		Voters[user] = vote;
-		IRCConnection.SendMessage($"{user} voted {(vote ? "yes" : "no")}.");
+		IRCConnection.SendMessage($"{user} voted {(vote ? "\"Yes\"" : "\"No\"")}.");
 	}
 
 	public static void RemoveVote(string user)
@@ -297,7 +303,7 @@ public static class Votes
 			IRCConnection.SendMessage($"{user}, there is no vote currently in progress.");
 			return;
 		}
-		IRCConnection.SendMessage("The vote is being ended now.");
+		IRCConnection.SendMessage("The vote has been ended early.");
 		VoteTimeRemaining = 0f;
 	}
 
