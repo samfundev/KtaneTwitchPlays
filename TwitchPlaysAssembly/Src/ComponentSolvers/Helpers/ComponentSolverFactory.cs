@@ -156,6 +156,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["bigeggs"] = module => new PerspectiveEggsComponentSolver(module);
 		ModComponentSolverCreators["GL_nokiaModule"] = module => new NokiaComponentSolver(module);
 		ModComponentSolverCreators["lookLookAway"] = module => new LookLookAwayComponentSolver(module);
+		ModComponentSolverCreators["krazzBlaseball"] = module => new BlaseballComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -182,6 +183,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["TDSDossierModifier"] = module => new DossierModifierComponentSolver(module);
 		ModComponentSolverCreators["ManualCodes"] = module => new ManualCodesComponentSolver(module);
 		ModComponentSolverCreators["jackboxServerModule"] = module => new JackboxTVComponentSolver(module);
+		ModComponentSolverCreators["NeedyScreensaver"] = module => new ScreensaverComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -263,7 +265,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["graffitiNumbers"] = module => new GraffitiNumbersShim(module);
 		ModComponentSolverCreators["mortalKombat"] = module => new MortalKombatShim(module);
 		ModComponentSolverCreators["ledGrid"] = module => new LEDGridShim(module);
-		ModComponentSolverCreators["RGBSequences"] = module => new RGBSequencesShim(module);
 		ModComponentSolverCreators["stars"] = module => new StarsShim(module);
 		//ModComponentSolverCreators["shikaku"] = module => new ShikakuShim(module);
 		ModComponentSolverCreators["osu"] = module => new OsuShim(module);
@@ -281,6 +282,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["safetySquare"] = module => new SafetySquareShim(module);
 		ModComponentSolverCreators["lgndEightPages"] = module => new EightPagesShim(module);
 		ModComponentSolverCreators["KritLockpickMaze"] = module => new LockpickMazeShim(module);
+		ModComponentSolverCreators["simonSamples"] = module => new SimonSamplesShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -459,6 +461,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["bigeggs"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "perspective eggs" };
 		ModComponentSolverInformation["GL_nokiaModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Nokia" };
 		ModComponentSolverInformation["lookLookAway"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Look, Look Away" };
+		ModComponentSolverInformation["krazzBlaseball"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Blaseball" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
@@ -504,6 +507,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["TDSDossierModifier"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Dossier Modifier" };
 		ModComponentSolverInformation["ManualCodes"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Manual Codes" };
 		ModComponentSolverInformation["jackboxServerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jackbox.TV", unclaimable = true };
+		ModComponentSolverInformation["NeedyScreensaver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Screensaver" };
 
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated" };
