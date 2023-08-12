@@ -36,19 +36,12 @@ static class GlobalCommands
 	[Command(@"(manual) (\S+)")]
 	public static void Manual([Group(1)] string moduleName, string user, bool isWhisper)
 	{
-		List<ModuleInformation> moduleInformation = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(moduleName)).ToList();
-		int count = moduleInformation.Count();
+		bool valid = ComponentSolverFactory.GetModuleInformation().Search(moduleName, x => x.moduleDisplayName, x => $"“{x.moduleDisplayName}”", out ModuleInformation result, out string message);
 
-		//prevents issues where typing the exact name gives modules with the exact name + an addition
-		if (moduleInformation.Any(x => x.moduleDisplayName.ToLowerInvariant() == moduleName.Trim().ToLowerInvariant()))
-			moduleInformation = moduleInformation.Where(x => x.moduleDisplayName.ToLowerInvariant() == moduleName.Trim().ToLowerInvariant()).ToList();
-
-		if (count == 0)
-			IRCConnection.SendMessage($"Sorry, there were no modules with the name “{moduleName}”.", user, !isWhisper);
-		else if (count == 1)
-			IRCConnection.SendMessage($"{moduleInformation[0].moduleDisplayName} manual: {UrlHelper.ManualFor(moduleInformation[0].manualCode)}", user, !isWhisper);
+		if (valid)
+			IRCConnection.SendMessage($"{result.moduleDisplayName} manual: {UrlHelper.ManualFor(result.manualCode)}", user, !isWhisper);
 		else
-			IRCConnection.SendMessage($"Sorry, there is more than one module matching your search term. They are: {moduleInformation.Take(5).Select(x => $"“{x.moduleDisplayName}”").Join(", ")}");
+			IRCConnection.SendMessage(message, user, !isWhisper);
 	}
 
 	/// <name>Bonus Points</name>

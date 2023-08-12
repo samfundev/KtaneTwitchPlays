@@ -355,7 +355,7 @@ public static class GeneralExtensions
 				return true;
 
 			default:
-				var oneItem = items.Where(item => toSearch(item).Equals(query));
+				var oneItem = items.Where(item => toSearch(item).EqualsIgnoreCase(query));
 				if (oneItem.Count() == 1)
 				{
 					items = oneItem;
