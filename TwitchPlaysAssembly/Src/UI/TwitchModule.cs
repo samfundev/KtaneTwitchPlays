@@ -612,10 +612,15 @@ public class TwitchModule : MonoBehaviour
 				if (kvp.Key.gameObject.layer != setToLayer)
 					kvp.Key.gameObject.layer = setToLayer;
 
-				// Sets the camera layers of the cameras in Backdoor Hacking to the proper new TP layer to prevent blackscreening
+				// Adjusts the culling mask used on the cameras for Backdoor Hacking and Reporting Anomalies
 				Camera cam = kvp.Key.gameObject.GetComponent<Camera>();
 				if (BombComponent.GetModuleDisplayName().EqualsAny("Backdoor Hacking", "Reporting Anomalies") && cam != null)
 					cam.cullingMask = (1 << setToLayer) | (1 << 31);
+
+				// Adjusts the culling mask used on the lights for Reporting Anomalies
+				Light light = kvp.Key.gameObject.GetComponent<Light>();
+				if (BombComponent.GetModuleDisplayName().EqualsAny("Reporting Anomalies") && light != null)
+					light.cullingMask = (1 << setToLayer) | (1 << 31);
 			}
 			catch
 			{
