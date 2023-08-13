@@ -4,7 +4,7 @@ using System.Linq;
 public class MatchmakerComponentSolver : ReflectionComponentSolver
 {
 	public MatchmakerComponentSolver(TwitchModule module) :
-		base(module, "HumanResourcesModule", "!{0} cycle [See the people in each list] | !{0} cycle <top/bottom> [See the people in a specific list] | !{0} match <name> <name> [Selects the two specified people and presses the match button] | !{0} reset [Presses the reset button]")
+		base(module, "HumanResourcesModule", "matchmaker", "!{0} cycle [See the people in each list] | !{0} cycle <top/bottom> [See the people in a specific list] | !{0} match <name> <name> [Selects the two specified people and presses the match button] | !{0} reset [Presses the reset button]")
 	{
 	}
 
