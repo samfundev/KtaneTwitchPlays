@@ -466,7 +466,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["lookLookAway"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Look, Look Away" };
 		ModComponentSolverInformation["krazzBlaseball"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Blaseball" };
 		ModComponentSolverInformation["redLightGreenLight"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Red Light Green Light", announceModule = true, unclaimable = true };
-		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true };
+		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true, unclaimable = true };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
