@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 {
 	public ThreeSentenceHorrorComponentSolver(TwitchModule module) :
-		base(module, "threeSentenceHorror", "!{0} escape [Attempt to escape] | On Twitch Plays footsteps and breathing will be sent to chat | Note that ANYTHING you send counts towards your voice")
+		base(module, "threeSentenceHorror", "!{0} escape [Attempt to escape] | On Twitch Plays footsteps and breathing will be sent to chat and the delay before \"drop everything\" is checked is extended | Note that ANYTHING you send counts towards your voice")
 	{
 		IRCConnection.Instance.OnMessageReceived += AddToVoice;
 		Module.OnDestroyed += () => IRCConnection.Instance.OnMessageReceived -= AddToVoice;
@@ -23,7 +23,8 @@ public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 
 	public void AddToVoice(IRCMessage _)
 	{
-		_cooldownValue++;
+		if (_component.GetValue<int>("_isSpooking") == 1)
+			_cooldownValue++;
 		if (_cooldownValue == 3)
 		{
 			_component.CallMethod("Strike");
@@ -35,9 +36,15 @@ public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 	{
 		while (!Module.BombComponent.IsSolved)
 		{
-			yield return new WaitForSeconds(1.5f);
-			if (_cooldownValue != 0)
-				_cooldownValue--;
+			yield return null;
+			if (_component.GetValue<int>("_isSpooking") == 1 && _cooldownValue != 0)
+			{
+				yield return new WaitForSeconds(3f);
+				if (_cooldownValue != 0)
+					_cooldownValue--;
+			}
+			else if (_cooldownValue != 0)
+				_cooldownValue = 0;
 		}
 	}
 
@@ -46,20 +53,19 @@ public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 		while (!Module.BombComponent.IsSolved)
 		{
 			yield return null;
-			if (_component.GetValue<GameObject>("KeyCollectSub").GetComponent<Text>().text == "I swear I left that key somewhere...")
+			if (_shouldHide && _component.GetValue<GameObject>("KeyCollectSub").GetComponent<Text>().text == "")
 			{
-				ModuleCameras.Instance.SetHudVisibility(false);
-				while (_component.GetValue<GameObject>("KeyCollectSub").GetComponent<Text>().text == "I swear I left that key somewhere...") yield return null;
-				ModuleCameras.Instance.SetHudVisibility(true);
+				ModuleCameras.Instance.ModulesHidingNotes--;
+				_shouldHide = false;
 			}
-			else if (_component.GetValue<GameObject>("KeyCollectSub").GetComponent<Text>().text == "I think someone's coming, I better get out of here.")
+			else if (!_shouldHide && _component.GetValue<GameObject>("KeyCollectSub").GetComponent<Text>().text != "")
 			{
-				ModuleCameras.Instance.SetHudVisibility(false);
-				while (_component.GetValue<GameObject>("KeyCollectSub").GetComponent<Text>().text == "I think someone's coming, I better get out of here.") yield return null;
-				ModuleCameras.Instance.SetHudVisibility(true);
+				ModuleCameras.Instance.ModulesHidingNotes++;
+				_shouldHide = true;
 			}
 		}
 	}
 
 	private int _cooldownValue;
+	private bool _shouldHide;
 }
