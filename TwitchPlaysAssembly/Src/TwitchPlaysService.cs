@@ -27,6 +27,7 @@ public class TwitchPlaysService : MonoBehaviour
 	public TwitchGame twitchGame = null;
 	public CoroutineQueue CoroutineQueue = null;
 	public KMGameInfo.State CurrentState;
+	public Action OnInteractCommand;
 
 	private KMGameInfo _gameInfo;
 	private TwitchPlaysProperties _publicProperties;

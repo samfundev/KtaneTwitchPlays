@@ -76,6 +76,8 @@ static class ModuleCommands
 
 	public static IEnumerator Show(TwitchModule module, object yield)
 	{
+		if (TwitchPlaysService.Instance.OnInteractCommand != null)
+			TwitchPlaysService.Instance.OnInteractCommand.Invoke();
 		bool select = !module.BombComponent.GetModuleID().EqualsAny("lookLookAway");
 		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace, select);
 		while (focusCoroutine.MoveNext())
@@ -361,6 +363,9 @@ static class ModuleCommands
 
 	public static IEnumerator Tilt(TwitchModule module, object yield, string direction, float tiltAngle)
 	{
+		if (TwitchPlaysService.Instance.OnInteractCommand != null)
+			TwitchPlaysService.Instance.OnInteractCommand.Invoke();
+
 		float easeCubic(float t) { return 3 * t * t - 2 * t * t * t; }
 
 		Dictionary<string[], int> directionNames = new Dictionary<string[], int>()
@@ -561,6 +566,9 @@ static class ModuleCommands
 			TwitchGame.Instance.Modules.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.BombID)) < TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims
 		)
 		{
+			if (TwitchPlaysService.Instance.OnInteractCommand != null)
+				TwitchPlaysService.Instance.OnInteractCommand.Invoke();
+
 			var response = module.Solver.RespondToCommand(user, cmd);
 			while (response.MoveNext())
 				yield return response.Current;

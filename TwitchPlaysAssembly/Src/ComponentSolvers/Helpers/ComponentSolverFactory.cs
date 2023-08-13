@@ -157,6 +157,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["GL_nokiaModule"] = module => new NokiaComponentSolver(module);
 		ModComponentSolverCreators["lookLookAway"] = module => new LookLookAwayComponentSolver(module);
 		ModComponentSolverCreators["krazzBlaseball"] = module => new BlaseballComponentSolver(module);
+		ModComponentSolverCreators["redLightGreenLight"] = module => new RedLightGreenLightComponentSolver(module);
+		ModComponentSolverCreators["threeSentenceHorror"] = module => new ThreeSentenceHorrorComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -462,6 +464,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["GL_nokiaModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Nokia" };
 		ModComponentSolverInformation["lookLookAway"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Look, Look Away" };
 		ModComponentSolverInformation["krazzBlaseball"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Blaseball" };
+		ModComponentSolverInformation["redLightGreenLight"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Red Light Green Light", announceModule = true, unclaimable = true };
+		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
