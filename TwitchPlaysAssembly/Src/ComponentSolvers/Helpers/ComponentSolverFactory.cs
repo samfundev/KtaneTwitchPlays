@@ -285,6 +285,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["lgndEightPages"] = module => new EightPagesShim(module);
 		ModComponentSolverCreators["KritLockpickMaze"] = module => new LockpickMazeShim(module);
 		ModComponentSolverCreators["simonSamples"] = module => new SimonSamplesShim(module);
+		ModComponentSolverCreators["DIWindow"] = module => new DriveInWindowShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
