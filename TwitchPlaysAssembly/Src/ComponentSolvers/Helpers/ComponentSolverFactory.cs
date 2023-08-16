@@ -156,6 +156,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["bigeggs"] = module => new PerspectiveEggsComponentSolver(module);
 		ModComponentSolverCreators["GL_nokiaModule"] = module => new NokiaComponentSolver(module);
 		ModComponentSolverCreators["lookLookAway"] = module => new LookLookAwayComponentSolver(module);
+		ModComponentSolverCreators["SimpleBoss"] = module => new RememberSimpleComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -460,6 +461,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["bigeggs"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "perspective eggs" };
 		ModComponentSolverInformation["GL_nokiaModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Nokia" };
 		ModComponentSolverInformation["lookLookAway"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Look, Look Away" };
+		ModComponentSolverInformation["SimpleBoss"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Remember Simple", announceModule = true };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
