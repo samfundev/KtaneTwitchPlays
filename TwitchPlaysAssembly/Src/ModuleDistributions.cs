@@ -10,10 +10,6 @@ using UnityEngine;
 [Serializable]
 public sealed class DistributionPool : ISerializable
 {
-	private readonly int RewardPerModule;
-	private readonly int TimePerModule;
-	public readonly float Weight;
-
 	public enum PoolType
 	{
 		// Default pool type or error, gives a warning if attempted to run
@@ -67,6 +63,11 @@ public sealed class DistributionPool : ISerializable
 		//     Fixed: Wires, Wires, Wires, Wires, Venn (80% Wires, 20% Complicated Wires)
 		Fixed,
 	}
+
+	private readonly int? RewardPerModule;
+	private readonly int? TimePerModule;
+	public readonly float Weight;
+
 	private PoolType Type;
 	private List<string> Arguments;
 	private Dictionary<string, int> PoolSettings;
@@ -191,9 +192,9 @@ public sealed class DistributionPool : ISerializable
 	{
 		info.AddValue("Definition", __poolDef, typeof(string));
 		info.AddValue("Weight", Weight, typeof(float));
-		if (RewardPerModule >= 0)
+		if (RewardPerModule != null)
 			info.AddValue("Reward", RewardPerModule, typeof(int));
-		if (TimePerModule >= 0)
+		if (TimePerModule != null)
 			info.AddValue("Time", TimePerModule, typeof(int));
 	}
 
@@ -206,22 +207,14 @@ public sealed class DistributionPool : ISerializable
 
 		// May not be present, and if so leaves RewardPerModule at default
 		try { RewardPerModule = (int) info.GetValue("Reward", typeof(int)); }
-		catch (SerializationException) { RewardPerModule = -1; }
+		catch (SerializationException) { }
 
 		// May not be present, and if so leaves TimePerModule at default
 		try { TimePerModule = (int) info.GetValue("Time", typeof(int)); }
-		catch (SerializationException) { TimePerModule = -1; }
+		catch (SerializationException) { }
 	}
 
-	public DistributionPool(float weight, string def)
-	{
-		Weight = weight;
-		RewardPerModule = -1;
-		TimePerModule = -1;
-		PoolDefinition = def;
-	}
-
-	public DistributionPool(float weight, string def, int reward, int time)
+	public DistributionPool(float weight, string def, int? reward = null, int? time = null)
 	{
 		Weight = weight;
 		RewardPerModule = reward;
@@ -229,10 +222,7 @@ public sealed class DistributionPool : ISerializable
 		PoolDefinition = def;
 	}
 
-	private static string GetTwitchPlaysID(KMGameInfo.KMModuleInfo moduleInfo)
-	{
-		return moduleInfo.IsMod ? moduleInfo.ModuleId : moduleInfo.ModuleType.ToString();
-	}
+	private static string GetTwitchPlaysID(KMGameInfo.KMModuleInfo info) => info.IsMod ? info.ModuleId : info.ModuleType.ToString();
 
 	public KMComponentPool ToComponentPool(int count)
 	{
@@ -304,9 +294,7 @@ public sealed class DistributionPool : ISerializable
 			case PoolType.Fixed:
 				// We treat a fixed pool like a regualar pool in a mission; i.e. we allow duplicates for the purposes of
 				// making some modules more likely than others, and if any module is missing then we bail out.
-				Dictionary<string, KMGameInfo.KMModuleInfo> reverseLookup = AllModules.ToDictionary(x => {
-					return x.IsMod ? x.ModuleId : Enum.GetName(typeof(KMComponentPool.ComponentTypeEnum), x.ModuleType);
-				}, x => x);
+				Dictionary<string, KMGameInfo.KMModuleInfo> reverseLookup = AllModules.ToDictionary(x => GetTwitchPlaysID(x), x => x);
 
 				ModulePool = Arguments.Select(Module => {
 					if (!reverseLookup.ContainsKey(Module))
@@ -329,25 +317,10 @@ public sealed class DistributionPool : ISerializable
 		};
 	}
 
-	public int RewardPointsGiven(int count)
-	{
-		if (RewardPerModule != -1)
-			return RewardPerModule * count;
+	private bool IsVanillaPool() => Type == PoolType.AllSolvable && PoolSettings["Component Source"] == (int) KMComponentPool.ComponentSource.Base;
 
-		if (Type == PoolType.AllSolvable && PoolSettings["Component Source"] == (int) KMComponentPool.ComponentSource.Base)
-			return 2 * count;
-		return 5 * count;
-	}
-
-	public int TimeGiven(int count)
-	{
-		if (TimePerModule != -1)
-			return TimePerModule * count;
-
-		if (Type == PoolType.AllSolvable && PoolSettings["Component Source"] == (int) KMComponentPool.ComponentSource.Base)
-			return 60 * count;
-		return 120 * count;
-	}
+	public int RewardPointsGiven(int count) => (RewardPerModule ?? (IsVanillaPool() ? 2 : 5)) * count;
+	public int TimeGiven(int count) => (TimePerModule ?? (IsVanillaPool() ? 60 : 120)) * count;
 }
 
 public sealed class ModuleDistributions
@@ -361,12 +334,11 @@ public sealed class ModuleDistributions
 
 	private int[] ModulesPerPool(int numModules)
 	{
-		int i = 0;
 		// Before assigning: Any pools with weight <= 0 are single force spawns
 		int[] modCount = Pools.Select(pool => pool.Weight <= 0f ? 1 : 0).ToArray();
 		int numNonForcedModules = numModules - modCount.Sum();
 
-		for (; i < Pools.Count; ++i)
+		for (int i = 0; i < Pools.Count; ++i)
 		{
 			if (Pools[i].Weight > 0f)
 				modCount[i] = Mathf.FloorToInt(Pools[i].Weight * numNonForcedModules);
@@ -374,25 +346,15 @@ public sealed class ModuleDistributions
 
 		// Okay, that might have left us with less than numModules accounted for.
 		// Divvy up the remainder to the first non-forced pools in the list.
-		int modulesLeft = numModules - modCount.Sum();
-		i = 0;
-		while (modCount.Sum() < numModules)
+		for (int i = 0; i < Pools.Count && modCount.Sum() < numModules; ++i)
 		{
 			if (Pools[i].Weight > 0f)
 				++modCount[i];
-			++i;
 		}
+
+		if (modCount.Sum() != numModules) // Usually means the weights don't add up to 1
+			throw new InvalidOperationException($"Please contact a developer; tried to generate a {numModules} module bomb, instead got {modCount.Sum()} modules.");
 		return modCount;
-	}
-
-	private int RewardPoints(int[] modsPerPool)
-	{
-		return Pools.Select((pool, i) => pool.RewardPointsGiven(modsPerPool[i])).Sum();
-	}
-
-	private int StartingTime(int[] modsPerPool)
-	{
-		return Pools.Select((pool, i) => pool.TimeGiven(modsPerPool[i])).Sum();
 	}
 
 	private List<KMComponentPool> GeneratePools(int[] modsPerPool)
@@ -400,6 +362,9 @@ public sealed class ModuleDistributions
 		// Generate KMComponentPools from our DistributionPools.
 		return Pools.Select((pool, i) => pool.ToComponentPool(modsPerPool[i])).ToList();
 	}
+
+	private int RewardPoints(int[] modsPerPool) => Math.Max(0, Pools.Select((pool, i) => pool.RewardPointsGiven(modsPerPool[i])).Sum());
+	private int StartingTime(int[] modsPerPool) => Math.Max(60, Pools.Select((pool, i) => pool.TimeGiven(modsPerPool[i])).Sum());
 
 	public KMGeneratorSetting GenerateMission(int moduleCount, bool timeMode, out int rewardPoints)
 	{
