@@ -238,27 +238,27 @@ public class TwitchPlaySettingsData
 			DisplayName = "Light Easy Mix",
 			Pools = new List<DistributionPool> {
 				new DistributionPool(0.7f, "AllSolvable"),
-				new DistributionPool(0.3f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
+				new DistributionPool(0.3f, "Score: <= 7", /* Reward */ 3),
 			}
 		}},
 		{ "mixedeasy", new ModuleDistributions {
 			DisplayName = "Easy Mix",
 			Pools = new List<DistributionPool> {
 				new DistributionPool(0.5f, "AllSolvable"),
-				new DistributionPool(0.5f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
+				new DistributionPool(0.5f, "Score: <= 7", /* Reward */ 3),
 			}
 		}},
 		{ "heavyeasy", new ModuleDistributions {
 			DisplayName = "Heavy Easy Mix",
 			Pools = new List<DistributionPool> {
 				new DistributionPool(0.2f, "AllSolvable"),
-				new DistributionPool(0.8f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
+				new DistributionPool(0.8f, "Score: <= 7", /* Reward */ 3),
 			}
 		}},
 		{ "alleasy", new ModuleDistributions {
 			DisplayName = "All Easy",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
+				new DistributionPool(1.0f, "Score: <= 7", /* Reward */ 3),
 			}
 		}},
 
