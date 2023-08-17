@@ -146,94 +146,97 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, ModuleDistributions> ModDistributionSettings = new Dictionary<string, ModuleDistributions>()
 	{
-		// Non-difficulty related distributions
+		// Vanilla/Mod related distributions
 		{ "vanilla", new ModuleDistributions {
 			DisplayName = "Vanilla",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE, BASE"),
+				new DistributionPool(1.0f, "AllSolvable: Base"),
 			}
 		}},
 		{ "light", new ModuleDistributions {
 			DisplayName = "Mods",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.8f, "ALL_SOLVABLE, BASE"),
-				new DistributionPool(0.2f, "ALL_SOLVABLE, MODS"),
+				new DistributionPool(0.8f, "AllSolvable: Base"),
+				new DistributionPool(0.2f, "AllSolvable: Mods"),
 			},
 			Hidden = true
 		}},
 		{ "mixed", new ModuleDistributions {
 			DisplayName = "Mods",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.5f, "ALL_SOLVABLE, BASE"),
-				new DistributionPool(0.5f, "ALL_SOLVABLE, MODS"),
+				new DistributionPool(0.5f, "AllSolvable: Base"),
+				new DistributionPool(0.5f, "AllSolvable: Mods"),
 			},
 			Hidden = true
 		}},
 		{ "heavy", new ModuleDistributions {
 			DisplayName = "Mods",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.2f, "ALL_SOLVABLE, BASE"),
-				new DistributionPool(0.8f, "ALL_SOLVABLE, MODS"),
+				new DistributionPool(0.2f, "AllSolvable: Base"),
+				new DistributionPool(0.8f, "AllSolvable: Mods"),
 			},
 			Hidden = true
 		}},
 		{ "mods", new ModuleDistributions {
 			DisplayName = "Mods",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE, MODS"),
+				new DistributionPool(1.0f, "AllSolvable: Mods"),
 			}
 		}},
+
+		// Fair Mix distributions
 		{ "fair", new ModuleDistributions {
 			DisplayName = "Fair Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE"),
+				new DistributionPool(1.0f, "AllSolvable"),
 			}
 		}},
 		{ "fair+modneedy", new ModuleDistributions {
 			DisplayName = "Fair + Mod Needy",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE"),
-				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY, MODS"),
+				new DistributionPool(1.0f, "AllSolvable"),
+				new DistributionPool(0.0f, "AllNeedy: Mods", /* Reward */ 20, /* Time */ 0),
 			},
 			MinModules = 2
 		}},
 		{ "fair+needy", new ModuleDistributions {
 			DisplayName = "Fair + Needy",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE"),
-				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY"),
+				new DistributionPool(1.0f, "AllSolvable"),
+				new DistributionPool(0.0f, "AllNeedy", /* Reward */ 20, /* Time */ 0),
 			},
 			MinModules = 2
 		}},
 		{ "fair+2needies", new ModuleDistributions {
 			DisplayName = "Fair + 2 Needies",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE"),
-				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY"),
-				new DistributionPool(0.0f, 20, 0, "ALL_NEEDY"),
+				new DistributionPool(1.0f, "AllSolvable"),
+				new DistributionPool(0.0f, "AllNeedy", /* Reward */ 20, /* Time */ 0),
+				new DistributionPool(0.0f, "AllNeedy", /* Reward */ 20, /* Time */ 0),
 			},
 			MinModules = 3
 		}},
 		{ "fair+needysometimes", new ModuleDistributions {
 			DisplayName = "Fair + Needy Sometimes",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "ALL_SOLVABLE"),
-				new DistributionPool(0.0f, "ALL_MODULES"),
+				new DistributionPool(1.0f, "AllSolvable"),
+				new DistributionPool(0.0f, "AllModules"),
 			},
 			MinModules = 2
 		}},
 		{ "fair+neediessometimes", new ModuleDistributions {
 			DisplayName = "Fair + Needies Sometimes",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.8f, "ALL_SOLVABLE"),
-				new DistributionPool(0.2f, "ALL_MODULES"),
-			},
+				new DistributionPool(0.8f, "AllSolvable"),
+				new DistributionPool(0.2f, "AllModules"),
+			}
 		}},
 		{ "chaos", new ModuleDistributions {
 			DisplayName = "Chaos",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.0f, "ALL_SOLVABLE"),
-				new DistributionPool(1.0f, "ALL_MODULES"),
+				new DistributionPool(1.0f, "AllModules"),
+				// Must have one guaranteed solvable to avoid possible softlocks
+				new DistributionPool(0.0f, "AllSolvable"),
 			},
 			MinModules = 2
 		}},
@@ -242,95 +245,99 @@ public class TwitchPlaySettingsData
 		{ "lighteasy", new ModuleDistributions {
 			DisplayName = "Light Easy Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.7f, "ALL_SOLVABLE"),
-				new DistributionPool(0.3f, 3, 120, "SCORE, <= 7")
+				new DistributionPool(0.7f, "AllSolvable"),
+				new DistributionPool(0.3f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
 			}
 		}},
 		{ "easy", new ModuleDistributions {
 			DisplayName = "Easy Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.5f, "ALL_SOLVABLE"),
-				new DistributionPool(0.5f, 3, 120, "SCORE, <= 7")
+				new DistributionPool(0.5f, "AllSolvable"),
+				new DistributionPool(0.5f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
 			}
 		}},
 		{ "heavyeasy", new ModuleDistributions {
 			DisplayName = "Heavy Easy Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.2f, "ALL_SOLVABLE"),
-				new DistributionPool(0.8f, 3, 120, "SCORE, <= 7")
+				new DistributionPool(0.2f, "AllSolvable"),
+				new DistributionPool(0.8f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
 			}
 		}},
 		{ "alleasy", new ModuleDistributions {
 			DisplayName = "All Easy",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, 3, 120, "SCORE, <= 7")
+				new DistributionPool(1.0f, "Score: <= 7", /* Reward */ 3, /* Time */ 120),
 			}
 		}},
+
 		{ "lightmedium", new ModuleDistributions {
 			DisplayName = "Light Medium Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.7f, "ALL_SOLVABLE"),
-				new DistributionPool(0.3f, "SCORE, > 7, <= 14")
+				new DistributionPool(0.7f, "AllSolvable"),
+				new DistributionPool(0.3f, "Score: > 7, <= 14"),
 			}
 		}},
 		{ "medium", new ModuleDistributions {
 			DisplayName = "Medium Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.5f, "ALL_SOLVABLE"),
-				new DistributionPool(0.5f, "SCORE, > 7, <= 14")
+				new DistributionPool(0.5f, "AllSolvable"),
+				new DistributionPool(0.5f, "Score: > 7, <= 14"),
 			}
 		}},
 		{ "heavymedium", new ModuleDistributions {
 			DisplayName = "Heavy Medium Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.2f, "ALL_SOLVABLE"),
-				new DistributionPool(0.8f, "SCORE, > 7, <= 14")
+				new DistributionPool(0.2f, "AllSolvable"),
+				new DistributionPool(0.8f, "Score: > 7, <= 14"),
 			}
 		}},
 		{ "allmedium", new ModuleDistributions {
 			DisplayName = "All Medium",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(1.0f, "SCORE, > 7, <= 14")
+				new DistributionPool(1.0f, "Score: > 7, <= 14"),
 			}
 		}},
+
 		{ "lighthard", new ModuleDistributions {
 			DisplayName = "Light Hard Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.7f, "ALL_SOLVABLE"),
-				new DistributionPool(0.2f, 10, 240, "SCORE, > 14, <= 25"),
-				new DistributionPool(0.1f, 10, 240, "SCORE, > 14")
+				new DistributionPool(0.7f, "AllSolvable"),
+				new DistributionPool(0.2f, "Score: > 14, <= 25", /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.1f, "Score: > 14",        /* Reward */ 10, /* Time */ 240),
 			}
 		}},
 		{ "hard", new ModuleDistributions {
 			DisplayName = "Hard Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.5f, "ALL_SOLVABLE"),
-				new DistributionPool(0.3f, 10, 240, "SCORE, > 14, <= 25"),
-				new DistributionPool(0.2f, 10, 240, "SCORE, > 14")
+				new DistributionPool(0.5f, "AllSolvable"),
+				new DistributionPool(0.3f, "Score: > 14, <= 25", /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.2f, "Score: > 14",        /* Reward */ 10, /* Time */ 240),
 			}
 		}},
 		{ "heavyhard", new ModuleDistributions {
 			DisplayName = "Heavy Hard Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.2f, "ALL_SOLVABLE"),
-				new DistributionPool(0.5f, 10, 240, "SCORE, > 14, <= 25"),
-				new DistributionPool(0.3f, 10, 240, "SCORE, > 14")
+				new DistributionPool(0.2f, "AllSolvable"),
+				new DistributionPool(0.5f, "Score: > 14, <= 25", /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.3f, "Score: > 14",        /* Reward */ 10, /* Time */ 240),
 			}
 		}},
 		{ "allhard", new ModuleDistributions {
 			DisplayName = "All Hard",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.6f, 10, 240, "SCORE, > 14, <= 25"),
-				new DistributionPool(0.4f, 10, 240, "SCORE, > 14")
+				new DistributionPool(0.6f, "Score: > 14, <= 25", /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.4f, "Score: > 14",        /* Reward */ 10, /* Time */ 240),
 			}
 		}},
+
+		// Variety distributions
 		{ "variety", new ModuleDistributions {
 			DisplayName = "Variety Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.30f, 3, 120, "SCORE, <= 7"),
-				new DistributionPool(0.25f, "SCORE, > 7, <= 14"),
-				new DistributionPool(0.20f, 10, 240, "SCORE, > 14, <= 25"),
-				new DistributionPool(0.25f, "ALL_SOLVABLE")
+				new DistributionPool(0.30f, "Score: <= 7",        /* Reward */ 3,  /* Time */ 120),
+				new DistributionPool(0.25f, "Score: > 7, <= 14"),
+				new DistributionPool(0.20f, "Score: > 14, <= 25", /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.25f, "AllSolvable"),
 			}
 		}}
 	};

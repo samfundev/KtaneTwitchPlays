@@ -221,7 +221,7 @@ public sealed class DistributionPool : ISerializable
 		PoolDefinition = def;
 	}
 
-	public DistributionPool(float weight, int reward, int time, string def)
+	public DistributionPool(float weight, string def, int reward, int time)
 	{
 		Weight = weight;
 		RewardPerModule = reward;
