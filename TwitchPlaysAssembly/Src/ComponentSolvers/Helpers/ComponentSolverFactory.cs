@@ -760,6 +760,8 @@ public static class ComponentSolverFactory
 		{
 			var defaultInfo = GetDefaultInformation(item.ModuleID);
 			defaultInfo.announceModule |= item.ModuleID.IsBossMod();
+			defaultInfo.announceModule |= item.ModuleID.ModHasQuirk("NeedsImmediateAttention");
+			defaultInfo.announceModule |= item.ModuleID.ModHasQuirk("PseudoNeedy");
 		}
 
 		if (reloadData)
