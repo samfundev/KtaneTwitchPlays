@@ -20,7 +20,13 @@ public static class Repository
 		Modules = JsonConvert.DeserializeObject<WebsiteJSON>(RawJSON).KtaneModules;
 	}
 
-	public static bool IsBossMod(this string moduleID) => Modules.Any(module => module.ModuleID == moduleID && module.Ignore != null);
+	public static bool IsBossMod(this string moduleID) => Modules.Any(module => module.ModuleID == moduleID && module.BossStatus != null);
+
+	public static bool ModHasQuirk(this string moduleID, string quirk)
+	{
+		var match = Modules?.Find(module => module.ModuleID == moduleID);
+		return (match?.Quirks ?? "").Contains(quirk);
+	}
 
 	public static string GetManual(string moduleID)
 	{
@@ -44,7 +50,8 @@ public static class Repository
 		public string FileName;
 		public Dictionary<string, object> TwitchPlays;
 
-		public List<string> Ignore;
+		public string BossStatus;
+		public string Quirks;
 	}
 #pragma warning restore CS0649
 }

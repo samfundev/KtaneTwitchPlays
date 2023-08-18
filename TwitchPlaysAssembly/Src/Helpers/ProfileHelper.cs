@@ -150,13 +150,21 @@ static class ProfileHelper
 				needyProfiles[scoreString].Add(mod.First);
 		}
 
-		var bossModules = new HashSet<string>();
-		foreach (var module in modules.Where(x => x.Type == "Regular" && x.ModuleID.IsBossMod()))
+		var solvableProfiles = new Dictionary<string, HashSet<string>>
+		{
+			{"NoBossModules", new HashSet<string>() },
+			{"NoPseudoNeedy", new HashSet<string>() },
+		};
+		foreach (var module in modules.Where(x => x.Type == "Regular"))
 		{
 			var info = ComponentSolverFactory.GetDefaultInformation(module.ModuleID, false);
 			if (info == null)
 				continue;
-			bossModules.Add(info.moduleID);
+
+			if (info.moduleID.IsBossMod())
+				solvableProfiles["NoBossModules"].Add(info.moduleID);
+			if (info.moduleID.ModHasQuirk("PseudoNeedy"))
+				solvableProfiles["NoPseudoNeedy"].Add(info.moduleID);
 		}
 
 		var profilesPath = Path.Combine(Application.persistentDataPath, "ModProfiles");
@@ -164,13 +172,13 @@ static class ProfileHelper
 		{
 			foreach (var profile in needyProfiles)
 				Write(profile.Key, profile.Value);
+			foreach (var profile in solvableProfiles)
+				Write(profile.Key, profile.Value);
 
-			Write("NoBossModules", bossModules);
 			foreach (var profile in needyProfiles.Where(x => !TwitchPlaySettings.data.ProfileWhitelist.Contains(x.Key)))
 				TwitchPlaySettings.data.ProfileWhitelist.Add(profile.Key);
-
-			if (!TwitchPlaySettings.data.ProfileWhitelist.Contains("NoBossModules"))
-				TwitchPlaySettings.data.ProfileWhitelist.Add("NoBossModules");
+			foreach (var profile in solvableProfiles.Where(x => !TwitchPlaySettings.data.ProfileWhitelist.Contains(x.Key)))
+				TwitchPlaySettings.data.ProfileWhitelist.Add(profile.Key);
 
 			var profileWhitelist = TwitchPlaySettings.data.ProfileWhitelist.Where(x =>
 					new Regex(@"^No(?:(?:[0-9]0?\+?)|(?:StaticNeedies)|(?:TimeNeedies)|(?:OtherNeedies))$").Match(x)
