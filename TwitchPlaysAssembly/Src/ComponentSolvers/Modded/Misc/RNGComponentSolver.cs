@@ -15,6 +15,7 @@ public class RNGComponentSolver : ReflectionComponentSolver
 		{
 			yield return null;
 			yield return Click(0, 0);
+			yield return "sendtochat Displayed number: " + _component.GetValue<int>("randomNL") + _component.GetValue<int>("randomNR");
 		}
 		else if ("accept".StartsWith(command))
 		{
