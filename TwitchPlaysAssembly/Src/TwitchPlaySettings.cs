@@ -64,6 +64,7 @@ public class TwitchPlaySettingsData
 	public bool EnableMissionVoteSolve = true;
 	public float VoteSolveRewardDecrease = 0.25f;
 	public int MaxVoteDetonatesPerBomb = -1;
+	public bool EnableVoteSolveAutomaticNoForClaims = false;
 
 	public bool EnableAutoProfiles = true;
 	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.GetVoteDict();

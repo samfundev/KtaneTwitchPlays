@@ -66,28 +66,28 @@ public static class Votes
 			VoteTypes.Solve, new VoteData {
 				validityChecks = new List<Tuple<Func<bool>, string>>
 				{
-					CreateCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, VoteSolving is disabled."),
-					CreateCheck(() => voteModule.Votesolving, "Sorry, {0}, that module is already being VoteSolved."),
-					CreateCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS && !TwitchPlaySettings.data.EnableVSVoteSolve, "Sorry, {0}, VoteSolving is disabled during VS mode bombs."),
-					CreateCheck(() => TwitchPlaySettings.data.MaxVoteSolvesPerBomb >= 0 && TwitchGame.Instance.VoteSolveCount >= TwitchPlaySettings.data.MaxVoteSolvesPerBomb, "Sorry, {0}, the maximum amount of VoteSolves has already been reached. Another one cannot be started."),
+					CreateCheck(() => !TwitchPlaySettings.data.EnableVoteSolve, "Sorry, {0}, votesolving is disabled."),
+					CreateCheck(() => voteModule.Votesolving, "Sorry, {0}, that module is already being votesolved."),
+					CreateCheck(() => OtherModes.currentMode == TwitchPlaysMode.VS && !TwitchPlaySettings.data.EnableVSVoteSolve, "Sorry, {0}, votesolving is disabled during VS mode bombs."),
+					CreateCheck(() => TwitchPlaySettings.data.MaxVoteSolvesPerBomb >= 0 && TwitchGame.Instance.VoteSolveCount >= TwitchPlaySettings.data.MaxVoteSolvesPerBomb, "Sorry, {0}, the maximum amount of votesolves has already been reached. Another one cannot be started."),
 					CreateCheck(() =>
 						TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio >= float.Epsilon &&
 						TwitchPlaySettings.data.VoteSolveBossMinSeconds > 0 &&
 						voteModule.BombComponent.GetModuleID().IsBossMod() &&
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio ||
 						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < TwitchPlaySettings.data.VoteSolveBossMinSeconds),
-						$"Sorry, {{0}}, boss modules may only be VoteSolved before {TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio * 100}% of all modules are solved and when at least {TwitchPlaySettings.data.VoteSolveBossMinSeconds} seconds of the bomb has passed."),
+						$"Sorry, {{0}}, boss modules may only be votesolved before {TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio * 100}% of all modules are solved and when at least {TwitchPlaySettings.data.VoteSolveBossMinSeconds} seconds of the bomb has passed."),
 					CreateCheck(() =>
 						TwitchPlaySettings.data.VoteSolveNonBossRatio >= float.Epsilon &&
 						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
 						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= TwitchPlaySettings.data.VoteSolveNonBossRatio) &&
 						!voteModule.BombComponent.GetModuleID().IsBossMod(),
-						$"Sorry, {{0}}, more than {TwitchPlaySettings.data.VoteSolveNonBossRatio * 100}% of all non-boss modules on the bomb must be solved in order to call a VoteSolve."),
-					CreateCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be VoteSolved."),
-					CreateCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to VoteSolve has a queued claim on it."),
-					CreateCheck(() => TwitchPlaySettings.data.MinScoreForVoteSolve > 0 && (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= TwitchPlaySettings.data.MinScoreForVoteSolve && !voteModule.BombComponent.GetModuleID().IsBossMod(), $"Sorry, {{0}}, the module must have a score greater than {TwitchPlaySettings.data.MinScoreForVoteSolve} to be VoteSolved."),
-					CreateCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to VoteSolve is in the queue."),
-					CreateCheck(() => !TwitchPlaySettings.data.EnableMissionVoteSolve && GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't VoteSolve modules while in a mission bomb.")
+						$"Sorry, {{0}}, more than {TwitchPlaySettings.data.VoteSolveNonBossRatio * 100}% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
+					CreateCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),
+					CreateCheck(() => voteModule.ClaimQueue.Count > 0, "Sorry, {0}, the module you are trying to votesolve has a queued claim on it."),
+					CreateCheck(() => TwitchPlaySettings.data.MinScoreForVoteSolve > 0 && (int)voteModule.ScoreMethods.Sum(x => x.CalculateScore(null)) <= TwitchPlaySettings.data.MinScoreForVoteSolve && !voteModule.BombComponent.GetModuleID().IsBossMod(), $"Sorry, {{0}}, the module must have a score greater than {TwitchPlaySettings.data.MinScoreForVoteSolve} to be votesolved."),
+					CreateCheck(() => TwitchGame.Instance.CommandQueue.Any(x => x.Message.Text.StartsWith($"!{voteModule.Code} ")), "Sorry, {0}, the module you are trying to votesolve is in the queue."),
+					CreateCheck(() => !TwitchPlaySettings.data.EnableMissionVoteSolve && GameplayState.MissionToLoad != "custom", "Sorry, {0}, you can't votesolve modules while in a mission bomb.")
 				},
 				onSuccess = () =>
 				{
@@ -119,7 +119,7 @@ public static class Votes
 			yield return null;
 		}
 
-		if (TwitchGame.BombActive && (CurrentVoteType == VoteTypes.Detonation || CurrentVoteType == VoteTypes.Solve))
+		if (TwitchGame.BombActive && (CurrentVoteType == VoteTypes.Detonation || (CurrentVoteType == VoteTypes.Solve && TwitchPlaySettings.data.EnableVoteSolveAutomaticNoForClaims)))
 		{
 			// Add claimed users who didn't vote as "no"
 			int numAddedNoVotes = 0;
