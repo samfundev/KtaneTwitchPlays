@@ -38,6 +38,7 @@ public class TwitchPlaySettingsData
 	public bool EnableLastModuleZoom = true;
 	public string RepositoryUrl = "https://ktane.timwi.de/";
 	public string AnalyzerUrl = "https://ktane.timwi.de/More/Logfile%20Analyzer.html";
+	public string ScoringSheetId = "1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA";
 	public int AutoReturnToSetupMinutes = 0;
 	public bool EnableModeratorsCommand = true;
 	public bool EnableTrollCommands = false;
