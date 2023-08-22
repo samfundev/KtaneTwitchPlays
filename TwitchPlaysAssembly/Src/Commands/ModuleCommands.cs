@@ -336,8 +336,7 @@ static class ModuleCommands
 
 	public static IEnumerator Zoom(TwitchModule module, SuperZoomData zoomData, object yield)
 	{
-		float alpha = module.CanvasGroupMultiDecker.alpha;
-		module.CanvasGroupMultiDecker.alpha = 0.0f;
+		module.HideBanner();
 
 		var zoomCoroutine = TwitchGame.ModuleCameras?.ZoomCamera(module, zoomData, 1);
 		if (zoomCoroutine != null)
@@ -348,13 +347,12 @@ static class ModuleCommands
 
 		if (CoroutineCanceller.ShouldCancel)
 		{
-			module.CanvasGroupMultiDecker.alpha = alpha;
+			module.ShowBanner(0.0f);
 			module.StartCoroutine(TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 0));
 			yield break;
 		}
 
-		module.CanvasGroupMultiDecker.alpha = alpha;
-
+		module.ShowBanner();
 		var unzoomCoroutine = TwitchGame.ModuleCameras?.UnzoomCamera(module, zoomData, 1);
 		if (unzoomCoroutine != null)
 			while (unzoomCoroutine.MoveNext())
@@ -399,10 +397,7 @@ static class ModuleCommands
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
-		float moduleAlpha = module.CanvasGroupMultiDecker.alpha;
-		if (moduleAlpha != 0.0f)
-			module.CanvasGroupMultiDecker.alpha = 0.0f;
-
+		module.HideBanner(0.5f);
 		yield return new WaitForSeconds(0.5f);
 
 		var targetAngle = Quaternion.Euler(new Vector3(-Mathf.Cos(targetRotation * Mathf.Deg2Rad), 0, Mathf.Sin(targetRotation * Mathf.Deg2Rad)) * (module.FrontFace ? tiltAngle : -tiltAngle));
@@ -424,8 +419,7 @@ static class ModuleCommands
 			module.Bomb.RotateByLocalQuaternion(bombAngle);
 			TwitchBomb.RotateCameraByLocalQuaternion(module.BombComponent.gameObject, angle);
 			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace, false));
-			if (moduleAlpha != 0.0f)
-				module.CanvasGroupMultiDecker.alpha = moduleAlpha;
+			module.ShowBanner(0.0f);
 			yield break;
 		}
 
@@ -438,9 +432,7 @@ static class ModuleCommands
 			yield return null;
 		}
 
-		if (moduleAlpha != 0.0f)
-			module.CanvasGroupMultiDecker.alpha = moduleAlpha;
-
+		module.ShowBanner(0.5f);
 		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace, false);
 		while (defocusCoroutine.MoveNext())
 			yield return defocusCoroutine.Current;
