@@ -689,7 +689,7 @@ public static class ComponentSolverFactory
 
 	public static IEnumerator LoadDefaultInformation(bool reloadData = false)
 	{
-		var sheet = new GoogleSheet("1G6hZW0RibjW7n72AkXZgDTHZ-LKj0usRkbAwxSPhcqA");
+		var sheet = new GoogleSheet(TwitchPlaySettings.data.ScoringSheetId);
 
 		yield return sheet;
 
