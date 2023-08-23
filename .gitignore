@@ -33,3 +33,5 @@ sysinfo.txt
 /Assets/Editor/Resources/WorkshopItem.asset.meta
 /Assets/Plugins/Managed/TwitchPlaysAssembly.*
 !/Assets/Plugins/Managed/TwitchPlaysAssembly.dll.meta
+/Assets/Plugins/Managed/BouncyCastle.Crypto.*
+!/Assets/Plugins/Managed/BouncyCastle.Crypto.dll.meta
