@@ -17,17 +17,14 @@ public class RedLightGreenLightComponentSolver : ReflectionComponentSolver
 
 	public void RLGLMovement()
 	{
-		if (_component.GetValue<bool>("active"))
+		if (_component.GetValue<bool>("active") && !_component.GetValue<bool>("alreadyStruck"))
 		{
-			if (!_component.GetValue<bool>("alreadyStruck"))
-			{
-				Debug.LogFormat("[Red Light Green Light #{0}] You moved!", _component.GetValue<int>("moduleId"));
-				if (!_component.GetValue<object>("Settings").GetValue<bool>("HardMode"))
-					_component.GetValue<KMBombModule>("module").HandleStrike();
-				else
-					Module.StartCoroutine(_component.CallMethod<IEnumerator>("Detonate"));
-				_component.SetValue("alreadyStruck", true);
-			}
+			Debug.LogFormat("[Red Light Green Light #{0}] You moved!", _component.GetValue<int>("moduleId"));
+			if (!_component.GetValue<object>("Settings").GetValue<bool>("HardMode"))
+				_component.GetValue<KMBombModule>("module").HandleStrike();
+			else
+				Module.StartCoroutine(_component.CallMethod<IEnumerator>("Detonate"));
+			_component.SetValue("alreadyStruck", true);
 		}
 	}
 }

@@ -22,7 +22,7 @@ public class BlaseballComponentSolver : ReflectionComponentSolver
 				yield return "sendtochaterror Please specify a team to set as the away team!";
 			else
 			{
-				string team = split.Join(" ").Substring(5).ToLower();
+				string team = split.Skip(1).Join(" ");
 				string[] awayOptions = _component.GetValue<string[]>("awayTeamSelected").Select(x => x.ToLower()).ToArray();
 				if (!awayOptions.Contains(team))
 				{
@@ -39,7 +39,7 @@ public class BlaseballComponentSolver : ReflectionComponentSolver
 				yield return "sendtochaterror Please specify a team to set as the home team!";
 			else
 			{
-				string team = split.Join(" ").Substring(5).ToLower();
+				string team = split.Skip(1).Join(" ");
 				string[] homeOptions = _component.GetValue<string[]>("homeTeamSelected").Select(x => x.ToLower()).ToArray();
 				if (!homeOptions.Contains(team))
 				{
