@@ -497,6 +497,7 @@ public class TwitchBomb : MonoBehaviour
 
 	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace, bool select = true)
 	{
+		TwitchPlaysService.Instance.OnInteractCommand?.Invoke();
 		IEnumerator gameRoomFocus = GameRoom.Instance?.BombCommanderFocus(Bomb, selectable, focusDistance, frontFace);
 		if (gameRoomFocus != null && gameRoomFocus.MoveNext() && gameRoomFocus.Current is bool continueInvoke)
 		{
