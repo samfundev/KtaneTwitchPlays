@@ -30,6 +30,15 @@ static class GlobalCommands
 		IRCConnection.SendMessage(string.Format("!{0} help [commands for module {0}] | Go to {1} to get the command reference for TP:KTaNE (multiple sections, see the menu on the left)", randomCodes[1], UrlHelper.CommandReference), user, !isWhisper);
 	}
 
+	/// <name>Date</name>
+	/// <syntax>date</syntax>
+	/// <summary>Gives the current date and time.</summary>
+	[Command(@"(date|time)")]
+	public static void CurrentTime(string user, bool isWhisper)
+	{
+		IRCConnection.SendMessage(string.Format("Current Date and Time: {0}, {1}", DateTime.Now.ToString("MMMM dd"), DateTime.Now.ToString("HH:mm:ss"), !isWhisper));
+	}
+
 	/// <name>Bonus Points</name>
 	/// <syntax>bonuspoints [player] [points]</syntax>
 	/// <summary>Adds points to a player's score.</summary>
