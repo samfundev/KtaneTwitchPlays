@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class TableMadnessShim : ReflectionComponentSolverShim
@@ -9,6 +10,16 @@ public class TableMadnessShim : ReflectionComponentSolverShim
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_buttons = _component.GetValue<KMSelectable[]>("buttons");
+	}
+
+	protected override IEnumerator RespondShimmed(string[] split, string command)
+	{
+		Match modulesMatch = Regex.Match(command, "^submit (a|b|c|d|e) ?([1-5])$", RegexOptions.IgnoreCase);
+		if (!modulesMatch.Success)
+			yield break;
+		IEnumerator cmd = RespondUnshimmed(command);
+		while (cmd.MoveNext())
+			yield return cmd.Current;
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
