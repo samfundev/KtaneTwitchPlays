@@ -196,7 +196,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["Color Generator"] = module => new ColorGeneratorShim(module);
 		ModComponentSolverCreators["ExtendedPassword"] = module => new ExtendedPasswordComponentSolver(module);
 		ModComponentSolverCreators["groceryStore"] = module => new GroceryStoreShim(module);
-		ModComponentSolverCreators["plungerButton"] = module => new PlungerButtonShim(module);
 		ModComponentSolverCreators["theSwan"] = module => new SwanShim(module);
 		ModComponentSolverCreators["ButtonV2"] = module => new SquareButtonShim(module);
 		ModComponentSolverCreators["spwizAstrology"] = module => new AstrologyShim(module);
@@ -1217,8 +1216,8 @@ public static class ComponentSolverFactory
 
 	private static FieldInfo FindHelpMessage(Type commandComponentType)
 	{
-		FieldInfo cancelField = commandComponentType?.GetDeepField("TwitchHelpMessage", fieldFlags);
-		return cancelField?.FieldType == typeof(string) ? cancelField : null;
+		FieldInfo helpField = commandComponentType?.GetDeepField("TwitchHelpMessage", fieldFlags);
+		return helpField?.FieldType == typeof(string) ? helpField : null;
 	}
 
 	private static FieldInfo FindCancelBool(Type commandComponentType)
