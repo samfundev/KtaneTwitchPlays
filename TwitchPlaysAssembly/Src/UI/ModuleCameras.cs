@@ -225,8 +225,22 @@ public class ModuleCameras : MonoBehaviour
 	[HideInInspector]
 	public bool CameraWallEnabled;
 
+	private int _modulesHidingNotes;
+
 	[HideInInspector]
-	public int ModulesHidingNotes;
+	public int ModulesHidingNotes
+	{
+		get => _modulesHidingNotes;
+		set
+		{
+			_modulesHidingNotes = value;
+
+			if (_modulesHidingNotes > 0)
+				SetHudVisibility(false);
+			else if (_currentBomb != null)
+				SetHudVisibility(true);
+		}
+	}
 
 	private Mode _cameraWallMode;
 	public Mode CameraWallMode
@@ -335,8 +349,6 @@ public class ModuleCameras : MonoBehaviour
 		_cameraWallMode = TwitchPlaySettings.data.EnableAutomaticCameraWall ? Mode.Automatic : Mode.Disabled;
 
 		lastModule = false;
-
-		StartCoroutine(HideNotesForModules());
 
 		// Create the first 6 module cameras (more will be created if the camera wall gets enabled)
 		for (int i = 0; i < 6; i++)
@@ -498,7 +510,8 @@ public class ModuleCameras : MonoBehaviour
 		bombUI = visible;
 		SetCameraVisibility(visible);
 		SetEdgeworkCameraVisibility(visible);
-		SetHudVisibility(visible);
+		if (_modulesHidingNotes == 0)
+			SetHudVisibility(visible);
 		UpdateMainCamera();
 	}
 
@@ -847,18 +860,6 @@ public class ModuleCameras : MonoBehaviour
 	#endregion
 
 	#region Private Methods
-	private IEnumerator HideNotesForModules()
-	{
-		while (true)
-		{
-			yield return null;
-			if (ModulesHidingNotes > 0)
-				SetHudVisibility(false);
-			else if (_currentBomb != null)
-				SetHudVisibility(true);
-		}
-	}
-
 	private IEnumerator UpdateStrikesCoroutine(bool delay)
 	{
 		if (delay)
