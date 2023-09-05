@@ -24,7 +24,7 @@ public class TwitchGame : MonoBehaviour
 	public AudioSource alertSound = null;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
-	public bool VoteDetonateAttempted = false;
+	public int VoteDetonateAttempts;
 	public int VoteSolveCount;
 	public int TrainingModeRemainingTime = -1;
 	public int[] TrainingModeAlertTimes = new int[9] { 1, 2, 5, 10, 20, 30, 45, 60, 90 };
@@ -133,7 +133,7 @@ public class TwitchGame : MonoBehaviour
 		CallingPlayers.Clear();
 		callWaiting = false;
 		GameCommands.calledCommands.Clear();
-		VoteDetonateAttempted = false;
+		VoteDetonateAttempts = 0;
 		ProcessingClaimQueue = false;
 		VoteSolveCount = 0;
 		FindClaimPlayers.Clear();

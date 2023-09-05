@@ -51,9 +51,21 @@ public class TwitchPlaySettingsData
 	public int FindClaimTerms = 3;
 	public int FindClaimAddTime = 5;
 	public int FindClaimDelay = 30;
+
 	public int VoteCountdownTime = 60;
 	public bool EnableVoting = true;
 	public bool EnableVoteSolve = true;
+	public bool EnableVSVoteSolve = true;
+	public int MaxVoteSolvesPerBomb = -1;
+	public float VoteSolveBossNormalModuleRatio = 0f;
+	public int VoteSolveBossMinSeconds = 0;
+	public float VoteSolveNonBossRatio = 0f;
+	public int MinScoreForVoteSolve = 0;
+	public bool EnableMissionVoteSolve = true;
+	public float VoteSolveRewardDecrease = 0.25f;
+	public int MaxVoteDetonatesPerBomb = -1;
+	public bool EnableVoteSolveAutomaticNoForClaims = false;
+
 	public bool EnableAutoProfiles = true;
 	public Dictionary<VoteTypes, int> MinimumYesVotes = TwitchPlaySettings.GetVoteDict();
 	public float DynamicScoreMultiplier = 1;
