@@ -17,9 +17,7 @@ public class TableMadnessShim : ReflectionComponentSolverShim
 		Match modulesMatch = Regex.Match(command, "^submit (a|b|c|d|e) ?([1-5])$", RegexOptions.IgnoreCase);
 		if (!modulesMatch.Success)
 			yield break;
-		IEnumerator cmd = RespondUnshimmed(command);
-		while (cmd.MoveNext())
-			yield return cmd.Current;
+		yield return RespondUnshimmed(command);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()
