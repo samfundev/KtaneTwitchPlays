@@ -17,7 +17,7 @@ public class JackboxTVComponentSolver : ReflectionComponentSolver
 		}
 
 		yield return null;
-		yield return Click(0, 0);
+		yield return DoInteractionClick(Module.Selectable.Children[0], 0);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()
@@ -25,7 +25,7 @@ public class JackboxTVComponentSolver : ReflectionComponentSolver
 		yield return null;
 
 		if (_component.GetValue<bool>("isSolved"))
-			yield return Click(0);
+			yield return DoInteractionClick(Module.Selectable.Children[0]);
 		else
 			yield return _component.CallMethod<IEnumerator>("WSSolve", "TP Autosolver");
 	}
