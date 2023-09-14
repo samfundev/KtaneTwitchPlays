@@ -16,9 +16,9 @@ public class RapidButtonsComponentSolver : ReflectionComponentSolver
 		if (check < 1 || check > 3) yield break;
 		int[] indexes = new int[3];
 		int ct = 0;
-		for (int i = 0; i < selectables.Length; i++)
+		for (int i = 0; i < Selectables.Length; i++)
 		{
-			if (selectables[i].gameObject.activeSelf)
+			if (Selectables[i].gameObject.activeSelf)
 			{
 				indexes[ct] = i;
 				ct++;
@@ -59,7 +59,7 @@ public class RapidButtonsComponentSolver : ReflectionComponentSolver
 			}
 
 			object[] corrButtons = _component.GetValue<object[]>("correctButtons");
-			if (selectables.Any(x => x.gameObject.activeSelf))
+			if (Selectables.Any(x => x.gameObject.activeSelf))
 			{
 				yield return null;
 				corrButtons[Random.Range(0, corrButtons.Length)].GetValue<KMSelectable>("selectable").OnInteract();

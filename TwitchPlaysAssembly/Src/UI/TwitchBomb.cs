@@ -54,6 +54,9 @@ public class TwitchBomb : MonoBehaviour
 
 	private bool _flipEnabled = true;
 
+	private int _focusCount = 0;
+	private int _focusSelectCount = 0;
+
 	public string BombName
 	{
 		get => _bombName;
@@ -500,6 +503,7 @@ public class TwitchBomb : MonoBehaviour
 
 	public IEnumerator Focus(Selectable selectable, float focusDistance, bool frontFace, bool select = true)
 	{
+		TwitchPlaysService.Instance.OnInteractCommand?.Invoke();
 		IEnumerator gameRoomFocus = GameRoom.Instance?.BombCommanderFocus(Bomb, selectable, focusDistance, frontFace);
 		if (gameRoomFocus != null && gameRoomFocus.MoveNext() && gameRoomFocus.Current is bool continueInvoke)
 		{
@@ -514,12 +518,16 @@ public class TwitchBomb : MonoBehaviour
 		while (holdCoroutine.MoveNext())
 			yield return holdCoroutine.Current;
 
-		var holdable = Bomb.GetComponent<FloatingHoldable>();
-		float focusTime = holdable.FocusTime;
-		holdable.Focus(selectable.transform, focusDistance, false, false, focusTime);
+		if (_focusCount++ == 0)
+		{
+			var holdable = Bomb.GetComponent<FloatingHoldable>();
+			float focusTime = holdable.FocusTime;
+			holdable.Focus(selectable.transform, focusDistance, false, false, focusTime);
 
-		if (select) selectable.HandleSelect(false);
-		selectable.HandleInteract();
+			selectable.HandleInteract();
+		}
+		if (select && _focusSelectCount++ == 0)
+			selectable.HandleSelect(false);
 	}
 
 	public IEnumerator Defocus(Selectable selectable, bool frontFace, bool deselect = true)
@@ -534,11 +542,19 @@ public class TwitchBomb : MonoBehaviour
 				yield break;
 		}
 
-		selectable.OnDefocus?.Invoke();
+		if (--_focusCount <= 0)
+		{
+			selectable.OnDefocus?.Invoke();
 
-		Bomb.GetComponent<FloatingHoldable>().Defocus(false, false);
-		if (deselect) selectable.HandleDeselect();
-		selectable.HandleCancel();
+			Bomb.GetComponent<FloatingHoldable>().Defocus(false, false);
+			selectable.HandleCancel();
+			_focusCount = 0;
+		}
+		if (deselect && --_focusSelectCount <= 0)
+		{
+			selectable.HandleDeselect();
+			_focusSelectCount = 0;
+		}
 	}
 
 	public void RotateByLocalQuaternion(Quaternion localQuaternion)

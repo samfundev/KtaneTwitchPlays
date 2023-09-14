@@ -56,7 +56,7 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 
 			int currentIndex = _component.GetValue<int>("groupCounter");
 			int targetIndex = Array.IndexOf(allCGs, matchedCGs[0]);
-			yield return SelectIndex(currentIndex, targetIndex, allCGs.Length, selectables[2], selectables[0]);
+			yield return SelectIndex(currentIndex, targetIndex, allCGs.Length, Selectables[2], Selectables[0]);
 
 			currentIndex = _component.GetValue<int>("tempCounter");
 			targetIndex = Array.IndexOf(allTemps, targetTemp);
@@ -67,7 +67,7 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 				yield return "unsubmittablepenalty";
 				yield break;
 			}
-			yield return SelectIndex(currentIndex, targetIndex, allTemps.Length, selectables[5], selectables[3]);
+			yield return SelectIndex(currentIndex, targetIndex, allTemps.Length, Selectables[5], Selectables[3]);
 			yield return Click(7);
 		}
 	}

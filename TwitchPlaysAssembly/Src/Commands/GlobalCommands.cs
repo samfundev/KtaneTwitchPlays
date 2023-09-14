@@ -16,7 +16,7 @@ static class GlobalCommands
 	/// <name>Help</name>
 	/// <syntax>help</syntax>
 	/// <summary>Gives you some help on how to play TP.</summary>
-	[Command(@"(manual|help)")]
+	[Command(@"(help)")]
 	public static void Help(string user, bool isWhisper)
 	{
 		string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
@@ -37,6 +37,20 @@ static class GlobalCommands
 	public static void CurrentTime(string user, bool isWhisper)
 	{
 		IRCConnection.SendMessage(string.Format("Current Date and Time: {0}, {1}", DateTime.Now.ToString("MMMM dd"), DateTime.Now.ToString("HH:mm:ss"), !isWhisper));
+  }
+
+	/// <name>Manual</name>
+	/// <syntax>manual [module]</syntax>
+	/// <summary>Gives the manual link for the specified module.</summary>
+	[Command(@"(manual) (\S+)")]
+	public static void Manual([Group(1)] string moduleName, string user, bool isWhisper)
+	{
+		bool valid = ComponentSolverFactory.GetModuleInformation().Search(moduleName, x => x.moduleDisplayName, x => $"“{x.moduleDisplayName}”", out ModuleInformation result, out string message);
+
+		if (valid)
+			IRCConnection.SendMessage($"{result.moduleDisplayName} manual: {UrlHelper.ManualFor(result.manualCode)}", user, !isWhisper);
+		else
+			IRCConnection.SendMessage(message, user, !isWhisper);
 	}
 
 	/// <name>Bonus Points</name>

@@ -30,9 +30,9 @@ public class UrlHelper : MonoBehaviour
 
 	public static string MissionLink(string mission) => "https://bombs.samfun.dev/mission/" + TwitchUrlEscape(mission);
 
-	private static string TwitchUrlEscape(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name)).Replace("*", "%2A").Replace("!", "%21");
+	private static string TwitchUrlEscape(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name)).Replace("*", "%2A").Replace("!", "%21").Replace("'", "%27");
 	
-	private static string NameToUrl(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name).Replace("'", "’").Split(InvalidCharacters).Join("")).Replace("*", "%2A").Replace("!", "%21");
+	private static string NameToUrl(string name) => Uri.EscapeDataString(Uri.UnescapeDataString(name).Replace("'", "’").Split(InvalidCharacters).Join("")).Replace("*", "%2A").Replace("!", "%21").Replace("'", "%27");
 
 	private static readonly char[] InvalidCharacters = Path.GetInvalidFileNameChars().Where(c => c != '*').ToArray();
 }

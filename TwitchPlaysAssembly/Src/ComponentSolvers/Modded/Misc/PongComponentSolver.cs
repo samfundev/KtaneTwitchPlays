@@ -18,64 +18,64 @@ public class PongComponentSolver : ReflectionComponentSolver
 		yield return null;
 		if (split[0].FirstOrWhole("left") && split[1].FirstOrWhole("top"))
 		{
-			DoInteractionStart(selectables[0]);
+			DoInteractionStart(Selectables[0]);
 			while (_component.GetValue<float>("Paddle1Y") < 0.875f)
 				yield return null;
-			DoInteractionEnd(selectables[0]);
+			DoInteractionEnd(Selectables[0]);
 		}
 		else if (split[0].FirstOrWhole("left") && split[1].FirstOrWhole("bottom"))
 		{
-			DoInteractionStart(selectables[1]);
+			DoInteractionStart(Selectables[1]);
 			while (_component.GetValue<float>("Paddle1Y") > 0.125f)
 				yield return null;
-			DoInteractionEnd(selectables[1]);
+			DoInteractionEnd(Selectables[1]);
 		}
 		else if (split[0].FirstOrWhole("left") && split[1].FirstOrWhole("middle"))
 		{
 			if (_component.GetValue<float>("Paddle1Y") < 0.5f)
 			{
-				DoInteractionStart(selectables[0]);
+				DoInteractionStart(Selectables[0]);
 				while (_component.GetValue<float>("Paddle1Y") < 0.5f)
 					yield return null;
-				DoInteractionEnd(selectables[0]);
+				DoInteractionEnd(Selectables[0]);
 			}
 			else
 			{
-				DoInteractionStart(selectables[1]);
+				DoInteractionStart(Selectables[1]);
 				while (_component.GetValue<float>("Paddle1Y") > 0.5f)
 					yield return null;
-				DoInteractionEnd(selectables[1]);
+				DoInteractionEnd(Selectables[1]);
 			}
 		}
 		else if (split[0].FirstOrWhole("right") && split[1].FirstOrWhole("top"))
 		{
-			DoInteractionStart(selectables[2]);
+			DoInteractionStart(Selectables[2]);
 			while (_component.GetValue<float>("Paddle2Y") < 0.875f)
 				yield return null;
-			DoInteractionEnd(selectables[2]);
+			DoInteractionEnd(Selectables[2]);
 		}
 		else if (split[0].FirstOrWhole("right") && split[1].FirstOrWhole("bottom"))
 		{
-			DoInteractionStart(selectables[3]);
+			DoInteractionStart(Selectables[3]);
 			while (_component.GetValue<float>("Paddle2Y") > 0.125f)
 				yield return null;
-			DoInteractionEnd(selectables[3]);
+			DoInteractionEnd(Selectables[3]);
 		}
 		else
 		{
 			if (_component.GetValue<float>("Paddle2Y") < 0.5f)
 			{
-				DoInteractionStart(selectables[2]);
+				DoInteractionStart(Selectables[2]);
 				while (_component.GetValue<float>("Paddle2Y") < 0.5f)
 					yield return null;
-				DoInteractionEnd(selectables[2]);
+				DoInteractionEnd(Selectables[2]);
 			}
 			else
 			{
-				DoInteractionStart(selectables[3]);
+				DoInteractionStart(Selectables[3]);
 				while (_component.GetValue<float>("Paddle2Y") > 0.5f)
 					yield return null;
-				DoInteractionEnd(selectables[3]);
+				DoInteractionEnd(Selectables[3]);
 			}
 		}
 	}

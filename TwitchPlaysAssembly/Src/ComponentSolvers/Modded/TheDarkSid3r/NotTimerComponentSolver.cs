@@ -22,7 +22,7 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 			else
 			{
 				heldObj = Array.IndexOf(_valids, split[1]);
-				DoInteractionStart(selectables[heldObj]);
+				DoInteractionStart(Selectables[heldObj]);
 			}
 		}
 		else if (command.StartsWith("release ") && split.Length == 2)
@@ -43,7 +43,7 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 
 				if (Module.Bomb.CurrentTimerFormatted.Contains(secondString))
 				{
-					DoInteractionEnd(selectables[heldObj]);
+					DoInteractionEnd(Selectables[heldObj]);
 					heldObj = -1;
 				}
 
@@ -196,12 +196,12 @@ public class NotTimerComponentSolver : ReflectionComponentSolver
 					digit = 3;
 				}
 			}
-			DoInteractionStart(selectables[index]);
+			DoInteractionStart(Selectables[index]);
 			while (_component.GetValue<float>("TimeElapsedSinceHold") < needed)
 				yield return true;
 			while (!_component.GetValue<string>("FormattedTime").Contains(digit.ToString()[0]))
 				yield return true;
-			DoInteractionEnd(selectables[index]);
+			DoInteractionEnd(Selectables[index]);
 		}
 	}
 

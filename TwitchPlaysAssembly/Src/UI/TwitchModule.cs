@@ -112,6 +112,10 @@ public class TwitchModule : MonoBehaviour
 	private bool _hidden;
 	private readonly Dictionary<Transform, int> _originalLayers = new Dictionary<Transform, int>();
 	private int? _currentLayer;
+
+	private float BackgroundBaseAlpha = 1.0f;
+	private float BackgroundAlphaPercent = 1.0f;
+	private int _bannerHideCount = 0;
 	#endregion
 
 	#region Private Statics
@@ -126,12 +130,12 @@ public class TwitchModule : MonoBehaviour
 			_anarchyMode = TwitchPlaySettings.data.AnarchyMode;
 			if (_anarchyMode)
 			{
-				CanvasGroupMultiDecker.alpha = Solved ? 0.5f : 1.0f;
+				SetBannerBaseAlpha(Solved ? 0.5f : 1.0f);
 				SetBannerColor(unclaimedBackgroundColor);
 			}
 			else
 			{
-				CanvasGroupMultiDecker.alpha = Solved ? 0.0f : 1.0f;
+				SetBannerBaseAlpha(Solved ? 0.0f : 1.0f);
 				SetBannerColor(Claimed && !Solved ? ClaimedBackgroundColour : unclaimedBackgroundColor);
 			}
 		}
@@ -139,7 +143,7 @@ public class TwitchModule : MonoBehaviour
 		if (_hidden != Hidden)
 		{
 			_hidden = Hidden;
-			CanvasGroupMultiDecker.alpha = Hidden ? 0.0f : 1.0f;
+			SetBannerBaseAlpha(Hidden ? 0.0f : 1.0f);
 
 			if (!Hidden)
 			{
@@ -173,7 +177,7 @@ public class TwitchModule : MonoBehaviour
 
 		IDTextMultiDecker.text = Code;
 
-		CanvasGroupMultiDecker.alpha = 1.0f;
+		SetBannerBaseAlpha(1.0f);
 
 		unclaimedBackgroundColor = TwitchPlaySettings.data.UnclaimedColor;
 
@@ -244,7 +248,7 @@ public class TwitchModule : MonoBehaviour
 		catch (Exception e)
 		{
 			DebugHelper.LogException(e);
-			CanvasGroupMultiDecker.alpha = 0.0f;
+			SetBannerBaseAlpha(0.0f);
 			UnsupportedComponents.Add(this);
 			Solver = null;
 
@@ -385,7 +389,7 @@ public class TwitchModule : MonoBehaviour
 
 	public void OnPass(string userNickname)
 	{
-		CanvasGroupMultiDecker.alpha = TwitchPlaySettings.data.AnarchyMode ? 0.5f : 0.0f;
+		SetBannerBaseAlpha(_anarchyMode ? 0.5f : 0.0f);
 		if (PlayerName == null)
 			PlayerName = userNickname;
 		if (TakeInProgress != null)
@@ -612,10 +616,15 @@ public class TwitchModule : MonoBehaviour
 				if (kvp.Key.gameObject.layer != setToLayer)
 					kvp.Key.gameObject.layer = setToLayer;
 
-				// Sets the camera layers of the cameras in Backdoor Hacking to the proper new TP layer to prevent blackscreening
+				// Adjusts the culling mask used on the cameras for Backdoor Hacking and Reporting Anomalies
 				Camera cam = kvp.Key.gameObject.GetComponent<Camera>();
 				if (BombComponent.GetModuleDisplayName().EqualsAny("Backdoor Hacking", "Reporting Anomalies") && cam != null)
 					cam.cullingMask = (1 << setToLayer) | (1 << 31);
+
+				// Adjusts the culling mask used on the lights for Reporting Anomalies
+				Light light = kvp.Key.gameObject.GetComponent<Light>();
+				if (BombComponent.GetModuleDisplayName().EqualsAny("Reporting Anomalies") && light != null)
+					light.cullingMask = (1 << setToLayer) | (1 << 31);
 			}
 			catch
 			{
@@ -653,6 +662,21 @@ public class TwitchModule : MonoBehaviour
 		// The camera wall needs to be updated whenever a module's claim changes.
 		ModuleCameras.Instance.UpdateAutomaticCameraWall();
 	}
+
+	public void HideBanner(float timeframe = 1.0f)
+	{
+		if (_bannerHideCount++ == 0)
+			StartCoroutine(BannerLerpAlpha(1.0f, 0.0f, timeframe));
+	}
+
+	public void ShowBanner(float timeframe = 1.0f)
+	{
+		if (--_bannerHideCount <= 0)
+		{
+			StartCoroutine(BannerLerpAlpha(0.0f, 1.0f, timeframe));
+			_bannerHideCount = 0;
+		}
+	}
 	#endregion
 
 	#region Private Methods
@@ -660,6 +684,24 @@ public class TwitchModule : MonoBehaviour
 	{
 		CanvasGroupMultiDecker.GetComponent<Image>().color = color;
 		ClaimedUserMultiDecker.color = color;
+	}
+
+	private void SetBannerBaseAlpha(float alpha)
+	{
+		BackgroundBaseAlpha = alpha;
+		CanvasGroupMultiDecker.alpha = alpha * BackgroundAlphaPercent;
+	}
+
+	private IEnumerator BannerLerpAlpha(float begin, float end, float timeframe)
+	{
+		for (float time = 0f; time < timeframe; time += Time.deltaTime)
+		{
+			BackgroundAlphaPercent = Mathf.Lerp(begin, end, Mathf.InverseLerp(0f, timeframe, time));
+			CanvasGroupMultiDecker.alpha = BackgroundBaseAlpha * BackgroundAlphaPercent;
+			yield return null;
+		}
+		BackgroundAlphaPercent = end;
+		CanvasGroupMultiDecker.alpha = BackgroundBaseAlpha * BackgroundAlphaPercent;
 	}
 
 	private void SetStatusLightPosition(StatusLightPosition newPos)

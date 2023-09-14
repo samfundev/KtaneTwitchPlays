@@ -4,7 +4,7 @@ using System.Linq;
 public class MatchmakerComponentSolver : ReflectionComponentSolver
 {
 	public MatchmakerComponentSolver(TwitchModule module) :
-		base(module, "HumanResourcesModule", "!{0} cycle [See the people in each list] | !{0} cycle <top/bottom> [See the people in a specific list] | !{0} match <name> <name> [Selects the two specified people and presses the match button] | !{0} reset [Presses the reset button]")
+		base(module, "HumanResourcesModule", "matchmaker", "!{0} cycle [See the people in each list] | !{0} cycle <top/bottom> [See the people in a specific list] | !{0} match <name> <name> [Selects the two specified people and presses the match button] | !{0} reset [Presses the reset button]")
 	{
 	}
 
@@ -41,8 +41,8 @@ public class MatchmakerComponentSolver : ReflectionComponentSolver
 			int target2 = inNames1[1] ? 1 : 2;
 
 			yield return null;
-			yield return SelectIndex(curName1Index, names1.IndexOf(x => people[x].GetValue<string>("Name").ToLower() == split[target1]), names1.Length, selectables[1], selectables[0]);
-			yield return SelectIndex(curName2Index, names2.IndexOf(x => people[x].GetValue<string>("Name").ToLower() == split[target2]), names2.Length, selectables[3], selectables[2]);
+			yield return SelectIndex(curName1Index, names1.IndexOf(x => people[x].GetValue<string>("Name").ToLower() == split[target1]), names1.Length, Selectables[1], Selectables[0]);
+			yield return SelectIndex(curName2Index, names2.IndexOf(x => people[x].GetValue<string>("Name").ToLower() == split[target2]), names2.Length, Selectables[3], Selectables[2]);
 			yield return Click(4, 0);
 		}
 		else if (command.StartsWith("cycle "))

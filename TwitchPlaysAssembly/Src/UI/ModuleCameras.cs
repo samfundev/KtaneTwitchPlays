@@ -225,6 +225,23 @@ public class ModuleCameras : MonoBehaviour
 	[HideInInspector]
 	public bool CameraWallEnabled;
 
+	private int _modulesHidingNotes;
+
+	[HideInInspector]
+	public int ModulesHidingNotes
+	{
+		get => _modulesHidingNotes;
+		set
+		{
+			_modulesHidingNotes = value;
+
+			if (_modulesHidingNotes > 0)
+				SetHudVisibility(false);
+			else if (_currentBomb != null)
+				SetHudVisibility(true);
+		}
+	}
+
 	private Mode _cameraWallMode;
 	public Mode CameraWallMode
 	{
@@ -493,7 +510,8 @@ public class ModuleCameras : MonoBehaviour
 		bombUI = visible;
 		SetCameraVisibility(visible);
 		SetEdgeworkCameraVisibility(visible);
-		SetHudVisibility(visible);
+		if (_modulesHidingNotes == 0)
+			SetHudVisibility(visible);
 		UpdateMainCamera();
 	}
 

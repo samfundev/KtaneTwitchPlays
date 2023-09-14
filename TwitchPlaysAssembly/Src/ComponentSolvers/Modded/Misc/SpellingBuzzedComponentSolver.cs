@@ -9,7 +9,7 @@ public class SpellingBuzzedComponentSolver : ReflectionComponentSolver
 	public SpellingBuzzedComponentSolver(TwitchModule module) :
 		base(module, "SpellingBuzzedModule", "Use '!{0} submit DRUNK' to submit that word into the module. Use '!{0} reset' to reset the module.")
 	{
-		_keypadButtons = selectables.ToList();
+		_keypadButtons = Selectables.ToList();
 		_keypadButtons.RemoveAt(2);
 		_keypadButtons.RemoveAt(7);
 		for (var buttonIndex = 0; buttonIndex < 7; buttonIndex++)
