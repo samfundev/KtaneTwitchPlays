@@ -537,6 +537,11 @@
             <syntax>help</syntax>
             <summary>Gives you some help on how to play TP.</summary>
         </member>
+        <member name="M:GlobalCommands.CurrentTime(System.String,System.Boolean)">
+            <name>Date</name>
+            <syntax>date</syntax>
+            <summary>Gives the current date and time.</summary>
+        </member>
         <member name="M:GlobalCommands.Manual(System.String,System.String,System.Boolean)">
             <name>Manual</name>
             <syntax>manual [module]</syntax>
