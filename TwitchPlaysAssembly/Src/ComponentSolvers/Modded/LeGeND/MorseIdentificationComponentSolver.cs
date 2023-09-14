@@ -22,7 +22,7 @@ public class MorseIdentificationComponentSolver : ReflectionComponentSolver
 
 		int current = _component.GetValue<int>("CharacterDisplayNumber");
 		int target = Array.IndexOf(_component.GetValue<string[]>("characterdisplaylist"), split[1].ToUpper());
-		yield return SelectIndex(current, target, 36, selectables[2], selectables[0]);
+		yield return SelectIndex(current, target, 36, Selectables[2], Selectables[0]);
 
 		yield return Click(1, 0);
 	}

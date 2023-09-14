@@ -30,7 +30,7 @@ public class BlaseballComponentSolver : ReflectionComponentSolver
 					yield break;
 				}
 				yield return null;
-				yield return SelectIndex(_component.GetValue<int>("awayTeamMenu"), Array.IndexOf(awayOptions, team), awayOptions.Length, selectables[2], selectables[1]);
+				yield return SelectIndex(_component.GetValue<int>("awayTeamMenu"), Array.IndexOf(awayOptions, team), awayOptions.Length, Selectables[2], Selectables[1]);
 			}
 		}
 		else if (split[0].Equals("home"))
@@ -47,7 +47,7 @@ public class BlaseballComponentSolver : ReflectionComponentSolver
 					yield break;
 				}
 				yield return null;
-				yield return SelectIndex(_component.GetValue<int>("homeTeamMenu"), Array.IndexOf(homeOptions, team), homeOptions.Length, selectables[4], selectables[3]);
+				yield return SelectIndex(_component.GetValue<int>("homeTeamMenu"), Array.IndexOf(homeOptions, team), homeOptions.Length, Selectables[4], Selectables[3]);
 			}
 		}
 	}

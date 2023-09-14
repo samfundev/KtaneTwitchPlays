@@ -23,7 +23,7 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 		_component = module.BombComponent.GetComponent(componentType);
 		if (_component == null) _component = module.BombComponent.GetComponentInChildren(componentType);
 
-		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
+		selectable = Module.Selectable;
 		if (helpMessage != null) ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
 	}
 
@@ -44,11 +44,13 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 	protected static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>();
 
 	protected readonly object _component;
-	protected readonly KMSelectable[] selectables;
+	protected readonly Selectable selectable;
+
+	protected Selectable[] Selectables => selectable.Children;
 
 	// Helper methods
-	protected WaitForSeconds Click(int index, float delay = 0.1f) => DoInteractionClick(selectables[index], delay);
+	protected WaitForSeconds Click(int index, float delay = 0.1f) => DoInteractionClick(Selectables[index], delay);
 	protected WaitForSeconds Click(string button, float delay = 0.1f) => Click(buttonMap[button], delay);
 	protected WaitForSeconds Click(char button, float delay = 0.1f) => Click(button.ToString(), delay);
-	protected void LogSelectables() => DebugHelper.Log($"Selectables:\n{selectables.Select((selectable, index) => $"{index} = {selectable.name}").Join("\n")}");
+	protected void LogSelectables() => DebugHelper.Log($"Selectables:\n{Selectables.Select((selectable, index) => $"{index} = {selectable.name}").Join("\n")}");
 }

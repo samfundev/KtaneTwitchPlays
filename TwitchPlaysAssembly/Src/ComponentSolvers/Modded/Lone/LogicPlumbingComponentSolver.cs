@@ -27,9 +27,9 @@ public class LogicPlumbingComponentSolver : ReflectionComponentSolver
 		else if (command.Equals("check"))
 		{
 			yield return null;
-			DoInteractionStart(selectables[36]);
+			DoInteractionStart(Selectables[36]);
 			while (_component.GetValue<int>("waveStep") <= 24) yield return "trycancel";
-			DoInteractionEnd(selectables[36]);
+			DoInteractionEnd(Selectables[36]);
 			if (_component.GetValue<bool>("solved")) yield return "solve";
 		}
 	}
