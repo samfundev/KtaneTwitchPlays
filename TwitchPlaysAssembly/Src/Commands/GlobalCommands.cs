@@ -37,7 +37,7 @@ static class GlobalCommands
 	public static void CurrentTime(string user, bool isWhisper)
 	{
 		IRCConnection.SendMessage(string.Format("Current Date and Time: {0}, {1}", DateTime.Now.ToString("MMMM dd"), DateTime.Now.ToString("HH:mm:ss"), !isWhisper));
-  }
+	}
 
 	/// <name>Manual</name>
 	/// <syntax>manual [module]</syntax>
