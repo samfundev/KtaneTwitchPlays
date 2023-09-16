@@ -159,6 +159,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["krazzBlaseball"] = module => new BlaseballComponentSolver(module);
 		ModComponentSolverCreators["redLightGreenLight"] = module => new RedLightGreenLightComponentSolver(module);
 		ModComponentSolverCreators["threeSentenceHorror"] = module => new ThreeSentenceHorrorComponentSolver(module);
+		ModComponentSolverCreators["GreenWires"] = module => new GreenWiresComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -286,6 +287,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["KritLockpickMaze"] = module => new LockpickMazeShim(module);
 		ModComponentSolverCreators["simonSamples"] = module => new SimonSamplesShim(module);
 		ModComponentSolverCreators["DIWindow"] = module => new DriveInWindowShim(module);
+		ModComponentSolverCreators["chip"] = module => new ChipShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -467,6 +469,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["krazzBlaseball"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Blaseball" };
 		ModComponentSolverInformation["redLightGreenLight"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Red Light Green Light", announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true, unclaimable = true };
+		ModComponentSolverInformation["GreenWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Green Wires" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
