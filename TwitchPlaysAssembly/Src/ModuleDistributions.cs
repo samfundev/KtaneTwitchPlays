@@ -280,8 +280,7 @@ public sealed class DistributionPool : ISerializable
 				foreach (string ProfileName in Arguments)
 				{
 					ProfileHelper.Profile data;
-					string profilePath = Path.Combine(ProfileHelper.ProfileFolder, ProfileName + ".json");
-					try { data = ProfileHelper.GetProfile(profilePath); }
+					try { data = ProfileHelper.GetProfile(ProfileName); }
 					catch (FileNotFoundException) { throw new InvalidOperationException($"Profile {ProfileName} doesn't exist."); }
 
 					relevantMods.UnionWith((Type == PoolType.ProfileEnables) ? data.EnabledList : data.DisabledList);

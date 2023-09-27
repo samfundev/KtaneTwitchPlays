@@ -62,7 +62,7 @@ static class ProfileHelper
 	{
 		if (!Directory.Exists(ProfileFolder)) return;
 
-		File.WriteAllText(Path.Combine(ProfileFolder, $"{profile}.json"), SettingsConverter.Serialize(
+		File.WriteAllText(GetPath(profile), SettingsConverter.Serialize(
 			new Dictionary<string, object>()
 			{
 				{ "DisabledList", modules },
@@ -75,7 +75,7 @@ static class ProfileHelper
 	{
 		if (!Directory.Exists(ProfileFolder)) return;
 
-		File.Delete(Path.Combine(ProfileFolder, $"{profile}.json"));
+		File.Delete(GetPath(profile));
 	}
 
 	public static IEnumerator LoadAutoProfiles()
@@ -195,9 +195,9 @@ static class ProfileHelper
 		}
 	}
 
-	public static bool SetState(string profilePath, string module, bool state)
+	public static bool SetState(string profileName, string module, bool state)
 	{
-		var profile = GetProfile(profilePath);
+		var profile = GetProfile(profileName);
 		var success = false;
 
 		if (state && (!profile.EnabledList.Contains(module) || profile.DisabledList.Contains(module)))
@@ -213,14 +213,16 @@ static class ProfileHelper
 
 		if (success)
 		{
-			File.WriteAllText(profilePath, JsonConvert.SerializeObject(profile, Formatting.Indented));
+			File.WriteAllText(GetPath(profileName), JsonConvert.SerializeObject(profile, Formatting.Indented));
 			ReloadActiveConfiguration();
 		}
 
 		return success;
 	}
 
-	public static Profile GetProfile(string profilePath) => JsonConvert.DeserializeObject<Profile>(File.ReadAllText(profilePath));
+	public static Profile GetProfile(string profileName) => JsonConvert.DeserializeObject<Profile>(File.ReadAllText(GetPath(profileName)));
+
+	public static string GetPath(string profileName) => Path.Combine(ProfileFolder, $"{profileName.Replace(' ', '_')}.json");
 
 	public class Profile
 	{

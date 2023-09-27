@@ -1171,7 +1171,7 @@ static class GlobalCommands
 		}
 
 		var cleanProfileName = Path.GetFileNameWithoutExtension(profilePath).Replace('_', ' ');
-		var success = ProfileHelper.SetState(profilePath, moduleInfo.moduleID, !adding);
+		var success = ProfileHelper.SetState(cleanProfileName, moduleInfo.moduleID, !adding);
 		IRCConnection.SendMessage(success ?
 			$"\"{moduleInfo.moduleDisplayName}\" {(adding ? "added to" : "removed from")} \"{cleanProfileName}\"." :
 			$"\"{moduleInfo.moduleDisplayName}\" is already {(adding ? "added to" : "removed from")} \"{cleanProfileName}\".",
@@ -1243,8 +1243,7 @@ static class GlobalCommands
 	public static void ProfileDisabledBy([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
 		var moduleIDs = ComponentSolverFactory.GetModuleInformation().Select(modInfo => modInfo.moduleID);
-		var profilePath = Path.Combine(ProfileHelper.ProfileFolder, filename + ".json");
-		var modules = ProfileHelper.GetProfile(profilePath).DisabledList.Where(modID => moduleIDs.Contains(modID));
+		var modules = ProfileHelper.GetProfile(filename).DisabledList.Where(modID => moduleIDs.Contains(modID));
 		IRCConnection.SendMessage($"Modules disabled by {profileString}: {modules.Join(", ")}");
 	});
 
