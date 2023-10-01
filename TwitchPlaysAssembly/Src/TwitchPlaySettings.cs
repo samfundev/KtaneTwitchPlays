@@ -136,6 +136,7 @@ public class TwitchPlaySettingsData
 
 	public Dictionary<string, string> CustomMissions = new Dictionary<string, string>();
 	public List<string> ProfileWhitelist = new List<string>();
+	public List<string> ToggleableModules = new List<string>();
 
 	public Dictionary<string, string> BombCustomMessages = new Dictionary<string, string>
 	{

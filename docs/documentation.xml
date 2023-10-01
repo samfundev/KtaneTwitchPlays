@@ -901,6 +901,11 @@
             <syntax>profile disabled by [name]</syntax>
             <summary>Gets the modules disabled by a profile.</summary>
         </member>
+        <member name="M:GlobalCommands.ModuleToggle(System.String,System.String,System.String,System.Boolean)">
+            <name>Module Enable/Disable</name>
+            <syntax>module enable [name]\nmodule disable name</syntax>
+            <summary>Enable/Disable a module from appearing on bombs.</summary>
+        </member>
         <member name="M:GlobalCommands.Holdables(System.String,System.Boolean)">
             <name>Holdables</name>
             <syntax>holdables</syntax>

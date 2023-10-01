@@ -1247,6 +1247,46 @@ static class GlobalCommands
 		IRCConnection.SendMessage($"Modules disabled by {profileString}: {modules.Join(", ")}");
 	});
 
+	/// <name>Module Enable/Disable</name>
+	/// <syntax>module enable [name]\nmodule disable name</syntax>
+	/// <summary>Enable/Disable a module from appearing on bombs.</summary>
+	[Command(@"module (enable|disable) (.+)")]
+	public static void ModuleToggle([Group(1)] string enableDisable, [Group(2)] string moduleQuery, string user, bool isWhisper) {
+		if (!ComponentSolverFactory.GetModuleInformation().Search(moduleQuery, info => info.moduleDisplayName, out ModuleInformation moduleInfo, out string message)) {
+			IRCConnection.SendMessage(message, user, !isWhisper);
+			return;
+		}
+
+		string moduleID = moduleInfo.moduleID;
+		if (!TwitchPlaySettings.data.ToggleableModules.Any(value => value == moduleInfo.moduleDisplayName || value == moduleID)) {
+			IRCConnection.SendMessage($"Module \"{moduleInfo.moduleDisplayName}\" cannot be toggled.", user, !isWhisper);
+			return;
+		}
+
+		// Create profile if it doesn't exist
+		if (!File.Exists(ProfileHelper.GetPath("TP_Toggleable"))) {
+			ProfileHelper.Write("TP_Toggleable", new HashSet<string>());
+		}
+
+		// Get existing profile
+		HashSet<string> modules = ProfileHelper.GetProfile("TP_Toggleable").DisabledList;
+		bool enable = enableDisable == "enable";
+		bool enabled = !modules.Contains(moduleID);
+		if (enable == enabled) {
+			IRCConnection.SendMessage($"Module \"{moduleInfo.moduleDisplayName}\" is already {(enable ? "enabled" : "disabled")}.", user, !isWhisper);
+			return;
+		}
+		
+		// Update profile based on the user's command
+		if (enable) modules.Remove(moduleID);
+		else modules.Add(moduleID);
+		ProfileHelper.Write("TP_Toggleable", modules);
+		IRCConnection.SendMessage($"Module \"{moduleInfo.moduleDisplayName}\" has been {(enable ? "enabled" : "disabled")}.", user, !isWhisper);
+
+		// Make sure the profile is active
+		ProfileHelper.Enable("TP_Toggleable");
+	}
+
 	/// <name>Holdables</name>
 	/// <syntax>holdables</syntax>
 	/// <summary>Sends the list of available holdables to chat.</summary>
