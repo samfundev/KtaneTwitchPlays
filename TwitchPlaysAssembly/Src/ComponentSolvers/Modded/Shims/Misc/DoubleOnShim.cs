@@ -24,8 +24,7 @@ public class DoubleOnShim : ReflectionComponentSolverShim
 				yield break;
 			}
 		}
+
 		yield return RespondUnshimmed(command);
 	}
-
-	private readonly char[] _validChars = { '1', '2', '3', '4', '5', '6', '7', '8', ' ', ',', '|', '-' };
 }
