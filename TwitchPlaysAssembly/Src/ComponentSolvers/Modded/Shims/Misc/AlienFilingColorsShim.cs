@@ -19,6 +19,7 @@ public class AlienFilingColorsShim : ReflectionComponentSolverShim
 					yield break;
 			}
 		}
+
 		yield return RespondUnshimmed(command);
 	}
 

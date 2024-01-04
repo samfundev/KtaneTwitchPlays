@@ -16,17 +16,21 @@ public class SimonsSatireShim : ReflectionComponentSolverShim
 		{
 			if (!split[0].Equals("press"))
 				yield break;
+
 			yield return null;
+
 			if (split.Length < 2)
 			{
 				yield return "sendtochaterror Parameter length invalid. Command ignored.";
 				yield break;
 			}
+
 			if (!_validButtons.Contains(split[1]))
 			{
 				yield return "sendtochaterror Command contains an invalid color. Command ignored.";
 				yield break;
 			}
+
 			switch (split[1])
 			{
 				case "red":
@@ -46,8 +50,8 @@ public class SimonsSatireShim : ReflectionComponentSolverShim
 					break;
 			}
 		}
-		else
-			yield return RespondUnshimmed(command);
+
+		yield return RespondUnshimmed(command);
 	}
 
 	private readonly string[] _validButtons = { "red", "blue", "yellow", "green", "r", "b", "y", "g" };
