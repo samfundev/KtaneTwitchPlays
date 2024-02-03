@@ -44,7 +44,7 @@ public class KeepClickingComponentSolver : ReflectionComponentSolver
 				type = 1;
 			else
 			{
-				foreach (string r in edgework.GetIndicators())
+				foreach (string r in edgework.GetOnIndicators())
 				{
 					if (r.EndsWith("R"))
 					{
