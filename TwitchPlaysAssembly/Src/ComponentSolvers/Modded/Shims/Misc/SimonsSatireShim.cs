@@ -50,8 +50,8 @@ public class SimonsSatireShim : ReflectionComponentSolverShim
 					break;
 			}
 		}
-
-		yield return RespondUnshimmed(command);
+		else
+			yield return RespondUnshimmed(command);
 	}
 
 	private readonly string[] _validButtons = { "red", "blue", "yellow", "green", "r", "b", "y", "g" };
