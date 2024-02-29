@@ -694,15 +694,16 @@ public class IRCConnection : MonoBehaviour
 		sendToChat |= !IsUsernameValid(userNickName) || !TwitchPlaySettings.data.EnableWhispers || userNickName == Instance.UserNickName;
 		foreach (string line in message.Wrap(MaxMessageLength).Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
 		{
+			bool command = line.StartsWith(".") || line.StartsWith("/");
 			if (!Instance._silenceMode && Instance._state != IRCConnectionState.Disconnected)
 				Instance.SendCommand(sendToChat
-					? $"PRIVMSG #{Instance._settings.channelName} :{line}"
+					? $"PRIVMSG #{Instance._settings.channelName} :{(command ? " " : "")}{line}"
 					: $"PRIVMSG #{Instance._settings.channelName} :.w {userNickName} {line}");
 
 			var ircMessage = new IRCMessage(Instance.UserNickName, Instance.CurrentColor, line, !sendToChat, true);
 			TwitchPlaysService.Instance.AddMessage(ircMessage);
 
-			if (line.StartsWith(".") || line.StartsWith("/")) continue;
+			if (command) continue;
 			lock (Instance._receiveQueue)
 			{
 				Instance._receiveQueue.Enqueue(ircMessage);
