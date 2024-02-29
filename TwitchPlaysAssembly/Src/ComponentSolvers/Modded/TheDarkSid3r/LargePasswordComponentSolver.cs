@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class LargePasswordComponentSolver : ReflectionComponentSolver
 {
 	public LargePasswordComponentSolver(TwitchModule module) :
-		base(module, "LargeVanillaPassword", "!{0} cycle 1 13 8 [Cycle through the letters in columns 1, 13, and 8] | !{0} toggle [Move all columns down one letter] | !{0} world about still water [Try to submit words]")
+		base(module, "LargeVanillaPassword", "LargeVanillaPassword", "!{0} cycle 1 13 8 [Cycle through the letters in columns 1, 13, and 8] | !{0} toggle [Move all columns down one letter] | !{0} world about still water [Try to submit words]")
 	{
 	}
 
