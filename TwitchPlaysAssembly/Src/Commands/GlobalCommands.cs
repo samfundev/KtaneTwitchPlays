@@ -16,7 +16,7 @@ static class GlobalCommands
 	/// <name>Help</name>
 	/// <syntax>help</syntax>
 	/// <summary>Gives you some help on how to play TP.</summary>
-	[Command(@"(help)")]
+	[Command(@"help")]
 	public static void Help(string user, bool isWhisper)
 	{
 		string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
@@ -42,7 +42,7 @@ static class GlobalCommands
 	/// <name>Manual</name>
 	/// <syntax>manual [module]</syntax>
 	/// <summary>Gives the manual link for the specified module.</summary>
-	[Command(@"(manual) (\S+)")]
+	[Command(@"manual (.+)")]
 	public static void Manual([Group(1)] string moduleName, string user, bool isWhisper)
 	{
 		bool valid = ComponentSolverFactory.GetModuleInformation().Search(moduleName, x => x.moduleDisplayName, x => $"“{x.moduleDisplayName}”", out ModuleInformation result, out string message);
