@@ -118,7 +118,7 @@ public static class BombCommands
 	/// <name>Vote</name>
 	/// <syntax>vote [choice]</syntax>
 	/// <summary>Vote with yes or no</summary>
-	[Command(@"vote ((yes|voteyea)|(no|votenay))")]
+	[Command(@"vote ((yes|voteyea|y|yea)|(no|votenay|n|nay))")]
 	public static void Vote(string user, [Group(2)] bool yesVote) => GlobalCommands.Vote(user, yesVote);
 
 	/// <name>Remove vote</name>
