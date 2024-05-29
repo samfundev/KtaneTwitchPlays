@@ -5,7 +5,7 @@ using System;
 public class HyperactiveNumsComponentSolver : ReflectionComponentSolver
 {
 	public HyperactiveNumsComponentSolver(TwitchModule module) :
-		base(module, "HyperactiveNumbersScript", "!{0} submit <color> <parity> [Presses submit when the middle number that has the specified color and parity]")
+		base(module, "HyperactiveNumbersScript", "!{0} submit <color> <parity> [Presses submit when the middle number has the specified color and parity]")
 	{
 	}
 

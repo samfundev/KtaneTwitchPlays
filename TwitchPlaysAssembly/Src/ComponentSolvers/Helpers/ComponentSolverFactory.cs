@@ -288,9 +288,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["KritLockpickMaze"] = module => new LockpickMazeShim(module);
 		ModComponentSolverCreators["simonSamples"] = module => new SimonSamplesShim(module);
 		ModComponentSolverCreators["DIWindow"] = module => new DriveInWindowShim(module);
-		ModComponentSolverCreators["chip"] = module => new ChipShim(module);
 		ModComponentSolverCreators["AlienModule"] = module => new AlienFilingColorsShim(module);
-		ModComponentSolverCreators["SimonsSatire"] = module => new SimonsSatireShim(module);
 		ModComponentSolverCreators["double_on"] = module => new DoubleOnShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
@@ -573,7 +571,6 @@ public static class ComponentSolverFactory
 
 		//eXish
 		ModComponentSolverInformation["organizationModule"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
-		ModComponentSolverInformation["timingIsEverything"] = new ModuleInformation { announceModule = true };
 		ModComponentSolverInformation["blinkstopModule"] = new ModuleInformation { statusLightPosition = StatusLightPosition.TopLeft };
 
 		//Flamanis
