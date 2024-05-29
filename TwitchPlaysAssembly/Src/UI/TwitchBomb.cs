@@ -123,7 +123,12 @@ public class TwitchBomb : MonoBehaviour
 		SetMainUIWindowVisibility(visible);
 	}
 
-	private void OnDestroy() => StopAllCoroutines();
+	private void OnDestroy()
+	{
+		StopAllCoroutines();
+		if (BackdoorHandleHack)
+			SetMainUIWindowVisibility(true);
+	}
 	#endregion
 
 	public IEnumerator HideMainUIWindow()
