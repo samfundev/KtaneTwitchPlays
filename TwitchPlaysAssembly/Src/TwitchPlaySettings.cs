@@ -84,6 +84,7 @@ public class TwitchPlaySettingsData
 	public int MinScoreForNewbomb = 100;
 	public int StrikePenalty = 6;
 	public int ModuleToStrikeRatio = 12;
+	public int NormalModeSecondsPerModule = 120;
 	public bool PacingEventsOnRunBomb = true;
 	public bool AllowSheetDisabledModules = true;
 
