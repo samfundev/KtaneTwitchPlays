@@ -319,7 +319,7 @@ public sealed class DistributionPool : ISerializable
 	private bool IsVanillaPool() => Type == PoolType.AllSolvable && PoolSettings["Component Source"] == (int) KMComponentPool.ComponentSource.Base;
 
 	public int RewardPointsGiven(int count) => (RewardPerModule ?? (IsVanillaPool() ? 2 : 5)) * count;
-	public int TimeGiven(int count) => (TimePerModule ?? (IsVanillaPool() ? 60 : 120)) * count;
+	public int TimeGiven(int count) => (TimePerModule ?? (IsVanillaPool() ? 60 : TwitchPlaySettings.data.NormalModeSecondsPerModule)) * count;
 }
 
 public sealed class ModuleDistributions
