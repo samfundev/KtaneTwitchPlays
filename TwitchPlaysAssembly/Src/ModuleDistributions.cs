@@ -49,8 +49,7 @@ public sealed class DistributionPool : ISerializable
 		ProfileEnables,
 
 		// Adds a pool containing all solvable modules disabled by a defuser profile
-		// Examples:
-		//     DisabledBy: NoBossModules
+		// Example:
 		//     DisabledBy: NoColCipher, NoDream (modules disabled by both)
 		ProfileDisables,
 
@@ -62,6 +61,12 @@ public sealed class DistributionPool : ISerializable
 		//     Fixed: brainf, HexiEvilFMN (pick between two)
 		//     Fixed: Wires, Wires, Wires, Wires, Venn (80% Wires, 20% Complicated Wires)
 		Fixed,
+
+		// Adds a pool containing all modules that are announced at the start of a bomb,
+		// typically indicating a boss module.
+		// Example: 
+		//		"BossModule"
+		BossModule,
 	}
 
 	private readonly int? RewardPerModule;
@@ -182,6 +187,11 @@ public sealed class DistributionPool : ISerializable
 						return; // Not valid
 					// All cases here use the argument list when generating pools
 					break;
+
+				case "BOSSMODULE":
+				case "BOSS_MODULE":
+					FinalType = PoolType.BossModule;
+					break;
 			}
 			Type = FinalType ?? PoolType.Invalid;
 		}
@@ -299,6 +309,18 @@ public sealed class DistributionPool : ISerializable
 					if (!reverseLookup.ContainsKey(Module))
 						throw new InvalidOperationException($"This distribution contains a fixed pool, and at least one of the modules in that pool ({Module}) is not enabled.");
 					return reverseLookup[Module];
+				}).ToList();
+				break;
+
+			case PoolType.BossModule:
+				ModulePool = AllModules.Where(x =>
+				{
+					if (x.IsNeedy)
+						return false;
+
+					ModuleInformation info = ComponentSolverFactory.GetModuleInfo(GetTwitchPlaysID(x), false);
+					return info.announceModule;
+
 				}).ToList();
 				break;
 

@@ -337,6 +337,83 @@ public class TwitchPlaySettingsData
 			}
 		}},
 
+		// Strict Difficulty distributions
+		{ "easy", new ModuleDistributions {
+			DisplayName = "Strict Easy",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.5f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.4f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.1f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+			}
+		}},
+		{ "medium", new ModuleDistributions {
+			DisplayName = "Strict Medium",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.4f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.2f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.05f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+			}
+		}},
+		{ "hard", new ModuleDistributions {
+			DisplayName = "Strict Hard",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.3f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.25f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.1f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+			}
+		}},
+		{ "expert", new ModuleDistributions {
+			DisplayName = "Strict Expert",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.2f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.3f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.3f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.2f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+			}
+		}},
+		{ "easy+boss", new ModuleDistributions {
+			DisplayName = "Strict Easy",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.5f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.4f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.1f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
+			}
+		}},
+		{ "medium+boss", new ModuleDistributions {
+			DisplayName = "Strict Medium",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.4f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.2f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.05f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
+			}
+		}},
+		{ "hard+boss", new ModuleDistributions {
+			DisplayName = "Strict Hard",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.3f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.25f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.1f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
+			}
+		}},
+		{ "expert+boss", new ModuleDistributions {
+			DisplayName = "Strict Expert",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.2f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.3f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.3f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
+				new DistributionPool(0.2f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
+			}
+		}},
+
+
 		// Variety distributions
 		{ "variety", new ModuleDistributions {
 			DisplayName = "Variety Mix",
@@ -363,8 +440,8 @@ public class TwitchPlaySettingsData
 				new DistributionPool(0.09f, "Score: >= 20",        /* Reward */ 10, /* Time */ 240),
 
 				new DistributionPool(0.0865f, "AllSolvable"),
-				new DistributionPool(0.0435f, "DisabledBy: NoBossModules", /* Reward */ 0, /* Time */ 300),
-				new DistributionPool(0.0f,    "DisabledBy: NoBossModules", /* Reward */ 0, /* Time */ 300),
+				new DistributionPool(0.0435f, "BossModule", /* Reward */ 0, /* Time */ 300),
+				new DistributionPool(0.0f,    "BossModule", /* Reward */ 0, /* Time */ 300),
 			},
 			MinModules = 2
 		}}
