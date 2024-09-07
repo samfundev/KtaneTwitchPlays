@@ -62,6 +62,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["shapeshift"] = module => new ShapeShiftComponentSolver(module);
 		ModComponentSolverCreators["ThirdBase"] = module => new ThirdBaseComponentSolver(module);
 
+		//MaddyMoos Modules
+		ModComponentSolverCreators["gemory"] = module => new GemoryComponentSolver(module);
+		ModComponentSolverCreators["nonagonInfinity"] = module => new NonagonInfinityComponentSolver(module);
+
 		//Mock Army Modules
 		ModComponentSolverCreators["AnagramsModule"] = module => new AnagramsComponentSolver(module);
 		ModComponentSolverCreators["Emoji Math"] = module => new EmojiMathComponentSolver(module);
@@ -143,7 +147,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["weekDays"] = module => new WeekdaysComponentSolver(module);
 		ModComponentSolverCreators["draw"] = module => new DrawComponentSolver(module);
 		ModComponentSolverCreators["overKilo"] = module => new OverKiloComponentSolver(module);
-		ModComponentSolverCreators["gemory"] = module => new GemoryComponentSolver(module);
 		ModComponentSolverCreators["parliament"] = module => new ParliamentComponentSolver(module);
 		ModComponentSolverCreators["12321"] = module => new OneTwoThreeComponentSolver(module);
 		ModComponentSolverCreators["TechSupport"] = module => new TechSupportComponentSolver(module);
@@ -160,6 +163,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["redLightGreenLight"] = module => new RedLightGreenLightComponentSolver(module);
 		ModComponentSolverCreators["threeSentenceHorror"] = module => new ThreeSentenceHorrorComponentSolver(module);
 		ModComponentSolverCreators["GreenWires"] = module => new GreenWiresComponentSolver(module);
+		ModComponentSolverCreators["traffic_board"] = module => new TrafficBoardComponentSolver(module);
+		ModComponentSolverCreators["puzzlingButtons"] = module => new PuzzlingButtonsComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -377,6 +382,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["logicPlumbing"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Logic Plumbing" };
 		ModComponentSolverInformation["flashingCube"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Flashing Cube" };
 
+		//MaddyMoos
+		ModComponentSolverInformation["gemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gemory", announceModule = true };
+		ModComponentSolverInformation["nonagonInfinity"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Nonagon Infinity" };
+
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams" };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math" };
@@ -455,7 +464,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["weekDays"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Weekdays" };
 		ModComponentSolverInformation["draw"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Draw" };
 		ModComponentSolverInformation["overKilo"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Over Kilo" };
-		ModComponentSolverInformation["gemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gemory", announceModule = true };
 		ModComponentSolverInformation["parliament"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Parliament" };
 		ModComponentSolverInformation["12321"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "1-2-3-2-1" };
 		ModComponentSolverInformation["TechSupport"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Tech Support" };
@@ -472,6 +480,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["redLightGreenLight"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Red Light Green Light", announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["GreenWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Green Wires" };
+		ModComponentSolverInformation["traffic_board"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Traffic Board" };
+		ModComponentSolverInformation["puzzlingButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Puzzling Buttons" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
