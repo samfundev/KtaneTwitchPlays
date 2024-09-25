@@ -610,7 +610,7 @@ static class GameCommands
 		DeleteCallInformation(true);
 		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
 			IRCConnection.SendMessage("Hack detected, waiting until the hack is over to execute this command.");
-		TwitchGame.Instance.StartCoroutine(WaitForCall(new List<IRCMessage>(){ TwitchGame.Instance.callSend.Message }));
+		TwitchGame.Instance.StartCoroutine(WaitForCall(new List<IRCMessage>() { TwitchGame.Instance.callSend.Message }));
 	}
 
 	/// <name>Call All</name>
@@ -902,7 +902,7 @@ static class GameCommands
 	/// <syntax>status\nmission</syntax>
 	/// <summary>View currently running mission name, if any.</summary>
 	[Command(@"(?:status|mission)")]
-	public static void Mission(string cmd, string user, bool isWhisper)
+	public static void Mission(string user, bool isWhisper)
 	{
 		if (GameplayState.MissionToLoad.EqualsAny(Assets.Scripts.Missions.FreeplayMissionGenerator.FREEPLAY_MISSION_ID, ModMission.CUSTOM_MISSION_ID))
 		{
@@ -971,7 +971,8 @@ static class GameCommands
 		calledCommands.AddRange(cmdsToExecute);
 		if (alreadyExecuting) yield break;
 
-		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack)) {
+		if (TwitchGame.Instance.Bombs.Any(x => x.BackdoorHandleHack))
+		{
 			yield return new WaitUntil(() => TwitchGame.Instance.Bombs.All(x => !x.BackdoorHandleHack));
 			IRCConnection.SendMessage("The hack is over, executing all commands held up due to the hack.");
 		}
