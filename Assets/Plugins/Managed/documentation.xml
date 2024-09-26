@@ -524,7 +524,7 @@
             <syntax>ttks\nttksleft\nttksright\ninfozen\nqhelp</syntax>
             <summary>These commands send a predefined message to chat. Streamers can choose their own messages but the ones mentioned here are included by default.</summary>
         </member>
-        <member name="M:GameCommands.Mission(System.String,System.String,System.Boolean)">
+        <member name="M:GameCommands.Mission(System.String,System.Boolean)">
             <name>Show Mission Name</name>
             <syntax>status\nmission</syntax>
             <summary>View currently running mission name, if any.</summary>
