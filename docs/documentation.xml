@@ -379,6 +379,12 @@
             <summary>Rotates the bomb to show the edgework. (edge) is which edge of the bomb will be shown, ex: top or top left. Using 45 will rotate the bomb in 45 degree increments.</summary>
             <restriction>ElevatorDisallowed</restriction>
         </member>
+        <member name="M:GameCommands.EdgeworkFor(System.String,System.String,System.Boolean)">
+            <name>Edgework for a module</name>
+            <syntax>edgework (module-id)\nedgework 1</syntax>
+            <summary>In a game with multiple bombs, echoes to chat the edgework on the bomb that contains the specified module.</summary>
+            <restriction>ElevatorDisallowed</restriction>
+        </member>
         <member name="M:GameCommands.CameraWall(System.String,System.String)">
             <name>Camera Wall</name>
             <syntax>camerawall [mode]</syntax>
