@@ -563,6 +563,7 @@ public class TwitchPlaySettingsData
 	public string BombHelp = "The Bomb: !bomb hold [pick up] | !bomb drop | !bomb turn [turn to the other side] | !bomb edgework [show the widgets on the sides] | !bomb top [show one side; sides are Top/Bottom/Left/Right | !bomb time [time remaining] | !bomb timestamp [bomb start time]";
 	public string BlankBombEdgework = "Not set, use !edgework <edgework> to set!\nUse !bomb edgework or !bomb edgework 45 to view the bomb edges.";
 	public string BombEdgework = "Edgework: {0}";
+	public string BombEdgeworkFor = "Edgework for {0} ({1}): {2} (bomb {3})";
 	public string BombTimeRemaining = "panicBasket [{0}] out of [{1}].";
 	public string BombTimeStamp = "The Date/Time this bomb started is {0:F}";
 	public string BombDetonateCommand = "panicBasket This bomb's gonna blow!";

@@ -477,6 +477,20 @@ static class GameCommands
 			return null;
 		}
 	}
+	/// <name>Edgework for a module</name>
+	/// <syntax>edgework (module-id)\nedgework 1</syntax>
+	/// <summary>In a game with multiple bombs, echoes to chat the edgework on the bomb that contains the specified module.</summary>
+	/// <restriction>ElevatorDisallowed</restriction>
+	[Command(@"(?:edgeworkfor|ewfor)\s+(.+)"), ElevatorDisallowed]
+	public static IEnumerator EdgeworkFor([Group(1)] string moduleId, string user, bool isWhisper)
+	{
+		var module = TwitchGame.Instance.Modules.FirstOrDefault(m => m.Code == moduleId);
+		if (module == null)
+			IRCConnection.SendMessage($"@{user}, no such module.", user, !isWhisper);
+		else
+			IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgeworkFor, user, !isWhisper, module.HeaderText, module.Code, module.Bomb.EdgeworkText.text, module.Bomb.BombID);
+		return null;
+	}
 
 	/// <name>Camera Wall</name>
 	/// <syntax>camerawall [mode]</syntax>
