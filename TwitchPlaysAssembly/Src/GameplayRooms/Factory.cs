@@ -160,12 +160,15 @@ public sealed class Factory : GameRoom
 			});
 			if (!TwitchGame.BombActive) yield break;
 
+			// In between sequence bombs, award players who maintained modules on the previous bomb.
+			TwitchGame.Instance.AwardMaintainedModules();
+
 			IRCConnection.SendMessage(TwitchGame.Instance.GetBombResult(false));
 			TwitchPlaySettings.SetRetryReward();
 
 			foreach (TwitchModule handle in TwitchGame.Instance.Modules)
 			{
-				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as wel.
+				//If the camera is still attached to the bomb component when the bomb gets destroyed, then THAT camera is destroyed as well.
 				TwitchGame.ModuleCameras.UnviewModule(handle);
 			}
 
