@@ -285,6 +285,7 @@ public class TwitchGame : MonoBehaviour
 			Leaderboard.Instance.Success = false;
 			TwitchPlaySettings.ClearPlayerLog();
 		}
+
 		return bombMessage;
 	}
 
@@ -313,21 +314,7 @@ public class TwitchGame : MonoBehaviour
 		if (ModuleCameras != null)
 			ModuleCameras.StartCoroutine(ModuleCameras.DisableCameras());
 
-		// Award users who maintained modules.
-		var methods = Modules.SelectMany(module => module.ScoreMethods).Where(method => method.Players.Count != 0);
-		var awardedPoints = new Dictionary<string, int>();
-		foreach (var player in methods.SelectMany(method => method.Players).Distinct())
-		{
-			int points = (methods.Sum(method => method.CalculateScore(player)) * OtherModes.ScoreMultiplier).RoundToInt();
-			if (points != 0)
-			{
-				awardedPoints[player] = points;
-				Leaderboard.Instance.AddScore(player, points);
-			}
-		}
-
-		if (awardedPoints.Count > 0)
-			IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {awardedPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
+		AwardMaintainedModules();
 
 		GameCommands.unclaimedModules = null;
 		DestroyComponentHandles();
@@ -348,7 +335,7 @@ public class TwitchGame : MonoBehaviour
 	}
 
 	// We need to delay the bomb result by one frame so we don't award the solve bonus before the person who solved the last module is added to the Players list.
-	// Delaying the log being uploaded by one frame also captures module that log after calling HandleStrike().
+	// Delaying the log being uploaded by one frame also captures modules that log after calling HandleStrike().
 	public IEnumerator DelayBombResult()
 	{
 		yield return null;
@@ -844,6 +831,25 @@ public class TwitchGame : MonoBehaviour
 			if (module.Solver != null)
 				module.Solver.UnsupportedModule = true;
 		}
+	}
+
+	public void AwardMaintainedModules()
+	{
+		// Award users who maintained modules.
+		var methods = Modules.SelectMany(module => module.ScoreMethods).Where(method => method.Players.Count != 0);
+		var awardedPoints = new Dictionary<string, int>();
+		foreach (var player in methods.SelectMany(method => method.Players).Distinct())
+		{
+			int points = (methods.Sum(method => method.CalculateScore(player)) * OtherModes.ScoreMultiplier).RoundToInt();
+			if (points != 0)
+			{
+				awardedPoints[player] = points;
+				Leaderboard.Instance.AddScore(player, points);
+			}
+		}
+
+		if (awardedPoints.Count > 0)
+			IRCConnection.SendMessage($"These players have been awarded points for managing a needy: {awardedPoints.Select(pair => $"{pair.Key} ({pair.Value})").Join(", ")}");
 	}
 
 	#endregion
