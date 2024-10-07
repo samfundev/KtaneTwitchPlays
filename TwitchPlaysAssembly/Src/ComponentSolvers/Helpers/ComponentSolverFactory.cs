@@ -66,6 +66,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["gemory"] = module => new GemoryComponentSolver(module);
 		ModComponentSolverCreators["nonagonInfinity"] = module => new NonagonInfinityComponentSolver(module);
 
+		//Maffo Modules
+		ModComponentSolverCreators["poisonedGoblets"] = module => new PoisonedGobletsComponentSolver(module);
+		ModComponentSolverCreators["yetAnotherKeypad"] = module => new YetAnotherKeypadComponentSolver(module);
+
 		//Mock Army Modules
 		ModComponentSolverCreators["AnagramsModule"] = module => new AnagramsComponentSolver(module);
 		ModComponentSolverCreators["Emoji Math"] = module => new EmojiMathComponentSolver(module);
@@ -133,7 +137,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["babaIsWho"] = module => new BabaIsWhoComponentSolver(module);
 		ModComponentSolverCreators["chordProgressions"] = module => new ChordProgressionsComponentSolver(module);
 		ModComponentSolverCreators["rng"] = module => new RNGComponentSolver(module);
-		ModComponentSolverCreators["needyShapeMemory"] = module => new ShapeMemoryComponentSolver(module);
 		ModComponentSolverCreators["caesarsMaths"] = module => new CaesarsMathsComponentSolver(module);
 		ModComponentSolverCreators["gatekeeper"] = module => new GatekeeperComponentSolver(module);
 		ModComponentSolverCreators["stateOfAggregation"] = module => new StateOfAggregationComponentSolver(module);
@@ -164,7 +167,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["threeSentenceHorror"] = module => new ThreeSentenceHorrorComponentSolver(module);
 		ModComponentSolverCreators["GreenWires"] = module => new GreenWiresComponentSolver(module);
 		ModComponentSolverCreators["traffic_board"] = module => new TrafficBoardComponentSolver(module);
-		ModComponentSolverCreators["puzzlingButtons"] = module => new PuzzlingButtonsComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -192,6 +194,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["ManualCodes"] = module => new ManualCodesComponentSolver(module);
 		ModComponentSolverCreators["jackboxServerModule"] = module => new JackboxTVComponentSolver(module);
 		ModComponentSolverCreators["NeedyScreensaver"] = module => new ScreensaverComponentSolver(module);
+
+		//UltraCboy Modules
+		ModComponentSolverCreators["needyShapeMemory"] = module => new ShapeMemoryComponentSolver(module);
+		ModComponentSolverCreators["needyTypingTutor"] = module => new TypingTutorComponentSolver(module);
 
 		//Translated Modules
 		ModComponentSolverCreators["BigButtonTranslated"] = module => new TranslatedButtonComponentSolver(module);
@@ -386,6 +392,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["gemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gemory", announceModule = true };
 		ModComponentSolverInformation["nonagonInfinity"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Nonagon Infinity" };
 
+		//Maffo
+		ModComponentSolverInformation["poisonedGoblets"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Poisoned Goblets" };
+		ModComponentSolverInformation["yetAnotherKeypad"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Yet Another Keypad" };
+
 		//Mock Army
 		ModComponentSolverInformation["AnagramsModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Anagrams" };
 		ModComponentSolverInformation["Emoji Math"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Emoji Math" };
@@ -450,7 +460,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["babaIsWho"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Baba Is Who?" };
 		ModComponentSolverInformation["chordProgressions"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Chord Progressions" };
 		ModComponentSolverInformation["rng"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Random Number Generator", additionalNeedyTime = 30 };
-		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Shape Memory" };
 		ModComponentSolverInformation["caesarsMaths"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Caesar's Maths" };
 		ModComponentSolverInformation["gatekeeper"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Gatekeeper" };
 		ModComponentSolverInformation["stateOfAggregation"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "State of Aggregation" };
@@ -481,7 +490,6 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["GreenWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Green Wires" };
 		ModComponentSolverInformation["traffic_board"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Traffic Board" };
-		ModComponentSolverInformation["puzzlingButtons"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Puzzling Buttons" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
@@ -529,6 +537,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["jackboxServerModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Jackbox.TV", unclaimable = true };
 		ModComponentSolverInformation["NeedyScreensaver"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Screensaver" };
 
+		//UltraCboy
+		ModComponentSolverInformation["needyShapeMemory"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Needy Shape Memory" };
+		ModComponentSolverInformation["needyTypingTutor"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Typing Tutor" };
+
 		//Translated Modules
 		ModComponentSolverInformation["BigButtonTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Big Button Translated" };
 		ModComponentSolverInformation["MorseCodeTranslated"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Morse Code Translated" };
@@ -551,6 +563,9 @@ public static class ComponentSolverFactory
 
 		//AAces
 		ModComponentSolverInformation["timeKeeper"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
+
+		//AnAverageArceus
+		ModComponentSolverInformation["dontTouchAnything"] = new ModuleInformation { unclaimable = true };
 
 		//AT_Bash / Bashly / Ashthebash
 		ModComponentSolverInformation["ColourFlash"] = new ModuleInformation { helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5." };
@@ -627,6 +642,9 @@ public static class ComponentSolverFactory
 
 		//NoahCoolBoy
 		ModComponentSolverInformation["pigpenRotations"] = new ModuleInformation { helpTextOverride = true, helpText = "To submit abcdefhijklm use '!{0} abcdefhijklm'." };
+
+		//Obvious
+		ModComponentSolverInformation["hearthur"] = new ModuleInformation { unclaimable = true };
 
 		//Piggered
 		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { CompatibilityMode = true };
