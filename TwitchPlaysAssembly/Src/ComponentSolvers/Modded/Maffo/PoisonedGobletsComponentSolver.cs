@@ -22,7 +22,7 @@ public class PoisonedGobletsComponentSolver : ReflectionComponentSolver
 			if (check < 1 || check > 6) yield break;
 
 			yield return null;
-			yield return Click(check, 0);
+			yield return Click(check - 1, 0);
 		}
 	}
 
