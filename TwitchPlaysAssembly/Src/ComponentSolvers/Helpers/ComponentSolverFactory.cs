@@ -167,6 +167,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["threeSentenceHorror"] = module => new ThreeSentenceHorrorComponentSolver(module);
 		ModComponentSolverCreators["GreenWires"] = module => new GreenWiresComponentSolver(module);
 		ModComponentSolverCreators["traffic_board"] = module => new TrafficBoardComponentSolver(module);
+		ModComponentSolverCreators["NeedyPou"] = module => new PouComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -490,6 +491,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["threeSentenceHorror"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Three Sentence Horror", announceModule = true, unclaimable = true };
 		ModComponentSolverInformation["GreenWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Green Wires" };
 		ModComponentSolverInformation["traffic_board"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Traffic Board" };
+		ModComponentSolverInformation["NeedyPou"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pou" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
