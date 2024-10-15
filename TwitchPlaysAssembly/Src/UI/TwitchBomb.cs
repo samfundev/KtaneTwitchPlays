@@ -27,8 +27,13 @@ public class TwitchBomb : MonoBehaviour
 			_bomb = value;
 
 			var floatingHoldable = Bomb.GetComponent<FloatingHoldable>();
-			floatingHoldable.OnHold += () => TwitchGame.ModuleCameras?.ChangeBomb(this);
-			floatingHoldable.OnLetGo += () => TwitchGame.ModuleCameras?.ChangeBomb(null);
+			if (floatingHoldable != null)
+			{
+				floatingHoldable.OnHold += () => TwitchGame.ModuleCameras?.ChangeBomb(this);
+				floatingHoldable.OnLetGo += () => TwitchGame.ModuleCameras?.ChangeBomb(null);
+			}
+			else
+				TwitchGame.ModuleCameras?.ChangeBomb(this);
 		}
 	}
 
