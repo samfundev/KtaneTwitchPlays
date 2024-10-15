@@ -35,7 +35,7 @@ public class TPElevatorSwitch : MonoBehaviour
 		if (setupRoom == null) yield break;
 		try
 		{
-			ElevatorRoomGameObject = Resources.Load<GameObject>("PC/Prefabs/ElevatorRoom/ElevatorBombRoom");
+			ElevatorRoomGameObject = Resources.Load<GameObject>("Elevator/Prefabs/ElevatorRoom/ElevatorBombRoom");
 		}
 		catch (Exception ex)
 		{
