@@ -588,6 +588,9 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["monsplodeFight"] = new ModuleInformation { helpText = "Use a move with !{0} use splash." };
 		ModComponentSolverInformation["monsplodeWho"] = new ModuleInformation { helpText = "Press either button with “!{ 0 } press left / right | Left and Right can be abbreviated to(L) & (R)" };
 
+		//Deaf
+		ModComponentSolverInformation["WAR"] = new ModuleInformation { unclaimable = true };
+
 		//EpicToast
 		ModComponentSolverInformation["brushStrokes"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["cookieJars"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
