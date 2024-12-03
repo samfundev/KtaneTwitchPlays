@@ -602,11 +602,15 @@ public static class ComponentSolverFactory
 		//eXish
 		ModComponentSolverInformation["organizationModule"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["blinkstopModule"] = new ModuleInformation { statusLightPosition = StatusLightPosition.TopLeft };
+		ModComponentSolverInformation["widgetry"] = new ModuleInformation { announceModule = true };
 
 		//Flamanis
 		ModComponentSolverInformation["ChessModule"] = new ModuleInformation { helpText = "Cycle the positions with !{0} cycle. Submit the safe spot with !{0} press C2.", CompatibilityMode = true };
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa" };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit." };
+
+		//GhostSalt
+		ModComponentSolverInformation["GSAccessCodes"] = new ModuleInformation { announceModule = true };
 
 		//Goofy
 		ModComponentSolverInformation["megaMan2"] = new ModuleInformation { CompatibilityMode = true };
@@ -627,14 +631,24 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["footnotes"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["forgetThis"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 
+		//JyGein
+		ModComponentSolverInformation["wireTesting"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight };
+
+		//Katarina
+		ModComponentSolverInformation["kataZenerCards"] = new ModuleInformation { announceModule = true };
+
 		//KingBranBran
 		ModComponentSolverInformation["intervals"] = new ModuleInformation { CompatibilityMode = true };
+
 		//Kritzy
 		ModComponentSolverInformation["KritMicroModules"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["KritRadio"] = new ModuleInformation { CompatibilityMode = true };
 
 		//Maca
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleDisplayName = "Playfair Cipher" };
+
+		//MaddyMoos
+		ModComponentSolverInformation["top10nums"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight };
 
 		//McNiko67
 		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { CompatibilityMode = true };
@@ -685,10 +699,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["forgetMeLater"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["tallorderedKeys"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["veryAnnoyingButton"] = new ModuleInformation { announceModule = true };
+		ModComponentSolverInformation["doomsdayButton"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
 
 		//TheThirdMan
 		ModComponentSolverInformation["forgetThemAll"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["treasureHunt"] = new ModuleInformation { CompatibilityMode = true };
+		ModComponentSolverInformation["oldFogey"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
 
 		//Timwi (includes Perky/Konqi/Eluminate/Mitterdoo/Riverbui modules maintained by Timwi)
 		ModComponentSolverInformation["alphabet"] = new ModuleInformation { moduleDisplayName = "Alphabet" };
