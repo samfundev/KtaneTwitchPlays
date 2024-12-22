@@ -36,7 +36,7 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_submit);
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("ErrorCodes");
+	private static readonly Type ComponentType = ReflectionHelper.FindType("ErrorCodes", "errorCodes");
 	private static readonly FieldInfo ButtonsField = ComponentType.GetField("numberButtons", BindingFlags.Public | BindingFlags.Instance);
 	private static readonly FieldInfo SendField = ComponentType.GetField("sendButton", BindingFlags.Public | BindingFlags.Instance);
 
