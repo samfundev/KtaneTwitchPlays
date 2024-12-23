@@ -7,10 +7,16 @@ public class ErrorCodesComponentSolver : ComponentSolver
 	public ErrorCodesComponentSolver(TwitchModule module) :
 		   base(module)
 	{
-		object component = module.BombComponent.GetComponent(ComponentType);
-		_buttons = (KMSelectable[]) ButtonsField.GetValue(component);
-		_submit = (KMSelectable) SendField.GetValue(component);
+		_component = module.BombComponent.GetComponent(ComponentType);
+		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
+		_submit = (KMSelectable) SendField.GetValue(_component);
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
+
+		module.BombComponent.OnPass += _ =>
+		{
+			moduleSolved = true;
+			return false;
+		};
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
@@ -36,10 +42,23 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		yield return DoInteractionClick(_submit);
 	}
 
+	protected override IEnumerator ForcedSolveIEnumerator()
+	{
+		yield return null;
+		var solution = _component.GetValue<string>("solution");
+		yield return RespondToCommandInternal($"submit {solution}");
+		while (!moduleSolved)
+		{
+			yield return true;
+		}
+	}
+
 	private static readonly Type ComponentType = ReflectionHelper.FindType("ErrorCodes", "errorCodes");
+	private readonly object _component;
 	private static readonly FieldInfo ButtonsField = ComponentType.GetField("numberButtons", BindingFlags.Public | BindingFlags.Instance);
 	private static readonly FieldInfo SendField = ComponentType.GetField("sendButton", BindingFlags.Public | BindingFlags.Instance);
 
 	private readonly KMSelectable[] _buttons;
 	private readonly KMSelectable _submit;
+	private bool moduleSolved = false;
 }
