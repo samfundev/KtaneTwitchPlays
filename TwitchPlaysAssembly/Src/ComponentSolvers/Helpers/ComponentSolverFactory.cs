@@ -210,6 +210,7 @@ public static class ComponentSolverFactory
 		// SHIMS
 		// These override at least one specific command or formatting, then pass on control to ProcessTwitchCommand in all other cases. (Or in some cases, enforce unsubmittable penalty)
 		ModComponentSolverCreators["disorderedKeys"] = module => new DisorderedKeysShim(module);
+		ModComponentSolverCreators["borderedKeys"] = module => new BorderedKeysShim(module);
 		ModComponentSolverCreators["simonServes"] = module => new SimonServesShim(module);
 		ModComponentSolverCreators["BooleanKeypad"] = module => new BooleanKeypadShim(module);
 		ModComponentSolverCreators["Color Generator"] = module => new ColorGeneratorShim(module);
