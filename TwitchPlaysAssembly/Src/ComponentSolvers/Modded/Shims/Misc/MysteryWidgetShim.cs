@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 public class MysteryWidgetShim : ComponentSolverShim
 {
@@ -10,8 +10,6 @@ public class MysteryWidgetShim : ComponentSolverShim
 	public MysteryWidgetShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-
 		module.StartCoroutine(WaitForMysteryWidget());
 	}
 

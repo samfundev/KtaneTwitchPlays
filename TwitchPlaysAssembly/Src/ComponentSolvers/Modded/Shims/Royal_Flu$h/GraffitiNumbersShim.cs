@@ -7,7 +7,6 @@ public class GraffitiNumbersShim : ComponentSolverShim
 	public GraffitiNumbersShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_numbers = _component.GetValue<KMSelectable[]>("numbers");
 	}

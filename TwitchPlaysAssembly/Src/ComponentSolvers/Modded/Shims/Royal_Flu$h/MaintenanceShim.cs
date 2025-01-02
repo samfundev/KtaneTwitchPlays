@@ -8,7 +8,6 @@ public class MaintenanceShim : ComponentSolverShim
 	public MaintenanceShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_left = _component.GetValue<KMSelectable>("jobLeft");
 		_right = _component.GetValue<KMSelectable>("jobRight");

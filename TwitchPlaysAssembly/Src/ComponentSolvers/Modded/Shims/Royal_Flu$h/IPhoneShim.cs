@@ -7,7 +7,6 @@ public class IPhoneShim : ComponentSolverShim
 	public IPhoneShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		string[] numNames = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 		_subBtns = new KMSelectable[10];

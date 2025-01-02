@@ -5,7 +5,6 @@ public class CoopHarmonySequenceShim : ReflectionComponentSolverShim
 	public CoopHarmonySequenceShim(TwitchModule module)
 		: base(module, "CoopHarmonySequenceScript", "coopharmonySequence")
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()

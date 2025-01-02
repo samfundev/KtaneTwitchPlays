@@ -1,13 +1,10 @@
-using System;
 using System.Collections;
 
-public class SemaphoreShim : ComponentSolverShim
+public class SemaphoreShim : ReflectionComponentSolverShim
 {
 	public SemaphoreShim(TwitchModule module)
-		: base(module)
+		: base(module, "SemaphoreModule")
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-		_component = module.BombComponent.GetComponent(ComponentType);
 		_prev = _component.GetValue<KMSelectable>("PreviousButton");
 		_next = _component.GetValue<KMSelectable>("NextButton");
 		_ok = _component.GetValue<KMSelectable>("OKButton");
@@ -33,9 +30,6 @@ public class SemaphoreShim : ComponentSolverShim
 		yield return DoInteractionClick(_ok, 0);
 	}
 
-	private static readonly Type ComponentType = ReflectionHelper.FindType("SemaphoreModule");
-
-	private readonly object _component;
 	private readonly KMSelectable _prev;
 	private readonly KMSelectable _next;
 	private readonly KMSelectable _ok;

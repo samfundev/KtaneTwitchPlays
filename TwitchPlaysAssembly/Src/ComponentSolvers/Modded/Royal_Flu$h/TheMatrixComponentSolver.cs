@@ -11,7 +11,7 @@ public class TheMatrixComponentSolver : ComponentSolver
 		Switch = _component.GetValue<KMSelectable>("switchObject");
 		bluePill = _component.GetValue<KMSelectable>("bluePill");
 		redPill = _component.GetValue<KMSelectable>("redPill");
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Flip the switch and flip it again in x seconds with '!{0} flip for x'! Use '!{0} press <colour>' at # to press the pill corresponding to the colour you specified when the last digit of the timer equals to #");
+		SetHelpMessage("Flip the switch and flip it again in x seconds with '!{0} flip for x'! Use '!{0} press <colour>' at # to press the pill corresponding to the colour you specified when the last digit of the timer equals to #");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

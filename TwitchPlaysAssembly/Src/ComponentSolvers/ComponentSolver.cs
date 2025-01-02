@@ -13,6 +13,7 @@ public abstract class ComponentSolver
 	protected ComponentSolver(TwitchModule module, bool hookUpEvents = true)
 	{
 		Module = module;
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 
 		if (!hookUpEvents) return;
 		module.BombComponent.OnPass += OnPass;
@@ -225,7 +226,7 @@ public abstract class ComponentSolver
 				{
 					if (chatResponse == SendToTwitchChatResponse.HandledMustHalt)
 						break; // Antitroll, requested stop with "sendtochat!h", etc.
-					// otherwise handled, continue
+							   // otherwise handled, continue
 				}
 				else if (currentString.StartsWith("add strike", StringComparison.InvariantCultureIgnoreCase))
 					OnStrike(null);
@@ -653,7 +654,7 @@ public abstract class ComponentSolver
 
 	protected static void DoInteractionHighlight(MonoBehaviour interactable) => interactable.GetComponent<Selectable>().SetHighlight(true);
 
-	protected string GetModuleType() => Module.BombComponent.GetComponent<KMBombModule>()?.ModuleType ?? Module.BombComponent.GetComponent<KMNeedyModule>()?.ModuleType;
+	protected string GetModuleType() => Module.BombComponent.GetModuleID();
 
 	// ReSharper disable once UnusedMember.Global
 	protected WaitForSeconds DoInteractionClick(MonoBehaviour interactable, float delay) => DoInteractionClick(interactable, null, delay);
@@ -746,6 +747,11 @@ public abstract class ComponentSolver
 	{
 		IRCConnection.SendMessage(reason);
 		SolveSilently();
+	}
+
+	protected void SetHelpMessage(string helpMessage)
+	{
+		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
 	}
 	#endregion
 
@@ -1432,7 +1438,7 @@ public abstract class ComponentSolver
 	private int _pointsToAward;
 
 	private MusicPlayer _musicPlayer;
-	public ModuleInformation ModInfo = null;
+	public ModuleInformation ModInfo;
 	public bool ChainableCommands = false;
 
 	public bool TurnQueued;

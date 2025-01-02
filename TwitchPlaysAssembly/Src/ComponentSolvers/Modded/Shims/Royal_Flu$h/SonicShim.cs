@@ -6,7 +6,6 @@ public class SonicShim : ComponentSolverShim
 	public SonicShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_monitors = new KMSelectable[] { _component.GetValue<KMSelectable>("boots"), _component.GetValue<KMSelectable>("invincible"), _component.GetValue<KMSelectable>("life"), _component.GetValue<KMSelectable>("rings") };
 		_startButton = _component.GetValue<KMSelectable>("startButton");

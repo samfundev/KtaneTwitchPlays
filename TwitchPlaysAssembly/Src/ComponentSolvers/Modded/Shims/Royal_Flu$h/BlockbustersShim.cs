@@ -6,7 +6,6 @@ public class BlockbustersShim : ComponentSolverShim
 	public BlockbustersShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 

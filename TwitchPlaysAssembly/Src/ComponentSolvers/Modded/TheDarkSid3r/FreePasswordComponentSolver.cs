@@ -8,7 +8,7 @@ public class FreePasswordComponentSolver : ComponentSolver
 		base(module)
 	{
 		_modType = GetModuleType();
-		ModInfo = ComponentSolverFactory.GetModuleInfo(_modType, _modType == "FreePassword" ? "!{0} submit [Presses the submit button] | !{0} WAHOO [Sets the display to \"WAHOO\"]" : "!{0} submit [Presses the submit button] | !{0} THEREEGGSONBOMBWAHOO [Sets the display to \"THEREEGGSONBOMBWAHOO\"]");
+		SetHelpMessage(_modType == "FreePassword" ? "!{0} submit [Presses the submit button] | !{0} WAHOO [Sets the display to \"WAHOO\"]" : "!{0} submit [Presses the submit button] | !{0} THEREEGGSONBOMBWAHOO [Sets the display to \"THEREEGGSONBOMBWAHOO\"]");
 		_buttons.AddRange(module.BombComponent.GetComponent<KMSelectable>().Children);
 	}
 

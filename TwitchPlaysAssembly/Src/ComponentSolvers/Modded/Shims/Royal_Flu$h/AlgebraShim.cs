@@ -7,7 +7,6 @@ public class AlgebraShim : ComponentSolverShim
 	public AlgebraShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_keypadButtons = new KMSelectable[] { _component.GetValue<KMSelectable>("but0"), _component.GetValue<KMSelectable>("but1"), _component.GetValue<KMSelectable>("but2"), _component.GetValue<KMSelectable>("but3"), _component.GetValue<KMSelectable>("but4"), _component.GetValue<KMSelectable>("but5"), _component.GetValue<KMSelectable>("but6"), _component.GetValue<KMSelectable>("but7"), _component.GetValue<KMSelectable>("but8"), _component.GetValue<KMSelectable>("but9") };
 		_clearButton = _component.GetValue<KMSelectable>("clearBut");

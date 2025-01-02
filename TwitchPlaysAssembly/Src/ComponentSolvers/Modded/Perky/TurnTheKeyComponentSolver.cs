@@ -11,7 +11,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		base(module)
 	{
 		_lock = (MonoBehaviour) LockField.GetValue(Module.BombComponent.GetComponent(ComponentType));
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the key at specified time with !{0} turn 8:29");
+		SetHelpMessage("Turn the key at specified time with !{0} turn 8:29");
 		module.StartCoroutine(ReWriteTurnTheKey());
 		module.BombComponent.GetComponent<KMBombModule>().OnActivate = OnActivate;
 		SkipTimeAllowed = true;

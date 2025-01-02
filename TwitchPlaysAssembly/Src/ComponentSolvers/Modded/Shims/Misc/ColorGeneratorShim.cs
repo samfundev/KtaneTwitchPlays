@@ -7,7 +7,6 @@ public class ColorGeneratorShim : ComponentSolverShim
 	public ColorGeneratorShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 

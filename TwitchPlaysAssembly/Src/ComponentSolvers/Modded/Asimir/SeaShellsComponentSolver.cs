@@ -12,7 +12,7 @@ public class SeaShellsComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press buttons by their labels by typing !{0} label alar llama. You can submit partial text as long it only matches one button. Press buttons by their position using !{0} position 3 5 2 1 4. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.");
+		SetHelpMessage("Press buttons by their labels by typing !{0} label alar llama. You can submit partial text as long it only matches one button. Press buttons by their position using !{0} position 3 5 2 1 4. NOTE: Each button press is separated by a space so typing \"burglar alarm\" will press a button twice.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

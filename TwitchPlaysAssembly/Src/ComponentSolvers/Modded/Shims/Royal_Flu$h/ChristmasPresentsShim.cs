@@ -7,7 +7,6 @@ public class ChristmasPresentsShim : ComponentSolverShim
 	public ChristmasPresentsShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_clock = _component.GetValue<KMSelectable>("clockButton");
 	}

@@ -10,7 +10,7 @@ public class EdgeworkComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position.");
+		SetHelpMessage("Press an answer using !{0} press left. Answers can be referred to numbered from left to right. They can also be referred to by their position.");
 	}
 
 	private static int? ButtonToIndex(string button)

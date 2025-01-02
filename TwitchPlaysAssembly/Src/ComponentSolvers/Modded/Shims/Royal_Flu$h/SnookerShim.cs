@@ -7,7 +7,6 @@ public class SnookerShim : ComponentSolverShim
 	public SnookerShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_cue = _component.GetValue<KMSelectable>("cueBall");
 	}

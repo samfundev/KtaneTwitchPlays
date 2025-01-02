@@ -10,7 +10,7 @@ public class NumberNimblenessComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} screen [press the screen] | !{0} press <numbers> [press those numbers]");
+		SetHelpMessage("!{0} screen [press the screen] | !{0} press <numbers> [press those numbers]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

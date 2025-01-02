@@ -12,7 +12,6 @@ public abstract class ReflectionComponentSolverShim : ReflectionComponentSolver
 	{
 		// Passing null to the BombCommander argument here because Unshimmed is only used to run RespondInternal(); we don’t want it to award strikes/solves etc. because this object already does that
 		Unshimmed = ComponentSolverFactory.CreateDefaultModComponentSolver(module, module.BombComponent.GetModuleID(), module.BombComponent.GetModuleDisplayName(), false);
-		ModInfo = Unshimmed.ModInfo;
 	}
 
 	protected sealed override IEnumerator ForcedSolveIEnumerator() => TwitchPlaySettings.data.EnableTwitchPlayShims ? ForcedSolveIEnumeratorShimmed() : ForcedSolveIEnumeratorUnshimmed();

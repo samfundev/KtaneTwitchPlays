@@ -10,7 +10,7 @@ public class ErrorCodesComponentSolver : ComponentSolver
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
 		_submit = (KMSelectable) SendField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
+		SetHelpMessage("Submit a decimal, octal, hexidecimal, or binary value using !{0} submit 00010100.");
 
 		module.BombComponent.OnPass += _ =>
 		{

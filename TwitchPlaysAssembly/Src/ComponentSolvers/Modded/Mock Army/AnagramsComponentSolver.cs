@@ -11,7 +11,7 @@ public class AnagramsComponentSolver : ComponentSolver
 		_buttons = module.BombComponent.GetComponent<KMSelectable>().Children;
 		string modType = GetModuleType();
 		_component = Module.BombComponent.GetComponent(ReflectionHelper.FindType(modType));
-		ModInfo = ComponentSolverFactory.GetModuleInfo(modType, "Submit your answer with !{0} submit poodle");
+		SetHelpMessage("Submit your answer with !{0} submit poodle");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

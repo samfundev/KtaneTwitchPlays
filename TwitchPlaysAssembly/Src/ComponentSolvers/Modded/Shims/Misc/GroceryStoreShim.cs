@@ -8,7 +8,6 @@ public class GroceryStoreShim : ComponentSolverShim
 	public GroceryStoreShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = new KMSelectable[] { (KMSelectable) AddButtonField.GetValue(_component), (KMSelectable) LeaveButtonField.GetValue(_component) };
 	}

@@ -6,7 +6,6 @@ public class NumberCipherShim : ComponentSolverShim
 	public NumberCipherShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_left = _component.GetValue<KMSelectable>("cycleLeftButton");
 		_right = _component.GetValue<KMSelectable>("cycleRightButton");

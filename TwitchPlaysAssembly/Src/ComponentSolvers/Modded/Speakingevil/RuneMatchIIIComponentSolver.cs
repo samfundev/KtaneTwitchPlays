@@ -10,7 +10,7 @@ public class RuneMatchIIIComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_orbs = (KMSelectable[]) OrbsField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} <a-c><1-3> [Selects the orb at the specified coordinate] | Command is chainable with spaces");
+		SetHelpMessage("!{0} <a-c><1-3> [Selects the orb at the specified coordinate] | Command is chainable with spaces");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

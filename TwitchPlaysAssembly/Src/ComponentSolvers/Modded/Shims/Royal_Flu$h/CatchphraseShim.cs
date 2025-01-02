@@ -7,7 +7,6 @@ public class CatchphraseShim : ComponentSolverShim
 	public CatchphraseShim(TwitchModule module) :
 		base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		component = module.BombComponent.GetComponent(ComponentType);
 		panels = component.GetValue<KMSelectable[]>("panels");
 		keypad = component.GetValue<KMSelectable[]>("keypads");

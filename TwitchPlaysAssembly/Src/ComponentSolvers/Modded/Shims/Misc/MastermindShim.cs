@@ -5,7 +5,6 @@ public class MastermindShim : ComponentSolverShim
 	public MastermindShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		var type = ReflectionHelper.FindType("Mastermind", module.BombComponent.GetModuleID());
 		_component = module.BombComponent.GetComponent(type);
 		_slots = _component.GetValue<KMSelectable[]>("Slot");

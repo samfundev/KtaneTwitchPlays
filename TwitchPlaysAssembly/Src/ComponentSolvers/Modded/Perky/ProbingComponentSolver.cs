@@ -9,7 +9,7 @@ public class ProbingComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_wires = _component.GetValue<MonoBehaviour[]>("selectables");
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
+		SetHelpMessage("Get the readings with !{0} cycle. Try a combination with !{0} connect 4 3. Cycle reads 1&2, 1&3, 1&4, 1&5, 1&6.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

@@ -7,7 +7,6 @@ public class TangramsShim : ComponentSolverShim
 	public TangramsShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 

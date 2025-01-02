@@ -20,7 +20,6 @@ public class SimpleModComponentSolver : ComponentSolver
 		TwitchPlays = true;
 		ZenMode = OtherModes.Unexplodable;
 		TimeMode = OtherModes.TimeModeOn;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

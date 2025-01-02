@@ -10,7 +10,6 @@ public class SwanShim : ComponentSolverShim
 		: base(module)
 	{
 		_component = Module.BombComponent.GetComponent(ComponentType);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_keypad = new KMSelectable[] { (KMSelectable) Keypad0ButtonField.GetValue(_component), (KMSelectable) Keypad1ButtonField.GetValue(_component), (KMSelectable) Keypad2ButtonField.GetValue(_component), (KMSelectable) Keypad3ButtonField.GetValue(_component), (KMSelectable) Keypad4ButtonField.GetValue(_component), (KMSelectable) Keypad5ButtonField.GetValue(_component), (KMSelectable) Keypad6ButtonField.GetValue(_component), (KMSelectable) Keypad7ButtonField.GetValue(_component), (KMSelectable) Keypad8ButtonField.GetValue(_component), (KMSelectable) Keypad9ButtonField.GetValue(_component), (KMSelectable) Keypad10ButtonField.GetValue(_component), (KMSelectable) Keypad11ButtonField.GetValue(_component) };
 		_execute = (KMSelectable) ExecuteButtonField.GetValue(_component);
 	}

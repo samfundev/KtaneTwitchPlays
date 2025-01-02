@@ -7,7 +7,6 @@ public class StopwatchShim : ComponentSolverShim
 	public StopwatchShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_startButton = _component.GetValue<KMSelectable>("startButton");
 	}
