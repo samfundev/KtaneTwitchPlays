@@ -119,7 +119,6 @@ static class ModuleCommands
 	/// <name>Claim View Pin</name>
 	/// <syntax>claim view pin\ncvp</syntax>
 	/// <summary>Claims, views and pins a module. You can remove one of three actions as well. (e.g. claim view)</summary>
-	[Command("solve")]
 	[Command(@"(claim view|view claim|claimview|viewclaim|cv|vc|claim view pin|view pin claim|claimviewpin|viewpinclaim|cvp|vpc)")]
 	public static void ClaimViewPin(TwitchModule module, string user, bool isWhisper, [Group(1)] string cmd) => ClaimViewOrPin(module, user, isWhisper, view: true, pin: cmd.Contains("p"));
 
