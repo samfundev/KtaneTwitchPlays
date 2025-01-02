@@ -6,7 +6,6 @@ public class MinecraftCipherShim : ComponentSolverShim
 	public MinecraftCipherShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_keypadButtons = _component.GetValue<KMSelectable[]>("Button");
 		_clearButton = _component.GetValue<KMSelectable>("clear");

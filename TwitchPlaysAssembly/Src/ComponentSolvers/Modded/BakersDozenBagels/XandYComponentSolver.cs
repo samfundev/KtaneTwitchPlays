@@ -8,7 +8,7 @@ public class XandYComponentSolver : ComponentSolver
 	public XandYComponentSolver(TwitchModule module) :
 		base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!alarm help [View the commands for the alarm clock] | !{0} cover [Presses the cover to solve the module if no alarm clock is present]");
+		SetHelpMessage("!alarm help [View the commands for the alarm clock] | !{0} cover [Presses the cover to solve the module if no alarm clock is present]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

@@ -7,7 +7,6 @@ public class BinaryLEDsShim : ComponentSolverShim
 	public BinaryLEDsShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 

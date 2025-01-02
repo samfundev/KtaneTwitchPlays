@@ -10,7 +10,7 @@ public class ShapeShiftComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = (KMSelectable[]) ButtonsField.GetValue(_component);
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.");
+		SetHelpMessage("Submit your answer with !{0} submit point round. Reset to initial state with !{0} reset. Valid shapes: flat, point, round and ticket.");
 
 		if (module.BombComponent.gameObject.activeInHierarchy)
 			module.BombComponent.StartCoroutine(GetDisplay());

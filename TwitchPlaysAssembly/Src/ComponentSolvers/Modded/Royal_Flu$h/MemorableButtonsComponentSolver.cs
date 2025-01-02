@@ -11,7 +11,7 @@ public class MemorableButtonsComponentSolver : ComponentSolver
 		_component = module.BombComponent.GetComponent(ComponentSolverType);
 		finalKeypad = _component.GetValue<KMSelectable[]>("solveKeypad");
 		interKeypad = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a button with '!{0} press 1' or '!{0} press TL'. When at the solving stage, press multiple buttons with '!{0} press 1 5 9 4 8 12 …'. Buttons are numbered in reading order at all times.");
+		SetHelpMessage("Press a button with '!{0} press 1' or '!{0} press TL'. When at the solving stage, press multiple buttons with '!{0} press 1 5 9 4 8 12 …'. Buttons are numbered in reading order at all times.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

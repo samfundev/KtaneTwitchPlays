@@ -10,7 +10,7 @@ public class CrazyTalkComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_toggle = _component.GetValue<KMSelectable>("toggleSwitch");
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Toggle the switch down and up with !{0} toggle 4 5. The order is down, then up.");
+		SetHelpMessage("Toggle the switch down and up with !{0} toggle 4 5. The order is down, then up.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

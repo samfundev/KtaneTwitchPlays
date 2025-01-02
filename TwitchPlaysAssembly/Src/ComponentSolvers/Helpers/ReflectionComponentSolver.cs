@@ -24,7 +24,7 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 		if (_component == null) _component = module.BombComponent.GetComponentInChildren(componentType);
 
 		selectable = Module.Selectable;
-		if (helpMessage != null) ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
+		if (helpMessage != null) SetHelpMessage(helpMessage);
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

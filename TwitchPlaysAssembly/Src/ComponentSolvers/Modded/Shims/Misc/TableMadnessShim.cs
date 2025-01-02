@@ -8,7 +8,6 @@ public class TableMadnessShim : ReflectionComponentSolverShim
 	public TableMadnessShim(TwitchModule module)
 		: base(module, "TableMadness", "TableMadness")
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_buttons = _component.GetValue<KMSelectable[]>("buttons");
 	}
 

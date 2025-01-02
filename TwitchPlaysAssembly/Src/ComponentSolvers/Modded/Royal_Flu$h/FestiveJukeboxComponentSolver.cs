@@ -10,7 +10,7 @@ public class FestiveJukeboxComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press 3 buttons using !{0} press <buttons>. (1 = top; 2 = middle; 3 = bottom.)");
+		SetHelpMessage("Press 3 buttons using !{0} press <buttons>. (1 = top; 2 = middle; 3 = bottom.)");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

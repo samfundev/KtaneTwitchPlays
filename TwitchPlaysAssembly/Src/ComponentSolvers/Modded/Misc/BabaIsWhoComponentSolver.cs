@@ -9,7 +9,7 @@ public class BabaIsWhoComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press a character using using !{0} press <character>. Characters: baba, keke, me, rock, flag and wall.");
+		SetHelpMessage("Press a character using using !{0} press <character>. Characters: baba, keke, me, rock, flag and wall.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

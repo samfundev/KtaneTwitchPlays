@@ -10,7 +10,7 @@ public class TWordsComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press <words> [words are numbered 1–4 top to bottom] | !{0} led");
+		SetHelpMessage("!{0} press <words> [words are numbered 1–4 top to bottom] | !{0} led");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

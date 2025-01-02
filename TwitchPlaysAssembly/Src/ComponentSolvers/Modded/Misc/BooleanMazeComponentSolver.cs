@@ -11,7 +11,7 @@ public class BooleanMazeComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Press buttons using !{0} press <button>. Buttons can be specified in full or based on their last character.");
+		SetHelpMessage("Press buttons using !{0} press <button>. Buttons can be specified in full or based on their last character.");
 	}
 
 	readonly Dictionary<string, int> buttonMap = new Dictionary<string, int>()

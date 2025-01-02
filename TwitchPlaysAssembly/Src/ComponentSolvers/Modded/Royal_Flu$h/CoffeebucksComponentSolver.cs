@@ -12,7 +12,7 @@ public class CoffeebucksComponentSolver : ComponentSolver
 	{
 		_component = Module.BombComponent.GetComponent(ComponentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} next [next customer] | !{0} name <name> [select name] | !{0} name <name> (pause) [pause on the name for (pause) seconds, then select] | !{0} sugar/time/stress/size/name [repeat info] | !{0} milk/cream/sprinkles/gluten [toggle a quirk] | !{0} submit <coffee> [partial names are fine]");
+		SetHelpMessage("!{0} next [next customer] | !{0} name <name> [select name] | !{0} name <name> (pause) [pause on the name for (pause) seconds, then select] | !{0} sugar/time/stress/size/name [repeat info] | !{0} milk/cream/sprinkles/gluten [toggle a quirk] | !{0} submit <coffee> [partial names are fine]");
 	}
 
 	readonly Dictionary<string, int> buttonMap = new Dictionary<string, int>()

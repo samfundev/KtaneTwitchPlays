@@ -6,7 +6,6 @@ public class HiddenColorsShim : ComponentSolverShim
 	public HiddenColorsShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = _component.GetValue<KMSelectable[]>("Buttons");
 		_toggle = _component.GetValue<KMSelectable>("ToggleButton");

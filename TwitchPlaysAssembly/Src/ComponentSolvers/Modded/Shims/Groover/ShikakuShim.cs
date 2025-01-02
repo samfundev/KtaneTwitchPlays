@@ -7,7 +7,6 @@ public class ShikakuShim : ComponentSolverShim
 	public ShikakuShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = _component.GetValue<KMSelectable[]>("_buttons");
 	}

@@ -9,8 +9,6 @@ public class MysteryModuleShim : ReflectionComponentSolverShim
 	public MysteryModuleShim(TwitchModule module)
 		: base(module, "MysteryModuleScript")
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
-
 		module.StartCoroutine(WaitForMysteryModule());
 	}
 

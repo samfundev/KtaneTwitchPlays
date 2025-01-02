@@ -10,7 +10,7 @@ public class LetterKeysComponentSolver : ComponentSolver
 		base(module)
 	{
 		_buttons = module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press b");
+		SetHelpMessage("!{0} press b");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

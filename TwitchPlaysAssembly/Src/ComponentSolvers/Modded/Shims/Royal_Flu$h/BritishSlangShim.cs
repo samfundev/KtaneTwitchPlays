@@ -7,7 +7,6 @@ public class BritishSlangShim : ComponentSolverShim
 	public BritishSlangShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 

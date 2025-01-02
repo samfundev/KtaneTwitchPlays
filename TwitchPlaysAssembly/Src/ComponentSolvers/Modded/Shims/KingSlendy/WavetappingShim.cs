@@ -6,7 +6,6 @@ public class WavetappingShim : ComponentSolverShim
 	public WavetappingShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = _component.GetValue<KMSelectable[]>("ModuleButtons");
 		_submit = _component.GetValue<KMSelectable>("SubmitButton");

@@ -11,7 +11,7 @@ public class LabyrinthComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Move around the labyrinth using !{0} move <directions>. Directions must be abbreviated.");
+		SetHelpMessage("Move around the labyrinth using !{0} move <directions>. Directions must be abbreviated.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

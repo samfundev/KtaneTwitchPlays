@@ -14,7 +14,7 @@ public class SimonsStagesComponentSolver : ComponentSolver
 		lightDevices = _component.GetValue<object[]>("lightDevices");
 		colorOrder = lightDevices.Select(device => device.GetValue<TextMesh>("lightText").text[0]).ToArray();
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} press <letters> [press a sequence of colors based on their first letter]");
+		SetHelpMessage("!{0} press <letters> [press a sequence of colors based on their first letter]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

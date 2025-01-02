@@ -12,7 +12,7 @@ public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 	{
 		_leftKey = (MonoBehaviour) LeftKeyField.GetValue(module.BombComponent.GetComponent(ComponentType));
 		_rightKey = (MonoBehaviour) RightKeyField.GetValue(module.BombComponent.GetComponent(ComponentType));
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Turn the left key with !{0} turn left. Turn the right key with !{0} turn right.");
+		SetHelpMessage("Turn the left key with !{0} turn left. Turn the right key with !{0} turn right.");
 
 		((KMSelectable) _leftKey).OnInteract = () => HandleKey(LeftBeforeA, LeftAfterA, LeftKeyTurnedField, RightKeyTurnedField, BeforeLeftKeyField, OnLeftKeyTurnMethod, LeftKeyAnimatorField);
 		((KMSelectable) _rightKey).OnInteract = () => HandleKey(RightBeforeA, RightAfterA, RightKeyTurnedField, LeftKeyTurnedField, BeforeRightKeyField, OnRightKeyTurnMethod, RightKeyAnimatorField);

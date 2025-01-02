@@ -11,7 +11,7 @@ public class ForeignExchangeRatesComponentSolver : ComponentSolver
 	{
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_buttons = _component.GetValue<MonoBehaviour[]>("buttons");
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
+		SetHelpMessage("Solve the module with !{0} press ML. Positions are TL, TM, TR, ML, MM, MR, BL, BM, BR.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

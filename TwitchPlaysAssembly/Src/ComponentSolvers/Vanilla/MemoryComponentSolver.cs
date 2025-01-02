@@ -8,7 +8,7 @@ public class MemoryComponentSolver : ComponentSolver
 		base(module)
 	{
 		_buttons = ((MemoryComponent) module.BombComponent).Buttons;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("Memory", "!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]");
+		SetHelpMessage("!{0} position 2, !{0} pos 2, !{0} p 2 [2nd position] | !{0} label 3, !{0} lab 3, !{0} l 3 [label 3]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

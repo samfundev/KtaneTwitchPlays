@@ -6,7 +6,6 @@ public class AlienFilingColorsShim : ReflectionComponentSolverShim
 	public AlienFilingColorsShim(TwitchModule module)
 		: base(module, "AFCScript", "AlienModule")
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected override IEnumerator RespondShimmed(string[] split, string command)

@@ -7,7 +7,6 @@ public class TaxReturnsShim : ComponentSolverShim
 	public TaxReturnsShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_keypadButtons = _component.GetValue<KMSelectable[]>("keypad");
 		_toggleButton = _component.GetValue<KMSelectable>("toggleSwitch");

@@ -6,7 +6,6 @@ public class DriveInWindowShim : ComponentSolverShim
 	public DriveInWindowShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		Module.StartCoroutine(HideNotesForOrder());
 	}

@@ -9,7 +9,7 @@ public class InvisibleWallsComponentSolver : ComponentSolver
 		base(module)
 	{
 		_buttons = ((InvisibleWallsComponent) module.BombComponent).Buttons;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("Maze", "!{0} move up down left right, !{0} move udlr [make a series of white icon moves]");
+		SetHelpMessage("!{0} move up down left right, !{0} move udlr [make a series of white icon moves]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

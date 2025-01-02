@@ -5,7 +5,6 @@ public class SquareButtonShim : ComponentSolverShim
 	public SquareButtonShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected override IEnumerator RespondToCommandShimmed(string inputCommand)

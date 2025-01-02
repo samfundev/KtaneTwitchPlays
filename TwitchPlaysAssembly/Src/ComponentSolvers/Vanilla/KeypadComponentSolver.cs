@@ -9,7 +9,7 @@ public class KeypadComponentSolver : ComponentSolver
 		base(module)
 	{
 		_buttons = ((KeypadComponent) module.BombComponent).buttons;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("Keypad", "!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR");
+		SetHelpMessage("!{0} press 3 1 2 4 | The buttons are 1=TL, 2=TR, 3=BL, 4=BR");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

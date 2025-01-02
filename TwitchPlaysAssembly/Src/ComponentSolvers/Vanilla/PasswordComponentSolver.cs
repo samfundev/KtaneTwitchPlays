@@ -11,7 +11,7 @@ public class PasswordComponentSolver : ComponentSolver
 		var passwordModule = (PasswordComponent) module.BombComponent;
 		_spinners = passwordModule.Spinners;
 		_submitButton = passwordModule.SubmitButton;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("Password", "!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]");
+		SetHelpMessage("!{0} cycle 1 3 5 [cycle through the letters in columns 1, 3, and 5] | !{0} cycle [cycle through all columns] | !{0} toggle [move all columns down one letter] | !{0} world [try to submit a word]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

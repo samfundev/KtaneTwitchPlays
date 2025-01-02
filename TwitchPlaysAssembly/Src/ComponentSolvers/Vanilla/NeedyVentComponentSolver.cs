@@ -8,7 +8,7 @@ public class NeedyVentComponentSolver : ComponentSolver
 		var ventModule = (NeedyVentComponent) module.BombComponent;
 		_yesButton = ventModule.YesButton;
 		_noButton = ventModule.NoButton;
-		ModInfo = ComponentSolverFactory.GetModuleInfo("NeedyVentGas", "!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
+		SetHelpMessage("!{0} yes, !{0} y [answer yes] | !{0} no, !{0} n [answer no]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

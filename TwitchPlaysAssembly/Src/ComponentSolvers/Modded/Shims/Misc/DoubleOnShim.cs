@@ -8,7 +8,6 @@ public class DoubleOnShim : ReflectionComponentSolverShim
 	public DoubleOnShim(TwitchModule module)
 		: base(module, "DoubleOnModule", "double_on")
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected override IEnumerator RespondShimmed(string[] split, string command)

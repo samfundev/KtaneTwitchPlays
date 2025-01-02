@@ -6,7 +6,6 @@ public class OsuShim : ComponentSolverShim
 	public OsuShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_change = _component.GetValue<KMSelectable>("canvas");
 		_submit = _component.GetValue<KMSelectable>("textbox");

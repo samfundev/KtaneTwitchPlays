@@ -6,7 +6,6 @@ public class LightspeedShim : ComponentSolverShim
 	public LightspeedShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 	}
 

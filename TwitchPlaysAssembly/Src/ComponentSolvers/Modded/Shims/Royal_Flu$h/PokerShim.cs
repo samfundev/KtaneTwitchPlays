@@ -6,7 +6,6 @@ public class PokerShim : ComponentSolverShim
 	public PokerShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_foldButton = _component.GetValue<KMSelectable>("FoldBut");
 		_checkButton = _component.GetValue<KMSelectable>("CheckBut");

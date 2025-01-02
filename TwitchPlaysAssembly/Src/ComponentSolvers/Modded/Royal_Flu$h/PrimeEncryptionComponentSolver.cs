@@ -9,7 +9,7 @@ public class PrimeEncryptionComponentSolver : ComponentSolver
 	{
 		_component = Module.BombComponent.GetComponent(ComponentType);
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "!{0} submit 123 456 [submit 123 and 456 as the bases]");
+		SetHelpMessage("!{0} submit 123 456 [submit 123 and 456 as the bases]");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)

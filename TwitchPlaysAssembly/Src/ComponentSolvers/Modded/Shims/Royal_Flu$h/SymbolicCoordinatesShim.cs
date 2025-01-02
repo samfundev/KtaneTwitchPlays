@@ -6,7 +6,6 @@ public class SymbolicCoordinatesShim : ComponentSolverShim
 	public SymbolicCoordinatesShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 		_component = module.BombComponent.GetComponent(ComponentType);
 		_upLet = _component.GetValue<KMSelectable>("lettersUp");
 		_downLet = _component.GetValue<KMSelectable>("lettersDown");

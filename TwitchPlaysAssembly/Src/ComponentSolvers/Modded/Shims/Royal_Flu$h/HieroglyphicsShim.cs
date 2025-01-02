@@ -5,7 +5,6 @@ public class HieroglyphicsShim : ComponentSolverShim
 	public HieroglyphicsShim(TwitchModule module)
 		: base(module)
 	{
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType());
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()

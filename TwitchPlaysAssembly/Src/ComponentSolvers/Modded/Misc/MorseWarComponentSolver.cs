@@ -8,7 +8,7 @@ public class MorseWarComponentSolver : ComponentSolver
 		base(module)
 	{
 		selectables = Module.BombComponent.GetComponent<KMSelectable>().Children;
-		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), "Send supply ship (S) or a submarine (U) using: !{0} press SUSU.");
+		SetHelpMessage("Send supply ship (S) or a submarine (U) using: !{0} press SUSU.");
 	}
 
 	protected internal override IEnumerator RespondToCommandInternal(string inputCommand)
