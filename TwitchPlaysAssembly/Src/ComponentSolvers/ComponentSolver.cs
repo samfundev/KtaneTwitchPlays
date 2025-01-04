@@ -572,7 +572,7 @@ public abstract class ComponentSolver
 			return instantResponseReturn;
 		}
 
-		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) +(\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
+		if (!message.RegexMatch(out match, @"^(sendtochat|sendtochaterror|strikemessage|antitroll) (\S(?:\S|\s)*)$")) return SendToTwitchChatResponse.NotHandled;
 
 		string chatMsg = skipFormatting ? match.Groups[2].Value : string.Format(match.Groups[2].Value, userNickName, Module.Code);
 
