@@ -14,31 +14,31 @@ public static class FreeplayCommands
 	/// <name>Needy</name>
 	/// <syntax>needy on\nneedy off</syntax>
 	/// <summary>Enables or disables the needy switch.</summary>
-	[Command(@"needy(?: +(on)| +off)")]
+	[Command(@"needy(?: (on)| off)")]
 	public static void Needy(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.HasNeedy, s => s.NeedyToggle, TwitchPlaySettings.data.EnableFreeplayNeedy, TwitchPlaySettings.data.FreePlayNeedyDisabled);
 	/// <name>Hardcore</name>
 	/// <syntax>hardcore on\nhardcore off</syntax>
 	/// <summary>Enables or disables the hardcore switch.</summary>
-	[Command(@"hardcore(?: +(on)| +off)")]
+	[Command(@"hardcore(?: (on)| off)")]
 	public static void Hardcore(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.IsHardCore, s => s.HardcoreToggle, TwitchPlaySettings.data.EnableFreeplayHardcore, TwitchPlaySettings.data.FreePlayHardcoreDisabled);
 	/// <name>Mods Only</name>
 	/// <syntax>mods only\nmods only off</syntax>
 	/// <summary>Enables or disables the mods only.</summary>
-	[Command(@"mods ?only(?: +(on)| +off)")]
+	[Command(@"mods ?only(?: (on)| off)")]
 	public static void ModsOnly(FloatingHoldable holdable, [Group(1)] bool on, string user, bool isWhisper) => SetSetting(holdable, on, user, isWhisper, s => s.OnlyMods, s => s.ModsOnly, TwitchPlaySettings.data.EnableFreeplayModsOnly, TwitchPlaySettings.data.FreePlayModsOnlyDisabled);
 
 	/// <name>Set Time</name>
 	/// <syntax>time (hours):[minutes]:[seconds]</syntax>
 	/// <summary>Sets the amount of time the bomb will have.</summary>
-	[Command(@"timer? +(\d+):(\d{1,3}):(\d{2})")]
+	[Command(@"timer? (\d+):(\d{1,3}):(\d{2})")]
 	public static IEnumerator ChangeTimerHours(FloatingHoldable holdable, [Group(1)] int hours, [Group(2)] int minutes, [Group(3)] int seconds) => SetBombTimer(holdable, hours, minutes, seconds);
-	[Command(@"timer? +(\d{1,3}):(\d{2})")]
+	[Command(@"timer? (\d{1,3}):(\d{2})")]
 	public static IEnumerator ChangeTimer(FloatingHoldable holdable, [Group(1)] int minutes, [Group(2)] int seconds) => SetBombTimer(holdable, 0, minutes, seconds);
 
 	/// <name>Set Bombs</name>
 	/// <syntax>bombs [bombs]</syntax>
 	/// <summary>Sets the number of bombs.</summary>
-	[Command(@"bombs +(\d+)")]
+	[Command(@"bombs (\d+)")]
 	public static IEnumerator ChangeBombCount(FloatingHoldable holdable, [Group(1)] int bombCount)
 	{
 		if (!MultipleBombs.Installed())
@@ -61,7 +61,7 @@ public static class FreeplayCommands
 	/// <name>Set Modules</name>
 	/// <syntax>modules [modules]</syntax>
 	/// <summary>Sets the number of modules each bomb will have.</summary>
-	[Command(@"modules +(\d+)")]
+	[Command(@"modules (\d+)")]
 	public static IEnumerator ChangeModuleCount(FloatingHoldable holdable, [Group(1)] int moduleCount)
 	{
 		var device = holdable.GetComponent<FreeplayDevice>();
@@ -87,7 +87,7 @@ public static class FreeplayCommands
 	/// <name>Advanced Set / Start</name>
 	/// <syntax>set [parameters]\nstart [parameters]</syntax>
 	/// <summary>Sets or starts a bomb with a bunch of parameters. Combine any of the following to set the bomb parameters. (hours):[minutes]:[seconds], [#] bombs, [#] modules, hardcore, modsonly, needy.</summary>
-	[Command(@"(set|start) +(.*)")]
+	[Command(@"(set|start) (.*)")]
 	public static IEnumerator StartAdvanced(FloatingHoldable holdable, [Group(1)] string command, [Group(2)] string parameters, string user, bool isWhisper)
 	{
 		if (parameters.RegexMatch(out Match m, @"(\d):(\d{1,3}):(\d{2})"))
@@ -103,13 +103,13 @@ public static class FreeplayCommands
 				yield return e.Current;
 		}
 
-		if (MultipleBombs.Installed() && parameters.RegexMatch(out m, @"(\d+) +bombs"))
+		if (MultipleBombs.Installed() && parameters.RegexMatch(out m, @"(\d+) bombs"))
 		{
 			var e = ChangeBombCount(holdable, int.Parse(m.Groups[1].Value));
 			while (e.MoveNext())
 				yield return e.Current;
 		}
-		if (parameters.RegexMatch(out m, @"(\d+) +modules"))
+		if (parameters.RegexMatch(out m, @"(\d+) modules"))
 		{
 			var e = ChangeModuleCount(holdable, int.Parse(m.Groups[1].Value));
 			while (e.MoveNext())

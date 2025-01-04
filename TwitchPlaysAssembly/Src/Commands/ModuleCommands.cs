@@ -12,7 +12,7 @@ static class ModuleCommands
 	/// <syntax>help</syntax>
 	/// <summary>Sends a message to chat with information on what commands you can use to solve the module.</summary>
 	/// <restriction>SolvedAllowed</restriction>
-	[Command(@"(?:help|manual)( +pdf)?"), SolvedAllowed]
+	[Command(@"(?:help|manual)( pdf)?"), SolvedAllowed]
 	public static void Help(TwitchModule module, [Group(1)] bool pdf)
 	{
 		string manualType = pdf ? "pdf" : "html";
@@ -35,7 +35,7 @@ static class ModuleCommands
 	/// <name>Queue Flip</name>
 	/// <syntax>queue flip</syntax>
 	/// <summary>Queues the bomb to be flipped over when the module is solved.</summary>
-	[Command("(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)")]
+	[Command("(?:bomb|queue) (?:turn(?: a?round)?|flip|spin)")]
 	public static void BombTurnAround(TwitchModule module)
 	{
 		if (!module.Solver.TurnQueued)
@@ -49,7 +49,7 @@ static class ModuleCommands
 	/// <name>Cancel Queued Flip</name>
 	/// <syntax>cancel queue flip</syntax>
 	/// <summary>Cancels a previously queued flip when the module was solved.</summary>
-	[Command("cancel +(?:bomb|queue) +(?:turn(?: +a?round)?|flip|spin)")]
+	[Command("cancel (?:bomb|queue) (?:turn(?: +a?round)?|flip|spin)")]
 	public static void BombTurnAroundCancel(TwitchModule module)
 	{
 		module.Solver.TurnQueued = false;
@@ -168,7 +168,7 @@ static class ModuleCommands
 	/// <name>Assign</name>
 	/// <syntax>assign [username]</syntax>
 	/// <summary>Assigns a module to another user. Usually requires mod rank but if you are claiming the module you can attempt to assign it to another user.</summary>
-	[Command(@"assign +(.+)")]
+	[Command(@"assign (.+)")]
 	public static void Assign(TwitchModule module, string user, [Group(1)] string targetUser)
 	{
 		targetUser = targetUser.FormatUsername();

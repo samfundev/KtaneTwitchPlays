@@ -14,7 +14,7 @@ public class DoubleOnShim : ReflectionComponentSolverShim
 	{
 		if (!command.Equals("read"))
 		{
-			if (!Regex.IsMatch(command, @"^([1-9]\d*[rgbcmy]{2}( +|$))+$")) yield break;
+			if (!Regex.IsMatch(command, @"^([1-9]\d*[rgbcmy]{2}( |$))+$")) yield break;
 			string[] subCommands = split.Where(s => s.Length > 0).ToArray();
 			int[] btnIndices = subCommands.Select(s => int.Parse(s.Take(s.Length - 2).Join("")) - 1).ToArray();
 			if (btnIndices.Any(b => b >= _component.GetValue<object>("_puzzle").GetValue<Vector2Int[]>("LEDPositions").Length))

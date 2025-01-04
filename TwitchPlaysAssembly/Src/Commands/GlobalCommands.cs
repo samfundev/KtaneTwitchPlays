@@ -93,7 +93,7 @@ static class GlobalCommands
 	/// <syntax>srefund [user] (count)</syntax>
 	/// <summary>Refunds a strike that happens to the user.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"srefund +(\S+) *?( +[0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"srefund (\S+) *?( [0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void StrikeRefund([Group(1)] string targetPlayer, [Group(2)] int? _count, string user)
 	{
 		int count = _count ?? 1;
@@ -115,7 +115,7 @@ static class GlobalCommands
 	/// <syntax>stransfer [user] to [user] (count)</syntax>
 	/// <summary>Transfers a strike from the first user to the second.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"stransfer +(\S+) +to +(\S+) *?( +[0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"stransfer (\S+) to (\S+) *?( [0-9]+)?", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void StrikeTransfer([Group(1)] string fromPlayer, [Group(2)] string toPlayer, [Group(3)] int? _count, string user)
 	{
 		int count = _count ?? 1;
@@ -188,7 +188,7 @@ static class GlobalCommands
 	/// <syntax>resetuser [users]</syntax>
 	/// <summary>Resets a user's information on the leaderboard. [users] is a list of usernames seperated by a semicolon.</summary>
 	/// <restriction>SuperUser</restriction>
-	[Command(@"resetusers? +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	[Command(@"resetusers? (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetUser([Group(1)] string parameters, string user, bool isWhisper)
 	{
 		foreach (string userRaw in parameters.Split(';'))
@@ -320,14 +320,14 @@ static class GlobalCommands
 	/// <syntax>readsetting [setting]</syntax>
 	/// <summary>Reads a setting.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"(?:read|write|change|set) *settings? +(\S+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(?:read|write|change|set) *settings? (\S+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void ReadSetting([Group(1)] string settingName, string user, bool isWhisper) => IRCConnection.SendMessage(TwitchPlaySettings.GetSetting(settingName), user, !isWhisper);
 
 	/// <name>Write Setting</name>
 	/// <syntax>writesetting [setting] [value]</syntax>
 	/// <summary>Writes a setting to a specified value.</summary>
 	/// <restriction>SuperUser</restriction>
-	[Command(@"(?:write|change|set) *settings? +(\S+) +(.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
+	[Command(@"(?:write|change|set) *settings? (\S+) (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void WriteSetting([Group(1)] string settingName, [Group(2)] string newValue, string user, bool isWhisper)
 	{
 		var result = TwitchPlaySettings.ChangeSetting(settingName, newValue);
@@ -339,7 +339,7 @@ static class GlobalCommands
 	/// <name>Read Module Information</name>
 	/// <syntax>readmodule [information] [module]</syntax>
 	/// <summary>Reads the information for a module.</summary>
-	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|compatibility(?: *mode)?|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands|unclaimable|announce(?:ment| *module)?) +(.+)")]
+	[Command(@"read *module *(help(?: *message)?|manual(?: *code)?|score|points|compatibility(?: *mode)?|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|(?:valid *)?commands|unclaimable|announce(?:ment| *module)?) (.+)")]
 	public static void ReadModuleInformation([Group(1)] string command, [Group(2)] string parameter, string user, bool isWhisper)
 	{
 		var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(parameter)).ToList();
@@ -441,7 +441,7 @@ static class GlobalCommands
 	/// <syntax>writemodule [information] [module] [value]</syntax>
 	/// <summary>Writes the information for a module to a specified value.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|compatibility(?: *mode)?|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|unclaimable|announce(?:ment| *module)?) +(.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"(?:write|change|set) *module *(help(?: *message)?|manual(?: *code)?|score|points|compatibility(?: *mode)?|statuslight|(?:camera *|module *)?pin *allowed|strike(?: *penalty)|colou?r|unclaimable|announce(?:ment| *module)?) (.+);(.*)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void WriteModuleInformation([Group(1)] string command, [Group(2)] string search, [Group(3)] string changeTo, string user, bool isWhisper)
 	{
 		var modules = ComponentSolverFactory.GetModuleInformation().Where(x => x.moduleDisplayName.ContainsIgnoreCase(search)).ToList();
@@ -640,7 +640,7 @@ static class GlobalCommands
 	/// <summary>Temporarily bans a user from TP including a reason for the ban.</summary>
 	/// <argument name="length">How long the user should be banned for in seconds.</argument>
 	/// <restriction>Mod</restriction>
-	[Command(@"timeout +(\S+) +(\d+) +(.+)")]
+	[Command(@"timeout (\S+) (\d+) (.+)")]
 	public static void BanUser([Group(1)] string userToBan, [Group(2)] int banTimeout, [Group(3)] string reason, string user, bool isWhisper) => UserAccess.TimeoutUser(userToBan, user, reason, banTimeout, isWhisper);
 
 	/// <name>Timeout User</name>
@@ -648,35 +648,35 @@ static class GlobalCommands
 	/// <summary>Temporarily bans a user from TP.</summary>
 	/// <argument name="length">How long the user should be banned for in seconds.</argument>
 	/// <restriction>Mod</restriction>
-	[Command(@"timeout +(\S+) +(\d+)")]
+	[Command(@"timeout (\S+) (\d+)")]
 	public static void BanUserForNoReason([Group(1)] string userToBan, [Group(2)] int banTimeout, string user, bool isWhisper) => UserAccess.TimeoutUser(userToBan, user, null, banTimeout, isWhisper);
 
 	/// <name>Ban User with Reason</name>
 	/// <syntax>ban [user] [reason]</syntax>
 	/// <summary>Bans a user from TP including a reason for the ban.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"ban +(\S+) +(.+)")]
+	[Command(@"ban (\S+) (.+)")]
 	public static void BanUser([Group(1)] string userToBan, [Group(2)] string reason, string user, bool isWhisper) => UserAccess.BanUser(userToBan, user, reason, isWhisper);
 
 	/// <name>Ban User</name>
 	/// <syntax>ban [user]</syntax>
 	/// <summary>Bans a user from TP.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"ban +(\S+)")]
+	[Command(@"ban (\S+)")]
 	public static void BanUserForNoReason([Group(1)] string userToBan, string user, bool isWhisper) => UserAccess.BanUser(userToBan, user, null, isWhisper);
 
 	/// <name>Unban User</name>
 	/// <syntax>unban [user]</syntax>
 	/// <summary>Unbans a user from TP.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"unban +(\S+)")]
+	[Command(@"unban (\S+)")]
 	public static void UnbanUser([Group(1)] string userToUnban, string user, bool isWhisper) => UserAccess.UnbanUser(userToUnban, user, isWhisper);
 
 	/// <name>Is Banned</name>
 	/// <syntax>isbanned [users]</syntax>
 	/// <summary>Checks if the specified users are banned.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"(isbanned|banstats|bandata) +(\S+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(isbanned|banstats|bandata) (\S+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void IsBanned([Group(1)] string usersToCheck, string user, bool isWhisper)
 	{
 		bool found = false;
@@ -844,7 +844,7 @@ static class GlobalCommands
 	/// <syntax>add [username] [rank]\nremove [username] [rank]</syntax>
 	/// <summary>Adds or removes a user from a rank. [rank] can be multiple ranks seperated by spaces.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"(add|remove) +(\S+) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(add|remove) (\S+) (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddRemoveRole([Group(1)] string command, [Group(2)] string targetUser, [Group(3)] string roles, string user, bool isWhisper)
 	{
 		targetUser = targetUser.FormatUsername();
@@ -938,7 +938,7 @@ static class GlobalCommands
 	/// <syntax>getaccess [users]</syntax>
 	/// <summary>Gets the access levels of the specified users.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"(getaccess|accessstats|accessdata) +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"(getaccess|accessstats|accessdata) (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void GetAccess([Group(2)] string targetUsers, string user, bool isWhisper)
 	{
 		foreach (string person in targetUsers.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
@@ -960,7 +960,7 @@ static class GlobalCommands
 	/// <name>Run VS</name>
 	/// <syntax>run [modules] [distribution] [goodhp] [evilhp]</syntax>
 	/// <summary>Runs a versus mode bomb.</summary>
-	[Command(@"run +(\d+) +(.*) +(\d+) +(\d+)")]
+	[Command(@"run (\d+) (.*) (\d+) (\d+)")]
 	public static IEnumerator RunVSHP(string user, bool isWhisper, [Group(1)] int modules,
 	[Group(2)] string distributionName, [Group(3)] int GoodHP, [Group(4)] int EvilHP, KMGameInfo inf) => RunWrapper(
 	user, isWhisper,
@@ -1047,9 +1047,9 @@ static class GlobalCommands
 	/// <name>Run Specific</name>
 	/// <syntax>run [distribution] [modules]</syntax>
 	/// <summary>Runs a distribution with a set number of modules. [distribution] can be vanilla, light, mixed, heavy and mods. There are also a few combinations like mixedlight and extralight. Which goes from all vanilla to all modded modules.</summary>
-	[Command(@"run +(.*) +(\d+)")]
+	[Command(@"run (.*) (\d+)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] string distributionName, [Group(2)] int modules, KMGameInfo inf) => RunSpecific(user, isWhisper, modules, distributionName, inf);
-	[Command(@"run +(\d+) +(.*)")]
+	[Command(@"run (\d+) (.*)")]
 	public static IEnumerator RunSpecific(string user, bool isWhisper, [Group(1)] int modules, [Group(2)] string distributionName, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
 		if (!TwitchPlaySettings.data.ModDistributionSettings.TryGetValue(distributionName, out var distribution))
@@ -1069,7 +1069,7 @@ static class GlobalCommands
 	/// <name>Run Mission</name>
 	/// <syntax>run [mission name]</syntax>
 	/// <summary>Runs a named mission. Mods can give any mission ID to run.</summary>
-	[Command(@"run +(?!.* +\d+$|\d+ +.*$)(.+)")]
+	[Command(@"run (?!.* \d+$|\d+ .*$)(.+)")]
 	public static IEnumerator RunMission(string user, bool isWhisper, [Group(1)] string textAfter, KMGameInfo inf) => RunWrapper(user, isWhisper, () =>
 	{
 		if (OtherModes.VSModeOn)
@@ -1099,14 +1099,14 @@ static class GlobalCommands
 	/// <syntax>runraw [mission id]</syntax>
 	/// <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"runraw +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"runraw (.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static IEnumerator RunRaw([Group(1)] string missionName) => RunMissionCoroutine(missionName);
 
 	/// <name>Run Raw Seed</name>
 	/// <syntax>runrawseed [seed] [mission id]</syntax>
 	/// <summary>The same as Run Raw but allows you to specify a seed.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"runrawseed +(\d+) +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"runrawseed (\d+) (.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static IEnumerator RunRawSeed([Group(1)] string seed, [Group(2)] string missionName) => RunMissionCoroutine(missionName, seed);
 
 	/// <name>Profile Help</name>
@@ -1119,7 +1119,7 @@ static class GlobalCommands
 	/// <name>Profile Enable</name>
 	/// <syntax>profile enable [name]</syntax>
 	/// <summary>Enables a profile.</summary>
-	[Command(@"profiles? +(?:enable|activate) +(.+)")]
+	[Command(@"profiles? (?:enable|activate) (.+)")]
 	public static void ProfileEnable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
 		IRCConnection.SendMessage(ProfileHelper.Enable(filename) ?
@@ -1130,7 +1130,7 @@ static class GlobalCommands
 	/// <name>Profile Disable</name>
 	/// <syntax>profile disable [name]</syntax>
 	/// <summary>Disables a profile.</summary>
-	[Command(@"profiles? +(?:disable|deactivate) +(.+)")]
+	[Command(@"profiles? (?:disable|deactivate) (.+)")]
 	public static void ProfileDisable([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
 		IRCConnection.SendMessage(ProfileHelper.Disable(filename) ?
@@ -1141,20 +1141,20 @@ static class GlobalCommands
 	/// <name>Profile Enabled</name>
 	/// <syntax>profile enabled</syntax>
 	/// <summary>Lists out the enabled profiles.</summary>
-	[Command(@"profiles? +enabled(?:list)?")]
+	[Command(@"profiles? enabled(?:list)?")]
 	public static void ProfilesListEnabled(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileListEnabled, ProfileHelper.Profiles.Select(str => str.Replace('_', ' ')).Intersect(TwitchPlaySettings.data.ProfileWhitelist).DefaultIfEmpty("(none)").Join(", ")), user, !isWhisper);
 
 	/// <name>Profile List</name>
 	/// <syntax>profile list</syntax>
 	/// <summary>Lists out all the profiles available.</summary>
-	[Command(@"profiles? +(?:list|all)?")]
+	[Command(@"profiles? (?:list|all)?")]
 	public static void ProfilesListAll(string user, bool isWhisper) => IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.ProfileListAll, TwitchPlaySettings.data.ProfileWhitelist.Join(", ")), user, !isWhisper);
 
 	/// <name>Profile Add/Remove Module</name>
 	/// <syntax>profile add [module] [profile]\nprofile remove [module] [profile]</syntax>
 	/// <summary>Adds or removes a module from a profile. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space. [profile] can be a partial profile name.</summary>
 	/// <restriction>Admin</restriction>
-	[Command("profiles? +(?:(add)|remove) +(\"?)(.+)\\2 +(.+)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command("profiles? (?:(add)|remove) (\"?)(.+)\\2 (.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ProfileModule(string user, bool isWhisper, [Group(1)] bool adding, [Group(3)] string module, [Group(4)] string profileName)
 	{
 		if (!ComponentSolverFactory.GetModuleInformation().Search(module, modInfo => modInfo.moduleDisplayName, out ModuleInformation moduleInfo, out string message) &&
@@ -1183,7 +1183,7 @@ static class GlobalCommands
 	/// <syntax>profile create [profile] [module]</syntax>
 	/// <summary>Creates a new profile with a disabled module. [profile] must be a new profile name. [module] can be a partial module name or ID and can be surrounded with quotes if the name has a space.</summary>
 	/// <restriction>Admin</restriction>
-	[Command("profiles? +create +(\"?)(.+)\\1 +(\"?)(.+)\\3", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command("profiles? create (\"?)(.+)\\1 (\"?)(.+)\\3", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ProfileCreate(string user, bool isWhisper, [Group(2)] string profileName, [Group(4)] string module)
 	{
 		if (!ComponentSolverFactory.GetModuleInformation().Search(module, modInfo => modInfo.moduleDisplayName, out ModuleInformation moduleInfo, out string message) &&
@@ -1208,12 +1208,12 @@ static class GlobalCommands
 			user, !isWhisper
 		);
 	}
-	
+
 	// <name>Profile Delete</name>
 	/// <syntax>profile delete [profile]</syntax>
 	/// <summary>Deletes a profile with the specified name.</summary>
 	/// <restriction>Admin</restriction>
-	[Command("profiles? +delete +(\"?)(.+)\\1", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command("profiles? delete (\"?)(.+)\\1", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void ProfileDelete(string user, bool isWhisper, [Group(2)] string profileName)
 	{
 		var fileName = profileName.Replace(' ', '_');
@@ -1239,7 +1239,7 @@ static class GlobalCommands
 	/// <name>Profile Disabled By</name>
 	/// <syntax>profile disabled by [name]</syntax>
 	/// <summary>Gets the modules disabled by a profile.</summary>
-	[Command(@"profiles? +disabled +by +(.+)")]
+	[Command(@"profiles? disabled by (.+)")]
 	public static void ProfileDisabledBy([Group(1)] string profileName, string user, bool isWhisper) => ProfileWrapper(profileName, user, isWhisper, (filename, profileString) =>
 	{
 		var moduleIDs = ComponentSolverFactory.GetModuleInformation().Select(modInfo => modInfo.moduleID);
@@ -1251,20 +1251,24 @@ static class GlobalCommands
 	/// <syntax>module enable [name]\nmodule disable name</syntax>
 	/// <summary>Enable/Disable a module from appearing on bombs.</summary>
 	[Command(@"module (enable|disable) (.+)")]
-	public static void ModuleToggle([Group(1)] string enableDisable, [Group(2)] string moduleQuery, string user, bool isWhisper) {
-		if (!ComponentSolverFactory.GetModuleInformation().Search(moduleQuery, info => info.moduleDisplayName, out ModuleInformation moduleInfo, out string message)) {
+	public static void ModuleToggle([Group(1)] string enableDisable, [Group(2)] string moduleQuery, string user, bool isWhisper)
+	{
+		if (!ComponentSolverFactory.GetModuleInformation().Search(moduleQuery, info => info.moduleDisplayName, out ModuleInformation moduleInfo, out string message))
+		{
 			IRCConnection.SendMessage(message, user, !isWhisper);
 			return;
 		}
 
 		string moduleID = moduleInfo.moduleID;
-		if (!TwitchPlaySettings.data.ToggleableModules.Any(value => value == moduleInfo.moduleDisplayName || value == moduleID)) {
+		if (!TwitchPlaySettings.data.ToggleableModules.Any(value => value == moduleInfo.moduleDisplayName || value == moduleID))
+		{
 			IRCConnection.SendMessage($"Module \"{moduleInfo.moduleDisplayName}\" cannot be toggled.", user, !isWhisper);
 			return;
 		}
 
 		// Create profile if it doesn't exist
-		if (!File.Exists(ProfileHelper.GetPath("TP_Toggleable"))) {
+		if (!File.Exists(ProfileHelper.GetPath("TP_Toggleable")))
+		{
 			ProfileHelper.Write("TP_Toggleable", new HashSet<string>());
 		}
 
@@ -1272,11 +1276,12 @@ static class GlobalCommands
 		HashSet<string> modules = ProfileHelper.GetProfile("TP_Toggleable").DisabledList;
 		bool enable = enableDisable == "enable";
 		bool enabled = !modules.Contains(moduleID);
-		if (enable == enabled) {
+		if (enable == enabled)
+		{
 			IRCConnection.SendMessage($"Module \"{moduleInfo.moduleDisplayName}\" is already {(enable ? "enabled" : "disabled")}.", user, !isWhisper);
 			return;
 		}
-		
+
 		// Update profile based on the user's command
 		if (enable) modules.Remove(moduleID);
 		else modules.Add(moduleID);

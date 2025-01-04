@@ -16,7 +16,7 @@ public static class AlarmClockCommands
 	/// <name>Snooze Multiple</name>
 	/// <syntax>snooze [times]</syntax>
 	/// <summary>Hits the snooze button on the alarm clock. [times] is the number of times to press the snooze button (up to 50).</summary>
-	[Command(@"snooze +(\d+)")]
+	[Command(@"snooze (\d+)")]
 	public static IEnumerator SnoozeMultiple(TwitchHoldable holdable, string user, bool isWhisper, [Group(1)] int times) =>
 		holdable.RespondToCommand(user, "", isWhisper, Snooze(holdable.Holdable.GetComponent<AlarmClock>(), times));
 

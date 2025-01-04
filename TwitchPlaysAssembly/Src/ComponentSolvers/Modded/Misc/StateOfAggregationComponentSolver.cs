@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System;
 using UnityEngine;
 
 public class StateOfAggregationComponentSolver : ReflectionComponentSolver
@@ -27,13 +27,13 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 		}
 
 		Match mt;
-		if ((mt = Regex.Match(command, @"^submit +([a-zA-Z ]*)[, ]+(\-?[0-9\.]+)(?:(\u00B0?[cC]|\u2103)|(\u00B0?[fF]|\u2109)|([kK]))$")).Success)
+		if ((mt = Regex.Match(command, @"^submit ([a-zA-Z ]*)[, ]+(\-?[0-9\.]+)(?:(\u00B0?[cC]|\u2103)|(\u00B0?[fF]|\u2109)|([kK]))$")).Success)
 		{
 			// Capture group 1: Chemical name
-			string targetCG = mt.Groups[1].ToString().Replace(" ","").ToLower();
+			string targetCG = mt.Groups[1].ToString().Replace(" ", "").ToLower();
 			string[] allCGs = _component.GetValue<string[]>("groups");
 
-			List<string> matchedCGs = allCGs.Where(g => g.ToLower().Replace(" ","").StartsWith(targetCG)).ToList();
+			List<string> matchedCGs = allCGs.Where(g => g.ToLower().Replace(" ", "").StartsWith(targetCG)).ToList();
 			if (matchedCGs.Count() == 0)
 				yield return $"sendtochaterror!hf No chemical group matches \"{mt.Groups[1].ToString()}\".";
 			else if (matchedCGs.Count() > 1)
@@ -46,10 +46,10 @@ public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 
 			if (!float.TryParse(mt.Groups[2].ToString(), out _))
 				yield break; // Ignore invalid numbers, but don't actually use the float representation
-			if (mt.Groups[3].Success)      targetTemp = $"{mt.Groups[2]}\u00B0C";
+			if (mt.Groups[3].Success) targetTemp = $"{mt.Groups[2]}\u00B0C";
 			else if (mt.Groups[4].Success) targetTemp = $"{mt.Groups[2]}\u00B0F";
 			else if (mt.Groups[5].Success) targetTemp = $"{mt.Groups[2]}K";
-			else                           yield break;
+			else yield break;
 
 			// We're executing the command at this point -- it's an unsubmittable penalty if the temperature is not present
 			yield return null;

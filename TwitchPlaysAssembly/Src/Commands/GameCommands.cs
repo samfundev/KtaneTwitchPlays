@@ -36,7 +36,7 @@ static class GameCommands
 	/// <summary>Sets the contents of a note.</summary>
 	/// <argument name="note">The note's number.</argument>
 	/// <argument name="contents">New text of the note.</argument>
-	[Command(@"notes(-?\d+) +(.+)")]
+	[Command(@"notes(-?\d+) (.+)")]
 	public static void SetNotes([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper)
 	{
 		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NotesTaken, index, notes), user, !isWhisper);
@@ -50,7 +50,7 @@ static class GameCommands
 	/// <summary>Appends the contents of a note.</summary>
 	/// <argument name="note">The note's number.</argument>
 	/// <argument name="contents">The text that will be appended to the note.</argument>
-	[Command(@"notes(-?\d+)append +(.+)")]
+	[Command(@"notes(-?\d+)append (.+)")]
 	public static void SetNotesAppend([Group(1)] int index, [Group(2)] string notes, string user, bool isWhisper)
 	{
 		IRCConnection.SendMessage(string.Format(TwitchPlaySettings.data.NotesAppended, index, notes), user, !isWhisper);
@@ -100,7 +100,7 @@ static class GameCommands
 	/// <syntax>claims [user]</syntax>
 	/// <summary>Shows the claims of another user.</summary>
 	/// <argument name="user">The user whose claims you want to see.</argument>
-	[Command(@"claims +(.+)")]
+	[Command(@"claims (.+)")]
 	public static void ShowClaimsOfAnotherPlayer([Group(1)] string targetUser, string user, bool isWhisper)
 	{
 		if (TwitchPlaySettings.data.AnarchyMode)
@@ -128,7 +128,7 @@ static class GameCommands
 	/// <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
 	/// <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
 	/// <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
-	[Command(@"((?:claim *|view *|pin *)+)(?: +(.+)| *(all))")]
+	[Command(@"((?:claim *|view *|pin *)+)(?: (.+)| *(all))")]
 	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat, [Group(3)] bool all)
 	{
 		var strings = all ? null : claimWhat.SplitFull(' ', ',', ';');
@@ -189,7 +189,7 @@ static class GameCommands
 	/// <syntax>unclaim [what]</syntax>
 	/// <summary>Unclaims a list of module codes.</summary>
 	/// <argument name="what">A list of module codes to unclaim.</argument>
-	[Command(@"(?:unclaim|release) +(.+)")]
+	[Command(@"(?:unclaim|release) (.+)")]
 	public static void UnclaimSpecific([Group(1)] string unclaimWhat, string user, bool isWhisper)
 	{
 		var strings = unclaimWhat.SplitFull(' ', ',', ';');
@@ -308,7 +308,7 @@ static class GameCommands
 	/// <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
 	/// <argument name="actions">A combination of claim or view seperated by spaces.</argument>
 	/// <argument name="what">Partial module names seperated by commas or semicolons.</argument>
-	[Command(@"(?:find|search)((?: *claim| *view)*) +(.+)")]
+	[Command(@"(?:find|search)((?: *claim| *view)*) (.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
 		var claim = commands.ContainsIgnoreCase("claim");
@@ -369,7 +369,7 @@ static class GameCommands
 	/// <syntax>findplayer [what]</syntax>
 	/// <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
 	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
-	[Command(@"(?:find *player|player *find|search *player|player *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
+	[Command(@"(?:find *player|player *find|search *player|player *search) (.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindPlayer([Group(1)] string queries, string user, bool isWhisper)
 	{
 		List<string> modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray(), m => m.PlayerName != null)
@@ -382,7 +382,7 @@ static class GameCommands
 	/// <syntax>findsolved [what]</syntax>
 	/// <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
 	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
-	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) +(.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
+	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) (.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindSolved([Group(1)] string queries, string user, bool isWhisper)
 	{
 		List<string> modules = FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray(), m => m.Solved)
@@ -395,7 +395,7 @@ static class GameCommands
 	/// <syntax>findduplicate (what)</syntax>
 	/// <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
 	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
-	[Command(@"(?:find *dup(?:licate)?|dup(?:licate)? *find|search *dup(?:licate)?|dup(?:licate)? *search)( +.+)?")]
+	[Command(@"(?:find *dup(?:licate)?|dup(?:licate)? *find|search *dup(?:licate)?|dup(?:licate)? *search)( .+)?")]
 	public static void FindDuplicate([Group(1)] string queries, string user, bool isWhisper)
 	{
 		var allMatches = (string.IsNullOrEmpty(queries) ? TwitchGame.Instance.Modules : FindModules(queries.SplitFull(',', ';').Select(q => q.Trim()).Distinct().ToArray()))
@@ -516,7 +516,7 @@ static class GameCommands
 	/// <name>Queue Named Command</name>
 	/// <syntax>queue [name] [command]</syntax>
 	/// <summary>Queues a command that can be called by name.</summary>
-	[Command(@"q(?:ueue)? +(?!\s*!)([^!]+) +(!.+)")]
+	[Command(@"q(?:ueue)? (?!\s*!)([^!]+) (!.+)")]
 	public static void EnqueueNamedCommand(IRCMessage msg, [Group(1)] string name, [Group(2)] string command)
 	{
 		if (name.Trim().EqualsIgnoreCase("all"))
@@ -533,7 +533,7 @@ static class GameCommands
 	/// <name>Queue Command</name>
 	/// <syntax>queue [command]</syntax>
 	/// <summary>Queues a command that will be called in order.</summary>
-	[Command(@"q(?:ueue)? +(!.+)")]
+	[Command(@"q(?:ueue)? (!.+)")]
 	public static void EnqueueUnnamedCommand(IRCMessage msg, [Group(1)] string command)
 	{
 		var simplifiedCommand = command.Trim().ToLowerInvariant();
@@ -553,7 +553,7 @@ static class GameCommands
 	/// <syntax>unqueue [command]\ndelqueue [command]\nshowqueue [command]</syntax>
 	/// <summary>Unqueues, deletes or shows a queued command. Unqueuing only allows you to remove your own commands. Deleting is a moderator only action that can remove any command.</summary>
 	/// <argument name="command">The command to find in the queue. Can be "all" for all of your commands or just all commands if delqueue is being used.</argument>
-	[Command(@"(?:(un)|(del)|(show|list))q(?:ueue)?(?: *(all)| +(.+))?")]
+	[Command(@"(?:(un)|(del)|(show|list))q(?:ueue)?(?: *(all)| (.+))?")]
 	public static void UnqueueCommand(string user, bool isWhisper, [Group(1)] bool un, [Group(2)] bool del, [Group(3)] bool show, [Group(4)] bool all, [Group(5)] string command)
 	{
 		if (del && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
@@ -601,7 +601,7 @@ static class GameCommands
 	/// <name>Call Command</name>
 	/// <syntax>call (name)\ncallnow (name)</syntax>
 	/// <summary>Calls a command from the queue. callnow skips the requirement set by Call Set. If (name) is specified calls a named command instead of the next command in the queue.</summary>
-	[Command(@"call( *now)?( +.+)?")]
+	[Command(@"call( *now)?( .+)?")]
 	public static void CallQueuedCommand(string user, [Group(1)] bool now, [Group(2)] string name)
 	{
 		name = (name?.Trim()) ?? "";
@@ -664,7 +664,7 @@ static class GameCommands
 	/// <name>Call Set</name>
 	/// <syntax>callset [minimum]</syntax>
 	/// <summary>Sets a minimum a number of times Call Command must be run for a command to be called.</summary>
-	[Command(@"callset +(\d*)")]
+	[Command(@"callset (\d*)")]
 	public static void CallSetCommand(string user, [Group(1)] int minimum)
 	{
 		if (minimum <= 0 || minimum >= 25)
@@ -688,7 +688,7 @@ static class GameCommands
 	/// <syntax>delcall [user]</syntax>
 	/// <summary>Removes a user's call.</summary>
 	/// <restriction>Mod</restriction>
-	[Command(@"delcall +(.+)", AccessLevel.Mod, AccessLevel.Mod)]
+	[Command(@"delcall (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void DeleteQueuedPlayer([Group(1)] string callUser, string user)
 	{
 		callUser = callUser.FormatUsername();
@@ -753,7 +753,7 @@ static class GameCommands
 	/// <syntax>setmultiplier [multiplier]</syntax>
 	/// <summary>Sets the time mode multiplier.</summary>
 	/// <restriction>Admin</restriction>
-	[Command(@"setmultiplier +(\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
+	[Command(@"setmultiplier (\d*\.?\d+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetMultiplier([Group(1)] float multiplier) => OtherModes.SetMultiplier(multiplier);
 
 	/// <name>Solve Bomb</name>
@@ -799,7 +799,7 @@ static class GameCommands
 	/// <name>Assign</name>
 	/// <syntax>assign [user] [codes]</syntax>
 	/// <summary>Assigns modules to a user based on their module codes.</summary>
-	[Command(@"assign +(\S+) +(.+)")]
+	[Command(@"assign (\S+) (.+)")]
 	public static void AssignModuleTo([Group(1)] string targetUser, [Group(2)] string queries, string user)
 	{
 		targetUser = targetUser.FormatUsername();
