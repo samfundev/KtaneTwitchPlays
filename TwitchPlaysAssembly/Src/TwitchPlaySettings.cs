@@ -341,74 +341,70 @@ public class TwitchPlaySettingsData
 		{ "easy", new ModuleDistributions {
 			DisplayName = "Strict Easy",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.5f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.6f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
 				new DistributionPool(0.4f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.1f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
 			}
 		}},
 		{ "medium", new ModuleDistributions {
 			DisplayName = "Strict Medium",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.4f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
-				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.2f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
-				new DistributionPool(0.05f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.55f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.4f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.05f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
 			}
 		}},
 		{ "hard", new ModuleDistributions {
 			DisplayName = "Strict Hard",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.3f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.5f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
 				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.25f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
-				new DistributionPool(0.1f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.1f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
+				new DistributionPool(0.05f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
 			}
 		}},
 		{ "expert", new ModuleDistributions {
 			DisplayName = "Strict Expert",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.2f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.4f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
 				new DistributionPool(0.3f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.3f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
-				new DistributionPool(0.2f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.15f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
+				new DistributionPool(0.15f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
 			}
 		}},
 		{ "easy+boss", new ModuleDistributions {
-			DisplayName = "Strict Easy",
+			DisplayName = "Strict Easy + Boss",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.5f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.6f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
 				new DistributionPool(0.4f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.1f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
 				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
 			}
 		}},
 		{ "medium+boss", new ModuleDistributions {
-			DisplayName = "Strict Medium",
+			DisplayName = "Strict Medium + Boss",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.4f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
-				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.2f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
-				new DistributionPool(0.05f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.55f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.4f, "Score: >= 9, <= 15"),
+				new DistributionPool(0.05f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
 				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
 			}
 		}},
 		{ "hard+boss", new ModuleDistributions {
-			DisplayName = "Strict Hard",
+			DisplayName = "Strict Hard + Boss",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.3f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.5f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
 				new DistributionPool(0.35f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.25f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
-				new DistributionPool(0.1f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.1f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
+				new DistributionPool(0.05f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
 				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
 			}
 		}},
 		{ "expert+boss", new ModuleDistributions {
-			DisplayName = "Strict Expert",
+			DisplayName = "Strict Expert + Boss",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.2f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.4f, "Score: <= 8", /* Reward */ 3, /* Time */ 90),
 				new DistributionPool(0.3f, "Score: >= 9, <= 15"),
-				new DistributionPool(0.3f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 90),
-				new DistributionPool(0.2f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.15f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
+				new DistributionPool(0.15f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
 				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
 			}
 		}},
