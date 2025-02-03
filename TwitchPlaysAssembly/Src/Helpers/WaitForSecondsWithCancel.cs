@@ -27,7 +27,8 @@ public class WaitForSecondsWithCancel : CustomYieldInstruction
 	{
 		get
 		{
-			if (!_started) {
+			if (!_started)
+			{
 				_started = true;
 				_startingTime = Time.time;
 			}

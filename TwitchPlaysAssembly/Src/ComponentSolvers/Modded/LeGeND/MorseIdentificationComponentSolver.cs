@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System;
+﻿using System;
+using System.Collections;
 
 [ModuleID("lgndMorseIdentification")]
 public class MorseIdentificationComponentSolver : ReflectionComponentSolver

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
-using System;
 
 [ModuleID("lgndHyperactiveNumbers")]
 public class HyperactiveNumsComponentSolver : ReflectionComponentSolver

@@ -4,6 +4,7 @@
 [*.{cs,vb}]
 
 indent_style = tab
+end_of_line = lf
 
 dotnet_diagnostic.CA1001.severity = warning
 dotnet_diagnostic.CA1009.severity = warning

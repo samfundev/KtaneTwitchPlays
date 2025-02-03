@@ -66,7 +66,7 @@ public class LookLookAwayComponentSolver : ReflectionComponentSolver
 		{
 			DoInteractionHighlight(ModuleSelectable);
 			yield return new WaitForSeconds(.05f);
-			while (_component.GetValue<int>("_currentDirection") != (int)answer[i]) yield return true;
+			while (_component.GetValue<int>("_currentDirection") != (int) answer[i]) yield return true;
 			DoInteractionEnd(ModuleSelectable);
 			yield return new WaitForSeconds(.05f);
 		}

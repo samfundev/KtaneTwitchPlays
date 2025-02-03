@@ -70,7 +70,7 @@ static class ProfileHelper
 			}
 		));
 	}
-	
+
 	public static void Delete(string profile)
 	{
 		if (!Directory.Exists(ProfileFolder)) return;

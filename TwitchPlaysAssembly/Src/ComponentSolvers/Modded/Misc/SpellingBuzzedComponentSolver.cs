@@ -20,7 +20,7 @@ public class SpellingBuzzedComponentSolver : ReflectionComponentSolver
 	public override IEnumerator Respond(string[] split, string command)
 	{
 		command = command.ToUpperInvariant();
-		if(command.EqualsAny("RESET"))
+		if (command.EqualsAny("RESET"))
 		{
 			yield return null;
 			yield return Click(8, 0);

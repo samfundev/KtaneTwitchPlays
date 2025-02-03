@@ -21,9 +21,11 @@ public class TwitchBomb : MonoBehaviour
 
 	[HideInInspector]
 	private Bomb _bomb;
-	public Bomb Bomb {
+	public Bomb Bomb
+	{
 		get => _bomb;
-		set {
+		set
+		{
 			_bomb = value;
 
 			var floatingHoldable = Bomb.GetComponent<FloatingHoldable>();

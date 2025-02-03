@@ -85,7 +85,7 @@ public sealed class DistributionPool : ISerializable
 		{
 			__poolDef = value;
 			Type = PoolType.Invalid;
-			Arguments = __poolDef.Split(new char[] {',', ':'}).Select(str => str.Trim()).ToList();
+			Arguments = __poolDef.Split(new char[] { ',', ':' }).Select(str => str.Trim()).ToList();
 			PoolSettings = new Dictionary<string, int>();
 
 			string mode = Arguments[0].ToUpperInvariant();
@@ -185,7 +185,7 @@ public sealed class DistributionPool : ISerializable
 					FinalType = FinalType ?? PoolType.Fixed;
 					if (Arguments.Count == 0)
 						return; // Not valid
-					// All cases here use the argument list when generating pools
+								// All cases here use the argument list when generating pools
 					break;
 
 				case "BOSSMODULE":
@@ -258,12 +258,13 @@ public sealed class DistributionPool : ISerializable
 					AllowedSources = (KMComponentPool.ComponentSource) PoolSettings["Component Source"],
 					Count = count
 				};
-	
+
 			case PoolType.AllModules:
 				// This one doesn't exist in the game, so we have to make it ourselves.
-				ModulePool = AllModules.Where(Module => {
-					if (Module.IsMod) return (PoolSettings["Component Source"] & (int)KMComponentPool.ComponentSource.Mods) != 0;
-					else              return (PoolSettings["Component Source"] & (int)KMComponentPool.ComponentSource.Base) != 0;
+				ModulePool = AllModules.Where(Module =>
+				{
+					if (Module.IsMod) return (PoolSettings["Component Source"] & (int) KMComponentPool.ComponentSource.Mods) != 0;
+					else return (PoolSettings["Component Source"] & (int) KMComponentPool.ComponentSource.Base) != 0;
 				}).ToList();
 				break;
 
@@ -305,7 +306,8 @@ public sealed class DistributionPool : ISerializable
 				// making some modules more likely than others, and if any module is missing then we bail out.
 				Dictionary<string, KMGameInfo.KMModuleInfo> reverseLookup = AllModules.ToDictionary(x => GetTwitchPlaysID(x), x => x);
 
-				ModulePool = Arguments.Select(Module => {
+				ModulePool = Arguments.Select(Module =>
+				{
 					if (!reverseLookup.ContainsKey(Module))
 						throw new InvalidOperationException($"This distribution contains a fixed pool, and at least one of the modules in that pool ({Module}) is not enabled.");
 					return reverseLookup[Module];
