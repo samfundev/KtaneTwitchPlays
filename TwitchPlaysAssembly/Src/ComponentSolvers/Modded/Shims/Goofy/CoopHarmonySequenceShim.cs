@@ -12,8 +12,7 @@ public class CoopHarmonySequenceShim : ReflectionComponentSolverShim
 	{
 		if (Unshimmed.ForcedSolveMethod == null) yield break;
 		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-		while (coroutine.MoveNext())
-			yield return coroutine.Current;
+		yield return coroutine;
 		while (_component.GetValue<bool>("harmonyRunning"))
 			yield return true;
 	}

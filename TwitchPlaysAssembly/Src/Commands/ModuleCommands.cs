@@ -77,9 +77,7 @@ static class ModuleCommands
 	public static IEnumerator Show(TwitchModule module, object yield)
 	{
 		bool select = !module.BombComponent.GetModuleID().EqualsAny("lookLookAway");
-		IEnumerator focusCoroutine = module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace, select);
-		while (focusCoroutine.MoveNext())
-			yield return focusCoroutine.Current;
+		yield return module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace, select);
 
 		yield return new WaitForSeconds(0.5f);
 		yield return yield is float delay ? new WaitForSecondsWithCancel(delay, false, module.Solver) : yield;
@@ -88,9 +86,7 @@ static class ModuleCommands
 			module.StartCoroutine(module.Bomb.Defocus(module.Selectable, module.FrontFace, select));
 			yield break;
 		}
-		IEnumerator defocusCoroutine = module.Bomb.Defocus(module.Selectable, module.FrontFace, select);
-		while (defocusCoroutine.MoveNext())
-			yield return defocusCoroutine.Current;
+		yield return module.Bomb.Defocus(module.Selectable, module.FrontFace, select);
 
 		yield return new WaitForSeconds(0.5f);
 	}
@@ -588,9 +584,7 @@ static class ModuleCommands
 			TwitchGame.Instance.Modules.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.BombID)) < TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims
 		)
 		{
-			var response = module.Solver.RespondToCommand(user, cmd);
-			while (response.MoveNext())
-				yield return response.Current;
+			yield return module.Solver.RespondToCommand(user, cmd);
 
 			module.Solver.EnableAnarchyStrike();
 		}

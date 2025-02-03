@@ -21,8 +21,7 @@ public abstract class ComponentSolverShim : ComponentSolver
 		object result = Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 		if (result is IEnumerator e)
 		{
-			while (e.MoveNext())
-				yield return e.Current;
+			yield return e;
 		}
 		else
 		{

@@ -50,11 +50,7 @@ public class TranslatedButtonComponentSolver : ComponentSolver
 			}
 
 			if (second < 0 || second > 9) yield break;
-			IEnumerator releaseCoroutine = ReleaseCoroutine(second);
-			while (releaseCoroutine.MoveNext())
-			{
-				yield return releaseCoroutine.Current;
-			}
+			yield return ReleaseCoroutine(second);
 		}
 	}
 

@@ -132,9 +132,7 @@ public class TPElevatorSwitch : MonoBehaviour
 			yield break;
 		var elevatorSwitch = setupRoom.ElevatorSwitch;
 
-		IEnumerator dropHoldables = TwitchPlaysService.Instance.DropAllHoldables();
-		while (dropHoldables.MoveNext())
-			yield return dropHoldables.Current;
+		yield return TwitchPlaysService.Instance.DropAllHoldables();
 		yield return new WaitForSeconds(0.25f);
 
 		const float duration = 2f;
@@ -218,8 +216,7 @@ public class TPElevatorSwitch : MonoBehaviour
 					break;
 			}
 		}
-		while (toggleSwitch != null && toggleSwitch.MoveNext())
-			yield return toggleSwitch.Current;
+		yield return toggleSwitch;
 	}
 
 	public static bool IsON => GameplayState.GameplayRoomPrefabOverride != null;

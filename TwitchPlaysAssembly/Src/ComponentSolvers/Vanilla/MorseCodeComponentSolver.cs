@@ -50,8 +50,7 @@ public class MorseCodeComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		while (!Module.BombComponent.IsActive) yield return true;
-		IEnumerator solve = RespondToCommandInternal($"tx {((MorseCodeComponent) Module.BombComponent).ChosenFrequency}");
-		while (solve.MoveNext()) yield return solve.Current;
+		yield return RespondToCommandInternal($"tx {((MorseCodeComponent) Module.BombComponent).ChosenFrequency}");
 	}
 
 	private readonly KeypadButton _upButton;

@@ -20,8 +20,7 @@ public class SwanShim : ComponentSolverShim
 		int resetsPreCommand = _component.GetValue<int>("systemResetCounter");
 
 		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-			yield return command.Current;
+		yield return command;
 
 		// Award a point upon a successful system reset.
 		if (_component.GetValue<int>("systemResetCounter") != resetsPreCommand)
@@ -35,9 +34,7 @@ public class SwanShim : ComponentSolverShim
 		if (!_component.GetValue<bool>("solved") && _component.GetValue<bool>("executeLock"))
 		{
 			if (Unshimmed.ForcedSolveMethod == null) yield break;
-			var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-			while (coroutine.MoveNext())
-				yield return coroutine.Current;
+			yield return (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 			yield break;
 		}
 		Module.BombComponent.StartCoroutine(HandleSolve());
@@ -53,9 +50,7 @@ public class SwanShim : ComponentSolverShim
 		if (input.Length > ans.Length)
 		{
 			if (Unshimmed.ForcedSolveMethod == null) yield break;
-			var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-			while (coroutine.MoveNext())
-				yield return coroutine.Current;
+			yield return (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 			yield break;
 		}
 		else
@@ -67,9 +62,7 @@ public class SwanShim : ComponentSolverShim
 				else if (input[i] != ans[i])
 				{
 					if (Unshimmed.ForcedSolveMethod == null) yield break;
-					var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-					while (coroutine.MoveNext())
-						yield return coroutine.Current;
+					yield return (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 					yield break;
 				}
 			}

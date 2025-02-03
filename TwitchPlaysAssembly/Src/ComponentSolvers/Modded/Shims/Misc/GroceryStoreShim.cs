@@ -28,8 +28,7 @@ public class GroceryStoreShim : ComponentSolverShim
 		}
 
 		IEnumerator command = RespondToCommandUnshimmed(inputCommand.ToLowerInvariant().Trim());
-		while (command.MoveNext())
-			yield return command.Current;
+		yield return command;
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()

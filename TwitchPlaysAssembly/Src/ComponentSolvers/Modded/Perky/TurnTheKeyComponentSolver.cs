@@ -23,8 +23,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		yield return null;
-		IEnumerator solve = DelayKeyTurn(true, false, true);
-		while (solve.MoveNext()) yield return solve.Current;
+		yield return DelayKeyTurn(true, false, true);
 	}
 
 	private bool CanTurnEarlyWithoutStrike(int turnTime)
@@ -150,9 +149,7 @@ public class TurnTheKeyComponentSolver : ComponentSolver
 		if (commands.Length != 2 || !commands[0].Equals("turn", StringComparison.InvariantCultureIgnoreCase))
 			yield break;
 
-		IEnumerator turn = ReleaseCoroutine(commands[1]);
-		while (turn.MoveNext())
-			yield return turn.Current;
+		yield return ReleaseCoroutine(commands[1]);
 	}
 
 	private IEnumerator ReleaseCoroutine(string second)

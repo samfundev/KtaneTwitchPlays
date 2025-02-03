@@ -34,8 +34,7 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 
 		var enumerator = Respond(split, inputCommand);
 		if (enumerator == null) yield break;
-		while (enumerator.MoveNext())
-			yield return enumerator.Current;
+		yield return enumerator;
 	}
 
 	public abstract IEnumerator Respond(string[] split, string command);

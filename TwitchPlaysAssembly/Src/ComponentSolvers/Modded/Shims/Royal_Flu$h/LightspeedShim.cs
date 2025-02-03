@@ -15,8 +15,7 @@ public class LightspeedShim : ComponentSolverShim
 		if (Unshimmed.ForcedSolveMethod == null) yield break;
 		yield return null;
 		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-		while (coroutine.MoveNext())
-			yield return coroutine.Current;
+		yield return coroutine;
 		while (!_component.GetValue<bool>("moduleSolved"))
 			yield return true;
 	}

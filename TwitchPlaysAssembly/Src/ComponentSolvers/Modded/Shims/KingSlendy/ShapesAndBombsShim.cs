@@ -29,9 +29,7 @@ public class ShapesAndBombsShim : ComponentSolverShim
 		}
 		else
 		{
-			IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-			while (command.MoveNext())
-				yield return command.Current;
+			yield return RespondToCommandUnshimmed(inputCommand);
 		}
 	}
 

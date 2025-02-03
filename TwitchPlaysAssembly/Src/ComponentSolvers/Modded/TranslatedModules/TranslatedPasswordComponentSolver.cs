@@ -43,9 +43,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 				if (!int.TryParse(cycle, out int spinnerIndex) || !alreadyCycled.Add(spinnerIndex) || spinnerIndex < 1 || spinnerIndex > _downButtons.Length)
 					continue;
 
-				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(spinnerIndex - 1);
-				while (spinnerCoroutine.MoveNext())
-					yield return spinnerCoroutine.Current;
+				yield return CycleCharacterSpinnerCoroutine(spinnerIndex - 1);
 			}
 			yield break;
 		}
@@ -65,9 +63,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 
 		yield return "password";
 
-		IEnumerator solveCoroutine = SolveCoroutine(lettersToSubmit);
-		while (solveCoroutine.MoveNext())
-			yield return solveCoroutine.Current;
+		yield return SolveCoroutine(lettersToSubmit);
 	}
 
 	private IEnumerator CycleCharacterSpinnerCoroutine(int index)
@@ -87,9 +83,7 @@ public class TranslatedPasswordComponentSolver : ComponentSolver
 	{
 		for (int characterIndex = 0; characterIndex < characters.Length; ++characterIndex)
 		{
-			IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(characterIndex, characters.Substring(characterIndex, 1));
-			while (subcoroutine.MoveNext())
-				yield return subcoroutine.Current;
+			yield return GetCharacterSpinnerToCharacterCoroutine(characterIndex, characters.Substring(characterIndex, 1));
 
 			//Break out of the sequence if a column spinner doesn't have a matching character
 			if (_display[characterIndex].text.Equals(characters.Substring(characterIndex, 1), StringComparison.InvariantCultureIgnoreCase))

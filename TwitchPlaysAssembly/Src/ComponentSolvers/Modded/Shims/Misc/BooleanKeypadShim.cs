@@ -16,8 +16,7 @@ public class BooleanKeypadShim : ComponentSolverShim
 	{
 		inputCommand = inputCommand.ToLowerInvariant().Trim().Replace("press", "solve").Replace("submit", "solve");
 		IEnumerator command = RespondToCommandUnshimmed(inputCommand.ToLowerInvariant().Trim());
-		while (command.MoveNext())
-			yield return command.Current;
+		yield return command;
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()

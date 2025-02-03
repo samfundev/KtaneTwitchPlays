@@ -25,8 +25,7 @@ public abstract class ReflectionComponentSolverShim : ReflectionComponentSolver
 		object result = Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
 		if (result is IEnumerator e)
 		{
-			while (e.MoveNext())
-				yield return e.Current;
+			yield return e;
 		}
 		else
 		{

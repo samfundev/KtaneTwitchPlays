@@ -29,9 +29,7 @@ public class PasswordComponentSolver : ComponentSolver
 			yield return "password";
 			for (int i = 0; i < 5; i++)
 			{
-				IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[i]);
-				while (spinnerCoroutine.MoveNext())
-					yield return spinnerCoroutine.Current;
+				yield return CycleCharacterSpinnerCoroutine(_spinners[i]);
 			}
 		}
 		else if ((m = Regex.Match(inputCommand, @"^\s*cycle\s+([ \d]+)\s*$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)).Success)
@@ -51,9 +49,7 @@ public class PasswordComponentSolver : ComponentSolver
 				yield return "password";
 				foreach (var slot in slots)
 				{
-					IEnumerator spinnerCoroutine = CycleCharacterSpinnerCoroutine(_spinners[slot - 1]);
-					while (spinnerCoroutine.MoveNext())
-						yield return spinnerCoroutine.Current;
+					yield return CycleCharacterSpinnerCoroutine(_spinners[slot - 1]);
 				}
 			}
 		}
@@ -65,9 +61,7 @@ public class PasswordComponentSolver : ComponentSolver
 			for (int ix = 0; ix < characters.Length; ++ix)
 			{
 				CharSpinner spinner = _spinners[ix];
-				IEnumerator subcoroutine = GetCharacterSpinnerToCharacterCoroutine(spinner, characters[ix]);
-				while (subcoroutine.MoveNext())
-					yield return subcoroutine.Current;
+				yield return GetCharacterSpinnerToCharacterCoroutine(spinner, characters[ix]);
 
 				//Break out of the sequence if a column spinner doesn't have a matching character
 				if (char.ToLowerInvariant(spinner.GetCurrentChar()) ==
@@ -106,8 +100,7 @@ public class PasswordComponentSolver : ComponentSolver
 	protected override IEnumerator ForcedSolveIEnumerator()
 	{
 		while (!Module.BombComponent.IsActive) yield return true;
-		IEnumerator solve = RespondToCommandInternal(((PasswordComponent) Module.BombComponent).CorrectWord);
-		while (solve.MoveNext()) yield return solve.Current;
+		yield return RespondToCommandInternal(((PasswordComponent) Module.BombComponent).CorrectWord);
 	}
 
 	private readonly List<CharSpinner> _spinners;

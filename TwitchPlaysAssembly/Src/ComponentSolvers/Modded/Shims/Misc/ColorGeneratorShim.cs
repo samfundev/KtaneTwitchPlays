@@ -25,8 +25,7 @@ public class ColorGeneratorShim : ComponentSolverShim
 	{
 		if (Unshimmed.ForcedSolveMethod == null) yield break;
 		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-		while (coroutine.MoveNext())
-			yield return coroutine.Current;
+		yield return coroutine;
 		string ans = _component.GetValue<string>("displayAnswer");
 		while (ans != _component.GetValue<TextMesh>("displayText").text)
 			yield return true;

@@ -38,9 +38,7 @@ public class ColourFlashESShim : ComponentSolverShim
 		else
 		{
 			inputCommand = inputCommand.ToLowerInvariant().Replace("any", "cualq");
-			IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-			while (command.MoveNext())
-				yield return command.Current;
+			yield return RespondToCommandUnshimmed(inputCommand);
 		}
 	}
 

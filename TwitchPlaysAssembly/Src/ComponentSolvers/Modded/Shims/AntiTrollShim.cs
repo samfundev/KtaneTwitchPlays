@@ -27,11 +27,7 @@ public class AntiTrollShim : ComponentSolverShim
 		}
 		else
 		{
-			IEnumerator respondToCommandInternal = RespondToCommandUnshimmed(inputCommand);
-			while (respondToCommandInternal.MoveNext())
-			{
-				yield return respondToCommandInternal.Current;
-			}
+			yield return RespondToCommandUnshimmed(inputCommand);
 		}
 	}
 

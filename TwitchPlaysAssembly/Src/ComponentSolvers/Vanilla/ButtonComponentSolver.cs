@@ -32,9 +32,7 @@ public class ButtonComponentSolver : ComponentSolver
 				yield break;
 			yield return "tap2";
 
-			IEnumerator releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
-			while (releaseCoroutine.MoveNext())
-				yield return releaseCoroutine.Current;
+			yield return ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
 		}
 		else if (!_held && inputCommand.Equals("hold"))
 		{
@@ -62,8 +60,7 @@ public class ButtonComponentSolver : ComponentSolver
 			else
 				releaseCoroutine = ReleaseCoroutineModded(inputCommand.Substring(inputCommand.IndexOf(' ')));
 
-			while (releaseCoroutine.MoveNext())
-				yield return releaseCoroutine.Current;
+			yield return releaseCoroutine;
 		}
 	}
 

@@ -53,8 +53,7 @@ public class PressXShim : ComponentSolverShim
 		int curTime = (int) timerComponent.TimeRemaining;
 		while ((int) timerComponent.TimeRemaining == curTime) yield return "trycancel The button was not pressed due to a request to cancel";
 		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-			yield return command.Current;
+		yield return command;
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()

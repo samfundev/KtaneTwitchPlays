@@ -30,16 +30,12 @@ public class WireSequenceComponentSolver : ComponentSolver
 			int page = (int) CurrentPageField.GetValue(Module.BombComponent);
 			for (int i = page - 1; i >= 0; i--)
 			{
-				IEnumerator changePage = wireSeq.ChangePage(i + 1, i);
-				while (changePage.MoveNext())
-					yield return changePage.Current;
+				yield return wireSeq.ChangePage(i + 1, i);
 			}
 			for (int i = 0; i < page; i++)
 			{
 				yield return new WaitForSecondsWithCancel(3.0f, false);
-				IEnumerator changePage = wireSeq.ChangePage(i, i + 1);
-				while (changePage.MoveNext())
-					yield return changePage.Current;
+				yield return wireSeq.ChangePage(i, i + 1);
 			}
 			yield return "trycancel The cycle command of Wire Sequences was cancelled";
 			yield break;

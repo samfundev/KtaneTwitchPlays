@@ -92,28 +92,20 @@ public static class FreeplayCommands
 	{
 		if (parameters.RegexMatch(out Match m, @"(\d):(\d{1,3}):(\d{2})"))
 		{
-			var e = SetBombTimer(holdable, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value));
-			while (e.MoveNext())
-				yield return e.Current;
+			yield return SetBombTimer(holdable, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value));
 		}
 		else if (parameters.RegexMatch(out m, @"(\d{1,3}):(\d{2})"))
 		{
-			var e = SetBombTimer(holdable, 0, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
-			while (e.MoveNext())
-				yield return e.Current;
+			yield return SetBombTimer(holdable, 0, int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
 		}
 
 		if (MultipleBombs.Installed() && parameters.RegexMatch(out m, @"(\d+) bombs"))
 		{
-			var e = ChangeBombCount(holdable, int.Parse(m.Groups[1].Value));
-			while (e.MoveNext())
-				yield return e.Current;
+			yield return ChangeBombCount(holdable, int.Parse(m.Groups[1].Value));
 		}
 		if (parameters.RegexMatch(out m, @"(\d+) modules"))
 		{
-			var e = ChangeModuleCount(holdable, int.Parse(m.Groups[1].Value));
-			while (e.MoveNext())
-				yield return e.Current;
+			yield return ChangeModuleCount(holdable, int.Parse(m.Groups[1].Value));
 		}
 
 		yield return null;

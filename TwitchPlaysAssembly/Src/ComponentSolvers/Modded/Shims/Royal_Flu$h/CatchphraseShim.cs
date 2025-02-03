@@ -25,8 +25,7 @@ public class CatchphraseShim : ComponentSolverShim
 		}
 
 		IEnumerator command = RespondToCommandUnshimmed(inputCommand);
-		while (command.MoveNext())
-			yield return command.Current;
+		yield return command;
 	}
 
 	protected override IEnumerator ForcedSolveIEnumeratorShimmed()

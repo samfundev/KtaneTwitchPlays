@@ -109,15 +109,11 @@ public abstract class ComponentSolver
 
 			if (!TwitchPlaySettings.data.AnarchyMode)
 			{
-				IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
-				while (focusDefocus.MoveNext())
-					yield return focusDefocus.Current;
+				yield return Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
 
 				yield return new WaitForSeconds(0.5f);
 
-				focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace, select);
-				while (focusDefocus.MoveNext())
-					yield return focusDefocus.Current;
+				yield return Module.Bomb.Defocus(Module.Selectable, FrontFace, select);
 
 				yield return new WaitForSeconds(0.5f);
 				_currentUserNickName = null;
@@ -138,10 +134,7 @@ public abstract class ComponentSolver
 
 		AppreciateArtComponentSolver.ShowAppreciation(Module);
 
-		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
-		while (focusCoroutine.MoveNext())
-			yield return focusCoroutine.Current;
-
+		yield return Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
 		yield return new WaitForSeconds(0.5f);
 
 		bool parseError = false;
@@ -294,9 +287,7 @@ public abstract class ComponentSolver
 					{
 						TwitchGame.ModuleCameras?.Hide();
 						TwitchGame.ModuleCameras?.SetHudVisibility(false);
-						IEnumerator hideUI = Module.Bomb.HideMainUIWindow();
-						while (hideUI.MoveNext())
-							yield return hideUI.Current;
+						yield return Module.Bomb.HideMainUIWindow();
 					}
 
 					hideCamera = true;
@@ -456,9 +447,7 @@ public abstract class ComponentSolver
 		{
 			TwitchGame.ModuleCameras?.Show();
 			TwitchGame.ModuleCameras?.SetHudVisibility(true);
-			IEnumerator showUI = Module.Bomb.ShowMainUIWindow();
-			while (showUI.MoveNext())
-				yield return showUI.Current;
+			yield return Module.Bomb.ShowMainUIWindow();
 		}
 
 		if (_musicPlayer != null)
@@ -637,9 +626,7 @@ public abstract class ComponentSolver
 		}
 		else
 		{
-			var enumerator = RespondToCommandInternal(command);
-			while (enumerator.MoveNext())
-				yield return enumerator.Current;
+			yield return RespondToCommandInternal(command);
 		}
 	}
 
@@ -819,9 +806,7 @@ public abstract class ComponentSolver
 			yield return new WaitForSeconds(0.1f);
 
 		_readyToTurn = false;
-		IEnumerator turnCoroutine = Module.Bomb.TurnBomb();
-		while (turnCoroutine.MoveNext())
-			yield return turnCoroutine.Current;
+		yield return Module.Bomb.TurnBomb();
 
 		yield return new WaitForSeconds(0.5f);
 	}

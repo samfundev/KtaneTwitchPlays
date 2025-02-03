@@ -87,13 +87,8 @@ static class GameCommands
 		if (!TwitchPlaysService.Instance.Holdables.TryGetValue("alarm", out var alarmClock))
 			yield break;
 
-		var e = alarmClock.Hold();
-		while (e.MoveNext())
-			yield return e.Current;
-
-		e = AlarmClockCommands.Snooze(alarmClock.Holdable.GetComponent<AlarmClock>());
-		while (e.MoveNext())
-			yield return e.Current;
+		yield return alarmClock.Hold();
+		yield return AlarmClockCommands.Snooze(alarmClock.Holdable.GetComponent<AlarmClock>());
 	}
 
 	/// <name>Show Claims</name>

@@ -12,8 +12,7 @@ public class HieroglyphicsShim : ComponentSolverShim
 	{
 		if (Unshimmed.ForcedSolveMethod == null) yield break;
 		var coroutine = (IEnumerator) Unshimmed.ForcedSolveMethod.Invoke(Unshimmed.CommandComponent, null);
-		while (coroutine.MoveNext())
-			yield return coroutine.Current;
+		yield return coroutine;
 		while (!Module.BombComponent.IsSolved)
 			yield return true;
 	}
