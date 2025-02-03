@@ -168,6 +168,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["GreenWires"] = module => new GreenWiresComponentSolver(module);
 		ModComponentSolverCreators["traffic_board"] = module => new TrafficBoardComponentSolver(module);
 		ModComponentSolverCreators["NeedyPou"] = module => new PouComponentSolver(module);
+		ModComponentSolverCreators["CornflowerButtonModule"] = module => new CornflowerButtonComponentSolver(module);
 
 		//ZekNikZ Modules
 		ModComponentSolverCreators["EdgeworkModule"] = module => new EdgeworkComponentSolver(module);
@@ -304,6 +305,8 @@ public static class ComponentSolverFactory
 		ModComponentSolverCreators["DIWindow"] = module => new DriveInWindowShim(module);
 		ModComponentSolverCreators["AlienModule"] = module => new AlienFilingColorsShim(module);
 		ModComponentSolverCreators["double_on"] = module => new DoubleOnShim(module);
+		ModComponentSolverCreators["BlueNeedy"] = module => new BlueRedShim(module);
+		ModComponentSolverCreators["RedNeedy"] = module => new BlueRedShim(module);
 
 		// Anti-troll shims - These are specifically meant to allow the troll commands to be disabled.
 		ModComponentSolverCreators["MazeV2"] = module => new AntiTrollShim(module, new Dictionary<string, string> { { "spinme", "Sorry, I am not going to waste time spinning every single pipe 360 degrees." } });
@@ -494,6 +497,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["GreenWires"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Green Wires" };
 		ModComponentSolverInformation["traffic_board"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Traffic Board" };
 		ModComponentSolverInformation["NeedyPou"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Pou" };
+		ModComponentSolverInformation["CornflowerButtonModule"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "The Cornflower Button" };
 
 		//GoodHood
 		ModComponentSolverInformation["buttonOrder"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Button Order" };
