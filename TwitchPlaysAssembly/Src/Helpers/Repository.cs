@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 public static class Repository
 {
 	public static string RawJSON;
-	public static List<KtaneModule> Modules;
+	public static List<KtaneModule> Modules = new List<KtaneModule>();
 
 	public static IEnumerator LoadData()
 	{
@@ -24,13 +24,13 @@ public static class Repository
 
 	public static bool ModHasQuirk(this string moduleID, string quirk)
 	{
-		var match = Modules?.Find(module => module.ModuleID == moduleID);
+		var match = Modules.Find(module => module.ModuleID == moduleID);
 		return (match?.Quirks ?? "").Contains(quirk);
 	}
 
 	public static string GetManual(string moduleID)
 	{
-		var match = Modules?.Find(module => module.ModuleID == moduleID);
+		var match = Modules.Find(module => module.ModuleID == moduleID);
 		return match?.FileName ?? match?.Name;
 	}
 
