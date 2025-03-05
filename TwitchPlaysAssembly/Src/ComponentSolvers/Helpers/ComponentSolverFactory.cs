@@ -359,214 +359,41 @@ public static class ComponentSolverFactory
 
 		//All of these modules are built into Twitch plays.
 
-			// Asimir
-			{ "murder", new ModuleInformation { moduleDisplayName = "Murder" } },
-			{ "SeaShells", new ModuleInformation { moduleDisplayName = "Sea Shells" } },
-			{ "shapeshift", new ModuleInformation { moduleDisplayName = "Shape Shift" } },
-			{ "ThirdBase", new ModuleInformation { moduleDisplayName = "Third Base" } },
-
 			// AT_Bash / Bashly / Ashthebash
-			{ "MotionSense", new ModuleInformation { moduleDisplayName = "Motion Sense", unclaimable = true } },
-			{ "AppreciateArt", new ModuleInformation { unclaimable = true, moduleDisplayName = "Art Appreciation" } },
+			{ "AppreciateArt", new ModuleInformation { unclaimable = true } },
 
 			// Perky
-			{ "CrazyTalk", new ModuleInformation { moduleDisplayName = "Crazy Talk" } },
-			{ "CryptModule", new ModuleInformation { moduleDisplayName = "Cryptography" } },
-			{ "ForeignExchangeRates", new ModuleInformation { moduleDisplayName = "Foreign Exchange Rates" } },
-			{ "Listening", new ModuleInformation { moduleDisplayName = "Listening" } },
-			{ "OrientationCube", new ModuleInformation { moduleDisplayName = "Orientation Cube" } },
-			{ "Probing", new ModuleInformation { moduleDisplayName = "Probing" } },
-			{ "TurnTheKey", new ModuleInformation { moduleDisplayName = "Turn The Key", announceModule = true } },
-			{ "TurnTheKeyAdvanced", new ModuleInformation { moduleDisplayName = "Turn The Keys", announceModule = true } },
-
-			// Kaneb
-			{ "TwoBits", new ModuleInformation { moduleDisplayName = "Two Bits" } },
-
-			// LeGeND
-			{ "lgndAlpha", new ModuleInformation { moduleDisplayName = "Alpha" } },
-			{ "lgndHyperactiveNumbers", new ModuleInformation { moduleDisplayName = "Hyperactive Numbers" } },
-			{ "lgndMorseIdentification", new ModuleInformation { moduleDisplayName = "Morse Identification" } },
-			{ "lgndReflex", new ModuleInformation { moduleDisplayName = "Reflex" } },
-			{ "lgndPayRespects", new ModuleInformation { moduleDisplayName = "Pay Respects" } },
-
-			// Lone
-			{ "tripleVision", new ModuleInformation { moduleDisplayName = "Triple Vision" } },
-			{ "SIHTS", new ModuleInformation { moduleDisplayName = "SI-HTS" } },
-			{ "doubleMaze", new ModuleInformation { moduleDisplayName = "Double Maze" } },
-			{ "logicPlumbing", new ModuleInformation { moduleDisplayName = "Logic Plumbing" } },
-			{ "flashingCube", new ModuleInformation { moduleDisplayName = "Flashing Cube" } },
+			{ "TurnTheKey", new ModuleInformation { announceModule = true } },
+			{ "TurnTheKeyAdvanced", new ModuleInformation { announceModule = true } },
 
 			// MaddyMoos
-			{ "gemory", new ModuleInformation { moduleDisplayName = "Gemory", announceModule = true } },
-			{ "nonagonInfinity", new ModuleInformation { moduleDisplayName = "Nonagon Infinity" } },
-
-			// Maffo
-			{ "poisonedGoblets", new ModuleInformation { moduleDisplayName = "Poisoned Goblets" } },
-			{ "yetAnotherKeypad", new ModuleInformation { moduleDisplayName = "Yet Another Keypad" } },
+			{ "gemory", new ModuleInformation { announceModule = true } },
 
 			// Mock Army
-			{ "AnagramsModule", new ModuleInformation { moduleDisplayName = "Anagrams" } },
-			{ "Emoji Math", new ModuleInformation { moduleDisplayName = "Emoji Math" } },
-			{ "Filibuster", new ModuleInformation { moduleDisplayName = "Filibuster", unclaimable = true } },
-			{ "Needy Math", new ModuleInformation { moduleDisplayName = "Needy Math" } },
-			{ "WordScrambleModule", new ModuleInformation { moduleDisplayName = "Word Scramble" } },
+			{ "Filibuster", new ModuleInformation { unclaimable = true } },
 
 			// Royal_Flu$h
-			{ "coffeebucks", new ModuleInformation { moduleDisplayName = "Coffeebucks" } },
-			{ "festiveJukebox", new ModuleInformation { moduleDisplayName = "The Festive Jukebox" } },
-			{ "hangover", new ModuleInformation { moduleDisplayName = "The Hangover" } },
-			{ "labyrinth", new ModuleInformation { moduleDisplayName = "The Labyrinth" } },
-			{ "matrix", new ModuleInformation { moduleDisplayName = "The Matrix" } },
-			{ "memorableButtons", new ModuleInformation { moduleDisplayName = "Memorable Buttons" } },
-			{ "simonsOnFirst", new ModuleInformation { moduleDisplayName = "Simon's On First" } },
-			{ "simonsStages", new ModuleInformation { moduleDisplayName = "Simon's Stages", CameraPinningAlwaysAllowed = true, announceModule = true } },
-			{ "skinnyWires", new ModuleInformation { moduleDisplayName = "Skinny Wires" } },
-			{ "stainedGlass", new ModuleInformation { moduleDisplayName = "Stained Glass" } },
-			{ "streetFighter", new ModuleInformation { moduleDisplayName = "Street Fighter" } },
-			{ "troll", new ModuleInformation { moduleDisplayName = "The Troll", announceModule = true } },
-			{ "tWords", new ModuleInformation { moduleDisplayName = "T-Words" } },
-			{ "primeEncryption", new ModuleInformation { moduleDisplayName = "Prime Encryption" } },
-			{ "needyMrsBob", new ModuleInformation { moduleDisplayName = "Needy Mrs Bob" } },
-			{ "simonSquawks", new ModuleInformation { moduleDisplayName = "Simon Squawks" } },
-			{ "rapidButtons", new ModuleInformation { moduleDisplayName = "Rapid Buttons" } },
-
-			// Hockeygoalie78
-			{ "CrypticPassword", new ModuleInformation { moduleDisplayName = "Cryptic Password" } },
-			{ "modulusManipulation", new ModuleInformation { moduleDisplayName = "Modulus Manipulation" } },
-			{ "triangleButtons", new ModuleInformation { moduleDisplayName = "Triangle Buttons" } },
-
-			// Elias
-			{ "numberNimbleness", new ModuleInformation { moduleDisplayName = "Number Nimbleness", } },
-			{ "matchmaker", new ModuleInformation { moduleDisplayName = "Matchmaker" } },
-
-			// BakersDozenBagels
-			{ "xModule", new ModuleInformation { moduleDisplayName = "X" } },
-			{ "yModule", new ModuleInformation { moduleDisplayName = "Y" } },
-			{ "imbalance", new ModuleInformation { moduleDisplayName = "Imbalance" } },
-			{ "shaker", new ModuleInformation { moduleDisplayName = "The Shaker" } },
-
-			// TheCrazyCodr
-			{ "sqlBasic", new ModuleInformation { moduleDisplayName = "SQL - Basic" } },
-			{ "sqlEvil", new ModuleInformation { moduleDisplayName = "SQL - Evil" } },
-			{ "sqlCruel", new ModuleInformation { moduleDisplayName = "SQL - Cruel" } },
+			{ "simonsStages", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
+			{ "troll", new ModuleInformation { announceModule = true } },
 
 			// Misc
-			{ "EnglishTest", new ModuleInformation { moduleDisplayName = "English Test" } },
-			{ "LetterKeys", new ModuleInformation { moduleDisplayName = "Letter Keys" } },
-			{ "Microcontroller", new ModuleInformation { moduleDisplayName = "Microcontroller" } },
-			{ "resistors", new ModuleInformation { moduleDisplayName = "Resistors" } },
-			{ "speakEnglish", new ModuleInformation { moduleDisplayName = "Speak English" } },
-			{ "switchModule", new ModuleInformation { moduleDisplayName = "Switches" } },
-			{ "EdgeworkModule", new ModuleInformation { moduleDisplayName = "Edgework" } },
-			{ "NeedyBeer", new ModuleInformation { moduleDisplayName = "Refill That Beer!" } },
-			{ "errorCodes", new ModuleInformation { moduleDisplayName = "Error Codes" } },
-			{ "JuckAlchemy", new ModuleInformation { moduleDisplayName = "Alchemy" } },
-			{ "LEGOModule", new ModuleInformation { moduleDisplayName = "LEGOs" } },
-			{ "boolMaze", new ModuleInformation { moduleDisplayName = "Boolean Maze" } },
-			{ "MorseWar", new ModuleInformation { moduleDisplayName = "Morse War" } },
-			{ "necronomicon", new ModuleInformation { moduleDisplayName = "The Necronomicon" } },
-			{ "babaIsWho", new ModuleInformation { moduleDisplayName = "Baba Is Who?" } },
-			{ "chordProgressions", new ModuleInformation { moduleDisplayName = "Chord Progressions" } },
-			{ "rng", new ModuleInformation { moduleDisplayName = "Random Number Generator", additionalNeedyTime = 30 } },
-			{ "caesarsMaths", new ModuleInformation { moduleDisplayName = "Caesar's Maths" } },
-			{ "gatekeeper", new ModuleInformation { moduleDisplayName = "Gatekeeper" } },
-			{ "stateOfAggregation", new ModuleInformation { moduleDisplayName = "State of Aggregation" } },
-			{ "conditionalButtons", new ModuleInformation { moduleDisplayName = "Conditional Buttons" } },
-			{ "strikeSolve", new ModuleInformation { moduleDisplayName = "Strike Solve" } },
-			{ "abstractSequences", new ModuleInformation { moduleDisplayName = "Abstract Sequences" } },
-			{ "bridge", new ModuleInformation { moduleDisplayName = "Bridge" } },
-			{ "needyHotate", new ModuleInformation { moduleDisplayName = "Needy Hotate" } },
-			{ "pinkArrows", new ModuleInformation { moduleDisplayName = "Pink Arrows" } },
-			{ "CactusPConundrum", new ModuleInformation { moduleDisplayName = "Cacti's Conundrum" } },
-			{ "weekDays", new ModuleInformation { moduleDisplayName = "Weekdays" } },
-			{ "draw", new ModuleInformation { moduleDisplayName = "Draw" } },
-			{ "overKilo", new ModuleInformation { moduleDisplayName = "Over Kilo" } },
-			{ "parliament", new ModuleInformation { moduleDisplayName = "Parliament" } },
-			{ "12321", new ModuleInformation { moduleDisplayName = "1-2-3-2-1" } },
-			{ "TechSupport", new ModuleInformation { moduleDisplayName = "Tech Support" } },
-			{ "factoryCode", new ModuleInformation { moduleDisplayName = "Factory Code" } },
-			{ "SpellingBuzzed", new ModuleInformation { moduleDisplayName = "Spelling Buzzed" } },
-			{ "BackdoorHacking", new ModuleInformation { moduleDisplayName = "Backdoor Hacking" } },
-			{ "forget_fractal", new ModuleInformation { moduleDisplayName = "Forget Fractal", announceModule = true } },
-			{ "NeedyPong", new ModuleInformation { moduleDisplayName = "Pong" } },
-			{ "needycrafting", new ModuleInformation { moduleDisplayName = "The Crafting Table" } },
-			{ "bigeggs", new ModuleInformation { moduleDisplayName = "perspective eggs" } },
-			{ "GL_nokiaModule", new ModuleInformation { moduleDisplayName = "Nokia" } },
-			{ "lookLookAway", new ModuleInformation { moduleDisplayName = "Look, Look Away" } },
-			{ "krazzBlaseball", new ModuleInformation { moduleDisplayName = "Blaseball" } },
-			{ "redLightGreenLight", new ModuleInformation { moduleDisplayName = "Red Light Green Light", announceModule = true, unclaimable = true } },
-			{ "threeSentenceHorror", new ModuleInformation { moduleDisplayName = "Three Sentence Horror", announceModule = true, unclaimable = true } },
-			{ "GreenWires", new ModuleInformation { moduleDisplayName = "Green Wires" } },
-			{ "traffic_board", new ModuleInformation { moduleDisplayName = "Traffic Board" } },
-			{ "NeedyPou", new ModuleInformation { moduleDisplayName = "Pou" } },
-
-			// GoodHood
-			{ "buttonOrder", new ModuleInformation { moduleDisplayName = "Button Order" } },
-			{ "pressTheShape", new ModuleInformation { moduleDisplayName = "Press The Shape" } },
-			{ "standardButtonMasher", new ModuleInformation { moduleDisplayName = "Standard Button Masher" } },
-			{ "BinaryButtons", new ModuleInformation { moduleDisplayName = "Binary Buttons" } },
-
-			// Steel Crate Games (Need these in place even for the Vanilla modules)
-			{ "Wires", new ModuleInformation { moduleDisplayName = "Wires" } },
-			{ "BigButton", new ModuleInformation { moduleDisplayName = "The Button" } },
-			{ "BigButtonModified", new ModuleInformation { moduleDisplayName = "The Button" } },
-			{ "WireSequence", new ModuleInformation { moduleDisplayName = "Wire Sequence" } },
-			{ "WhosOnFirst", new ModuleInformation { moduleDisplayName = "Who's on First" } },
-			{ "Venn", new ModuleInformation { moduleDisplayName = "Complicated Wires" } },
-			{ "Simon", new ModuleInformation { moduleDisplayName = "Simon Says" } },
-			{ "Password", new ModuleInformation { moduleDisplayName = "Password" } },
-			{ "NeedyVentGas", new ModuleInformation { moduleDisplayName = "Needy Vent Gas" } },
-			{ "NeedyKnob", new ModuleInformation { moduleDisplayName = "Needy Knob" } },
-			{ "NeedyCapacitor", new ModuleInformation { moduleDisplayName = "Needy Capacitor" } },
-			{ "Morse", new ModuleInformation { moduleDisplayName = "Morse Code" } },
-			{ "Memory", new ModuleInformation { moduleDisplayName = "Memory" } },
-			{ "Keypad", new ModuleInformation { moduleDisplayName = "Keypad" } },
-			{ "Maze", new ModuleInformation { moduleDisplayName = "Maze" } },
+			{ "rng", new ModuleInformation { additionalNeedyTime = 30 } },
+			{ "forget_fractal", new ModuleInformation { announceModule = true } },
+			{ "redLightGreenLight", new ModuleInformation { announceModule = true, unclaimable = true } },
+			{ "threeSentenceHorror", new ModuleInformation { announceModule = true, unclaimable = true } },
 
 			// Speakingevil
-			{ "runeMatchI", new ModuleInformation { moduleDisplayName = "Rune Match I", additionalNeedyTime = 15 } },
-			{ "runeMatchII", new ModuleInformation { moduleDisplayName = "Rune Match II" } },
-			{ "runeMatchIII", new ModuleInformation { moduleDisplayName = "Rune Match III" } },
-
-			// StrangaDanga
-			{ "keepClicking", new ModuleInformation { moduleDisplayName = "Keep Clicking" } },
-			{ "sixteenCoins", new ModuleInformation { moduleDisplayName = "16 Coins" } },
+			{ "runeMatchI", new ModuleInformation { additionalNeedyTime = 15 } },
 
 			// TheDarkSid3r
-			{ "NotTimerModule", new ModuleInformation { moduleDisplayName = "Not Timer" } },
-			{ "TDSAmogus", new ModuleInformation { moduleDisplayName = "amogus" } },
-			{ "TDSNya", new ModuleInformation { moduleDisplayName = "nya~" } },
-			{ "IconReveal", new ModuleInformation { moduleDisplayName = "Icon Reveal" } },
-			{ "FreePassword", new ModuleInformation { moduleDisplayName = "Free Password" } },
-			{ "LargeFreePassword", new ModuleInformation { moduleDisplayName = "Large Free Password" } },
-			{ "LargeVanillaPassword", new ModuleInformation { moduleDisplayName = "Large Password" } },
-			{ "TDSNeedyWires", new ModuleInformation { moduleDisplayName = "Needy Wires" } },
-			{ "TDSDossierModifier", new ModuleInformation { moduleDisplayName = "Dossier Modifier" } },
-			{ "ManualCodes", new ModuleInformation { moduleDisplayName = "Manual Codes" } },
-			{ "jackboxServerModule", new ModuleInformation { moduleDisplayName = "Jackbox.TV", unclaimable = true } },
-			{ "NeedyScreensaver", new ModuleInformation { moduleDisplayName = "Screensaver" } },
-
-			// UltraCboy
-			{ "needyShapeMemory", new ModuleInformation { moduleDisplayName = "Needy Shape Memory" } },
-			{ "needyTypingTutor", new ModuleInformation { moduleDisplayName = "Typing Tutor" } },
-
-			// Translated Modules
-			{ "BigButtonTranslated", new ModuleInformation { moduleDisplayName = "Big Button Translated" } },
-			{ "MorseCodeTranslated", new ModuleInformation { moduleDisplayName = "Morse Code Translated" } },
-			{ "PasswordsTranslated", new ModuleInformation { moduleDisplayName = "Password Translated" } },
-			{ "WhosOnFirstTranslated", new ModuleInformation { moduleDisplayName = "Who's on First Translated" } },
-			{ "VentGasTranslated", new ModuleInformation { moduleDisplayName = "Vent Gas Translated" } },
+			{ "jackboxServerModule", new ModuleInformation { unclaimable = true } },
 
 			// Shim added in between Twitch Plays and module (This allows overriding a specific command, adding a new command, or for fixes such as enforcing unsubmittable penalty)
-			{ "Color Generator", new ModuleInformation { moduleDisplayName = "Color Generator", helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true } },
-			{ "ExtendedPassword", new ModuleInformation { moduleDisplayName = "Extended Password" } },
-			{ "ColourFlashES", new ModuleInformation { moduleDisplayName = "Colour Flash ES", helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", helpTextOverride = true } },
-			{ "PressX", new ModuleInformation { moduleDisplayName = "Press X", helpText = "Submit button presses using !{0} press x on 1 or !{0} press y on 23 or !{0} press a on 8 28 48. Acceptable buttons are a, b, x and y.", helpTextOverride = true } },
-			{ "ShapesBombs", new ModuleInformation { moduleDisplayName = "Shapes And Bombs", helpText = "!{0} press A1 B39 C123... (column [A to E] and row [1 to 8] to press [you can input multiple rows in the same column]) | !{0} display/disp/d 4 (displays sequence number [0 to 14]) | !{0} reset/res/r (resets initial letter) | !{0} empty/emp/e (empties lit squares) | !{0} submit/sub/s (submits current shape) | !{0} colorblind/cb (enables colorblind mode)", helpTextOverride = true } },
-			{ "taxReturns", new ModuleInformation { moduleDisplayName = "Tax Returns", helpText = "Submit your taxes using !{0} submit <number>. Page left and right using !{0} left (number) and !{0} right (number). Briefly view the HRMC terminal to see the deadline with !{0} deadline.", helpTextOverride = true, announceModule = true } },
-
-			// These modules have troll commands built in.
-			{ "MazeV2", new ModuleInformation { moduleDisplayName = "Plumbing" } },
+			{ "Color Generator", new ModuleInformation { helpText = "Submit a color using \"!{0} press bigred 1,smallred 2,biggreen 1,smallblue 1\" !{0} press <buttonname> <amount of times to push>. If you want to be silly, you can have this module change the color of the status light when solved with \"!{0} press smallblue UseRedOnSolve\" or UseOffOnSolve. You can make this module tell a story with !{0} tellmeastory, make a needy sound with !{0} needystart or !{0} needyend, fake strike with !{0} faksestrike, and troll with !{0} troll", helpTextOverride = true } },
+			{ "ColourFlashES", new ModuleInformation { helpText = "Submit the correct response with !{0} press yes 3, or !{0} press no 5.", helpTextOverride = true } },
+			{ "PressX", new ModuleInformation { helpText = "Submit button presses using !{0} press x on 1 or !{0} press y on 23 or !{0} press a on 8 28 48. Acceptable buttons are a, b, x and y.", helpTextOverride = true } },
+			{ "ShapesBombs", new ModuleInformation { helpText = "!{0} press A1 B39 C123... (column [A to E] and row [1 to 8] to press [you can input multiple rows in the same column]) | !{0} display/disp/d 4 (displays sequence number [0 to 14]) | !{0} reset/res/r (resets initial letter) | !{0} empty/emp/e (empties lit squares) | !{0} submit/sub/s (submits current shape) | !{0} colorblind/cb (enables colorblind mode)", helpTextOverride = true } },
+			{ "taxReturns", new ModuleInformation { helpText = "Submit your taxes using !{0} submit <number>. Page left and right using !{0} left (number) and !{0} right (number). Briefly view the HRMC terminal to see the deadline with !{0} deadline.", helpTextOverride = true, announceModule = true } },
 
 			// These modules are not built into TP, but they are created by notable people.
 
@@ -629,15 +456,8 @@ public static class ComponentSolverFactory
 			{ "megaMan2", new ModuleInformation { CompatibilityMode = true } },
 
 			// Hexicube
-			{ "MemoryV2", new ModuleInformation { moduleDisplayName = "Forget Me Not", CameraPinningAlwaysAllowed = true, announceModule = true } },
-			{ "KeypadV2", new ModuleInformation { moduleDisplayName = "Round Keypad" } },
-			{ "ButtonV2", new ModuleInformation { moduleDisplayName = "Square Button" } },
-			{ "SimonV2", new ModuleInformation { moduleDisplayName = "Simon States" } },
-			{ "PasswordV2", new ModuleInformation { moduleDisplayName = "Safety Safe" } },
-			{ "MorseV2", new ModuleInformation { moduleDisplayName = "Morsematics" } },
-			{ "HexiEvilFMN", new ModuleInformation { moduleDisplayName = "Forget Everything", CameraPinningAlwaysAllowed = true, announceModule = true } },
-			{ "NeedyVentV2", new ModuleInformation { moduleDisplayName = "Needy Answering Questions" } },
-			{ "NeedyKnobV2", new ModuleInformation { moduleDisplayName = "Needy Rotary Phone" } },
+			{ "MemoryV2", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
+			{ "HexiEvilFMN", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
 
 			// JerryErris
 			{ "desertBus", new ModuleInformation { CompatibilityMode = true } },
@@ -660,9 +480,6 @@ public static class ComponentSolverFactory
 			//ktane1
 			{ "schulteTable", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight } },
 			{ "cruelSchulteTable", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight } },
-
-			// Maca
-			{ "Playfair", new ModuleInformation { moduleDisplayName = "Playfair Cipher" } },
 
 			// MaddyMoos
 			{ "top10nums", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight } },
@@ -734,11 +551,9 @@ public static class ComponentSolverFactory
 			{ "oldFogey", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft } },
 
 			// Timwi (includes Perky/Konqi/Eluminate/Mitterdoo/Riverbui modules maintained by Timwi)
-			{ "alphabet", new ModuleInformation { moduleDisplayName = "Alphabet" } },
 			{ "CornersModule", new ModuleInformation { statusLightPosition = StatusLightPosition.Center } },
 			{ "DividedSquaresModule", new ModuleInformation { announceModule = true } },
 			{ "HogwartsModule", new ModuleInformation { announceModule = true } },
-			{ "NumberPad", new ModuleInformation { moduleDisplayName = "Number Pad" } },
 			{ "SouvenirModule", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true } },
 
 			// Trainzack
@@ -749,7 +564,6 @@ public static class ComponentSolverFactory
 			{ "LEDEnc", new ModuleInformation { helpText = "Press the button with label B with !{0} press b." } },
 
 			// Windesign
-			{ "Color Decoding", new ModuleInformation { moduleDisplayName = "Color Decoding" } },
 			{ "GridMatching", new ModuleInformation { helpText = "Commands are “left/right/up/down/clockwise/counter-clockwise/submit” or “l/r/u/d/cw/ccw/s”. The letter can be set by using “set d” or “'d'”. All of these can be chained, for example: “!{0} up right right clockwise 'd' submit”. You can only use one letter-setting command at a time." } },
 
 			// ZekNikZ
@@ -758,7 +572,7 @@ public static class ComponentSolverFactory
 			{ "symbolicPasswordModule", new ModuleInformation { helpText = "Cycle a row with cycle t l. Cycle a column with cycle m. Submit with !{0} submit. Rows are TL/TR/BL/BR, columns are L/R/M. Spaces are important!" } },
 
 			// Other modded modules not built into Twitch Plays
-			{ "buttonMasherNeedy", new ModuleInformation { moduleDisplayName = "Needy Button Masher", helpText = "Press the button 20 times with !{0} press 20" } },
+			{ "buttonMasherNeedy", new ModuleInformation { helpText = "Press the button 20 times with !{0} press 20" } },
 			{ "combinationLock", new ModuleInformation { helpText = "Submit the code using !{0} submit 1 2 3.", CompatibilityMode = true } },
 			{ "EternitySDec", new ModuleInformation { CompatibilityMode = true } },
 			{ "forgetUsNot", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, CompatibilityMode = true } },

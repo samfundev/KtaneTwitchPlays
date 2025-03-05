@@ -18,6 +18,13 @@ public static class Repository
 
 		RawJSON = download.Text;
 		Modules = JsonConvert.DeserializeObject<WebsiteJSON>(RawJSON).KtaneModules;
+
+		foreach (var module in Modules)
+		{
+			var info = ComponentSolverFactory.GetDefaultInformation(module.ModuleID);
+			if (info.moduleDisplayName == "") continue;
+			info.moduleDisplayName = module.Name;
+		}
 	}
 
 	public static bool IsBossMod(this string moduleID) => Modules.Any(module => module.ModuleID == moduleID && module.BossStatus != null);
