@@ -29,7 +29,7 @@ public class ModuleInformation
 	public string[] validCommands;
 	public bool CompatibilityMode = false;
 
-	public bool builtIntoTwitchPlays;
+	public bool builtIntoTwitchPlays => ComponentSolverFactory.IsBuiltIn(moduleID);
 
 	public bool CameraPinningAlwaysAllowed;
 
