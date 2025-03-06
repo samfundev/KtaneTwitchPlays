@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("ColorfulInsanity")]
 public class ColorfulInsanityShim : ComponentSolverShim
 {
 	public ColorfulInsanityShim(TwitchModule module)

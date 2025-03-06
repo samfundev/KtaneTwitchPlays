@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[ModuleID("ExtendedPassword")]
 public class ExtendedPasswordComponentSolver : ComponentSolverShim
 {
 	public ExtendedPasswordComponentSolver(TwitchModule module) :

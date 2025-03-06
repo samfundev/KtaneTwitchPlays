@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 
+[ModuleID("Mastermind Simple")]
+[ModuleID("Mastermind Cruel")]
 public class MastermindShim : ComponentSolverShim
 {
 	public MastermindShim(TwitchModule module)

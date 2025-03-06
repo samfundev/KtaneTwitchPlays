@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("cube")]
 public class CubeShim : ComponentSolverShim
 {
 	public CubeShim(TwitchModule module)

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("redLightGreenLight")]
 public class RedLightGreenLightComponentSolver : ReflectionComponentSolver
 {
 	public RedLightGreenLightComponentSolver(TwitchModule module) :

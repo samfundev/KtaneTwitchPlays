@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 
+[ModuleID("traffic_board")]
 public class TrafficBoardComponentSolver : ReflectionComponentSolver
 {
 	public TrafficBoardComponentSolver(TwitchModule module) :

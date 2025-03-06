@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using KModkit;
 
+[ModuleID("vexillology")]
 public class VexillologyShim : ComponentSolverShim
 {
 	public VexillologyShim(TwitchModule module)

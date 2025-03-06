@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("Probing")]
 public class ProbingComponentSolver : ComponentSolver
 {
 	public ProbingComponentSolver(TwitchModule module) :

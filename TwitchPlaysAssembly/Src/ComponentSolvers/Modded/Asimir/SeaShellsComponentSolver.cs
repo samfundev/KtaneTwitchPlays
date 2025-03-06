@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("SeaShells")]
 public class SeaShellsComponentSolver : ComponentSolver
 {
 	public SeaShellsComponentSolver(TwitchModule module) :

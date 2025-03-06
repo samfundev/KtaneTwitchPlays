@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("periodicTable")]
 public class PeriodicTableShim : ComponentSolverShim
 {
 	public PeriodicTableShim(TwitchModule module)

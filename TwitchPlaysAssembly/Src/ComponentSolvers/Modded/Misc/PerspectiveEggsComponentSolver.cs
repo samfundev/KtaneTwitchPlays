@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("bigeggs")]
 public class PerspectiveEggsComponentSolver : ReflectionComponentSolver
 {
 	public PerspectiveEggsComponentSolver(TwitchModule module) :

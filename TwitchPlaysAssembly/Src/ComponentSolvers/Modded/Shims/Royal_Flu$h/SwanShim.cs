@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("theSwan")]
 public class SwanShim : ComponentSolverShim
 {
 	public SwanShim(TwitchModule module)

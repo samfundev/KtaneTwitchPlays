@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("Wavetapping")]
 public class WavetappingShim : ComponentSolverShim
 {
 	public WavetappingShim(TwitchModule module)

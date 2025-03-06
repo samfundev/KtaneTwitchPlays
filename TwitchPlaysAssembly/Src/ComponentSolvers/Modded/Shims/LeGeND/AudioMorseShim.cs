@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("lgndAudioMorse")]
 public class AudioMorseShim : ComponentSolverShim
 {
 	public AudioMorseShim(TwitchModule module)

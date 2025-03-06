@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("SpellingBuzzed")]
 public class SpellingBuzzedComponentSolver : ReflectionComponentSolver
 {
 	public SpellingBuzzedComponentSolver(TwitchModule module) :

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("imbalance")]
 public class ImbalanceComponentSolver : ReflectionComponentSolver
 {
 	public ImbalanceComponentSolver(TwitchModule module) :

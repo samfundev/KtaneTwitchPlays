@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("constellations")]
 public class ConstellationsShim : ComponentSolverShim
 {
 	public ConstellationsShim(TwitchModule module)

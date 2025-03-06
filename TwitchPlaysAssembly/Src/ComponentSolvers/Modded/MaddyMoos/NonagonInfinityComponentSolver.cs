@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+[ModuleID("nonagonInfinity")]
 public class NonagonInfinityComponentSolver : CommandComponentSolver
 {
 	public NonagonInfinityComponentSolver(TwitchModule module) :

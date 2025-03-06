@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("NeedyBeer")]
 public class NeedyBeerComponentSolver : ComponentSolver
 {
 	public NeedyBeerComponentSolver(TwitchModule module)

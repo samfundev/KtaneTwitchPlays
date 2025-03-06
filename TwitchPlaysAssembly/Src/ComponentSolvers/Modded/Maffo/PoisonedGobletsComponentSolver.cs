@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("poisonedGoblets")]
 public class PoisonedGobletsComponentSolver : ReflectionComponentSolver
 {
 	public PoisonedGobletsComponentSolver(TwitchModule module) :

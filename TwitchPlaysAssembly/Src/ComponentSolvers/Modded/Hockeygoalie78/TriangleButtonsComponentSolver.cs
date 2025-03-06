@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[ModuleID("triangleButtons")]
 public class TriangleButtonsComponentSolver : ReflectionComponentSolver
 {
 	public TriangleButtonsComponentSolver(TwitchModule module) :

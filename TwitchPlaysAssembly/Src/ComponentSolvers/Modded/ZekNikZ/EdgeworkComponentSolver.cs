@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("EdgeworkModule")]
 public class EdgeworkComponentSolver : ComponentSolver
 {
 	public EdgeworkComponentSolver(TwitchModule module) :

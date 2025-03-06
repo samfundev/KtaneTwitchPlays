@@ -1,5 +1,6 @@
 using System;
 
+[ModuleID("KritLockpickMaze")]
 public class LockpickMazeShim : ComponentSolverShim
 {
 	public LockpickMazeShim(TwitchModule module)

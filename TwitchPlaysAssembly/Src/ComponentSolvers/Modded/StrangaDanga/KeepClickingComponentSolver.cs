@@ -3,6 +3,7 @@ using System.Linq;
 using KModkit;
 using UnityEngine;
 
+[ModuleID("keepClicking")]
 public class KeepClickingComponentSolver : ReflectionComponentSolver
 {
 	public KeepClickingComponentSolver(TwitchModule module) :

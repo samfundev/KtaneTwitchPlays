@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("BinaryButtons")]
 public class BinaryButtonsComponentSolver : ReflectionComponentSolver
 {
 	public BinaryButtonsComponentSolver(TwitchModule module) :

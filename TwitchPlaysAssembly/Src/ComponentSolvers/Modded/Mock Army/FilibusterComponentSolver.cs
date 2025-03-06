@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("Filibuster")]
 public class FilibusterComponentSolver : ReflectionComponentSolver
 {
 	public FilibusterComponentSolver(TwitchModule module) :

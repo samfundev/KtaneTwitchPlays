@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 
+[ModuleID("ColourFlash")]
+[ModuleID("ColourFlashPL")]
 public class ColourFlashShim : ReflectionComponentSolverShim
 {
 	public ColourFlashShim(TwitchModule module)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("jackOLantern")]
 public class JackOLanternShim : ComponentSolverShim
 {
 	public JackOLanternShim(TwitchModule module)

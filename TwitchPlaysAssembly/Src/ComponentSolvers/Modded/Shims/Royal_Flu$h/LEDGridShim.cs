@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("ledGrid")]
 public class LEDGridShim : ComponentSolverShim
 {
 	public LEDGridShim(TwitchModule module)

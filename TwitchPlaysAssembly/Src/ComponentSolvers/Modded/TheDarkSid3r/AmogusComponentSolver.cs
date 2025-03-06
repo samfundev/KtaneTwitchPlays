@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using KModkit;
 
+[ModuleID("TDSAmogus")]
 public class AmogusComponentSolver : ReflectionComponentSolver
 {
 	public AmogusComponentSolver(TwitchModule module) :

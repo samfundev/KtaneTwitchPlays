@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("blockbusters")]
 public class BlockbustersShim : ComponentSolverShim
 {
 	public BlockbustersShim(TwitchModule module)

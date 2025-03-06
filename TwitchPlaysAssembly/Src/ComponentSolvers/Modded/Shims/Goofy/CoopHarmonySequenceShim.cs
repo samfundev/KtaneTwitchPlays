@@ -1,5 +1,6 @@
 using System.Collections;
 
+[ModuleID("coopharmonySequence")]
 public class CoopHarmonySequenceShim : ReflectionComponentSolverShim
 {
 	public CoopHarmonySequenceShim(TwitchModule module)

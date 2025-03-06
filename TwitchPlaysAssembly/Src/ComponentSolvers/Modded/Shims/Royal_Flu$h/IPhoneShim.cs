@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("iPhone")]
 public class IPhoneShim : ComponentSolverShim
 {
 	public IPhoneShim(TwitchModule module)

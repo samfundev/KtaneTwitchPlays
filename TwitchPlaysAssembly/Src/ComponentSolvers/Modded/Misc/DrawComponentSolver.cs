@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("draw")]
 public class DrawComponentSolver : ReflectionComponentSolver
 {
 	public DrawComponentSolver(TwitchModule module) :

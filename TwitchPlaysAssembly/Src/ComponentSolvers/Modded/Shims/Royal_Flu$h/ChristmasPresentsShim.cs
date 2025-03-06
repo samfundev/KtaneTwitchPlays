@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("christmasPresents")]
 public class ChristmasPresentsShim : ComponentSolverShim
 {
 	public ChristmasPresentsShim(TwitchModule module)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using KModkit;
 
+[ModuleID("NotTimerModule")]
 public class NotTimerComponentSolver : ReflectionComponentSolver
 {
 	public NotTimerComponentSolver(TwitchModule module) :

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("wire")]
 public class WireShim : ComponentSolverShim
 {
 	public WireShim(TwitchModule module)

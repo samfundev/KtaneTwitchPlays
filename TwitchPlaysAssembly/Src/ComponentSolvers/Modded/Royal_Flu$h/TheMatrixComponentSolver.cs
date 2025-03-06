@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("matrix")]
 public class TheMatrixComponentSolver : ComponentSolver
 {
 	public TheMatrixComponentSolver(TwitchModule module) :

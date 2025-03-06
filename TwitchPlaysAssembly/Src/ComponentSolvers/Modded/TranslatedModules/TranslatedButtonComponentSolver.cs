@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+[ModuleID("BigButtonTranslated")]
 public class TranslatedButtonComponentSolver : ComponentSolver
 {
 	public TranslatedButtonComponentSolver(TwitchModule module) :

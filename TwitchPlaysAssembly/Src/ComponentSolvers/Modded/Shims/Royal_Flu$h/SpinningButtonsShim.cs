@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("spinningButtons")]
 public class SpinningButtonsShim : ComponentSolverShim
 {
 	public SpinningButtonsShim(TwitchModule module)

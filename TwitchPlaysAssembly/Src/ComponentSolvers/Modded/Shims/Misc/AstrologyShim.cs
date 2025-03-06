@@ -1,3 +1,4 @@
+[ModuleID("spwizAstrology")]
 public class AstrologyShim : ComponentSolverShim
 {
 	public AstrologyShim(TwitchModule module)

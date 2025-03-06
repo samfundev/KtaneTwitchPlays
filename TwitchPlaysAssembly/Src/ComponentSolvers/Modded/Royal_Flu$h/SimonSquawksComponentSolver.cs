@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("simonSquawks")]
 public class SimonSquawksComponentSolver : ReflectionComponentSolver
 {
 	public SimonSquawksComponentSolver(TwitchModule module) :

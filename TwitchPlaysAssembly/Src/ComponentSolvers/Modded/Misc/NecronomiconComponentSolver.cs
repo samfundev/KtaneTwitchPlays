@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("necronomicon")]
 public class NecronomiconComponentSolver : ComponentSolver
 {
 	public NecronomiconComponentSolver(TwitchModule module) :

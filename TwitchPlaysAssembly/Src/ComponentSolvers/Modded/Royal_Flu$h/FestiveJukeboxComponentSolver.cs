@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("festiveJukebox")]
 public class FestiveJukeboxComponentSolver : ComponentSolver
 {
 	public FestiveJukeboxComponentSolver(TwitchModule module) :

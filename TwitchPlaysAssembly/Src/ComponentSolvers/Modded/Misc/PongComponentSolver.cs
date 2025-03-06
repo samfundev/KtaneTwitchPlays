@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("NeedyPong")]
 public class PongComponentSolver : ReflectionComponentSolver
 {
 	public PongComponentSolver(TwitchModule module) :

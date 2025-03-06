@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("LEGOModule")]
 public class LEGOComponentSolver : ComponentSolver
 {
 	public LEGOComponentSolver(TwitchModule module) :

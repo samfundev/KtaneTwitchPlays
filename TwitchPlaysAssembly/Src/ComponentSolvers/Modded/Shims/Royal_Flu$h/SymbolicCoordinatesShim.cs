@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("symbolicCoordinates")]
 public class SymbolicCoordinatesShim : ComponentSolverShim
 {
 	public SymbolicCoordinatesShim(TwitchModule module)

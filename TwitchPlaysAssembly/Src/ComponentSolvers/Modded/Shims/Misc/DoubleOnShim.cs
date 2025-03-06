@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("double_on")]
 public class DoubleOnShim : ReflectionComponentSolverShim
 {
 	public DoubleOnShim(TwitchModule module)

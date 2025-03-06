@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("conditionalButtons")]
 public class ConditionalButtonsComponentSolver : ReflectionComponentSolver
 {
 	public ConditionalButtonsComponentSolver(TwitchModule module) :

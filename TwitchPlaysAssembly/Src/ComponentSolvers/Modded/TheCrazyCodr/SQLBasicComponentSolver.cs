@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 
+[ModuleID("sqlBasic")]
 public class SQLBasicComponentSolver : ReflectionComponentSolver
 {
 	public SQLBasicComponentSolver(TwitchModule module) :

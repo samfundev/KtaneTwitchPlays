@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("BackdoorHacking")]
 public class BackdoorHackingComponentSolver : CommandComponentSolver
 {
 	public BackdoorHackingComponentSolver(TwitchModule module) :

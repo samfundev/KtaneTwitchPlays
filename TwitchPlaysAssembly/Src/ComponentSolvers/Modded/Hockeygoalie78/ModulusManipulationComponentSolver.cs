@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("modulusManipulation")]
 public class ModulusManipulationComponentSolver : ComponentSolver
 {
 	public ModulusManipulationComponentSolver(TwitchModule module) :

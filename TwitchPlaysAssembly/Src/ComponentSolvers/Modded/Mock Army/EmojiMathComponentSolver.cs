@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+[ModuleID("Emoji Math")]
 public class EmojiMathComponentSolver : ComponentSolver
 {
 	public EmojiMathComponentSolver(TwitchModule module) :

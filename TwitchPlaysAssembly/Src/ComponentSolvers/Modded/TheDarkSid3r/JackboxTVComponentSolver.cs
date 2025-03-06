@@ -1,5 +1,6 @@
 using System.Collections;
 
+[ModuleID("jackboxServerModule")]
 public class JackboxTVComponentSolver : ReflectionComponentSolver
 {
 	public JackboxTVComponentSolver(TwitchModule module) :

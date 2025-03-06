@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 
+[ModuleID("overKilo")]
 public class OverKiloComponentSolver : ReflectionComponentSolver
 {
 	public OverKiloComponentSolver(TwitchModule module) :

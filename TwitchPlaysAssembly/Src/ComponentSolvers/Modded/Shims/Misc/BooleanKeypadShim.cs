@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 
+[ModuleID("BooleanKeypad")]
 public class BooleanKeypadShim : ComponentSolverShim
 {
 	public BooleanKeypadShim(TwitchModule module)

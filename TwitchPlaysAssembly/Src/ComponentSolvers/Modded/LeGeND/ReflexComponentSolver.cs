@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("lgndReflex")]
 public class ReflexComponentSolver : ReflectionComponentSolver
 {
 	public ReflexComponentSolver(TwitchModule module) :

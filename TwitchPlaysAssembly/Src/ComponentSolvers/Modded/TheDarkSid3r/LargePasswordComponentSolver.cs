@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("LargeVanillaPassword")]
 public class LargePasswordComponentSolver : ReflectionComponentSolver
 {
 	public LargePasswordComponentSolver(TwitchModule module) :

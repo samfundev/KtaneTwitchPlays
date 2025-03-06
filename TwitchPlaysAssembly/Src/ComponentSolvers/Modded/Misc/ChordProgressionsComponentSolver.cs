@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+[ModuleID("chordProgressions")]
 public class ChordProgressionsComponentSolver : ComponentSolver
 {
 	public ChordProgressionsComponentSolver(TwitchModule module) :

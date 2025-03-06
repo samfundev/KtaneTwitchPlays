@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("stars")]
 public class StarsShim : ComponentSolverShim
 {
 	public StarsShim(TwitchModule module)

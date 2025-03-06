@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("FlashMemory")]
 public class FlashMemoryShim : ComponentSolverShim
 {
 	public FlashMemoryShim(TwitchModule module)

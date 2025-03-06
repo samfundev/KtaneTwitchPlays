@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("needyShapeMemory")]
 public class ShapeMemoryComponentSolver : ReflectionComponentSolver
 {
 	public ShapeMemoryComponentSolver(TwitchModule module) :

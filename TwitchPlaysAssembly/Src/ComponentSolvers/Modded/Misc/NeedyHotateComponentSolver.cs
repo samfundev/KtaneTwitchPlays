@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("needyHotate")]
 public class NeedyHotateComponentSolver : ReflectionComponentSolver
 {
 	public NeedyHotateComponentSolver(TwitchModule module) :

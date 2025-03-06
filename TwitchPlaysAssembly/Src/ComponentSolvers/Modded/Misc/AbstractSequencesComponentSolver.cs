@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("abstractSequences")]
 public class AbstractSequencesComponentSolver : ReflectionComponentSolver
 {
 	public AbstractSequencesComponentSolver(TwitchModule module) :

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("TwoBits")]
 public class TwoBitsComponentSolver : ComponentSolver
 {
 	private readonly Component _c;

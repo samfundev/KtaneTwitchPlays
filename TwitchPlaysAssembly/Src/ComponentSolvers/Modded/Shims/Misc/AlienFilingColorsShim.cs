@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("AlienModule")]
 public class AlienFilingColorsShim : ReflectionComponentSolverShim
 {
 	public AlienFilingColorsShim(TwitchModule module)

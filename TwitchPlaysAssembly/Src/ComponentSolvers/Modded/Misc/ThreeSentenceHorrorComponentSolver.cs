@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[ModuleID("threeSentenceHorror")]
 public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 {
 	public ThreeSentenceHorrorComponentSolver(TwitchModule module) :

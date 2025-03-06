@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Linq;
 
+[ModuleID("matchmaker")]
 public class MatchmakerComponentSolver : ReflectionComponentSolver
 {
 	public MatchmakerComponentSolver(TwitchModule module) :

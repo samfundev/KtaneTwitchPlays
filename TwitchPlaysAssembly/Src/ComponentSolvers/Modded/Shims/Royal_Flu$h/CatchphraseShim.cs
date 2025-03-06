@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("catchphrase")]
 public class CatchphraseShim : ComponentSolverShim
 {
 	public CatchphraseShim(TwitchModule module) :

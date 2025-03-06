@@ -1,5 +1,6 @@
 using System.Collections;
 
+[ModuleID("Semaphore")]
 public class SemaphoreShim : ReflectionComponentSolverShim
 {
 	public SemaphoreShim(TwitchModule module)

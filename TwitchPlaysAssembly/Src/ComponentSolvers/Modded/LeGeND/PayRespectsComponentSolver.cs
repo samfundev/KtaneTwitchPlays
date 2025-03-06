@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("lgndPayRespects")]
 public class PayRespectsComponentSolver : ReflectionComponentSolver
 {
 	public PayRespectsComponentSolver(TwitchModule module) :

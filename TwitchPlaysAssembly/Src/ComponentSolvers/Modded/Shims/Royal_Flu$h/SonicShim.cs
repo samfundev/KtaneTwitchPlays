@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("sonic")]
 public class SonicShim : ComponentSolverShim
 {
 	public SonicShim(TwitchModule module)

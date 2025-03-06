@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("ShapesBombs")]
 public class ShapesAndBombsShim : ComponentSolverShim
 {
 	public ShapesAndBombsShim(TwitchModule module)

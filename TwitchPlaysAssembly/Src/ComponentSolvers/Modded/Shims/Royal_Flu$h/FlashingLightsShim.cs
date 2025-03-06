@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("flashingLights")]
 public class FlashingLightsShim : ComponentSolverShim
 {
 	public FlashingLightsShim(TwitchModule module)

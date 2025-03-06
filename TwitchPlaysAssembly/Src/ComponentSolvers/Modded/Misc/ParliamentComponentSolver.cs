@@ -4,6 +4,7 @@ using System.Linq;
 using KModkit;
 using UnityEngine;
 
+[ModuleID("parliament")]
 public class ParliamentComponentSolver : ReflectionComponentSolver
 {
 	public ParliamentComponentSolver(TwitchModule module) :

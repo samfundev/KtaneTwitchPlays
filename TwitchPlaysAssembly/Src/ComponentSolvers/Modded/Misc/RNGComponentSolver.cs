@@ -2,6 +2,7 @@
 using System.Linq;
 using KModkit;
 
+[ModuleID("rng")]
 public class RNGComponentSolver : ReflectionComponentSolver
 {
 	public RNGComponentSolver(TwitchModule module) :

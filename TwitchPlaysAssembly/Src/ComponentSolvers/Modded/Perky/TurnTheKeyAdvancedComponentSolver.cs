@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("TurnTheKeyAdvanced")]
 public class TurnTheKeyAdvancedComponentSolver : ComponentSolver
 {
 	public TurnTheKeyAdvancedComponentSolver(TwitchModule module) :

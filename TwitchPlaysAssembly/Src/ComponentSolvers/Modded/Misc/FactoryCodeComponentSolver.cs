@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("factoryCode")]
 public class FactoryCodeComponentSolver : ReflectionComponentSolver
 {
 	public FactoryCodeComponentSolver(TwitchModule module) :

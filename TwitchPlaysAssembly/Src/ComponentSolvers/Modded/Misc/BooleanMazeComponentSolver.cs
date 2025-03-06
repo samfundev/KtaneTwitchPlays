@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("boolMaze")]
 public class BooleanMazeComponentSolver : ComponentSolver
 {
 	public BooleanMazeComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("graffitiNumbers")]
 public class GraffitiNumbersShim : ComponentSolverShim
 {
 	public GraffitiNumbersShim(TwitchModule module)

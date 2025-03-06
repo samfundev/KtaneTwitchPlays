@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("lgndHiddenColors")]
 public class HiddenColorsShim : ComponentSolverShim
 {
 	public HiddenColorsShim(TwitchModule module)

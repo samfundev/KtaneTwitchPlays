@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("CactusPConundrum")]
 public class CactiConundrumComponentSolver : ReflectionComponentSolver
 {
 	public CactiConundrumComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("stainedGlass")]
 public class StainedGlassComponentSolver : ComponentSolver
 {
 	public StainedGlassComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Linq;
 using System;
 
+[ModuleID("lgndHyperactiveNumbers")]
 public class HyperactiveNumsComponentSolver : ReflectionComponentSolver
 {
 	public HyperactiveNumsComponentSolver(TwitchModule module) :

@@ -126,4 +126,16 @@ public static class ReflectionHelper
 	{
 		@object.GetType().CallMethod(member, @object, arguments);
 	}
+
+	// https://stackoverflow.com/a/607204
+	public static IEnumerable<KeyValuePair<Type, T>> GetTypesWithAttribute<T>(Type attributeType)
+	{
+		foreach (Type type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetSafeTypes))
+		{
+			foreach (object attribute in type.GetCustomAttributes(attributeType, true))
+			{
+				yield return new KeyValuePair<Type, T>(type, (T) attribute);
+			}
+		}
+	}
 }

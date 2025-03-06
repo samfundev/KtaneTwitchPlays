@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("runeMatchI")]
 public class RuneMatchIComponentSolver : ReflectionComponentSolver
 {
 	public RuneMatchIComponentSolver(TwitchModule module) :

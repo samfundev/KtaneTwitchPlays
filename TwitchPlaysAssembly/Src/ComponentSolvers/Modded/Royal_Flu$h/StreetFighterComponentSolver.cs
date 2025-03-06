@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("streetFighter")]
 public class StreetFighterComponentSolver : ComponentSolver
 {
 	public StreetFighterComponentSolver(TwitchModule module)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("memorableButtons")]
 public class MemorableButtonsComponentSolver : ComponentSolver
 {
 	public MemorableButtonsComponentSolver(TwitchModule module) :

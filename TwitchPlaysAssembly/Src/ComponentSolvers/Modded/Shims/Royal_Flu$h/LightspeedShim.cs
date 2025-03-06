@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("lightspeed")]
 public class LightspeedShim : ComponentSolverShim
 {
 	public LightspeedShim(TwitchModule module)

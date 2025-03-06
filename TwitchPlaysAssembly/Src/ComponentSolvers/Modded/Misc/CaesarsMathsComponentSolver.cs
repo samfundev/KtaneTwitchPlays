@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("caesarsMaths")]
 public class CaesarsMathsComponentSolver : ReflectionComponentSolver
 {
 	public CaesarsMathsComponentSolver(TwitchModule module) :

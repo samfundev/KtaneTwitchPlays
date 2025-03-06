@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("Numbers")]
 public class NumbersShim : ComponentSolverShim
 {
 	public NumbersShim(TwitchModule module)

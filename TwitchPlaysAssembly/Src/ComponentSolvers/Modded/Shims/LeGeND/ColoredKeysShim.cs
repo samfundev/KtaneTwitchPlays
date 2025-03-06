@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("lgndColoredKeys")]
 public class ColoredKeysShim : ComponentSolverShim
 {
 	public ColoredKeysShim(TwitchModule module)

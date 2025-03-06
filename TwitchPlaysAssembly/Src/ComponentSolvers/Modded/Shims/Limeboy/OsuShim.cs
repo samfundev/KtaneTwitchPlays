@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("osu")]
 public class OsuShim : ComponentSolverShim
 {
 	public OsuShim(TwitchModule module)

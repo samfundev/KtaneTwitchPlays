@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("NeedyScreensaver")]
 public class ScreensaverComponentSolver : ReflectionComponentSolver
 {
 	public ScreensaverComponentSolver(TwitchModule module) :

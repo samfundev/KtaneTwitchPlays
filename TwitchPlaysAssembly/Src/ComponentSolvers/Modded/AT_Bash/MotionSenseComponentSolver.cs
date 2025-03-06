@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("MotionSense")]
 public class MotionSenseComponentSolver : ComponentSolver
 {
 	public MotionSenseComponentSolver(TwitchModule module) :

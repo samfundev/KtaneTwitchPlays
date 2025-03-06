@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("doubleMaze")]
 public class DoubleMazeComponentSolver : ReflectionComponentSolver
 {
 	public DoubleMazeComponentSolver(TwitchModule module) :

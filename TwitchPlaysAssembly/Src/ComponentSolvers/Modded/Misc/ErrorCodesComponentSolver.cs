@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 
+[ModuleID("errorCodes")]
 public class ErrorCodesComponentSolver : ComponentSolver
 {
 	public ErrorCodesComponentSolver(TwitchModule module) :

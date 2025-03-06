@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("minecraftParody")]
 public class MinecraftParodyShim : ComponentSolverShim
 {
 	public MinecraftParodyShim(TwitchModule module)

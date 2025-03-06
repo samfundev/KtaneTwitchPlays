@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("widgetModule")]
 public class MysteryWidgetShim : ComponentSolverShim
 {
 	public static readonly List<GameObject> Covers = new List<GameObject>();
