@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("MazeV2")]
+[ModuleID("danielDice")]
 public class AntiTrollShim : ComponentSolverShim
 {
 	public AntiTrollShim(TwitchModule module)

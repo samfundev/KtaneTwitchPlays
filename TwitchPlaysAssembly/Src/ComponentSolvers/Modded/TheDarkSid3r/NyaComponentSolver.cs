@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("TDSNya")]
 public class NyaComponentSolver : ReflectionComponentSolver
 {
 	public NyaComponentSolver(TwitchModule module) :

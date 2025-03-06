@@ -3,6 +3,8 @@ using System.Collections;
 using Assets.Scripts.Props;
 using UnityEngine;
 
+[ModuleID("xModule")]
+[ModuleID("yModule")]
 public class XandYComponentSolver : ComponentSolver
 {
 	public XandYComponentSolver(TwitchModule module) :

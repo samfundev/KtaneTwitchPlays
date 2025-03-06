@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("taxReturns")]
 public class TaxReturnsShim : ComponentSolverShim
 {
 	public TaxReturnsShim(TwitchModule module)

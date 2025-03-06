@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 
+[ModuleID("primeEncryption")]
 public class PrimeEncryptionComponentSolver : ComponentSolver
 {
 	public PrimeEncryptionComponentSolver(TwitchModule module) :

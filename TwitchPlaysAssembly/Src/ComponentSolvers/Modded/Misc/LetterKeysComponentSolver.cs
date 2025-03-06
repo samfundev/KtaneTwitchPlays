@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using KModkit;
 using UnityEngine;
 
+[ModuleID("LetterKeys")]
 public class LetterKeysComponentSolver : ComponentSolver
 {
 	public LetterKeysComponentSolver(TwitchModule module) :

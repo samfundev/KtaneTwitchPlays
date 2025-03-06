@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("WhosOnFirstTranslated")]
 public class TranslatedWhosOnFirstComponentSolver : ComponentSolver
 {
 	public TranslatedWhosOnFirstComponentSolver(TwitchModule module) :

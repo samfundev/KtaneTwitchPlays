@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 
+[ModuleID("lgndMorseIdentification")]
 public class MorseIdentificationComponentSolver : ReflectionComponentSolver
 {
 	public MorseIdentificationComponentSolver(TwitchModule module) :

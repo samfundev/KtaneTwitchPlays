@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("gatekeeper")]
 public class GatekeeperComponentSolver : ReflectionComponentSolver
 {
 	public GatekeeperComponentSolver(TwitchModule module) :

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("lookLookAway")]
 public class LookLookAwayComponentSolver : ReflectionComponentSolver
 {
 	public LookLookAwayComponentSolver(TwitchModule module) :

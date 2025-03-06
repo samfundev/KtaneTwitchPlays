@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("strikeSolve")]
 public class StrikeSolveComponentSolver : ReflectionComponentSolver
 {
 	public StrikeSolveComponentSolver(TwitchModule module) :

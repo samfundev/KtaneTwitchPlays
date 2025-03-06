@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("lgndEightPages")]
 public class EightPagesShim : ComponentSolverShim
 {
 	public EightPagesShim(TwitchModule module)

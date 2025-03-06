@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("giantsDrink")]
 public class GiantsDrinkShim : ComponentSolverShim
 {
 	public GiantsDrinkShim(TwitchModule module)

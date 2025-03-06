@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("ColourFlashES")]
 public class ColourFlashESShim : ComponentSolverShim
 {
 	public ColourFlashESShim(TwitchModule module)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("simonsStages")]
 public class SimonsStagesComponentSolver : ComponentSolver
 {
 	public SimonsStagesComponentSolver(TwitchModule module) :

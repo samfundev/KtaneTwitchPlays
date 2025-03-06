@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("Poker")]
 public class PokerShim : ComponentSolverShim
 {
 	public PokerShim(TwitchModule module)

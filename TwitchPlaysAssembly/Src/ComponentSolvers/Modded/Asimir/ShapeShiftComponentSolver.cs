@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("shapeshift")]
 public class ShapeShiftComponentSolver : ComponentSolver
 {
 	public ShapeShiftComponentSolver(TwitchModule module) :

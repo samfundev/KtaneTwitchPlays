@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("needyMrsBob")]
 public class NeedyMrsBobComponentSolver : ReflectionComponentSolver
 {
 	public NeedyMrsBobComponentSolver(TwitchModule module) :

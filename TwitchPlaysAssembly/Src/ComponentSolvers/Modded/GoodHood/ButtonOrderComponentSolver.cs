@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("buttonOrder")]
 public class ButtonOrderComponentSolver : ReflectionComponentSolver
 {
 	public ButtonOrderComponentSolver(TwitchModule module) :

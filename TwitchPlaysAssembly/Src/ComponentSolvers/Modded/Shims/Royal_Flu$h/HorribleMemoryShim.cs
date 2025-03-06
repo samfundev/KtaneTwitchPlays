@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("horribleMemory")]
 public class HorribleMemoryShim : ComponentSolverShim
 {
 	public HorribleMemoryShim(TwitchModule module)

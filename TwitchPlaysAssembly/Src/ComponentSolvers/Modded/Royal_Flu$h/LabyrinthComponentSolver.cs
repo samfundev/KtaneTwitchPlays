@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("labyrinth")]
 public class LabyrinthComponentSolver : ComponentSolver
 {
 	public LabyrinthComponentSolver(TwitchModule module) :

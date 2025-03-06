@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("speakEnglish")]
 public class SpeakEnglishComponentSolver : ReflectionComponentSolver
 {
 	public SpeakEnglishComponentSolver(TwitchModule module)

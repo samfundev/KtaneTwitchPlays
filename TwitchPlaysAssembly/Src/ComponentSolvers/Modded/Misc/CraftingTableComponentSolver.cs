@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("needycrafting")]
 public class CraftingTableComponentSolver : ReflectionComponentSolver
 {
 	public CraftingTableComponentSolver(TwitchModule module) :

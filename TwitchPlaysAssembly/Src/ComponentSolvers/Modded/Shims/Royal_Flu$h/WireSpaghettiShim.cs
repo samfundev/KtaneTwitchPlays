@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("wireSpaghetti")]
 public class WireSpaghettiShim : ComponentSolverShim
 {
 	public WireSpaghettiShim(TwitchModule module)

@@ -1,5 +1,6 @@
 using System.Collections;
 
+[ModuleID("flashingCube")]
 public class FlashingCubeComponentSolver : ReflectionComponentSolver
 {
 	public FlashingCubeComponentSolver(TwitchModule module) :

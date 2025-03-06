@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("jukebox")]
 public class JukeboxShim : ComponentSolverShim
 {
 	public JukeboxShim(TwitchModule module)

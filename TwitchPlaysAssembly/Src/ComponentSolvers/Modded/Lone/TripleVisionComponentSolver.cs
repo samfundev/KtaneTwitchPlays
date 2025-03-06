@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text.RegularExpressions;
 
+[ModuleID("tripleVision")]
 public class TripleVisionComponentSolver : CommandComponentSolver
 {
 	public TripleVisionComponentSolver(TwitchModule module) :

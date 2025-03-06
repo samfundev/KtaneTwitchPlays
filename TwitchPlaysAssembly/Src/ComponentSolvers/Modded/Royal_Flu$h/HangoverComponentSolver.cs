@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("hangover")]
 public class HangoverComponentSolver : ComponentSolver
 {
 	public HangoverComponentSolver(TwitchModule module) :

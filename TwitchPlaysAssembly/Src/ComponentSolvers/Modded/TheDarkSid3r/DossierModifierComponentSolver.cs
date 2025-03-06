@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("TDSDossierModifier")]
 public class DossierModifierComponentSolver : ComponentSolver
 {
 	public DossierModifierComponentSolver(TwitchModule module) :

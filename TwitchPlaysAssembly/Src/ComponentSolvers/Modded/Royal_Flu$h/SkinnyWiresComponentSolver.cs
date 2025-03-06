@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("skinnyWires")]
 public class SkinnyWiresComponentSolver : ComponentSolver
 {
 	public SkinnyWiresComponentSolver(TwitchModule module) :

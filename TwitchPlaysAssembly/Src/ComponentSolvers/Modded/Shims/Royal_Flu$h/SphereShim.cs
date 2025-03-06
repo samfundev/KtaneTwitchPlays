@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("sphere")]
 public class SphereShim : ComponentSolverShim
 {
 	public SphereShim(TwitchModule module)

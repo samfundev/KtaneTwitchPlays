@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("heraldry")]
 public class HeraldryShim : ComponentSolverShim
 {
 	public HeraldryShim(TwitchModule module)

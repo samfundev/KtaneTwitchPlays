@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("algebra")]
 public class AlgebraShim : ComponentSolverShim
 {
 	public AlgebraShim(TwitchModule module)

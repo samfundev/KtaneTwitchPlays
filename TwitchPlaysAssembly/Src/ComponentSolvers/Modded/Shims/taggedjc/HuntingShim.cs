@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("hunting")]
 public class HuntingShim : ComponentSolverShim
 {
 	public HuntingShim(TwitchModule module)

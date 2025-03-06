@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("pinkArrows")]
 public class PinkArrowsComponentSolver : ReflectionComponentSolver
 {
 	public PinkArrowsComponentSolver(TwitchModule module) :

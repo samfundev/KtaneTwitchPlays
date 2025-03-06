@@ -1,5 +1,6 @@
 using System.Collections;
 
+[ModuleID("safetySquare")]
 public class SafetySquareShim : ReflectionComponentSolverShim
 {
 	public SafetySquareShim(TwitchModule module)

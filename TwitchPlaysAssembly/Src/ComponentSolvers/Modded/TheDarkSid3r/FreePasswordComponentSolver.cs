@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("FreePassword")]
+[ModuleID("LargeFreePassword")]
 public class FreePasswordComponentSolver : ComponentSolver
 {
 	public FreePasswordComponentSolver(TwitchModule module) :

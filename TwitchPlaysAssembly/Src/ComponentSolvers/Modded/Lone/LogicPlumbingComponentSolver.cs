@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text.RegularExpressions;
 
+[ModuleID("logicPlumbing")]
 public class LogicPlumbingComponentSolver : ReflectionComponentSolver
 {
 	public LogicPlumbingComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("ManualCodes")]
 public class ManualCodesComponentSolver : ReflectionComponentSolver
 {
 	public ManualCodesComponentSolver(TwitchModule module) :

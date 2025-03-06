@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("12321")]
 public class OneTwoThreeComponentSolver : ReflectionComponentSolver
 {
 	public OneTwoThreeComponentSolver(TwitchModule module) :

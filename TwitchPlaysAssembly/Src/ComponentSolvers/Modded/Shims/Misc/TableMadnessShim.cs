@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("TableMadness")]
 public class TableMadnessShim : ReflectionComponentSolverShim
 {
 	public TableMadnessShim(TwitchModule module)

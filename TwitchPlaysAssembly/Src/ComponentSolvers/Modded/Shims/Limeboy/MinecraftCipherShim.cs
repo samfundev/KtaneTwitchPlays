@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("minecraftCipher")]
 public class MinecraftCipherShim : ComponentSolverShim
 {
 	public MinecraftCipherShim(TwitchModule module)

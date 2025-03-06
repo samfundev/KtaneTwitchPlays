@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+[ModuleID("groceryStore")]
 public class GroceryStoreShim : ComponentSolverShim
 {
 	public GroceryStoreShim(TwitchModule module)

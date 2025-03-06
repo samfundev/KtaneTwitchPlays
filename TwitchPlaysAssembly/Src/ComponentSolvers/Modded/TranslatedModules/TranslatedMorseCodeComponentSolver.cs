@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("MorseCodeTranslated")]
 public class TranslatedMorseCodeComponentSolver : ComponentSolver
 {
 	public TranslatedMorseCodeComponentSolver(TwitchModule module) :

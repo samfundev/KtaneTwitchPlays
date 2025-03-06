@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("Microcontroller")]
 public class MicrocontrollerComponentSolver : ComponentSolver
 {
 	public MicrocontrollerComponentSolver(TwitchModule module) :

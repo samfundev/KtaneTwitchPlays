@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("Color Decoding")]
 public class ColorDecodingShim : ReflectionComponentSolverShim
 {
 	public ColorDecodingShim(TwitchModule module)

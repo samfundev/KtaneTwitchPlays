@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("shaker")]
 public class ShakerComponentSolver : ReflectionComponentSolver
 {
 	public ShakerComponentSolver(TwitchModule module) :

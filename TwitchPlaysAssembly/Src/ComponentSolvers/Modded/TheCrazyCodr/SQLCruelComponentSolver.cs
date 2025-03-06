@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 
+[ModuleID("sqlCruel")]
 public class SQLCruelComponentSolver : ReflectionComponentSolver
 {
 	public SQLCruelComponentSolver(TwitchModule module) :

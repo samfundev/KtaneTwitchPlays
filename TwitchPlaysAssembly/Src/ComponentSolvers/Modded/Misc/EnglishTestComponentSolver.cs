@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("EnglishTest")]
 public class EnglishTestComponentSolver : ComponentSolver
 {
 	public EnglishTestComponentSolver(TwitchModule module) :

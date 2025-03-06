@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("FlagsModule")]
 public class FlagsShim : ComponentSolverShim
 {
 	public FlagsShim(TwitchModule module)

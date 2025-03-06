@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("forget_fractal")]
 public class ForgetFractalComponentSolver : ReflectionComponentSolver
 {
 	public ForgetFractalComponentSolver(TwitchModule module) :

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("CryptModule")]
 public class CryptographyComponentSolver : ComponentSolver
 {
 	public CryptographyComponentSolver(TwitchModule module) :

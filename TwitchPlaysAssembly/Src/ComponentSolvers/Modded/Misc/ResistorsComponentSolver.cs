@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+[ModuleID("resistors")]
 public class ResistorsComponentSolver : ComponentSolver
 {
 	public ResistorsComponentSolver(TwitchModule module) :

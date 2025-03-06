@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("babaIsWho")]
 public class BabaIsWhoComponentSolver : ComponentSolver
 {
 	public BabaIsWhoComponentSolver(TwitchModule module) :

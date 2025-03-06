@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("combinationLock")]
 public class CombinationLockShim : ComponentSolverShim
 {
 	public CombinationLockShim(TwitchModule module)

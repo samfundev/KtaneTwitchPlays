@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("lgndZoni")]
 public class ZoniShim : ComponentSolverShim
 {
 	public ZoniShim(TwitchModule module)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[ModuleID("IconReveal")]
 public class IconRevealComponentSolver : ReflectionComponentSolver
 {
 	public IconRevealComponentSolver(TwitchModule module) :

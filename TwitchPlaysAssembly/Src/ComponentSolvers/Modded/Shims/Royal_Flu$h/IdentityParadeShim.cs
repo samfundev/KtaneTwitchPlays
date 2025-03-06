@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("identityParade")]
 public class IdentityParadeShim : ComponentSolverShim
 {
 	public IdentityParadeShim(TwitchModule module)

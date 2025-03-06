@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("simonsOnFirst")]
 public class SimonsOnFirstComponentSolver : ComponentSolver
 {
 	public SimonsOnFirstComponentSolver(TwitchModule module) :

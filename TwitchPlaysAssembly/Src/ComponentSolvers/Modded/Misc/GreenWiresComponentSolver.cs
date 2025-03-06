@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("GreenWires")]
 public class GreenWiresComponentSolver : ReflectionComponentSolver
 {
 	public GreenWiresComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("krazzBlaseball")]
 public class BlaseballComponentSolver : ReflectionComponentSolver
 {
 	public BlaseballComponentSolver(TwitchModule module) :

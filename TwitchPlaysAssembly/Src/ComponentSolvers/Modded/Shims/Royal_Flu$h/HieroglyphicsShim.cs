@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("hieroglyphics")]
 public class HieroglyphicsShim : ComponentSolverShim
 {
 	public HieroglyphicsShim(TwitchModule module)

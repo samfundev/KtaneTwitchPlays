@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("PasswordsTranslated")]
 public class TranslatedPasswordComponentSolver : ComponentSolver
 {
 	public TranslatedPasswordComponentSolver(TwitchModule module) :

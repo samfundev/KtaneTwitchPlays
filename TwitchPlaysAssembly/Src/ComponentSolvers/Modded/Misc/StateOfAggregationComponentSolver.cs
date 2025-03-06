@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("stateOfAggregation")]
 public class StateOfAggregationComponentSolver : ReflectionComponentSolver
 {
 	public StateOfAggregationComponentSolver(TwitchModule module) :

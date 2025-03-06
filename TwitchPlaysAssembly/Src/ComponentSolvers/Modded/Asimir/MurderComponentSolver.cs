@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+[ModuleID("murder")]
 public class MurderComponentSolver : CommandComponentSolver
 {
 	public MurderComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("britishSlang")]
 public class BritishSlangShim : ComponentSolverShim
 {
 	public BritishSlangShim(TwitchModule module)

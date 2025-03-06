@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("simonSamples")]
 public class SimonSamplesShim : ComponentSolverShim
 {
 	public SimonSamplesShim(TwitchModule module)

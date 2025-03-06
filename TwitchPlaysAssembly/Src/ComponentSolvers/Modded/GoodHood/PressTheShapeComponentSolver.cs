@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("pressTheShape")]
 public class PressTheShapeComponentSolver : ReflectionComponentSolver
 {
 	public PressTheShapeComponentSolver(TwitchModule module) :

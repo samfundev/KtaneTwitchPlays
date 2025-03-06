@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("rapidButtons")]
 public class RapidButtonsComponentSolver : ReflectionComponentSolver
 {
 	public RapidButtonsComponentSolver(TwitchModule module) :

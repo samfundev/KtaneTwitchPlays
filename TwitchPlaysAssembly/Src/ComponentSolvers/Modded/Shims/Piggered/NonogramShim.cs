@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("NonogramModule")]
 public class NonogramShim : ComponentSolverShim
 {
 	public NonogramShim(TwitchModule module)

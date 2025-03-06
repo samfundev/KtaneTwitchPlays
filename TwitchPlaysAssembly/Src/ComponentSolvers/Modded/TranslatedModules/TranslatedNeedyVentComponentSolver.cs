@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("VentGasTranslated")]
 public class TranslatedNeedyVentComponentSolver : ComponentSolver
 {
 	public TranslatedNeedyVentComponentSolver(TwitchModule module) :

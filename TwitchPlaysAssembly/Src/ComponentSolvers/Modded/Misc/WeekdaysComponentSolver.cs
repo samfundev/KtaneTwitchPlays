@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("weekDays")]
 public class WeekdaysComponentSolver : ReflectionComponentSolver
 {
 	public WeekdaysComponentSolver(TwitchModule module) :

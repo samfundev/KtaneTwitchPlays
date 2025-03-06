@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("needyTypingTutor")]
 public class TypingTutorComponentSolver : ReflectionComponentSolver
 {
 	public TypingTutorComponentSolver(TwitchModule module) :

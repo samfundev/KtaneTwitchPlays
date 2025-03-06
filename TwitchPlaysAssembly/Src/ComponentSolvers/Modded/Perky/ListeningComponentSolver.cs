@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("Listening")]
 public class ListeningComponentSolver : ComponentSolver
 {
 	public ListeningComponentSolver(TwitchModule module) :

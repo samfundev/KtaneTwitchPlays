@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("ThirdBase")]
 public class ThirdBaseComponentSolver : ComponentSolver
 {
 	public ThirdBaseComponentSolver(TwitchModule module) :

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("TDSNeedyWires")]
 public class NeedyWiresComponentSolver : ReflectionComponentSolver
 {
 	public NeedyWiresComponentSolver(TwitchModule module) :

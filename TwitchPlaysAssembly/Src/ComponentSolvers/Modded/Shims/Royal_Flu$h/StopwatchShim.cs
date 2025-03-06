@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("stopwatch")]
 public class StopwatchShim : ComponentSolverShim
 {
 	public StopwatchShim(TwitchModule module)

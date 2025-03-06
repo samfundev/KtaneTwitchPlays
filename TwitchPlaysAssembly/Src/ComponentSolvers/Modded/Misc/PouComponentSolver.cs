@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("NeedyPou")]
 public class PouComponentSolver : ReflectionComponentSolver
 {
 	public PouComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("accumulation")]
 public class AccumulationShim : ComponentSolverShim
 {
 	public AccumulationShim(TwitchModule module)

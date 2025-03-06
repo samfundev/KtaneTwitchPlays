@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("Color Generator")]
 public class ColorGeneratorShim : ComponentSolverShim
 {
 	public ColorGeneratorShim(TwitchModule module)

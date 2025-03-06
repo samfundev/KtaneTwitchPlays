@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("standardButtonMasher")]
 public class StandardButtonMasherComponentSolver : ReflectionComponentSolver
 {
 	public StandardButtonMasherComponentSolver(TwitchModule module) :

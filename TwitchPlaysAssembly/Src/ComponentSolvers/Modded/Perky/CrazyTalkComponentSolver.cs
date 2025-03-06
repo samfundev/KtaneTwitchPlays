@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("CrazyTalk")]
 public class CrazyTalkComponentSolver : ComponentSolver
 {
 	public CrazyTalkComponentSolver(TwitchModule module) :

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("mortalKombat")]
 public class MortalKombatShim : ComponentSolverShim
 {
 	public MortalKombatShim(TwitchModule module)

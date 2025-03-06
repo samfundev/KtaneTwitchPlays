@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("simonsStar")]
 public class SimonStarShim : ComponentSolverShim
 {
 	public SimonStarShim(TwitchModule module)

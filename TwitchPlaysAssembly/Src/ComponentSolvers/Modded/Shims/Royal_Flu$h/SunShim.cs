@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("sun")]
 public class SunShim : ComponentSolverShim
 {
 	public SunShim(TwitchModule module)

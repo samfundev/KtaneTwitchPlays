@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("DIWindow")]
 public class DriveInWindowShim : ComponentSolverShim
 {
 	public DriveInWindowShim(TwitchModule module)

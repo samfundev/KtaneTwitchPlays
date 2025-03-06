@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("quintuples")]
 public class QuintuplesShim : ComponentSolverShim
 {
 	public QuintuplesShim(TwitchModule module)

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[ModuleID("GL_nokiaModule")]
 public class NokiaComponentSolver : ReflectionComponentSolver
 {
 	public NokiaComponentSolver(TwitchModule module) :

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("snooker")]
 public class SnookerShim : ComponentSolverShim
 {
 	public SnookerShim(TwitchModule module)

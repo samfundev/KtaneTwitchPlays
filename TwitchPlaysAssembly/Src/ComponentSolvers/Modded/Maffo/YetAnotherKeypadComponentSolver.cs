@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("yetAnotherKeypad")]
 public class YetAnotherKeypadComponentSolver : ReflectionComponentSolver
 {
 	public YetAnotherKeypadComponentSolver(TwitchModule module) :

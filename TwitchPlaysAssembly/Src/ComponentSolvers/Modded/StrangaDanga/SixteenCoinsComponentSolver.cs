@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 
+[ModuleID("sixteenCoins")]
 public class SixteenCoinsComponentSolver : ReflectionComponentSolver
 {
 	public SixteenCoinsComponentSolver(TwitchModule module) :

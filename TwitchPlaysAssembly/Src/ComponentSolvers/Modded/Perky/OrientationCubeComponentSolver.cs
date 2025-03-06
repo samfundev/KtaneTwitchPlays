@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+[ModuleID("OrientationCube")]
 public class OrientationCubeComponentSolver : ComponentSolver
 {
 	public OrientationCubeComponentSolver(TwitchModule module) :

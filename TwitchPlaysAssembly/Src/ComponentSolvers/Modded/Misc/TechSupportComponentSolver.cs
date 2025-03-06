@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 
+[ModuleID("TechSupport")]
 public class TechSupportComponentSolver : ReflectionComponentSolver
 {
 	public TechSupportComponentSolver(TwitchModule module) :

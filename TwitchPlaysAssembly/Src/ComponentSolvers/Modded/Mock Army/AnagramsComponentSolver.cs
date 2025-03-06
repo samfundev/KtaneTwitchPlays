@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("AnagramsModule")]
+[ModuleID("WordScrambleModule")]
 public class AnagramsComponentSolver : ComponentSolver
 {
 	public AnagramsComponentSolver(TwitchModule module) :

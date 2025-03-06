@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("Needy Math")]
 public class NeedyMathComponentSolver : ReflectionComponentSolver
 {
 	public NeedyMathComponentSolver(TwitchModule module)

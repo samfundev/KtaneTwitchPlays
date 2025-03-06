@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 
+[ModuleID("MorseWar")]
 public class MorseWarComponentSolver : ComponentSolver
 {
 	public MorseWarComponentSolver(TwitchModule module) :

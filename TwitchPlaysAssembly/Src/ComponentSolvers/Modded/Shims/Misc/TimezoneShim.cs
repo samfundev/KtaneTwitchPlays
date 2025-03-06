@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+[ModuleID("timezone")]
 public class TimezoneShim : ComponentSolverShim
 {
 	public TimezoneShim(TwitchModule module)

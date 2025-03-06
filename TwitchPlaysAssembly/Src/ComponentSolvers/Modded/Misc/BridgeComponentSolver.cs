@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[ModuleID("bridge")]
 public class BridgeComponentSolver : ReflectionComponentSolver
 {
 	public BridgeComponentSolver(TwitchModule module) :

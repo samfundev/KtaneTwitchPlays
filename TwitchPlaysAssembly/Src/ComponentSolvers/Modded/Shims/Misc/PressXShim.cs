@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using KModkit;
 
+[ModuleID("PressX")]
 public class PressXShim : ComponentSolverShim
 {
 	public PressXShim(TwitchModule module)

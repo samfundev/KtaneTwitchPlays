@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("gemory")]
 public class GemoryComponentSolver : ReflectionComponentSolver
 {
 	public GemoryComponentSolver(TwitchModule module) :

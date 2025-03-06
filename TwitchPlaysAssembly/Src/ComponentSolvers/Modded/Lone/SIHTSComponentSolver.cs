@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("SIHTS")]
 public class SIHTSComponentSolver : CommandComponentSolver
 {
 	public SIHTSComponentSolver(TwitchModule module) :

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ModuleID("maintenance")]
 public class MaintenanceShim : ComponentSolverShim
 {
 	public MaintenanceShim(TwitchModule module)

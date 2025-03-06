@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ModuleID("CrypticPassword")]
 public class CrypticPasswordComponentSolver : ComponentSolver
 {
 	public CrypticPasswordComponentSolver(TwitchModule module) :

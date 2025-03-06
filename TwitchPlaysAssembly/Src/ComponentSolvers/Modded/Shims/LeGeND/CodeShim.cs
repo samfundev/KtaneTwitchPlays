@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+[ModuleID("theCodeModule")]
 public class CodeShim : ComponentSolverShim
 {
 	public CodeShim(TwitchModule module)
