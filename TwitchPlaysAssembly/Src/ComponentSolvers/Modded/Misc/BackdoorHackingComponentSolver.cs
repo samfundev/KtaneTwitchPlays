@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 [ModuleID("BackdoorHacking")]
@@ -13,27 +12,24 @@ public class BackdoorHackingComponentSolver : CommandComponentSolver
 			module.Bomb.BackdoorComponent = _component;
 	}
 
-	private IEnumerator Reconnect(CommandParser _)
+	[Command("reconnect")]
+	private IEnumerator Reconnect()
 	{
-		_.Literal("reconnect");
-
 		yield return null;
 		yield return Click(0);
 	}
 
-	private IEnumerator Buy(CommandParser _)
+	[Command("buy ([1-3])")]
+	private IEnumerator Buy(int index)
 	{
-		_.Literal("buy");
-		_.Integer(out int index, 1, 3);
-
 		yield return null;
 		yield return Click(index);
 	}
 
-	private IEnumerator AnyKeyPress(CommandParser _)
+	[Command("([a-z0-9_<^>/]+)")]
+	private IEnumerator AnyKeyPress(string value)
 	{
-		_.Regex("[a-z0-9_<^>/]+", out Match match);
-		string input = match.Groups[0].Value.ToUpper().Replace("_", " ");
+		string input = value.ToUpper().Replace("_", " ");
 
 		yield return null;
 		foreach (char key in input)

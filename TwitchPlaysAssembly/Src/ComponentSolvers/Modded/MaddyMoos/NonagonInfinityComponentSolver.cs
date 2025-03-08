@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 [ModuleID("nonagonInfinity")]
 public class NonagonInfinityComponentSolver : CommandComponentSolver
@@ -11,13 +10,11 @@ public class NonagonInfinityComponentSolver : CommandComponentSolver
 	{
 	}
 
-	private IEnumerator Press(CommandParser _)
+	[Command("press ([a-z]) ([a-z])")]
+	private IEnumerator Press(string l1, string l2)
 	{
-		_.Literal("press");
-		_.Regex("([a-z]) ([a-z])", out Match match);
-
-		string l1 = match.Groups[1].Value.ToUpperInvariant();
-		string l2 = match.Groups[2].Value.ToUpperInvariant();
+		l1 = l1.ToUpperInvariant();
+		l2 = l2.ToUpperInvariant();
 		string[] buttonlabels = _component.GetValue<string[]>("buttonlabels");
 		if (!buttonlabels.Contains(l1) || !buttonlabels.Contains(l2))
 			yield break;

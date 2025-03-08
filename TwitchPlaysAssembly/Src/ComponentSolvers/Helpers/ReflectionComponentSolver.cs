@@ -33,6 +33,7 @@ public abstract class ReflectionComponentSolver : ComponentSolver
 		string[] split = inputCommand.SplitFull(" ,;");
 
 		var enumerator = Respond(split, inputCommand);
+		if (enumerator == null) yield break;
 		while (enumerator.MoveNext())
 			yield return enumerator.Current;
 	}

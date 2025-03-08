@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Text.RegularExpressions;
 
 [ModuleID("tripleVision")]
 public class TripleVisionComponentSolver : CommandComponentSolver
@@ -9,14 +8,12 @@ public class TripleVisionComponentSolver : CommandComponentSolver
 	{
 	}
 
-	private IEnumerator Press(CommandParser _)
+	[Command("press ([a-h][1-8])")]
+	private IEnumerator Press(string value)
 	{
-		_.Literal("press");
-		_.Regex("[a-h][1-8]", out Match match);
-
 		yield return null;
-		int letIndex = match.Groups[0].Value[0].ToIndex();
-		yield return Click(match.Groups[0].Value[1].ToIndex() * 8 + letIndex);
+		int letIndex = value[0].ToIndex();
+		yield return Click(value[1].ToIndex() * 8 + letIndex);
 	}
 
 	protected override IEnumerator ForcedSolveIEnumerator()

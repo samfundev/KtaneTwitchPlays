@@ -19,15 +19,12 @@ public class PaintingShim : CommandComponentSolverShim
 			.ToList();
 	}
 
-	public IEnumerator Paint(CommandParser _)
+	[Command("paint (.+) (.+)")]
+	public IEnumerator Paint(string label, string _color, string cmd)
 	{
-		_.Literal("paint", "p");
-		_.String(out string label);
-		_.String(out string _color);
-
 		TextMesh targetCell = labels.Find(textMesh => textMesh.text == label);
 		if (targetCell == null) yield break;
 
-		yield return RespondUnshimmed(_.OriginalCommand);
+		yield return RespondUnshimmed(cmd);
 	}
 }
