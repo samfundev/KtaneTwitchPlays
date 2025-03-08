@@ -9,41 +9,37 @@ public class SIHTSComponentSolver : CommandComponentSolver
 	{
 	}
 
-	private IEnumerator Underhand(CommandParser _)
+	[Command("underhand")]
+	private IEnumerator Underhand()
 	{
-		_.Literal("underhand");
-
 		yield return null;
 		yield return Click(3);
 	}
 
-	private IEnumerator Flick(CommandParser _)
+	[Command("flick")]
+	private IEnumerator Flick()
 	{
-		_.Literal("flick");
-
 		yield return null;
 		yield return Click(4);
 	}
-	private IEnumerator Unchanged(CommandParser _)
-	{
-		_.Literal("unchanged");
 
+	[Command("unchanged")]
+	private IEnumerator Unchanged()
+	{
 		yield return null;
 		yield return Click(0);
 	}
 
-	private IEnumerator Increased(CommandParser _)
+	[Command("increased")]
+	private IEnumerator Increased()
 	{
-		_.Literal("increased");
-
 		yield return null;
 		yield return Click(2);
 	}
 
-	private IEnumerator Decreased(CommandParser _)
+	[Command("decreased")]
+	private IEnumerator Decreased()
 	{
-		_.Literal("decreased");
-
 		yield return null;
 		yield return Click(1);
 	}

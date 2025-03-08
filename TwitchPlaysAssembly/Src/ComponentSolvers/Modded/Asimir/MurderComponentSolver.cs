@@ -32,19 +32,16 @@ public class MurderComponentSolver : CommandComponentSolver
 		}
 	}
 
-	private IEnumerator Accuse(CommandParser _)
+	[Command("accuse")]
+	private IEnumerator Accuse()
 	{
-		_.Literal("accuse");
-
 		yield return "accuse";
 		yield return DoInteractionClick(_buttons[6]);
 	}
 
-	private IEnumerator Cycle(CommandParser _)
+	[Command("cycle (?<NameTypes>)?")]
+	private IEnumerator Cycle(string option)
 	{
-		_.Literal("cycle");
-		_.OptionalOptions(out string option, NameTypes);
-
 		for (int i = 0; i < 3; i++)
 		{
 			if (option != null && option != NameTypes[i]) continue;
@@ -60,17 +57,16 @@ public class MurderComponentSolver : CommandComponentSolver
 		}
 	}
 
-	private IEnumerator SetAccusation(CommandParser _)
+	[Command("(?:(?<Commands>) ([a-z ]+)){3}")]
+	private IEnumerator SetAccusation(Group command, Group noun)
 	{
 		var present = new bool[3];
 		for (int i = 0; i < 3; i++)
 		{
-			_.Regex("(" + string.Join("|", Commands) + ") ([a-z ]+)", out Match match);
-
-			int catIndex = Array.IndexOf(Commands, match.Groups[1].ToString());
+			int catIndex = Array.IndexOf(Commands, command.Captures[i].ToString());
 			if (catIndex == -1)
 				continue;
-			string value = match.Groups[2].ToString().Trim();
+			string value = noun.Captures[i].ToString().Trim();
 
 			yield return null;
 			if (!NameSpellings[catIndex].Any(x => x.EndsWith(value, StringComparison.InvariantCultureIgnoreCase)))

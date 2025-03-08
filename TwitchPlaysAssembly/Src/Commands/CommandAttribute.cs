@@ -9,7 +9,7 @@ sealed class CommandAttribute : Attribute
 	/// <summary>
 	///     A regular expression that matches all forms of the command. Note that which part of the command is matched against
 	///     this regex depends on what type of command it is (global, module, bomb, or holdable).</summary>
-	public string Regex { get; }
+	public string Regex;
 
 	/// <summary>Access level required to use this command.</summary>
 	public AccessLevel AccessLevel { get; }
