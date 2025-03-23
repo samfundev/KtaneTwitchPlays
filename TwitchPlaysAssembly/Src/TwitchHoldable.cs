@@ -446,7 +446,7 @@ public class TwitchHoldable
 			HelpMessage = "Snooze the alarm clock with “!{0} snooze”.";
 			HelpMessage += (TwitchPlaySettings.data.AllowSnoozeOnly && !TwitchPlaySettings.data.AnarchyMode)
 				? " (Current settings forbid turning the alarm clock back on.)"
-				: " Alarm clock may also be turned back on with “!{0} snooze”. Toggle the alarm clock 5 times with “!{0} snooze 5”";
+				: " Alarm clock may also be turned back on with “!{0} snooze”. Toggle the alarm clock 5 times with “!{0} snooze 5”.";
 		}
 		else if (CommandType == typeof(IRCConnectionManagerCommands))
 		{

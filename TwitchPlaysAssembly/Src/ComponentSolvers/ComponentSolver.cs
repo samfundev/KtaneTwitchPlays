@@ -93,6 +93,7 @@ public abstract class ComponentSolver
 		}
 
 		bool select = !Module.BombComponent.GetModuleID().EqualsAny("lookLookAway");
+		bool cornflowerCmd = Module.BombComponent.GetModuleID().EqualsAny("CornflowerButtonModule");
 
 		if (Solved != solved || _beforeStrikeCount != StrikeCount)
 		{
@@ -108,13 +109,13 @@ public abstract class ComponentSolver
 
 			if (!TwitchPlaySettings.data.AnarchyMode)
 			{
-				IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
+				IEnumerator focusDefocus = Module.Bomb.Focus(Module.Selectable, Module.FocusDistance, Module.FrontFace, select);
 				while (focusDefocus.MoveNext())
 					yield return focusDefocus.Current;
 
 				yield return new WaitForSeconds(0.5f);
 
-				focusDefocus = Module.Bomb.Defocus(Module.Selectable, FrontFace, select);
+				focusDefocus = Module.Bomb.Defocus(Module.Selectable, Module.FrontFace, select);
 				while (focusDefocus.MoveNext())
 					yield return focusDefocus.Current;
 
@@ -137,7 +138,17 @@ public abstract class ComponentSolver
 
 		AppreciateArtComponentSolver.ShowAppreciation(Module);
 
-		IEnumerator focusCoroutine = Module.Bomb.Focus(Module.Selectable, FocusDistance, FrontFace, select);
+		TwitchModule modToFocus = Module;
+		Selectable cornflowerSel = null;
+		if (cornflowerCmd && command.StartsWith("highlight"))
+		{
+			string[] splitCmd = command.SplitFull(" ,;");
+			string code = splitCmd[1];
+			int selNum = int.Parse(splitCmd[2]) - 1;
+			modToFocus = TwitchGame.Instance.Modules.Where(x => x.Code.EqualsIgnoreCase(code)).ToList()[0];
+			cornflowerSel = modToFocus.Selectable.Children.Where(x => x != null).Distinct().ToArray()[selNum];
+		}
+		IEnumerator focusCoroutine = Module.Bomb.Focus(modToFocus.Selectable, modToFocus.FocusDistance, modToFocus.FrontFace, select);
 		while (focusCoroutine.MoveNext())
 			yield return focusCoroutine.Current;
 
@@ -486,9 +497,11 @@ public abstract class ComponentSolver
 
 		AppreciateArtComponentSolver.HideAppreciation(Module);
 
-		IEnumerator defocusCoroutine = Module.Bomb.Defocus(Module.Selectable, FrontFace, select);
+		IEnumerator defocusCoroutine = Module.Bomb.Defocus(modToFocus.Selectable, modToFocus.FrontFace, select);
 		while (defocusCoroutine.MoveNext())
 			yield return defocusCoroutine.Current;
+		if (cornflowerSel != null)
+			cornflowerSel.SetHighlight(false);
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -1289,10 +1302,6 @@ public abstract class ComponentSolver
 	protected bool Detonated => Module.Bomb.Bomb.HasDetonated;
 
 	public int StrikeCount { get; private set; }
-
-	protected float FocusDistance => Module.FocusDistance;
-
-	protected bool FrontFace => Module.FrontFace;
 
 	protected FieldInfo HelpMessageField { get; set; }
 	private string _helpMessage = null;
