@@ -338,6 +338,14 @@ public class TwitchPlaySettingsData
 		}},
 
 		// Strict Difficulty distributions
+		{ "beginner", new ModuleDistributions {
+			DisplayName = "Strict Beginner",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.3f, "AllSolvable: Base"),
+				new DistributionPool(0.4f, "Score: <= 6", /* Reward */ 2, /* Time */ 75),
+				new DistributionPool(0.3f, "Score: >= 7, <= 10", /* Reward */ 3, /* Time */ 90),
+			}
+		}},
 		{ "easy", new ModuleDistributions {
 			DisplayName = "Strict Easy",
 			Pools = new List<DistributionPool> {
@@ -369,6 +377,15 @@ public class TwitchPlaySettingsData
 				new DistributionPool(0.3f, "Score: >= 9, <= 15"),
 				new DistributionPool(0.15f, "Score: >= 16, <= 24", /* Reward */ 8, /* Time */ 180),
 				new DistributionPool(0.15f, "Score: >= 25",        /* Reward */ 10, /* Time */ 240),
+			}
+		}},
+		{ "beginner+boss", new ModuleDistributions {
+			DisplayName = "Strict Beginner + Boss",
+			Pools = new List<DistributionPool> {
+				new DistributionPool(0.3f, "AllSolvable: Base"),
+				new DistributionPool(0.4f, "Score: <= 6", /* Reward */ 2, /* Time */ 75),
+				new DistributionPool(0.3f, "Score: >= 7, <= 10", /* Reward */ 3, /* Time */ 90),
+				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
 			}
 		}},
 		{ "easy+boss", new ModuleDistributions {
@@ -414,30 +431,29 @@ public class TwitchPlaySettingsData
 		{ "variety", new ModuleDistributions {
 			DisplayName = "Variety Mix",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.11f, "Score: <= 4",         /* Reward */ 2,  /* Time */ 60),
+				new DistributionPool(0.2f, "AllSolvable: Base"),
+				new DistributionPool(0.1f, "Score: <= 4",         /* Reward */ 2,  /* Time */ 60),
 				new DistributionPool(0.15f, "Score: <= 9",         /* Reward */ 3,  /* Time */ 120),
-				new DistributionPool(0.15f, "Score: >= 5, <= 14"),
-				new DistributionPool(0.13f, "Score: >= 5, <= 19"),
-				new DistributionPool(0.13f, "Score: >= 10, <= 24"),
-				new DistributionPool(0.11f, "Score: >= 10, <= 29", /* Reward */ 8,  /* Time */ 180),
-				new DistributionPool(0.09f, "Score: >= 20",        /* Reward */ 10, /* Time */ 240),
-				new DistributionPool(0.13f, "AllSolvable"),
+				new DistributionPool(0.1f, "Score: >= 5, <= 14"),
+				new DistributionPool(0.15f, "Score: >= 5, <= 19"),
+				new DistributionPool(0.1f, "Score: >= 10, <= 29", /* Reward */ 8,  /* Time */ 180),
+				new DistributionPool(0.05f, "Score: >= 20",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.15f, "AllSolvable"),
 			}
 		}},
 		{ "variety+boss", new ModuleDistributions {
 			DisplayName = "Variety + Boss",
 			Pools = new List<DistributionPool> {
-				new DistributionPool(0.11f, "Score: <= 4",         /* Reward */ 2,  /* Time */ 60),
+				new DistributionPool(0.2f, "AllSolvable: Base"),
+				new DistributionPool(0.1f, "Score: <= 4",         /* Reward */ 2,  /* Time */ 60),
 				new DistributionPool(0.15f, "Score: <= 9",         /* Reward */ 3,  /* Time */ 120),
-				new DistributionPool(0.15f, "Score: >= 5, <= 14"),
-				new DistributionPool(0.13f, "Score: >= 5, <= 19"),
-				new DistributionPool(0.13f, "Score: >= 10, <= 24"),
-				new DistributionPool(0.11f, "Score: >= 10, <= 29", /* Reward */ 8,  /* Time */ 180),
-				new DistributionPool(0.09f, "Score: >= 20",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.1f, "Score: >= 5, <= 14"),
+				new DistributionPool(0.15f, "Score: >= 5, <= 19"),
+				new DistributionPool(0.1f, "Score: >= 10, <= 29", /* Reward */ 8,  /* Time */ 180),
+				new DistributionPool(0.05f, "Score: >= 20",        /* Reward */ 10, /* Time */ 240),
+				new DistributionPool(0.15f, "AllSolvable"),
 
-				new DistributionPool(0.0865f, "AllSolvable"),
-				new DistributionPool(0.0435f, "BossModule", /* Reward */ 0, /* Time */ 300),
-				new DistributionPool(0.0f,    "BossModule", /* Reward */ 0, /* Time */ 300),
+				new DistributionPool(0.0f, "BossModule", /* Reward */ 0, /* Time */ 300),
 			},
 			MinModules = 2
 		}}
