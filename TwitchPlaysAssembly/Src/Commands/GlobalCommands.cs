@@ -855,7 +855,7 @@ static class GlobalCommands
 		var level = AccessLevel.User;
 		foreach (string lvl in roles.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
 		{
-			switch (lvl)
+			switch (lvl.ToLower())
 			{
 				case "mod":
 				case "moderator":
