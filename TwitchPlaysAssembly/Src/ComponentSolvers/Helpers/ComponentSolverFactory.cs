@@ -361,7 +361,7 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["ThirdBase"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Third Base" };
 
 		//AT_Bash / Bashly / Ashthebash
-		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense" };
+		ModComponentSolverInformation["MotionSense"] = new ModuleInformation { builtIntoTwitchPlays = true, moduleDisplayName = "Motion Sense", unclaimable = true };
 		ModComponentSolverInformation["AppreciateArt"] = new ModuleInformation { builtIntoTwitchPlays = true, unclaimable = true, moduleDisplayName = "Art Appreciation" };
 
 		//Perky
@@ -584,6 +584,7 @@ public static class ComponentSolverFactory
 
 		//Blananas2
 		ModComponentSolverInformation["timingIsEverything"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
+		ModComponentSolverInformation["triskaideka"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
 
 		//clutterArranger
 		ModComponentSolverInformation["graphModule"] = new ModuleInformation { helpText = "Submit an answer with !{0} submit green red true false. Order is TL, TR, BL, BR." }; // Connection Check
@@ -611,8 +612,12 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["Laundry"] = new ModuleInformation { helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa" };
 		ModComponentSolverInformation["ModuleAgainstHumanity"] = new ModuleInformation { helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit." };
 
+		//GeekYiwen
+		ModComponentSolverInformation["encryptedHangman"] = new ModuleInformation { announceModule = true };
+
 		//GhostSalt
 		ModComponentSolverInformation["GSAccessCodes"] = new ModuleInformation { announceModule = true };
+		ModComponentSolverInformation["GSYellowFace"] = new ModuleInformation { unclaimable = true };
 
 		//Goofy
 		ModComponentSolverInformation["megaMan2"] = new ModuleInformation { CompatibilityMode = true };
@@ -646,11 +651,18 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["KritMicroModules"] = new ModuleInformation { CompatibilityMode = true };
 		ModComponentSolverInformation["KritRadio"] = new ModuleInformation { CompatibilityMode = true };
 
+		//ktane1
+		ModComponentSolverInformation["schulteTable"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight };
+		ModComponentSolverInformation["cruelSchulteTable"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight };
+
 		//Maca
 		ModComponentSolverInformation["Playfair"] = new ModuleInformation { moduleDisplayName = "Playfair Cipher" };
 
 		//MaddyMoos
 		ModComponentSolverInformation["top10nums"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight };
+
+		//MAXANGE2B
+		ModComponentSolverInformation["colorPong"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
 
 		//McNiko67
 		ModComponentSolverInformation["BigSwitch"] = new ModuleInformation { CompatibilityMode = true };
@@ -661,11 +673,15 @@ public static class ComponentSolverFactory
 		//MrSpekCraft
 		ModComponentSolverInformation["vexillology"] = new ModuleInformation { CompatibilityMode = true };
 
+		//Nimsay Ramsey
+		ModComponentSolverInformation["solveShift"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
+
 		//NoahCoolBoy
 		ModComponentSolverInformation["pigpenRotations"] = new ModuleInformation { helpTextOverride = true, helpText = "To submit abcdefhijklm use '!{0} abcdefhijklm'." };
 
 		//Obvious
 		ModComponentSolverInformation["hearthur"] = new ModuleInformation { unclaimable = true };
+		ModComponentSolverInformation["bigBean"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
 
 		//Piggered
 		ModComponentSolverInformation["NonogramModule"] = new ModuleInformation { CompatibilityMode = true };
@@ -701,7 +717,10 @@ public static class ComponentSolverFactory
 		ModComponentSolverInformation["forgetMeLater"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["tallorderedKeys"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
 		ModComponentSolverInformation["veryAnnoyingButton"] = new ModuleInformation { announceModule = true };
-		ModComponentSolverInformation["doomsdayButton"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft };
+		ModComponentSolverInformation["doomsdayButton"] = new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft, announceModule = true };
+
+		//That one kid
+		ModComponentSolverInformation["peeky"] = new ModuleInformation { announceModule = true };
 
 		//TheThirdMan
 		ModComponentSolverInformation["forgetThemAll"] = new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true };
