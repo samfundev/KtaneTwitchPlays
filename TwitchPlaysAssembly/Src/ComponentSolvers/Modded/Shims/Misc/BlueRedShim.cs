@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("BlueNeedy")]
+[ModuleID("RedNeedy")]
 public class BlueRedShim : ComponentSolverShim
 {
 	public BlueRedShim(TwitchModule module)

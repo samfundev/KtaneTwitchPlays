@@ -333,12 +333,11 @@ static class ModuleCommands
 	/// <syntax>selectables</syntax>
 	/// <summary>List all selectable objects in a module</summary>
 	[Command(@"selectables")]
-	public static IEnumerator Selectables(TwitchModule module)
+	public static void Selectables(TwitchModule module)
 	{
-		yield return null;
 		Selectable[] modSels = module.Selectable.Children.Where(x => x != null).Distinct().ToArray();
 		string selectablesStr = modSels.Select((sel, idx) => $"{sel.name} ({idx + 1})").Join(", ");
-		yield return $"sendtochat Selectables for module {module.Code} ({module.BombComponent.GetModuleDisplayName()}): {selectablesStr}";
+		IRCConnection.SendMessage($"Selectables for module {module.Code} ({module.BombComponent.GetModuleDisplayName()}): {selectablesStr}");
 	}
 
 	/// <name>Highlight</name>
@@ -350,11 +349,17 @@ static class ModuleCommands
 		Selectable[] modSels = module.Selectable.Children.Where(x => x != null).Distinct().ToArray();
 		if (!selectableIndex.InRange(1, modSels.Length)) yield break;
 
-		yield return null;
+		yield return module.Bomb.Focus(module.Selectable, module.FocusDistance, module.FrontFace);
+
 		Selectable selectable = modSels[selectableIndex - 1];
 		selectable.SetHighlight(true);
 		yield return new WaitForSeconds(3);
+
+		// NOTE: The dehighlight and defocus must happen on the same frame.
 		selectable.SetHighlight(false);
+		module.Selectable.OnDefocus.Invoke();
+
+		yield return module.Bomb.Defocus(module.Selectable, module.FrontFace);
 	}
 
 	public static IEnumerator Zoom(TwitchModule module, SuperZoomData zoomData, object yield)

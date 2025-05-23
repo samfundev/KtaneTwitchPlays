@@ -1,10 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
+[ModuleID("CornflowerButtonModule")]
 public class CornflowerButtonComponentSolver : ReflectionComponentSolver
 {
 	public CornflowerButtonComponentSolver(TwitchModule module) :
-		base(module, "CornflowerButtonScript", "!{0} press (#) [Presses the button (optionally '#' times)] | !{0} camwalloff [Turns off camera wall for 5 seconds] | !{0} selectables <tpID> [Outputs the list of selectables and their IDs for the module with TP ID 'tpID'] | !{0} highlight <tpID> <selID> [Highlights the selectable with ID 'selID' on the module with TP ID 'tpID'] | Pressing the alarm clock's SNOOZE button will highlight it")
+		base(module, "CornflowerButtonScript", "!{0} press (#) [Presses the button (optionally '#' times)] | !{0} camwalloff [Turns off camera wall for 5 seconds] | !<tpID> selectables  [Outputs the list of selectables and their IDs for the module with TP ID 'tpID'] | !<tpID> highlight <selID> [Highlights the selectable with ID 'selID' on the module with TP ID 'tpID'] | Pressing the alarm clock's SNOOZE button will highlight it")
 	{
 	}
 
