@@ -430,15 +430,15 @@ public class TwitchPlaysService : MonoBehaviour
 		switch (CurrentState)
 		{
 			case KMGameInfo.State.Gameplay:
-				InvokeCommand(msg, fullCommand, typeof(GlobalCommands), typeof(GameCommands));
+				InvokeCommand(msg, fullCommand, false, typeof(GlobalCommands), typeof(GameCommands));
 				break;
 
 			case KMGameInfo.State.PostGame:
-				InvokeCommand(msg, fullCommand, typeof(GlobalCommands), typeof(PostGameCommands));
+				InvokeCommand(msg, fullCommand, false, typeof(GlobalCommands), typeof(PostGameCommands));
 				break;
 
 			default:
-				InvokeCommand(msg, fullCommand, typeof(GlobalCommands));
+				InvokeCommand(msg, fullCommand, false, typeof(GlobalCommands));
 				break;
 		}
 	}
