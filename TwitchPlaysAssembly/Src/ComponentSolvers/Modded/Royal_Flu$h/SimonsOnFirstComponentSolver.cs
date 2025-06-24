@@ -102,7 +102,7 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 		yield return null;
 		foreach (KMSelectable btntopress in buttons)
 		{
-			yield return DoInteractionClick(btntopress);
+			yield return DoInteractionClick(btntopress, .25f);
 		}
 	}
 
@@ -118,7 +118,7 @@ public class SimonsOnFirstComponentSolver : ComponentSolver
 			char[] correctSequence = _component.GetValue<string>("correctSequence").ToCharArray();
 			int start = _component.GetValue<int>("numberOfPresses");
 			for (int i = start; i < correctSequence.Length; i++)
-				yield return DoInteractionClick(numbers[correctSequence[i] - '0' - 1]);
+				yield return DoInteractionClick(numbers[correctSequence[i] - '0' - 1], .25f);
 		}
 	}
 

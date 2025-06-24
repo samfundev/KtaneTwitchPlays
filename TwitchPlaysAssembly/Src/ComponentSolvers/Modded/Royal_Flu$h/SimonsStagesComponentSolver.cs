@@ -31,7 +31,7 @@ public class SimonsStagesComponentSolver : ComponentSolver
 			while (_component.GetValue<bool>("moduleLocked"))
 				yield return true;
 
-			yield return DoInteractionClick(selectables[Array.IndexOf(colorOrder, character)]);
+			yield return DoInteractionClick(selectables[Array.IndexOf(colorOrder, character)], .25f);
 		}
 	}
 
