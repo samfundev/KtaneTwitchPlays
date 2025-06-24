@@ -287,8 +287,8 @@ public static class CommandParser
 			AuditLog.Log(msg.UserNickName, UserAccess.HighestAccessLevel(msg.UserNickName), msg.Text);
 
 		var invokeResult = command.Method.Invoke(command.Method.IsStatic ? null : (object) extraObject, arguments);
-		if (invokeResult is bool invRes && invRes)
-			return null;
+		if (invokeResult is bool invRes)
+			return invRes ? Enumerator.Empty() : null;
 		else if (invokeResult is IEnumerator coroutine)
 			return coroutine;
 		else if (invokeResult != null)
