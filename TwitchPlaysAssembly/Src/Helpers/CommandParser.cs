@@ -233,7 +233,7 @@ public static class CommandParser
 			// Capturing groups from the regular expression
 			else if (m != null)
 			{
-				var group = m.Groups[groupIndex++];
+				var group = m.Groups[groupAttrs[i] != null ? groupAttrs[i].GroupIndex : groupIndex++];
 				NumberParseResult result;
 
 				// Helper function to parse numbers (ints, floats, doubles)
