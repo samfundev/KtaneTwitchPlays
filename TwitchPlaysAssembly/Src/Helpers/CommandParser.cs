@@ -228,7 +228,7 @@ public static class CommandParser
 				arguments[i] = twitchHoldable.Holdable;
 
 			// Object we passed in (module, bomb, holdable)
-			else if (parameters[i].ParameterType.IsAssignableFrom(typeof(TObj)))
+			else if (extraObject != null && parameters[i].ParameterType.IsAssignableFrom(typeof(TObj)))
 				arguments[i] = extraObject;
 			// Capturing groups from the regular expression
 			else if (m != null)
