@@ -763,7 +763,7 @@ static class GameCommands
 
 		var modules = TwitchGame.Instance.Modules
 			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID))
-			.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro"));
+			.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro", "theFan"));
 		foreach (var module in modules)
 			if (!module.Solved)
 				module.SolveSilently();
