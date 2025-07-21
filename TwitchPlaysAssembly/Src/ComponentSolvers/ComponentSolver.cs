@@ -419,6 +419,13 @@ public abstract class ComponentSolver
 					}
 				}
 			}
+			else if (currentValue is WaitUntil waitUntil)
+			{
+				// We convert WaitUntil into a "while (condition) yield return null", so that execution can stop if there's a strike.
+				subcoroutine = WaitUntilCoroutine(waitUntil, subcoroutine).Flatten();
+
+				continue;
+			}
 			yield return currentValue;
 
 			if (CoroutineCanceller.ShouldCancel)
@@ -739,6 +746,14 @@ public abstract class ComponentSolver
 	protected void SetHelpMessage(string helpMessage)
 	{
 		ModInfo = ComponentSolverFactory.GetModuleInfo(GetModuleType(), helpMessage);
+	}
+
+	protected IEnumerator WaitUntilCoroutine(WaitUntil waitUntil, IEnumerator subcoroutine)
+	{
+		while (waitUntil.keepWaiting)
+			yield return null;
+
+		yield return subcoroutine;
 	}
 	#endregion
 
