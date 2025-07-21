@@ -57,11 +57,11 @@ public class MurderComponentSolver : CommandComponentSolver
 		}
 	}
 
-	[Command("(?:(?<Commands>) ([a-z ]+)){3}")]
+	[Command("(?:(?<Commands>) ([a-z ]+),? ?){1,3}")]
 	private IEnumerator SetAccusation(Group command, Group noun)
 	{
 		var present = new bool[3];
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < command.Captures.Count; i++)
 		{
 			int catIndex = Array.IndexOf(Commands, command.Captures[i].ToString());
 			if (catIndex == -1)
