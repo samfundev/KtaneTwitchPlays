@@ -14,6 +14,6 @@ public abstract class CommandComponentSolverShim : ReflectionComponentSolverShim
 
 	public override IEnumerator Respond(string[] split, string command)
 	{
-		return CommandParser.Invoke(new IRCMessage(null, null, command), command, GetType());
+		return CommandParser.Invoke(new IRCMessage("", "", command), command, this, GetType());
 	}
 }

@@ -332,7 +332,7 @@ static class ModuleCommands
 	/// <name>Selectables</name>
 	/// <syntax>selectables</syntax>
 	/// <summary>List all selectable objects in a module</summary>
-	[Command(@"selectables")]
+	[Command(@"selectables"), SolvedAllowed]
 	public static void Selectables(TwitchModule module)
 	{
 		Selectable[] modSels = module.Selectable.Children.Where(x => x != null).Distinct().ToArray();
@@ -343,7 +343,7 @@ static class ModuleCommands
 	/// <name>Highlight</name>
 	/// <syntax>highlight [index]</syntax>
 	/// <summary>Highlights a specific selectable object in a module</summary>
-	[Command(@"highlight +(\d+)")]
+	[Command(@"highlight +(\d+)"), SolvedAllowed]
 	public static IEnumerator Highlight(TwitchModule module, [Group(1)] int selectableIndex)
 	{
 		Selectable[] modSels = module.Selectable.Children.Where(x => x != null).Distinct().ToArray();
