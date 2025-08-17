@@ -79,6 +79,7 @@ public class TwitchPlaySettingsData
 	public bool AllowTurnTheKeyEarlyLate = false;
 	public bool DisableTurnTheKeysSoftLock = false;
 	public bool EnforceSolveAllBeforeTurningKeys = true;
+	public bool PreventMultipleStrikes = false;
 	public bool LogUploaderShortUrls = false;
 	public bool SuperStreamerIgnoreClaimLimit = false;
 	public int MinScoreForNewbomb = 100;
