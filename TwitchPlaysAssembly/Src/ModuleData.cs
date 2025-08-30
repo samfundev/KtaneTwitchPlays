@@ -16,6 +16,7 @@ public class ModuleInformation
 	public string scoreString = "5";
 	public bool announceModule;
 	public bool unclaimable;
+	public int autosolvePriority; // When it should be autosolved. Higher means solved first.
 
 	public bool helpTextOverride;
 	public string helpText;
