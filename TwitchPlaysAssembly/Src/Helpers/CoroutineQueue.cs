@@ -27,9 +27,13 @@ public class CoroutineQueue : MonoBehaviour
 
 	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.AddLast(new Stack<IEnumerator>(new[] { subcoroutine }));
 
-	public void AddToQueue(IEnumerator subcoroutine)
+	public void AddToQueue(IEnumerator subcoroutine, bool highPriority = false)
 	{
-		_coroutineQueue.AddLast(subcoroutine);
+		if (highPriority)
+			_coroutineQueue.AddFirst(subcoroutine);
+		else
+			_coroutineQueue.AddLast(subcoroutine);
+
 		QueueModified = true;
 	}
 
@@ -83,9 +87,8 @@ public class CoroutineQueue : MonoBehaviour
 			if (_bombIDProcessed.Count > 0)
 				CurrentBombID = _bombIDProcessed.Dequeue();
 
-			yield return ProcessCoroutine(coroutine);
-
 			_coroutineQueue.RemoveFirst();
+			yield return ProcessCoroutine(coroutine);
 		}
 
 		_processing = false;

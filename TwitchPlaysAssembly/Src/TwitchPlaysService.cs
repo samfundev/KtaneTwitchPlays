@@ -378,7 +378,7 @@ public class TwitchPlaysService : MonoBehaviour
 			StartCoroutine(_coroutinesToStart.Dequeue());
 	}
 
-	private void OnMessageReceived(IRCMessage msg)
+	private IEnumerator OnMessageReceived(IRCMessage msg)
 	{
 		var m = Regex.Match(msg.Text, @"^\s*!\s*(\w+)\s+(.+)$");
 		if (m.Success)
@@ -393,65 +393,64 @@ public class TwitchPlaysService : MonoBehaviour
 			if (CurrentState == KMGameInfo.State.Gameplay && TwitchGame.Instance.Bombs.Count == 0)
 			{
 				StartCoroutine(new WaitUntil(() => TwitchGame.Instance.Bombs.Count != 0).Yield(() => OnMessageReceived(msg)));
-				return;
+				return null;
 			}
 
 			// Commands for bombs by “!bomb X” referring to the current bomb
 			if (CurrentState == KMGameInfo.State.Gameplay && prefix.EqualsIgnoreCase("bomb"))
-				InvokeCommand(msg, restCommand, TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb], typeof(BombCommands));
+				return InvokeCommand(msg, restCommand, TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb], typeof(BombCommands));
 			// Commands for bombs by bomb name (e.g. “!bomb1 hold”)
 			else if (CurrentState == KMGameInfo.State.Gameplay && (bomb = twitchGame.Bombs.Find(b => b.Code.EqualsIgnoreCase(prefix))) != null)
-				InvokeCommand(msg, restCommand, bomb, typeof(BombCommands));
+				return InvokeCommand(msg, restCommand, bomb, typeof(BombCommands));
 
 			// Commands for modules
 			else if (CurrentState == KMGameInfo.State.Gameplay && (module = twitchGame.Modules.Find(md => md.Code.EqualsIgnoreCase(prefix))) != null)
-				InvokeCommand(msg, restCommand, module, typeof(ModuleCommands));
+				return InvokeCommand(msg, restCommand, module, typeof(ModuleCommands));
 
 			// Commands for holdables (check for these after bombs and modules so modded holdables can’t override them)
 			else if (Holdables.TryGetValue(prefix, out var holdable))
 			{
-				if (holdable.CommandType != null) InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands), holdable.CommandType);
-				else InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands));
+				if (holdable.CommandType != null) return InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands), holdable.CommandType);
+				else return InvokeCommand(msg, restCommand, holdable, typeof(HoldableCommands));
 			}
 			else
-				ProcessGlobalCommand(msg);
+				return ProcessGlobalCommand(msg);
 		}
 		else
-			ProcessGlobalCommand(msg);
+			return ProcessGlobalCommand(msg);
 	}
 
-	public void ProcessGlobalCommand(IRCMessage msg)
+	public IEnumerator ProcessGlobalCommand(IRCMessage msg)
 	{
 		var m = Regex.Match(msg.Text, @"^\s*!\s*(.+)$");
 		if (!m.Success)
-			return;
+			return null;
 
 		var fullCommand = m.Groups[1].Value.Trim();
 		switch (CurrentState)
 		{
 			case KMGameInfo.State.Gameplay:
-				InvokeCommand(msg, fullCommand, typeof(GlobalCommands), typeof(GameCommands));
-				break;
+				return InvokeCommand(msg, fullCommand, typeof(GlobalCommands), typeof(GameCommands));
 
 			case KMGameInfo.State.PostGame:
-				InvokeCommand(msg, fullCommand, typeof(GlobalCommands), typeof(PostGameCommands));
-				break;
+				return InvokeCommand(msg, fullCommand, typeof(GlobalCommands), typeof(PostGameCommands));
 
 			default:
-				InvokeCommand(msg, fullCommand, typeof(GlobalCommands));
-				break;
+				return InvokeCommand(msg, fullCommand, typeof(GlobalCommands));
 		}
 	}
 
-	private void InvokeCommand(IRCMessage msg, string cmdStr, params Type[] commandTypes) => InvokeCommand(msg, cmdStr, (object) null, commandTypes);
+	private IEnumerator InvokeCommand(IRCMessage msg, string cmdStr, params Type[] commandTypes) => InvokeCommand(msg, cmdStr, (object) null, commandTypes);
 
-	private void InvokeCommand<TObj>(IRCMessage msg, string cmdStr, TObj extraObject = default, params Type[] commandTypes)
+	private IEnumerator InvokeCommand<TObj>(IRCMessage msg, string cmdStr, TObj extraObject = default, params Type[] commandTypes)
 	{
 		var enumerator = CommandParser.Invoke(msg, cmdStr, extraObject, commandTypes);
 		if (enumerator != null)
-			ProcessCommandCoroutine(enumerator, extraObject);
+			return ProcessCommandCoroutine(enumerator, extraObject);
 		else if (TwitchPlaySettings.data.ShowUnrecognizedCommandError)
 			IRCConnection.SendMessage("@{0}, I don’t recognize that command.", msg.UserNickName, !msg.IsWhisper, msg.UserNickName);
+
+		return null;
 	}
 
 	public void RunMission(KMMission mission)
@@ -463,17 +462,17 @@ public class TwitchPlaysService : MonoBehaviour
 		}
 	}
 
-	private void ProcessCommandCoroutine(IEnumerator coroutine, object extraObject)
+	private IEnumerator ProcessCommandCoroutine(IEnumerator coroutine, object extraObject)
 	{
 		// Make sure we are holding the correct bomb or holdable
 		if (extraObject is TwitchHoldable holdable && holdable.Holdable.HoldState != FloatingHoldable.HoldStateEnum.Held)
-			CoroutineQueue.AddToQueue(holdable.Hold());
+			yield return holdable.Hold();
 		else if (extraObject is TwitchBomb bomb && !GameRoom.Instance.IsCurrentBomb(bomb.BombID))
-			CoroutineQueue.AddToQueue(bomb.HoldBomb());
+			yield return bomb.HoldBomb();
 		else if (extraObject is TwitchModule module && !GameRoom.Instance.IsCurrentBomb(module.BombID))
-			CoroutineQueue.AddToQueue(module.Bomb.HoldBomb());
+			yield return module.Bomb.HoldBomb();
 
-		CoroutineQueue.AddToQueue(coroutine);
+		yield return coroutine;
 	}
 
 	private static void DefaultCamera()

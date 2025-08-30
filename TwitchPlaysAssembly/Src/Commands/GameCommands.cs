@@ -986,7 +986,10 @@ static class GameCommands
 			IRCConnection.SendMessage("The hack is over, executing all commands held up due to the hack.");
 		}
 		foreach (IRCMessage m in calledCommands)
+		{
+			m.HighPriority = true;
 			IRCConnection.ReceiveMessage(m);
+		}
 		calledCommands.Clear();
 	}
 	#endregion
