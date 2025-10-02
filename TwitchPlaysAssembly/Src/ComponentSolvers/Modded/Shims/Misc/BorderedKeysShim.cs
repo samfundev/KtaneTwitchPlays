@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+[ModuleID("borderedKeys")]
 internal class BorderedKeysShim : ReflectionComponentSolverShim
 {
 	private readonly KMSelectable display;
