@@ -266,7 +266,7 @@ public class TwitchBomb : MonoBehaviour
 
 		TwitchGame.ModuleCameras?.Hide();
 
-		edge = edge.ToLowerInvariant().Trim();
+		edge = edge?.ToLowerInvariant()?.Trim();
 		if (string.IsNullOrEmpty(edge))
 			edge = allEdges;
 
