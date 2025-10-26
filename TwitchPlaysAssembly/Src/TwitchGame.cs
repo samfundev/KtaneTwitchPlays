@@ -161,6 +161,26 @@ public class TwitchGame : MonoBehaviour
 			DebugHelper.LogException(ex, "Couldn't read TwitchPlaysLastClaimed.json:");
 			LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
 		}
+
+		// Set the reward bonus for non-custom missions.
+		if (!GameplayState.MissionToLoad.EqualsAny(ModMission.CUSTOM_MISSION_ID, FreeplayMissionGenerator.FREEPLAY_MISSION_ID))
+		{
+			// Wait until the mission is loaded to calculate the reward bonus.
+			StartCoroutine(new WaitUntil(() => SceneManager.Instance.GameplayState.Mission != null).Yield(() =>
+			{
+				int total = 0;
+				foreach (var pool in SceneManager.Instance.GameplayState.Mission.GeneratorSetting.ComponentPools)
+				{
+					bool isVanilla = pool.SpecialComponentType == SpecialComponentTypeEnum.ALL_SOLVABLE && pool.AllowedSources == ComponentPool.ComponentSource.Base;
+					total += (isVanilla ? 2 : 5) * pool.Count;
+				}
+
+				total = (total * OtherModes.ScoreMultiplier).RoundToInt();
+
+				TwitchPlaySettings.SetRewardBonus(total);
+				IRCConnection.SendMessage("Reward for completing bomb: " + total);
+			}));
+		}
 	}
 
 	public string GetBombResult(bool lastBomb = true)
