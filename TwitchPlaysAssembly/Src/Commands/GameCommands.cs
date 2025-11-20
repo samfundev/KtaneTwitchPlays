@@ -761,9 +761,12 @@ static class GameCommands
 		foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
 			bomb.StartCoroutine(bomb.KeepAlive());
 
-		var modules = TwitchGame.Instance.Modules
-			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID))
-			.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro", "theFan"));
+		var modulesUnsorted = TwitchGame.Instance.Modules
+			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID));
+		var modules = TwitchPlaySettings.data.LegacyAutosolvePriority ?
+			modulesUnsorted.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro", "theFan", "BoardWalk", "solveShift", "dandysFloors", "dandysFloors", "dandysFloors", "tetrahedron", "pointerPointerModule", "clearanceCodeModule")) :
+			modulesUnsorted.OrderByDescending(module => module.Solver.ModInfo.autosolvePriority);
+		// Sort order of autosolver by priority
 		foreach (var module in modules)
 			if (!module.Solved)
 				module.SolveSilently();
