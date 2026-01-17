@@ -192,7 +192,7 @@
         <member name="M:DossierCommands.SelectIndex(FloatingHoldable,System.String,System.Int32)">
             <name>Select Index</name>
             <syntax>select [index]</syntax>
-            <summary>Selects an item based on it's index on the menu.</summary>
+            <summary>Selects an item based on its index on the menu.</summary>
         </member>
         <member name="M:DossierCommands.Navigate(System.String,System.Nullable{System.Int32})">
             <name>Up / Down</name>
@@ -301,8 +301,8 @@
         <member name="M:GameCommands.ClaimViewPin(System.String,System.Boolean,System.String,System.String,System.Boolean)">
             <name>Claim View Pin</name>
             <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
-            <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
-            <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
+            <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin separated by spaces.</summary>
+            <argument name="actions">A combination of claim, view or pin separated by spaces.</argument>
             <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
         </member>
         <member name="M:GameCommands.ClaimAny(System.String,System.String,System.Boolean,System.Boolean,System.String,System.Boolean)">
@@ -335,27 +335,27 @@
         <member name="M:GameCommands.FindClaimView(System.String,System.String,System.String,System.Boolean)">
             <name>Find Claim View</name>
             <syntax>find (actions) [what]</syntax>
-            <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
-            <argument name="actions">A combination of claim or view seperated by spaces.</argument>
-            <argument name="what">Partial module names seperated by commas or semicolons.</argument>
+            <summary>Finds modules based on their module name. [what] can be partial module names separated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
+            <argument name="actions">A combination of claim or view separated by spaces.</argument>
+            <argument name="what">Partial module names separated by commas or semicolons.</argument>
         </member>
         <member name="M:GameCommands.FindPlayer(System.String,System.String,System.Boolean)">
             <name>Find Player</name>
             <syntax>findplayer [what]</syntax>
-            <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+            <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names separated by commas or semicolons.</summary>
+            <argument name="what">A combination of claim or view separated by spaces.</argument>
         </member>
         <member name="M:GameCommands.FindSolved(System.String,System.String,System.Boolean)">
             <name>Find Solved</name>
             <syntax>findsolved [what]</syntax>
-            <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+            <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names separated by commas or semicolons.</summary>
+            <argument name="what">A combination of claim or view separated by spaces.</argument>
         </member>
         <member name="M:GameCommands.FindDuplicate(System.String,System.String,System.Boolean)">
             <name>Find Duplicate</name>
             <syntax>findduplicate (what)</syntax>
-            <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
-            <argument name="what">A combination of claim or view seperated by spaces.</argument>
+            <summary>Finds duplicate modules based on their module name. (what) can be partial module names separated by commas or semicolons. If not specified, all modules will be searched.</summary>
+            <argument name="what">A combination of claim or view separated by spaces.</argument>
         </member>
         <member name="M:GameCommands.NewBomb(System.String,System.Boolean)">
             <name>New Bomb</name>
@@ -586,13 +586,13 @@
         <member name="M:GlobalCommands.SetReward(System.Int32)">
             <name>Set Reward</name>
             <syntax>reward [points]</syntax>
-            <summary>Sets the reward that's given out on a succesful defusual.</summary>
+            <summary>Sets the reward that's given out on a successful defusal.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.AddReward(System.Int32)">
             <name>Add Reward</name>
             <syntax>bonusreward [points]</syntax>
-            <summary>Adds to the reward that's given out on a succesful defusual.</summary>
+            <summary>Adds to the reward that's given out on a successful defusal.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.TimeMode(System.Boolean,System.Boolean,System.String,System.Boolean)">
@@ -624,7 +624,7 @@
         <member name="M:GlobalCommands.ResetUser(System.String,System.String,System.Boolean)">
             <name>Reset User</name>
             <syntax>resetuser [users]</syntax>
-            <summary>Resets a user's information on the leaderboard. [users] is a list of usernames seperated by a semicolon.</summary>
+            <summary>Resets a user's information on the leaderboard. [users] is a list of usernames separated by a semicolon.</summary>
             <restriction>SuperUser</restriction>
         </member>
         <member name="M:GlobalCommands.VoteStart(System.String,System.Boolean)">
@@ -731,7 +731,7 @@
         <member name="M:GlobalCommands.ResetSetting(System.String,System.String,System.Boolean)">
             <name>Reset Setting</name>
             <syntax>resetsetting [setting]</syntax>
-            <summary>Resets a setting back to it's default value.</summary>
+            <summary>Resets a setting back to its default value.</summary>
             <restriction>SuperUser</restriction>
         </member>
         <member name="M:GlobalCommands.BanUser(System.String,System.Int32,System.String,System.String,System.Boolean)">
@@ -808,7 +808,7 @@
         <member name="M:GlobalCommands.AddRemoveRole(System.String,System.String,System.String,System.String,System.Boolean)">
             <name>Add/Remove Rank</name>
             <syntax>add [username] [rank]\nremove [username] [rank]</syntax>
-            <summary>Adds or removes a user from a rank. [rank] can be multiple ranks seperated by spaces.</summary>
+            <summary>Adds or removes a user from a rank. [rank] can be multiple ranks separated by spaces.</summary>
             <restriction>Mod</restriction>
         </member>
         <member name="M:GlobalCommands.Moderators(System.String,System.Boolean)">
@@ -851,7 +851,7 @@
         <member name="M:GlobalCommands.RunRaw(System.String)">
             <name>Run Raw</name>
             <syntax>runraw [mission id]</syntax>
-            <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
+            <summary>Runs a mission by its full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
             <restriction>Admin</restriction>
         </member>
         <member name="M:GlobalCommands.RunRawSeed(System.String,System.String)">
@@ -1071,12 +1071,12 @@
         <member name="M:MissionBinderCommands.SelectIndex(FloatingHoldable,System.Int32)">
             <name>Select Index</name>
             <syntax>select [index]</syntax>
-            <summary>Selects an item based on it's index on the page.</summary>
+            <summary>Selects an item based on its index on the page.</summary>
         </member>
         <member name="M:MissionBinderCommands.SelectSearch(FloatingHoldable,System.String)">
             <name>Select Text</name>
             <syntax>select [text]</syntax>
-            <summary>Selects an item based on it's text (subsection or name).</summary>
+            <summary>Selects an item based on its text (subsection or name).</summary>
         </member>
         <member name="M:MissionBinderCommands.Navigate(System.String,System.Nullable{System.Int32})">
             <name>Up / Down</name>

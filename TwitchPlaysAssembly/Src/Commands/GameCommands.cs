@@ -120,8 +120,8 @@ static class GameCommands
 
 	/// <name>Claim View Pin</name>
 	/// <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
-	/// <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
-	/// <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
+	/// <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin separated by spaces.</summary>
+	/// <argument name="actions">A combination of claim, view or pin separated by spaces.</argument>
 	/// <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
 	[Command(@"((?:claim *|view *|pin *)+)(?: (.+)| *(all))")]
 	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat, [Group(3)] bool all)
@@ -300,9 +300,9 @@ static class GameCommands
 
 	/// <name>Find Claim View</name>
 	/// <syntax>find (actions) [what]</syntax>
-	/// <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
-	/// <argument name="actions">A combination of claim or view seperated by spaces.</argument>
-	/// <argument name="what">Partial module names seperated by commas or semicolons.</argument>
+	/// <summary>Finds modules based on their module name. [what] can be partial module names separated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
+	/// <argument name="actions">A combination of claim or view separated by spaces.</argument>
+	/// <argument name="what">Partial module names separated by commas or semicolons.</argument>
 	[Command(@"(?:find|search)((?: *claim| *view)*) (.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
@@ -362,8 +362,8 @@ static class GameCommands
 
 	/// <name>Find Player</name>
 	/// <syntax>findplayer [what]</syntax>
-	/// <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	/// <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names separated by commas or semicolons.</summary>
+	/// <argument name="what">A combination of claim or view separated by spaces.</argument>
 	[Command(@"(?:find *player|player *find|search *player|player *search) (.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindPlayer([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -375,8 +375,8 @@ static class GameCommands
 
 	/// <name>Find Solved</name>
 	/// <syntax>findsolved [what]</syntax>
-	/// <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	/// <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names separated by commas or semicolons.</summary>
+	/// <argument name="what">A combination of claim or view separated by spaces.</argument>
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) (.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindSolved([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -388,8 +388,8 @@ static class GameCommands
 
 	/// <name>Find Duplicate</name>
 	/// <syntax>findduplicate (what)</syntax>
-	/// <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
-	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	/// <summary>Finds duplicate modules based on their module name. (what) can be partial module names separated by commas or semicolons. If not specified, all modules will be searched.</summary>
+	/// <argument name="what">A combination of claim or view separated by spaces.</argument>
 	[Command(@"(?:find *dup(?:licate)?|dup(?:licate)? *find|search *dup(?:licate)?|dup(?:licate)? *search)( .+)?")]
 	public static void FindDuplicate([Group(1)] string queries, string user, bool isWhisper)
 	{

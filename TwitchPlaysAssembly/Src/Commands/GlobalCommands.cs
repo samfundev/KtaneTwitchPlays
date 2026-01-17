@@ -139,14 +139,14 @@ static class GlobalCommands
 
 	/// <name>Set Reward</name>
 	/// <syntax>reward [points]</syntax>
-	/// <summary>Sets the reward that's given out on a succesful defusual.</summary>
+	/// <summary>Sets the reward that's given out on a successful defusal.</summary>
 	/// <restriction>Admin</restriction>
 	[Command(@"reward (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void SetReward([Group(1)] int reward) => TwitchPlaySettings.SetRewardBonus(reward);
 
 	/// <name>Add Reward</name>
 	/// <syntax>bonusreward [points]</syntax>
-	/// <summary>Adds to the reward that's given out on a succesful defusual.</summary>
+	/// <summary>Adds to the reward that's given out on a successful defusal.</summary>
 	/// <restriction>Admin</restriction>
 	[Command(@"bonusreward (-?[0-9]+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static void AddReward([Group(1)] int reward) => TwitchPlaySettings.AddRewardBonus(reward);
@@ -186,7 +186,7 @@ static class GlobalCommands
 
 	/// <name>Reset User</name>
 	/// <syntax>resetuser [users]</syntax>
-	/// <summary>Resets a user's information on the leaderboard. [users] is a list of usernames seperated by a semicolon.</summary>
+	/// <summary>Resets a user's information on the leaderboard. [users] is a list of usernames separated by a semicolon.</summary>
 	/// <restriction>SuperUser</restriction>
 	[Command(@"resetusers? (.+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetUser([Group(1)] string parameters, string user, bool isWhisper)
@@ -624,7 +624,7 @@ static class GlobalCommands
 
 	/// <name>Reset Setting</name>
 	/// <syntax>resetsetting [setting]</syntax>
-	/// <summary>Resets a setting back to it's default value.</summary>
+	/// <summary>Resets a setting back to its default value.</summary>
 	/// <restriction>SuperUser</restriction>
 	[Command(@"(?:erase|remove|reset) ?settings? (\S+)", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void ResetSetting([Group(1)] string parameter, string user, bool isWhisper)
@@ -842,7 +842,7 @@ static class GlobalCommands
 
 	/// <name>Add/Remove Rank</name>
 	/// <syntax>add [username] [rank]\nremove [username] [rank]</syntax>
-	/// <summary>Adds or removes a user from a rank. [rank] can be multiple ranks seperated by spaces.</summary>
+	/// <summary>Adds or removes a user from a rank. [rank] can be multiple ranks separated by spaces.</summary>
 	/// <restriction>Mod</restriction>
 	[Command(@"(add|remove) (\S+) (.+)", AccessLevel.Mod, AccessLevel.Mod)]
 	public static void AddRemoveRole([Group(1)] string command, [Group(2)] string targetUser, [Group(3)] string roles, string user, bool isWhisper)
@@ -1097,7 +1097,7 @@ static class GlobalCommands
 
 	/// <name>Run Raw</name>
 	/// <syntax>runraw [mission id]</syntax>
-	/// <summary>Runs a mission by it's full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
+	/// <summary>Runs a mission by its full ID. Examples: mod_TwitchPlays_tpFMNHell or firsttime. Will softlock if required modules are mission or ID is incorrect.</summary>
 	/// <restriction>Admin</restriction>
 	[Command(@"runraw (.+)", AccessLevel.Admin, AccessLevel.Admin)]
 	public static IEnumerator RunRaw([Group(1)] string missionName) => RunMissionCoroutine(missionName);
