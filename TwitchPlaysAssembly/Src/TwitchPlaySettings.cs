@@ -88,6 +88,7 @@ public class TwitchPlaySettingsData
 	public int NormalModeSecondsPerModule = 120;
 	public bool PacingEventsOnRunBomb = true;
 	public bool AllowSheetDisabledModules = true;
+	public bool LegacyAutosolvePriority = true;
 
 	public int BombFlipCooldown = 5;
 
