@@ -49,10 +49,7 @@ public abstract class GameRoom
 	public virtual void InitializeBombs(List<Bomb> bombs)
 	{
 		int currentBomb = bombs.Count == 1 ? -1 : 0;
-		for (int i = 0; i < bombs.Count; i++)
-		{
-			TwitchGame.Instance.SetBomb(bombs[i], currentBomb == -1 ? -1 : i);
-		}
+		TwitchGame.Instance.SetBombs(bombs);
 		BombCount = currentBomb == -1 ? -1 : bombs.Count;
 		TwitchGame.Instance.InitializeModuleCodes();
 	}
