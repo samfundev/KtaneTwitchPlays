@@ -694,14 +694,9 @@ public class TwitchGame : MonoBehaviour
 
 	public void SetBombs(List<Bomb> bombs)
 	{
-		Bombs.Clear();
+		Bombs = bombs.Select(CreateBombHandleForBomb).ToList();
 
-		for (int id = 0; id < bombs.Count; id++)
-		{
-			var tb = CreateBombHandleForBomb(bombs[id], id);
-			Bombs.Add(tb);
-			CreateComponentHandlesForBomb(tb);
-		}
+		InitializeModuleCodes();
 
 		// Set the reward bonus for non-custom missions.
 		if (!GameplayState.MissionToLoad.EqualsAny(ModMission.CUSTOM_MISSION_ID, FreeplayMissionGenerator.FREEPLAY_MISSION_ID))
@@ -718,13 +713,15 @@ public class TwitchGame : MonoBehaviour
 		}
 	}
 
-	private TwitchBomb CreateBombHandleForBomb(Bomb bomb, int id)
+	private TwitchBomb CreateBombHandleForBomb(Bomb bomb)
 	{
 		TwitchBomb twitchBomb = Instantiate(twitchBombPrefab);
 		twitchBomb.Bomb = bomb;
-		twitchBomb.BombID = id;
 		twitchBomb.BombTimeStamp = DateTime.Now;
 		twitchBomb.BombStartingTimer = bomb.GetTimer().TimeRemaining;
+
+		CreateComponentHandlesForBomb(twitchBomb);
+
 		return twitchBomb;
 	}
 
@@ -738,7 +735,6 @@ public class TwitchGame : MonoBehaviour
 			TwitchModule module = Instantiate(twitchModulePrefab, component.transform, false);
 			module.Bomb = bomb;
 			module.BombComponent = component;
-			module.BombID = bomb.BombID;
 
 			module.transform.SetParent(component.transform.parent, true);
 			module.BasePosition = module.transform.localPosition;

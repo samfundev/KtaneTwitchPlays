@@ -72,8 +72,6 @@ public sealed class Factory : GameRoom
 		}
 
 		TwitchGame.Instance.SetBombs(new List<Bomb> { bombs[0] });
-		TwitchGame.Instance.InitializeModuleCodes();
-		BombCount = bombs.Count;
 	}
 
 	public override IEnumerator InterruptLights()
@@ -200,10 +198,8 @@ public sealed class Factory : GameRoom
 			if (GetBomb == null) continue;
 			Bomb bomb = (Bomb) _internalBombProperty.GetValue(GetBomb, null);
 			Object.Destroy(bombHandle);
-			TwitchGame.Instance.Bombs.Clear();
 			TwitchGame.Instance.DestroyComponentHandles();
 			TwitchGame.Instance.SetBombs(new List<Bomb> { bomb });
-			TwitchGame.Instance.InitializeModuleCodes();
 			bombHandle = TwitchGame.Instance.Bombs[0];
 		}
 	}

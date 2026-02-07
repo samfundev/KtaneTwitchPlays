@@ -40,7 +40,7 @@ public class TwitchBomb : MonoBehaviour
 	}
 
 	[HideInInspector]
-	public int BombID = -1;
+	public int BombID => TwitchGame.Instance.Bombs.IndexOf(this) + 1;
 
 	[HideInInspector]
 	public DateTime BombTimeStamp;
@@ -102,16 +102,16 @@ public class TwitchBomb : MonoBehaviour
 
 	private void Start()
 	{
-		if (BombID > -1)
+		if (TwitchGame.Instance.Bombs.Count > 1)
 		{
-			Code = "bomb" + (BombID + 1);
-			_edgeworkCode = "edgework" + (BombID + 1);
+			Code = "bomb" + BombID	;
+			_edgeworkCode = "edgework" + BombID;
 		}
 
 		EdgeworkIDText.text = string.Format("!{0}", _edgeworkCode);
 		EdgeworkText.text = TwitchPlaySettings.data.BlankBombEdgework;
 
-		CanvasGroup.alpha = BombID == 0 ? 1 : 0;
+		CanvasGroup.alpha = BombID == 1 ? 1 : 0;
 	}
 
 	private void Update()
