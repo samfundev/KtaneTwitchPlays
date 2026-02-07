@@ -19,8 +19,6 @@ public class TwitchGame : MonoBehaviour
 
 	public List<TwitchBomb> Bombs = new List<TwitchBomb>();
 	public List<TwitchModule> Modules = new List<TwitchModule>();
-	public int _currentBomb = -1;
-	public TwitchBomb CurrentBomb => Bombs[_currentBomb == -1 ? 0 : _currentBomb];
 	public AudioSource alertSound = null;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
@@ -92,12 +90,6 @@ public class TwitchGame : MonoBehaviour
 			InputInterceptor.EnableInput();
 			return false;
 		}
-	}
-
-	public void SetCurrentBomb()
-	{
-		if (BombActive)
-			_currentBomb = TwitchPlaysService.Instance.CoroutineQueue.CurrentBombID;
 	}
 
 	private bool _bombStarted;
@@ -703,7 +695,6 @@ public class TwitchGame : MonoBehaviour
 	public void SetBombs(List<Bomb> bombs)
 	{
 		Bombs.Clear();
-		_currentBomb = bombs.Count == 1 ? -1 : 0;
 
 		for (int id = 0; id < bombs.Count; id++)
 		{
@@ -747,7 +738,7 @@ public class TwitchGame : MonoBehaviour
 			TwitchModule module = Instantiate(twitchModulePrefab, component.transform, false);
 			module.Bomb = bomb;
 			module.BombComponent = component;
-			module.BombID = _currentBomb == -1 ? -1 : Bombs.Count - 1;
+			module.BombID = bomb.BombID;
 
 			module.transform.SetParent(component.transform.parent, true);
 			module.BasePosition = module.transform.localPosition;
@@ -832,7 +823,6 @@ public class TwitchGame : MonoBehaviour
 	{
 		CoroutineCanceller.SetCancel();
 		TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
-		SetCurrentBomb();
 	}
 
 	private bool solveBossModules = false;

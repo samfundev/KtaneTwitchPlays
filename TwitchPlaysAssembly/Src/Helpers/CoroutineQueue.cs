@@ -9,7 +9,6 @@ public class CoroutineQueue : MonoBehaviour
 	{
 		_coroutineQueue = new LinkedList<IEnumerator>();
 		_forceSolveQueue = new LinkedList<Stack<IEnumerator>>();
-		_bombIDProcessed = new Queue<int>();
 	}
 
 	private void Update()
@@ -37,12 +36,6 @@ public class CoroutineQueue : MonoBehaviour
 		QueueModified = true;
 	}
 
-	public void AddToQueue(IEnumerator subcoroutine, int bombID)
-	{
-		AddToQueue(subcoroutine);
-		_bombIDProcessed.Enqueue(bombID);
-	}
-
 	public void CancelFutureSubcoroutines()
 	{
 		foreach (TwitchMessage twitchMessage in IRCConnection.Instance.MessageScrollContents
@@ -50,7 +43,6 @@ public class CoroutineQueue : MonoBehaviour
 			twitchMessage.RemoveMessage();
 
 		_coroutineQueue.Clear();
-		_bombIDProcessed.Clear();
 	}
 
 	public void StopQueue()
@@ -84,9 +76,6 @@ public class CoroutineQueue : MonoBehaviour
 			CoroutineCanceller.ResetCancel();
 
 			IEnumerator coroutine = _coroutineQueue.First.Value;
-			if (_bombIDProcessed.Count > 0)
-				CurrentBombID = _bombIDProcessed.Dequeue();
-
 			_coroutineQueue.RemoveFirst();
 			yield return ProcessCoroutine(coroutine);
 		}
@@ -105,8 +94,6 @@ public class CoroutineQueue : MonoBehaviour
 		while (localQueue.Count > 0)
 		{
 			coroutine = localQueue.First.Value;
-			if (_bombIDProcessed.Count > 0)
-				CurrentBombID = _bombIDProcessed.Dequeue();
 			bool result = true;
 			while (result)
 			{
@@ -205,9 +192,6 @@ public class CoroutineQueue : MonoBehaviour
 	private LinkedList<IEnumerator> _coroutineQueue;
 	private bool _processing;
 	private Coroutine _activeCoroutine;
-
-	public int CurrentBombID = -1;
-	private Queue<int> _bombIDProcessed;
 
 	public bool SkipCurrentCoroutine;
 }

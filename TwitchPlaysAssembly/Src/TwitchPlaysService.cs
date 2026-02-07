@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -397,8 +397,8 @@ public class TwitchPlaysService : MonoBehaviour
 			}
 
 			// Commands for bombs by “!bomb X” referring to the current bomb
-			if (CurrentState == KMGameInfo.State.Gameplay && prefix.EqualsIgnoreCase("bomb"))
-				return InvokeCommand(msg, restCommand, TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb], typeof(BombCommands));
+			if (CurrentState == KMGameInfo.State.Gameplay && prefix.EqualsIgnoreCase("bomb") && TwitchGame.Instance.Bombs.Count == 1)
+				return InvokeCommand(msg, restCommand, TwitchGame.Instance.Bombs[0], typeof(BombCommands));
 			// Commands for bombs by bomb name (e.g. “!bomb1 hold”)
 			else if (CurrentState == KMGameInfo.State.Gameplay && (bomb = twitchGame.Bombs.Find(b => b.Code.EqualsIgnoreCase(prefix))) != null)
 				return InvokeCommand(msg, restCommand, bomb, typeof(BombCommands));
@@ -467,9 +467,9 @@ public class TwitchPlaysService : MonoBehaviour
 		// Make sure we are holding the correct bomb or holdable
 		if (extraObject is TwitchHoldable holdable && holdable.Holdable.HoldState != FloatingHoldable.HoldStateEnum.Held)
 			yield return holdable.Hold();
-		else if (extraObject is TwitchBomb bomb && !GameRoom.Instance.IsCurrentBomb(bomb.BombID))
+		else if (extraObject is TwitchBomb bomb && bomb.Bomb.GetComponent<FloatingHoldable>().HoldState != FloatingHoldable.HoldStateEnum.Held)
 			yield return bomb.HoldBomb();
-		else if (extraObject is TwitchModule module && !GameRoom.Instance.IsCurrentBomb(module.BombID))
+		else if (extraObject is TwitchModule module && module.Bomb.Bomb.GetComponent<FloatingHoldable>().HoldState != FloatingHoldable.HoldStateEnum.Held)
 			yield return module.Bomb.HoldBomb();
 
 		yield return coroutine;

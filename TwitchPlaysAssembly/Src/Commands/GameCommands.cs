@@ -155,7 +155,7 @@ static class GameCommands
 		var avoid = new[] { "Forget Everything", "Forget Me Not", "Souvenir", "The Swan", "The Time Keeper", "Turn The Key", "Turn The Keys" };
 
 		var unclaimed = TwitchGame.Instance.Modules
-			.Where(module => (vanilla ? !module.IsMod : !modded || module.IsMod) && !module.Claimed && !module.Solved && !module.Hidden && !avoid.Contains(module.HeaderText) && GameRoom.Instance.IsCurrentBomb(module.BombID))
+			.Where(module => (vanilla ? !module.IsMod : !modded || module.IsMod) && !module.Claimed && !module.Solved && !module.Hidden && !avoid.Contains(module.HeaderText))
 			.Shuffle()
 			.FirstOrDefault();
 
@@ -290,7 +290,7 @@ static class GameCommands
 		}
 
 		IEnumerable<string> unsolved = TwitchGame.Instance.Modules
-			.Where(module => !module.Solved && GameRoom.Instance.IsCurrentBomb(module.BombID) && !module.Hidden)
+			.Where(module => !module.Solved && !module.Hidden)
 			.Shuffle().Take(3)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - {(module.PlayerName == null ? "Unclaimed" : "Claimed by " + module.PlayerName)}")
 			.ToList();
@@ -434,16 +434,14 @@ static class GameCommands
 	/// <syntax>filledgework</syntax>
 	/// <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
 	[Command(@"filledgework")]
-	public static void FillEdgework(string user, bool isWhisper)
+	public static void FillEdgework(string user)
 	{
 		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true) && !TwitchPlaySettings.data.EnableFilledgeworkForEveryone && !TwitchPlaySettings.data.AnarchyMode)
 			return;
 
 		foreach (var bomb in TwitchGame.Instance.Bombs)
 		{
-			var str = bomb.FillEdgework();
-			if (bomb.BombID == TwitchGame.Instance._currentBomb)
-				IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, user, !isWhisper, str);
+			bomb.FillEdgework();
 		}
 	}
 
@@ -461,7 +459,14 @@ static class GameCommands
 	public static IEnumerator Edgework([Group(1)] string edge, string user, bool isWhisper)
 	{
 		if (TwitchPlaySettings.data.EnableEdgeworkCommand || TwitchPlaySettings.data.AnarchyMode)
-			return TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb].ShowEdgework(edge);
+		{
+			if (TwitchGame.Instance.Bombs.Count > 1) {
+				IRCConnection.SendMessage($"@{user}, the !edgework command is not available when there are multiple bombs. Use !bomb# edgework instead.", user, !isWhisper);
+				return null;
+			}
+
+			return TwitchGame.Instance.Bombs[0].ShowEdgework(edge);
+		}
 		else
 		{
 			string edgework = TwitchGame.Instance.Bombs.Count == 1 ?
@@ -758,15 +763,14 @@ static class GameCommands
 	[Command(@"solvebomb", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SolveBomb()
 	{
-		foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
+		foreach (var bomb in TwitchGame.Instance.Bombs)
 			bomb.StartCoroutine(bomb.KeepAlive());
 
 		var modules = TwitchGame.Instance.Modules
-			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID))
+			.Where(x => !x.Solved)
 			.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro", "theFan"));
 		foreach (var module in modules)
-			if (!module.Solved)
-				module.SolveSilently();
+			module.SolveSilently();
 	}
 
 	/// <name>Enable Claims</name>
@@ -806,7 +810,7 @@ static class GameCommands
 
 		var query = queries.SplitFull(' ', ',', ';');
 		var denied = new List<string>();
-		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && GameRoom.Instance.IsCurrentBomb(m.BombID) && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
+		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
 		{
 			if ((module.PlayerName != user || module.ClaimQueue.All(q => q.UserNickname == targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 				denied.Add(module.Code);
@@ -827,7 +831,7 @@ static class GameCommands
 	public static void BotUnclaim()
 	{
 		foreach (var module in TwitchGame.Instance.Modules)
-			if (!module.Solved && module.PlayerName == IRCConnection.Instance.UserNickName && GameRoom.Instance.IsCurrentBomb(module.BombID))
+			if (!module.Solved && module.PlayerName == IRCConnection.Instance.UserNickName)
 				module.SetUnclaimed();
 	}
 
@@ -949,7 +953,7 @@ static class GameCommands
 	}
 
 	private static IEnumerable<TwitchModule> FindModules(string[] queries, Func<TwitchModule, bool> predicate = null) => TwitchGame.Instance.Modules
-			.Where(module => queries.Any(q => module.HeaderText.ContainsIgnoreCase(q)) && GameRoom.Instance.IsCurrentBomb(module.BombID) && (predicate == null || predicate(module)) && !module.Hidden)
+			.Where(module => queries.Any(q => module.HeaderText.ContainsIgnoreCase(q)) && (predicate == null || predicate(module)) && !module.Hidden)
 			.OrderByDescending(handle => queries.Any(q => handle.HeaderText.EqualsIgnoreCase(q)))
 			.ThenBy(handle => handle.Solved)
 			.ThenBy(handle => handle.PlayerName != null);

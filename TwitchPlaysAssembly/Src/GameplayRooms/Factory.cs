@@ -58,7 +58,6 @@ public sealed class Factory : GameRoom
 
 		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
 		_finiteMode = _gameroom.GetType() == _factoryFiniteModeType;
-		BombID = -1;
 		HoldBomb = false;
 	}
 

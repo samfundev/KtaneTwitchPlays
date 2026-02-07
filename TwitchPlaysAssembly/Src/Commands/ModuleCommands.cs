@@ -586,7 +586,7 @@ static class ModuleCommands
 			// there is less than X time left on the clock;
 			module.Bomb.CurrentTimer <= TwitchPlaySettings.data.MinTimeLeftForClaims ||
 			// there are only X unsolved modules left.
-			TwitchGame.Instance.Modules.Count(x => !x.Solved && GameRoom.Instance.IsCurrentBomb(x.BombID)) < TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims
+			TwitchGame.Instance.Modules.Count(x => !x.Solved) < TwitchPlaySettings.data.MinUnsolvedModulesLeftForClaims
 		)
 		{
 			yield return module.Solver.RespondToCommand(user, cmd);

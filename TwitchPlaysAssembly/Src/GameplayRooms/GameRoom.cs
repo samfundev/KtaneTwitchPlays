@@ -40,12 +40,6 @@ public abstract class GameRoom
 
 	public bool HoldBomb = true;
 
-	public int BombID { get; protected set; }
-
-	public virtual void RefreshBombID(ref int bombID) => BombID = bombID;
-
-	public virtual bool IsCurrentBomb(int bombIndex) => true;
-
 	public virtual void InitializeBombs(List<Bomb> bombs)
 	{
 		int currentBomb = bombs.Count == 1 ? -1 : 0;

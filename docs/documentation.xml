@@ -362,7 +362,7 @@
             <syntax>newbomb</syntax>
             <summary>Starts a new bomb in training mode. Requires either a minimum score or the defuser rank to run.</summary>
         </member>
-        <member name="M:GameCommands.FillEdgework(System.String,System.Boolean)">
+        <member name="M:GameCommands.FillEdgework(System.String)">
             <name>Fill Edgework</name>
             <syntax>filledgework</syntax>
             <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
