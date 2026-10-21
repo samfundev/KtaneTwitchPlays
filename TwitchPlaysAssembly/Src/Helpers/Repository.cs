@@ -17,7 +17,7 @@ public static class Repository
 		yield return download;
 
 		RawJSON = download.Text;
-		Modules = JsonConvert.DeserializeObject<WebsiteJSON>(RawJSON).KtaneModules;
+		Modules = JsonConvert.DeserializeObject<WebsiteJSON>(RawJSON).KtaneModules.Where(module => module.ModuleID != null).ToList();
 
 		foreach (var module in Modules)
 		{

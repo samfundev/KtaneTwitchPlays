@@ -19,8 +19,6 @@ public class TwitchGame : MonoBehaviour
 
 	public List<TwitchBomb> Bombs = new List<TwitchBomb>();
 	public List<TwitchModule> Modules = new List<TwitchModule>();
-	public int _currentBomb = -1;
-	public TwitchBomb CurrentBomb => Bombs[_currentBomb == -1 ? 0 : _currentBomb];
 	public AudioSource alertSound = null;
 	public readonly Dictionary<int, string> NotesDictionary = new Dictionary<int, string>();
 	public Dictionary<string, Dictionary<string, double>> LastClaimedModule = new Dictionary<string, Dictionary<string, double>>();
@@ -92,12 +90,6 @@ public class TwitchGame : MonoBehaviour
 			InputInterceptor.EnableInput();
 			return false;
 		}
-	}
-
-	public void SetCurrentBomb()
-	{
-		if (BombActive)
-			_currentBomb = TwitchPlaysService.Instance.CoroutineQueue.CurrentBombID;
 	}
 
 	private bool _bombStarted;
@@ -700,22 +692,36 @@ public class TwitchGame : MonoBehaviour
 		}
 	}
 
-	public void SetBomb(Bomb bomb, int id)
+	public void SetBombs(List<Bomb> bombs)
 	{
-		if (Bombs.Count == 0)
-			_currentBomb = id == -1 ? -1 : 0;
-		var tb = CreateBombHandleForBomb(bomb, id);
-		Bombs.Add(tb);
-		CreateComponentHandlesForBomb(tb);
+		Bombs = bombs.Select(CreateBombHandleForBomb).ToList();
+
+		InitializeModuleCodes();
+
+		// Set the reward bonus for non-custom missions.
+		if (!GameplayState.MissionToLoad.EqualsAny(ModMission.CUSTOM_MISSION_ID, FreeplayMissionGenerator.FREEPLAY_MISSION_ID))
+		{
+			// Calculate the reward bonus giving more for modded or needy modules.
+			int total = Bombs.SelectMany(b => b.Bomb.BombComponents)
+				.Where(component => !component.ComponentType.EqualsAny(ComponentTypeEnum.Empty, ComponentTypeEnum.Timer))
+				.Sum(component => component.IsSolvable && component.ComponentType != ComponentTypeEnum.Mod ? 2 : 5);
+
+			total = (total * OtherModes.ScoreMultiplier).RoundToInt();
+
+			TwitchPlaySettings.SetRewardBonus(total);
+			IRCConnection.SendMessage("Reward for completing bomb: " + total);
+		}
 	}
 
-	private TwitchBomb CreateBombHandleForBomb(Bomb bomb, int id)
+	private TwitchBomb CreateBombHandleForBomb(Bomb bomb)
 	{
 		TwitchBomb twitchBomb = Instantiate(twitchBombPrefab);
 		twitchBomb.Bomb = bomb;
-		twitchBomb.BombID = id;
 		twitchBomb.BombTimeStamp = DateTime.Now;
 		twitchBomb.BombStartingTimer = bomb.GetTimer().TimeRemaining;
+
+		CreateComponentHandlesForBomb(twitchBomb);
+
 		return twitchBomb;
 	}
 
@@ -729,7 +735,6 @@ public class TwitchGame : MonoBehaviour
 			TwitchModule module = Instantiate(twitchModulePrefab, component.transform, false);
 			module.Bomb = bomb;
 			module.BombComponent = component;
-			module.BombID = _currentBomb == -1 ? -1 : Bombs.Count - 1;
 
 			module.transform.SetParent(component.transform.parent, true);
 			module.BasePosition = module.transform.localPosition;
@@ -814,7 +819,6 @@ public class TwitchGame : MonoBehaviour
 	{
 		CoroutineCanceller.SetCancel();
 		TwitchPlaysService.Instance.CoroutineQueue.CancelFutureSubcoroutines();
-		SetCurrentBomb();
 	}
 
 	private bool solveBossModules = false;

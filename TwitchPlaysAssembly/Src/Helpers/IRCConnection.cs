@@ -32,6 +32,7 @@ public class IRCMessage
 	public string Text { get; private set; }
 	public readonly bool Internal;
 	public readonly bool IsWhisper;
+	public bool HighPriority;
 
 	/// <summary>
 	/// Creates a duplicate <see cref="IRCMessage">Message</see> object with the Text changed.
@@ -158,6 +159,7 @@ public class IRCConnection : MonoBehaviour
 
 					TwitchMessage twitchMessage = null;
 					CoroutineQueue coroutineQueue = TwitchPlaysService.Instance.CoroutineQueue;
+					List<IEnumerator> coroutines = new List<IEnumerator>();
 					if (isCommand)
 					{
 						HighlightGroup.alpha = 1;
@@ -167,22 +169,33 @@ public class IRCConnection : MonoBehaviour
 							? $"<b>{message.UserNickName}</b>: {message.Text}"
 							: $"<b><color={message.UserColorCode}>{message.UserNickName}</color></b>: {message.Text}");
 
-						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(HighlightMessage(twitchMessage));
+						coroutines.Add(HighlightMessage(twitchMessage));
 					}
 
-					coroutineQueue.QueueModified = false;
+					var queueModified = false;
 					try
 					{
-						OnMessageReceived.Invoke(message);
+						var coroutine = OnMessageReceived.Invoke(message);
+						if (coroutine != null)
+						{
+							coroutines.Add(coroutine);
+							queueModified = true;
+						}
 					}
 					catch (Exception exception)
 					{
 						DebugHelper.LogException(exception, "An exception has occurred while invoking OnMessageRecieved:");
 					}
 
-					if (!coroutineQueue.QueueModified && twitchMessage != null) Destroy(twitchMessage.gameObject);
+					if (!queueModified && twitchMessage != null) Destroy(twitchMessage.gameObject);
 					else if (isCommand)
-						TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(HideMessage(twitchMessage));
+						coroutines.Add(HideMessage(twitchMessage));
+
+					bool highPriority = message.HighPriority || TwitchGame.Instance.Modules.Any(m => message.Text.StartsWith($"!{m.Code}") && !m.BombComponent.IsSolvable);
+					TwitchPlaysService.Instance.CoroutineQueue.AddToQueue(coroutines.GetEnumerator(), highPriority);
+
+					// If the message is high priority, move it to the top of the scroll view but below the currently highlighted message
+					if (highPriority && twitchMessage != null && MessageScrollContents.transform.childCount > 2) twitchMessage.transform.SetSiblingIndex(1);
 				}
 
 				InternalMessageReceived(message.UserNickName, message.UserColorCode, message.Text);
@@ -1072,7 +1085,7 @@ public class IRCConnection : MonoBehaviour
 	#endregion
 
 	#region Public Fields
-	public Action<IRCMessage> OnMessageReceived;
+	public Func<IRCMessage, IEnumerator> OnMessageReceived;
 	public string ColorOnDisconnect;
 	public static IRCConnection Instance { get; private set; }
 	public IRCConnectionState State => gameObject.activeInHierarchy ? _state : IRCConnectionState.Disabled;

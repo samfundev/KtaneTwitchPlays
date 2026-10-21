@@ -9,7 +9,6 @@ public class CoroutineQueue : MonoBehaviour
 	{
 		_coroutineQueue = new LinkedList<IEnumerator>();
 		_forceSolveQueue = new LinkedList<Stack<IEnumerator>>();
-		_bombIDProcessed = new Queue<int>();
 	}
 
 	private void Update()
@@ -27,16 +26,14 @@ public class CoroutineQueue : MonoBehaviour
 
 	public static void AddForcedSolve(IEnumerator subcoroutine) => _forceSolveQueue.AddLast(new Stack<IEnumerator>(new[] { subcoroutine }));
 
-	public void AddToQueue(IEnumerator subcoroutine)
+	public void AddToQueue(IEnumerator subcoroutine, bool highPriority = false)
 	{
-		_coroutineQueue.AddLast(subcoroutine);
-		QueueModified = true;
-	}
+		if (highPriority)
+			_coroutineQueue.AddFirst(subcoroutine);
+		else
+			_coroutineQueue.AddLast(subcoroutine);
 
-	public void AddToQueue(IEnumerator subcoroutine, int bombID)
-	{
-		AddToQueue(subcoroutine);
-		_bombIDProcessed.Enqueue(bombID);
+		QueueModified = true;
 	}
 
 	public void CancelFutureSubcoroutines()
@@ -46,7 +43,6 @@ public class CoroutineQueue : MonoBehaviour
 			twitchMessage.RemoveMessage();
 
 		_coroutineQueue.Clear();
-		_bombIDProcessed.Clear();
 	}
 
 	public void StopQueue()
@@ -80,12 +76,8 @@ public class CoroutineQueue : MonoBehaviour
 			CoroutineCanceller.ResetCancel();
 
 			IEnumerator coroutine = _coroutineQueue.First.Value;
-			if (_bombIDProcessed.Count > 0)
-				CurrentBombID = _bombIDProcessed.Dequeue();
-
-			yield return ProcessCoroutine(coroutine);
-
 			_coroutineQueue.RemoveFirst();
+			yield return ProcessCoroutine(coroutine);
 		}
 
 		_processing = false;
@@ -102,8 +94,6 @@ public class CoroutineQueue : MonoBehaviour
 		while (localQueue.Count > 0)
 		{
 			coroutine = localQueue.First.Value;
-			if (_bombIDProcessed.Count > 0)
-				CurrentBombID = _bombIDProcessed.Dequeue();
 			bool result = true;
 			while (result)
 			{
@@ -202,9 +192,6 @@ public class CoroutineQueue : MonoBehaviour
 	private LinkedList<IEnumerator> _coroutineQueue;
 	private bool _processing;
 	private Coroutine _activeCoroutine;
-
-	public int CurrentBombID = -1;
-	private Queue<int> _bombIDProcessed;
 
 	public bool SkipCurrentCoroutine;
 }

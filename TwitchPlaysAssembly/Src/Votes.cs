@@ -74,13 +74,13 @@ public static class Votes
 						TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio >= float.Epsilon &&
 						TwitchPlaySettings.data.VoteSolveBossMinSeconds > 0 &&
 						voteModule.BombComponent.GetModuleID().IsBossMod() &&
-						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModules / TwitchGame.Instance.CurrentBomb.BombSolvableModules >= TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio ||
-						TwitchGame.Instance.CurrentBomb.BombStartingTimer - TwitchGame.Instance.CurrentBomb.CurrentTimer < TwitchPlaySettings.data.VoteSolveBossMinSeconds),
+						((double)voteModule.Bomb.BombSolvedModules / voteModule.Bomb.BombSolvableModules >= TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio ||
+						voteModule.Bomb.BombStartingTimer - voteModule.Bomb.CurrentTimer < TwitchPlaySettings.data.VoteSolveBossMinSeconds),
 						$"Sorry, {{0}}, boss modules may only be votesolved before {TwitchPlaySettings.data.VoteSolveBossNormalModuleRatio * 100}% of all modules are solved and when at least {TwitchPlaySettings.data.VoteSolveBossMinSeconds} seconds of the bomb has passed."),
 					CreateCheck(() =>
 						TwitchPlaySettings.data.VoteSolveNonBossRatio >= float.Epsilon &&
-						((double)TwitchGame.Instance.CurrentBomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
-						TwitchGame.Instance.CurrentBomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= TwitchPlaySettings.data.VoteSolveNonBossRatio) &&
+						((double)voteModule.Bomb.BombSolvedModuleIDs.Count(x => !x.IsBossMod()) /
+						voteModule.Bomb.BombSolvableModuleIDs.Count(x => !x.IsBossMod()) <= TwitchPlaySettings.data.VoteSolveNonBossRatio) &&
 						!voteModule.BombComponent.GetModuleID().IsBossMod(),
 						$"Sorry, {{0}}, more than {TwitchPlaySettings.data.VoteSolveNonBossRatio * 100}% of all non-boss modules on the bomb must be solved in order to call a votesolve."),
 					CreateCheck(() => voteModule.Claimed, "Sorry, {0}, the module must be unclaimed for it to be votesolved."),

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[ModuleID("simonServes")]
 internal class SimonServesShim : ComponentSolverShim
 {
 	private static readonly Type ComponentType = ReflectionHelper.FindType("simonServesScript");

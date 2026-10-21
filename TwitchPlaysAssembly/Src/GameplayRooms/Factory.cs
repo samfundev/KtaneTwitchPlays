@@ -58,7 +58,6 @@ public sealed class Factory : GameRoom
 
 		_infiniteMode = _gameroom.GetType() == _factoryInfiniteModeType;
 		_finiteMode = _gameroom.GetType() == _factoryFiniteModeType;
-		BombID = -1;
 		HoldBomb = false;
 	}
 
@@ -72,9 +71,7 @@ public sealed class Factory : GameRoom
 			return;
 		}
 
-		TwitchGame.Instance.SetBomb(bombs[0], -1);
-		TwitchGame.Instance.InitializeModuleCodes();
-		BombCount = bombs.Count;
+		TwitchGame.Instance.SetBombs(new List<Bomb> { bombs[0] });
 	}
 
 	public override IEnumerator InterruptLights()
@@ -201,10 +198,8 @@ public sealed class Factory : GameRoom
 			if (GetBomb == null) continue;
 			Bomb bomb = (Bomb) _internalBombProperty.GetValue(GetBomb, null);
 			Object.Destroy(bombHandle);
-			TwitchGame.Instance.Bombs.Clear();
 			TwitchGame.Instance.DestroyComponentHandles();
-			TwitchGame.Instance.SetBomb(bomb, -1);
-			TwitchGame.Instance.InitializeModuleCodes();
+			TwitchGame.Instance.SetBombs(new List<Bomb> { bomb });
 			bombHandle = TwitchGame.Instance.Bombs[0];
 		}
 	}

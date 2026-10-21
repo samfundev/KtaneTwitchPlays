@@ -66,9 +66,10 @@ public class FilibusterComponentSolver : ReflectionComponentSolver
 		}
 	}
 
-	public void AddToMicLevel(IRCMessage _)
+	public IEnumerator AddToMicLevel(IRCMessage _)
 	{
 		_micLevel += 10;
+		return null;
 	}
 
 	private float _micLevel;

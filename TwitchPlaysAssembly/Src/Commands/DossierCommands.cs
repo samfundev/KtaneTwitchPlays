@@ -15,7 +15,7 @@ public static class DossierCommands
 
 	/// <name>Select Index</name>
 	/// <syntax>select [index]</syntax>
-	/// <summary>Selects an item based on it's index on the menu.</summary>
+	/// <summary>Selects an item based on its index on the menu.</summary>
 	[Command(@"select (\d+)")]
 	public static IEnumerator SelectIndex(FloatingHoldable holdable, string user, [Group(1)] int index) => SelectOnPage(holdable, user, index: index);
 

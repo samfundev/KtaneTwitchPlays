@@ -22,7 +22,7 @@ public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 		yield return Click(0, 0);
 	}
 
-	public void AddToVoice(IRCMessage _)
+	public IEnumerator AddToVoice(IRCMessage _)
 	{
 		if (_component.GetValue<int>("_isSpooking") == 1)
 			_cooldownValue++;
@@ -31,6 +31,7 @@ public class ThreeSentenceHorrorComponentSolver : ReflectionComponentSolver
 			_component.CallMethod("Strike");
 			_component.CallMethod("DebugMsg", "They heard you...");
 		}
+		return null;
 	}
 
 	private IEnumerator VoiceCooldown()

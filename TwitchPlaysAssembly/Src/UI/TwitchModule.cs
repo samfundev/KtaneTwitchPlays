@@ -39,7 +39,7 @@ public class TwitchModule : MonoBehaviour
 	public bool CanBeClaimed => !(Solver != null && Solver.ModInfo.unclaimable);
 
 	[HideInInspector]
-	public int BombID;
+	public int BombID => Bomb.BombID;
 
 	public bool Solved => BombComponent.IsSolved;
 

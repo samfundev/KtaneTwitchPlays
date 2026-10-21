@@ -247,6 +247,12 @@ public abstract class ComponentSolver
 				}
 				else if (currentString.RegexMatch(out match, "^(?:detonate|explode)(?: ([0-9.]+))?(?: ((?:.|\\n)+))?$"))
 				{
+					if (TwitchPlaySettings.data.PreventMultipleStrikes)
+					{
+						OnStrike(null);
+						continue;
+					}
+
 					if (!float.TryParse(match.Groups[1].Value, out float explosionTime))
 					{
 						if (string.IsNullOrEmpty(match.Groups[1].Value))
@@ -402,6 +408,12 @@ public abstract class ComponentSolver
 				{
 					if (currentStrings[0].ToLowerInvariant().EqualsAny("detonate", "explode"))
 					{
+						if (TwitchPlaySettings.data.PreventMultipleStrikes)
+						{
+							OnStrike(null);
+							continue;
+						}
+
 						AwardStrikes(_currentUserNickName, Module.Bomb.StrikeLimit - Module.Bomb.StrikeCount);
 						switch (currentStrings.Length)
 						{
@@ -860,6 +872,12 @@ public abstract class ComponentSolver
 
 		if (_disableOnStrike || _disableAnarchyStrike)
 		{
+			if (TwitchPlaySettings.data.PreventMultipleStrikes && StrikeCount > _beforeStrikeCount + 1)
+			{
+				StrikeCount--;
+				Module.Bomb.Bomb.NumStrikes--;
+			}
+
 			TwitchGame.ModuleCameras?.UpdateStrikes(true);
 			return false;
 		}

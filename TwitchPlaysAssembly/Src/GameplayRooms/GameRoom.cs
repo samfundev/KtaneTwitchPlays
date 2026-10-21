@@ -13,7 +13,7 @@ public abstract class GameRoom
 	public delegate Type GameRoomType();
 	public delegate bool CreateRoom(Object[] roomObjects, out GameRoom room);
 
-	protected int BombCount;
+	protected int BombCount => SceneManager.Instance.GameplayState.Bombs.Count;
 
 	public static readonly GameRoomType[] GameRoomTypes =
 	{
@@ -40,21 +40,9 @@ public abstract class GameRoom
 
 	public bool HoldBomb = true;
 
-	public int BombID { get; protected set; }
-
-	public virtual void RefreshBombID(ref int bombID) => BombID = bombID;
-
-	public virtual bool IsCurrentBomb(int bombIndex) => true;
-
 	public virtual void InitializeBombs(List<Bomb> bombs)
 	{
-		int currentBomb = bombs.Count == 1 ? -1 : 0;
-		for (int i = 0; i < bombs.Count; i++)
-		{
-			TwitchGame.Instance.SetBomb(bombs[i], currentBomb == -1 ? -1 : i);
-		}
-		BombCount = currentBomb == -1 ? -1 : bombs.Count;
-		TwitchGame.Instance.InitializeModuleCodes();
+		TwitchGame.Instance.SetBombs(bombs);
 	}
 
 	public virtual IEnumerator InterruptLights()

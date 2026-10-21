@@ -120,8 +120,8 @@ static class GameCommands
 
 	/// <name>Claim View Pin</name>
 	/// <syntax>claim (what)\nview (what)\npin (what)\n(actions) (what)</syntax>
-	/// <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin seperated by spaces.</summary>
-	/// <argument name="actions">A combination of claim, view or pin seperated by spaces.</argument>
+	/// <summary>Claims, views or pins a list of module codes. (actions) should be some combination of claim, view or pin separated by spaces.</summary>
+	/// <argument name="actions">A combination of claim, view or pin separated by spaces.</argument>
 	/// <argument name="what">A list of module codes to take the actions on. Can be "all" to do the action on all unsolved modules.</argument>
 	[Command(@"((?:claim *|view *|pin *)+)(?: (.+)| *(all))")]
 	public static void ClaimViewPin(string user, bool isWhisper, [Group(1)] string command, [Group(2)] string claimWhat, [Group(3)] bool all)
@@ -155,7 +155,7 @@ static class GameCommands
 		var avoid = new[] { "Forget Everything", "Forget Me Not", "Souvenir", "The Swan", "The Time Keeper", "Turn The Key", "Turn The Keys" };
 
 		var unclaimed = TwitchGame.Instance.Modules
-			.Where(module => (vanilla ? !module.IsMod : !modded || module.IsMod) && !module.Claimed && !module.Solved && !module.Hidden && !avoid.Contains(module.HeaderText) && GameRoom.Instance.IsCurrentBomb(module.BombID))
+			.Where(module => (vanilla ? !module.IsMod : !modded || module.IsMod) && !module.Claimed && !module.Solved && !module.Hidden && !avoid.Contains(module.HeaderText))
 			.Shuffle()
 			.FirstOrDefault();
 
@@ -290,7 +290,7 @@ static class GameCommands
 		}
 
 		IEnumerable<string> unsolved = TwitchGame.Instance.Modules
-			.Where(module => !module.Solved && GameRoom.Instance.IsCurrentBomb(module.BombID) && !module.Hidden)
+			.Where(module => !module.Solved && !module.Hidden)
 			.Shuffle().Take(3)
 			.Select(module => $"{module.HeaderText} ({module.Code}) - {(module.PlayerName == null ? "Unclaimed" : "Claimed by " + module.PlayerName)}")
 			.ToList();
@@ -300,9 +300,9 @@ static class GameCommands
 
 	/// <name>Find Claim View</name>
 	/// <syntax>find (actions) [what]</syntax>
-	/// <summary>Finds modules based on their module name. [what] can be partial module names seperated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
-	/// <argument name="actions">A combination of claim or view seperated by spaces.</argument>
-	/// <argument name="what">Partial module names seperated by commas or semicolons.</argument>
+	/// <summary>Finds modules based on their module name. [what] can be partial module names separated by commas or semicolons. If (actions) are specified, they will be executed on the matching modules.</summary>
+	/// <argument name="actions">A combination of claim or view separated by spaces.</argument>
+	/// <argument name="what">Partial module names separated by commas or semicolons.</argument>
 	[Command(@"(?:find|search)((?: *claim| *view)*) (.+)")]
 	public static void FindClaimView([Group(1)] string commands, [Group(2)] string queries, string user, bool isWhisper)
 	{
@@ -362,8 +362,8 @@ static class GameCommands
 
 	/// <name>Find Player</name>
 	/// <syntax>findplayer [what]</syntax>
-	/// <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	/// <summary>Finds claimed modules based on their module name and shows who has the claim on the module. [what] can be partial module names separated by commas or semicolons.</summary>
+	/// <argument name="what">A combination of claim or view separated by spaces.</argument>
 	[Command(@"(?:find *player|player *find|search *player|player *search) (.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindPlayer([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -375,8 +375,8 @@ static class GameCommands
 
 	/// <name>Find Solved</name>
 	/// <syntax>findsolved [what]</syntax>
-	/// <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names seperated by commas or semicolons.</summary>
-	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	/// <summary>Finds solved modules based on their module name and shows who has the claim on the module. [what] can be partial module names separated by commas or semicolons.</summary>
+	/// <argument name="what">A combination of claim or view separated by spaces.</argument>
 	[Command(@"(?:find *solved|solved *find|search *solved|solved *search) (.+)", AccessLevel.User, /* Disabled in Anarchy mode */ AccessLevel.Streamer)]
 	public static void FindSolved([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -388,8 +388,8 @@ static class GameCommands
 
 	/// <name>Find Duplicate</name>
 	/// <syntax>findduplicate (what)</syntax>
-	/// <summary>Finds duplicate modules based on their module name. (what) can be partial module names seperated by commas or semicolons. If not specified, all modules will be searched.</summary>
-	/// <argument name="what">A combination of claim or view seperated by spaces.</argument>
+	/// <summary>Finds duplicate modules based on their module name. (what) can be partial module names separated by commas or semicolons. If not specified, all modules will be searched.</summary>
+	/// <argument name="what">A combination of claim or view separated by spaces.</argument>
 	[Command(@"(?:find *dup(?:licate)?|dup(?:licate)? *find|search *dup(?:licate)?|dup(?:licate)? *search)( .+)?")]
 	public static void FindDuplicate([Group(1)] string queries, string user, bool isWhisper)
 	{
@@ -434,16 +434,14 @@ static class GameCommands
 	/// <syntax>filledgework</syntax>
 	/// <summary>Fills in the text-based edgework. Requires either mod rank or it to be enabled for everyone.</summary>
 	[Command(@"filledgework")]
-	public static void FillEdgework(string user, bool isWhisper)
+	public static void FillEdgework(string user)
 	{
 		if (!UserAccess.HasAccess(user, AccessLevel.Mod, true) && !TwitchPlaySettings.data.EnableFilledgeworkForEveryone && !TwitchPlaySettings.data.AnarchyMode)
 			return;
 
 		foreach (var bomb in TwitchGame.Instance.Bombs)
 		{
-			var str = bomb.FillEdgework();
-			if (bomb.BombID == TwitchGame.Instance._currentBomb)
-				IRCConnection.SendMessage(TwitchPlaySettings.data.BombEdgework, user, !isWhisper, str);
+			bomb.FillEdgework();
 		}
 	}
 
@@ -461,7 +459,14 @@ static class GameCommands
 	public static IEnumerator Edgework([Group(1)] string edge, string user, bool isWhisper)
 	{
 		if (TwitchPlaySettings.data.EnableEdgeworkCommand || TwitchPlaySettings.data.AnarchyMode)
-			return TwitchGame.Instance.Bombs[TwitchGame.Instance._currentBomb == -1 ? 0 : TwitchGame.Instance._currentBomb].ShowEdgework(edge);
+		{
+			if (TwitchGame.Instance.Bombs.Count > 1) {
+				IRCConnection.SendMessage($"@{user}, the !edgework command is not available when there are multiple bombs. Use !bomb# edgework instead.", user, !isWhisper);
+				return null;
+			}
+
+			return TwitchGame.Instance.Bombs[0].ShowEdgework(edge);
+		}
 		else
 		{
 			string edgework = TwitchGame.Instance.Bombs.Count == 1 ?
@@ -758,18 +763,16 @@ static class GameCommands
 	[Command(@"solvebomb", AccessLevel.SuperUser, AccessLevel.SuperUser)]
 	public static void SolveBomb()
 	{
-		foreach (var bomb in TwitchGame.Instance.Bombs.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID)))
+		foreach (var bomb in TwitchGame.Instance.Bombs)
 			bomb.StartCoroutine(bomb.KeepAlive());
 
 		var modulesUnsorted = TwitchGame.Instance.Modules
-			.Where(x => GameRoom.Instance.IsCurrentBomb(x.BombID));
-		var modules = TwitchPlaySettings.data.LegacyAutosolvePriority ?
-			modulesUnsorted.OrderByDescending(module => module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro", "theFan", "BoardWalk", "solveShift", "dandysFloors", "dandysFloors", "dandysFloors", "tetrahedron", "pointerPointerModule", "clearanceCodeModule")) :
-			modulesUnsorted.OrderByDescending(module => module.Solver.ModInfo.autosolvePriority);
+			.Where(x => !x.Solved);
+		var modules =
+			modulesUnsorted.OrderByDescending(module => TwitchPlaySettings.data.LegacyAutosolvePriority ? module.Solver.ModInfo.moduleID.EqualsAny("cookieJars", "organizationModule", "forgetMeLater", "encryptedHangman", "SecurityCouncil", "GSAccessCodes", "Kuro", "theFan", "BoardWalk", "solveShift", "dandysFloors", "dandysFloors", "dandysFloors", "tetrahedron", "pointerPointerModule", "clearanceCodeModule") : module.Solver.ModInfo.autosolvePriority);
 		// Sort order of autosolver by priority
 		foreach (var module in modules)
-			if (!module.Solved)
-				module.SolveSilently();
+			module.SolveSilently();
 	}
 
 	/// <name>Enable Claims</name>
@@ -809,7 +812,7 @@ static class GameCommands
 
 		var query = queries.SplitFull(' ', ',', ';');
 		var denied = new List<string>();
-		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && GameRoom.Instance.IsCurrentBomb(m.BombID) && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
+		foreach (var module in TwitchGame.Instance.Modules.Where(m => !m.Solved && query.Any(q => q.EqualsIgnoreCase(m.Code))).Take(TwitchPlaySettings.data.ModuleClaimLimit))
 		{
 			if ((module.PlayerName != user || module.ClaimQueue.All(q => q.UserNickname == targetUser)) && !UserAccess.HasAccess(user, AccessLevel.Mod, true))
 				denied.Add(module.Code);
@@ -830,7 +833,7 @@ static class GameCommands
 	public static void BotUnclaim()
 	{
 		foreach (var module in TwitchGame.Instance.Modules)
-			if (!module.Solved && module.PlayerName == IRCConnection.Instance.UserNickName && GameRoom.Instance.IsCurrentBomb(module.BombID))
+			if (!module.Solved && module.PlayerName == IRCConnection.Instance.UserNickName)
 				module.SetUnclaimed();
 	}
 
@@ -952,7 +955,7 @@ static class GameCommands
 	}
 
 	private static IEnumerable<TwitchModule> FindModules(string[] queries, Func<TwitchModule, bool> predicate = null) => TwitchGame.Instance.Modules
-			.Where(module => queries.Any(q => module.HeaderText.ContainsIgnoreCase(q)) && GameRoom.Instance.IsCurrentBomb(module.BombID) && (predicate == null || predicate(module)) && !module.Hidden)
+			.Where(module => queries.Any(q => module.HeaderText.ContainsIgnoreCase(q)) && (predicate == null || predicate(module)) && !module.Hidden)
 			.OrderByDescending(handle => queries.Any(q => handle.HeaderText.EqualsIgnoreCase(q)))
 			.ThenBy(handle => handle.Solved)
 			.ThenBy(handle => handle.PlayerName != null);
@@ -989,7 +992,10 @@ static class GameCommands
 			IRCConnection.SendMessage("The hack is over, executing all commands held up due to the hack.");
 		}
 		foreach (IRCMessage m in calledCommands)
+		{
+			m.HighPriority = true;
 			IRCConnection.ReceiveMessage(m);
+		}
 		calledCommands.Clear();
 	}
 	#endregion
