@@ -140,17 +140,18 @@ public static class ComponentSolverFactory
 
 			// Deaf
 			{ "WAR", new ModuleInformation { unclaimable = true } },
+			{ "BoardWalk", new ModuleInformation { announceModule = true, autosolvePriority = 10 } },
 
 			// EpicToast
 			{ "brushStrokes", new ModuleInformation { CompatibilityMode = true } },
-			{ "cookieJars", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
+			{ "cookieJars", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 10 } },
 			{ "krazyTalk", new ModuleInformation { CompatibilityMode = true } },
 
 			// Espik
 			{ "ForgetMeNow", new ModuleInformation { CameraPinningAlwaysAllowed = true, CompatibilityMode = true } },
 
 			// eXish
-			{ "organizationModule", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
+			{ "organizationModule", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 40 } },
 			{ "blinkstopModule", new ModuleInformation { statusLightPosition = StatusLightPosition.TopLeft } },
 			{ "widgetry", new ModuleInformation { announceModule = true } },
 
@@ -159,13 +160,12 @@ public static class ComponentSolverFactory
 			{ "Laundry", new ModuleInformation { helpText = "Set all of the options with !{0} set all 30C,2 dot,110C,Wet Cleaning. Set just washing with !{0} set wash 40C. Submit with !{0} insert coin. ...pray for that 4 in 2 & lit BOB Kappa" } },
 			{ "ModuleAgainstHumanity", new ModuleInformation { helpText = "Reset the module with !{0} press reset. Move the black card +2 with !{0} move black 2. Move the white card -3 with !{0} move white -3. Submit with !{0} press submit." } },
 
-			//GeekYiwen
-			{ "encryptedHangman", new ModuleInformation { announceModule = true } },
+			// GeekYiwen
+			{ "encryptedHangman", new ModuleInformation { announceModule = true, autosolvePriority = 10 } },
 
 			// GhostSalt
-			{ "GSAccessCodes", new ModuleInformation { announceModule = true } },
+			{ "GSAccessCodes", new ModuleInformation { announceModule = true, autosolvePriority = 50 } },
 			{ "GSYellowFace", new ModuleInformation { unclaimable = true } },
-
 
 			// Goofy
 			{ "megaMan2", new ModuleInformation { CompatibilityMode = true } },
@@ -192,14 +192,14 @@ public static class ComponentSolverFactory
 			{ "KritMicroModules", new ModuleInformation { CompatibilityMode = true } },
 			{ "KritRadio", new ModuleInformation { CompatibilityMode = true } },
 
-			//ktane1
+			// ktane1
 			{ "schulteTable", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight } },
 			{ "cruelSchulteTable", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight } },
 
 			// MaddyMoos
 			{ "top10nums", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomRight } },
 
-			//MAXANGE2B
+			// MAXANGE2B
 			{ "colorPong", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft } },
 
 			// McNiko67
@@ -211,8 +211,8 @@ public static class ComponentSolverFactory
 			// MrSpekCraft
 			{ "vexillology", new ModuleInformation { CompatibilityMode = true } },
 
-			//Nimsay Ramsey
-			{ "solveShift", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft } },
+			// Nimsay Ramsey
+			{ "solveShift", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft, announceModule = true, autosolvePriority = 10 } },
 
 			// NoahCoolBoy
 			{ "pigpenRotations", new ModuleInformation { helpTextOverride = true, helpText = "To submit abcdefhijklm use '!{0} abcdefhijklm'." } },
@@ -224,6 +224,9 @@ public static class ComponentSolverFactory
 			{ "NonogramModule", new ModuleInformation { CompatibilityMode = true } },
 			{ "bigBean", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft } },
 
+			// Play
+			{ "dandysFloors", new ModuleInformation { announceModule = true, CameraPinningAlwaysAllowed = true, autosolvePriority = 10 } },
+
 			// Procyon
 			{ "alphaBits", new ModuleInformation { CompatibilityMode = true } },
 
@@ -232,6 +235,7 @@ public static class ComponentSolverFactory
 
 			// Red Penguin
 			{ "encryptionBingo", new ModuleInformation { announceModule = true, CameraPinningAlwaysAllowed = true } },
+			{ "needyPiano", new ModuleInformation { CompatibilityMode = true } },
 
 			// Royal_Flu$h
 			{ "christmasPresents", new ModuleInformation { CompatibilityMode = true } },
@@ -252,12 +256,12 @@ public static class ComponentSolverFactory
 
 			// Speakingevil
 			{ "crypticCycle", new ModuleInformation { CompatibilityMode = true } },
-			{ "forgetMeLater", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
+			{ "forgetMeLater", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 30 } },
 			{ "tallorderedKeys", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true } },
-			{ "veryAnnoyingButton", new ModuleInformation { announceModule = true } },
+			{ "veryAnnoyingButton", new ModuleInformation { announceModule = true, CameraPinningAlwaysAllowed = true } },
 			{ "doomsdayButton", new ModuleInformation { statusLightPosition = StatusLightPosition.BottomLeft, announceModule = true } },
 
-			//That one kid
+			// That one kid
 			{ "peeky", new ModuleInformation { announceModule = true } },
 
 			// TheThirdMan
@@ -273,6 +277,11 @@ public static class ComponentSolverFactory
 
 			// Trainzack
 			{ "MusicRhythms", new ModuleInformation { helpText = "Press a button using !{0} press 1. Hold a button for a certain duration using !{0} hold 1 for 2. Mash all the buttons using !{0} mash. Buttons can be specified using the text on the button, a number in reading order or using letters like tl.", CompatibilityMode = true } },
+
+			// VFlyer (includes a module maintained by NickLatkovich)
+			{ "tetrahedron", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 30 } },
+			{ "pointerPointerModule", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 30 } },
+			{ "clearanceCodeModule", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 30 } },
 
 			// Virepri
 			{ "BitOps", new ModuleInformation { helpText = "Submit the correct answer with !{0} submit 10101010.", validCommands = new[] { "^submit [0-1]{8}$" } } },
@@ -292,8 +301,10 @@ public static class ComponentSolverFactory
 			{ "EternitySDec", new ModuleInformation { CompatibilityMode = true } },
 			{ "forgetUsNot", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, CompatibilityMode = true } },
 			{ "groceryStore", new ModuleInformation { helpText = "Use !{0} add item to cart | Adds an item to the cart. Use !{0} pay and leave | Pays and leaves | Commands can be abbreviated with !{0} add & !{0} pay" } },
-			{ "needyPiano", new ModuleInformation { CompatibilityMode = true } },
 			{ "mysterymodule", new ModuleInformation { CompatibilityMode = true, CameraPinningAlwaysAllowed = true, announceModule = true, unclaimable = true } },
+			{ "theFan", new ModuleInformation { CameraPinningAlwaysAllowed = true, announceModule = true, autosolvePriority = 30 } },
+			{ "Kuro", new ModuleInformation { autosolvePriority = 50 } },
+			{ "SecurityCouncil", new ModuleInformation { autosolvePriority = 50 } },
 		};
 
 		foreach (KeyValuePair<string, ModuleInformation> kvp in ModComponentSolverInformation)
@@ -352,7 +363,7 @@ public static class ComponentSolverFactory
 
 				rewardBonuses[moduleID] = rewardString;
 
-				// Catch any TDB modules which can't be parsed.
+				// Catch any TBD modules which can't be parsed.
 				if (scoreString == "TBD")
 					continue;
 
