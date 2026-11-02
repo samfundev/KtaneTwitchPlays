@@ -460,7 +460,8 @@ static class GameCommands
 	{
 		if (TwitchPlaySettings.data.EnableEdgeworkCommand || TwitchPlaySettings.data.AnarchyMode)
 		{
-			if (TwitchGame.Instance.Bombs.Count > 1) {
+			if (TwitchGame.Instance.Bombs.Count > 1)
+			{
 				IRCConnection.SendMessage($"@{user}, the !edgework command is not available when there are multiple bombs. Use !bomb# edgework instead.", user, !isWhisper);
 				return null;
 			}
