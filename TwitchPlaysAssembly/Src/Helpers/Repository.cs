@@ -53,7 +53,7 @@ public static class Repository
 		public string Name;
 		public string ModuleID;
 		public string Type;
-		public string Compatibility;
+		public string Issues;
 		public string FileName;
 		public Dictionary<string, object> TwitchPlays;
 
