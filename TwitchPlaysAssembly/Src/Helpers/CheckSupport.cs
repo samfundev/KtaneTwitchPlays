@@ -110,10 +110,10 @@ public static class CheckSupport
 			}
 		}
 
-		// Always disable modules that are marked as "Unplayable"
+		// Always disable modules that are marked with "Gameplay" Issues
 		foreach (var moduleInfo in modules)
 		{
-			if (moduleInfo.Compatibility != "Unplayable")
+			if (moduleInfo.Issues != "Gameplay")
 				continue;
 
 			unsupportedModules.Add(moduleInfo.ModuleID);
