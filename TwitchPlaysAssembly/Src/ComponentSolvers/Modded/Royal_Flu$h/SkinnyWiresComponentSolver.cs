@@ -22,7 +22,7 @@ public class SkinnyWiresComponentSolver : ComponentSolver
 		{
 			if (split.Length == 3) split[1] = split.Skip(1).Join("");
 
-			if (split[1].Length != 2) yield break;
+			if (split[1].Length != 2 || !split[1][0].EqualsAny('a', 'b', 'c') || !split[1][1].EqualsAny('1', '2', '3')) yield break;
 
 			int letter = split[1][0].ToIndex();
 			int number = split[1][1].ToIndex();
@@ -30,7 +30,7 @@ public class SkinnyWiresComponentSolver : ComponentSolver
 			var wire = selectables[letter * 3 + number];
 			if (!wire.gameObject.activeSelf)
 			{
-				yield return $"sendtochaterror!f There is no wire that goes between {split[1][0]} and {split[1][0]}.";
+				yield return $"sendtochaterror!f There is no wire that goes between {split[1][0]} and {split[1][1]}.";
 				yield break;
 			}
 
